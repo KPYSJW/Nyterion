@@ -43,10 +43,10 @@ if %ERRORLEVEL% neq 0 (
     echo origin URL 업데이트 완료
 )
 
-:: 현재 브랜치 확인
+:: 현재 브랜치 확인 및 자동 전환
 for /f "tokens=*" %%i in ('git branch --show-current') do set "CURRENT_BRANCH=%%i"
 if not "%CURRENT_BRANCH%"=="ParkSiWoo" (
-    echo ERROR: 현재 브랜치 '%CURRENT_BRANCH%' → ParkSiWoo가 아님.
+    echo 현재 브랜치 '%CURRENT_BRANCH%' → ParkSiWoo로 자동 전환합니다.
     :: 병합 상태 확인 및 해소
     git status >nul 2>&1
     for /f "tokens=*" %%s in ('git status ^| findstr "merging"') do (
@@ -58,20 +58,13 @@ if not "%CURRENT_BRANCH%"=="ParkSiWoo" (
             exit /b 1
         )
     )
-    set /p "SWITCH=ParkSiWoo로 전환하시겠습니까? (y/n): "
-    if /i "%SWITCH%"=="y" (
+    git checkout ParkSiWoo 2>&1 | findstr "error" >nul
+    if %ERRORLEVEL% equ 0 (
+        echo ERROR: 브랜치 전환 실패. ParkSiWoo 브랜치를 생성합니다.
+        git branch ParkSiWoo
         git checkout ParkSiWoo
-        if %ERRORLEVEL% neq 0 (
-            echo ERROR: 브랜치 전환 실패. ParkSiWoo 브랜치를 생성합니다.
-            git branch ParkSiWoo
-            git checkout ParkSiWoo
-        )
-        echo 브랜치가 ParkSiWoo로 전환되었습니다.
-    ) else (
-        echo 종료합니다.
-        pause
-        exit /b 1
     )
+    echo 브랜치가 ParkSiWoo로 전환되었습니다.
 )
 
 :: 변경 사항 확인 및 디버깅
