@@ -1,14 +1,18 @@
 # Unity .gitignore 
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-[Mm]emoryCaptures/
-UserSettings/
-.vs/
-.DS_Store
+/Library/
+/Temp/
+/Obj/
+/Build/
+/Builds/
+/Logs/
+/MemoryCaptures/
+/UserSettings/
+/Packages/
+/Assets/AssetStoreTools*
+
+# IDE 및 시스템 파일
+/.vs/
+/.DS_Store
 *.sln
 *.user
 *.csproj
@@ -18,3 +22,11 @@ UserSettings/
 *.pdb
 *.opendb
 *.VC.db
+
+# Unity 추가 파일
+*.unitypackage
+*.unity
+/BuildSettings/
+
+# 스크립트 및 임시 파일
+SafePushToParkSiWoo.bat
