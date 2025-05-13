@@ -16,7 +16,8 @@ MonoBehaviour:
   chapterNumber: 1
   stageNumber: 1
   isBossStage: 0
-  enemyList: []
+  enemyList:
+  - {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
   fixedSpawnPoints: []
   useRandomSpawn: 1
   enemyCount: 3
