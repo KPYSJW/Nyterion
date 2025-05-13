@@ -5,7 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/Park/ParkScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/PlayerTestScene.unity
+    guid: 5b9402515cf992244b7fb942fa486f5a
+  - enabled: 1
+    path: Assets/Scenes/test.unity
+    guid: 86a7a21dd70dc934ea1afc065bcbd90d
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 846a314fc817f66499dcadf2d56158a7, type: 3}
