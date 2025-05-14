@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Game.Data;
+using Nytherion.Data;
 
-namespace Game.Core
+namespace Nytherion.Core
 {
     public class ObjectPoolManager : MonoBehaviour
     {

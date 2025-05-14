@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Core
+namespace Nytherion.Core
 {
     public class GameManager : MonoBehaviour
     {

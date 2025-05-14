@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Game.Combat
+namespace Nytherion.Combat
 {
     public interface IAttackBehavior
     {

@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Game.Interfaces;
-using Game.Data;
-using Game.Core;
+using Nytherion.Interfaces;
+using Nytherion.Data;
+using Nytherion.Core;
 
-namespace Game.Characters.Enemy
+namespace Nytherion.Characters.Enemy
 {
     public class EnemyBase : MonoBehaviour, IDamageable
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Interfaces
+namespace Nytherion.Interfaces
 {
     public interface IDamageable
     {
