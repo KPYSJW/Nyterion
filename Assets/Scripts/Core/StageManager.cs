@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Game.Data;
-using Game.Characters.Enemy;
+using Nytherion.Data;
+using Nytherion.Characters.Enemy;
 
-namespace Game.Core
+namespace Nytherion.Core
 {
     public class StageManager : MonoBehaviour
     {

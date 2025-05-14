@@ -1,10 +1,10 @@
-using Game.Core;
+using Nytherion.Core;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Game.Characters.Player
+namespace Nytherion.Characters.Player
 {
     public class PlayerController : MonoBehaviour
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-namespace Game.Core
+namespace Nytherion.Core
 {
     public class InputManager : MonoBehaviour
     {
@@ -31,64 +31,64 @@ namespace Game.Core
             inputActions.Player.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
             inputActions.Player.Move.canceled += ctx => MoveInput = Vector2.zero;
 
-            inputActions.Player.Attack.performed += ctx => Debug.Log("°ø°Ý ½ÃÀÛ");
-            inputActions.Player.Attack.canceled += ctx => Debug.Log("°ø°Ý Á¾·á");
+            inputActions.Player.Attack.performed += ctx => Debug.Log("ê³µê²© ì‹œìž‘");
+            inputActions.Player.Attack.canceled += ctx => Debug.Log("ê³µê²© ì¢…ë£Œ");
 
             inputActions.Player.Dash.started += ctx => Dash=true;
             inputActions.Player.Dash.canceled += ctx => Dash = false;
 
-            inputActions.Player.Skill_Q.started += ctx => Debug.Log("½ºÅ³Q ½ÃÀÛ");
-            inputActions.Player.Skill_Q.canceled += ctx => Debug.Log("½ºÅ³Q Á¾·á");
+            inputActions.Player.Skill_Q.started += ctx => Debug.Log("ìŠ¤í‚¬Q ì‹œìž‘");
+            inputActions.Player.Skill_Q.canceled += ctx => Debug.Log("ìŠ¤í‚¬Q ì¢…ë£Œ");
 
-            inputActions.Player.Skill_W.started += ctx => Debug.Log("½ºÅ³W ½ÃÀÛ");
-            inputActions.Player.Skill_W.canceled += ctx => Debug.Log("½ºÅ³W Á¾·á");
+            inputActions.Player.Skill_W.started += ctx => Debug.Log("ìŠ¤í‚¬W ì‹œìž‘");
+            inputActions.Player.Skill_W.canceled += ctx => Debug.Log("ìŠ¤í‚¬W ì¢…ë£Œ");
 
-            inputActions.Player.Skill_E.started += ctx => Debug.Log("½ºÅ³E ½ÃÀÛ");
-            inputActions.Player.Skill_E.canceled += ctx => Debug.Log("½ºÅ³E Á¾·á");
+            inputActions.Player.Skill_E.started += ctx => Debug.Log("ìŠ¤í‚¬E ì‹œìž‘");
+            inputActions.Player.Skill_E.canceled += ctx => Debug.Log("ìŠ¤í‚¬E ì¢…ë£Œ");
 
-            inputActions.Player.Skill_R.started += ctx => Debug.Log("½ºÅ³R ½ÃÀÛ");
-            inputActions.Player.Skill_R.canceled += ctx => Debug.Log("½ºÅ³R Á¾·á");
+            inputActions.Player.Skill_R.started += ctx => Debug.Log("ìŠ¤í‚¬R ì‹œìž‘");
+            inputActions.Player.Skill_R.canceled += ctx => Debug.Log("ìŠ¤í‚¬R ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_0.started += ctx => Debug.Log("Äü½½·Ô0 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_0.canceled += ctx => Debug.Log("Äü½½·Ô0 Á¾·á");
+            inputActions.Player.QuickSlot_0.started += ctx => Debug.Log("í€µìŠ¬ë¡¯0 ì‹œìž‘");
+            inputActions.Player.QuickSlot_0.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯0 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_1.started += ctx => Debug.Log("Äü½½·Ô1 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_1.canceled += ctx => Debug.Log("Äü½½·Ô1 Á¾·á");
+            inputActions.Player.QuickSlot_1.started += ctx => Debug.Log("í€µìŠ¬ë¡¯1 ì‹œìž‘");
+            inputActions.Player.QuickSlot_1.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯1 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_2.started += ctx => Debug.Log("Äü½½·Ô2 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_2.canceled += ctx => Debug.Log("Äü½½·Ô2 Á¾·á");
+            inputActions.Player.QuickSlot_2.started += ctx => Debug.Log("í€µìŠ¬ë¡¯2 ì‹œìž‘");
+            inputActions.Player.QuickSlot_2.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯2 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_3.started += ctx => Debug.Log("Äü½½·Ô3 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_3.canceled += ctx => Debug.Log("Äü½½·Ô3 Á¾·á");
+            inputActions.Player.QuickSlot_3.started += ctx => Debug.Log("í€µìŠ¬ë¡¯3 ì‹œìž‘");
+            inputActions.Player.QuickSlot_3.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯3 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_4.started += ctx => Debug.Log("Äü½½·Ô4 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_4.canceled += ctx => Debug.Log("Äü½½·Ô4 Á¾·á");
+            inputActions.Player.QuickSlot_4.started += ctx => Debug.Log("í€µìŠ¬ë¡¯4 ì‹œìž‘");
+            inputActions.Player.QuickSlot_4.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯4 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_5.started += ctx => Debug.Log("Äü½½·Ô5 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_5.canceled += ctx => Debug.Log("Äü½½·Ô5 Á¾·á");
+            inputActions.Player.QuickSlot_5.started += ctx => Debug.Log("í€µìŠ¬ë¡¯5 ì‹œìž‘");
+            inputActions.Player.QuickSlot_5.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯5 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_6.started += ctx => Debug.Log("Äü½½·Ô6 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_6.canceled += ctx => Debug.Log("Äü½½·Ô6 Á¾·á");
+            inputActions.Player.QuickSlot_6.started += ctx => Debug.Log("í€µìŠ¬ë¡¯6 ì‹œìž‘");
+            inputActions.Player.QuickSlot_6.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯6 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_7.started += ctx => Debug.Log("Äü½½·Ô7 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_7.canceled += ctx => Debug.Log("Äü½½·Ô7 Á¾·á");
+            inputActions.Player.QuickSlot_7.started += ctx => Debug.Log("í€µìŠ¬ë¡¯7 ì‹œìž‘");
+            inputActions.Player.QuickSlot_7.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯7 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_8.started += ctx => Debug.Log("Äü½½·Ô8 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_8.canceled += ctx => Debug.Log("Äü½½·Ô8 Á¾·á");
+            inputActions.Player.QuickSlot_8.started += ctx => Debug.Log("í€µìŠ¬ë¡¯8 ì‹œìž‘");
+            inputActions.Player.QuickSlot_8.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯8 ì¢…ë£Œ");
 
-            inputActions.Player.QuickSlot_9.started += ctx => Debug.Log("Äü½½·Ô9 ½ÃÀÛ");
-            inputActions.Player.QuickSlot_9.canceled += ctx => Debug.Log("Äü½½·Ô9 Á¾·á");
+            inputActions.Player.QuickSlot_9.started += ctx => Debug.Log("í€µìŠ¬ë¡¯9 ì‹œìž‘");
+            inputActions.Player.QuickSlot_9.canceled += ctx => Debug.Log("í€µìŠ¬ë¡¯9 ì¢…ë£Œ");
 
         }
 
         private void Update()
         {
-            /* if(Input.GetKeyDown(KeyCode.Space))//¾ÀÀüÈ¯ Å×½ºÆ®
+            /* if(Input.GetKeyDown(KeyCode.Space))//ì”¬ì „í™˜ í…ŒìŠ¤íŠ¸
              {
                  string currentScene = SceneManager.GetActiveScene().name;
                  string nextScene = currentScene == "PlayerTestScene" ? "test" : "PlayerTestScene";
 
-                 Debug.Log($"¾À ÀüÈ¯: {currentScene} ¡æ {nextScene}");
+                 Debug.Log($"ì”¬ ì „í™˜: {currentScene} â†’ {nextScene}");
                  SceneManager.LoadScene(nextScene);
              }*/
         }

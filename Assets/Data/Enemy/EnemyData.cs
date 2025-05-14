@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Data
+namespace Nytherion.Data
 {
     [CreateAssetMenu(fileName = "NewEnemyData", menuName = "Data/Enemy")]
     public class EnemyData : ScriptableObject
