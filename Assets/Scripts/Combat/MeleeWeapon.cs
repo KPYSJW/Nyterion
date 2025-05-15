@@ -7,8 +7,11 @@ namespace Nytherion.Combat
 {
     public class MeleeWeapon : WeaponBase
     {
+        public SpriteRenderer sprite;
         public override void Attack(Vector2 direction)
         {
+            Debug.Log("АјАн");
+            sprite.color = Color.red;
             if (!CanAttack()) return;
 
             RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, weaponData.range, Vector2.zero);
@@ -23,6 +26,11 @@ namespace Nytherion.Combat
             }
 
             lastAttackTime = Time.time;
+        }
+
+        public override void AttackEnd()
+        {
+            sprite.color = new Color(1, 1, 1, 1);
         }
     }
 }
