@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.Data;
+using Nytherion.Data.ScriptableObjects.Weapons;
 
-namespace Nytherion.Combat
+namespace Nytherion.Gameplay.Combat
 {
     public abstract class WeaponBase : MonoBehaviour
     {
         [SerializeField]protected WeaponData weaponData;
+
 
         protected float lastAttackTime;
 
@@ -24,5 +25,6 @@ namespace Nytherion.Combat
 
         public abstract void Attack(Vector2 direction);
         public abstract void AttackEnd();
+
     }
 }

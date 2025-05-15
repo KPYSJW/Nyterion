@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace Nytherion.Combat
+namespace Nytherion.Gameplay.Combat
 {
     public interface IAttackBehavior
     {

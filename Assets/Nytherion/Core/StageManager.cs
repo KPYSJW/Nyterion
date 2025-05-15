@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.Data;
-using Nytherion.Characters.Enemy;
+
+using Nytherion.Data.ScriptableObjects.Stage;
+using Nytherion.GamePlay.Characters.Enemy;
 
 namespace Nytherion.Core
 {
@@ -15,6 +16,16 @@ namespace Nytherion.Core
         public EnemySpawner spawner;
         void Start()
         {
+
+            if (EventSystem.Instance != null)
+            {
+                EventSystem.Instance.RegisterEnemyDeathListener(OnEnemyDied);
+            }
+            else
+            {
+                Debug.LogError("EventSystem.Instance is not available!");
+            }
+            
             LoadStage(currentStageIndex);
         }
         private void LoadStage(int index)
@@ -46,13 +57,22 @@ namespace Nytherion.Core
                 }
             }
         }
-        private void OnEnable()
-        {
-            EventSystem.Instance.RegisterEnemyDeathListener(OnEnemyDied);
-        }
+        
         private void OnDisable()
         {
-            EventSystem.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
+            if (EventSystem.Instance != null)
+            {
+                EventSystem.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
+            }
+        }
+        
+        private void OnDestroy()
+        {
+            // 오브젝트가 파괴될 때도 이벤트 리스너 해제
+            if (EventSystem.Instance != null)
+            {
+                EventSystem.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
+            }
         }
     }
 

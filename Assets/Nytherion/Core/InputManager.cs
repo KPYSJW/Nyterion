@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using System;
 
+
 namespace Nytherion.Core
 {
     public class InputManager : MonoBehaviour
@@ -37,6 +38,8 @@ namespace Nytherion.Core
 
             inputActions.Player.Attack.performed += ctx => onAttackDown?.Invoke();//null 이 아니면 구독되어있는 함수 실행 
             inputActions.Player.Attack.canceled += ctx => onAttackUp?.Invoke();
+            inputActions.Player.Attack.performed += ctx => Debug.Log("공격 시작");
+            inputActions.Player.Attack.canceled += ctx => Debug.Log("공격 종료");
 
             inputActions.Player.Dash.started += ctx => Dash=true;
             inputActions.Player.Dash.canceled += ctx => Dash = false;

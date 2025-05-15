@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 
-namespace Nytherion.Combat
+namespace Nytherion.Gameplay.Combat
 {
     public class RangedWeapon : WeaponBase
     {
         public Transform firePoint;
         public SpriteRenderer sprite;
+
         public override void Attack(Vector2 direction)
         {
             if (!CanAttack() || weaponData.projectilePrefab == null) return;

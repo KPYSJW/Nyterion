@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace Nytherion.Characters.Player
+namespace Nytherion.GamePlay.Characters.Player
 {
     public class PlayerController : MonoBehaviour
     {

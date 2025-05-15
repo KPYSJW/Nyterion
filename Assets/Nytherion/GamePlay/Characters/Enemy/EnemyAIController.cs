@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace Nytherion.Characters.Enemy
+namespace Nytherion.GamePlay.Characters.Enemy
 {
-    using Nytherion.Combat;
+    using Nytherion.Gameplay.Combat;
     public class EnemyAIController : MonoBehaviour
     {
         public enum EnemyState { Idle, Chase, Attack }

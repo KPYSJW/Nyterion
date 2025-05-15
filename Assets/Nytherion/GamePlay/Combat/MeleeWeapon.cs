@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.Interfaces;
+using Nytherion.Core.Interfaces;
 
-namespace Nytherion.Combat
+namespace Nytherion.Gameplay.Combat
 {
     public class MeleeWeapon : WeaponBase
     {
         public SpriteRenderer sprite;
         public override void Attack(Vector2 direction)
         {
-            Debug.Log("°ø°Ý");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½");
             sprite.color = Color.red;
+
             if (!CanAttack()) return;
 
             RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, weaponData.range, Vector2.zero);

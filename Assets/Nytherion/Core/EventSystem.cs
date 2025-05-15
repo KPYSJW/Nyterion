@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Nytherion.Data;
+using Nytherion.Data.ScriptableObjects.Enemy;
+using Nytherion.Data.ScriptableObjects.Stage;
 
 namespace Nytherion.Core
 {

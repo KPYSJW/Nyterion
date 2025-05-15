@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.Data;
+using Nytherion.Data.ScriptableObjects.Enemy;
+using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.Core;
 
-namespace Nytherion.Characters.Enemy
+namespace Nytherion.GamePlay.Characters.Enemy
 {
     public class EnemySpawner : MonoBehaviour
     {
