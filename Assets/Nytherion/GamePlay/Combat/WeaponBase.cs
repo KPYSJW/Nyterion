@@ -7,7 +7,8 @@ namespace Nytherion.Gameplay.Combat
 {
     public abstract class WeaponBase : MonoBehaviour
     {
-        protected WeaponData weaponData;
+        [SerializeField]protected WeaponData weaponData;
+
 
         protected float lastAttackTime;
 
@@ -23,6 +24,7 @@ namespace Nytherion.Gameplay.Combat
         }
 
         public abstract void Attack(Vector2 direction);
+        public abstract void AttackEnd();
 
     }
 }

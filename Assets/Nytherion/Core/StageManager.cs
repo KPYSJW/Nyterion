@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.GamePlay.Characters.Enemy;
 
@@ -15,6 +16,7 @@ namespace Nytherion.Core
         public EnemySpawner spawner;
         void Start()
         {
+
             if (EventSystem.Instance != null)
             {
                 EventSystem.Instance.RegisterEnemyDeathListener(OnEnemyDied);

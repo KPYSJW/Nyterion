@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using System;
+
 
 namespace Nytherion.Core
 {
@@ -14,6 +16,9 @@ namespace Nytherion.Core
 
         public Vector2 MoveInput { get; private set; }
         public bool Dash {  get; private set; }
+
+        public event Action onAttackDown;
+        public event Action onAttackUp;
 
         private void Awake()
         {
@@ -31,6 +36,8 @@ namespace Nytherion.Core
             inputActions.Player.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
             inputActions.Player.Move.canceled += ctx => MoveInput = Vector2.zero;
 
+            inputActions.Player.Attack.performed += ctx => onAttackDown?.Invoke();//null 이 아니면 구독되어있는 함수 실행 
+            inputActions.Player.Attack.canceled += ctx => onAttackUp?.Invoke();
             inputActions.Player.Attack.performed += ctx => Debug.Log("공격 시작");
             inputActions.Player.Attack.canceled += ctx => Debug.Log("공격 종료");
 

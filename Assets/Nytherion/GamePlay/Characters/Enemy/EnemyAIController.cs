@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace Nytherion.GamePlay.Characters.Enemy
 {
     using Nytherion.Gameplay.Combat;
