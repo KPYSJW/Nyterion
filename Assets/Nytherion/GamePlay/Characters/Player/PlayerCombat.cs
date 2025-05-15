@@ -1,4 +1,4 @@
-using Nytherion.Combat;
+using Nytherion.Gameplay.Combat;
 using Nytherion.Core;
 using System.Collections;
 using System.Collections.Generic;
