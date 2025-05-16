@@ -8,22 +8,51 @@ using System;
 
 namespace Nytherion.Core
 {
+    /// <summary>
+    /// 플레이어의 모든 입력을 처리하고 관련 이벤트를 발생시키는 관리자 클래스입니다.
+    /// 싱글톤 패턴으로 구현되어 어디서든 접근이 가능합니다.
+    /// </summary>
     public class InputManager : MonoBehaviour
     {
-        public static InputManager Instance;
+        /// <summary>
+        /// InputManager의 싱글톤 인스턴스에 접근합니다.
+        /// </summary>
+        public static InputManager Instance { get; private set; }
 
         private PlayerAction inputActions;
 
+        /// <summary>
+        /// 현재 이동 입력 벡터를 가져옵니다. (정규화되지 않음)
+        /// </summary>
         public Vector2 MoveInput { get; private set; }
-        public bool Dash {  get; private set; }
+        
+        /// <summary>
+        /// 대시 입력 상태를 가져옵니다.
+        /// </summary>
+        public bool Dash { get; private set; }
 
+        /// <summary>
+        /// 공격 버튼을 누를 때 발생하는 이벤트입니다.
+        /// </summary>
         public event Action onAttackDown;
+        
+        /// <summary>
+        /// 공격 버튼을 뗄 때 발생하는 이벤트입니다.
+        /// </summary>
         public event Action onAttackUp;
+        
+        /// <summary>
+        /// 퀵슬롯 입력 시 발생하는 이벤트입니다. (0-9)
+        /// </summary>
         public event Action<int> onQuickSlotInput;
 
+        /// <summary>
+        /// 컴포넌트가 활성화될 때 호출됩니다.
+        /// 싱글톤 인스턴스를 초기화하고 입력 액션을 설정합니다.
+        /// </summary>
         private void Awake()
         {
-            if (Instance != null)
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
@@ -87,6 +116,10 @@ namespace Nytherion.Core
 
         }
 
+        /// <summary>
+        /// 매 프레임마다 호출됩니다.
+        /// (현재는 사용되지 않음, 디버그용 코드가 주석 처리되어 있음)
+        /// </summary>
         private void Update()
         {
             /* if(Input.GetKeyDown(KeyCode.Space))//씬전환 테스트
