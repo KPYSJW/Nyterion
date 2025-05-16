@@ -10,11 +10,11 @@ namespace Nytherion.Characters.Player
     {
         [SerializeField] private Transform weaponPoint;
         [SerializeField] private WeaponBase weaponPrefab;
-        private WeaponBase currentWeapon;
+        public WeaponBase currentWeapon;
 
         private void Start()
         {
-            EquipWeapon(weaponPrefab);
+            
             if (InputManager.Instance != null)
             {
                 InputManager.Instance.onAttackDown += Attack;
@@ -43,12 +43,19 @@ namespace Nytherion.Characters.Player
 
         void Attack()
         {
-            currentWeapon.Attack(Vector2.up);
+            if (currentWeapon != null)
+            {
+                currentWeapon.Attack(Vector2.up);
+            }
         }
         void AttackEnd()
         {
-            currentWeapon.AttackEnd();
+            if (currentWeapon != null)
+            {
+                currentWeapon.AttackEnd();
+            }
         }
+
     }
 }
 

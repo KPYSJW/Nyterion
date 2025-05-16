@@ -10,7 +10,7 @@ namespace Nytherion.Gameplay.Combat
         public SpriteRenderer sprite;
         public override void Attack(Vector2 direction)
         {
-            Debug.Log("����");
+            Debug.Log("공격시작");
             sprite.color = Color.red;
 
             if (!CanAttack()) return;
