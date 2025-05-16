@@ -1,11 +1,10 @@
-
-using Nytherion.GamePlay.Combat;
-using Nytherion.GamePlay.Characters.Item;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.GamePlay.Characters.Item;
 using Nytherion.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Nytherion.Core
 {
     public class SlotManager : MonoBehaviour
@@ -14,7 +13,7 @@ namespace Nytherion.Core
         public static SlotManager Instance;
 
         
-        public List<WeaponItem>weaponBases = new List<WeaponItem>();//Å×½ºÆ®¿ë ÄÚµå
+        public List<WeaponItem>weaponBases = new List<WeaponItem>();//ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½Úµï¿½
 
         private void Awake()
         {
@@ -30,8 +29,8 @@ namespace Nytherion.Core
         {
             InputManager.Instance.onQuickSlotInput += UseSlot;
             for (int i = 0; i < 10; ++i) quickSlots.Add(null);
-            SetItem(1, weaponBases[0]);//Å×½ºÆ®¿ë ÄÚµå
-            SetItem(2, weaponBases[1]);//Å×½ºÆ®¿ë ÄÚµå
+            SetItem(1, weaponBases[0]);//ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½Úµï¿½
+            SetItem(2, weaponBases[1]);//ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½Úµï¿½
         }
         public void UseSlot(int index)
         {
