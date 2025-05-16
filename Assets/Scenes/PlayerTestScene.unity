@@ -609,7 +609,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &750341713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1518,6 +1518,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1834462812}
   - component: {fileID: 1834462811}
+  - component: {fileID: 1834462817}
   - component: {fileID: 1834462816}
   - component: {fileID: 1834462815}
   - component: {fileID: 1834462813}
@@ -1609,10 +1610,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38efd3bc2d510a6438227fb45dfc72c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  dashSpeed: 12
-  dashDuration: 0.2
-  dashCooldown: 3
   isDash: 0
 --- !u!50 &1834462814
 Rigidbody2D:
@@ -1667,7 +1664,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aecc2587fc6efe84496d9142a0be9289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCombat: {fileID: 1834462815}
+  _playerCombat: {fileID: 0}
+  playerEngravingManager: {fileID: 0}
+  playerData: {fileID: 11400000, guid: fb11d3df7e5a27d43bd00264c2d31f60, type: 2}
+--- !u!114 &1834462817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834462810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767942bc8e4d6b847bce31827fabdc48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equippedEngravings:
+  - {fileID: 11400000, guid: 4d85d52af4aa2ea44963ecccab8cbca4, type: 2}
+  synergyTable:
+  - {fileID: 11400000, guid: 8da7a3dede0d4d94f8f3fa5f84903e06, type: 2}
 --- !u!1 &1854068599
 GameObject:
   m_ObjectHideFlags: 0

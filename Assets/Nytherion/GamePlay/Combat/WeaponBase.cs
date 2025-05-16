@@ -14,7 +14,7 @@ namespace Nytherion.GamePlay.Combat
         /// <summary>
         /// 무기 데이터입니다. 이 데이터는 무기의 속성과 행동을 정의합니다.
         /// </summary>
-        [SerializeField]protected WeaponData weaponData;
+        [SerializeField]public WeaponData weaponData;
 
         /// <summary>
         /// 마지막 공격 시간입니다. 이 시간은 공격 쿨다운을 계산하는 데 사용됩니다.

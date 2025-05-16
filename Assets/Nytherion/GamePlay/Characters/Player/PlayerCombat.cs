@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Nytherion.Data.ScriptableObjects.Synergy;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -15,7 +16,7 @@ namespace Nytherion.GamePlay.Characters.Player
     {
         [SerializeField] private Transform weaponPoint;
         public WeaponBase currentWeapon;
-
+       
         /// <summary>
         /// 컴포넌트가 활성화될 때 호출됩니다.
         /// 필요한 이벤트들을 구독합니다.
@@ -42,6 +43,15 @@ namespace Nytherion.GamePlay.Characters.Player
             if (currentWeapon!=null)
             {
                 Destroy(currentWeapon.gameObject);
+            }
+            WeaponEngravingSynergyData synergy = PlayerManager.Instance.playerEngravingManager.synergyEvaluator.EvaluateSynergy(weapon.weaponData, PlayerManager.Instance.playerEngravingManager.GetCurrentEngravings());
+            if (synergy != null)
+            {
+                Debug.Log($"✅ 시너지 발동: {synergy.weaponName} + {synergy.engravingName}");
+            }
+            else
+            {
+                Debug.Log("❌ 시너지 없음.");
             }
             currentWeapon = Instantiate(weapon, weaponPoint.position, Quaternion.identity, weaponPoint);
         }

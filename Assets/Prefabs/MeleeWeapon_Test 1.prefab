@@ -111,5 +111,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06317e272effa754a808584f077fa6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponData: {fileID: 11400000, guid: 79a5f1b4642118e44be9799c0bd66e88, type: 2}
+  weaponData: {fileID: 11400000, guid: b3198689e49ba1e4c8846e6a266df129, type: 2}
   sprite: {fileID: 8590790990860606378}

@@ -1,6 +1,6 @@
 using Nytherion.Core;
 using Nytherion.GamePlay.Combat;
-using Nytherion.Interfaces;
+using Nytherion.Core.Interfaces;
 using Nytherion.GamePlay.Characters.Player;
 using System.Collections;
 using System.Collections.Generic;
