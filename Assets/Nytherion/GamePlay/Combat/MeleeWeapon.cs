@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Interfaces;
 
-namespace Nytherion.Gameplay.Combat
+namespace Nytherion.GamePlay.Combat
 {
     public class MeleeWeapon : WeaponBase
     {

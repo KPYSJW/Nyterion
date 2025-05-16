@@ -1,15 +1,15 @@
-using Nytherion.Gameplay.Combat;
+using Nytherion.GamePlay.Combat;
 using Nytherion.Core;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Nytherion.Characters.Player
+namespace Nytherion.GamePlay.Characters.Player
+
 {
     public class PlayerCombat : MonoBehaviour
     {
         [SerializeField] private Transform weaponPoint;
-        [SerializeField] private WeaponBase weaponPrefab;
         public WeaponBase currentWeapon;
 
         private void Start()
@@ -26,6 +26,7 @@ namespace Nytherion.Characters.Player
             if (currentWeapon!=null)
             {
                 Destroy(currentWeapon.gameObject);
+          
             }
             currentWeapon = Instantiate(weapon, weaponPoint.position, Quaternion.identity, weaponPoint);
         }

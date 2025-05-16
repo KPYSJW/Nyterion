@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Nytherion.Gameplay.Combat
+namespace Nytherion.GamePlay.Combat
 {
     public class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
     {

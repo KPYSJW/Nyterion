@@ -1,5 +1,7 @@
-using Nytherion.Characters.Player;
-using Nytherion.Gameplay.Combat;
+
+using Nytherion.GamePlay.Combat;
+using Nytherion.GamePlay.Characters.Item;
+using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Interfaces;
 using System.Collections;
 using System.Collections.Generic;

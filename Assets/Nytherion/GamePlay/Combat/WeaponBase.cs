@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Weapons;
 
-namespace Nytherion.Gameplay.Combat
+namespace Nytherion.GamePlay.Combat
 {
     public abstract class WeaponBase : MonoBehaviour
     {

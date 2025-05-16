@@ -6,9 +6,9 @@ using UnityEngine;
 namespace Nytherion.GamePlay.Characters.Player
 
 {
-    public class PlayerManager : MonoBehaviour
+    public class Player : MonoBehaviour
     {
-        public static PlayerManager Instance;
+        public static Player Instance;
         public PlayerCombat playerCombat;
 
         private void Awake()

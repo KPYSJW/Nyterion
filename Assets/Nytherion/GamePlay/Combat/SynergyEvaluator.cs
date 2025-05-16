@@ -5,7 +5,7 @@ using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Core;
 
-namespace Nytherion.Gameplay.Combat
+namespace Nytherion.GamePlay.Combat
 {
     public class SynergyEvaluator : ISynergyEvaluator
     {

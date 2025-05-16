@@ -1,11 +1,12 @@
 using Nytherion.Core;
-using Nytherion.Gameplay.Combat;
+using Nytherion.GamePlay.Combat;
 using Nytherion.Interfaces;
+using Nytherion.GamePlay.Characters.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Nytherion.Characters.Player
+namespace Nytherion.GamePlay.Characters.Item
 {
     public class WeaponItem : MonoBehaviour,IUseableItem
     {
@@ -13,7 +14,9 @@ namespace Nytherion.Characters.Player
         public void Use()
         {
             Debug.Log("º“»Ø");
-           Player.Instance.playerCombat.EquipWeapon(weapon);
+
+            PlayerManager.Instance.playerCombat.EquipWeapon(weapon);
+        
         }
     }
 }
