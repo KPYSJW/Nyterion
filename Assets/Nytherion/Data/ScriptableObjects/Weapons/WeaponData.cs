@@ -21,6 +21,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float cooldown;
         public GameObject projectilePrefab;
         public Sprite icon;
+        public bool isCursed;
+        
     }
 
 

@@ -7,18 +7,19 @@ using Nytherion.Data.ScriptableObjects.Synergy;
 
 public class EngravingTester : MonoBehaviour
 {
-    public WeaponData weapon;
-    public List<EngravingData> engravings;
+    public WeaponData testWeapon;
+    public List<EngravingData> testEngravings;
     public List<WeaponEngravingSynergyData> synergyTable;
 
+    private ISynergyEvaluator synergyEvaluator;
     void Start()
     {
-        var synergy = SynergyChecker.CheckSynergy(weapon, engravings, synergyTable);
+        synergyEvaluator = new SynergyEvaluator(synergyTable);
+        WeaponEngravingSynergyData synergy = synergyEvaluator.EvaluateSynergy(testWeapon, testEngravings);
 
         if (synergy != null)
         {
-            Debug.Log("✅ 시너지 발동!");
-            Debug.Log("공격력 배수: " + synergy.bonusAttackMultiplier);
+            Debug.Log($"✅ 시너지 발동: {synergy.weaponName} + {synergy.engravingName}");
         }
         else
         {

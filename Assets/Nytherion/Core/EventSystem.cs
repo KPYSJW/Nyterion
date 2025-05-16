@@ -4,6 +4,9 @@ using UnityEngine;
 using System;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.Data.ScriptableObjects.Stage;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Synergy;
 
 namespace Nytherion.Core
 {
@@ -18,6 +21,7 @@ namespace Nytherion.Core
 
        public event Action OnEnemyDeathEvent;
        public event Action<StageData> OnBossClearedEvent;
+       public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;
        public void TriggerEnemyDeathEvent(EnemyData data)
        {
            OnEnemyDeathEvent?.Invoke();
@@ -41,6 +45,10 @@ namespace Nytherion.Core
        public void UnregisterBossClearedListener(Action<StageData> listener)
        {
            OnBossClearedEvent -= listener;
+       }
+       public void TriggerSynergyEvaluated(WeaponData weapon, EngravingData engraving, WeaponEngravingSynergyData synergy)
+       {
+           OnSynergyEvaluated?.Invoke(weapon, engraving, synergy);
        }
     }
 }
