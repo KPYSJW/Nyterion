@@ -3,21 +3,56 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using System;
+
 
 namespace Nytherion.Core
 {
+    /// <summary>
+    /// 플레이어의 모든 입력을 처리하고 관련 이벤트를 발생시키는 관리자 클래스입니다.
+    /// 싱글톤 패턴으로 구현되어 어디서든 접근이 가능합니다.
+    /// </summary>
     public class InputManager : MonoBehaviour
     {
-        public static InputManager Instance;
+        /// <summary>
+        /// InputManager의 싱글톤 인스턴스에 접근합니다.
+        /// </summary>
+        public static InputManager Instance { get; private set; }
 
         private PlayerAction inputActions;
 
+        /// <summary>
+        /// 현재 이동 입력 벡터를 가져옵니다. (정규화되지 않음)
+        /// </summary>
         public Vector2 MoveInput { get; private set; }
-        public bool Dash {  get; private set; }
+        
+        /// <summary>
+        /// 대시 입력 상태를 가져옵니다.
+        /// </summary>
+        public bool Dash { get; private set; }
 
+        /// <summary>
+        /// 공격 버튼을 누를 때 발생하는 이벤트입니다.
+        /// </summary>
+        public event Action onAttackDown;
+        
+        /// <summary>
+        /// 공격 버튼을 뗄 때 발생하는 이벤트입니다.
+        /// </summary>
+        public event Action onAttackUp;
+        
+        /// <summary>
+        /// 퀵슬롯 입력 시 발생하는 이벤트입니다. (0-9)
+        /// </summary>
+        public event Action<int> onQuickSlotInput;
+
+        /// <summary>
+        /// 컴포넌트가 활성화될 때 호출됩니다.
+        /// 싱글톤 인스턴스를 초기화하고 입력 액션을 설정합니다.
+        /// </summary>
         private void Awake()
         {
-            if (Instance != null)
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
@@ -31,8 +66,8 @@ namespace Nytherion.Core
             inputActions.Player.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
             inputActions.Player.Move.canceled += ctx => MoveInput = Vector2.zero;
 
-            inputActions.Player.Attack.performed += ctx => Debug.Log("공격 시작");
-            inputActions.Player.Attack.canceled += ctx => Debug.Log("공격 종료");
+            inputActions.Player.Attack.performed += ctx => onAttackDown?.Invoke();//null 이 아니면 구독되어있는 함수 실행 
+            inputActions.Player.Attack.canceled += ctx => onAttackUp?.Invoke();
 
             inputActions.Player.Dash.started += ctx => Dash=true;
             inputActions.Player.Dash.canceled += ctx => Dash = false;
@@ -49,38 +84,42 @@ namespace Nytherion.Core
             inputActions.Player.Skill_R.started += ctx => Debug.Log("스킬R 시작");
             inputActions.Player.Skill_R.canceled += ctx => Debug.Log("스킬R 종료");
 
-            inputActions.Player.QuickSlot_0.started += ctx => Debug.Log("퀵슬롯0 시작");
+            inputActions.Player.QuickSlot_0.started += ctx => onQuickSlotInput?.Invoke(0);
             inputActions.Player.QuickSlot_0.canceled += ctx => Debug.Log("퀵슬롯0 종료");
 
-            inputActions.Player.QuickSlot_1.started += ctx => Debug.Log("퀵슬롯1 시작");
+            inputActions.Player.QuickSlot_1.started += ctx => onQuickSlotInput?.Invoke(1);
             inputActions.Player.QuickSlot_1.canceled += ctx => Debug.Log("퀵슬롯1 종료");
 
-            inputActions.Player.QuickSlot_2.started += ctx => Debug.Log("퀵슬롯2 시작");
+            inputActions.Player.QuickSlot_2.started += ctx => onQuickSlotInput?.Invoke(2);
             inputActions.Player.QuickSlot_2.canceled += ctx => Debug.Log("퀵슬롯2 종료");
 
-            inputActions.Player.QuickSlot_3.started += ctx => Debug.Log("퀵슬롯3 시작");
+            inputActions.Player.QuickSlot_3.started += ctx => onQuickSlotInput?.Invoke(3);
             inputActions.Player.QuickSlot_3.canceled += ctx => Debug.Log("퀵슬롯3 종료");
 
-            inputActions.Player.QuickSlot_4.started += ctx => Debug.Log("퀵슬롯4 시작");
+            inputActions.Player.QuickSlot_4.started += ctx => onQuickSlotInput?.Invoke(4);
             inputActions.Player.QuickSlot_4.canceled += ctx => Debug.Log("퀵슬롯4 종료");
 
-            inputActions.Player.QuickSlot_5.started += ctx => Debug.Log("퀵슬롯5 시작");
+            inputActions.Player.QuickSlot_5.started += ctx => onQuickSlotInput?.Invoke(5);
             inputActions.Player.QuickSlot_5.canceled += ctx => Debug.Log("퀵슬롯5 종료");
 
-            inputActions.Player.QuickSlot_6.started += ctx => Debug.Log("퀵슬롯6 시작");
+            inputActions.Player.QuickSlot_6.started += ctx => onQuickSlotInput?.Invoke(6);
             inputActions.Player.QuickSlot_6.canceled += ctx => Debug.Log("퀵슬롯6 종료");
 
-            inputActions.Player.QuickSlot_7.started += ctx => Debug.Log("퀵슬롯7 시작");
+            inputActions.Player.QuickSlot_7.started += ctx => onQuickSlotInput?.Invoke(7);
             inputActions.Player.QuickSlot_7.canceled += ctx => Debug.Log("퀵슬롯7 종료");
 
-            inputActions.Player.QuickSlot_8.started += ctx => Debug.Log("퀵슬롯8 시작");
+            inputActions.Player.QuickSlot_8.started += ctx => onQuickSlotInput?.Invoke(8);
             inputActions.Player.QuickSlot_8.canceled += ctx => Debug.Log("퀵슬롯8 종료");
 
-            inputActions.Player.QuickSlot_9.started += ctx => Debug.Log("퀵슬롯9 시작");
+            inputActions.Player.QuickSlot_9.started += ctx => onQuickSlotInput?.Invoke(9);
             inputActions.Player.QuickSlot_9.canceled += ctx => Debug.Log("퀵슬롯9 종료");
 
         }
 
+        /// <summary>
+        /// 매 프레임마다 호출됩니다.
+        /// (현재는 사용되지 않음, 디버그용 코드가 주석 처리되어 있음)
+        /// </summary>
         private void Update()
         {
             /* if(Input.GetKeyDown(KeyCode.Space))//씬전환 테스트
