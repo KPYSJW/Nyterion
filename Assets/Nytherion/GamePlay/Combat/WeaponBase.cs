@@ -52,5 +52,6 @@ namespace Nytherion.GamePlay.Combat
         /// </summary>
         public abstract void AttackEnd();
 
+        
     }
 }

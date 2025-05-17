@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
-  m_Name: Sword
+  m_Name: Bow
   m_EditorClassIdentifier: 
-  weaponType: 0
-  weaponName: Sword
+  weaponType: 1
+  weaponName: Bow
   damage: 1
   range: 1
   cooldown: 1
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 3778041586713616541, guid: 56250e60bad76b54ba94b508d2f08cf5, type: 3}
   icon: {fileID: 0}
   isCursed: 0

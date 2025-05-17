@@ -64,7 +64,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (currentWeapon != null)
             {
-                currentWeapon.Attack(Vector2.up);
+                currentWeapon.Attack(Vector2.right);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (currentWeapon != null)
             {
-                currentWeapon.AttackEnd();
+                //currentWeapon.AttackEnd();
             }
         }
 
