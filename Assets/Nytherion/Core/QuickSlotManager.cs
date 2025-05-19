@@ -50,7 +50,7 @@ namespace Nytherion.UI.Inventory
         public void UseSlot(int index)
         {
             if (index < 0 || index >= slots.Length) return;
-            slots[index].Use();
+            slots[index].UseItem();
         }
 
         public bool RegisterItemToSlot(ItemData item, int count, int index)
