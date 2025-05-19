@@ -1,54 +1,52 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Nytherion.Data.ScriptableObjects.Items;
 
-public class TooltipPanel : MonoBehaviour
+namespace Nytherion.UI.Inventory
 {
-    public static TooltipPanel Instance;
-    public RectTransform panel;
-    public TextMeshProUGUI titleText;
-    public TextMeshProUGUI descriptionText;
-    private bool isVisible = false;
-    private void Awake()
+    public class TooltipPanel : MonoBehaviour
     {
-        Instance = this;
-        HideTooltip();
-    }
+        public static TooltipPanel Instance;
 
-    private void LateUpdate()
-    {
-        if (!isVisible) return;
+        [SerializeField] private GameObject panel;
+        [SerializeField] private CanvasGroup canvasGroup;
+        [SerializeField] private TextMeshProUGUI nameText;
+        [SerializeField] private TextMeshProUGUI descriptionText;
 
-        Vector2 localPoint;
-        RectTransform canvasRect = panel.GetComponentInParent<Canvas>().GetComponent<RectTransform>();
+        private void Awake()
+        {
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
 
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvasRect,
-            Input.mousePosition,
-            null,
-            out localPoint
-        );
+            canvasGroup.blocksRaycasts = false; // 마우스 방해 방지
+            HideTooltip();
+        }
 
-        Vector2 offset = new Vector2(4, 4); // 살짝 마우스에서 띄움
-        panel.anchoredPosition = localPoint + offset;
-    }
+        private void LateUpdate()
+        {
+            if (panel.activeSelf)
+            {
+                transform.position = Input.mousePosition;
+            }
+        }
 
-    public void ShowTooltip(ItemData item)
-    {
-        if (item == null) return;
+        public void ShowTooltip(ItemData item)
+        {
+            if (item == null) return;
+            SetContent(item.itemName, item.description);
+            panel.SetActive(true);
+        }
 
-        titleText.text = item.itemName;
-        descriptionText.text = item.description;
+        public void HideTooltip()
+        {
+            panel.SetActive(false);
+        }
 
-        isVisible = true;
-        panel.gameObject.SetActive(true);
-    }
-
-    public void HideTooltip()
-    {
-        isVisible = false;
-        panel.gameObject.SetActive(false);
+        private void SetContent(string name, string desc)
+        {
+            nameText.text = name;
+            descriptionText.text = desc;
+        }
     }
 }

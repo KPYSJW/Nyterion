@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 12
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -307,7 +307,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6358166102116225803
 CanvasRenderer:
@@ -362,8 +362,6 @@ MonoBehaviour:
   iconImage: {fileID: 4112530065599958366}
   countText: {fileID: 4427375559483984263}
   keyLabelText: {fileID: 3316935179711936039}
-  item: {fileID: 0}
-  stackCount: 0
 --- !u!1 &6382680229784661248
 GameObject:
   m_ObjectHideFlags: 0

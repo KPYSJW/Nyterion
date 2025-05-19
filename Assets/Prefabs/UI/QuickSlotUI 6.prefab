@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 8951756498087080682}
   - component: {fileID: 3141311151574102235}
   m_Layer: 5
-  m_Name: QuickSlotUI 2
+  m_Name: QuickSlotUI 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
