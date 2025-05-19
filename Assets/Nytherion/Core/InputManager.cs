@@ -46,6 +46,7 @@ namespace Nytherion.Core
         /// </summary>
         public event Action<int> onQuickSlotInput;
 
+        public event Action<int> onSkillInput;
         /// <summary>
         /// 컴포넌트가 활성화될 때 호출됩니다.
         /// 싱글톤 인스턴스를 초기화하고 입력 액션을 설정합니다.
@@ -72,47 +73,33 @@ namespace Nytherion.Core
             inputActions.Player.Dash.started += ctx => Dash=true;
             inputActions.Player.Dash.canceled += ctx => Dash = false;
 
-            inputActions.Player.Skill_Q.started += ctx => Debug.Log("스킬Q 시작");
-            inputActions.Player.Skill_Q.canceled += ctx => Debug.Log("스킬Q 종료");
+            inputActions.Player.Skill_Q.started += ctx => onSkillInput?.Invoke(0);
 
-            inputActions.Player.Skill_W.started += ctx => Debug.Log("스킬W 시작");
-            inputActions.Player.Skill_W.canceled += ctx => Debug.Log("스킬W 종료");
+            inputActions.Player.Skill_W.started += ctx => onSkillInput?.Invoke(1);
 
-            inputActions.Player.Skill_E.started += ctx => Debug.Log("스킬E 시작");
-            inputActions.Player.Skill_E.canceled += ctx => Debug.Log("스킬E 종료");
+            inputActions.Player.Skill_E.started += ctx => onSkillInput?.Invoke(2);
 
-            inputActions.Player.Skill_R.started += ctx => Debug.Log("스킬R 시작");
-            inputActions.Player.Skill_R.canceled += ctx => Debug.Log("스킬R 종료");
+            inputActions.Player.Skill_R.started += ctx => onSkillInput?.Invoke(3);
 
             inputActions.Player.QuickSlot_0.started += ctx => onQuickSlotInput?.Invoke(0);
-            inputActions.Player.QuickSlot_0.canceled += ctx => Debug.Log("퀵슬롯0 종료");
 
             inputActions.Player.QuickSlot_1.started += ctx => onQuickSlotInput?.Invoke(1);
-            inputActions.Player.QuickSlot_1.canceled += ctx => Debug.Log("퀵슬롯1 종료");
 
             inputActions.Player.QuickSlot_2.started += ctx => onQuickSlotInput?.Invoke(2);
-            inputActions.Player.QuickSlot_2.canceled += ctx => Debug.Log("퀵슬롯2 종료");
 
             inputActions.Player.QuickSlot_3.started += ctx => onQuickSlotInput?.Invoke(3);
-            inputActions.Player.QuickSlot_3.canceled += ctx => Debug.Log("퀵슬롯3 종료");
 
             inputActions.Player.QuickSlot_4.started += ctx => onQuickSlotInput?.Invoke(4);
-            inputActions.Player.QuickSlot_4.canceled += ctx => Debug.Log("퀵슬롯4 종료");
 
             inputActions.Player.QuickSlot_5.started += ctx => onQuickSlotInput?.Invoke(5);
-            inputActions.Player.QuickSlot_5.canceled += ctx => Debug.Log("퀵슬롯5 종료");
 
             inputActions.Player.QuickSlot_6.started += ctx => onQuickSlotInput?.Invoke(6);
-            inputActions.Player.QuickSlot_6.canceled += ctx => Debug.Log("퀵슬롯6 종료");
 
             inputActions.Player.QuickSlot_7.started += ctx => onQuickSlotInput?.Invoke(7);
-            inputActions.Player.QuickSlot_7.canceled += ctx => Debug.Log("퀵슬롯7 종료");
 
             inputActions.Player.QuickSlot_8.started += ctx => onQuickSlotInput?.Invoke(8);
-            inputActions.Player.QuickSlot_8.canceled += ctx => Debug.Log("퀵슬롯8 종료");
 
             inputActions.Player.QuickSlot_9.started += ctx => onQuickSlotInput?.Invoke(9);
-            inputActions.Player.QuickSlot_9.canceled += ctx => Debug.Log("퀵슬롯9 종료");
 
         }
 
