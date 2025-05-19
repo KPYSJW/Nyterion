@@ -47,11 +47,11 @@ namespace Nytherion.GamePlay.Characters.Player
         /// 지정된 방향으로 공격을 시도합니다.
         /// </summary>
         /// <param name="direction">공격 방향 (정규화된 벡터)</param>
-        public void Attack(Vector2 direction)
+        public void Attack()
         {
             if (currentWeapon != null)
             {
-                currentWeapon.Attack(direction);
+                currentWeapon.Attack(Vector2.up);
             }
         }
 
