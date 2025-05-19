@@ -10,7 +10,7 @@ public class InventoryManager : MonoBehaviour
     public GameObject slotPrefab;
     public Transform slotParent;
     public int slotCount = 24;
-
+    public ItemData testItem;
     private void Start()
     {
         slots = new List<InventorySlot>();
@@ -19,7 +19,11 @@ public class InventoryManager : MonoBehaviour
             GameObject slotObj = Instantiate(slotPrefab, slotParent);
             InventorySlot slot = slotObj.GetComponent<InventorySlot>();
             slots.Add(slot);
+            slot.ClearSlot();
         }
+
+        if (testItem != null)
+            AddItem(testItem);
     }
     private void Awake()
     {

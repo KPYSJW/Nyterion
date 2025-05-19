@@ -12,6 +12,13 @@ public class DragItemIcon : MonoBehaviour
     {
         Instance = this;
         Hide();
+
+        if (GetComponent<Canvas>() == null)
+        {
+            Canvas canvas = gameObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.sortingOrder = 1000;
+        }
     }
 
     public void SetIcon(Sprite icon)

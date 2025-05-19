@@ -42,8 +42,10 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IBeginDragHand
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (item == null) return;
-        originalParent = transform.parent;
+        if (item == null || iconImage.sprite == null || DragItemIcon.Instance == null)
+        {
+            return; // 드래그 취소
+        }
         DragItemIcon.Instance.SetIcon(iconImage.sprite);
         DragItemIcon.Instance.transform.position = Input.mousePosition;
         DragItemIcon.Instance.Show();
@@ -51,16 +53,36 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IBeginDragHand
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (item == null) return;
+        if (item == null || DragItemIcon.Instance == null) return;
         DragItemIcon.Instance.transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (item == null || DragItemIcon.Instance == null) return;
         DragItemIcon.Instance.Hide();
 
         if (eventData.pointerEnter != null)
         {
+            InventorySlot targetSlot = eventData.pointerEnter.GetComponentInParent<InventorySlot>();
+            if (targetSlot != null && targetSlot != this)
+            {
+                InventoryManager.Instance.SwapItems(this, targetSlot);
+            }
+        }
+
+        if (eventData.pointerEnter != null)
+        {
+            // 퀵슬롯으로 드래그 등록 처리
+            QuickSlotUI quickSlot = eventData.pointerEnter.GetComponentInParent<QuickSlotUI>();
+            if (quickSlot != null)
+            {
+                quickSlot.SetItem(item, stackCount); // 복사 등록
+                InventoryManager.Instance.RemoveItem(item, stackCount);
+                return;
+            }
+
+            // 기본 인벤토리 슬롯간 교환 처리
             InventorySlot targetSlot = eventData.pointerEnter.GetComponentInParent<InventorySlot>();
             if (targetSlot != null && targetSlot != this)
             {
