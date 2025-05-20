@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using Nytherion.UI.Inventory;
 
-namespace Nytherion.Interfaces
+namespace Nytherion.Core.Interfaces
 {
     public interface IInventorySaveService
     {

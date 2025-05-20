@@ -4,26 +4,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Interfaces;
+using Nytherion.Core.Interfaces;
 using Nytherion.UI.Inventory;
 
 namespace Nytherion.Core
 {
-    public interface IInventoryManager
-    {
-        bool AddItem(ItemData item);
-        bool AddItem(ItemData item, int count);
-        bool RemoveItem(ItemData item);
-        bool RemoveItem(ItemData item, int count);
-        void SwapItems(InventorySlotUI fromSlot, InventorySlotUI toSlot);
-        bool IsFull { get; }
-        event Action<ItemData, int> OnItemAdded;
-        event Action<ItemData, int> OnItemRemoved;
-        event Action OnInventoryUpdated;
-    }
 
     [RequireComponent(typeof(InventoryUI))]
-    public class InventoryManager : MonoBehaviour, Nytherion.Interfaces.IInventoryManager
+    public class InventoryManager : MonoBehaviour, IInventoryManager
     {
         // 인벤토리 슬롯 및 아이템 관리
         [Header("Inventory Settings")]
@@ -49,8 +37,8 @@ namespace Nytherion.Core
         public event Action OnInventoryUpdated;
 
         // IInventoryManager 인터페이스 구현
-        bool Nytherion.Interfaces.IInventoryManager.AddItem(ItemData item) => AddItemInternal(item, 1);
-        bool Nytherion.Interfaces.IInventoryManager.AddItem(ItemData item, int count) => AddItemInternal(item, count);
+        bool IInventoryManager.AddItem(ItemData item) => AddItemInternal(item, 1);
+        bool IInventoryManager.AddItem(ItemData item, int count) => AddItemInternal(item, count);
 
         /// <summary>
         /// 퀵슬롯에 아이템을 등록합니다.
@@ -89,15 +77,8 @@ namespace Nytherion.Core
         /// </summary>
         public string SaveToJson()
         {
-            var state = new InventoryState
-            {
-                items = items.Select(pair => new ItemSaveData 
-                { 
-                    itemId = pair.Key.ID, 
-                    count = pair.Value 
-                }).ToList()
-            };
-            return state.ToJson();
+            var state = new Nytherion.UI.Inventory.InventoryState(items.Keys);
+            return JsonUtility.ToJson(state);
         }
 
         /// <summary>
@@ -105,7 +86,7 @@ namespace Nytherion.Core
         /// </summary>
         public void LoadFromJson(string json)
         {
-            var state = InventoryState.FromJson(json);
+            var state = JsonUtility.FromJson<Nytherion.UI.Inventory.InventoryState>(json);
             if (state == null) 
             {
                 Debug.LogError("[Inventory] Failed to load inventory state from JSON");
@@ -114,19 +95,19 @@ namespace Nytherion.Core
             
             ClearInventory();
             
-            foreach (var itemData in state.items)
+            foreach (var itemId in state.ItemIds)
             {
-                if (itemTable.TryGetValue(itemData.itemId, out var item))
+                if (itemTable.TryGetValue(itemId, out var item))
                 {
-                    AddItem(item, itemData.count);
+                    AddItem(item, 1); // 수량은 기본값 1로 설정
                 }
                 else
                 {
-                    Debug.LogWarning($"[Inventory] Item not found: {itemData.itemId}");
+                    Debug.LogWarning($"[Inventory] Item not found: {itemId}");
                 }
             }
             
-            Debug.Log($"[Inventory] Loaded {state.items.Count} items from save data");
+            Debug.Log($"[Inventory] Loaded {state.ItemIds.Count} items from save data");
         }
 
         // Public method for direct access
@@ -180,7 +161,7 @@ namespace Nytherion.Core
                 return false;
             }
 
-            
+
             // 인벤토리 공간 확인 (새로운 아이템만 공간 체크)
             if (items.Count >= maxSlotCount)
             {
@@ -195,34 +176,17 @@ namespace Nytherion.Core
             OnInventoryUpdated?.Invoke();
             return true;
         }
-        
-        bool Nytherion.Interfaces.IInventoryManager.RemoveItem(ItemData item) => RemoveItem(item, 1);
-        bool Nytherion.Interfaces.IInventoryManager.RemoveItem(ItemData item, int count) => RemoveItem(item, count);
-        bool Nytherion.Interfaces.IInventoryManager.HasItem(ItemData item) => items.ContainsKey(item);
-        bool Nytherion.Interfaces.IInventoryManager.HasItem(string itemId) => items.Keys.Any(item => item.ID == itemId);
-        int Nytherion.Interfaces.IInventoryManager.GetItemCount(ItemData item) => items.TryGetValue(item, out var count) ? count : 0;
-        void Nytherion.Interfaces.IInventoryManager.ClearInventory() => ClearInventory();
-        void Nytherion.Interfaces.IInventoryManager.SwapItems(InventorySlotUI fromSlot, InventorySlotUI toSlot) => SwapItems(fromSlot, toSlot);
-        bool Nytherion.Interfaces.IInventoryManager.IsFull => IsFull;
+
+        bool IInventoryManager.RemoveItem(ItemData item) => RemoveItem(item, 1);
+        bool IInventoryManager.RemoveItem(ItemData item, int count) => RemoveItem(item, count);
+        void IInventoryManager.SwapItems(InventorySlotUI fromSlot, InventorySlotUI toSlot) => SwapItems(fromSlot, toSlot);
+        bool IInventoryManager.HasItem(ItemData item) => items.ContainsKey(item);
+        bool IInventoryManager.HasItem(string itemId) => items.Keys.Any(item => item.ID == itemId);
+        int IInventoryManager.GetItemCount(ItemData item) => items.TryGetValue(item, out var count) ? count : 0;
+        void IInventoryManager.ClearInventory() => ClearInventory();
+        bool IInventoryManager.IsFull => IsFull;
         public static InventoryManager Instance { get; private set; }
         
-        [System.Serializable]
-        public class ItemSaveData
-        {
-            public string itemId;
-            public int count;
-        }
-
-        [System.Serializable]
-        public class InventoryState
-        {
-            public List<ItemSaveData> items = new List<ItemSaveData>();
-            public int version = 1;
-            
-            public string ToJson() => JsonUtility.ToJson(this);
-            public static InventoryState FromJson(string json) => JsonUtility.FromJson<InventoryState>(json);
-        }
-
         private void Awake()
         {
             if (Instance == null)

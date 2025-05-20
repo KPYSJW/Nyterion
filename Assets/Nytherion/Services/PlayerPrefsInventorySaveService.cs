@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.UI.Inventory;
-using Nytherion.Interfaces;
+using Nytherion.Core.Interfaces;
 using System.Threading.Tasks;
 
 namespace Nytherion.Services
