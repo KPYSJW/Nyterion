@@ -4,10 +4,11 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Core;
+using UnityEngine;
 
-namespace Nytherion.Gameplay.Combat
+namespace Nytherion.GamePlay.Combat
 {
-    public class SynergyEvaluator : ISynergyEvaluator
+    public class SynergyEvaluator :ISynergyEvaluator
     {
         private readonly List<WeaponEngravingSynergyData> synergyTable;
 

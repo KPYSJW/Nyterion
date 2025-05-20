@@ -3,6 +3,8 @@ using Nytherion.Core;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using Nytherion.Data.ScriptableObjects.Synergy;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -19,7 +21,7 @@ namespace Nytherion.GamePlay.Characters.Player
         /// <summary>현재 장착된 무기 인스턴스</summary>
         [Tooltip("현재 플레이어가 장착한 무기")]
         public WeaponBase currentWeapon;
-
+       
         /// <summary>
         /// 컴포넌트가 활성화될 때 호출됩니다.
         /// 필요한 이벤트들을 구독합니다.
@@ -40,6 +42,8 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
+    
+
         /// <summary>
         /// 새로운 무기를 장착합니다.
         /// 기존 무기가 있는 경우 제거한 후 새 무기를 생성합니다.
@@ -57,8 +61,15 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 Destroy(currentWeapon.gameObject);
             }
-            
-            // 새 무기를 weaponPoint 위치에 생성하고 자식으로 설정
+            WeaponEngravingSynergyData synergy = PlayerManager.Instance.playerEngravingManager.synergyEvaluator.EvaluateSynergy(weapon.weaponData, PlayerManager.Instance.playerEngravingManager.GetCurrentEngravings());
+            if (synergy != null)
+            {
+                Debug.Log($"✅ 시너지 발동: {synergy.weaponName} + {synergy.engravingName}");
+            }
+            else
+            {
+                Debug.Log("❌ 시너지 없음.");
+            }
             currentWeapon = Instantiate(weapon, weaponPoint.position, Quaternion.identity, weaponPoint);
         }
 
@@ -70,13 +81,14 @@ namespace Nytherion.GamePlay.Characters.Player
         /// 공격을 시작합니다.
         /// 현재 장착된 무기가 있는 경우, 위쪽 방향으로 공격 명령을 전달합니다.
         /// </summary>
+
         public void Attack()
         {
             // 무기가 장착되어 있는 경우에만 공격 실행
             if (currentWeapon != null)
             {
-                // 기본적으로 위쪽 방향으로 공격 (실제 게임에서는 마우스 방향이나 조이스틱 입력에 따라 달라질 수 있음)
-                currentWeapon.Attack(Vector2.up);
+                currentWeapon.Attack(Vector2.right);
+
             }
         }
 
@@ -88,7 +100,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (currentWeapon != null)
             {
-                currentWeapon.AttackEnd();
+                //currentWeapon.AttackEnd();
             }
         }
 

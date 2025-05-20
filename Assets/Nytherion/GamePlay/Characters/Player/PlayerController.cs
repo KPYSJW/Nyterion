@@ -1,4 +1,5 @@
 using Nytherion.Core;
+using Nytherion.Data.ScriptableObjects.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,9 @@ namespace Nytherion.GamePlay.Characters.Player
 {
     public class PlayerController : MonoBehaviour
     {
+        
+        
+      
         /// <summary>기본 이동 속도</summary>
         [Tooltip("플레이어의 기본 이동 속도")]
         public float moveSpeed = 5f;
@@ -33,20 +37,14 @@ namespace Nytherion.GamePlay.Characters.Player
         
         /// <summary>Rigidbody2D 컴포넌트 캐시</summary>
         private Rigidbody2D rb;
-        
-        /// <summary>이동 입력 벡터</summary>
-        private Vector2 moveInput;
-        
-        /// <summary>현재 대시 중인지 여부</summary>
-        [Tooltip("현재 대시 중인지 나타내는 플래그")]
-        public bool isDash = false;
-        /// <summary>
-        /// 컴포넌트 초기화 시 호출됩니다.
-        /// Rigidbody2D 컴포넌트를 캐시합니다.
-        /// </summary>
+        Vector2 moveInput;
+        public bool isDash=false;
+
+
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+          
         }
         /// <summary>
         /// 매 프레임 호출됩니다.
@@ -54,8 +52,8 @@ namespace Nytherion.GamePlay.Characters.Player
         /// </summary>
         private void Update()
         {
-            // 대시 입력이 있고, 현재 대시 중이 아니며, 쿨다운이 끝난 경우에만 대시 실행
-            if (InputManager.Instance.Dash && !isDash && Time.time >= lastDashTime + dashCooldown)
+            if(InputManager.Instance.Dash&&!isDash&&Time.time>=lastDashTime+ PlayerManager.Instance.playerData.dashCooldown)
+
             {
                 StartCoroutine(Dash());
             }
@@ -71,9 +69,8 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 // 입력 매니저로부터 이동 입력 받기
                 moveInput = InputManager.Instance.MoveInput;
-                
-                // 입력 방향으로 속도 적용 (정규화하여 대각선 이동 시 속도 보정)
-                rb.velocity = moveInput.normalized * moveSpeed;
+                rb.velocity = moveInput.normalized * PlayerManager.Instance.playerData.moveSpeed;
+
             }
         }
 
@@ -95,12 +92,9 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 dashDirection = Vector2.up;
             }
-            
-            // 대시 속도 적용
-            rb.velocity = dashDirection * dashSpeed;
-            
-            // 대시 지속 시간만큼 대기
-            yield return new WaitForSeconds(dashDuration);
+            rb.velocity=dashDirection* PlayerManager.Instance.playerData.dashSpeed;
+            yield return new WaitForSeconds(PlayerManager.Instance.playerData.dashDuration);
+
 
             // 대시 상태 해제 (이후 FixedUpdate에서 일반 이동으로 복귀)
             isDash = false;
