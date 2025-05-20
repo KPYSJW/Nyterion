@@ -1,4 +1,5 @@
 using Nytherion.Core;
+using Nytherion.Data.ScriptableObjects.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Nytherion.GamePlay.Characters.Player
     public class PlayerManager : MonoBehaviour
     {
         private static PlayerManager _instance;
-        
+        public float currentHP;
         /// <summary>
         /// PlayerManager의 싱글톤 인스턴스에 접근합니다.
         /// 인스턴스가 없을 경우 씬에서 자동으로 찾아 할당합니다.
@@ -58,7 +59,8 @@ namespace Nytherion.GamePlay.Characters.Player
                 return _playerCombat;
             }
         }
-
+        public PlayerEngravingManager playerEngravingManager;
+        public PlayerData playerData;
         /// <summary>
         /// 컴포넌트 초기화 시 호출됩니다.
         /// 싱글톤 인스턴스를 설정하고, 필요한 컴포넌트들을 초기화합니다.
@@ -79,6 +81,8 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 _playerCombat = GetComponent<PlayerCombat>();
             }
+            playerEngravingManager=GetComponent<PlayerEngravingManager>();
+            currentHP = playerData.maxHealth;
         }
 
     }

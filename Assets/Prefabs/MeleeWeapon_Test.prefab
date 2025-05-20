@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8604274073206334278}
   - component: {fileID: 8590790990860606378}
   - component: {fileID: 6208765460595893722}
-  - component: {fileID: 5725239708119278433}
   m_Layer: 0
   m_Name: MeleeWeapon_Test
   m_TagString: Untagged
@@ -98,18 +97,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d35c5d514f90dc248963a7df2b987599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 5725239708119278433}
---- !u!114 &5725239708119278433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2204877618560446080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06317e272effa754a808584f077fa6fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponData: {fileID: 11400000, guid: 79a5f1b4642118e44be9799c0bd66e88, type: 2}
-  sprite: {fileID: 8590790990860606378}
+  weapon: {fileID: 0}

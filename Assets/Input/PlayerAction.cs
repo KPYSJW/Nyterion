@@ -243,6 +243,24 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleInventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""99c069fb-891e-4833-ad43-4762fd2513c4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CloseInventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""f88f9c97-664c-4720-a1f9-2bbebe7194d1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -476,6 +494,28 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""action"": ""QuickSlot_0"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""950b3c00-30d4-4546-87b2-a6e9ff69ad64"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleInventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2faa8b9f-bd22-41e7-8e7a-91d3aeac49c5"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseInventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -513,6 +553,8 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_QuickSlot_8 = m_Player.FindAction("QuickSlot_8", throwIfNotFound: true);
         m_Player_QuickSlot_9 = m_Player.FindAction("QuickSlot_9", throwIfNotFound: true);
         m_Player_QuickSlot_0 = m_Player.FindAction("QuickSlot_0", throwIfNotFound: true);
+        m_Player_ToggleInventory = m_Player.FindAction("ToggleInventory", throwIfNotFound: true);
+        m_Player_CloseInventory = m_Player.FindAction("CloseInventory", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -610,6 +652,8 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_QuickSlot_8;
     private readonly InputAction m_Player_QuickSlot_9;
     private readonly InputAction m_Player_QuickSlot_0;
+    private readonly InputAction m_Player_ToggleInventory;
+    private readonly InputAction m_Player_CloseInventory;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -690,6 +734,14 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @QuickSlot_0 => m_Wrapper.m_Player_QuickSlot_0;
         /// <summary>
+        /// Provides access to the underlying input action "Player/ToggleInventory".
+        /// </summary>
+        public InputAction @ToggleInventory => m_Wrapper.m_Player_ToggleInventory;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/CloseInventory".
+        /// </summary>
+        public InputAction @CloseInventory => m_Wrapper.m_Player_CloseInventory;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -766,6 +818,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @QuickSlot_0.started += instance.OnQuickSlot_0;
             @QuickSlot_0.performed += instance.OnQuickSlot_0;
             @QuickSlot_0.canceled += instance.OnQuickSlot_0;
+            @ToggleInventory.started += instance.OnToggleInventory;
+            @ToggleInventory.performed += instance.OnToggleInventory;
+            @ToggleInventory.canceled += instance.OnToggleInventory;
+            @CloseInventory.started += instance.OnCloseInventory;
+            @CloseInventory.performed += instance.OnCloseInventory;
+            @CloseInventory.canceled += instance.OnCloseInventory;
         }
 
         /// <summary>
@@ -828,6 +886,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @QuickSlot_0.started -= instance.OnQuickSlot_0;
             @QuickSlot_0.performed -= instance.OnQuickSlot_0;
             @QuickSlot_0.canceled -= instance.OnQuickSlot_0;
+            @ToggleInventory.started -= instance.OnToggleInventory;
+            @ToggleInventory.performed -= instance.OnToggleInventory;
+            @ToggleInventory.canceled -= instance.OnToggleInventory;
+            @CloseInventory.started -= instance.OnCloseInventory;
+            @CloseInventory.performed -= instance.OnCloseInventory;
+            @CloseInventory.canceled -= instance.OnCloseInventory;
         }
 
         /// <summary>
@@ -1000,5 +1064,19 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnQuickSlot_0(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleInventory" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleInventory(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CloseInventory" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCloseInventory(InputAction.CallbackContext context);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
-    using Nytherion.Gameplay.Combat;
+    using Nytherion.GamePlay.Combat;
     public class EnemyAIController : MonoBehaviour
     {
         public enum EnemyState { Idle, Chase, Attack }

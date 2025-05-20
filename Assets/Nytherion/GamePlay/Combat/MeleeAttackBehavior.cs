@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
-namespace Nytherion.Gameplay.Combat
+namespace Nytherion.GamePlay.Combat
 {
     /// <summary>
     /// 근접 공격 행동을 구현한 클래스입니다.
