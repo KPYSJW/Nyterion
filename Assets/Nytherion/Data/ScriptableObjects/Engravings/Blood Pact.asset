@@ -19,3 +19,4 @@ MonoBehaviour:
   attackMultiplier: 1
   cooldownMultiplier: 1
   speedMultiplier: 1
+  Image: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
