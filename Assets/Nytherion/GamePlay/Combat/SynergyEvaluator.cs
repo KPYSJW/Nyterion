@@ -29,12 +29,12 @@ namespace Nytherion.GamePlay.Combat
 
                 if (match != null)
                 {
-                    EventSystem.Instance?.TriggerSynergyEvaluated(weapon, engraving, match);
+                    EventManager.Instance?.TriggerSynergyEvaluated(weapon, engraving, match);
                     return match;
                 }
             }
 
-            EventSystem.Instance?.TriggerSynergyEvaluated(weapon, null, null);
+            EventManager.Instance?.TriggerSynergyEvaluated(weapon, null, null);
             return null;
         }
     }

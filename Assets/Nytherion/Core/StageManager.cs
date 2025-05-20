@@ -17,13 +17,13 @@ namespace Nytherion.Core
         void Start()
         {
 
-            if (EventSystem.Instance != null)
+            if (EventManager.Instance != null)
             {
-                EventSystem.Instance.RegisterEnemyDeathListener(OnEnemyDied);
+                EventManager.Instance.RegisterEnemyDeathListener(OnEnemyDied);
             }
             else
             {
-                Debug.LogError("EventSystem.Instance is not available!");
+                Debug.LogError("EventManager.Instance is not available!");
             }
             
             LoadStage(currentStageIndex);
@@ -60,18 +60,18 @@ namespace Nytherion.Core
         
         private void OnDisable()
         {
-            if (EventSystem.Instance != null)
+            if (EventManager.Instance != null)
             {
-                EventSystem.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
+                EventManager.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
             }
         }
         
         private void OnDestroy()
         {
             // 오브젝트가 파괴될 때도 이벤트 리스너 해제
-            if (EventSystem.Instance != null)
+            if (EventManager.Instance != null)
             {
-                EventSystem.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
+                EventManager.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
             }
         }
     }

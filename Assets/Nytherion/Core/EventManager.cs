@@ -10,9 +10,9 @@ using Nytherion.Data.ScriptableObjects.Synergy;
 
 namespace Nytherion.Core
 {
-    public class EventSystem : MonoBehaviour
+    public class EventManager : MonoBehaviour
     {
-       public static EventSystem Instance { get; private set; }
+       public static EventManager Instance { get; private set; }
        private void Awake()
        {
            if (Instance == null) Instance = this;

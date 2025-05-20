@@ -34,7 +34,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             isDead = true;
             DropItems();
-            EventSystem.Instance.TriggerEnemyDeathEvent(enemyData);
+            EventManager.Instance.TriggerEnemyDeathEvent(enemyData);
             gameObject.SetActive(false);
         }
 
