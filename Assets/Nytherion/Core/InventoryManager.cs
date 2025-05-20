@@ -18,11 +18,11 @@ namespace Nytherion.Core
         [SerializeField] private Transform slotParent;
         [SerializeField] private GameObject slotPrefab;
         [SerializeField] private int maxSlotCount = 24;
-        
+
         [Header("Debug")]
         public ItemData testItemData;
         public int testItemCount = 5;
-        
+
         private List<InventorySlotUI> slotPool = new();
         private Dictionary<ItemData, int> items = new(); // 아이템별 수량 추적
         private Dictionary<QuickSlotUI, Action<ItemData, int>> quickSlotCallbacks = new();
@@ -45,7 +45,7 @@ namespace Nytherion.Core
         /// </summary>
         public void RegisterQuickSlot(QuickSlotUI quickSlot, ItemData item, int count, Action<ItemData, int> onUseCallback = null)
         {
-            if (quickSlot == null || item == null || count <= 0) 
+            if (quickSlot == null || item == null || count <= 0)
             {
                 Debug.LogWarning("[Inventory] Invalid quick slot registration attempt");
                 return;
@@ -59,7 +59,7 @@ namespace Nytherion.Core
             }
 
             // 새 콜백 등록 (제공된 콜백이 없으면 기본 동작 사용)
-            Action<ItemData, int> onUsed = onUseCallback ?? ((usedItem, usedCount) => 
+            Action<ItemData, int> onUsed = onUseCallback ?? ((usedItem, usedCount) =>
             {
                 if (RemoveItem(usedItem, usedCount))
                 {
@@ -87,14 +87,14 @@ namespace Nytherion.Core
         public void LoadFromJson(string json)
         {
             var state = JsonUtility.FromJson<Nytherion.UI.Inventory.InventoryState>(json);
-            if (state == null) 
+            if (state == null)
             {
                 Debug.LogError("[Inventory] Failed to load inventory state from JSON");
                 return;
             }
-            
+
             ClearInventory();
-            
+
             foreach (var itemId in state.ItemIds)
             {
                 if (itemTable.TryGetValue(itemId, out var item))
@@ -106,19 +106,19 @@ namespace Nytherion.Core
                     Debug.LogWarning($"[Inventory] Item not found: {itemId}");
                 }
             }
-            
+
             Debug.Log($"[Inventory] Loaded {state.ItemIds.Count} items from save data");
         }
 
         // Public method for direct access
         public bool AddItem(ItemData item, int count = 1) => AddItemInternal(item, count);
-        
+
         /// <summary>
         /// 인벤토리에서 아이템을 제거합니다.
         /// </summary>
         public bool RemoveItem(ItemData item, int count = 1)
         {
-            if (item == null || count <= 0 || !items.ContainsKey(item)) 
+            if (item == null || count <= 0 || !items.ContainsKey(item))
                 return false;
 
             int currentCount = items[item];
@@ -160,8 +160,7 @@ namespace Nytherion.Core
                 // 스택 불가능한 아이템이고, 아이템이 이미 있으면 실패 (중복 불가)
                 return false;
             }
-
-
+            
             // 인벤토리 공간 확인 (새로운 아이템만 공간 체크)
             if (items.Count >= maxSlotCount)
             {
@@ -186,7 +185,7 @@ namespace Nytherion.Core
         void IInventoryManager.ClearInventory() => ClearInventory();
         bool IInventoryManager.IsFull => IsFull;
         public static InventoryManager Instance { get; private set; }
-        
+
         private void Awake()
         {
             if (Instance == null)
@@ -208,7 +207,7 @@ namespace Nytherion.Core
                 AddItem(testItemData, testItemCount);
             }
         }
-        
+
         private void LateUpdate()
         {
             if (needsRefresh && Time.time - lastRefreshTime >= MIN_REFRESH_INTERVAL)
@@ -218,7 +217,7 @@ namespace Nytherion.Core
                 ForceUpdateSlotsUI();
             }
         }
-        
+
         private void LoadItemTable()
         {
             var allItems = Resources.LoadAll<ItemData>("Items");
@@ -240,7 +239,7 @@ namespace Nytherion.Core
             {
                 var slotObj = Instantiate(slotPrefab, slotParent);
                 slotObj.SetActive(true); // 프리팹이 비활성화 상태여도 활성화
-                
+
                 if (slotObj.TryGetComponent(out InventorySlotUI slot))
                 {
                     slot.Initialize(i);
@@ -253,7 +252,7 @@ namespace Nytherion.Core
         {
             needsRefresh = true;
         }
-        
+
         private void ForceUpdateSlotsUI()
         {
             // 모든 슬롯 초기화 및 활성화
