@@ -18,14 +18,14 @@ namespace Nytherion.Core
         /// InputManager의 싱글톤 인스턴스에 접근합니다.
         /// </summary>
         public static InputManager Instance { get; private set; }
-
+        public GameObject inventoryPanel;
         private PlayerAction inputActions;
 
         /// <summary>
         /// 현재 이동 입력 벡터를 가져옵니다. (정규화되지 않음)
         /// </summary>
         public Vector2 MoveInput { get; private set; }
-        
+
         /// <summary>
         /// 대시 입력 상태를 가져옵니다.
         /// </summary>
@@ -35,12 +35,12 @@ namespace Nytherion.Core
         /// 공격 버튼을 누를 때 발생하는 이벤트입니다.
         /// </summary>
         public event Action onAttackDown;
-        
+
         /// <summary>
         /// 공격 버튼을 뗄 때 발생하는 이벤트입니다.
         /// </summary>
         public event Action onAttackUp;
-        
+
         /// <summary>
         /// 퀵슬롯 입력 시 발생하는 이벤트입니다. (0-9)
         /// </summary>
@@ -70,7 +70,7 @@ namespace Nytherion.Core
             inputActions.Player.Attack.performed += ctx => onAttackDown?.Invoke();//null 이 아니면 구독되어있는 함수 실행 
             inputActions.Player.Attack.canceled += ctx => onAttackUp?.Invoke();
 
-            inputActions.Player.Dash.started += ctx => Dash=true;
+            inputActions.Player.Dash.started += ctx => Dash = true;
             inputActions.Player.Dash.canceled += ctx => Dash = false;
 
             inputActions.Player.Skill_Q.started += ctx => onSkillInput?.Invoke(0);
@@ -117,6 +117,10 @@ namespace Nytherion.Core
                  Debug.Log($"씬 전환: {currentScene} → {nextScene}");
                  SceneManager.LoadScene(nextScene);
              }*/
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                inventoryPanel.SetActive(!inventoryPanel.activeSelf);
+            }
         }
 
 
