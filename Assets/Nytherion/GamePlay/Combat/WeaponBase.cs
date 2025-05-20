@@ -16,8 +16,8 @@ namespace Nytherion.GamePlay.Combat
         /// 무기 데이터입니다. 이 데이터는 무기의 속성과 행동을 정의합니다.
         /// ScriptableObject를 사용하여 다양한 무기 유형을 쉽게 생성하고 관리할 수 있습니다.
         /// </summary>
-        [Tooltip("무기의 속성과 행동을 정의하는 데이터")]
-        [SerializeField] protected WeaponData weaponData;
+        [SerializeField]public WeaponData weaponData;
+
 
         /// <summary>
         /// 마지막 공격 시간입니다.
@@ -75,5 +75,6 @@ namespace Nytherion.GamePlay.Combat
         /// </remarks>
         public abstract void AttackEnd();
 
+        
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Nytherion.Gameplay.Combat
+namespace Nytherion.GamePlay.Combat
 {
     /// <summary>
     /// 공격 행동을 정의하는 인터페이스입니다.
