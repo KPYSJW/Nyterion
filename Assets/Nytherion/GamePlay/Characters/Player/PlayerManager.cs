@@ -14,7 +14,7 @@ namespace Nytherion.GamePlay.Characters.Player
     public class PlayerManager : MonoBehaviour
     {
         private static PlayerManager _instance;
-        
+        public float currentHP;
         /// <summary>
         /// PlayerManager의 싱글톤 인스턴스에 접근합니다.
         /// 인스턴스가 없을 경우 씬에서 자동으로 찾아 할당합니다.
@@ -82,6 +82,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 _playerCombat = GetComponent<PlayerCombat>();
             }
             playerEngravingManager=GetComponent<PlayerEngravingManager>();
+            currentHP = playerData.maxHealth;
         }
 
     }

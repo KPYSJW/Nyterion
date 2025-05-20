@@ -17,5 +17,7 @@ namespace Nytherion.Data.ScriptableObjects.Engravings
         public float cooldownMultiplier = 1f;
         public float speedMultiplier = 1f;
 
+        public Sprite Image;
+
     }
 }

@@ -26,6 +26,12 @@ namespace Nytherion.GamePlay.Characters.Skill
 
         protected abstract void Activate();
 
+        public float GetCooldownTime()=>skillData.coolDown;
+        public float GetRemainingCooldown()
+        {
+            float remaining=(lastUseTime+skillData.coolDown)-Time.time;
+            return Mathf.Max(0f,remaining);   
+        }
     }
 }
 
