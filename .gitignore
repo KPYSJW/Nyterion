@@ -25,4 +25,8 @@
 
 # Unity 추가 파일
 *.unitypackage
+<<<<<<< HEAD
 /BuildSettings/
+=======
+/BuildSettings/
+>>>>>>> 9f107adaf2570f882f0c519872edcbf164e21165
