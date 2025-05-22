@@ -26,6 +26,3 @@
 # Unity 추가 파일
 *.unitypackage
 /BuildSettings/
-
-# 스크립트 및 임시 파일
-SafePushToParkSiWoo.bat
