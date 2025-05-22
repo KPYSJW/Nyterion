@@ -27,6 +27,11 @@ namespace Nytherion.Core
             poolDictionary = new Dictionary<string, Queue<GameObject>>();
             foreach (Pool pool in pools)
             {
+                if (pool.prefab == null)
+                {
+                    Debug.LogWarning($"Pool with tag '{pool.tag}' has a null prefab. Skipping this pool.");
+                    continue; // Skip to the next pool
+                }
                 Queue<GameObject> objectPool = new Queue<GameObject>();
                 for (int i = 0; i < pool.size; i++)
                 {
@@ -39,14 +44,38 @@ namespace Nytherion.Core
         }
         public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
         {
-            if (!poolDictionary.ContainsKey(tag)) return null;
+            if (!poolDictionary.ContainsKey(tag))
+            {
+                Debug.LogWarning($"Pool with tag '{tag}' doesn't exist.");
+                return null;
+            }
+
+            if (poolDictionary[tag].Count == 0)
+            {
+                Debug.LogWarning($"Pool with tag '{tag}' is empty. Consider increasing pool size or implementing dynamic expansion.");
+                return null; // Or handle by instantiating a new object if dynamic expansion is desired
+            }
 
             GameObject obj = poolDictionary[tag].Dequeue();
             obj.SetActive(true);
             obj.transform.position = position;
             obj.transform.rotation = rotation;
-            poolDictionary[tag].Enqueue(obj);
+            // poolDictionary[tag].Enqueue(obj); // Object should not be immediately returned
             return obj;
+        }
+
+        public void ReturnToPool(string tag, GameObject objectToReturn)
+        {
+            if (!poolDictionary.ContainsKey(tag))
+            {
+                Debug.LogWarning($"Pool with tag '{tag}' does not exist. Destroying object instead.");
+                Destroy(objectToReturn);
+                return;
+            }
+
+            objectToReturn.SetActive(false);
+            // Optionally, reset object's state here (e.g., position, parent, components)
+            poolDictionary[tag].Enqueue(objectToReturn);
         }
     }
 }

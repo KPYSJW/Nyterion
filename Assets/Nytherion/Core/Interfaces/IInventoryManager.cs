@@ -2,7 +2,7 @@ using System;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.UI.Inventory;
 
-namespace Nytherion.Interfaces
+namespace Nytherion.Core.Interfaces
 {
     public interface IInventoryManager
     {
