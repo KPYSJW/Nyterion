@@ -46,31 +46,49 @@ namespace Nytherion.UI.Inventory
                 DragItemIcon.Instance.Hide();
         }
 
-        public virtual void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback)
+        protected virtual void UpdateVisuals(ItemData item, int count)
         {
-            if (isSettingItem) return;
+            if (iconImage == null || countText == null)
+            {
+                Debug.LogError("[BaseSlotUI] iconImage or countText is null. Cannot update visuals.");
+                return;
+            }
+
+            if (item == null) // Corresponds to clearing the slot
+            {
+                iconImage.enabled = false;
+                iconImage.sprite = null;
+                countText.text = "";
+            }
+            else
+            {
+                iconImage.sprite = item.icon;
+                iconImage.enabled = true;
+                countText.text = item.isStackable && count > 1 ? count.ToString() : "";
+            }
+        }
+        
+        public virtual void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback) // onUseCallback might be removed if not used by BaseSlotUI directly
+        {
+            if (isSettingItem) return; // Keep re-entrancy guard if necessary
             isSettingItem = true;
 
             try
             {
-                currentItem = item;
-                currentCount = count;
+                this.currentItem = item;
+                this.currentCount = count;
 
-                if (item == null)
+                UpdateVisuals(this.currentItem, this.currentCount); // Call the new method
+
+                if (this.currentItem == null)
                 {
-                    iconImage.enabled = false;
-                    iconImage.sprite = null;
-                    countText.text = "";
                     OnItemCleared?.Invoke();
-                    return;
                 }
-
-                iconImage.sprite = item.icon;
-                iconImage.enabled = true;
-                countText.text = item.isStackable && count > 1 ? count.ToString() : "";
-                
-                OnItemSet?.Invoke(item, count);
-                OnSlotUpdated?.Invoke(this);
+                else
+                {
+                    OnItemSet?.Invoke(this.currentItem, this.currentCount);
+                }
+                OnSlotUpdated?.Invoke(this); // This event seems general for any update
             }
             finally
             {
@@ -80,12 +98,12 @@ namespace Nytherion.UI.Inventory
 
         public virtual void SetItem(ItemData item, int count = 1)
         {
-            SetItem(item, count, null);
+            SetItem(item, count, null); // Pass null for the callback if BaseSlotUI doesn't use it
         }
 
         public virtual void ClearSlot()
         {
-            SetItem(null);
+            SetItem(null, 0, null); // This will handle data, visuals, and events
         }
         
         public virtual void UseItem()
@@ -107,25 +125,30 @@ namespace Nytherion.UI.Inventory
 
         public virtual void IncreaseCount(int amount = 1)
         {
+            if (IsEmpty) return; // Cannot increase count if no item
             currentCount += amount;
-            UpdateCountText();
+            UpdateVisuals(currentItem, currentCount);
+            OnSlotUpdated?.Invoke(this);
         }
 
         public virtual void DecreaseCount(int amount = 1)
         {
+            if (IsEmpty) return; // Cannot decrease if no item
             currentCount -= amount;
             if (currentCount <= 0)
-                ClearSlot();
+            {
+                ClearSlot(); // ClearSlot will call SetItem(null,0) which calls UpdateVisuals
+            }
             else
-                UpdateCountText();
-        }
-
-        protected virtual void UpdateCountText()
-        {
-            if (currentItem == null)
-                countText.text = "";
-            else
-                countText.text = currentItem.isStackable && currentCount > 1 ? currentCount.ToString() : "";
+            {
+                UpdateVisuals(currentItem, currentCount);
+            }
+            // OnSlotUpdated is called by ClearSlot (via SetItem) or directly if not cleared.
+            // If not cleared by ClearSlot, invoke it here.
+            if (currentCount > 0) 
+            {
+                OnSlotUpdated?.Invoke(this);
+            }
         }
 
         // UI 이벤트 핸들러
@@ -143,9 +166,8 @@ namespace Nytherion.UI.Inventory
 
         public virtual void OnDrag(PointerEventData eventData)
         {
-            if (IsEmpty) return;
-            if (DragItemIcon.Instance != null)
-                DragItemIcon.Instance.transform.position = Input.mousePosition;
+            if (IsEmpty || DragItemIcon.Instance == null) return; // Added null check for Instance
+            DragItemIcon.Instance.transform.position = Input.mousePosition;
         }
 
         public virtual void OnEndDrag(PointerEventData eventData)

@@ -22,9 +22,6 @@ namespace Nytherion.Core
         [SerializeField] private GameObject slotPrefab;
         [SerializeField] private int maxSlotCount = 24;
 
-        [Header("Debug")]
-        public ItemData testItemData;
-        public int testItemCount = 5;
 
         private List<InventorySlotUI> slotPool = new();
         private Dictionary<ItemData, int> items = new(); // 아이템별 수량 추적
@@ -45,6 +42,15 @@ namespace Nytherion.Core
         public event Action OnInventoryUpdated;
 
         // IInventoryManager 인터페이스 구현
+        
+        /// <summary>
+        /// 현재 인벤토리의 모든 아이템과 수량을 반환합니다.
+        /// </summary>
+        public Dictionary<ItemData, int> GetAllItems()
+        {
+            return new Dictionary<ItemData, int>(items);
+        }
+        
         public bool AddItem(ItemData item) => AddItem(item, 1);
 
         public bool AddItem(ItemData item, int count)
@@ -190,6 +196,19 @@ namespace Nytherion.Core
         public bool HasItem(string itemId) => items.Keys.Any(item => item.ID == itemId);
         public int GetItemCount(ItemData item) => items.TryGetValue(item, out var count) ? count : 0;
         public bool IsFull => items.Count >= maxSlotCount;
+        public int MaxSlotCount => maxSlotCount;
+
+        public (ItemData item, int count) GetSlotContents(int slotIndex)
+        {
+            if (slotPool == null || slotIndex < 0 || slotIndex >= slotPool.Count)
+            {
+                Debug.LogWarning($"[InventoryManager] GetSlotContents: slotIndex {slotIndex} is out of bounds. Max slots: {slotPool?.Count ?? maxSlotCount}");
+                return (null, 0);
+            }
+            // Assuming slotPool[slotIndex] is an InventorySlotUI 
+            // which inherits Item and StackCount from BaseSlotUI
+            return (slotPool[slotIndex].Item, slotPool[slotIndex].StackCount);
+        }
 
         private void NotifyItemModified(ItemData item, int count, bool isAdded)
         {
@@ -239,13 +258,6 @@ namespace Nytherion.Core
                 Destroy(gameObject);
             }
         }
-        private void Start()
-        {
-            if (testItemData != null)
-            {
-                AddItem(testItemData, testItemCount);
-            }
-        }
 
         private void LateUpdate()
         {
@@ -259,9 +271,47 @@ namespace Nytherion.Core
 
         private void LoadItemTable()
         {
-            var allItems = Resources.LoadAll<ItemData>("Items");
-            itemTable = allItems.ToDictionary(item => item.ID, item => item);
-            Debug.Log($"[Inventory] Loaded {itemTable.Count} items");
+            itemTable = new Dictionary<string, ItemData>();
+            
+            // 에셋 데이터베이스에서 모든 ItemData 로드
+            #if UNITY_EDITOR
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:ItemData", new[] {"Assets/Nytherion/Data/ScriptableObjects/Items"});
+            
+            foreach (string guid in guids)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                ItemData item = UnityEditor.AssetDatabase.LoadAssetAtPath<ItemData>(path);
+                
+                if (item != null && !string.IsNullOrEmpty(item.ID))
+                {
+                    if (!itemTable.ContainsKey(item.ID))
+                    {
+                        itemTable[item.ID] = item;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[Inventory] 중복된 아이템 ID: {item.ID} - {path}");
+                    }
+                }
+            }
+            #endif
+            
+            Debug.Log($"[Inventory] Loaded {itemTable.Count} items from ScriptableObjects");
+            
+            // 에디터가 아닌 경우를 위한 폴백
+            if (Application.isPlaying && itemTable.Count == 0)
+            {
+                Debug.LogWarning("[Inventory] No items found in ScriptableObjects. Using Resources fallback.");
+                var allItems = Resources.LoadAll<ItemData>("");
+                foreach (var item in allItems)
+                {
+                    if (item != null && !string.IsNullOrEmpty(item.ID) && !itemTable.ContainsKey(item.ID))
+                    {
+                        itemTable[item.ID] = item;
+                    }
+                }
+                Debug.Log($"[Inventory] Loaded {itemTable.Count} items from Resources fallback");
+            }
         }
         private void InitializeSlots()
         {
@@ -364,14 +414,14 @@ namespace Nytherion.Core
 
         public void ClearInventory()
         {
-            var itemsToRemove = items.Keys.ToList();
-            foreach (var item in itemsToRemove)
-            {
-                RemoveItem(item, items[item]);
-            }
-
+            // 자동 저장 방지를 위해 items를 직접 비웁니다.
+            items.Clear();
+            
             // 슬롯 업데이트
             ForceUpdateSlotsUI();
+            
+            // 인벤토리 업데이트 이벤트 호출
+            OnInventoryUpdated?.Invoke();
         }
 
         // 저장/로드 관련 메서드
@@ -416,6 +466,7 @@ namespace Nytherion.Core
             
             try
             {
+                Debug.Log("[Inventory] Starting inventory load...");
                 var state = saveService.LoadInventory();
                 if (state == null || state.Items == null)
                 {
@@ -425,8 +476,10 @@ namespace Nytherion.Core
                     return;
                 }
 
+                Debug.Log($"[Inventory] Found {state.Items.Count} items in save data");
 
                 var newItems = new Dictionary<ItemData, int>();
+                int loadedCount = 0;
                 bool hasError = false;
 
                 foreach (var entry in state.Items)
@@ -437,7 +490,6 @@ namespace Nytherion.Core
                         hasError = true;
                         continue;
                     }
-
 
                     if (entry.Count <= 0)
                     {
@@ -451,6 +503,8 @@ namespace Nytherion.Core
                     if (item != null)
                     {
                         newItems[item] = entry.Count;
+                        loadedCount++;
+                        Debug.Log($"[Inventory] Loaded item: {item.name} (ID: {item.ID}), Count: {entry.Count}");
                     }
                     else
                     {
@@ -464,15 +518,31 @@ namespace Nytherion.Core
                 {
                     Debug.LogWarning("[Inventory] Some items may not have loaded correctly");
                 }
-                else
-                {
-                    Debug.Log("[Inventory] All items loaded successfully");
-                }
 
 
+                // 아이템 목록 업데이트
                 items = newItems;
-                Debug.Log($"[Inventory] Loaded {items.Count} items");
-                OnInventoryUpdated?.Invoke();
+                
+                // UI 갱신
+                try
+                {
+                    Debug.Log($"[Inventory] Notifying UI of {items.Count} loaded items");
+                    OnInventoryUpdated?.Invoke();
+                    
+                    // UI 갱신이 제대로 되었는지 확인하기 위해 강제로 한 번 더 호출
+                    // (UI가 이벤트를 놓쳤을 경우를 대비)
+                    if (items.Count > 0)
+                    {
+                        Debug.Log("[Inventory] Forcing additional UI refresh");
+                        OnInventoryUpdated?.Invoke();
+                    }
+                }
+                catch (Exception uiEx)
+                {
+                    Debug.LogError($"[Inventory] Error during UI update: {uiEx.Message}");
+                }
+                
+                Debug.Log($"[Inventory] Loaded {loadedCount} items successfully" + (hasError ? " (with some errors)" : ""));
             }
             catch (Exception e)
             {
@@ -493,10 +563,22 @@ namespace Nytherion.Core
         
         private void PerformDelayedSave()
         {
-            SaveInventory();
-            isScheduledForSave = false;
+            if (isScheduledForSave)
+            {
+                SaveInventory();
+                isScheduledForSave = false;
+            }
         }
         
+        /// <summary>
+        /// UI를 강제로 갱신합니다.
+        /// </summary>
+        public void ForceUpdateUI()
+        {
+            Debug.Log("[Inventory] Forcing UI update");
+            OnInventoryUpdated?.Invoke();
+        }
+
         private void OnDestroy()
         {
             if (Instance == this)
