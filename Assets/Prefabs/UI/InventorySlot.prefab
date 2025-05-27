@@ -202,7 +202,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 9243d0f00a778994787f42439862b30e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -226,8 +226,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 4112530065599958366}
   countText: {fileID: 4427375559483984263}
-  item: {fileID: 0}
-  stackCount: 0
 --- !u!1 &6382680229784661248
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,7 +291,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 9243d0f00a778994787f42439862b30e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
