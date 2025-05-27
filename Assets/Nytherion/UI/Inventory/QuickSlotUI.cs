@@ -18,9 +18,17 @@ namespace Nytherion.UI.Inventory
         protected override void Awake()
         {
             base.Awake();
-
-            // 기본 키 라벨 설정 (필요에 따라 인스펙터에서 수정 가능)
-            SetKeyLabel("");
+            // 디버그 로그 추가
+            if (keyLabelText == null)
+            {
+                Debug.LogError("keyLabelText is not assigned in the inspector!", this);
+            }
+            else
+            {
+                // 인스펙터에서 설정한 텍스트를 유지하기 위해 여기서는 활성화만 처리
+                keyLabelText.gameObject.SetActive(true);
+                Debug.Log($"QuickSlotUI Awake - KeyLabelText: '{keyLabelText.text}'", this);
+            }
 
             // 드래그 이벤트 핸들러 등록
             // OnBeginDragEvent += HandleBeginDrag; // Remove old
@@ -80,7 +88,7 @@ namespace Nytherion.UI.Inventory
             {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
             }
-            
+
             // Debug log for confirmation
             if (this.currentItem != null) // Use this.currentItem as it's set by base.SetItem
             {
@@ -132,13 +140,13 @@ namespace Nytherion.UI.Inventory
         public override void ClearSlot()
         {
             // QuickSlot specific cleanup
-            this.onItemUsed = null; 
+            this.onItemUsed = null;
             // Debug.Log("[QuickSlotUI] onItemUsed callback cleared.");
 
             // Call base method. This will call SetItem(null, 0, null) in BaseSlotUI,
             // which in turn calls UpdateVisuals and handles relevant events.
             base.ClearSlot();
-            
+
             // Debug.Log("[QuickSlotUI] Cleared slot via base.ClearSlot()");
         }
     }

@@ -54,7 +54,7 @@ namespace Nytherion.UI.Inventory
                 return;
             }
 
-            if (item == null) // Corresponds to clearing the slot
+            if (item == null) // 슬롯을 비우는 경우
             {
                 iconImage.enabled = false;
                 iconImage.sprite = null;
@@ -65,9 +65,17 @@ namespace Nytherion.UI.Inventory
                 iconImage.sprite = item.icon;
                 iconImage.enabled = true;
                 countText.text = item.isStackable && count > 1 ? count.ToString() : "";
+
+                // 이미지 크기를 슬롯 크기의 80%로 조정
+                RectTransform iconRect = iconImage.rectTransform;
+                if (iconRect != null)
+                {
+                    float scale = 0.7f; // 80% 크기로 설정 (원하는 크기에 따라 조정 가능)
+                    iconRect.localScale = new Vector3(scale, scale, 1f);
+                }
             }
         }
-        
+
         public virtual void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback) // onUseCallback might be removed if not used by BaseSlotUI directly
         {
             if (isSettingItem) return; // Keep re-entrancy guard if necessary
@@ -105,12 +113,12 @@ namespace Nytherion.UI.Inventory
         {
             SetItem(null, 0, null); // This will handle data, visuals, and events
         }
-        
+
         public virtual void UseItem()
         {
             // Override in derived classes
         }
-        
+
         public virtual void UseItem(Action<ItemData, int> onUseCallback)
         {
             if (currentItem != null && onUseCallback != null)
@@ -145,7 +153,7 @@ namespace Nytherion.UI.Inventory
             }
             // OnSlotUpdated is called by ClearSlot (via SetItem) or directly if not cleared.
             // If not cleared by ClearSlot, invoke it here.
-            if (currentCount > 0) 
+            if (currentCount > 0)
             {
                 OnSlotUpdated?.Invoke(this);
             }
