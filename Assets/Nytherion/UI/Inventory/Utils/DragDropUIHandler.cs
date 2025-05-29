@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using Nytherion.UI.Inventory; // For BaseSlotUI, DragItemIcon
-using Nytherion.Utils;       // For SlotTransferHelper
+using Nytherion.UI.Inventory;
+using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.UI.Inventory.Utils
 {
@@ -13,51 +13,52 @@ namespace Nytherion.UI.Inventory.Utils
         {
             if (slotBeingDragged == null || slotBeingDragged.IsEmpty) return;
 
-            if (DragItemIcon.Instance != null && slotBeingDragged.Item != null && slotBeingDragged.Item.icon != null)
+            if (DragItemIcon.Instance != null && slotBeingDragged.CurrentItem != null && slotBeingDragged.CurrentItem.icon != null)
             {
-                DragItemIcon.Instance.SetIcon(slotBeingDragged.Item.icon); // Use Item.icon directly
+                DragItemIcon.Instance.SetIcon(slotBeingDragged.CurrentItem.icon);
                 DragItemIcon.Instance.Show();
             }
             else
             {
                 if (DragItemIcon.Instance == null) Debug.LogError("[DragDropUIHandler] DragItemIcon.Instance is null.");
-                if (slotBeingDragged.Item == null) Debug.LogWarning($"[DragDropUIHandler] Item in slot {slotBeingDragged.name} is null.");
-                else if (slotBeingDragged.Item.icon == null) Debug.LogWarning($"[DragDropUIHandler] Icon for item {slotBeingDragged.Item.itemName} is null.");
+                if (slotBeingDragged.CurrentItem == null) Debug.LogWarning($"[DragDropUIHandler] Item in slot {slotBeingDragged.name} is null.");
+                else if (slotBeingDragged.CurrentItem.icon == null) Debug.LogWarning($"[DragDropUIHandler] Icon for item {slotBeingDragged.CurrentItem.itemName} is null.");
             }
         }
 
-        public static void HandleEndDragShared(BaseSlotUI sourceSlot, PointerEventData eventData, bool allowShiftSwap = true)
+        public static void HandleEndDragShared(BaseSlotUI sourceSlot, PointerEventData eventData)
         {
             if (DragItemIcon.Instance != null)
                 DragItemIcon.Instance.Hide();
 
             if (sourceSlot == null || sourceSlot.IsEmpty) return;
 
-            List<RaycastResult> results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, results); // eventData already has position
+            // UI 요소들에 대한 레이캐스트 수행
+            var results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
 
+            // 타겟 슬롯 찾기
             BaseSlotUI targetSlot = null;
             foreach (var result in results)
             {
-                var foundSlot = result.gameObject.GetComponentInParent<BaseSlotUI>();
-                if (foundSlot != null && foundSlot != sourceSlot)
+                var slot = result.gameObject.GetComponentInParent<BaseSlotUI>();
+                if (slot != null && slot != sourceSlot)
                 {
-                    targetSlot = foundSlot;
-                    break; // Found the first valid slot under the cursor
+                    targetSlot = slot;
+                    break;
                 }
             }
 
             if (targetSlot != null)
             {
-                bool transferred = SlotTransferHelper.TryTransferItem(sourceSlot, targetSlot);
-                if (!transferred && allowShiftSwap && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
-                {
-                    SlotTransferHelper.TrySwapItems(sourceSlot, targetSlot);
-                }
-                // If neither transfer nor swap happened, the item visually snaps back
-                // because its data in sourceSlot was never actually changed.
+                // 유효한 타겟 슬롯이 있는 경우 아이템 이동/교체 시도
+                SlotTransferHelper.TransferItem(sourceSlot, targetSlot);
             }
-            // else: No valid target slot found, item remains in sourceSlot. Visuals should be fine.
+            else
+            {
+                // UI 외부에 드롭된 경우 (아이템 버리기 등)
+                SlotTransferHelper.HandleDropOnEmptySpace(sourceSlot, eventData);
+            }
         }
     }
 }

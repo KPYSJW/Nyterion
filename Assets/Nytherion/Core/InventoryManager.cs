@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Interfaces;
 using Nytherion.UI.Inventory;
 using Nytherion.Services;
@@ -48,6 +49,30 @@ namespace Nytherion.Core
         {
             if (item == null || count <= 0) return false;
 
+            // 장비 아이템은 항상 새로운 슬롯에 할당
+            bool isEquipment = item is WeaponData || item.itemType == ItemType.Armor;
+            
+            if (isEquipment)
+            {
+                // 장비 아이템의 경우, 아이템을 복제하여 고유한 인스턴스로 만듦
+                for (int i = 0; i < count; i++)
+                {
+                    if (items.Count >= maxSlotCount)
+                    {
+                        Debug.LogWarning($"[Inventory] 인벤토리가 가득 찼습니다. {item.itemName}을 추가할 수 없습니다.");
+                        return i > 0; // 일부라도 추가되었으면 true 반환
+                    }
+                    
+                    // 아이템을 복제하여 고유한 인스턴스 생성
+                    ItemData clonedItem = Instantiate(item);
+                    clonedItem.name = item.name; // 원본 이름 유지
+                    items[clonedItem] = 1;
+                    NotifyItemModified(clonedItem, 1, true);
+                }
+                return true;
+            }
+            
+            // 일반 아이템 처리
             if (items.TryGetValue(item, out int currentCount))
             {
                 if (item.isStackable)
@@ -129,28 +154,70 @@ namespace Nytherion.Core
 
         public bool RemoveItem(ItemData item) => RemoveItem(item, 1);
 
-        public bool RemoveItem(ItemData item, int count)
+        public bool RemoveItem(ItemData item, int count = 1)
         {
-            if (item == null || count <= 0 || !items.ContainsKey(item))
+            if (item == null || count <= 0) return false;
+
+            if (items.TryGetValue(item, out int currentCount))
+            {
+                if (currentCount > count)
+                {
+                    items[item] = currentCount - count;
+                    NotifyItemModified(item, -count, true);
+                    return true;
+                }
+                else if (currentCount == count)
+                {
+                    items.Remove(item);
+                    NotifyItemModified(item, -currentCount, false);
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        /// <summary>
+        /// 아이템을 장비 슬롯에서 인벤토리로 이동시킵니다.
+        /// </summary>
+        public bool MoveToInventory(ItemData item, int count = 1)
+        {
+            if (item == null || count <= 0) return false;
+            
+            // 인벤토리에 빈 슬롯이 있는지 확인
+            if (items.Count >= maxSlotCount && !items.ContainsKey(item))
+            {
+                Debug.LogWarning("[Inventory] 인벤토리에 빈 슬롯이 없습니다.");
                 return false;
-
-            int currentCount = items[item];
-            bool isRemoved = false;
-
-            if (currentCount > count)
-            {
-                items[item] = currentCount - count;
-                NotifyItemModified(item, count, false);
-                isRemoved = true;
             }
-            else if (currentCount == count)
+            
+            // 인벤토리에 아이템 추가
+            return AddItem(item, count);
+        }
+        
+        /// <summary>
+        /// 인벤토리에서 아이템을 제거하고 장비 슬롯으로 이동시킵니다.
+        /// </summary>
+        public bool MoveToEquipment(ItemData item, int count = 1)
+        {
+            if (item == null || count <= 0) return false;
+            
+            // 인벤토리에 아이템이 충분히 있는지 확인
+            if (!items.TryGetValue(item, out int currentCount) || currentCount < count)
             {
-                items.Remove(item);
-                NotifyItemModified(item, currentCount, false);
-                isRemoved = true;
+                Debug.LogWarning($"[Inventory] 인벤토리에 {item.itemName}이(가) 부족합니다.");
+                return false;
             }
-
-            return isRemoved;
+            
+            // 인벤토리에서 아이템 제거
+            return RemoveItem(item, count);
+        }
+        
+        /// <summary>
+        /// 인벤토리에 빈 슬롯이 있는지 확인합니다.
+        /// </summary>
+        public bool HasEmptySlot()
+        {
+            return items.Count < maxSlotCount;
         }
 
         public bool HasItem(ItemData item) => items.ContainsKey(item);

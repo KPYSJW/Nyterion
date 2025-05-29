@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core;
 using Nytherion.Services;
 using TMPro;
@@ -13,7 +14,7 @@ namespace Nytherion.UI.Test
         [Header("아이템 참조")]
         [SerializeField] private ItemData testItem1;
         [SerializeField] private ItemData testItem2;
-        [SerializeField] private ItemData testItem3;
+        [SerializeField] private ItemData testWeapon;
 
         [Header("UI 버튼")]
         [SerializeField] private Button addItem1Button;
@@ -42,7 +43,7 @@ namespace Nytherion.UI.Test
             // 버튼 클릭 이벤트 연결
             if (addItem1Button != null) addItem1Button.onClick.AddListener(() => AddTestItem(testItem1));
             if (addItem2Button != null) addItem2Button.onClick.AddListener(() => AddTestItem(testItem2));
-            if (addItem3Button != null) addItem3Button.onClick.AddListener(() => AddTestItem(testItem3));
+            if (addItem3Button != null) addItem3Button.onClick.AddListener(() => AddTestItem(testWeapon));
             
             if (removeItem1Button != null) removeItem1Button.onClick.AddListener(RemoveTestItem1);
             if (clearInventoryButton != null) clearInventoryButton.onClick.AddListener(ClearInventory);

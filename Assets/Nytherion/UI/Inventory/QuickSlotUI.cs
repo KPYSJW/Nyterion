@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI; // LayoutRebuilder 사용을 위해 추가
+using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core;
 using System;
-using EventSystem = UnityEngine.EventSystems.EventSystem; // 모호성 해결을 위한 별칭
+using EventSystem = UnityEngine.EventSystems.EventSystem;
+using Nytherion.UI.Inventory.Utils;
 
 namespace Nytherion.UI.Inventory
 {
@@ -14,6 +15,7 @@ namespace Nytherion.UI.Inventory
         public event Action<ItemData, int> OnItemUsed;
         [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
         private Action<ItemData, int> onItemUsed;
+        private IUsableItem usableItem; // 사용 가능한 아이템 참조
 
         protected override void Awake()
         {
@@ -49,55 +51,34 @@ namespace Nytherion.UI.Inventory
 
         public override void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback = null)
         {
-            // isSettingItem is managed by BaseSlotUI.SetItem
-            // if (isSettingItem) 
-            // {
-            //     Debug.Log($"[QuickSlotUI] Base class should handle re-entrancy. If this logs, review BaseSlotUI.");
-            //     return;
-            // }
-
-            Debug.Log($"[QuickSlotUI] SetItem called - Item: {item?.itemName ?? "null"}, Count: {count}");
-
-            // QuickSlot specific logic for callback
-            if (onUseCallback != null)
+            // 기존 아이템 정리
+            if (this.usableItem != null && this.usableItem is IDisposable disposable)
             {
-                this.onItemUsed = onUseCallback;
-                // Debug.Log($"[QuickSlotUI] Callback set for {item?.itemName}");
-            }
-            else if (item == null) // If clearing the slot (item is null), clear the callback
-            {
-                this.onItemUsed = null;
-                // Debug.Log($"[QuickSlotUI] Item is null, callback cleared.");
-            }
-            // If item is not null but onUseCallback is null, retain the existing onItemUsed.
-
-            // Call base method to set data and update visuals
-            // The base.SetItem will handle setting this.currentItem, this.currentCount,
-            // calling UpdateVisuals, and invoking OnItemSet/OnItemCleared and OnSlotUpdated.
-            base.SetItem(item, count, onUseCallback);
-
-            // Duplicated UI update logic for iconImage and countText is now removed
-            // as it's handled by BaseSlotUI.UpdateVisuals() called from base.SetItem().
-
-            // QuickSlot specific UI updates (if any, beyond what BaseSlotUI.UpdateVisuals does)
-            // e.g., keyLabelText update if it depended on item data, but SetKeyLabel is separate.
-
-            // Layout rebuild if still necessary for QuickSlotUI
-            // Ensure the GameObject is active in the hierarchy before forcing a layout rebuild.
-            if (gameObject.activeInHierarchy && transform as RectTransform != null)
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+                disposable.Dispose();
             }
 
-            // Debug log for confirmation
-            if (this.currentItem != null) // Use this.currentItem as it's set by base.SetItem
+            // 새 아이템 설정
+            this.usableItem = item as IUsableItem;
+            this.onItemUsed = onUseCallback;
+
+            // 기본 슬롯 업데이트
+            base.SetItem(item, count, (usedItem, usedCount) => 
             {
-                Debug.Log($"[QuickSlotUI] SetItem completed: {this.currentItem.itemName} x{this.currentCount}");
-            }
-            else
+                // 아이템 사용 시 호출될 콜백
+                if (this.usableItem != null)
+                {
+                    this.usableItem.Use();
+                }
+                onItemUsed?.Invoke(usedItem, usedCount);
+            });
+
+            // 레이아웃 갱신
+            if (gameObject.activeInHierarchy && transform is RectTransform rectTransform)
             {
-                Debug.Log("[QuickSlotUI] Cleared slot (item is null after base call)");
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
             }
+
+            Debug.Log($"[QuickSlot] {(item != null ? $"아이템 설정 완료: {item.itemName} x{count}" : "슬롯 비움")}");
         }
 
         public override void UseItem()

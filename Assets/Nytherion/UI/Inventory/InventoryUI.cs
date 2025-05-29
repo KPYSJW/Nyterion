@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core;
@@ -13,6 +14,9 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private InputActionReference toggleInventoryAction;
         [Tooltip("인벤토리 슬롯들이 있는 부모 오브젝트")]
         [SerializeField] private Transform slotParent; // 인벤토리 슬롯들이 있는 부모 오브젝트
+        
+        [Header("Buttons")]
+        [SerializeField] private Button closeButton; // 닫기 버튼
 
         private bool isOpen = false;
 
@@ -20,6 +24,12 @@ namespace Nytherion.UI.Inventory
 
         private void Start()
         {
+            // 닫기 버튼 이벤트 등록
+            if (closeButton != null)
+            {
+                closeButton.onClick.AddListener(CloseInventory);
+            }
+            
             // InventoryManager가 초기화되었는지 확인하고 수동으로 한 번 Refresh
             if (InventoryManager.Instance != null)
             {
@@ -68,8 +78,16 @@ namespace Nytherion.UI.Inventory
             inventoryPanel.SetActive(isOpen);
             OnInventoryToggled?.Invoke(isOpen);
         }
+        
+        // 인벤토리를 닫는 메서드
+        public void CloseInventory()
+        {
+            isOpen = false;
+            inventoryPanel.SetActive(false);
+            OnInventoryToggled?.Invoke(false);
+        }
 
-        private void RefreshUI()
+        public void RefreshUI()
         {
             if (slotParent == null) return;
             
@@ -93,7 +111,7 @@ namespace Nytherion.UI.Inventory
             
             var items = InventoryManager.Instance.GetAllItems();
             
-            // 각 슬롯에 아이템 할당
+            // 모든 아이템을 인벤토리에 표시
             int slotIndex = 0;
             foreach (var item in items)
             {
