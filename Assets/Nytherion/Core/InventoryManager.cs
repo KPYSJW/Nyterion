@@ -16,36 +16,27 @@ namespace Nytherion.Core
     [RequireComponent(typeof(InventoryUI))]
     public class InventoryManager : MonoBehaviour, IInventoryManager
     {
-        // 인벤토리 슬롯 및 아이템 관리
         [Header("Inventory Settings")]
         [SerializeField] private Transform slotParent;
         [SerializeField] private GameObject slotPrefab;
         [SerializeField] private int maxSlotCount = 24;
 
-
         private List<InventorySlotUI> slotPool = new();
-        private Dictionary<ItemData, int> items = new(); // 아이템별 수량 추적
+        private Dictionary<ItemData, int> items = new();
         private Dictionary<QuickSlotUI, Action<ItemData, int>> quickSlotCallbacks = new();
         private Dictionary<string, ItemData> itemTable = new Dictionary<string, ItemData>();
         private bool needsRefresh;
         private float lastRefreshTime;
-        private const float MIN_REFRESH_INTERVAL = 0.1f; // 100ms
+        private const float MIN_REFRESH_INTERVAL = 0.1f;
         
-        // 저장/로드 관련
         private IInventorySaveService saveService;
-        private const float SAVE_DELAY = 2f; // 자동 저장 지연 시간(초)
+        private const float SAVE_DELAY = 2f;
         private bool isScheduledForSave = false;
 
-        // 인벤토리 상태 이벤트
         public event Action<ItemData, int> OnItemAdded;
         public event Action<ItemData, int> OnItemRemoved;
         public event Action OnInventoryUpdated;
-
-        // IInventoryManager 인터페이스 구현
         
-        /// <summary>
-        /// 현재 인벤토리의 모든 아이템과 수량을 반환합니다.
-        /// </summary>
         public Dictionary<ItemData, int> GetAllItems()
         {
             return new Dictionary<ItemData, int>(items);
@@ -57,57 +48,45 @@ namespace Nytherion.Core
         {
             if (item == null || count <= 0) return false;
 
-            // 이미 동일한 아이템이 있는 경우
             if (items.TryGetValue(item, out int currentCount))
             {
-                // 스택 가능한 아이템이면 수량 추가
                 if (item.isStackable)
                 {
                     items[item] = currentCount + count;
                     NotifyItemModified(item, count, true);
                     return true;
                 }
-                // 스택 불가능한 아이템이고, 아이템이 이미 있으면 실패 (중복 불가)
                 return false;
             }
 
-            // 인벤토리 공간 확인 (새로운 아이템만 공간 체크)
             if (items.Count >= maxSlotCount)
             {
                 Debug.LogWarning($"[Inventory] 인벤토리가 가득 찼습니다. {item.itemName}을 추가할 수 없습니다.");
                 return false;
             }
 
-            // 새 아이템 추가
             items[item] = count;
             NotifyItemModified(item, count, true);
             return true;
         }
 
-        /// <summary>
-        /// 퀵슬롯에 아이템을 등록합니다.
-        /// </summary>
         public void RegisterQuickSlot(QuickSlotUI quickSlot, ItemData item, int count, Action<ItemData, int> onUseCallback = null)
         {
             if (quickSlot == null || item == null || count <= 0)
             {
-                Debug.LogWarning("[Inventory] Invalid quick slot registration attempt");
                 return;
             }
 
-            // 기존 콜백 제거
             if (quickSlotCallbacks.TryGetValue(quickSlot, out var oldCallback))
             {
                 quickSlot.OnItemUsed -= oldCallback;
                 quickSlotCallbacks.Remove(quickSlot);
             }
 
-            // 새 콜백 등록 (제공된 콜백이 없으면 기본 동작 사용)
             Action<ItemData, int> onUsed = onUseCallback ?? ((usedItem, usedCount) =>
             {
                 if (RemoveItem(usedItem, usedCount))
                 {
-                    Debug.Log($"[Inventory] Used {usedCount}x {usedItem.itemName} from quick slot");
                 }
             });
 
@@ -116,24 +95,17 @@ namespace Nytherion.Core
             quickSlot.SetItem(item, count, onUsed);
         }
 
-        /// <summary>
-        /// 인벤토리 상태를 JSON으로 저장합니다.
-        /// </summary>
         public string SaveToJson()
         {
             var state = new Nytherion.UI.Inventory.InventoryState(items.Keys);
             return JsonUtility.ToJson(state);
         }
 
-        /// <summary>
-        /// JSON에서 인벤토리 상태를 복원합니다.
-        /// </summary>
         public void LoadFromJson(string json)
         {
             var state = JsonUtility.FromJson<Nytherion.UI.Inventory.InventoryState>(json);
             if (state == null)
             {
-                Debug.LogError("[Inventory] Failed to load inventory state from JSON");
                 return;
             }
 
@@ -152,18 +124,9 @@ namespace Nytherion.Core
                 {
                     AddItem(itemData, item.Count);
                 }
-                else
-                {
-                    Debug.LogWarning($"[Inventory] Item not found: {item.ItemId}");
-                }
             }
-
-            Debug.Log($"[Inventory] Loaded {state.Items.Count} items from save data");
         }
 
-        /// <summary>
-        /// 인벤토리에서 아이템을 제거합니다.
-        /// </summary>
         public bool RemoveItem(ItemData item) => RemoveItem(item, 1);
 
         public bool RemoveItem(ItemData item, int count)
@@ -176,14 +139,12 @@ namespace Nytherion.Core
 
             if (currentCount > count)
             {
-                // 일부 제거
                 items[item] = currentCount - count;
                 NotifyItemModified(item, count, false);
                 isRemoved = true;
             }
             else if (currentCount == count)
             {
-                // 전체 제거
                 items.Remove(item);
                 NotifyItemModified(item, currentCount, false);
                 isRemoved = true;
@@ -202,11 +163,8 @@ namespace Nytherion.Core
         {
             if (slotPool == null || slotIndex < 0 || slotIndex >= slotPool.Count)
             {
-                Debug.LogWarning($"[InventoryManager] GetSlotContents: slotIndex {slotIndex} is out of bounds. Max slots: {slotPool?.Count ?? maxSlotCount}");
                 return (null, 0);
             }
-            // Assuming slotPool[slotIndex] is an InventorySlotUI 
-            // which inherits Item and StackCount from BaseSlotUI
             return (slotPool[slotIndex].Item, slotPool[slotIndex].StackCount);
         }
 
@@ -223,16 +181,11 @@ namespace Nytherion.Core
                 OnItemRemoved?.Invoke(item, count);
             }
             
-            // 인벤토리 업데이트 이벤트 발생
             OnInventoryUpdated?.Invoke();
             
-            // 변경 사항 저장 예약 (자동 저장)
             ScheduleSave();
         }
 
-        /// <summary>
-        /// 아이템 제거 알림을 처리합니다.
-        /// </summary>
         private void NotifyItemRemoved(ItemData item, int count)
         {
             RequestSlotsUpdate();
@@ -250,8 +203,8 @@ namespace Nytherion.Core
                 DontDestroyOnLoad(gameObject);
                 LoadItemTable();
                 InitializeSlots();
-                InitializeSaveSystem(); // 저장 시스템 초기화
-                LoadInventory(); // 게임 시작 시 인벤토리 자동 로드
+                InitializeSaveSystem();
+                LoadInventory();
             }
             else
             {
@@ -273,7 +226,6 @@ namespace Nytherion.Core
         {
             itemTable = new Dictionary<string, ItemData>();
             
-            // 에셋 데이터베이스에서 모든 ItemData 로드
             #if UNITY_EDITOR
             string[] guids = UnityEditor.AssetDatabase.FindAssets("t:ItemData", new[] {"Assets/Nytherion/Data/ScriptableObjects/Items"});
             
@@ -288,20 +240,12 @@ namespace Nytherion.Core
                     {
                         itemTable[item.ID] = item;
                     }
-                    else
-                    {
-                        Debug.LogWarning($"[Inventory] 중복된 아이템 ID: {item.ID} - {path}");
-                    }
                 }
             }
             #endif
             
-            Debug.Log($"[Inventory] Loaded {itemTable.Count} items from ScriptableObjects");
-            
-            // 에디터가 아닌 경우를 위한 폴백
             if (Application.isPlaying && itemTable.Count == 0)
             {
-                Debug.LogWarning("[Inventory] No items found in ScriptableObjects. Using Resources fallback.");
                 var allItems = Resources.LoadAll<ItemData>("");
                 foreach (var item in allItems)
                 {
@@ -310,12 +254,10 @@ namespace Nytherion.Core
                         itemTable[item.ID] = item;
                     }
                 }
-                Debug.Log($"[Inventory] Loaded {itemTable.Count} items from Resources fallback");
             }
         }
         private void InitializeSlots()
         {
-            // 기존 슬롯 정리
             foreach (Transform child in slotParent)
             {
                 Destroy(child.gameObject);
@@ -323,11 +265,10 @@ namespace Nytherion.Core
             slotPool.Clear();
             items.Clear();
 
-            // 새 슬롯 생성 및 활성화
             for (int i = 0; i < maxSlotCount; i++)
             {
                 var slotObj = Instantiate(slotPrefab, slotParent);
-                slotObj.SetActive(true); // 프리팹이 비활성화 상태여도 활성화
+                slotObj.SetActive(true);
 
                 if (slotObj.TryGetComponent(out InventorySlotUI slot))
                 {
@@ -344,12 +285,11 @@ namespace Nytherion.Core
 
         private void ForceUpdateSlotsUI()
         {
-            UpdateSlotsUI(true); // forceActivate를 true로 설정하여 호출
+            UpdateSlotsUI(true);
         }
 
         private void UpdateSlotsUI(bool forceActivate = false)
         {
-            // 모든 슬롯 초기화 및 필요시 활성화
             foreach (var slot in slotPool)
             {
                 slot.ClearSlot();
@@ -358,8 +298,6 @@ namespace Nytherion.Core
                     slot.gameObject.SetActive(true);
                 }
             }
-
-            // 아이템으로 슬롯 채우기
             int slotIndex = 0;
             foreach (var itemPair in items)
             {
@@ -373,16 +311,13 @@ namespace Nytherion.Core
         {
             if (fromSlot == null || toSlot == null || fromSlot.IsEmpty) return;
 
-            // 실제 데이터 스왑
             var fromItem = fromSlot.Item;
             var toItem = toSlot.Item;
             var fromCount = fromSlot.StackCount;
             var toCount = toSlot.StackCount;
 
-            // 데이터 업데이트
             if (fromItem == toItem && fromItem.isStackable)
             {
-                // 같은 아이템 스택 합치기
                 int total = fromCount + toCount;
                 if (total <= fromItem.maxStack)
                 {
@@ -401,63 +336,31 @@ namespace Nytherion.Core
             }
             else
             {
-                // 서로 다른 아이템 교환
                 if (!fromSlot.IsEmpty) items[fromItem] = fromCount;
                 if (!toSlot.IsEmpty) items[toItem] = toCount;
 
                 fromSlot.SetItem(toItem, toCount);
                 toSlot.SetItem(fromItem, fromCount);
             }
-
             OnInventoryUpdated?.Invoke();
         }
 
         public void ClearInventory()
         {
-            // 자동 저장 방지를 위해 items를 직접 비웁니다.
             items.Clear();
-            
-            // 슬롯 업데이트
             ForceUpdateSlotsUI();
-            
-            // 인벤토리 업데이트 이벤트 호출
             OnInventoryUpdated?.Invoke();
         }
 
-        // 저장/로드 관련 메서드
         private void InitializeSaveSystem()
         {
-            try
-            {
-                // 저장 서비스 초기화
-                saveService = new PlayerPrefsInventorySaveService();
-                Debug.Log("[Inventory] 저장 시스템 초기화 완료");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[Inventory] 저장 시스템 초기화 실패: {e.Message}");
-            }
+            saveService = new PlayerPrefsInventorySaveService();
         }
         
         public void SaveInventory()
         {
-            if (saveService == null)
-            {
-                Debug.LogWarning("[Inventory] Save system is not initialized");
-                return;
-            }
-
-            try
-            {
-                // Use the constructor that takes Dictionary<ItemData, int>
-                var state = new InventoryState(items);
-                saveService.SaveInventory(state);
-                Debug.Log("[Inventory] Inventory saved successfully");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[Inventory] Error saving inventory: {e.Message}");
-            }
+            var state = new InventoryState(items);
+            saveService?.SaveInventory(state);
         }
         
         public void LoadInventory()
@@ -466,88 +369,35 @@ namespace Nytherion.Core
             
             try
             {
-                Debug.Log("[Inventory] Starting inventory load...");
                 var state = saveService.LoadInventory();
-                if (state == null || state.Items == null)
+                if (state?.Items == null)
                 {
-                    Debug.Log("[Inventory] No saved inventory data found");
                     items.Clear();
                     OnInventoryUpdated?.Invoke();
                     return;
                 }
 
-                Debug.Log($"[Inventory] Found {state.Items.Count} items in save data");
-
                 var newItems = new Dictionary<ItemData, int>();
-                int loadedCount = 0;
-                bool hasError = false;
 
                 foreach (var entry in state.Items)
                 {
-                    if (string.IsNullOrEmpty(entry.ItemId))
+                    if (string.IsNullOrEmpty(entry.ItemId) || entry.Count <= 0)
                     {
-                        Debug.LogWarning("[Inventory] Invalid item ID (null or empty)");
-                        hasError = true;
                         continue;
                     }
-
-                    if (entry.Count <= 0)
-                    {
-                        Debug.LogWarning($"[Inventory] Invalid count for item {entry.ItemId}: {entry.Count}");
-                        hasError = true;
-                        continue;
-                    }
-
 
                     ItemData item = itemTable.Values.FirstOrDefault(i => i.ID == entry.ItemId);
                     if (item != null)
                     {
                         newItems[item] = entry.Count;
-                        loadedCount++;
-                        Debug.Log($"[Inventory] Loaded item: {item.name} (ID: {item.ID}), Count: {entry.Count}");
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"[Inventory] Item not found in database: {entry.ItemId}");
-                        hasError = true;
                     }
                 }
 
-
-                if (hasError)
-                {
-                    Debug.LogWarning("[Inventory] Some items may not have loaded correctly");
-                }
-
-
-                // 아이템 목록 업데이트
                 items = newItems;
-                
-                // UI 갱신
-                try
-                {
-                    Debug.Log($"[Inventory] Notifying UI of {items.Count} loaded items");
-                    OnInventoryUpdated?.Invoke();
-                    
-                    // UI 갱신이 제대로 되었는지 확인하기 위해 강제로 한 번 더 호출
-                    // (UI가 이벤트를 놓쳤을 경우를 대비)
-                    if (items.Count > 0)
-                    {
-                        Debug.Log("[Inventory] Forcing additional UI refresh");
-                        OnInventoryUpdated?.Invoke();
-                    }
-                }
-                catch (Exception uiEx)
-                {
-                    Debug.LogError($"[Inventory] Error during UI update: {uiEx.Message}");
-                }
-                
-                Debug.Log($"[Inventory] Loaded {loadedCount} items successfully" + (hasError ? " (with some errors)" : ""));
+                OnInventoryUpdated?.Invoke();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.LogError($"[Inventory] Error loading inventory: {e.Message}");
-                // Restore from backup on error
                 items = backupItems;
                 OnInventoryUpdated?.Invoke();
             }
@@ -570,12 +420,8 @@ namespace Nytherion.Core
             }
         }
         
-        /// <summary>
-        /// UI를 강제로 갱신합니다.
-        /// </summary>
         public void ForceUpdateUI()
         {
-            Debug.Log("[Inventory] Forcing UI update");
             OnInventoryUpdated?.Invoke();
         }
 
@@ -583,11 +429,8 @@ namespace Nytherion.Core
         {
             if (Instance == this)
             {
-                // 게임 종료 시 인벤토리 저장
                 SaveInventory();
             }
         }
-
     }
-
 }
