@@ -166,15 +166,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "CloseInventory",
-                    "type": "Button",
-                    "id": "f88f9c97-664c-4720-a1f9-2bbebe7194d1",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -419,15 +410,32 @@
                     "action": "ToggleInventory",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "7a32a639-bf26-439c-9fcb-a8c4f1798448",
+            "actions": [
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "f756c728-f08b-4ac2-88bd-83c67b20422b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
                 {
                     "name": "",
-                    "id": "2faa8b9f-bd22-41e7-8e7a-91d3aeac49c5",
+                    "id": "a47ab531-8501-43a6-ac60-f56125804e7a",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CloseInventory",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
