@@ -17,7 +17,7 @@ namespace Nytherion.UI.Inventory
 
         [Header("Buttons")]
         [SerializeField] private Button closeButton; // 닫기 버튼
-
+        [SerializeField] private GameObject tooltipCanvas;
         private bool isOpen = false;
 
         public event Action<bool> OnInventoryToggled; // true: opened, false: closed
@@ -81,6 +81,11 @@ namespace Nytherion.UI.Inventory
             isOpen = false;
             inventoryPanel.SetActive(false);
             OnInventoryToggled?.Invoke(false);
+
+            if (TooltipPanel.Instance != null)
+            {
+                TooltipPanel.Instance.HideTooltip();
+            }
         }
 
         public void RefreshUI()
