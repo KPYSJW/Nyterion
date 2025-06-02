@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI; // LayoutRebuilder 사용을 위해 추가
+using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core;
 using System;
-using EventSystem = UnityEngine.EventSystems.EventSystem; // 모호성 해결을 위한 별칭
+using EventSystem = UnityEngine.EventSystems.EventSystem;
+using Nytherion.UI.Inventory.Utils;
 
 namespace Nytherion.UI.Inventory
 {
@@ -14,31 +15,31 @@ namespace Nytherion.UI.Inventory
         public event Action<ItemData, int> OnItemUsed;
         [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
         private Action<ItemData, int> onItemUsed;
+        private IUsableItem usableItem; // 사용 가능한 아이템 참조
 
         protected override void Awake()
         {
             base.Awake();
-
-            // 기본 키 라벨 설정 (필요에 따라 인스펙터에서 수정 가능)
-            SetKeyLabel("");
+            // 디버그 로그 추가
+            if (keyLabelText == null)
+            {
+                Debug.LogError("keyLabelText is not assigned in the inspector!", this);
+            }
+            else
+            {
+                // 인스펙터에서 설정한 텍스트를 유지하기 위해 여기서는 활성화만 처리
+                keyLabelText.gameObject.SetActive(true);
+                Debug.Log($"QuickSlotUI Awake - KeyLabelText: '{keyLabelText.text}'", this);
+            }
 
             // 드래그 이벤트 핸들러 등록
-            OnBeginDragEvent += HandleBeginDrag;
-            OnEndDragEvent += HandleEndDrag;
+            // OnBeginDragEvent += HandleBeginDrag; // Remove old
+            // OnEndDragEvent += HandleEndDrag;   // Remove old
+            OnBeginDragEvent += (slot, eventData) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleBeginDragShared(slot);
+            OnEndDragEvent += (slot, eventData) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleEndDragShared(slot, eventData); // allowShiftSwap defaults to true
         }
 
-        private void HandleBeginDrag(BaseSlotUI slot, PointerEventData eventData)
-        {
-            if (IsEmpty) return;
-            Debug.Log($"[QuickSlotUI] Begin Drag {currentItem?.itemName}");
-
-            // 드래그 아이콘 설정 및 표시
-            if (DragItemIcon.Instance != null && currentItem != null)
-            {
-                DragItemIcon.Instance.SetIcon(iconImage.sprite);
-                DragItemIcon.Instance.Show();
-            }
-        }
+        // Removed HandleBeginDrag method
 
         public void SetKeyLabel(string label)
         {
@@ -50,88 +51,34 @@ namespace Nytherion.UI.Inventory
 
         public override void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback = null)
         {
-            if (isSettingItem)
+            // 기존 아이템 정리
+            if (this.usableItem != null && this.usableItem is IDisposable disposable)
             {
-                Debug.Log($"[QuickSlotUI] Already setting item, skipping...");
-                return;
+                disposable.Dispose();
             }
 
-            isSettingItem = true;
-            Debug.Log($"[QuickSlotUI] SetItem called - Item: {item?.itemName ?? "null"}, Count: {count}");
+            // 새 아이템 설정
+            this.usableItem = item as IUsableItem;
+            this.onItemUsed = onUseCallback;
 
-            try
+            // 기본 슬롯 업데이트
+            base.SetItem(item, count, (usedItem, usedCount) => 
             {
-                // ✅ 먼저 현재 아이템과 카운트 설정
-                this.currentItem = item;
-                this.currentCount = count;
-
-                // 부모 클래스의 SetItem 호출 (UI 업데이트를 위해)
-                base.SetItem(item, count, onUseCallback);
-
-                // 콜백 설정 (null이 아닐 때만 업데이트)
-                if (onUseCallback != null)
+                // 아이템 사용 시 호출될 콜백
+                if (this.usableItem != null)
                 {
-                    this.onItemUsed = onUseCallback;
-                    Debug.Log($"[QuickSlotUI] Callback set for {item?.itemName}");
+                    this.usableItem.Use();
                 }
+                onItemUsed?.Invoke(usedItem, usedCount);
+            });
 
-                // UI 강제 업데이트
-                if (item != null)
-                {
-                    // 아이콘 설정
-                    if (iconImage != null)
-                    {
-                        iconImage.sprite = item.icon;
-                        iconImage.enabled = true;
-                        Debug.Log($"[QuickSlotUI] Set icon: {item.icon?.name ?? "null"}");
-                    }
-                    else
-                    {
-                        Debug.LogError("[QuickSlotUI] iconImage is null!");
-                    }
-
-                    // 카운트 텍스트 설정
-                    if (countText != null)
-                    {
-                        countText.text = item.isStackable && count > 1 ? count.ToString() : "";
-                        Debug.Log($"[QuickSlotUI] Set count text: {countText.text}");
-                    }
-                    else
-                    {
-                        Debug.LogError("[QuickSlotUI] countText is null!");
-                    }
-                }
-                else
-                {
-                    // 아이템이 null인 경우 UI 초기화
-                    if (iconImage != null)
-                    {
-                        iconImage.enabled = false;
-                        iconImage.sprite = null;
-                    }
-                    if (countText != null)
-                    {
-                        countText.text = "";
-                    }
-                }
-
-                // 레이아웃 강제 갱신
-                LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
-
-                // 디버그 로그
-                if (item != null)
-                {
-                    Debug.Log($"[QuickSlotUI] SetItem: {item.itemName} x{count}");
-                }
-                else
-                {
-                    Debug.Log("[QuickSlotUI] Cleared slot");
-                }
-            }
-            finally
+            // 레이아웃 갱신
+            if (gameObject.activeInHierarchy && transform is RectTransform rectTransform)
             {
-                isSettingItem = false;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
             }
+
+            Debug.Log($"[QuickSlot] {(item != null ? $"아이템 설정 완료: {item.itemName} x{count}" : "슬롯 비움")}");
         }
 
         public override void UseItem()
@@ -169,48 +116,19 @@ namespace Nytherion.UI.Inventory
             }
         }
 
-        protected override void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)
-        {
-            DragItemIcon.Instance?.Hide();
-            if (IsEmpty) return;
-
-            var results = new System.Collections.Generic.List<RaycastResult>();
-            var pointerData = new PointerEventData(UnityEngine.EventSystems.EventSystem.current)
-            {
-                position = eventData.position
-            };
-            EventSystem.current.RaycastAll(pointerData, results);
-
-            foreach (var result in results)
-            {
-                // 인벤토리 슬롯 또는 다른 퀵슬롯 찾기
-                var targetSlot = result.gameObject.GetComponentInParent<BaseSlotUI>();
-                if (targetSlot == null || targetSlot == this) continue;
-
-                // SlotTransferHelper를 사용하여 아이템 이동/교환 시도
-                if (targetSlot is InventorySlotUI || targetSlot is QuickSlotUI)
-                {
-                    if (Utils.SlotTransferHelper.TryTransferItem(this, targetSlot))
-                    {
-                        Debug.Log($"[QuickSlotUI] Successfully transferred item to {targetSlot.GetType().Name}");
-                    }
-                    else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                    {
-                        // Shift 키를 누른 경우 아이템 교환 시도
-                        Utils.SlotTransferHelper.TrySwapItems(this, targetSlot);
-                    }
-                    return;
-                }
-
-                // 드롭되지 않았을 경우 원래 아이템으로 복원
-                SetItem(currentItem, currentCount, onItemUsed);
-            }
-        }
+        // Removed HandleEndDrag method
 
         public override void ClearSlot()
         {
-            onItemUsed = null;
+            // QuickSlot specific cleanup
+            this.onItemUsed = null;
+            // Debug.Log("[QuickSlotUI] onItemUsed callback cleared.");
+
+            // Call base method. This will call SetItem(null, 0, null) in BaseSlotUI,
+            // which in turn calls UpdateVisuals and handles relevant events.
             base.ClearSlot();
+
+            // Debug.Log("[QuickSlotUI] Cleared slot via base.ClearSlot()");
         }
     }
 }

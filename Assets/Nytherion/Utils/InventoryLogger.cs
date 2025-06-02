@@ -1,28 +1,50 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Diagnostics;  // ConditionalAttribute를 위해 필요
-using Debug = UnityEngine.Debug;  // Debug 모호성 해결
-using Nytherion.Data.ScriptableObjects.Items;
-using System;
-using Nytherion.Core;
+using UnityEngine; // For Debug.Log, Debug.LogWarning, Debug.LogError
+// System.Diagnostics is no longer needed as ConditionalAttribute is removed.
+// using System.Diagnostics; 
+// using Nytherion.Data.ScriptableObjects.Items; // Not directly used in this logger
+// using System; // Not directly used in this logger
+// using Nytherion.Core; // Not directly used in this logger
 
 namespace Nytherion.Utils
 {
+    public enum LogLevel
+    {
+        None = 0,  // No logs
+        Error = 1, // Only errors
+        Warning = 2,// Errors and warnings
+        Info = 3   // Errors, warnings, and info (verbose)
+    }
+
     public static class InventoryLogger
     {
         private const string LOG_PREFIX = "[Inventory] ";
+        public static LogLevel CurrentLogLevel { get; set; } = LogLevel.Info; // Default to Info
 
-        [Conditional("ENABLE_LOG")]
+        // [Conditional("ENABLE_LOG")] // Removed
         public static void Log(string message)
-            => Debug.Log(LOG_PREFIX + message);
+        {
+            if (CurrentLogLevel >= LogLevel.Info)
+            {
+                Debug.Log(LOG_PREFIX + message);
+            }
+        }
 
-        [Conditional("ENABLE_LOG_WARNING")]
+        // [Conditional("ENABLE_LOG_WARNING")] // Removed
         public static void LogWarning(string message)
-            => Debug.LogWarning(LOG_PREFIX + message);
+        {
+            if (CurrentLogLevel >= LogLevel.Warning)
+            {
+                Debug.LogWarning(LOG_PREFIX + message);
+            }
+        }
 
-        [Conditional("ENABLE_LOG_ERROR")]
+        // [Conditional("ENABLE_LOG_ERROR")] // Removed
         public static void LogError(string message)
-            => Debug.LogError(LOG_PREFIX + message);
+        {
+            if (CurrentLogLevel >= LogLevel.Error)
+            {
+                Debug.LogError(LOG_PREFIX + message);
+            }
+        }
     }
 }

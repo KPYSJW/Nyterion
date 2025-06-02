@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.Data.ScriptableObjects.Stage;
@@ -9,114 +7,136 @@ namespace Nytherion.GamePlay.Characters.Enemy
 {
     public class EnemySpawner : MonoBehaviour
     {
+        [Header("Spawn Settings")]
         public StageData currentStageData;
-        public Transform randomSpawnAreaMin;
-        public Transform randomSpawnAreaMax;
+        
+        [Header("Player Reference")]
+        [SerializeField] private Transform player;
+        
+        [Header("Spawn Radius")]
+        [Tooltip("적이 스폰될 최소 반지름")]
+        [SerializeField] private float minSpawnRadius = 5f;
+        [Tooltip("적이 스폰될 최대 반지름")]
+        [SerializeField] private float maxSpawnRadius = 15f;
 
         public void SpawnEnemies()
         {
+            if (!ValidateSpawnConditions()) return;
+
+            if (currentStageData.useRandomSpawn)
+            {
+                SpawnRandomEnemies();
+            }
+            else
+            {
+                SpawnAtFixedPoints();
+            }
+        }
+
+        private bool ValidateSpawnConditions()
+        {
             if (currentStageData == null)
             {
-                Debug.LogWarning("StageData is null.");
-                return;
+                Debug.LogWarning("StageData is not assigned.");
+                return false;
             }
 
             if (currentStageData.enemyList == null || currentStageData.enemyList.Count == 0)
             {
-                Debug.LogWarning("EnemyList in StageData is null or empty. Cannot spawn enemies.");
-                return;
-            }
-            
-            if (randomSpawnAreaMin == null || randomSpawnAreaMax == null)
-            {
-                Debug.LogWarning("Spawn area bounds (randomSpawnAreaMin or randomSpawnAreaMax) are not set.");
-                // Optionally, you could prevent random spawning if this is the case or use a default area.
-                // For now, we'll let it potentially fail in GetRandomSpawnPosition if useRandomSpawn is true and these are needed.
+                Debug.LogWarning("No enemies in StageData's enemy list.");
+                return false;
             }
 
-
-            if (currentStageData.useRandomSpawn)
+            if (currentStageData.useRandomSpawn && player == null)
             {
-                if (randomSpawnAreaMin == null || randomSpawnAreaMax == null)
-                {
-                    Debug.LogError("Cannot use random spawn because spawn area bounds (randomSpawnAreaMin or randomSpawnAreaMax) are not set.");
-                    return;
-                }
-                for (int i = 0; i < currentStageData.enemyCount; i++)
-                {
-                    int index = Random.Range(0, currentStageData.enemyList.Count);
-                    EnemyData enemyData = currentStageData.enemyList[index];
-                    Vector3 spawnPosition = GetRandomSpawnPosition();
-                    SpawnSingleEnemy(enemyData, spawnPosition);
-                }
+                Debug.LogError("Random spawn is enabled but player reference is not set.");
+                return false;
             }
-            else
+
+            if (!currentStageData.useRandomSpawn &&
+                (currentStageData.fixedSpawnPoints == null || currentStageData.fixedSpawnPoints.Count == 0))
             {
-                if (currentStageData.fixedSpawnPoints == null || currentStageData.fixedSpawnPoints.Count == 0)
+                Debug.LogWarning("Fixed spawn is enabled but no spawn points are set.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void SpawnRandomEnemies()
+        {
+            for (int i = 0; i < currentStageData.enemyCount; i++)
+            {
+                EnemyData enemyData = currentStageData.enemyList[Random.Range(0, currentStageData.enemyList.Count)];
+                SpawnSingleEnemy(enemyData, GetRandomSpawnPosition());
+            }
+        }
+
+        private void SpawnAtFixedPoints()
+        {
+            for (int i = 0; i < currentStageData.fixedSpawnPoints.Count; i++)
+            {
+                if (currentStageData.fixedSpawnPoints[i] == null)
                 {
-                     Debug.LogWarning("Fixed spawn points list in StageData is null or empty, but useRandomSpawn is false. Cannot spawn enemies.");
-                     return;
+                    Debug.LogWarning($"Skipping null spawn point at index {i}");
+                    continue;
                 }
-                for (int i = 0; i < currentStageData.fixedSpawnPoints.Count; i++)
-                {
-                    if(currentStageData.fixedSpawnPoints[i] == null)
-                    {
-                        Debug.LogWarning($"Fixed spawn point at index {i} is null. Skipping this spawn point.");
-                        continue;
-                    }
-                    // Ensure enemyList has elements before trying to access it with modulo.
-                    // This is already checked by the general enemyList check at the beginning of the method.
-                    EnemyData enemyData = currentStageData.enemyList[i % currentStageData.enemyList.Count];
-                    Vector3 spawnPosition = currentStageData.fixedSpawnPoints[i].position;
-                    SpawnSingleEnemy(enemyData, spawnPosition);
-                }
+
+                EnemyData enemyData = currentStageData.enemyList[i % currentStageData.enemyList.Count];
+                SpawnSingleEnemy(enemyData, currentStageData.fixedSpawnPoints[i].position);
             }
         }
 
         private void SpawnSingleEnemy(EnemyData enemyData, Vector3 spawnPosition)
         {
-            if (enemyData == null)
-            {
-                Debug.LogWarning("EnemyData is null. Cannot spawn enemy.");
-                return;
-            }
+            if (enemyData == null) return;
+            if (ObjectPoolManager.Instance == null) return;
 
-            if (ObjectPoolManager.Instance == null)
-            {
-                Debug.LogError("ObjectPoolManager.Instance is null. Cannot spawn enemy.");
-                return;
-            }
-
-            GameObject enemyObj = ObjectPoolManager.Instance.SpawnFromPool(enemyData.enemyName, spawnPosition, Quaternion.identity);
+            GameObject enemyObj = ObjectPoolManager.Instance.SpawnFromPool(
+                enemyData.enemyName,
+                spawnPosition,
+                Quaternion.identity);
 
             if (enemyObj == null)
             {
-                Debug.LogWarning($"Failed to spawn enemy {enemyData.enemyName} from pool. It might be empty, not exist, or prefab is missing in pool.");
+                Debug.LogWarning($"Failed to spawn enemy: {enemyData.enemyName}");
                 return;
             }
 
-            var enemy = enemyObj.GetComponent<EnemyBase>();
-            if (enemy != null)
+            EnemyBase enemy;
+            if (enemyObj.TryGetComponent<EnemyBase>(out enemy))
             {
                 enemy.Initialize(enemyData);
             }
             else
             {
-                Debug.LogWarning($"Spawned object {enemyData.enemyName} (Instance ID: {enemyObj.GetInstanceID()}) does not have an EnemyBase component. Returning to pool.");
-                ObjectPoolManager.Instance.ReturnToPool(enemyData.enemyName, enemyObj); // Return to pool if not a valid enemy
+                Debug.LogWarning($"Spawned object is not an enemy: {enemyData.enemyName}");
+                ObjectPoolManager.Instance.ReturnToPool(enemyData.enemyName, enemyObj);
             }
         }
 
         private Vector3 GetRandomSpawnPosition()
         {
-            if (randomSpawnAreaMin == null || randomSpawnAreaMax == null)
+            if (player == null)
             {
-                Debug.LogError("Spawn area bounds (randomSpawnAreaMin or randomSpawnAreaMax) are not set. Returning origin.");
-                return Vector3.zero; // Fallback position
+                Debug.LogError("Player reference is not set in EnemySpawner!");
+                return Vector3.zero;
             }
-            float x = Random.Range(randomSpawnAreaMin.position.x, randomSpawnAreaMax.position.x);
-            float y = Random.Range(randomSpawnAreaMin.position.y, randomSpawnAreaMax.position.y);
-            return new Vector3(x, y, 0f);
+
+            // 랜덤한 각도와 반지름으로 위치 계산
+            float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            float randomRadius = Random.Range(minSpawnRadius, maxSpawnRadius);
+            
+            // 원형 범위 내 랜덤 위치 계산
+            Vector2 offset = new Vector2(
+                Mathf.Cos(randomAngle) * randomRadius,
+                Mathf.Sin(randomAngle) * randomRadius
+            );
+
+            Vector3 spawnPos = (Vector3)offset + player.position;
+            spawnPos.z = 0f; // 2D 게임이므로 z값은 0으로 고정
+            
+            return spawnPos;
         }
     }
 }
