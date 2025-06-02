@@ -264,19 +264,21 @@ namespace Nytherion.Core
 
         private void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-                LoadItemTable();
-                InitializeSlots();
-                InitializeSaveSystem();
-                LoadInventory();
-            }
-            else
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
+                return;
             }
+
+            // Make sure we're working with a root object
+            transform.SetParent(null);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            
+            LoadItemTable();
+            InitializeSlots();
+            InitializeSaveSystem();
+            LoadInventory();
         }
 
         private void LateUpdate()

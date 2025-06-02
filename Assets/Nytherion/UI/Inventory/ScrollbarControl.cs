@@ -39,8 +39,8 @@ public class ScrollbarControl : MonoBehaviour
     private IEnumerator InitializeScrollToTop()
     {
         yield return new WaitForEndOfFrame();
+        Canvas.ForceUpdateCanvases();
         scrollRect.verticalNormalizedPosition = 1f;
-        scrollbar.value = 1f;
     }
 }
 

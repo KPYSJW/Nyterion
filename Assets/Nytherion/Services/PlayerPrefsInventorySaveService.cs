@@ -61,7 +61,7 @@ namespace Nytherion.Services
                 string encryptedData = Encrypt(json);
                 
                 // 버전 정보와 함께 저장
-                var saveData = new SaveData
+                SaveData saveData = new SaveData
                 {
                     data = encryptedData,
                     version = CURRENT_VERSION
@@ -124,7 +124,7 @@ namespace Nytherion.Services
                 }
 
                 // JSON 파싱
-                var saveData = JsonUtility.FromJson<SaveData>(saveJson);
+                SaveData saveData = JsonUtility.FromJson<SaveData>(saveJson);
                 if (saveData == null)
                 {
                     Debug.LogError($"[SaveService] 저장 데이터 파싱 실패: {saveKey}");
@@ -135,7 +135,7 @@ namespace Nytherion.Services
                 string decryptedData = Decrypt(saveData.data);
                 
                 // 인벤토리 상태로 역직렬화
-                var state = JsonUtility.FromJson<InventoryState>(decryptedData);
+                InventoryState state = JsonUtility.FromJson<InventoryState>(decryptedData);
                 
                 if (state == null)
                 {

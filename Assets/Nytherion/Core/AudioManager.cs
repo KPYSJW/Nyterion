@@ -16,6 +16,8 @@ namespace Nytherion.Core
                 return;
             }
 
+            // Make sure we're working with a root object
+            transform.SetParent(null);
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
@@ -40,7 +42,6 @@ namespace Nytherion.Core
             if (bgmSource == null) return 0f;
             return bgmSource.volume;
         }
-        
 
     }
 }
