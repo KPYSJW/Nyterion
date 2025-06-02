@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Nytherion.Core
 {
@@ -7,6 +8,9 @@ namespace Nytherion.Core
         public static AudioManager Instance { get; private set; }
 
         [SerializeField] private AudioSource bgmSource;
+        [SerializeField] private AudioClip titleBGM;
+        [SerializeField] private AudioClip stageBGM;
+        [SerializeField] private AudioClip villageBGM;
 
         private void Awake()
         {
@@ -16,10 +20,52 @@ namespace Nytherion.Core
                 return;
             }
 
-            // Make sure we're working with a root object
             transform.SetParent(null);
             Instance = this;
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            AudioClip newClip = GetBGMForScene(scene.name);
+            PlayBGM(newClip);
+        }
+
+        private AudioClip GetBGMForScene(string sceneName)
+        {
+            switch (sceneName)
+            {
+                case "Title":
+                    return titleBGM;
+                case "Stage_1_1":
+                case "Stage_1_2":
+                    return stageBGM;
+                case "Village":
+                    return villageBGM;
+                default:
+                    return null;
+            }
+        }
+
+        public void PlayBGM(AudioClip clip)
+        {
+            if (clip == null || bgmSource == null) return;
+
+            if (bgmSource.clip == clip) return; // 동일한 BGM이면 재생하지 않음
+
+            bgmSource.clip = clip;
+            bgmSource.loop = true;
+            bgmSource.Play();
         }
 
         public void SetBGMVolume(float volume)
@@ -28,20 +74,10 @@ namespace Nytherion.Core
             bgmSource.volume = volume;
         }
 
-        public void PlayBGM(AudioClip clip)
-        {
-            if (clip == null || bgmSource == null) return;
-
-            bgmSource.clip = clip;
-            bgmSource.loop = true;
-            bgmSource.Play();
-        }
-
         public float GetBGMVolume()
         {
             if (bgmSource == null) return 0f;
             return bgmSource.volume;
         }
-
     }
 }
