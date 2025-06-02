@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6d35d9f608d2a7448c7fdfd9bf9bceb, type: 3}
   m_Name: MP
   m_EditorClassIdentifier: 
+  itemType: 2
+  _uniqueID: ae059f32-5449-4261-89ce-f8a63f45c772
   itemName: MP
   icon: {fileID: 21300000, guid: 10c68a2449febdd418c26ba918d11d74, type: 3}
-  description: Heals 50 MP
+  description: 100 MP
   isStackable: 1
   maxStack: 99

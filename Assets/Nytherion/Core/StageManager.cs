@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.GamePlay.Characters.Enemy;
 
@@ -68,7 +67,6 @@ namespace Nytherion.Core
         
         private void OnDestroy()
         {
-            // 오브젝트가 파괴될 때도 이벤트 리스너 해제
             if (EventManager.Instance != null)
             {
                 EventManager.Instance.UnregisterEnemyDeathListener(OnEnemyDied);

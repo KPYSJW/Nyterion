@@ -25,4 +25,6 @@
 
 # Unity 추가 파일
 *.unitypackage
+
 /BuildSettings/
+
