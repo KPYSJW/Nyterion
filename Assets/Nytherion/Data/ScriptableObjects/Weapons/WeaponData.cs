@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.Data.ScriptableObjects.Weapons
 {
@@ -12,7 +12,7 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
     }
 
     [CreateAssetMenu(fileName = "NewWeaponData", menuName = "Data/Weapon")]
-    public class WeaponData : ScriptableObject
+    public class WeaponData : ItemData
     {
         public WeaponType weaponType;
         public string weaponName;
@@ -20,7 +20,6 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float range;
         public float cooldown;
         public GameObject projectilePrefab;
-        public Sprite icon;
         public bool isCursed;
         
     }

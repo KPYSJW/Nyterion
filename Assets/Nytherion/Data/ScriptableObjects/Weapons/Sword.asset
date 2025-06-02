@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: 
+  itemType: 0
+  _uniqueID: d74e457c-7ba1-4842-af37-23865fcd2e9f
+  itemName: Sword
+  icon: {fileID: 21300000, guid: 274cc5d353702d54381995dc012cb66f, type: 3}
+  description: Damage 10
+  isStackable: 1
+  maxStack: 99
   weaponType: 0
   weaponName: Sword
   damage: 1
   range: 1
   cooldown: 1
   projectilePrefab: {fileID: 0}
-  icon: {fileID: 0}
   isCursed: 0

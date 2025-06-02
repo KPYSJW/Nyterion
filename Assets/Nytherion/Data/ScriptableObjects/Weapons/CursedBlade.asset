@@ -12,10 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
   m_Name: CursedBlade
   m_EditorClassIdentifier: 
+  itemType: 0
+  _uniqueID: 09760e42-e5b8-4162-abc2-5c8e06c8c7f0
+  itemName: CursedBlade
+  icon: {fileID: 0}
+  description: 'Damage 10
+
+    Attack Speed -10%'
+  isStackable: 1
+  maxStack: 99
   weaponType: 0
   weaponName: CursedBlade
   damage: 10
   range: 1
   cooldown: 1
   projectilePrefab: {fileID: 0}
-  icon: {fileID: 0}
+  isCursed: 0

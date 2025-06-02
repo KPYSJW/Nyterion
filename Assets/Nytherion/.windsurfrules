@@ -1,0 +1,4 @@
+1. Always respond in Korean. Do not use English under any circumstances.
+2. Maintain consistency with the existing project structure. This includes directory hierarchy, file names, class names, and namespace conventions.
+3. Do not use the `var` keyword in any code. Always explicitly declare variable types.
+4. Cascade must default to Korean responses even without additional instructions in the prompt.

@@ -194,7 +194,7 @@ namespace Nytherion.Services
             }
         }
 
-        private string Decrypt(string encryptedData)
+        public string Decrypt(string encryptedData)
         {
             try
             {

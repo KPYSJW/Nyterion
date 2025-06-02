@@ -24,6 +24,16 @@ namespace Nytherion.UI.Inventory
         // 아이템 관련 이벤트
         public event SlotItemEventDelegate OnItemSet;
         public event Action OnItemCleared;
+        
+        // 현재 아이템과 개수에 대한 프로퍼티
+        public ItemData CurrentItem => currentItem;
+        public int CurrentCount => currentCount;
+        public bool IsEmpty => currentItem == null || currentCount <= 0;
+    
+        public virtual bool CanReceiveItem(ItemData item)
+        {
+            return true;
+        }
         [SerializeField] protected Image iconImage;
         [SerializeField] protected TextMeshProUGUI countText;
 
@@ -33,44 +43,85 @@ namespace Nytherion.UI.Inventory
         protected virtual void Awake()
         {
             // 컴포넌트 초기화
-            if (iconImage == null) iconImage = GetComponentInChildren<Image>();
-            if (countText == null) countText = GetComponentInChildren<TextMeshProUGUI>();
+            if (iconImage == null) 
+            {
+                iconImage = GetComponentInChildren<Image>();
+                if (iconImage == null)
+                {
+                    Debug.LogError($"[{name}] Could not find Image component in children");
+                }
+            }
+            
+            // countText는 옵션이므로 찾지 못해도 경고만 표시
+            if (countText == null) 
+            {
+                countText = GetComponentInChildren<TextMeshProUGUI>();
+            }
         }
 
         protected bool isSettingItem = false;
 
         protected virtual void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)
         {
-            // 기본 구현: 아무 동작하지 않음 (하위 클래스에서 오버라이드하여 사용)
             if (DragItemIcon.Instance != null)
                 DragItemIcon.Instance.Hide();
         }
 
-        public virtual void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback)
+        protected virtual void UpdateVisuals(ItemData item, int count)
         {
-            if (isSettingItem) return;
+            if (iconImage == null)
+            {
+                Debug.LogError($"[{name}] iconImage is null. Cannot update visuals.");
+                return;
+            }
+
+            if (item == null) 
+            {
+                iconImage.enabled = false;
+                iconImage.sprite = null;
+                if (countText != null) countText.text = "";
+            }
+            else
+            {
+                iconImage.sprite = item.icon;
+                iconImage.enabled = true;
+                
+                // countText가 있는 경우에만 텍스트 업데이트
+                if (countText != null)
+                {
+                    countText.text = item.isStackable && count > 1 ? count.ToString() : "";
+                }
+
+                RectTransform iconRect = iconImage.rectTransform;
+                if (iconRect != null)
+                {
+                    float scale = 0.7f; 
+                    iconRect.localScale = new Vector3(scale, scale, 1f);
+                }
+            }
+        }
+
+        public virtual void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback) 
+        {
+            if (isSettingItem) return; 
             isSettingItem = true;
 
             try
             {
-                currentItem = item;
-                currentCount = count;
+                this.currentItem = item;
+                this.currentCount = count;
 
-                if (item == null)
+                UpdateVisuals(this.currentItem, this.currentCount); 
+
+                if (this.currentItem == null)
                 {
-                    iconImage.enabled = false;
-                    iconImage.sprite = null;
-                    countText.text = "";
                     OnItemCleared?.Invoke();
-                    return;
                 }
-
-                iconImage.sprite = item.icon;
-                iconImage.enabled = true;
-                countText.text = item.isStackable && count > 1 ? count.ToString() : "";
-                
-                OnItemSet?.Invoke(item, count);
-                OnSlotUpdated?.Invoke(this);
+                else
+                {
+                    OnItemSet?.Invoke(this.currentItem, this.currentCount);
+                }
+                OnSlotUpdated?.Invoke(this); 
             }
             finally
             {
@@ -80,19 +131,18 @@ namespace Nytherion.UI.Inventory
 
         public virtual void SetItem(ItemData item, int count = 1)
         {
-            SetItem(item, count, null);
+            SetItem(item, count, null); 
         }
 
         public virtual void ClearSlot()
         {
-            SetItem(null);
+            SetItem(null, 0, null); 
         }
-        
+
         public virtual void UseItem()
         {
-            // Override in derived classes
         }
-        
+
         public virtual void UseItem(Action<ItemData, int> onUseCallback)
         {
             if (currentItem != null && onUseCallback != null)
@@ -102,33 +152,34 @@ namespace Nytherion.UI.Inventory
         public virtual ItemData GetItem() => currentItem;
         public virtual ItemData Item => currentItem;
         public virtual int StackCount => currentCount;
-        public virtual bool IsEmpty => currentItem == null;
         public virtual bool HasItem(ItemData item) => currentItem == item;
 
         public virtual void IncreaseCount(int amount = 1)
         {
+            if (IsEmpty) return; 
             currentCount += amount;
-            UpdateCountText();
+            UpdateVisuals(currentItem, currentCount);
+            OnSlotUpdated?.Invoke(this);
         }
 
         public virtual void DecreaseCount(int amount = 1)
         {
+            if (IsEmpty) return; 
             currentCount -= amount;
             if (currentCount <= 0)
-                ClearSlot();
+            {
+                ClearSlot(); 
+            }
             else
-                UpdateCountText();
+            {
+                UpdateVisuals(currentItem, currentCount);
+            }
+            if (currentCount > 0)
+            {
+                OnSlotUpdated?.Invoke(this);
+            }
         }
 
-        protected virtual void UpdateCountText()
-        {
-            if (currentItem == null)
-                countText.text = "";
-            else
-                countText.text = currentItem.isStackable && currentCount > 1 ? currentCount.ToString() : "";
-        }
-
-        // UI 이벤트 핸들러
         public virtual void OnPointerClick(PointerEventData eventData)
         {
             OnPointerClickEvent?.Invoke(this, eventData);
@@ -137,15 +188,13 @@ namespace Nytherion.UI.Inventory
         public virtual void OnBeginDrag(PointerEventData eventData)
         {
             Debug.Log($"[BaseSlotUI] OnBeginDrag: IsEmpty={IsEmpty}, Item={currentItem?.itemName ?? "null"}");
-            // 모든 드래그 시도 허용 (하위 클래스에서 처리)
             OnBeginDragEvent?.Invoke(this, eventData);
         }
 
         public virtual void OnDrag(PointerEventData eventData)
         {
-            if (IsEmpty) return;
-            if (DragItemIcon.Instance != null)
-                DragItemIcon.Instance.transform.position = Input.mousePosition;
+            if (IsEmpty || DragItemIcon.Instance == null) return; 
+            DragItemIcon.Instance.transform.position = Input.mousePosition;
         }
 
         public virtual void OnEndDrag(PointerEventData eventData)

@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6d35d9f608d2a7448c7fdfd9bf9bceb, type: 3}
   m_Name: HP
   m_EditorClassIdentifier: 
+  itemType: 2
+  _uniqueID: a1ceda74-bfc9-4940-b068-8d8e70433148
   itemName: HP
   icon: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
-  description: Heals 50 HP
+  description: 50 HP
   isStackable: 1
   maxStack: 99
