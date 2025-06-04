@@ -13,7 +13,7 @@ namespace Nytherion.GamePlay.Characters.Player
     {
         [Header("Player Components")]
         [Tooltip("플레이어의 싱글톤 인스턴스")]
-        public static Player Instance;
+        public static Player Instance { get; private set; }
         
         [Tooltip("플레이어의 전투 시스템을 관리하는 컴포넌트")]
         public PlayerCombat playerCombat;

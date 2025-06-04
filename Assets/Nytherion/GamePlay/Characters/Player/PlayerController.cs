@@ -37,14 +37,20 @@ namespace Nytherion.GamePlay.Characters.Player
         
         /// <summary>Rigidbody2D 컴포넌트 캐시</summary>
         private Rigidbody2D rb;
-        Vector2 moveInput;
-        public bool isDash=false;
+        private SpriteRenderer spriteRenderer;
+        private Vector2 moveInput;
+        public bool isDash = false;
+        private bool isFacingRight = true;  // 기본적으로 오른쪽을 보고 있음
 
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
-          
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer == null)
+            {
+                Debug.LogError("PlayerController: SpriteRenderer 컴포넌트를 찾을 수 없습니다. 플레이어 오브젝트의 자식에 SpriteRenderer가 있는지 확인해주세요.");
+            }
         }
         /// <summary>
         /// 매 프레임 호출됩니다.
@@ -52,10 +58,20 @@ namespace Nytherion.GamePlay.Characters.Player
         /// </summary>
         private void Update()
         {
+            // 대시 입력 처리
             if(InputManager.Instance.Dash&&!isDash&&Time.time>=lastDashTime+ PlayerManager.Instance.playerData.dashCooldown)
-
             {
                 StartCoroutine(Dash());
+            }
+            
+            // 이동 방향에 따라 스프라이트 플립
+            if (moveInput.x > 0 && !isFacingRight)
+            {
+                FlipSprite(true);
+            }
+            else if (moveInput.x < 0 && isFacingRight)
+            {
+                FlipSprite(false);
             }
         }
         /// <summary>
@@ -64,13 +80,26 @@ namespace Nytherion.GamePlay.Characters.Player
         /// </summary>
         private void FixedUpdate()
         {
-            // 대시 중이 아닐 때만 일반 이동 처리
-            if (!isDash)
-            {
-                // 입력 매니저로부터 이동 입력 받기
-                moveInput = InputManager.Instance.MoveInput;
-                rb.velocity = moveInput.normalized * PlayerManager.Instance.playerData.moveSpeed;
+            // 이동 입력 받기
+            float moveX = Input.GetAxisRaw("Horizontal");
+            float moveY = Input.GetAxisRaw("Vertical");
+            moveInput = new Vector2(moveX, moveY).normalized;
 
+            // 이동 적용 (대시 중이면 대시 속도, 아니면 일반 속도)
+            float currentSpeed = isDash ? dashSpeed : PlayerManager.Instance.playerData.moveSpeed;
+            rb.velocity = moveInput * currentSpeed;
+        }
+        
+        /// <summary>
+        /// 스프라이트를 좌우로 뒤집습니다.
+        /// </summary>
+        /// <param name="faceRight">true면 오른쪽, false면 왼쪽을 바라봅니다.</param>
+        private void FlipSprite(bool faceRight)
+        {
+            if (spriteRenderer != null)
+            {
+                isFacingRight = faceRight;
+                spriteRenderer.flipX = !faceRight;
             }
         }
 

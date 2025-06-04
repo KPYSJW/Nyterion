@@ -122,7 +122,7 @@ public class SceneTransitionManager : MonoBehaviour
     private IEnumerator Fade(float startAlpha, float targetAlpha)
     {
         if (fadeCanvasGroup == null) yield break;
-        
+
         float elapsedTime = 0f;
         fadeCanvasGroup.alpha = startAlpha;
         fadeCanvasGroup.blocksRaycasts = true;
@@ -141,6 +141,20 @@ public class SceneTransitionManager : MonoBehaviour
         {
             fadeCanvasGroup.alpha = targetAlpha;
             fadeCanvasGroup.blocksRaycasts = targetAlpha > 0;
+        }
+    }
+    private void OnSceneLoadedHandler(Scene scene, LoadSceneMode mode)
+    {
+        // 싱글톤 선언 DontDestroyOnLoad(gameObject) 사용시 다른 씬에서 못사용하도록 작성
+    }
+
+    private void TryDestroySingleton(string objectName)
+    {
+        GameObject obj = GameObject.Find(objectName);
+        if (obj != null)
+        {
+            Destroy(obj);
+            Debug.Log($"[SceneTransitionManager] {objectName} destroyed on menu scene.");
         }
     }
 }

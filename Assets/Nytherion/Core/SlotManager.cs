@@ -10,7 +10,7 @@ namespace Nytherion.Core
     public class SlotManager : MonoBehaviour
     {
         [SerializeField] public List<IUseableItem> quickSlots = new List<IUseableItem>(10);
-        public static SlotManager Instance;
+        public static SlotManager Instance { get; private set; }
 
         
         public List<WeaponItem>weaponBases = new List<WeaponItem>();//�׽�Ʈ�� �ڵ�
