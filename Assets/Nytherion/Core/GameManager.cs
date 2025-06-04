@@ -6,7 +6,7 @@ namespace Nytherion.Core
 {
     public class GameManager : MonoBehaviour
     {
-        public static GameManager Instance;
+        public static GameManager Instance { get; private set; }
 
         private void Awake()
         {

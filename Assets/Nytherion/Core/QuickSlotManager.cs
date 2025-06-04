@@ -5,7 +5,7 @@ namespace Nytherion.UI.Inventory
 {
     public class QuickSlotManager : MonoBehaviour
     {
-        public static QuickSlotManager Instance;
+        public static QuickSlotManager Instance { get; private set; }
 
         [SerializeField] private QuickSlotUI[] slots; // 4개 슬롯 연결
         [SerializeField] private KeyCode[] keys = 

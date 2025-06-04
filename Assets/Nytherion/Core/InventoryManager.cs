@@ -243,7 +243,7 @@ namespace Nytherion.Core
             OnInventoryUpdated?.Invoke();
         }
 
-        public static InventoryManager Instance;
+        public static InventoryManager Instance { get; private set; }
 
         private void Awake()
         {

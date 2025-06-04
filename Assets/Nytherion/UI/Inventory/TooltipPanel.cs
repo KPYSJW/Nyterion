@@ -12,7 +12,7 @@ namespace Nytherion.UI.Inventory
 {
     public class TooltipPanel : MonoBehaviour
     {
-        public static TooltipPanel Instance;
+        public static TooltipPanel Instance { get; private set; }
 
         [SerializeField] private GameObject panel;
         [SerializeField] private CanvasGroup canvasGroup;
