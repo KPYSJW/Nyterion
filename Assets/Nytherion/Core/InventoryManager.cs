@@ -29,7 +29,7 @@ namespace Nytherion.Core
         private bool needsRefresh;
         private float lastRefreshTime;
         private const float MIN_REFRESH_INTERVAL = 0.1f;
-        
+
         private IInventorySaveService saveService;
         private const float SAVE_DELAY = 2f;
         private bool isScheduledForSave = false;
@@ -37,42 +37,38 @@ namespace Nytherion.Core
         public event Action<ItemData, int> OnItemAdded;
         public event Action<ItemData, int> OnItemRemoved;
         public event Action OnInventoryUpdated;
-        
+
         public Dictionary<ItemData, int> GetAllItems()
         {
             return new Dictionary<ItemData, int>(items);
         }
-        
+
         public bool AddItem(ItemData item) => AddItem(item, 1);
 
         public bool AddItem(ItemData item, int count)
         {
             if (item == null || count <= 0) return false;
 
-            // 장비 아이템은 항상 새로운 슬롯에 할당
             bool isEquipment = item is WeaponData || item.itemType == ItemType.Armor;
-            
+
             if (isEquipment)
             {
-                // 장비 아이템의 경우, 아이템을 복제하여 고유한 인스턴스로 만듦
                 for (int i = 0; i < count; i++)
                 {
                     if (items.Count >= maxSlotCount)
                     {
                         Debug.LogWarning($"[Inventory] 인벤토리가 가득 찼습니다. {item.itemName}을 추가할 수 없습니다.");
-                        return i > 0; // 일부라도 추가되었으면 true 반환
+                        return i > 0;
                     }
-                    
-                    // 아이템을 복제하여 고유한 인스턴스 생성
+
                     ItemData clonedItem = Instantiate(item);
-                    clonedItem.name = item.name; // 원본 이름 유지
+                    clonedItem.name = item.name;
                     items[clonedItem] = 1;
                     NotifyItemModified(clonedItem, 1, true);
                 }
                 return true;
             }
-            
-            // 일반 아이템 처리
+
             if (items.TryGetValue(item, out int currentCount))
             {
                 if (item.isStackable)
@@ -175,46 +171,33 @@ namespace Nytherion.Core
             }
             return false;
         }
-        
-        /// <summary>
-        /// 아이템을 장비 슬롯에서 인벤토리로 이동시킵니다.
-        /// </summary>
+
         public bool MoveToInventory(ItemData item, int count = 1)
         {
             if (item == null || count <= 0) return false;
-            
-            // 인벤토리에 빈 슬롯이 있는지 확인
+
             if (items.Count >= maxSlotCount && !items.ContainsKey(item))
             {
                 Debug.LogWarning("[Inventory] 인벤토리에 빈 슬롯이 없습니다.");
                 return false;
             }
-            
-            // 인벤토리에 아이템 추가
+
             return AddItem(item, count);
         }
-        
-        /// <summary>
-        /// 인벤토리에서 아이템을 제거하고 장비 슬롯으로 이동시킵니다.
-        /// </summary>
+
         public bool MoveToEquipment(ItemData item, int count = 1)
         {
             if (item == null || count <= 0) return false;
-            
-            // 인벤토리에 아이템이 충분히 있는지 확인
+
             if (!items.TryGetValue(item, out int currentCount) || currentCount < count)
             {
                 Debug.LogWarning($"[Inventory] 인벤토리에 {item.itemName}이(가) 부족합니다.");
                 return false;
             }
-            
-            // 인벤토리에서 아이템 제거
+
             return RemoveItem(item, count);
         }
-        
-        /// <summary>
-        /// 인벤토리에 빈 슬롯이 있는지 확인합니다.
-        /// </summary>
+
         public bool HasEmptySlot()
         {
             return items.Count < maxSlotCount;
@@ -247,9 +230,9 @@ namespace Nytherion.Core
                 RequestSlotsUpdate();
                 OnItemRemoved?.Invoke(item, count);
             }
-            
+
             OnInventoryUpdated?.Invoke();
-            
+
             ScheduleSave();
         }
 
@@ -260,21 +243,14 @@ namespace Nytherion.Core
             OnInventoryUpdated?.Invoke();
         }
 
-        public static InventoryManager Instance { get; private set; }
+        public static InventoryManager Instance;
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            // Make sure we're working with a root object
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
             transform.SetParent(null);
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            
+
             LoadItemTable();
             InitializeSlots();
             InitializeSaveSystem();
@@ -294,8 +270,8 @@ namespace Nytherion.Core
         private void LoadItemTable()
         {
             itemTable = new Dictionary<string, ItemData>();
-            
-            #if UNITY_EDITOR
+
+#if UNITY_EDITOR
             string[] guids = UnityEditor.AssetDatabase.FindAssets("t:ItemData", new[] {"Assets/Nytherion/Data/ScriptableObjects/Items"});
             
             foreach (string guid in guids)
@@ -311,8 +287,8 @@ namespace Nytherion.Core
                     }
                 }
             }
-            #endif
-            
+#endif
+
             if (Application.isPlaying && itemTable.Count == 0)
             {
                 var allItems = Resources.LoadAll<ItemData>("");
@@ -425,17 +401,17 @@ namespace Nytherion.Core
         {
             saveService = new PlayerPrefsInventorySaveService();
         }
-        
+
         public void SaveInventory()
         {
             var state = new InventoryState(items);
             saveService?.SaveInventory(state);
         }
-        
+
         public void LoadInventory()
         {
             var backupItems = new Dictionary<ItemData, int>(items);
-            
+
             try
             {
                 var state = saveService.LoadInventory();
@@ -471,15 +447,15 @@ namespace Nytherion.Core
                 OnInventoryUpdated?.Invoke();
             }
         }
-        
+
         private void ScheduleSave()
         {
             if (isScheduledForSave) return;
-            
+
             isScheduledForSave = true;
             Invoke(nameof(PerformDelayedSave), SAVE_DELAY);
         }
-        
+
         private void PerformDelayedSave()
         {
             if (isScheduledForSave)
@@ -488,7 +464,7 @@ namespace Nytherion.Core
                 isScheduledForSave = false;
             }
         }
-        
+
         public void ForceUpdateUI()
         {
             OnInventoryUpdated?.Invoke();
