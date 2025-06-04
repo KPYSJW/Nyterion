@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6d35d9f608d2a7448c7fdfd9bf9bceb, type: 3}
   m_Name: Potion
   m_EditorClassIdentifier: 
+  itemType: 2
+  _uniqueID: 7ad5d85a-77f0-4ef7-9383-5f63c9ac6f95
   itemName: Potion
-  itemType: 0
   icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  description: Heals 50 HP
+  description: Potion
   isStackable: 1
   maxStack: 99

@@ -9,17 +9,12 @@ namespace Nytherion.GamePlay.Characters.Player
     public class PlayerSkillManager : MonoBehaviour
     {
         public SkillBase[] equippedSkills = new SkillBase[4];
-        public static PlayerSkillManager Instance;
+        public static PlayerSkillManager Instance { get; private set; }
 
         private void Awake()
         {
-            if (Instance != null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            Instance = this;
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
         }
 
         void Start()
@@ -35,7 +30,7 @@ namespace Nytherion.GamePlay.Characters.Player
             }
             else
             {
-                Debug.Log($"해당칸에 스킬 없음:{i}");
+                Debug.Log($"Equipped skill is null at index {i}");
             }
         }
     }
