@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using Nytherion.Data.Shop;
 using Nytherion.Core;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.UI.Inventory;
+using TMPro;
 
 namespace Nytherion.UI.Shop
 {
@@ -21,45 +23,75 @@ namespace Nytherion.UI.Shop
 
         [Header("플레이어 인벤토리")]
         [SerializeField] private Transform playerInventoryParent;
+        private List<InventorySlotUI> playerInventorySlots;
 
         [Header("버튼")]
         [SerializeField] private Button closeButton;
+        [SerializeField] private TextMeshProUGUI playerGoldText;
 
         private ShopData currentShopData;
+        private bool isShopOpen = false;
 
         private void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
             shopPanel.SetActive(false);
+
+        }
+        private void Start()
+        {
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(CloseShop);
             }
+
+            playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>());
+            foreach (InventorySlotUI slot in playerInventorySlots)
+            {
+                slot.OnSellItemAction += (baseSlot) => SellItem(baseSlot);
+            }
         }
+        private void OnEnable()
+        {
+            if (CurrencyManager.Instance != null)
+            {
+                CurrencyManager.Instance.onCurrencyChanged += UpdateCurrencyUI;
+            }
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.OnInventoryUpdated += RefreshPlayerInventoryUI;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (CurrencyManager.Instance != null)
+            {
+                CurrencyManager.Instance.onCurrencyChanged -= UpdateCurrencyUI;
+            }
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.OnInventoryUpdated -= RefreshPlayerInventoryUI;
+            }
+        }
+
+        public bool IsShopOpen() => isShopOpen;
 
         public void OpenShop(ShopData data)
         {
             currentShopData = data;
-            if (currentShopData == null)
-            {
-                Debug.LogError("표시할 상점 데이터가 없습니다.", this);
-                return;
-            }
             shopPanel.SetActive(true);
+            isShopOpen = true;
             PopulateShop();
+            RefreshPlayerInventoryUI();
+            UpdateCurrencyUI(CurrencyType.Gold, CurrencyManager.Instance.GetCurrency(CurrencyType.Gold));
         }
 
         public void CloseShop()
         {
             shopPanel.SetActive(false);
+            isShopOpen = false;
         }
 
         private void PopulateShop()
@@ -85,8 +117,7 @@ namespace Nytherion.UI.Shop
             if (shopItem == null || shopItem.item == null) return;
             if (CurrencyManager.Instance.SpendCurrency(CurrencyType.Gold, shopItem.price))
             {
-                bool added = InventoryManager.Instance.AddItem(shopItem.item, 1);
-                if (!added)
+                if (!InventoryManager.Instance.AddItem(shopItem.item, 1))
                 {
                     CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, shopItem.price);
                     Debug.Log("인벤토리가 가득 찼습니다!");
@@ -104,18 +135,48 @@ namespace Nytherion.UI.Shop
                 // TODO: 돈이 부족한 피드백 UI 표시
             }
         }
-        public void SellItem(ItemData item, int price)
+        private void SellItem(BaseSlotUI slotToSell)
         {
-                if (item == null) return;
+            if (slotToSell.IsEmpty) return;
 
-                if(InventoryManager.Instance.RemoveItem(item, 1))
+            ItemData item = slotToSell.CurrentItem;
+
+            // 판매 가격은 아이템의 기본 가치의 절반으로 계산 (조정 가능)
+            int sellPrice = Mathf.Max(1, Mathf.RoundToInt(item.baseValue * 0.5f));
+
+            if (InventoryManager.Instance.RemoveItem(item, 1))
+            {
+                CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, sellPrice);
+                Debug.Log($"{item.itemName}을(를) {sellPrice} 골드에 판매했습니다!");
+                // 인벤토리 UI는 OnInventoryUpdated 이벤트 덕분에 자동으로 갱신됩니다.
+            }
+        }
+        private void RefreshPlayerInventoryUI()
+        {
+            if (!isShopOpen) return; // 상점이 닫혀있으면 갱신 안 함
+
+            var items = InventoryManager.Instance.GetAllItems();
+            int i = 0;
+
+            foreach (var itemEntry in items)
+            {
+                if (i < playerInventorySlots.Count)
                 {
-                    int sellPrice = Mathf.RoundToInt(price * 0.5f);
-                    CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, sellPrice);
-                    Debug.Log($"{item.itemName}을(를) {sellPrice} 골드에 판매했습니다!");
-                    // TODO: 플레이어 인벤토리 UI 갱신 로직 필요
+                    playerInventorySlots[i].SetItem(itemEntry.Key, itemEntry.Value);
+                    i++;
                 }
-                
+            }
+            for (; i < playerInventorySlots.Count; i++)
+            {
+                playerInventorySlots[i].ClearSlot();
+            }
+        }
+        private void UpdateCurrencyUI(CurrencyType type, int amount)
+        {
+            if (type == CurrencyType.Gold && playerGoldText != null)
+            {
+                playerGoldText.text = $"{amount} G";
+            }
         }
 
     }

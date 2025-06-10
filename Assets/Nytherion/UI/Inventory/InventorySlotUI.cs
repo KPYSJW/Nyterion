@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core;
 using System;
+using Nytherion.UI.Shop;
+using Nytherion.UI.Inventory.Utils;
 
 namespace Nytherion.UI.Inventory
 {
@@ -10,14 +12,13 @@ namespace Nytherion.UI.Inventory
     {
         public int SlotIndex { get; private set; }
 
+        public event Action<BaseSlotUI> OnSellItemAction;
+
         protected override void Awake()
         {
             base.Awake();
-            // 드래그 앤 드롭 이벤트 설정
-            // OnBeginDragEvent += HandleBeginDrag; // Remove old
-            // OnEndDragEvent += HandleEndDrag;   // Remove old
-            OnBeginDragEvent += (s, e) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleBeginDragShared(s);
-            OnEndDragEvent += (s, e) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleEndDragShared(s, e);
+            OnBeginDragEvent += (s, e) => DragDropUIHandler.HandleBeginDragShared(s);
+            OnEndDragEvent += (s, e) => DragDropUIHandler.HandleEndDragShared(s, e);
             OnPointerClickEvent += HandlePointerClick;
         }
 
@@ -27,16 +28,18 @@ namespace Nytherion.UI.Inventory
             ClearSlot();
         }
 
-        // Removed HandleBeginDrag method
-        // Removed HandleEndDrag method
-
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Right && !IsEmpty)
             {
-                // 아이템 사용 또는 컨텍스트 메뉴 표시
-                Debug.Log($"[Inventory] Used item: {currentItem.itemName}");
-                // 아이템 사용 로직 (필요시 구현)
+                if (ShopUI.Instance != null && ShopUI.Instance.IsShopOpen())
+                {
+                    OnSellItemAction?.Invoke(this);
+                }
+                else
+                {
+                    Debug.Log($"[Inventory] Used Item: {currentItem.itemName}");
+                }
             }
         }
 

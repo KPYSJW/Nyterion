@@ -31,12 +31,12 @@ namespace Nytherion.GamePlay.Characters.NPC
 
         private void Update()
         {
-            if (player == null) return;
+            if (player == null || ShopUI.Instance == null) return;
 
             float distance = Vector2.Distance(transform.position, player.position);
             isPlayerInRange = distance <= interactionRange;
 
-            if (isPlayerInRange && Input.GetKeyDown(KeyCode.E) && ShopUI.Instance == null)
+            if (isPlayerInRange && Input.GetKeyDown(KeyCode.E))
             {
                 ShopUI.Instance.OpenShop(shopData);
             }
