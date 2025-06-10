@@ -7,7 +7,7 @@ using Nytherion.Data.Shop;
 
 namespace Nytherion.GamePlay.Characters.NPC
 {
-    public class ShopDealer : MonoBehaviour
+    public class ShopDealer : MonoBehaviour, IInteractable
     {
         [Header("Shop Settings")]
         [Tooltip("Range at which the player can interact with the shop")]
@@ -15,7 +15,7 @@ namespace Nytherion.GamePlay.Characters.NPC
 
         [Header("Shop Data")]
         [Tooltip("Shop data containing items for sale")]
-        [SerializeField] private ShopData shopData;
+        public ShopData shopData;
 
         private Transform player;
         private bool isPlayerInRange;
@@ -46,6 +46,11 @@ namespace Nytherion.GamePlay.Characters.NPC
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, interactionRange);
+        }
+
+        public void Interact()
+        {
+            ShopUI.Instance.OpenShop(shopData);
         }
     }
 }
