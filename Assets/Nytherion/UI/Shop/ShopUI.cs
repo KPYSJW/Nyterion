@@ -31,6 +31,7 @@ namespace Nytherion.UI.Shop
 
         private ShopData currentShopData;
         private bool isShopOpen = false;
+        public bool IsOpen => shopPanel.activeInHierarchy;
 
         private void Awake()
         {
@@ -86,12 +87,20 @@ namespace Nytherion.UI.Shop
             PopulateShop();
             RefreshPlayerInventoryUI();
             UpdateCurrencyUI(CurrencyType.Gold, CurrencyManager.Instance.GetCurrency(CurrencyType.Gold));
+            if (InventoryUI.Instance != null)
+            {
+                InventoryUI.Instance?.OpenForShop();
+            }
         }
 
         public void CloseShop()
         {
             shopPanel.SetActive(false);
             isShopOpen = false;
+            if (InventoryUI.Instance != null)
+            {
+                InventoryUI.Instance?.CloseAllPanels();
+            }
         }
 
         private void PopulateShop()

@@ -4,12 +4,22 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core;
+using Nytherion.UI.Shop;
 
 namespace Nytherion.UI.Inventory
 {
     public class InventoryUI : MonoBehaviour
     {
-        [Header("UI References")]
+        public static InventoryUI Instance { get; private set; }
+
+        [Header("UI Panels")]
+        [Tooltip("인벤토리 전체를 감싸는 부모 패널")]
+        [SerializeField] private GameObject mainUIPanel; // 기존에 UI 켜고 끌 때 쓰던 패널
+        [Tooltip("캐릭터 장비창 패널")]
+        [SerializeField] private GameObject equipmentPanel;
+        [Tooltip("캐릭터 능력치창 패널")]
+        [SerializeField] private GameObject statsPanel;
+        [Tooltip("실제 아이템 슬롯들이 있는 인벤토리 패널")]
         [SerializeField] private GameObject inventoryPanel;
         [SerializeField] private InputActionReference toggleInventoryAction;
         [Tooltip("인벤토리 슬롯들이 있는 부모 오브젝트")]
@@ -21,6 +31,12 @@ namespace Nytherion.UI.Inventory
         private bool isOpen = false;
 
         public event Action<bool> OnInventoryToggled; // true: opened, false: closed
+
+        private void Awake()
+        {
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
+        }
 
         private void Start()
         {
@@ -66,13 +82,32 @@ namespace Nytherion.UI.Inventory
 
         private void OnToggleInventory(InputAction.CallbackContext context)
         {
+            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+            {
+                return;
+            }
             ToggleInventory();
         }
 
         public void ToggleInventory()
         {
+            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen) return;
             isOpen = !isOpen;
-            inventoryPanel.SetActive(isOpen);
+
+            if (mainUIPanel != null)
+            {
+                mainUIPanel.SetActive(isOpen);
+                if(isOpen)
+                {
+                    if(equipmentPanel != null) equipmentPanel.SetActive(true);
+                    if(statsPanel != null) statsPanel.SetActive(true);
+                    if(inventoryPanel != null) inventoryPanel.SetActive(true);
+                }
+            }
+            else
+            {
+                inventoryPanel.SetActive(isOpen);
+            }
             OnInventoryToggled?.Invoke(isOpen);
         }
 
@@ -121,6 +156,19 @@ namespace Nytherion.UI.Inventory
                 slots[slotIndex].SetItem(item.Key, item.Value);
                 slotIndex++;
             }
+        }
+        public void OpenForShop()
+        {
+            if (mainUIPanel != null) mainUIPanel.SetActive(true);
+
+            if (equipmentPanel != null) equipmentPanel.SetActive(false);
+            if (statsPanel != null) statsPanel.SetActive(false);
+
+            if (inventoryPanel != null) inventoryPanel.SetActive(true);
+        }
+        public void CloseAllPanels()
+        {
+            if (mainUIPanel != null) mainUIPanel.SetActive(false);
         }
     }
 }

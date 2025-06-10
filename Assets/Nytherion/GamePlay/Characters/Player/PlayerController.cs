@@ -106,14 +106,17 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void OnInteract()
         {
-            Debug.Log("<b>[2/4] PlayerController: 'OnInteract' 메서드 호출됨!</b>");
+            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+            {
+                ShopUI.Instance.CloseShop();
+                return;
+            }
+            
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, interactionDistance, interactableLayer);
-            Debug.Log($"<b>[3/4] 주변에서 {colliders.Length}개의 'Interactable' 레이어 오브젝트를 찾음.</b>");
             foreach (var collider in colliders)
             {
                 if (collider.TryGetComponent(out IInteractable interactableObject))
                 {
-                    Debug.Log($"<b>[4/4] 상호작용 성공: '{collider.name}' 오브젝트</b>");
                     interactableObject.Interact();
                     break;
                 }

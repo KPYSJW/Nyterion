@@ -16,3 +16,7 @@ MonoBehaviour:
   itemsForSale:
   - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
     price: 100
+  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
+    price: 100
+  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
+    price: 100
