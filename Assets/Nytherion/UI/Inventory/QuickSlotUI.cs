@@ -15,7 +15,7 @@ namespace Nytherion.UI.Inventory
         public event Action<ItemData, int> OnItemUsed;
         [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
         private Action<ItemData, int> onItemUsed;
-        private IUsableItem usableItem; // 사용 가능한 아이템 참조
+        private IUseableItem useableItem;
 
         protected override void Awake()
         {
@@ -44,19 +44,19 @@ namespace Nytherion.UI.Inventory
 
         public override void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback = null)
         {
-            if (this.usableItem != null && this.usableItem is IDisposable disposable)
+            if (this.useableItem != null && this.useableItem is IDisposable disposable)
             {
                 disposable.Dispose();
             }
 
-            this.usableItem = item as IUsableItem;
+            this.useableItem = item as IUseableItem;
             this.onItemUsed = onUseCallback;
 
             base.SetItem(item, count, (usedItem, usedCount) => 
             {
-                if (this.usableItem != null)
+                if (this.useableItem != null)
                 {
-                    this.usableItem.Use();
+                    this.useableItem.Use();
                 }
                 onItemUsed?.Invoke(usedItem, usedCount);
             });
