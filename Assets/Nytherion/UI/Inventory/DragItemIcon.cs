@@ -13,49 +13,36 @@ public class DragItemIcon : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // Optional: If this object should persist across scene loads
-            // DontDestroyOnLoad(gameObject); 
+
         }
         else if (Instance != this)
         {
             Debug.LogWarning("[DragItemIcon] Another instance already exists. Destroying this one.");
             Destroy(gameObject);
-            return; // Return to prevent further initialization
+            return;
         }
 
-        // Original Awake logic for Canvas setup (if still needed)
-        // It's generally better if the Canvas is part of the prefab setup,
-        // but this dynamic addition is kept as per original logic if required.
         Canvas currentCanvas = GetComponent<Canvas>();
         if (currentCanvas == null)
         {
             currentCanvas = gameObject.AddComponent<Canvas>();
-            currentCanvas.renderMode = RenderMode.ScreenSpaceCamera; // Or ScreenSpaceOverlay depending on requirements
-            // Find the main camera if ScreenSpaceCamera is used and it's not automatically assigned
-            // if (currentCanvas.worldCamera == null && currentCanvas.renderMode == RenderMode.ScreenSpaceCamera)
-            // {
-            //    currentCanvas.worldCamera = Camera.main; 
-            // }
-            currentCanvas.sortingOrder = 1000; // Ensure it's on top
+            currentCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+            currentCanvas.sortingOrder = 1000;
         }
-        
-        // Ensure iconImage is initially hidden or in a known state
+
         if (iconImage == null)
         {
-            iconImage = GetComponentInChildren<Image>(true); // true to include inactive children
+            iconImage = GetComponentInChildren<Image>(true);
             if (iconImage == null)
             {
                 Debug.LogError("[DragItemIcon] Image component for iconImage is not assigned and could not be found in children. Please assign it in the Inspector.");
-                // Optionally, disable the component if iconImage is crucial and not found
-                // enabled = false; 
-                // return;
             }
             else
             {
                 Debug.Log("[DragItemIcon] iconImage was not set in inspector, but found in children.");
             }
         }
-        Hide(); // Start hidden
+        Hide();
     }
 
     private void OnDestroy()
@@ -84,10 +71,16 @@ public class DragItemIcon : MonoBehaviour
         {
             iconImage.enabled = true;
         }
-        else
+
+        CanvasGroup group = GetComponent<CanvasGroup>();
+        if (group == null)
         {
-            Debug.LogError("[DragItemIcon] iconImage is null. Cannot show icon.");
+            group = gameObject.AddComponent<CanvasGroup>();
         }
+
+        group.alpha = 1f;
+        group.interactable = false;
+        group.blocksRaycasts = false;
     }
 
     public void Hide()
@@ -96,12 +89,15 @@ public class DragItemIcon : MonoBehaviour
         {
             iconImage.enabled = false;
         }
-        else
+
+        CanvasGroup group = GetComponent<CanvasGroup>();
+        if (group == null)
         {
-            // Don't log an error on Hide if it's null, as it might be called during destruction
-            // or before full initialization in some edge cases. Or, make it consistent.
-            // For now, let's be consistent with logging as per instructions.
-            Debug.LogWarning("[DragItemIcon] iconImage is null. Cannot hide icon (already effectively hidden).");
+            group = gameObject.AddComponent<CanvasGroup>();
         }
+
+        group.alpha = 0f;
+        group.interactable = false;
+        group.blocksRaycasts = false;
     }
 }

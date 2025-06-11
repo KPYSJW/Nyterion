@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Data.Shop;
@@ -16,6 +18,7 @@ namespace Nytherion.UI.Shop
 
         [Header("UI 패널")]
         [SerializeField] private GameObject shopPanel;
+        [SerializeField] private CanvasGroup canvasGroup;
 
         [Header("슬롯 설정")]
         [SerializeField] private GameObject shopSlotPrefab;
@@ -38,19 +41,12 @@ namespace Nytherion.UI.Shop
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
             shopPanel.SetActive(false);
-
         }
         private void Start()
         {
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(CloseShop);
-            }
-
-            playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>());
-            foreach (InventorySlotUI slot in playerInventorySlots)
-            {
-                slot.OnSellItemAction += (baseSlot) => SellItem(baseSlot);
             }
         }
         private void OnEnable()
@@ -62,6 +58,15 @@ namespace Nytherion.UI.Shop
             if (InventoryManager.Instance != null)
             {
                 InventoryManager.Instance.OnInventoryUpdated += RefreshPlayerInventoryUI;
+            }
+            playerInventorySlots = new List<InventorySlotUI>(
+                playerInventoryParent.GetComponentsInChildren<InventorySlotUI>(true)
+                    .Where(slot => slot != null)
+            );
+
+            foreach (InventorySlotUI slot in playerInventorySlots)
+            {
+                slot.OnSellItemAction += (baseSlot) => SellItem(baseSlot);
             }
         }
 
@@ -82,24 +87,32 @@ namespace Nytherion.UI.Shop
         public void OpenShop(ShopData data)
         {
             currentShopData = data;
-            shopPanel.SetActive(true);
+            ShowShopUI();
             isShopOpen = true;
+
             PopulateShop();
-            RefreshPlayerInventoryUI();
-            UpdateCurrencyUI(CurrencyType.Gold, CurrencyManager.Instance.GetCurrency(CurrencyType.Gold));
+
             if (InventoryUI.Instance != null)
             {
-                InventoryUI.Instance?.OpenForShop();
+                InventoryUI.Instance.OpenForShop();
+                RefreshPlayerInventoryUI();
             }
+            else
+            {
+                Debug.LogError("InventoryUI.Instance is null in ShopUI.OpenShop()");
+            }
+
+            UpdateCurrencyUI(CurrencyType.Gold, CurrencyManager.Instance.GetCurrency(CurrencyType.Gold));
         }
 
         public void CloseShop()
         {
-            shopPanel.SetActive(false);
+            HideShopUI();
             isShopOpen = false;
+
             if (InventoryUI.Instance != null)
             {
-                InventoryUI.Instance?.CloseAllPanels();
+                InventoryUI.Instance.CloseAllPanels();
             }
         }
 
@@ -162,24 +175,50 @@ namespace Nytherion.UI.Shop
         }
         private void RefreshPlayerInventoryUI()
         {
-            if (!isShopOpen) return; // 상점이 닫혀있으면 갱신 안 함
+            if (!isShopOpen) return;
 
             var items = InventoryManager.Instance.GetAllItems();
             int i = 0;
 
             foreach (var itemEntry in items)
             {
-                if (i < playerInventorySlots.Count)
+                if (itemEntry.Key == null)
+                {
+                    Debug.LogError($"[ShopUI] Null item key at index {i}");
+                    continue;
+                }
+
+                if (i >= playerInventorySlots.Count)
+                {
+                    Debug.LogWarning($"[ShopUI] Slot index {i} out of range.");
+                    continue;
+                }
+
+                if (playerInventorySlots[i] == null)
+                {
+                    Debug.LogError($"[ShopUI] Slot at index {i} is null");
+                    continue;
+                }
+
+                try
                 {
                     playerInventorySlots[i].SetItem(itemEntry.Key, itemEntry.Value);
-                    i++;
                 }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[ShopUI] Exception at slot {i}: {ex.Message}\n{ex.StackTrace}");
+                }
+
+                i++;
             }
+
             for (; i < playerInventorySlots.Count; i++)
             {
-                playerInventorySlots[i].ClearSlot();
+                if (playerInventorySlots[i] != null)
+                    playerInventorySlots[i].ClearSlot();
             }
         }
+
         private void UpdateCurrencyUI(CurrencyType type, int amount)
         {
             if (type == CurrencyType.Gold && playerGoldText != null)
@@ -188,6 +227,29 @@ namespace Nytherion.UI.Shop
             }
         }
 
+        private void ShowShopUI()
+        {
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = 1f;
+                canvasGroup.blocksRaycasts = true;
+                canvasGroup.interactable = true;
+            }
+
+            if (shopPanel != null) shopPanel.SetActive(true);
+        }
+
+        private void HideShopUI()
+        {
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = 0f;
+                canvasGroup.blocksRaycasts = false;
+                canvasGroup.interactable = false;
+            }
+
+            if (shopPanel != null) shopPanel.SetActive(false);
+        }
     }
 }
 

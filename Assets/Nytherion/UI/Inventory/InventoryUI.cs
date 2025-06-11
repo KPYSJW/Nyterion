@@ -28,6 +28,7 @@ namespace Nytherion.UI.Inventory
         [Header("Buttons")]
         [SerializeField] private Button closeButton; // 닫기 버튼
         [SerializeField] private GameObject tooltipCanvas;
+        [SerializeField] private CanvasGroup canvasGroup;
         private bool isOpen = false;
 
         public event Action<bool> OnInventoryToggled; // true: opened, false: closed
@@ -36,11 +37,11 @@ namespace Nytherion.UI.Inventory
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+            HideInventoryUI();
         }
 
         private void Start()
         {
-            inventoryPanel.SetActive(false);
             isOpen = false;
             if (closeButton != null)
             {
@@ -94,19 +95,13 @@ namespace Nytherion.UI.Inventory
             if (ShopUI.Instance != null && ShopUI.Instance.IsOpen) return;
             isOpen = !isOpen;
 
-            if (mainUIPanel != null)
+            if (isOpen)
             {
-                mainUIPanel.SetActive(isOpen);
-                if(isOpen)
-                {
-                    if(equipmentPanel != null) equipmentPanel.SetActive(true);
-                    if(statsPanel != null) statsPanel.SetActive(true);
-                    if(inventoryPanel != null) inventoryPanel.SetActive(true);
-                }
+                ShowInventoryUI();
             }
             else
             {
-                inventoryPanel.SetActive(isOpen);
+                HideInventoryUI();
             }
             OnInventoryToggled?.Invoke(isOpen);
         }
@@ -157,18 +152,49 @@ namespace Nytherion.UI.Inventory
                 slotIndex++;
             }
         }
+
+        private void ShowInventoryUI()
+        {
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = 1f;
+                canvasGroup.blocksRaycasts = true;
+                canvasGroup.interactable = true;
+            }
+
+            if (mainUIPanel != null) mainUIPanel.SetActive(true);
+            if (equipmentPanel != null) equipmentPanel.SetActive(true);
+            if (statsPanel != null) statsPanel.SetActive(true);
+            if (inventoryPanel != null) inventoryPanel.SetActive(true);
+        }
+
+        private void HideInventoryUI()
+        {
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = 0f;
+                canvasGroup.blocksRaycasts = false;
+                canvasGroup.interactable = false;
+            }
+        }
+
         public void OpenForShop()
         {
-            if (mainUIPanel != null) mainUIPanel.SetActive(true);
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = 1f;
+                canvasGroup.blocksRaycasts = true;
+                canvasGroup.interactable = true;
+            }
 
+            if (mainUIPanel != null) mainUIPanel.SetActive(true);
             if (equipmentPanel != null) equipmentPanel.SetActive(false);
             if (statsPanel != null) statsPanel.SetActive(false);
-
             if (inventoryPanel != null) inventoryPanel.SetActive(true);
         }
         public void CloseAllPanels()
         {
-            if (mainUIPanel != null) mainUIPanel.SetActive(false);
+            HideInventoryUI();
         }
     }
 }

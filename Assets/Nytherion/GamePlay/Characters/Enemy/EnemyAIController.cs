@@ -22,7 +22,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void Awake()
         {
-            var playerInstance = Nytherion.GamePlay.Characters.Player.Player.Instance;
+            var playerInstance = GameObject.FindWithTag("Player");
             if (playerInstance == null)
             {
                 Debug.LogError("Player instance not found. Make sure a Player exists in the scene.");
