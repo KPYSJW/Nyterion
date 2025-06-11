@@ -11,5 +11,7 @@ namespace Nytherion.Data.Shop
     {
         public ItemData item;
         public int price;
+        public int stock; 
+        public bool isUnlimited;
     }
 }

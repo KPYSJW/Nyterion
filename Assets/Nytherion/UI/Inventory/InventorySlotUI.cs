@@ -13,7 +13,7 @@ namespace Nytherion.UI.Inventory
         public int SlotIndex { get; private set; }
 
         public event Action<BaseSlotUI> OnSellItemAction;
-
+        public int CurrentAmount => IsEmpty ? 0 : InventoryManager.Instance.GetItemCount(CurrentItem);
         protected override void Awake()
         {
             base.Awake();
@@ -47,7 +47,6 @@ namespace Nytherion.UI.Inventory
         public override void ClearSlot()
         {
             base.ClearSlot();
-            // 슬롯이 비워질 때 추가 정리 작업이 필요하면 여기에 구현
         }
     }
 }

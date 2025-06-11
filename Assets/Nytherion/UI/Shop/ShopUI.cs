@@ -8,6 +8,7 @@ using Nytherion.Data.Shop;
 using Nytherion.Core;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.UI.Inventory;
+using Nytherion.UI.Shop;
 using TMPro;
 
 namespace Nytherion.UI.Shop
@@ -35,7 +36,7 @@ namespace Nytherion.UI.Shop
         private ShopData currentShopData;
         private bool isShopOpen = false;
         public bool IsOpen => shopPanel.activeInHierarchy;
-
+        private const float SELL_PRICE_RATIO = 0.7f;
         private void Awake()
         {
             if (Instance == null) Instance = this;
@@ -47,6 +48,10 @@ namespace Nytherion.UI.Shop
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(CloseShop);
+            }
+            if (SellSlotUI.Instance != null)
+            {
+                SellSlotUI.Instance.OnItemSold += HandleSellItem;
             }
         }
         private void OnEnable()
@@ -66,7 +71,13 @@ namespace Nytherion.UI.Shop
 
             foreach (InventorySlotUI slot in playerInventorySlots)
             {
-                slot.OnSellItemAction += (baseSlot) => SellItem(baseSlot);
+                slot.OnSellItemAction += (baseSlot) =>
+                {
+                    if (baseSlot.CurrentItem != null)
+                    {
+                        SellSlotUI.Instance?.SetItem(baseSlot.CurrentItem, 1);
+                    }
+                };
             }
         }
 
@@ -79,6 +90,10 @@ namespace Nytherion.UI.Shop
             if (InventoryManager.Instance != null)
             {
                 InventoryManager.Instance.OnInventoryUpdated -= RefreshPlayerInventoryUI;
+            }
+            if (SellSlotUI.Instance != null)
+            {
+                SellSlotUI.Instance.OnItemSold -= HandleSellItem;
             }
         }
 
@@ -134,45 +149,47 @@ namespace Nytherion.UI.Shop
             }
         }
 
-        public void BuyItem(ShopItemData shopItem)
+        public void BuyItem(ShopSlotUI slot)
         {
-            if (shopItem == null || shopItem.item == null) return;
+            var shopItem = slot.CurrentItem;
+
+            if (!shopItem.isUnlimited && shopItem.stock == 0)
+            {
+                Debug.Log("해당 아이템은 품절되었습니다.");
+                return;
+            }
+
             if (CurrencyManager.Instance.SpendCurrency(CurrencyType.Gold, shopItem.price))
             {
-                if (!InventoryManager.Instance.AddItem(shopItem.item, 1))
+                InventoryManager.Instance.AddItem(shopItem.item);
+
+                if (!shopItem.isUnlimited && shopItem.stock > 0)
                 {
-                    CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, shopItem.price);
-                    Debug.Log("인벤토리가 가득 찼습니다!");
-                    // TODO: 유저에게 피드백 UI 표시
+                    shopItem.stock--;
                 }
-                else
-                {
-                    Debug.Log($"{shopItem.item.itemName}을(를) 구매했습니다!");
-                    // TODO: 구매 성공 피드백 UI  표시
-                }
+
+                slot.UpdateStockUI();
             }
             else
             {
-                Debug.Log($"돈이 부족합니다!");
-                // TODO: 돈이 부족한 피드백 UI 표시
+                Debug.Log("골드가 부족합니다.");
             }
         }
-        private void SellItem(BaseSlotUI slotToSell)
+
+        private void HandleSellItem(ItemData item, int amount)
         {
-            if (slotToSell.IsEmpty) return;
-
-            ItemData item = slotToSell.CurrentItem;
-
-            // 판매 가격은 아이템의 기본 가치의 절반으로 계산 (조정 가능)
-            int sellPrice = Mathf.Max(1, Mathf.RoundToInt(item.baseValue * 0.5f));
-
-            if (InventoryManager.Instance.RemoveItem(item, 1))
+            if (InventoryManager.Instance.RemoveItem(item, amount))
             {
-                CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, sellPrice);
-                Debug.Log($"{item.itemName}을(를) {sellPrice} 골드에 판매했습니다!");
-                // 인벤토리 UI는 OnInventoryUpdated 이벤트 덕분에 자동으로 갱신됩니다.
+                int totalPrice = Mathf.RoundToInt(item.baseValue * SELL_PRICE_RATIO) * amount;
+                CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, totalPrice);
+                Debug.Log($"[Shop] {item.itemName} x{amount} 판매 완료 (+{totalPrice}G)");
+            }
+            else
+            {
+                Debug.LogWarning($"[Shop] {item.itemName} 판매 실패");
             }
         }
+
         private void RefreshPlayerInventoryUI()
         {
             if (!isShopOpen) return;
@@ -249,6 +266,7 @@ namespace Nytherion.UI.Shop
             }
 
             if (shopPanel != null) shopPanel.SetActive(false);
+            if (SellSlotUI.Instance != null) SellSlotUI.Instance.ClearSlot();
         }
     }
 }

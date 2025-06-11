@@ -7,9 +7,8 @@ namespace Nytherion.Core
 {
     public enum CurrencyType
     {
-        Gold,
-        Gem,
-        Token
+        Gold = 0,
+        Token = 1
     }
     public class CurrencyManager : MonoBehaviour
     {

@@ -4,17 +4,16 @@ using UnityEngine;
 using Nytherion.UI.Shop;
 using Nytherion.Data.Shop;
 
-
 namespace Nytherion.GamePlay.Characters.NPC
 {
     public class ShopDealer : MonoBehaviour, IInteractable
     {
         [Header("Shop Settings")]
-        [Tooltip("Range at which the player can interact with the shop")]
+        [Tooltip("상호작용 거리")]
         public float interactionRange = 2f;
 
         [Header("Shop Data")]
-        [Tooltip("Shop data containing items for sale")]
+        [Tooltip("상점 데이터")]
         public ShopData shopData;
 
         private Transform player;
