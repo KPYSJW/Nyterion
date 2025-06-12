@@ -10,6 +10,7 @@ namespace Nytherion.GamePlay.Characters.Player
         public static Player Instance { get; private set; }
         
         public PlayerCombat playerCombat;
+        public PlayerHealth playerHealth;
 
         private void Awake()
         {
@@ -17,6 +18,7 @@ namespace Nytherion.GamePlay.Characters.Player
             else Destroy(gameObject);
 
             playerCombat = GetComponent<PlayerCombat>();
+            playerHealth = GetComponent<PlayerHealth>();
         }
 
     }
