@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   engravingName: Blood Pact
   description: 
+  Image: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
+  rarity: 2
   isCursed: 1
+  shape:
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  - {x: 2, y: 1}
+  - {x: 1, y: 0}
   synergyType: 6
   attackMultiplier: 1
   cooldownMultiplier: 1
   speedMultiplier: 1
-  Image: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}

@@ -14,8 +14,6 @@ namespace Nytherion.UI
         private void Update()
         {
             UpdateEngraveUI();
-
-
         }
 
         public void UpdateEngraveUI()

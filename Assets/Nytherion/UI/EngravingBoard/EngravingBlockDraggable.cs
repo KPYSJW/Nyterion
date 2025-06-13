@@ -78,14 +78,43 @@ namespace Nytherion.UI.EngravingBoard
                     Vector2 finalPosition = EngravingGridUI.Instance.GetLocalPositionFromGridCell(lastValidGridPosition.Value);
                     rectTransform.anchoredPosition = finalPosition;
                     isPlaced = true;
+
+                    if (homeParent != null && homeParent != EngravingGridUI.Instance.blockStorageParent)
+                    {
+                        Destroy(homeParent.gameObject);
+                    }
+
                     return;
                 }
             }
 
+            if (IsPointerOverStorageArea(eventData))
+            {
+                CreateNewStorageSlot();
+                isPlaced = false;
+                return;
+            }
+
             Debug.Log("배치 실패 - 원래 위치로 복귀합니다.");
-            transform.SetParent(homeParent, true);
+            transform.SetParent(homeParent, false);
+            rectTransform.anchoredPosition = Vector2.zero;
             transform.SetSiblingIndex(homeSiblingIndex);
         }
+
+        private bool IsPointerOverStorageArea(PointerEventData eventData)
+        {
+            RectTransform storageRect = EngravingGridUI.Instance.blockStorageParent;
+            Vector2 localMousePos;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                storageRect,
+                eventData.position,
+                eventData.pressEventCamera,
+                out localMousePos
+            );
+
+            return storageRect.rect.Contains(localMousePos);
+        }
+
         public void BuildVisualFromShape()
         {
             foreach (Transform child in transform)
@@ -94,24 +123,34 @@ namespace Nytherion.UI.EngravingBoard
             }
 
             GridLayoutGroup gridLayout = EngravingGridUI.Instance.gridRoot.GetComponent<GridLayoutGroup>();
-            Vector2 gridCellSize = gridLayout.cellSize;
-            Vector2 gridSpacing = gridLayout.spacing;
+            Vector2 cellSize = gridLayout.cellSize;
+            Vector2 spacing = gridLayout.spacing;
 
             foreach (Vector2Int offset in blockData.Shape)
             {
                 GameObject cell = Instantiate(cellPrefab, transform);
                 RectTransform rt = cell.GetComponent<RectTransform>();
-
-                rt.sizeDelta = gridCellSize;
-
-                rt.anchoredPosition = new Vector2(
-                    offset.x * (gridCellSize.x + gridSpacing.x),
-                    -offset.y * (gridCellSize.y + gridSpacing.y)
-                );
-
+                rt.sizeDelta = cellSize;
+                rt.anchoredPosition = new Vector2(offset.x * (cellSize.x + spacing.x), -offset.y * (cellSize.y + spacing.y));
                 Image img = cell.GetComponent<Image>();
                 img.color = (offset == Vector2Int.zero) ? Color.red : Color.white;
             }
         }
+        private void CreateNewStorageSlot()
+        {
+            Transform storageParent = EngravingGridUI.Instance.blockStorageParent;
+            GameObject slotObj = Object.Instantiate(EngravingGridUI.Instance.storageSlotPrefab, storageParent);
+
+            transform.SetParent(slotObj.transform, false);
+            RectTransform rt = GetComponent<RectTransform>();
+            rt.anchoredPosition = Vector2.zero;
+
+            homeParent = slotObj.transform;
+            homeSiblingIndex = 0;
+
+            Debug.Log("블럭이 보관소 슬롯으로 복귀되었습니다.");
+        }
+
+
     }
 }

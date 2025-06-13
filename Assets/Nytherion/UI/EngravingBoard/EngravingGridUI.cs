@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.GamePlay.Engravings;
+using Nytherion.Data.ScriptableObjects.Engravings;
 
 namespace Nytherion.UI.EngravingBoard
 {
@@ -37,6 +38,7 @@ namespace Nytherion.UI.EngravingBoard
         private void Start()
         {
             InitializeGrid();
+            TestPlaceSampleBlock();
         }
 
         public void AddNewBlockToStorage(EngravingBlock blockData)
@@ -62,9 +64,42 @@ namespace Nytherion.UI.EngravingBoard
         public void TestAddRandomBlock()
         {
             List<Vector2Int> shape = GenerateValidShape();
-            EngravingBlock newBlock = new EngravingBlock("UserBlock_" + Random.Range(1000, 9999), shape, "Test");
+
+            EngravingData tempData = ScriptableObject.CreateInstance<EngravingData>();
+            tempData.engravingName = "UserBlock_" + Random.Range(1000, 9999);
+            tempData.shape = shape;
+            tempData.isCursed = false;
+
+            EngravingBlock newBlock = new EngravingBlock(tempData);
             AddNewBlockToStorage(newBlock);
         }
+        private void TestPlaceSampleBlock()
+        {
+            List<Vector2Int> shape = new List<Vector2Int>
+            {
+                new Vector2Int(0, 0),
+                new Vector2Int(1, 0),
+                new Vector2Int(0, 1),
+                new Vector2Int(1, 1)
+            };
+
+            // 샘플용 EngravingData 생성
+            EngravingData tempData = ScriptableObject.CreateInstance<EngravingData>();
+            tempData.engravingName = "TestBlock";
+            tempData.shape = shape;
+            tempData.isCursed = false;
+
+            EngravingBlock block = new EngravingBlock(tempData);
+            logicGrid.PlaceBlock(block, 2, 2);
+        }
+#if UNITY_EDITOR
+[ContextMenu("▶ Test Add Random Block")]
+#endif
+        public void EditorTestAddRandomBlock()
+        {
+            TestAddRandomBlock();
+        }
+
         private List<Vector2Int> GenerateValidShape()
         {
             int targetCount = Random.Range(3, 6); // 3~5칸짜리
@@ -92,19 +127,7 @@ namespace Nytherion.UI.EngravingBoard
             return shape;
         }
 
-        private void TestPlaceSampleBlock()
-        {
-            List<Vector2Int> shape = new List<Vector2Int>
-            {
-                new Vector2Int(0, 0),
-                new Vector2Int(1, 0),
-                new Vector2Int(0, 1),
-                new Vector2Int(1, 1)
-            };
 
-            EngravingBlock block = new EngravingBlock("TestBlock", shape, "Power");
-            logicGrid.PlaceBlock(block, 2, 2);
-        }
 
         private void InitializeGrid()
         {
@@ -192,6 +215,23 @@ namespace Nytherion.UI.EngravingBoard
         public bool RemoveBlockFromGrid(string blockId)
         {
             return logicGrid.RemoveBlock(blockId);
+        }
+        public void AddEngravingToStorage(EngravingData engravingData)
+        {
+            EngravingBlock block = new EngravingBlock(engravingData);
+
+            GameObject slotObj = Instantiate(storageSlotPrefab, blockStorageParent);
+            GameObject blockObj = Instantiate(draggableBlockPrefab, slotObj.transform);
+
+            EngravingBlockDraggable draggable = blockObj.GetComponent<EngravingBlockDraggable>();
+            draggable.blockData = block;
+            draggable.BuildVisualFromShape();
+
+            GridLayoutGroup gridLayout = gridRoot.GetComponent<GridLayoutGroup>();
+            Vector2 cellSize = gridLayout.cellSize;
+            Vector2 spacing = gridLayout.spacing;
+            Vector2 visualOffset = block.GetVisualCenterPixelOffset(cellSize, spacing);
+            blockObj.GetComponent<RectTransform>().anchoredPosition = -visualOffset;
         }
 
     }
