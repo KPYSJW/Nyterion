@@ -460,6 +460,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "EngravingUI",
+            "id": "bed38f45-1dee-4cc5-abc4-f8cd49b09b71",
+            "actions": [
+                {
+                    "name": "RotateBlock",
+                    "type": "Button",
+                    "id": "8c5a8f94-8adf-405a-bb30-21034c407433",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b5fc010e-c2ae-4578-b35c-995aaee6fbb8",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateBlock",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

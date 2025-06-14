@@ -83,7 +83,6 @@ namespace Nytherion.UI.EngravingBoard
                 new Vector2Int(1, 1)
             };
 
-            // 샘플용 EngravingData 생성
             EngravingData tempData = ScriptableObject.CreateInstance<EngravingData>();
             tempData.engravingName = "TestBlock";
             tempData.shape = shape;
@@ -102,7 +101,7 @@ namespace Nytherion.UI.EngravingBoard
 
         private List<Vector2Int> GenerateValidShape()
         {
-            int targetCount = Random.Range(3, 6); // 3~5칸짜리
+            int targetCount = Random.Range(3, 6); 
             List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };
 
             while (shape.Count < targetCount)
@@ -127,8 +126,6 @@ namespace Nytherion.UI.EngravingBoard
             return shape;
         }
 
-
-
         private void InitializeGrid()
         {
             logicGrid = new EngravingGrid(rows, columns);
@@ -144,7 +141,6 @@ namespace Nytherion.UI.EngravingBoard
                     slotCells[y, x] = cell;
                 }
             }
-
         }
 
         public void OnCellPointerEnter(EngravingSlotCell cell)

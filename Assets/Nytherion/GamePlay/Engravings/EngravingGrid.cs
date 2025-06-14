@@ -83,7 +83,6 @@ namespace Nytherion.GamePlay.Engravings
             if (block == null)
                 return false;
 
-            // 블록이 차지하고 있는 모든 셀을 비웁니다.
             foreach (var cell in block.GetOccupiedCells(position))
             {
                 if (cell.x >= 0 && cell.x < Columns && cell.y >= 0 && cell.y < Rows)

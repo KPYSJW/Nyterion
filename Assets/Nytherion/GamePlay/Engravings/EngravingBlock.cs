@@ -24,15 +24,6 @@ namespace Nytherion.GamePlay.Engravings
             }
         }
 
-        public void Rotate(bool clockwise = true)
-        {
-            for (int i = 0; i < SourceData.shape.Count; i++)
-            {
-                Vector2Int cell = SourceData.shape[i];
-                SourceData.shape[i] = clockwise ? new Vector2Int(cell.y, -cell.x) : new Vector2Int(-cell.y, cell.x);
-            }
-        }
-
         public Vector2 GetVisualCenterPixelOffset(Vector2 cellSize, Vector2 spacing)
         {
             if (Shape == null || Shape.Count == 0) return Vector2.zero;
@@ -53,6 +44,23 @@ namespace Nytherion.GamePlay.Engravings
             float offsetY = -centerY * (cellSize.y + spacing.y);
 
             return new Vector2(offsetX, offsetY);
+        }
+        public void Rotate(bool clockwise = true)
+        {
+            List<Vector2Int> newShape = new List<Vector2Int>();
+
+            foreach (var cell in Shape)
+            {
+                if (clockwise)
+                {
+                    newShape.Add(new Vector2Int(cell.y, -cell.x));
+                }
+                else
+                {
+                    newShape.Add(new Vector2Int(-cell.y, cell.x));
+                }
+            }
+            SourceData.shape = newShape;
         }
     }
 }
