@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.UI.Shop;
+using Nytherion.UI.Inventory;
 
 namespace Nytherion.UI.Inventory
 {
@@ -27,7 +29,7 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private List<ItemEntry> items = new List<ItemEntry>();
 
         public IReadOnlyList<ItemEntry> Items => items;
-        
+
         // 이전 버전과의 호환성을 위한 속성
         [Obsolete("Use Items property instead")]
         public IReadOnlyList<string> ItemIds => items.Select(entry => entry.ItemId).ToList();
@@ -44,6 +46,19 @@ namespace Nytherion.UI.Inventory
         public InventoryState(Dictionary<ItemData, int> itemDictionary) : this()
         {
             items = itemDictionary.Select(pair => new ItemEntry(pair.Key.ID, pair.Value)).ToList();
+        }
+        public void ToggleInventory()
+        {
+            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+            {
+                return;
+            }
+
+            if (InventoryUI.Instance != null)
+            {
+                bool isActive = !InventoryUI.Instance.gameObject.activeSelf;
+                InventoryUI.Instance.gameObject.SetActive(isActive);
+            }
         }
     }
 }

@@ -27,6 +27,9 @@ namespace Nytherion.Core
         public event Action<int> onSkillInput;
 
         public event Action OnPausePressed;
+
+        public event Action onInteract;
+        
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -74,6 +77,20 @@ namespace Nytherion.Core
             inputActions.Player.QuickSlot_7.started += ctx => onQuickSlotInput?.Invoke(7);
             inputActions.Player.QuickSlot_8.started += ctx => onQuickSlotInput?.Invoke(8);
             inputActions.Player.QuickSlot_9.started += ctx => onQuickSlotInput?.Invoke(9);
+
+            inputActions.Player.Interact.performed += _ => onInteract?.Invoke();
+        }
+
+        private void OnEnable()
+        {
+            inputActions.Player.Enable();
+            inputActions.UI.Enable();
+        }
+
+        private void OnDisable()
+        {
+            inputActions.Player.Disable();
+            inputActions.UI.Disable();
         }
 
     }

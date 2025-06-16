@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Nytherion.GamePlay.Characters.Player;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
@@ -21,20 +22,36 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void Awake()
         {
-            player = GameObject.Find("Player").transform;
+            var playerInstance = GameObject.FindWithTag("Player");
+            if (playerInstance == null)
+            {
+                Debug.LogError("Player instance not found. Make sure a Player exists in the scene.");
+                enabled = false;
+                return;
+            }
+            
+            player = playerInstance.transform;
             rb = GetComponent<Rigidbody2D>();
             attackBehavior = GetComponent<IAttackBehavior>();
 
+            if (rb == null)
+            {
+                Debug.LogError($"{name}: Rigidbody2D component is required.", this);
+                enabled = false;
+                return;
+            }
+
+            if (attackBehavior == null)
+            {
+                Debug.LogError($"{name}: IAttackBehavior component is required.", this);
+                enabled = false;
+                return;
+            }
+
+            // Initialize states after all validations
             idleState = new EnemyIdleState(this);
             chaseState = new EnemyChaseState(this);
             attackState = new EnemyAttackState(this);
-
-            if (player == null)
-            {
-                Debug.LogError("Player transform not found. Enemy AI will not function.");
-                enabled = false; 
-                return;
-            }
 
             if (rb == null)
             {

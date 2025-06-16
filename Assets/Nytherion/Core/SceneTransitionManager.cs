@@ -143,18 +143,4 @@ public class SceneTransitionManager : MonoBehaviour
             fadeCanvasGroup.blocksRaycasts = targetAlpha > 0;
         }
     }
-    private void OnSceneLoadedHandler(Scene scene, LoadSceneMode mode)
-    {
-        // 싱글톤 선언 DontDestroyOnLoad(gameObject) 사용시 다른 씬에서 못사용하도록 작성
-    }
-
-    private void TryDestroySingleton(string objectName)
-    {
-        GameObject obj = GameObject.Find(objectName);
-        if (obj != null)
-        {
-            Destroy(obj);
-            Debug.Log($"[SceneTransitionManager] {objectName} destroyed on menu scene.");
-        }
-    }
 }

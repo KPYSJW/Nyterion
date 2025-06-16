@@ -12,6 +12,7 @@ namespace Nytherion.GamePlay.Characters.Player
     {
         public static PlayerManager Instance { get; private set; }
 
+        public PlayerHealth playerHealth;
         public float currentHP;
 
         [SerializeField]
@@ -44,7 +45,8 @@ namespace Nytherion.GamePlay.Characters.Player
 
             _playerCombat = GetComponent<PlayerCombat>();
             playerEngravingManager = GetComponent<PlayerEngravingManager>();
-            currentHP = playerData.maxHealth;
+            playerHealth = GetComponent<PlayerHealth>();
+            currentHP = playerHealth.CurrentHealth;
         }
     }
 }

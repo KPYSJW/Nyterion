@@ -18,9 +18,9 @@ namespace Nytherion.UI
 
         private void UpdateHPUI()
         {
-            HPSlider.maxValue = PlayerManager.Instance.playerData.maxHealth;
+            HPSlider.maxValue = PlayerManager.Instance.playerHealth.MaxHealth;
             HPSlider.value = PlayerManager.Instance.currentHP;
-            HPText.text = $"{PlayerManager.Instance.currentHP}/{PlayerManager.Instance.playerData.maxHealth}";
+            HPText.text = $"{PlayerManager.Instance.currentHP}";
         }
     }
 }

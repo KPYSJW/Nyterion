@@ -14,7 +14,6 @@ using Nytherion.Services;
 namespace Nytherion.Core
 {
 
-    [RequireComponent(typeof(InventoryUI))]
     public class InventoryManager : MonoBehaviour, IInventoryManager
     {
         [Header("Inventory Settings")]
