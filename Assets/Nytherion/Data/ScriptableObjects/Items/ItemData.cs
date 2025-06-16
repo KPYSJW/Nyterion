@@ -51,6 +51,10 @@ namespace Nytherion.Data.ScriptableObjects.Items
         [Header("Inventory Settings")]
         public bool isStackable = true;
         public int maxStack = 99;
+
+        [Header("Value")]
+        [Tooltip("아이템의 기본 가치. 상점 판매 시 이 값을 기준으로 계산")]
+        public int baseValue = 10;
         
         [Header("Usage Settings")]
         [Tooltip("이 아이템이 사용 가능한지 여부")]

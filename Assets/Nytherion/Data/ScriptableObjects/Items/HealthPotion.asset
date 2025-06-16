@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6d35d9f608d2a7448c7fdfd9bf9bceb, type: 3}
+  m_Name: HealthPotion
+  m_EditorClassIdentifier: 
+  itemType: 5
+  _uniqueID: f9d9b515-58d2-4daa-8414-89717d406c76
+  itemName: HealthPotion
+  icon: {fileID: 21300000, guid: 7a050d858a27ec34184c52703bf7c2d2, type: 3}
+  description: Heal 10% HP
+  isStackable: 1
+  maxStack: 99
+  baseValue: 10
+  isUsable: 0
+  useEffectPrefab: {fileID: 0}
+  useSound: {fileID: 0}

@@ -122,7 +122,7 @@ public class SceneTransitionManager : MonoBehaviour
     private IEnumerator Fade(float startAlpha, float targetAlpha)
     {
         if (fadeCanvasGroup == null) yield break;
-        
+
         float elapsedTime = 0f;
         fadeCanvasGroup.alpha = startAlpha;
         fadeCanvasGroup.blocksRaycasts = true;

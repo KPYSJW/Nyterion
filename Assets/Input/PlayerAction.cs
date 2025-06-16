@@ -252,6 +252,15 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""2a088029-c8d5-4003-afea-5bab73833814"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -496,6 +505,17 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""action"": ""ToggleInventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8dfea71b-5ce4-422d-80f3-f0bf156e2ae3"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -522,6 +542,34 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""EngravingUI"",
+            ""id"": ""bed38f45-1dee-4cc5-abc4-f8cd49b09b71"",
+            ""actions"": [
+                {
+                    ""name"": ""RotateBlock"",
+                    ""type"": ""Button"",
+                    ""id"": ""8c5a8f94-8adf-405a-bb30-21034c407433"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b5fc010e-c2ae-4578-b35c-995aaee6fbb8"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateBlock"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -562,15 +610,20 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_QuickSlot_9 = m_Player.FindAction("QuickSlot_9", throwIfNotFound: true);
         m_Player_QuickSlot_0 = m_Player.FindAction("QuickSlot_0", throwIfNotFound: true);
         m_Player_ToggleInventory = m_Player.FindAction("ToggleInventory", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
+        // EngravingUI
+        m_EngravingUI = asset.FindActionMap("EngravingUI", throwIfNotFound: true);
+        m_EngravingUI_RotateBlock = m_EngravingUI.FindAction("RotateBlock", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerAction.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerAction.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_EngravingUI.enabled, "This will cause a leak and performance issues, PlayerAction.EngravingUI.Disable() has not been called.");
     }
 
     /// <summary>
@@ -664,6 +717,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_QuickSlot_9;
     private readonly InputAction m_Player_QuickSlot_0;
     private readonly InputAction m_Player_ToggleInventory;
+    private readonly InputAction m_Player_Interact;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -748,6 +802,10 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ToggleInventory => m_Wrapper.m_Player_ToggleInventory;
         /// <summary>
+        /// Provides access to the underlying input action "Player/Interact".
+        /// </summary>
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -827,6 +885,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @ToggleInventory.started += instance.OnToggleInventory;
             @ToggleInventory.performed += instance.OnToggleInventory;
             @ToggleInventory.canceled += instance.OnToggleInventory;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         /// <summary>
@@ -892,6 +953,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @ToggleInventory.started -= instance.OnToggleInventory;
             @ToggleInventory.performed -= instance.OnToggleInventory;
             @ToggleInventory.canceled -= instance.OnToggleInventory;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         /// <summary>
@@ -1021,6 +1085,102 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActions" /> instance referencing this action map.
     /// </summary>
     public UIActions @UI => new UIActions(this);
+
+    // EngravingUI
+    private readonly InputActionMap m_EngravingUI;
+    private List<IEngravingUIActions> m_EngravingUIActionsCallbackInterfaces = new List<IEngravingUIActions>();
+    private readonly InputAction m_EngravingUI_RotateBlock;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "EngravingUI".
+    /// </summary>
+    public struct EngravingUIActions
+    {
+        private @PlayerAction m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public EngravingUIActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "EngravingUI/RotateBlock".
+        /// </summary>
+        public InputAction @RotateBlock => m_Wrapper.m_EngravingUI_RotateBlock;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_EngravingUI; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="EngravingUIActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(EngravingUIActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="EngravingUIActions" />
+        public void AddCallbacks(IEngravingUIActions instance)
+        {
+            if (instance == null || m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Add(instance);
+            @RotateBlock.started += instance.OnRotateBlock;
+            @RotateBlock.performed += instance.OnRotateBlock;
+            @RotateBlock.canceled += instance.OnRotateBlock;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="EngravingUIActions" />
+        private void UnregisterCallbacks(IEngravingUIActions instance)
+        {
+            @RotateBlock.started -= instance.OnRotateBlock;
+            @RotateBlock.performed -= instance.OnRotateBlock;
+            @RotateBlock.canceled -= instance.OnRotateBlock;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="EngravingUIActions.UnregisterCallbacks(IEngravingUIActions)" />.
+        /// </summary>
+        /// <seealso cref="EngravingUIActions.UnregisterCallbacks(IEngravingUIActions)" />
+        public void RemoveCallbacks(IEngravingUIActions instance)
+        {
+            if (m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="EngravingUIActions.AddCallbacks(IEngravingUIActions)" />
+        /// <seealso cref="EngravingUIActions.RemoveCallbacks(IEngravingUIActions)" />
+        /// <seealso cref="EngravingUIActions.UnregisterCallbacks(IEngravingUIActions)" />
+        public void SetCallbacks(IEngravingUIActions instance)
+        {
+            foreach (var item in m_Wrapper.m_EngravingUIActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="EngravingUIActions" /> instance referencing this action map.
+    /// </summary>
+    public EngravingUIActions @EngravingUI => new EngravingUIActions(this);
     private int m_PCSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1167,6 +1327,13 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleInventory(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Interact" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInteract(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
@@ -1182,5 +1349,20 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "EngravingUI" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="EngravingUIActions.AddCallbacks(IEngravingUIActions)" />
+    /// <seealso cref="EngravingUIActions.RemoveCallbacks(IEngravingUIActions)" />
+    public interface IEngravingUIActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "RotateBlock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRotateBlock(InputAction.CallbackContext context);
     }
 }
