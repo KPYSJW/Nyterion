@@ -20,10 +20,6 @@ namespace Nytherion.Core
             {
                 EventManager.Instance.RegisterEnemyDeathListener(OnEnemyDied);
             }
-            else
-            {
-                Debug.LogError("EventManager.Instance is not available!");
-            }
             
             LoadStage(currentStageIndex);
         }
@@ -35,14 +31,12 @@ namespace Nytherion.Core
             remainingEnemies = stage.useRandomSpawn ? stage.enemyCount : stage.fixedSpawnPoints.Count;
             spawner.currentStageData = stage;
             spawner.SpawnEnemies();
-            Debug.Log($"Stage {stage.stageName} 시작, 적 수: {remainingEnemies}");
         }
         public void OnEnemyDied()
         {
             remainingEnemies--;
             if (remainingEnemies <= 0)
             {
-                Debug.Log($"Stage {stages[currentStageIndex].stageName} 클리어!");
                 StageData stage = stages[currentStageIndex];
                 
                 if(stage.isBossStage)

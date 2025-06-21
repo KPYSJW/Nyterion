@@ -30,7 +30,7 @@ namespace Nytherion.Core
                 if (pool.prefab == null)
                 {
                     Debug.LogWarning($"Pool with tag '{pool.tag}' has a null prefab. Skipping this pool.");
-                    continue; // Skip to the next pool
+                    continue; 
                 }
                 Queue<GameObject> objectPool = new Queue<GameObject>();
                 for (int i = 0; i < pool.size; i++)

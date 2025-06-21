@@ -17,9 +17,7 @@ namespace Nytherion.GamePlay.Characters.Player
             synergyEvaluator = new SynergyEvaluator(synergyTable);
         }
 
-
-
-        public void AddEngraving(EngravingData engraving)//각인 먹으면서 시너지 체크도 같이 
+        public void AddEngraving(EngravingData engraving)
         {
             if(equippedEngravings.Count >= 3)
             {
@@ -50,7 +48,7 @@ namespace Nytherion.GamePlay.Characters.Player
         
         public void EngravingStat(EngravingData engraving)
         {
-            PlayerManager.Instance.playerData.meleeDamage += 1; //플레이어 능력치 올리는 부분 나중에 정리해서 함수로
+            PlayerManager.Instance.playerData.meleeDamage += 1; 
         }
 
     }

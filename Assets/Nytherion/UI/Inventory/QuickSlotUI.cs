@@ -86,7 +86,6 @@ namespace Nytherion.UI.Inventory
                     SetItem(currentItem, currentCount);
                 }
 
-                InventoryManager.Instance.RequestSlotsUpdate();
 
                 OnItemUsed?.Invoke(currentItem, 1);
             }

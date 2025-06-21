@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core;
 using Nytherion.UI.Shop;
 
@@ -14,7 +13,7 @@ namespace Nytherion.UI.Inventory
 
         [Header("UI Panels")]
         [Tooltip("인벤토리 전체를 감싸는 부모 패널")]
-        [SerializeField] private GameObject mainUIPanel; // 기존에 UI 켜고 끌 때 쓰던 패널
+        [SerializeField] private GameObject mainUIPanel;
         [Tooltip("캐릭터 장비창 패널")]
         [SerializeField] private GameObject equipmentPanel;
         [Tooltip("캐릭터 능력치창 패널")]
@@ -23,15 +22,14 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private GameObject inventoryPanel;
         [SerializeField] private InputActionReference toggleInventoryAction;
         [Tooltip("인벤토리 슬롯들이 있는 부모 오브젝트")]
-        [SerializeField] private Transform slotParent; // 인벤토리 슬롯들이 있는 부모 오브젝트
+        [SerializeField] private Transform slotParent;
 
         [Header("Buttons")]
-        [SerializeField] private Button closeButton; // 닫기 버튼
-        [SerializeField] private GameObject tooltipCanvas;
+        [SerializeField] private Button closeButton;
         [SerializeField] private CanvasGroup canvasGroup;
         private bool isOpen = false;
 
-        public event Action<bool> OnInventoryToggled; // true: opened, false: closed
+        public event Action<bool> OnInventoryToggled;
 
         private void Awake()
         {
@@ -40,17 +38,12 @@ namespace Nytherion.UI.Inventory
             HideInventoryUI();
         }
 
-        private void Start()
+        public void Initialize()
         {
             isOpen = false;
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(CloseInventory);
-            }
-
-            if (InventoryManager.Instance != null)
-            {
-                RefreshUI();
             }
         }
 
@@ -59,7 +52,6 @@ namespace Nytherion.UI.Inventory
             if (InventoryManager.Instance != null)
             {
                 InventoryManager.Instance.OnInventoryUpdated += RefreshUI;
-                RefreshUI();
             }
 
             if (toggleInventoryAction != null && toggleInventoryAction.action != null)

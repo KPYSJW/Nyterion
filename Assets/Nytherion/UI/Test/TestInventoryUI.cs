@@ -40,7 +40,6 @@ namespace Nytherion.UI.Test
 
         private void Start()
         {
-            // 버튼 클릭 이벤트 연결
             if (addItem1Button != null) addItem1Button.onClick.AddListener(() => AddTestItem(testItem1));
             if (addItem2Button != null) addItem2Button.onClick.AddListener(() => AddTestItem(testItem2));
             if (addItem3Button != null) addItem3Button.onClick.AddListener(() => AddTestItem(testWeapon));
@@ -51,18 +50,15 @@ namespace Nytherion.UI.Test
             if (loadButton != null) loadButton.onClick.AddListener(LoadInventory);
             if (clearSaveButton != null) clearSaveButton.onClick.AddListener(ClearSaveData);
             
-            // 디버그 버튼 이벤트 연결
             if (debugSaveDataButton != null) debugSaveDataButton.onClick.AddListener(DebugSaveData);
             if (debugItemTableButton != null) debugItemTableButton.onClick.AddListener(DebugItemTable);
             if (debugCurrentInventoryButton != null) debugCurrentInventoryButton.onClick.AddListener(DebugCurrentInventory);
 
-            // 초기 메시지 설정
             ShowStatusMessage("Test UI is ready. Test the inventory!");
         }
 
         private void Update()
         {
-            // 메시지 타이머 업데이트
             if (messageTimer > 0)
             {
                 messageTimer -= Time.deltaTime;
@@ -94,7 +90,6 @@ namespace Nytherion.UI.Test
 
         private void RemoveTestItem1()
         {
-            // 인벤토리에서 아이템 목록 가져오기
             var items = InventoryManager.Instance.GetAllItems();
             
             if (items.Count == 0)
@@ -103,11 +98,9 @@ namespace Nytherion.UI.Test
                 return;
             }
             
-            // 첫 번째 아이템 가져오기
             var firstItem = items.Keys.First();
             int count = items[firstItem];
             
-            // 아이템 삭제 (최대 1개씩)
             int removeCount = Mathf.Min(1, count);
             bool success = InventoryManager.Instance.RemoveItem(firstItem, removeCount);
             
@@ -137,25 +130,18 @@ namespace Nytherion.UI.Test
         {
             try
             {
-                // 인벤토리 로드
                 InventoryManager.Instance.LoadInventory();
                 ShowStatusMessage("Inventory loaded");
                 
-                // InventoryManager에 UI 갱신을 강제하도록 요청
-                Debug.Log("[TestUI] Requesting UI refresh");
-                
-                // InventoryManager에 UI 갱신을 위한 public 메서드가 있다면 호출
                 var forceUpdateMethod = typeof(InventoryManager).GetMethod("ForceUpdateUI", 
                     System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
                     
                 if (forceUpdateMethod != null)
                 {
                     forceUpdateMethod.Invoke(InventoryManager.Instance, null);
-                    Debug.Log("[TestUI] UI refresh requested");
                 }
                 else
                 {
-                    // ForceUpdateUI 메서드가 없으면 직접 RefreshUI 호출 시도
                     var uiField = typeof(InventoryManager).GetField("OnInventoryUpdated", 
                         System.Reflection.BindingFlags.NonPublic | 
                         System.Reflection.BindingFlags.Instance | 
@@ -166,19 +152,13 @@ namespace Nytherion.UI.Test
                         var eventInstance = uiField.GetValue(InventoryManager.Instance) as System.Action;
                         if (eventInstance != null)
                         {
-                            Debug.Log("[TestUI] Forcing UI refresh after load");
                             eventInstance.Invoke();
                         }
-                    }
-                    else
-                    {
-                        Debug.LogWarning("[TestUI] Could not find a way to force UI refresh");
                     }
                 }
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"[TestUI] Error during load: {e.Message}");
                 ShowStatusMessage($"Load failed: {e.Message}");
             }
         }
@@ -197,33 +177,23 @@ namespace Nytherion.UI.Test
                 statusText.text = message;
                 currentMessage = message;
                 messageTimer = messageDuration;
-                
-                // 콘솔에도 로그 출력 (에디터에서 확인용)
-                Debug.Log($"[TestUI] {message}");
             }
         }
 
-        // ===== 디버그 메서드들 =====
-
-        /// <summary>
-        /// 저장된 데이터를 디버그 콘솔에 출력합니다.
-        /// </summary>
+       
         public void DebugSaveData()
         {
             string saveKey = "Inventory_DefaultSlot";
             if (PlayerPrefs.HasKey(saveKey))
             {
                 string saveJson = PlayerPrefs.GetString(saveKey);
-                Debug.Log($"=== 저장된 데이터 ===\n{saveJson}");
                 
                 try
                 {
-                    // JSON 파싱 시도
                     var saveData = JsonUtility.FromJson<SaveDataWrapper>(saveJson);
                     if (saveData != null && !string.IsNullOrEmpty(saveData.data))
                     {
                         string decrypted = new PlayerPrefsInventorySaveService().Decrypt(saveData.data);
-                        Debug.Log($"=== 복호화된 데이터 ===\n{decrypted}");
                     }
                 }
                 catch (System.Exception e)
@@ -237,9 +207,6 @@ namespace Nytherion.UI.Test
             }
         }
         
-        /// <summary>
-        /// 아이템 테이블의 내용을 디버그 콘솔에 출력합니다.
-        /// </summary>
         public void DebugItemTable()
         {
             if (InventoryManager.Instance == null)
@@ -248,7 +215,6 @@ namespace Nytherion.UI.Test
                 return;
             }
             
-            // 리플렉션을 사용하여 itemTable에 접근
             var field = typeof(InventoryManager).GetField("itemTable", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 
@@ -274,9 +240,6 @@ namespace Nytherion.UI.Test
             }
         }
         
-        /// <summary>
-        /// 현재 인벤토리의 내용을 디버그 콘솔에 출력합니다.
-        /// </summary>
         public void DebugCurrentInventory()
         {
             if (InventoryManager.Instance == null)
@@ -285,7 +248,6 @@ namespace Nytherion.UI.Test
                 return;
             }
             
-            // 리플렉션을 사용하여 items에 접근
             var field = typeof(InventoryManager).GetField("items", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 
@@ -311,7 +273,6 @@ namespace Nytherion.UI.Test
             }
         }
         
-        // SaveData 래퍼 클래스 (PlayerPrefsInventorySaveService의 내부 클래스와 동일해야 함)
         [System.Serializable]
         private class SaveDataWrapper
         {

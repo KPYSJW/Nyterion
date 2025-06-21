@@ -21,6 +21,10 @@ MonoBehaviour:
     Attack Speed -10%'
   isStackable: 1
   maxStack: 99
+  baseValue: 10
+  isUsable: 0
+  useEffectPrefab: {fileID: 0}
+  useSound: {fileID: 0}
   weaponType: 0
   weaponName: CursedBlade
   damage: 10
@@ -28,3 +32,4 @@ MonoBehaviour:
   cooldown: 1
   projectilePrefab: {fileID: 0}
   isCursed: 0
+  rarity: 2

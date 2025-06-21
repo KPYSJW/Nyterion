@@ -33,11 +33,9 @@ namespace Nytherion.UI.Inventory.Utils
 
             if (sourceSlot == null || sourceSlot.IsEmpty) return;
 
-            // UI 요소들에 대한 레이캐스트 수행
             var results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, results);
 
-            // 타겟 슬롯 찾기
             BaseSlotUI targetSlot = null;
             foreach (var result in results)
             {
@@ -51,12 +49,10 @@ namespace Nytherion.UI.Inventory.Utils
 
             if (targetSlot != null)
             {
-                // 유효한 타겟 슬롯이 있는 경우 아이템 이동/교체 시도
                 SlotTransferHelper.TransferItem(sourceSlot, targetSlot);
             }
             else
             {
-                // UI 외부에 드롭된 경우 (아이템 버리기 등)
                 SlotTransferHelper.HandleDropOnEmptySpace(sourceSlot, eventData);
             }
         }

@@ -2,36 +2,31 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
 using Nytherion.GamePlay.Engravings;
+using Nytherion.Core;
 
 namespace Nytherion.UI.EngravingBoard
 {
     public class EngravingBlockDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         public EngravingBlock blockData;
-        public Image iconImage;
         public GameObject cellPrefab;
-        private Transform homeParent;
-        private int homeSiblingIndex;
+        private Transform originalParent;
         private Canvas canvas;
         private RectTransform rectTransform;
         private CanvasGroup canvasGroup;
-
         private PlayerAction playerAction;
 
         private Vector2Int? lastValidGridPosition;
-        private bool isPlaced = false;
+        public bool isPlaced = false;
         private bool isBeingDragged = false;
+
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
-            canvas = GetComponentInParent<Canvas>();
+            canvas = GetComponentInParent<Canvas>().rootCanvas;
             canvasGroup = GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-            {
-                canvasGroup = gameObject.AddComponent<CanvasGroup>();
-            }
+            if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
             playerAction = new PlayerAction();
         }
@@ -41,82 +36,47 @@ namespace Nytherion.UI.EngravingBoard
             playerAction.EngravingUI.Enable();
             playerAction.EngravingUI.RotateBlock.performed += OnRotate;
         }
+
         private void OnDisable()
         {
-            playerAction.EngravingUI.RotateBlock.performed -= OnRotate;
-            playerAction.EngravingUI.Disable();
+            if (playerAction != null) playerAction.EngravingUI.Disable();
         }
+
         private void OnRotate(InputAction.CallbackContext context)
         {
-            if (isBeingDragged)
-            {
-                RotateAndRebuildVisuals();
-            }
+            if (isBeingDragged) RotateAndRebuildVisuals();
         }
+
         public void OnBeginDrag(PointerEventData eventData)
         {
-            homeParent = transform.parent;
-            homeSiblingIndex = transform.GetSiblingIndex();
+            if (blockData == null) return;
+            isBeingDragged = true;
 
             if (isPlaced)
             {
-                EngravingGridUI.Instance.RemoveBlockFromGrid(blockData.BlockId);
-                isPlaced = false;
+                EngravingManager.Instance.PickUpFromGrid(blockData);
+            }
+            else
+            {
+                EngravingManager.Instance.PickUpFromStorage(blockData);
             }
 
-            transform.SetParent(canvas.transform, true);
+            transform.SetParent(EngravingGridUI.Instance.rootCanvas.transform, true);
             canvasGroup.blocksRaycasts = false;
-            lastValidGridPosition = null;
-            isBeingDragged = true;
         }
+
         public void OnDrag(PointerEventData eventData)
         {
-            rectTransform.position = eventData.position;
+            if (isBeingDragged) rectTransform.position = eventData.position;
         }
+
         private void Update()
         {
             if (!isBeingDragged) return;
 
-            UpdatePlacementPreview();
-        }
-        public void OnEndDrag(PointerEventData eventData)
-        {
-            isBeingDragged = false;
-
-            canvasGroup.blocksRaycasts = true;
-            EngravingGridUI.Instance.ClearPreview();
-
-            if (lastValidGridPosition.HasValue && EngravingGridUI.Instance.TryPlaceBlockAt(blockData, lastValidGridPosition.Value))
-            {
-                transform.SetParent(EngravingGridUI.Instance.placedBlocksContainer, true);
-                Vector2 finalPosition = EngravingGridUI.Instance.GetLocalPositionFromGridCell(lastValidGridPosition.Value);
-                rectTransform.anchoredPosition = finalPosition;
-                isPlaced = true;
-
-                if (homeParent != null && homeParent.parent == EngravingGridUI.Instance.blockStorageParent)
-                {
-                    Destroy(homeParent.gameObject);
-                }
-                return;
-            }
-
-            if (homeParent != null && homeParent.parent == EngravingGridUI.Instance.blockStorageParent)
-            {
-                transform.SetParent(homeParent, false);
-                rectTransform.anchoredPosition = Vector2.zero;
-                isPlaced = false;
-            }
-            else
-            {
-                CreateNewStorageSlot();
-                isPlaced = false;
-            }
-        }
-        private void UpdatePlacementPreview()
-        {
+            // 배치 가능 여부 미리보기 표시
             Vector2Int? gridPos = EngravingGridUI.Instance.CurrentGridPos;
-
-            if (gridPos.HasValue && EngravingGridUI.Instance.CanPlacePreview(blockData, gridPos.Value))
+            if (gridPos.HasValue && EngravingManager.Instance.CanPlaceBlock(blockData, gridPos.Value.y, gridPos.Value.x))
             {
                 EngravingGridUI.Instance.ShowPlacementPreview(blockData, gridPos.Value);
                 lastValidGridPosition = gridPos.Value;
@@ -127,50 +87,69 @@ namespace Nytherion.UI.EngravingBoard
                 lastValidGridPosition = null;
             }
         }
-        public void BuildVisualFromShape()
+
+        public void OnEndDrag(PointerEventData eventData)
         {
-            foreach (Transform child in transform)
+            if (!isBeingDragged) return;
+            isBeingDragged = false;
+
+            canvasGroup.blocksRaycasts = true;
+            EngravingGridUI.Instance.ClearPreview();
+
+            bool placedSuccessfully = false;
+            if (lastValidGridPosition.HasValue)
             {
-                Destroy(child.gameObject);
+                if (EngravingManager.Instance.TryPlaceBlock(blockData, lastValidGridPosition.Value))
+                {
+                    placedSuccessfully = true;
+                }
             }
 
-            GridLayoutGroup gridLayout = EngravingGridUI.Instance.gridRoot.GetComponent<GridLayoutGroup>();
+            if (!placedSuccessfully)
+            {
+                EngravingManager.Instance.ReturnToStorage(blockData);
+            }
+
+            Destroy(gameObject);
+        }
+
+        private void CreateNewStorageSlot()
+        {
+            GameObject slotObj = Instantiate(EngravingGridUI.Instance.storageSlotPrefab, EngravingGridUI.Instance.blockStorageParent);
+            transform.SetParent(slotObj.transform, false);
+
+            // 시각적 중심 보정
+            var gridLayout = EngravingGridUI.Instance.gridRoot.GetComponent<GridLayoutGroup>();
+            Vector2 cellSize = gridLayout.cellSize;
+            Vector2 spacing = gridLayout.spacing;
+            Vector2 visualCenterOffset = blockData.GetVisualCenterPixelOffset(cellSize, spacing);
+            rectTransform.anchoredPosition = -visualCenterOffset;
+        }
+        public void BuildVisualFromShape()
+        {
+            foreach (Transform child in transform) Destroy(child.gameObject);
+
+            if (EngravingGridUI.Instance == null || EngravingGridUI.Instance.gridRoot == null) return;
+
+            var gridLayout = EngravingGridUI.Instance.gridRoot.GetComponent<GridLayoutGroup>();
             Vector2 cellSize = gridLayout.cellSize;
             Vector2 spacing = gridLayout.spacing;
 
             foreach (Vector2Int offset in blockData.Shape)
             {
                 GameObject cell = Instantiate(cellPrefab, transform);
-                RectTransform rt = cell.GetComponent<RectTransform>();
+                var rt = cell.GetComponent<RectTransform>();
                 rt.sizeDelta = cellSize;
                 rt.anchoredPosition = new Vector2(offset.x * (cellSize.x + spacing.x), -offset.y * (cellSize.y + spacing.y));
-                Image img = cell.GetComponent<Image>();
+                var img = cell.GetComponent<Image>();
                 img.color = (offset == Vector2Int.zero) ? Color.red : Color.white;
             }
         }
+
         public void RotateAndRebuildVisuals()
         {
             blockData.Rotate();
             BuildVisualFromShape();
-
-            Debug.Log("블록이 회전되었고, 중심점이 재조정되었습니다.");
         }
-
-        private void CreateNewStorageSlot()
-        {
-            Transform storageParent = EngravingGridUI.Instance.blockStorageParent;
-            GameObject slotObj = Object.Instantiate(EngravingGridUI.Instance.storageSlotPrefab, storageParent);
-
-            transform.SetParent(slotObj.transform, false);
-            RectTransform rt = GetComponent<RectTransform>();
-            rt.anchoredPosition = Vector2.zero;
-
-            homeParent = slotObj.transform;
-            homeSiblingIndex = 0;
-
-            Debug.Log("블럭이 보관소 슬롯으로 복귀되었습니다.");
-        }
-
-
     }
 }

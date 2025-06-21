@@ -11,7 +11,6 @@ namespace Nytherion.GamePlay.Characters.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        // --- 인스펙터 설정 변수들 ---
         [Header("Components")]
         [Tooltip("물리 효과를 위한 Rigidbody2D 컴포넌트")]
         [SerializeField] private Rigidbody2D rb;
@@ -24,18 +23,12 @@ namespace Nytherion.GamePlay.Characters.Player
         [Tooltip("상호작용 가능한 오브젝트들의 레이어")]
         [SerializeField] private LayerMask interactableLayer;
 
-
-        // --- 내부 변수들 ---
         private bool isFacingRight = true;
         private bool isDashing = false;
         private float lastDashTime = -999f;
 
-
-        // --- 이벤트 구독 및 해제 ---
-
         private void OnEnable()
         {
-            // InputManager가 존재할 때만 이벤트 구독
             if (InputManager.Instance != null)
             {
                 InputManager.Instance.onInteract += OnInteract;
@@ -49,9 +42,6 @@ namespace Nytherion.GamePlay.Characters.Player
                 InputManager.Instance.onInteract -= OnInteract;
             }
         }
-
-
-        // --- 프레임별 로직 ---
 
         private void Update()
         {
@@ -67,9 +57,6 @@ namespace Nytherion.GamePlay.Characters.Player
 
             HandleMovement();
         }
-
-
-        // --- 주요 기능별 메서드 ---
 
         private void HandleMovement()
         {

@@ -10,13 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: TestEngraving
+  m_Name: TestEngraving(Legendary)
   m_EditorClassIdentifier: 
-  engravingName: TestEngraving
+  engravingName: TestEngraving2
   description: 
+  Image: {fileID: 0}
+  rarity: 4
   isCursed: 0
+  shape:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 1, y: 1}
+  - {x: 2, y: 0}
+  - {x: 2, y: 1}
   synergyType: 0
   attackMultiplier: 1
   cooldownMultiplier: 1
   speedMultiplier: 1
-  Image: {fileID: 21300000, guid: 10c68a2449febdd418c26ba918d11d74, type: 3}

@@ -48,6 +48,11 @@ namespace Nytherion.GamePlay.Characters.Player
             playerHealth = GetComponent<PlayerHealth>();
             currentHP = playerHealth.CurrentHealth;
         }
+
+        public void Initialize()
+        {
+            
+        }
     }
 }
 

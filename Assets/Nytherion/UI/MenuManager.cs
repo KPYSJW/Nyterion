@@ -27,27 +27,23 @@ namespace Nytherion.UI
 
         private void OnEnable()
         {
-            // 버튼 이벤트 연결
             resumeButton.onClick.AddListener(ResumeGame);
             settingsButton.onClick.AddListener(OpenSettings);
             controlButton.onClick.AddListener(OpenControls);
             mainMenuButton.onClick.AddListener(ReturnToMainMenu);
 
-            // 입력 액션 설정
             if (toggleMenuAction != null)
             {
                 toggleMenuAction.action.Enable();
                 toggleMenuAction.action.performed += OnToggleMenu;
             }
 
-            // 초기 상태 설정
             menuUI.SetActive(false);
         }
 
 
         private void OnDisable()
         {
-            // 입력 액션 정리
             if (toggleMenuAction != null && toggleMenuAction.action != null)
             {
                 toggleMenuAction.action.performed -= OnToggleMenu;

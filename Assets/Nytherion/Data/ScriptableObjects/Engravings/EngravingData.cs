@@ -2,14 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Data.Enums;
-public enum EngravingRarity
-{
-    Common,
-    Uncommon,
-    Rare,
-    Epic,
-    Legendary
-}
+
 namespace Nytherion.Data.ScriptableObjects.Engravings
 {
     [CreateAssetMenu(fileName = "NewEngravingData", menuName = "Data/Engraving")]
@@ -19,7 +12,7 @@ namespace Nytherion.Data.ScriptableObjects.Engravings
         public string engravingName;
         [TextArea] public string description;
         public Sprite Image;
-        public EngravingRarity rarity;
+        public Rarity rarity;
         public bool isCursed;
 
         [Header("각인 모양 (블록 좌표)")]

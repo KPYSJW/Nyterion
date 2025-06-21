@@ -559,6 +559,24 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleEngraving"",
+                    ""type"": ""Button"",
+                    ""id"": ""49b55603-b93e-432b-adb8-0ef36d34454a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Close"",
+                    ""type"": ""Button"",
+                    ""id"": ""fdc2b7cf-cbfe-4afc-b855-78bdcdc90e4f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -570,6 +588,76 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""RotateBlock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""307b33f2-76da-494f-994d-a783e32e8dac"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleEngraving"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""275eb098-1dc5-4838-a496-5c96543f8939"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Close"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Gacha UI"",
+            ""id"": ""6bce68d8-4ea6-44f2-8094-303459950b69"",
+            ""actions"": [
+                {
+                    ""name"": ""ToggleUI"",
+                    ""type"": ""Button"",
+                    ""id"": ""fdfc4d64-2343-42f3-9aba-d735696e1066"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Close"",
+                    ""type"": ""Button"",
+                    ""id"": ""34f41d4f-4b01-4b34-8b40-eb6c75ddce19"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""ad460197-4110-4c5c-974d-7bc8e27169ae"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleUI"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""92ce3ce8-01e4-4907-86fa-7b85ea8e25bf"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Close"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -617,6 +705,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         // EngravingUI
         m_EngravingUI = asset.FindActionMap("EngravingUI", throwIfNotFound: true);
         m_EngravingUI_RotateBlock = m_EngravingUI.FindAction("RotateBlock", throwIfNotFound: true);
+        m_EngravingUI_ToggleEngraving = m_EngravingUI.FindAction("ToggleEngraving", throwIfNotFound: true);
+        m_EngravingUI_Close = m_EngravingUI.FindAction("Close", throwIfNotFound: true);
+        // Gacha UI
+        m_GachaUI = asset.FindActionMap("Gacha UI", throwIfNotFound: true);
+        m_GachaUI_ToggleUI = m_GachaUI.FindAction("ToggleUI", throwIfNotFound: true);
+        m_GachaUI_Close = m_GachaUI.FindAction("Close", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -624,6 +718,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerAction.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerAction.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_EngravingUI.enabled, "This will cause a leak and performance issues, PlayerAction.EngravingUI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_GachaUI.enabled, "This will cause a leak and performance issues, PlayerAction.GachaUI.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1090,6 +1185,8 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_EngravingUI;
     private List<IEngravingUIActions> m_EngravingUIActionsCallbackInterfaces = new List<IEngravingUIActions>();
     private readonly InputAction m_EngravingUI_RotateBlock;
+    private readonly InputAction m_EngravingUI_ToggleEngraving;
+    private readonly InputAction m_EngravingUI_Close;
     /// <summary>
     /// Provides access to input actions defined in input action map "EngravingUI".
     /// </summary>
@@ -1105,6 +1202,14 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "EngravingUI/RotateBlock".
         /// </summary>
         public InputAction @RotateBlock => m_Wrapper.m_EngravingUI_RotateBlock;
+        /// <summary>
+        /// Provides access to the underlying input action "EngravingUI/ToggleEngraving".
+        /// </summary>
+        public InputAction @ToggleEngraving => m_Wrapper.m_EngravingUI_ToggleEngraving;
+        /// <summary>
+        /// Provides access to the underlying input action "EngravingUI/Close".
+        /// </summary>
+        public InputAction @Close => m_Wrapper.m_EngravingUI_Close;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1134,6 +1239,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @RotateBlock.started += instance.OnRotateBlock;
             @RotateBlock.performed += instance.OnRotateBlock;
             @RotateBlock.canceled += instance.OnRotateBlock;
+            @ToggleEngraving.started += instance.OnToggleEngraving;
+            @ToggleEngraving.performed += instance.OnToggleEngraving;
+            @ToggleEngraving.canceled += instance.OnToggleEngraving;
+            @Close.started += instance.OnClose;
+            @Close.performed += instance.OnClose;
+            @Close.canceled += instance.OnClose;
         }
 
         /// <summary>
@@ -1148,6 +1259,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @RotateBlock.started -= instance.OnRotateBlock;
             @RotateBlock.performed -= instance.OnRotateBlock;
             @RotateBlock.canceled -= instance.OnRotateBlock;
+            @ToggleEngraving.started -= instance.OnToggleEngraving;
+            @ToggleEngraving.performed -= instance.OnToggleEngraving;
+            @ToggleEngraving.canceled -= instance.OnToggleEngraving;
+            @Close.started -= instance.OnClose;
+            @Close.performed -= instance.OnClose;
+            @Close.canceled -= instance.OnClose;
         }
 
         /// <summary>
@@ -1181,6 +1298,113 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="EngravingUIActions" /> instance referencing this action map.
     /// </summary>
     public EngravingUIActions @EngravingUI => new EngravingUIActions(this);
+
+    // Gacha UI
+    private readonly InputActionMap m_GachaUI;
+    private List<IGachaUIActions> m_GachaUIActionsCallbackInterfaces = new List<IGachaUIActions>();
+    private readonly InputAction m_GachaUI_ToggleUI;
+    private readonly InputAction m_GachaUI_Close;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Gacha UI".
+    /// </summary>
+    public struct GachaUIActions
+    {
+        private @PlayerAction m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public GachaUIActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "GachaUI/ToggleUI".
+        /// </summary>
+        public InputAction @ToggleUI => m_Wrapper.m_GachaUI_ToggleUI;
+        /// <summary>
+        /// Provides access to the underlying input action "GachaUI/Close".
+        /// </summary>
+        public InputAction @Close => m_Wrapper.m_GachaUI_Close;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_GachaUI; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="GachaUIActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(GachaUIActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="GachaUIActions" />
+        public void AddCallbacks(IGachaUIActions instance)
+        {
+            if (instance == null || m_Wrapper.m_GachaUIActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_GachaUIActionsCallbackInterfaces.Add(instance);
+            @ToggleUI.started += instance.OnToggleUI;
+            @ToggleUI.performed += instance.OnToggleUI;
+            @ToggleUI.canceled += instance.OnToggleUI;
+            @Close.started += instance.OnClose;
+            @Close.performed += instance.OnClose;
+            @Close.canceled += instance.OnClose;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="GachaUIActions" />
+        private void UnregisterCallbacks(IGachaUIActions instance)
+        {
+            @ToggleUI.started -= instance.OnToggleUI;
+            @ToggleUI.performed -= instance.OnToggleUI;
+            @ToggleUI.canceled -= instance.OnToggleUI;
+            @Close.started -= instance.OnClose;
+            @Close.performed -= instance.OnClose;
+            @Close.canceled -= instance.OnClose;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="GachaUIActions.UnregisterCallbacks(IGachaUIActions)" />.
+        /// </summary>
+        /// <seealso cref="GachaUIActions.UnregisterCallbacks(IGachaUIActions)" />
+        public void RemoveCallbacks(IGachaUIActions instance)
+        {
+            if (m_Wrapper.m_GachaUIActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="GachaUIActions.AddCallbacks(IGachaUIActions)" />
+        /// <seealso cref="GachaUIActions.RemoveCallbacks(IGachaUIActions)" />
+        /// <seealso cref="GachaUIActions.UnregisterCallbacks(IGachaUIActions)" />
+        public void SetCallbacks(IGachaUIActions instance)
+        {
+            foreach (var item in m_Wrapper.m_GachaUIActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_GachaUIActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="GachaUIActions" /> instance referencing this action map.
+    /// </summary>
+    public GachaUIActions @GachaUI => new GachaUIActions(this);
     private int m_PCSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1364,5 +1588,41 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRotateBlock(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleEngraving" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleEngraving(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Close" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClose(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Gacha UI" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="GachaUIActions.AddCallbacks(IGachaUIActions)" />
+    /// <seealso cref="GachaUIActions.RemoveCallbacks(IGachaUIActions)" />
+    public interface IGachaUIActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "ToggleUI" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleUI(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Close" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClose(InputAction.CallbackContext context);
     }
 }

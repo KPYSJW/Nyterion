@@ -24,6 +24,10 @@ namespace Nytherion.Core
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+        public void Initialize()
+        {
+            
+        }
 
         private void OnEnable()
         {
