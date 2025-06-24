@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742e9e1339086c94b85fd539b07b2450, type: 3}
   m_Name: test1
   m_EditorClassIdentifier: 
-  iterations: 50
-  walkLength: 30
-  startRandomlyEachIteration: 1
+  desiredNumberOfRooms: 30
+  minRoomSize: {x: 20, y: 20}
+  maxRoomSize: {x: 30, y: 30}
+  numberOfBossRooms: 1
+  numberOfShopRooms: 2
+  numberOfItemRooms: 2
+  compoundRoomChance: 1
+  bossRoomPrefab: {fileID: 8248369337269133653, guid: 227752a830facb24a806d9acbf79c15e, type: 3}
+  bossRoomSize: {x: 30, y: 30}
