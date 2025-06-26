@@ -12,10 +12,18 @@ namespace Nytherion.Core
     public class EngravingManager : MonoBehaviour
     {
         public static EngravingManager Instance { get; private set; }
+
         [Header("Database")]
         [SerializeField] private EngravingDatabaseSO engravingDatabaseSO;
 
+        [Header("Grid Settings")]
+        [SerializeField] private int gridRows = 5;
+        [SerializeField] private int gridColumns = 4;
+        public int GridRows => gridRows;
+        public int GridColumns => gridColumns;
+
         public event Action OnInitialized;
+        public event Action OnEngravingStateChanged;
 
         private EngravingGrid logicGrid;
         private IEngravingSaveService saveService;
@@ -23,45 +31,127 @@ namespace Nytherion.Core
         private List<EngravingBlock> storageBlocks;
         private Dictionary<string, Vector2Int> placedBlockPositions;
 
-        [Header("Grid Settings")]
-        [SerializeField] private int gridRows = 10;
-        [SerializeField] private int gridColumns = 10;
-        public int GridRows => gridRows;
-        public int GridColumns => gridColumns;
-        public event Action OnEngravingStateChanged;
+        // 드래그 상태 관리를 위한 변수
+        private EngravingBlock currentlyDraggedBlock;
+        private bool isDraggingFromGrid;
+        private Vector2Int dragStartPosition;
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
         }
+
         public void Initialize()
         {
-
             logicGrid = new EngravingGrid(gridRows, gridColumns);
             engravingDatabase = new Dictionary<string, EngravingData>();
             storageBlocks = new List<EngravingBlock>();
             placedBlockPositions = new Dictionary<string, Vector2Int>();
             saveService = new PlayerPrefsEngravingSaveService();
-
             LoadEngravingDatabaseFromSO();
             LoadGrid();
-
             OnInitialized?.Invoke();
         }
+
         private void OnDestroy()
         {
             SaveGrid();
         }
 
-        private void LoadEngravingDatabaseFromSO()
+        #region 드래그 앤 드롭 관리 (최종 수정 로직)
+
+        public void StartDraggingFromGrid(EngravingBlock block, Vector2Int gridPosition)
         {
-            if (engravingDatabaseSO == null)
+            if (block == null) return;
+            currentlyDraggedBlock = block;
+            isDraggingFromGrid = true;
+            dragStartPosition = gridPosition;
+
+            logicGrid.ClearBlockAt(gridPosition.y, gridPosition.x);
+            placedBlockPositions.Remove(block.BlockId);
+            logicGrid.RecalculateAllInfluences();
+            OnEngravingStateChanged?.Invoke();
+        }
+
+        public void StartDraggingFromStorage(EngravingBlock block)
+        {
+            if (block == null) return;
+            currentlyDraggedBlock = block;
+            isDraggingFromGrid = false;
+            storageBlocks.RemoveAll(b => b.BlockId == block.BlockId);
+            OnEngravingStateChanged?.Invoke();
+        }
+
+        public void EndDrag(Vector2Int? dropGridPosition)
+        {
+            if (currentlyDraggedBlock == null) return;
+
+            // Case 1: 유효한 그리드 칸에 놓았을 경우
+            if (dropGridPosition.HasValue && logicGrid.CanPlaceBlock(dropGridPosition.Value.y, dropGridPosition.Value.x))
             {
-                return;
+                PlaceBlockOnGrid(currentlyDraggedBlock, dropGridPosition.Value);
+            }
+            // Case 2: 그리드 밖(보관소 등)에 놓았을 경우
+            else if (!dropGridPosition.HasValue)
+            {
+                MoveToStorage(currentlyDraggedBlock);
+            }
+            // Case 3: 유효하지 않은 그리드 칸에 놓았을 경우
+            else
+            {
+                ReturnDraggedBlockToOrigin();
             }
 
-            foreach (EngravingData engraving in engravingDatabaseSO.allEngravings)
+            logicGrid.RecalculateAllInfluences();
+            currentlyDraggedBlock = null;
+            OnEngravingStateChanged?.Invoke();
+            SaveGrid();
+        }
+
+        #endregion
+
+        #region 내부 로직 메서드
+
+        private void PlaceBlockOnGrid(EngravingBlock block, Vector2Int position)
+        {
+            logicGrid.PlaceBlock(block, position.y, position.x);
+            placedBlockPositions.Add(block.BlockId, position);
+        }
+
+        private void ReturnDraggedBlockToOrigin()
+        {
+            if (isDraggingFromGrid)
+            {
+                PlaceBlockOnGrid(currentlyDraggedBlock, dragStartPosition);
+            }
+            else
+            {
+                MoveToStorage(currentlyDraggedBlock);
+            }
+        }
+
+        private void MoveToStorage(EngravingBlock block)
+        {
+            if (!storageBlocks.Any(b => b.BlockId == block.BlockId))
+            {
+                storageBlocks.Add(block);
+            }
+        }
+        
+        public InfluenceType GetInfluenceAt(int row, int col)
+        {
+            return logicGrid?.GetInfluenceAt(row, col) ?? InfluenceType.None;
+        }
+
+        #endregion
+
+        #region 데이터 로드/저장 및 유틸리티
+        
+        private void LoadEngravingDatabaseFromSO()
+        {
+            if (engravingDatabaseSO == null) return;
+            foreach (var engraving in engravingDatabaseSO.allEngravings)
             {
                 if (engraving != null && !engravingDatabase.ContainsKey(engraving.engravingName))
                 {
@@ -72,72 +162,17 @@ namespace Nytherion.Core
 
         public IEnumerable<EngravingBlock> GetStorageBlocks() => storageBlocks;
         public IEnumerable<KeyValuePair<string, Vector2Int>> GetPlacedBlocks() => placedBlockPositions;
-        public EngravingData GetEngravingData(string id)
-        {
-            engravingDatabase.TryGetValue(id, out EngravingData data);
-            return data;
-        }
+
         public EngravingBlock GetBlockByID(string id)
         {
-            EngravingBlock block = storageBlocks.FirstOrDefault(b => b.BlockId == id);
-            if (block != null) return block;
+            var blockInStorage = storageBlocks.FirstOrDefault(b => b.BlockId == id);
+            if (blockInStorage != null) return blockInStorage;
 
-            if (placedBlockPositions.ContainsKey(id))
+            if (placedBlockPositions.TryGetValue(id, out var pos))
             {
-                Vector2Int pos = placedBlockPositions[id];
                 return logicGrid.GetBlockAt(pos.y, pos.x);
             }
             return null;
-        }
-
-        public void PickUpFromStorage(EngravingBlock block)
-        {
-            var blockToRemove = storageBlocks.FirstOrDefault(b => b.BlockId == block.BlockId);
-            if (blockToRemove != null)
-            {
-                storageBlocks.Remove(blockToRemove);
-                SaveGrid();
-            }
-        }
-
-        public void PickUpFromGrid(EngravingBlock block)
-        {
-            if (placedBlockPositions.TryGetValue(block.BlockId, out Vector2Int position))
-            {
-                foreach (var offset in block.Shape)
-                {
-                    logicGrid.PlaceBlock(null, position.y + offset.y, position.x + offset.x);
-                }
-                placedBlockPositions.Remove(block.BlockId);
-                SaveGrid();
-            }
-        }
-        public bool TryPlaceBlock(EngravingBlock block, Vector2Int position)
-        {
-            if (logicGrid.CanPlaceBlock(block, position.y, position.x))
-            {
-                logicGrid.PlaceBlock(block, position.y, position.x);
-                placedBlockPositions[block.BlockId] = position;
-                OnEngravingStateChanged?.Invoke();
-                SaveGrid();
-                return true;
-            }
-            return false;
-        }
-
-        public void ReturnToStorage(EngravingBlock block)
-        {
-            if (!storageBlocks.Any(b => b.BlockId == block.BlockId))
-            {
-                storageBlocks.Add(block);
-            }
-            OnEngravingStateChanged?.Invoke();
-            SaveGrid();
-        }
-
-        public bool CanPlaceBlock(EngravingBlock block, int row, int col)
-        {
-            return logicGrid.CanPlaceBlock(block, row, col);
         }
 
         public void AddNewEngravingToStorage(EngravingData data)
@@ -145,8 +180,8 @@ namespace Nytherion.Core
             if (data == null) return;
             if (storageBlocks.Any(b => b.BlockId == data.engravingName) || placedBlockPositions.ContainsKey(data.engravingName)) return;
 
-            EngravingData instanceData = UnityEngine.Object.Instantiate(data);
-            EngravingBlock newBlock = new EngravingBlock(instanceData);
+            var instanceData = Instantiate(data);
+            var newBlock = new EngravingBlock(instanceData);
             storageBlocks.Add(newBlock);
             OnEngravingStateChanged?.Invoke();
             SaveGrid();
@@ -154,76 +189,69 @@ namespace Nytherion.Core
 
         public void SaveGrid()
         {
-            EngravingGridState state = new EngravingGridState();
-            foreach (KeyValuePair<string, Vector2Int> pair in placedBlockPositions)
+            var state = new EngravingGridState();
+            foreach (var pair in placedBlockPositions)
             {
-                EngravingBlock block = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
-                if (block != null)
+                state.placedBlocks.Add(new EngravingGridState.SavedEngravingBlock
                 {
-                    state.placedBlocks.Add(new EngravingGridState.SavedEngravingBlock { engravingId = block.BlockId, gridRow = pair.Value.y, gridCol = pair.Value.x, shape = block.Shape });
-                }
+                    engravingId = pair.Key,
+                    gridRow = pair.Value.y,
+                    gridCol = pair.Value.x
+                });
             }
-            foreach (EngravingBlock block in storageBlocks)
+            foreach (var block in storageBlocks)
             {
-                state.placedBlocks.Add(new EngravingGridState.SavedEngravingBlock { engravingId = block.BlockId, gridRow = -1, gridCol = -1, shape = block.Shape });
+                state.placedBlocks.Add(new EngravingGridState.SavedEngravingBlock
+                {
+                    engravingId = block.BlockId,
+                    gridRow = -1,
+                    gridCol = -1
+                });
             }
-
-            string json = JsonUtility.ToJson(state, true);
-
             saveService.SaveEngravings(state);
         }
+
         public void LoadGrid()
         {
-            EngravingGridState state = saveService.LoadEngravings();
+            var state = saveService.LoadEngravings();
             logicGrid.Clear();
             storageBlocks.Clear();
             placedBlockPositions.Clear();
 
-            HashSet<string> loadedEngravingIds = new HashSet<string>();
+            if (state == null) return;
 
-            if (state != null && state.placedBlocks.Count > 0)
+            foreach (var savedBlock in state.placedBlocks)
             {
-                foreach (var savedBlock in state.placedBlocks)
+                if (engravingDatabase.TryGetValue(savedBlock.engravingId, out var originalData))
                 {
-                    if (engravingDatabase.TryGetValue(savedBlock.engravingId, out EngravingData originalData))
-                    {
-                        loadedEngravingIds.Add(savedBlock.engravingId);
-                        EngravingData instanceData = Instantiate(originalData);
-                        instanceData.shape = new List<Vector2Int>(savedBlock.shape);
-                        EngravingBlock newBlock = new EngravingBlock(instanceData);
+                    var instanceData = Instantiate(originalData);
+                    var newBlock = new EngravingBlock(instanceData);
 
-                        if (savedBlock.gridRow == -1)
-                        {
+                    if (savedBlock.gridRow == -1)
+                    {
+                        if (!storageBlocks.Any(b => b.BlockId == newBlock.BlockId))
                             storageBlocks.Add(newBlock);
+                    }
+                    else
+                    {
+                        var pos = new Vector2Int(savedBlock.gridCol, savedBlock.gridRow);
+                        if (logicGrid.CanPlaceBlock(pos.y, pos.x))
+                        {
+                            PlaceBlockOnGrid(newBlock, pos);
                         }
                         else
                         {
-                            if (logicGrid.CanPlaceBlock(newBlock, savedBlock.gridRow, savedBlock.gridCol))
-                            {
-                                logicGrid.PlaceBlock(newBlock, savedBlock.gridRow, savedBlock.gridCol);
-                                placedBlockPositions.Add(newBlock.BlockId, new Vector2Int(savedBlock.gridCol, savedBlock.gridRow));
-                            }
-                            else
-                            {
+                            if (!storageBlocks.Any(b => b.BlockId == newBlock.BlockId))
                                 storageBlocks.Add(newBlock);
-                            }
                         }
                     }
                 }
             }
-
-            foreach (var dbEngraving in engravingDatabase.Values)
-            {
-                if (!loadedEngravingIds.Contains(dbEngraving.engravingName))
-                {
-                    EngravingData instanceData = Instantiate(dbEngraving);
-                    EngravingBlock newBlock = new EngravingBlock(instanceData);
-                    storageBlocks.Add(newBlock);
-                }
-            }
-
+            
+            logicGrid.RecalculateAllInfluences();
             OnEngravingStateChanged?.Invoke();
-            SaveGrid();
         }
+
+        #endregion
     }
 }
