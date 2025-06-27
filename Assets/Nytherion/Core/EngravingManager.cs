@@ -18,7 +18,7 @@ namespace Nytherion.Core
 
         [Header("Grid Settings")]
         [SerializeField] private int gridRows = 5;
-        [SerializeField] private int gridColumns = 4;
+        [SerializeField] private int gridColumns = 5;
         public int GridRows => gridRows;
         public int GridColumns => gridColumns;
 
@@ -31,7 +31,6 @@ namespace Nytherion.Core
         private List<EngravingBlock> storageBlocks;
         private Dictionary<string, Vector2Int> placedBlockPositions;
 
-        // 드래그 상태 관리를 위한 변수
         private EngravingBlock currentlyDraggedBlock;
         private bool isDraggingFromGrid;
         private Vector2Int dragStartPosition;
@@ -59,7 +58,7 @@ namespace Nytherion.Core
             SaveGrid();
         }
 
-        #region 드래그 앤 드롭 관리 (최종 수정 로직)
+        #region 드래그 앤 드롭 관리
 
         public void StartDraggingFromGrid(EngravingBlock block, Vector2Int gridPosition)
         {
@@ -87,17 +86,14 @@ namespace Nytherion.Core
         {
             if (currentlyDraggedBlock == null) return;
 
-            // Case 1: 유효한 그리드 칸에 놓았을 경우
             if (dropGridPosition.HasValue && logicGrid.CanPlaceBlock(dropGridPosition.Value.y, dropGridPosition.Value.x))
             {
                 PlaceBlockOnGrid(currentlyDraggedBlock, dropGridPosition.Value);
             }
-            // Case 2: 그리드 밖(보관소 등)에 놓았을 경우
             else if (!dropGridPosition.HasValue)
             {
                 MoveToStorage(currentlyDraggedBlock);
             }
-            // Case 3: 유효하지 않은 그리드 칸에 놓았을 경우
             else
             {
                 ReturnDraggedBlockToOrigin();
@@ -108,7 +104,14 @@ namespace Nytherion.Core
             OnEngravingStateChanged?.Invoke();
             SaveGrid();
         }
-
+        public void RotateDraggedBlock()
+        {
+            if (currentlyDraggedBlock != null)
+            {
+                currentlyDraggedBlock.Rotate();
+                OnEngravingStateChanged?.Invoke();
+            }
+        }
         #endregion
 
         #region 내부 로직 메서드
@@ -138,7 +141,7 @@ namespace Nytherion.Core
                 storageBlocks.Add(block);
             }
         }
-        
+
         public InfluenceType GetInfluenceAt(int row, int col)
         {
             return logicGrid?.GetInfluenceAt(row, col) ?? InfluenceType.None;
@@ -147,7 +150,7 @@ namespace Nytherion.Core
         #endregion
 
         #region 데이터 로드/저장 및 유틸리티
-        
+
         private void LoadEngravingDatabaseFromSO()
         {
             if (engravingDatabaseSO == null) return;
@@ -213,41 +216,47 @@ namespace Nytherion.Core
 
         public void LoadGrid()
         {
-            var state = saveService.LoadEngravings();
-            logicGrid.Clear();
             storageBlocks.Clear();
-            placedBlockPositions.Clear();
-
-            if (state == null) return;
-
-            foreach (var savedBlock in state.placedBlocks)
+            if (engravingDatabaseSO != null)
             {
-                if (engravingDatabase.TryGetValue(savedBlock.engravingId, out var originalData))
+                foreach (var originalData in engravingDatabaseSO.allEngravings)
                 {
-                    var instanceData = Instantiate(originalData);
-                    var newBlock = new EngravingBlock(instanceData);
-
-                    if (savedBlock.gridRow == -1)
+                    if (originalData != null)
                     {
+                        var instanceData = Instantiate(originalData);
+                        var newBlock = new EngravingBlock(instanceData);
                         if (!storageBlocks.Any(b => b.BlockId == newBlock.BlockId))
+                        {
                             storageBlocks.Add(newBlock);
-                    }
-                    else
-                    {
-                        var pos = new Vector2Int(savedBlock.gridCol, savedBlock.gridRow);
-                        if (logicGrid.CanPlaceBlock(pos.y, pos.x))
-                        {
-                            PlaceBlockOnGrid(newBlock, pos);
-                        }
-                        else
-                        {
-                            if (!storageBlocks.Any(b => b.BlockId == newBlock.BlockId))
-                                storageBlocks.Add(newBlock);
                         }
                     }
                 }
             }
-            
+
+            var state = saveService.LoadEngravings();
+            if (state != null && state.placedBlocks.Count > 0)
+            {
+                logicGrid.Clear();
+                placedBlockPositions.Clear();
+
+                foreach (var savedBlock in state.placedBlocks)
+                {
+                    var blockToPlace = storageBlocks.FirstOrDefault(b => b.BlockId == savedBlock.engravingId);
+                    if (blockToPlace != null)
+                    {
+                        if (savedBlock.gridRow != -1)
+                        {
+                            var pos = new Vector2Int(savedBlock.gridCol, savedBlock.gridRow);
+                            if (logicGrid.CanPlaceBlock(pos.y, pos.x))
+                            {
+                                PlaceBlockOnGrid(blockToPlace, pos);
+                                storageBlocks.Remove(blockToPlace); // 보관소에서 제거
+                            }
+                        }
+                    }
+                }
+            }
+
             logicGrid.RecalculateAllInfluences();
             OnEngravingStateChanged?.Invoke();
         }

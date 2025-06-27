@@ -52,10 +52,11 @@ namespace Nytherion.GamePlay.Engravings
                     EngravingBlock sourceBlock = grid[y, x];
                     if (sourceBlock != null)
                     {
-                        foreach (var zone in sourceBlock.SourceData.influenceZones)
+                        foreach (var zone in sourceBlock.GetRotatedInfluenceZones())
                         {
                             int targetRow = y + zone.offset.y;
                             int targetCol = x + zone.offset.x;
+
                             if (IsPositionValid(targetRow, targetCol))
                             {
                                 influenceGrid[targetRow, targetCol] = zone.type;
@@ -64,7 +65,7 @@ namespace Nytherion.GamePlay.Engravings
                     }
                 }
             }
-            
+
             for (int y = 0; y < Rows; y++)
             {
                 for (int x = 0; x < Columns; x++)
@@ -79,7 +80,7 @@ namespace Nytherion.GamePlay.Engravings
                 }
             }
         }
-        
+
         public bool CanPlaceBlock(int row, int col) => IsPositionValid(row, col) && grid[row, col] == null;
         public EngravingBlock GetBlockAt(int row, int col) => IsPositionValid(row, col) ? grid[row, col] : null;
         public InfluenceType GetInfluenceAt(int row, int col) => IsPositionValid(row, col) ? influenceGrid[row, col] : InfluenceType.None;

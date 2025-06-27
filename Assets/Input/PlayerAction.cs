@@ -552,7 +552,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             ""id"": ""bed38f45-1dee-4cc5-abc4-f8cd49b09b71"",
             ""actions"": [
                 {
-                    ""name"": ""RotateBlock"",
+                    ""name"": ""Rotate"",
                     ""type"": ""Button"",
                     ""id"": ""8c5a8f94-8adf-405a-bb30-21034c407433"",
                     ""expectedControlType"": """",
@@ -587,7 +587,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateBlock"",
+                    ""action"": ""Rotate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -704,7 +704,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
         // EngravingUI
         m_EngravingUI = asset.FindActionMap("EngravingUI", throwIfNotFound: true);
-        m_EngravingUI_RotateBlock = m_EngravingUI.FindAction("RotateBlock", throwIfNotFound: true);
+        m_EngravingUI_Rotate = m_EngravingUI.FindAction("Rotate", throwIfNotFound: true);
         m_EngravingUI_ToggleEngraving = m_EngravingUI.FindAction("ToggleEngraving", throwIfNotFound: true);
         m_EngravingUI_Close = m_EngravingUI.FindAction("Close", throwIfNotFound: true);
         // Gacha UI
@@ -1184,7 +1184,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     // EngravingUI
     private readonly InputActionMap m_EngravingUI;
     private List<IEngravingUIActions> m_EngravingUIActionsCallbackInterfaces = new List<IEngravingUIActions>();
-    private readonly InputAction m_EngravingUI_RotateBlock;
+    private readonly InputAction m_EngravingUI_Rotate;
     private readonly InputAction m_EngravingUI_ToggleEngraving;
     private readonly InputAction m_EngravingUI_Close;
     /// <summary>
@@ -1199,9 +1199,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// </summary>
         public EngravingUIActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "EngravingUI/RotateBlock".
+        /// Provides access to the underlying input action "EngravingUI/Rotate".
         /// </summary>
-        public InputAction @RotateBlock => m_Wrapper.m_EngravingUI_RotateBlock;
+        public InputAction @Rotate => m_Wrapper.m_EngravingUI_Rotate;
         /// <summary>
         /// Provides access to the underlying input action "EngravingUI/ToggleEngraving".
         /// </summary>
@@ -1236,9 +1236,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Add(instance);
-            @RotateBlock.started += instance.OnRotateBlock;
-            @RotateBlock.performed += instance.OnRotateBlock;
-            @RotateBlock.canceled += instance.OnRotateBlock;
+            @Rotate.started += instance.OnRotate;
+            @Rotate.performed += instance.OnRotate;
+            @Rotate.canceled += instance.OnRotate;
             @ToggleEngraving.started += instance.OnToggleEngraving;
             @ToggleEngraving.performed += instance.OnToggleEngraving;
             @ToggleEngraving.canceled += instance.OnToggleEngraving;
@@ -1256,9 +1256,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="EngravingUIActions" />
         private void UnregisterCallbacks(IEngravingUIActions instance)
         {
-            @RotateBlock.started -= instance.OnRotateBlock;
-            @RotateBlock.performed -= instance.OnRotateBlock;
-            @RotateBlock.canceled -= instance.OnRotateBlock;
+            @Rotate.started -= instance.OnRotate;
+            @Rotate.performed -= instance.OnRotate;
+            @Rotate.canceled -= instance.OnRotate;
             @ToggleEngraving.started -= instance.OnToggleEngraving;
             @ToggleEngraving.performed -= instance.OnToggleEngraving;
             @ToggleEngraving.canceled -= instance.OnToggleEngraving;
@@ -1582,12 +1582,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     public interface IEngravingUIActions
     {
         /// <summary>
-        /// Method invoked when associated input action "RotateBlock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Rotate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRotateBlock(InputAction.CallbackContext context);
+        void OnRotate(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "ToggleEngraving" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

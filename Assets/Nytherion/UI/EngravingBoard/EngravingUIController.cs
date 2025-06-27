@@ -8,16 +8,13 @@ namespace Nytherion.UI.EngravingBoard
         public static EngravingUIController Instance { get; private set; }
 
         [SerializeField]
-        private GameObject engravingUIPanel; // 각인 UI의 최상위 패널 오브젝트
-
-        private PlayerAction playerAction;
+        private GameObject engravingUIPanel;
 
         private void Awake()
         {
             if (Instance == null)
             {
                 Instance = this;
-                playerAction = new PlayerAction();
             }
             else
             {
@@ -28,21 +25,6 @@ namespace Nytherion.UI.EngravingBoard
             {
                 engravingUIPanel.SetActive(false);
             }
-        }
-
-        private void OnEnable()
-        {
-            playerAction.EngravingUI.Enable();
-            playerAction.EngravingUI.Close.performed += _ => CloseEngravingUI();
-
-            playerAction.Player.Interact.performed += _ => CloseIfOpen();
-        }
-
-        private void OnDisable()
-        {
-            playerAction.EngravingUI.Disable();
-            playerAction.EngravingUI.Close.performed -= _ => CloseEngravingUI();
-            playerAction.Player.Interact.performed -= _ => CloseIfOpen();
         }
 
         public void ToggleEngravingUI()
@@ -60,7 +42,7 @@ namespace Nytherion.UI.EngravingBoard
         private void OpenEngravingUI()
         {
             engravingUIPanel.SetActive(true);
-            UpdateActionMaps(true);
+            InputManager.Instance.DisablePlayerControls();
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -70,7 +52,7 @@ namespace Nytherion.UI.EngravingBoard
             if (!engravingUIPanel.activeSelf) return;
 
             engravingUIPanel.SetActive(false);
-            UpdateActionMaps(false);
+            InputManager.Instance.EnablePlayerControls();
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -84,16 +66,5 @@ namespace Nytherion.UI.EngravingBoard
             }
         }
 
-        private void UpdateActionMaps(bool isEngravingUIOpen)
-        {
-            if (isEngravingUIOpen)
-            {
-                playerAction.Player.Disable();
-            }
-            else
-            {
-                playerAction.Player.Enable();
-            }
-        }
     }
 }

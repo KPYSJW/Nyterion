@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
   m_Name: TestEngraving(Common)
   m_EditorClassIdentifier: 
-  engravingName: TestEngraving
+  engravingName: Common
   description: 
   Image: {fileID: 0}
   rarity: 0

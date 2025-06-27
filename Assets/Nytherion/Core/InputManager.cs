@@ -29,7 +29,7 @@ namespace Nytherion.Core
         public event Action OnPausePressed;
 
         public event Action onInteract;
-
+        public event Action onEngravingRotate;
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -78,6 +78,8 @@ namespace Nytherion.Core
             playerActions.Player.QuickSlot_8.started += ctx => onQuickSlotInput?.Invoke(8);
             playerActions.Player.QuickSlot_9.started += ctx => onQuickSlotInput?.Invoke(9);
 
+            playerActions.EngravingUI.Rotate.performed += _ => onEngravingRotate?.Invoke();
+
             playerActions.Player.Interact.performed += _ => onInteract?.Invoke();
         }
         private void OnEnable()
@@ -95,7 +97,15 @@ namespace Nytherion.Core
                 playerActions.Disable();
             }
         }
+        public void EnablePlayerControls()
+        {
+            playerActions.Player.Enable();
+        }
 
+        public void DisablePlayerControls()
+        {
+            playerActions.Player.Disable();
+        }
     }
 }
 
