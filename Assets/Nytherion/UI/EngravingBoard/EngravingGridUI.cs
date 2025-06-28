@@ -213,7 +213,7 @@ namespace Nytherion.UI.EngravingBoard
 
             foreach (var zone in block.GetRotatedInfluenceZones())
             {
-                int targetRow = pos.y + zone.offset.y;
+                int targetRow = pos.y - zone.offset.y;
                 int targetCol = pos.x + zone.offset.x;
 
                 if (targetRow >= 0 && targetRow < rows && targetCol >= 0 && targetCol < columns)

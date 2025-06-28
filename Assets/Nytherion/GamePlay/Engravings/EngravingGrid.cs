@@ -54,7 +54,7 @@ namespace Nytherion.GamePlay.Engravings
                     {
                         foreach (var zone in sourceBlock.GetRotatedInfluenceZones())
                         {
-                            int targetRow = y + zone.offset.y;
+                            int targetRow = y - zone.offset.y;
                             int targetCol = x + zone.offset.x;
 
                             if (IsPositionValid(targetRow, targetCol))

@@ -177,7 +177,11 @@ namespace Nytherion.Core
             }
             return null;
         }
-
+        public EngravingBlock GetBlockAt(int row, int col)
+        {
+            if (logicGrid == null) return null;
+            return logicGrid.GetBlockAt(row, col);
+        }
         public void AddNewEngravingToStorage(EngravingData data)
         {
             if (data == null) return;
@@ -195,12 +199,17 @@ namespace Nytherion.Core
             var state = new EngravingGridState();
             foreach (var pair in placedBlockPositions)
             {
-                state.placedBlocks.Add(new EngravingGridState.SavedEngravingBlock
+                EngravingBlock blockOnGrid = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
+                if (blockOnGrid != null)
                 {
-                    engravingId = pair.Key,
-                    gridRow = pair.Value.y,
-                    gridCol = pair.Value.x
-                });
+                    state.placedBlocks.Add(new EngravingGridState.SavedEngravingBlock
+                    {
+                        engravingId = pair.Key,
+                        gridRow = pair.Value.y,
+                        gridCol = pair.Value.x,
+                        rotationState = blockOnGrid.RotationState
+                    });
+                }
             }
             foreach (var block in storageBlocks)
             {
@@ -208,12 +217,12 @@ namespace Nytherion.Core
                 {
                     engravingId = block.BlockId,
                     gridRow = -1,
-                    gridCol = -1
+                    gridCol = -1,
+                    rotationState = block.RotationState
                 });
             }
             saveService.SaveEngravings(state);
         }
-
         public void LoadGrid()
         {
             storageBlocks.Clear();
@@ -244,13 +253,15 @@ namespace Nytherion.Core
                     var blockToPlace = storageBlocks.FirstOrDefault(b => b.BlockId == savedBlock.engravingId);
                     if (blockToPlace != null)
                     {
+                        blockToPlace.SetRotationState(savedBlock.rotationState);
+
                         if (savedBlock.gridRow != -1)
                         {
                             var pos = new Vector2Int(savedBlock.gridCol, savedBlock.gridRow);
                             if (logicGrid.CanPlaceBlock(pos.y, pos.x))
                             {
                                 PlaceBlockOnGrid(blockToPlace, pos);
-                                storageBlocks.Remove(blockToPlace); // 보관소에서 제거
+                                storageBlocks.Remove(blockToPlace);
                             }
                         }
                     }

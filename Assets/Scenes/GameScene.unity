@@ -899,19 +899,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 68505339}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 99685727}
-        m_TargetAssemblyTypeName: Nytherion.UI.Gacha.GachaUIController, Assembly-CSharp
-        m_MethodName: OnClick_DrawEngravingOnce
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &69962412
 GameObject:
   m_ObjectHideFlags: 0
@@ -2890,8 +2878,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3238,19 +3226,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 341284936}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 99685727}
-        m_TargetAssemblyTypeName: Nytherion.UI.Gacha.GachaUIController, Assembly-CSharp
-        m_MethodName: OnClick_CloseUI
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1001 &348831343
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4405,19 +4381,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 424230027}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 99685727}
-        m_TargetAssemblyTypeName: Nytherion.UI.Gacha.GachaUIController, Assembly-CSharp
-        m_MethodName: OnClick_DrawEngravingTenTimes
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &433948945
 GameObject:
   m_ObjectHideFlags: 0
@@ -7717,19 +7681,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 753373845}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 99685727}
-        m_TargetAssemblyTypeName: Nytherion.UI.Gacha.GachaUIController, Assembly-CSharp
-        m_MethodName: OnClick_DrawWeaponTenTimes
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &758589162
 GameObject:
   m_ObjectHideFlags: 0
@@ -10385,8 +10337,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10917,8 +10869,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -14971,8 +14923,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -75}
-  m_SizeDelta: {x: -100, y: -350}
+  m_AnchoredPosition: {x: 0, y: -100}
+  m_SizeDelta: {x: -100, y: -300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1395195134
 MonoBehaviour:
@@ -17791,7 +17743,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1721288126}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.375
+  m_Size: 0.75
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -19495,19 +19447,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1842905592}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 99685727}
-        m_TargetAssemblyTypeName: Nytherion.UI.Gacha.GachaUIController, Assembly-CSharp
-        m_MethodName: OnClick_DrawWeaponOnce
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1849032013
 GameObject:
   m_ObjectHideFlags: 0
@@ -20061,19 +20001,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1883901800}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 99685727}
-        m_TargetAssemblyTypeName: Nytherion.UI.Gacha.GachaUIController, Assembly-CSharp
-        m_MethodName: OnClick_CloseResultPanel
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1001 &1894938906
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21456,7 +21384,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.25
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

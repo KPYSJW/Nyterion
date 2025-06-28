@@ -87,7 +87,10 @@ public class EngravingTooltip : MonoBehaviour
 
         foreach (var zone in block.GetRotatedInfluenceZones())
         {
-            int index = (1 - zone.offset.y) * 3 + (1 + zone.offset.x);
+            int rowIndex = zone.offset.y * -1 + 1; 
+            int colIndex = 1 + zone.offset.x; 
+            int index = (rowIndex * 3) + colIndex;
+
             if (index >= 0 && index < 9)
             {
                 influenceCells[index].color = zone.type == InfluenceType.LevelUp ? levelUpColor : levelDownColor;

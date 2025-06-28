@@ -32,7 +32,10 @@ namespace Nytherion.GamePlay.Engravings
         {
             RotationState = (RotationState + 1) % 4;
         }
-
+        public void SetRotationState(int newRotationState)
+        {
+            RotationState = newRotationState;
+        }
         public List<InfluenceZone> GetRotatedInfluenceZones()
         {
             var rotatedZones = new List<InfluenceZone>();
@@ -41,7 +44,7 @@ namespace Nytherion.GamePlay.Engravings
                 Vector2Int rotatedOffset = zone.offset;
                 for (int i = 0; i < RotationState; i++)
                 {
-                    rotatedOffset = new Vector2Int(rotatedOffset.y, -rotatedOffset.x);
+                    rotatedOffset = new Vector2Int(-rotatedOffset.y, rotatedOffset.x);
                 }
                 rotatedZones.Add(new InfluenceZone { offset = rotatedOffset, type = zone.type });
             }

@@ -71,12 +71,6 @@ namespace Nytherion.UI.Gacha
             }
         }
 
-        public void OnClick_DrawWeaponOnce() { Draw(GachaType.Weapon, 1); }
-        public void OnClick_DrawWeaponTenTimes() { Draw(GachaType.Weapon, 10); }
-        public void OnClick_DrawEngravingOnce() { Draw(GachaType.Engraving, 1); }
-        public void OnClick_DrawEngravingTenTimes() { Draw(GachaType.Engraving, 10); }
-        public void OnClick_CloseUI() { CloseUI(); }
-        public void OnClick_CloseResultPanel() { CloseResultPanel(); }
         public void ToggleUI()
         {
             bool isActive = !mainPanel.activeSelf;

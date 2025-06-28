@@ -52,9 +52,13 @@ namespace Nytherion.UI.EngravingBoard
                 {
                     EngravingGridUI.Instance.ShowPlacementPreview(blockData, EngravingGridUI.Instance.CurrentGridPos);
                 }
+
+                if (levelText != null)
+                {
+                    levelText.transform.rotation = Quaternion.identity;
+                }
             }
         }
-
         private void HandleRotation()
         {
             if (isDragging)
@@ -62,7 +66,7 @@ namespace Nytherion.UI.EngravingBoard
                 if (EngravingManager.Instance != null)
                 {
                     EngravingManager.Instance.RotateDraggedBlock();
-                    rectTransform.Rotate(0, 0, -90);
+                    rectTransform.Rotate(0, 0, 90);
                 }
                 if (EngravingGridUI.Instance != null)
                 {
@@ -88,7 +92,7 @@ namespace Nytherion.UI.EngravingBoard
 
             transform.SetParent(EngravingGridUI.Instance.rootCanvas.transform, true);
             canvasGroup.blocksRaycasts = false;
-            rectTransform.rotation = Quaternion.Euler(0, 0, blockData.RotationState * -90);
+            rectTransform.rotation = Quaternion.Euler(0, 0, blockData.RotationState * 90);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -167,12 +171,24 @@ namespace Nytherion.UI.EngravingBoard
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (!isDragging && EngravingTooltip.Instance != null)
+            if (isDragging || EngravingTooltip.Instance == null) return;
+
+            EngravingBlock liveBlockData = null;
+
+            if (isPlaced)
             {
-                EngravingTooltip.Instance.Show(blockData);
+                liveBlockData = EngravingManager.Instance.GetBlockAt(gridPosition.y, gridPosition.x);
+            }
+            else
+            {
+                liveBlockData = EngravingManager.Instance.GetBlockByID(blockData.BlockId);
+            }
+
+            if (liveBlockData != null)
+            {
+                EngravingTooltip.Instance.Show(liveBlockData);
             }
         }
-
         public void OnPointerExit(PointerEventData eventData)
         {
             if (EngravingTooltip.Instance != null)
