@@ -61,10 +61,7 @@ namespace Nytherion.Core
         
         private void OnDestroy()
         {
-            if (EventManager.Instance != null)
-            {
-                EventManager.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
-            }
+            // Unregister is already handled in OnDisable
         }
     }
 
