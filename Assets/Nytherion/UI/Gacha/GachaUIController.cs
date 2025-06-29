@@ -4,15 +4,15 @@ using Nytherion.Core;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
+using UnityEngine.InputSystem;
 
 namespace Nytherion.UI.Gacha
 {
-    public class GachaUIController : MonoBehaviour
+    public class GachaUIController : UIPanelBase
     {
         public static GachaUIController Instance { get; private set; }
 
         [Header("UI Panels")]
-        [SerializeField] private GameObject mainPanel;
         [SerializeField] private GameObject resultPanel;
 
         [Header("Buttons")]
@@ -32,8 +32,9 @@ namespace Nytherion.UI.Gacha
 
         private PlayerAction playerAction;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
 
@@ -42,10 +43,9 @@ namespace Nytherion.UI.Gacha
             drawEngravingOnceButton.onClick.AddListener(() => Draw(GachaType.Engraving, 1));
             drawEngravingTenTimesButton.onClick.AddListener(() => Draw(GachaType.Engraving, 10));
 
-            closeButton.onClick.AddListener(CloseUI);
+            closeButton.onClick.AddListener(Close);
             resultCloseButton.onClick.AddListener(CloseResultPanel);
 
-            mainPanel.SetActive(false);
             resultPanel.SetActive(false);
         }
 
@@ -55,10 +55,10 @@ namespace Nytherion.UI.Gacha
                 CurrencyManager.Instance.onCurrencyChanged += UpdateTokenUI;
 
             playerAction = new PlayerAction();
-            playerAction.GachaUI.Close.performed += _ => CloseUI();
-            playerAction.GachaUI.ToggleUI.performed += _ => ToggleUI();
-
+            playerAction.GachaUI.Enable();
+            playerAction.GachaUI.Close.performed += OnCloseInput;
         }
+
         private void OnDisable()
         {
             if (CurrencyManager.Instance != null)
@@ -66,26 +66,32 @@ namespace Nytherion.UI.Gacha
 
             if (playerAction != null)
             {
-                playerAction.GachaUI.Close.performed -= _ => CloseUI();
-                playerAction.GachaUI.ToggleUI.performed -= _ => ToggleUI();
+                playerAction.GachaUI.Close.performed -= OnCloseInput;
+                playerAction.GachaUI.Disable();
             }
         }
 
-        public void ToggleUI()
+        private void OnCloseInput(InputAction.CallbackContext context)
         {
-            bool isActive = !mainPanel.activeSelf;
-            if (isActive) OpenUI();
-            else CloseUI();
+            if (IsOpen)
+            {
+                Close();
+            }
         }
-        public void OpenUI()
+
+        protected override void OnPanelStateChanged(bool isOpen)
         {
-            mainPanel.SetActive(true);
-            if (CurrencyManager.Instance != null)
+            if (isOpen && CurrencyManager.Instance != null)
+            {
                 UpdateTokenUI(CurrencyType.Token, CurrencyManager.Instance.GetCurrency(CurrencyType.Token));
-        }
-        public void CloseUI()
-        {
-            mainPanel.SetActive(false);
+            }
+
+            if (isOpen)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            
         }
         private void Draw(GachaType type, int count)
         {
@@ -95,20 +101,15 @@ namespace Nytherion.UI.Gacha
                 ShowResultPanel(drawnItems);
             }
         }
+
         private void ShowResultPanel(List<ScriptableObject> drawnItems)
         {
             resultPanel.SetActive(true);
-
-            foreach (Transform child in resultSlotParent)
-            {
-                Destroy(child.gameObject);
-            }
+            foreach (Transform child in resultSlotParent) Destroy(child.gameObject);
             foreach (ScriptableObject item in drawnItems)
             {
                 GameObject slotGO = Instantiate(resultSlotPrefab, resultSlotParent);
-                Image itemIcon = slotGO.GetComponent<Image>();
-                ItemData itemData = item as ItemData;
-                if (itemData != null)
+                if (slotGO.TryGetComponent(out Image itemIcon) && item is ItemData itemData)
                 {
                     itemIcon.sprite = itemData.icon;
                 }

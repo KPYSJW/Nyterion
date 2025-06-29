@@ -46,8 +46,6 @@ namespace Nytherion.Core
         {
             playerActions.Player.Enable();
             playerActions.UI.Enable();
-            playerActions.EngravingUI.Enable();
-            playerActions.GachaUI.Enable();
             playerActions.UI.Pause.performed += ctx =>
             {
                 Debug.Log("Pause pressed");
@@ -82,30 +80,25 @@ namespace Nytherion.Core
 
             playerActions.Player.Interact.performed += _ => onInteract?.Invoke();
         }
-        private void OnEnable()
+        private void OnEnable() => playerActions?.Enable();
+        private void OnDisable() => playerActions?.Disable();
+
+        public void DisableMovement()
         {
-            if (playerActions != null)
-            {
-                playerActions.Enable();
-            }
+            playerActions.Player.Move.Disable();
+            playerActions.Player.Dash.Disable();
+            playerActions.Player.Attack.Disable();
         }
 
-        private void OnDisable()
+        public void EnableMovement()
         {
-            if (playerActions != null)
-            {
-                playerActions.Disable();
-            }
-        }
-        public void EnablePlayerControls()
-        {
-            playerActions.Player.Enable();
+            playerActions.Player.Move.Enable();
+            playerActions.Player.Dash.Enable();
+            playerActions.Player.Attack.Enable();
         }
 
-        public void DisablePlayerControls()
-        {
-            playerActions.Player.Disable();
-        }
+        public void EnablePlayerControls() => playerActions.Player.Enable();
+        public void DisablePlayerControls() => playerActions.Player.Disable();
     }
 }
 
