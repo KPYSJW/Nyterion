@@ -1,6 +1,6 @@
-using Nytherion.UI.Inventory;
 using Nytherion.Data.ScriptableObjects.Engravings;
 using System.Collections.Generic;
+using Nytherion.UI.Inventory;
 
 namespace Nytherion.Core
 {
