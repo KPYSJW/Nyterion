@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using Nytherion.Data.ScriptableObjects.Items;
 using System;
+using Nytherion.UI.Components;
 
 namespace Nytherion.UI.Inventory
 {

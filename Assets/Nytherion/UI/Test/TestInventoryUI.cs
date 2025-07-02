@@ -1,9 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Data.ScriptableObjects.Weapons;
-using Nytherion.Core;
-using Nytherion.Services;
+using Nytherion.Core.Managers;  
 using TMPro;
 using System.Linq;
 

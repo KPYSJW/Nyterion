@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Nytherion.GamePlay.Dungeon;
 
 [CustomEditor(typeof(AbstractDungeonGenertor),true)]
 

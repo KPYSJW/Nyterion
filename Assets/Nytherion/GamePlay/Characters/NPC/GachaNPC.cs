@@ -1,5 +1,4 @@
 using UnityEngine;
-using Nytherion.UI.Gacha;
 using Nytherion.Core.Enums;
 
 namespace Nytherion.GamePlay.Characters.NPC

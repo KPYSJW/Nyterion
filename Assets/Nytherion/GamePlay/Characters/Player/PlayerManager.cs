@@ -1,7 +1,4 @@
-using Nytherion.Core;
 using Nytherion.Data.ScriptableObjects.Player;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Characters.Player

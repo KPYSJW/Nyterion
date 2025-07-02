@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Data.Shop;
+using Nytherion.Data.ScriptableObjects.Shop;
+using Nytherion.UI.Controllers;
 
 namespace Nytherion.UI.Shop
 {

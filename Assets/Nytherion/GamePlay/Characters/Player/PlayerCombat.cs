@@ -1,7 +1,5 @@
 using Nytherion.GamePlay.Combat;
-using Nytherion.Core;
-using System.Collections;
-using System.Collections.Generic;
+using Nytherion.Core.Managers;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Synergy;
 
@@ -55,7 +53,6 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (currentWeapon != null)
             {
-                //currentWeapon.AttackEnd();
             }
         }
 

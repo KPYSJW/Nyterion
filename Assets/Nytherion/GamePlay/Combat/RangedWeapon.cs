@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -12,7 +9,6 @@ namespace Nytherion.GamePlay.Combat
                  "캐릭터의 손이나 무기 끝부분에 위치시켜야 합니다.")]
         public Transform firePoint;
         
-
         private const float DefaultProjectileSpeed = 8f;
 
        public void Projectile(Vector2 direction)

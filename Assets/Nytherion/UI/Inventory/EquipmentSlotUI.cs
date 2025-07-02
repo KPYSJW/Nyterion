@@ -1,15 +1,15 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Core;
+using Nytherion.Core.Managers;
 using ItemType = Nytherion.Data.ScriptableObjects.Items.ItemType;
+using Nytherion.UI.Controllers;
 
 namespace Nytherion.UI.Inventory
 {
     public class EquipmentSlotUI : BaseSlotUI
     {
-        [SerializeField] private ItemType slotType = ItemType.Weapon; // 기본값을 Weapon으로 설정
+        [SerializeField] private ItemType slotType = ItemType.Weapon; 
         public ItemType SlotType => slotType;
         
         protected override void Awake()

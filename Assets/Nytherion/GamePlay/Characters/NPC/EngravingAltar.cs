@@ -1,5 +1,4 @@
 using UnityEngine;
-using Nytherion.UI.EngravingBoard;
 using Nytherion.Core.Enums;
 
 namespace Nytherion.GamePlay.Characters.NPC

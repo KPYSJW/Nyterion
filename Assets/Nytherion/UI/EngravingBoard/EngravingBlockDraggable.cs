@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Nytherion.GamePlay.Engravings;
-using Nytherion.Core;
+using Nytherion.Core.Managers;
 using TMPro;
 
 namespace Nytherion.UI.EngravingBoard

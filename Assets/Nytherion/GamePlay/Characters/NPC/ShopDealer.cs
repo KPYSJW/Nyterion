@@ -1,7 +1,7 @@
 using UnityEngine;
-using Nytherion.UI.Shop;
-using Nytherion.Data.Shop;
+using Nytherion.Data.ScriptableObjects.Shop;
 using Nytherion.Core.Enums;
+using Nytherion.UI.Controllers;
 
 namespace Nytherion.GamePlay.Characters.NPC
 {
