@@ -43,14 +43,13 @@ namespace Nytherion.UI.Test
             if (addItem1Button != null) addItem1Button.onClick.AddListener(() => AddTestItem(testItem1));
             if (addItem2Button != null) addItem2Button.onClick.AddListener(() => AddTestItem(testItem2));
             if (addItem3Button != null) addItem3Button.onClick.AddListener(() => AddTestItem(testWeapon));
-            
+
             if (removeItem1Button != null) removeItem1Button.onClick.AddListener(RemoveTestItem1);
             if (clearInventoryButton != null) clearInventoryButton.onClick.AddListener(ClearInventory);
+
             if (saveButton != null) saveButton.onClick.AddListener(SaveInventory);
             if (loadButton != null) loadButton.onClick.AddListener(LoadInventory);
-            if (clearSaveButton != null) clearSaveButton.onClick.AddListener(ClearSaveData);
-            
-            if (debugSaveDataButton != null) debugSaveDataButton.onClick.AddListener(DebugSaveData);
+
             if (debugItemTableButton != null) debugItemTableButton.onClick.AddListener(DebugItemTable);
             if (debugCurrentInventoryButton != null) debugCurrentInventoryButton.onClick.AddListener(DebugCurrentInventory);
 
@@ -91,19 +90,19 @@ namespace Nytherion.UI.Test
         private void RemoveTestItem1()
         {
             var items = InventoryManager.Instance.GetAllItems();
-            
+
             if (items.Count == 0)
             {
                 ShowStatusMessage("Inventory is empty");
                 return;
             }
-            
+
             var firstItem = items.Keys.First();
             int count = items[firstItem];
-            
+
             int removeCount = Mathf.Min(1, count);
             bool success = InventoryManager.Instance.RemoveItem(firstItem, removeCount);
-            
+
             if (success)
             {
                 ShowStatusMessage($"Removed {removeCount}x {firstItem.name}");
@@ -122,52 +121,22 @@ namespace Nytherion.UI.Test
 
         private void SaveInventory()
         {
-            InventoryManager.Instance.SaveInventory();
-            ShowStatusMessage("Inventory saved");
+            SaveLoadManager.Instance.SaveGame();
+            ShowStatusMessage("Game Saved via SaveLoadManager");
         }
 
         private void LoadInventory()
         {
             try
             {
-                InventoryManager.Instance.LoadInventory();
-                ShowStatusMessage("Inventory loaded");
-                
-                var forceUpdateMethod = typeof(InventoryManager).GetMethod("ForceUpdateUI", 
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                    
-                if (forceUpdateMethod != null)
-                {
-                    forceUpdateMethod.Invoke(InventoryManager.Instance, null);
-                }
-                else
-                {
-                    var uiField = typeof(InventoryManager).GetField("OnInventoryUpdated", 
-                        System.Reflection.BindingFlags.NonPublic | 
-                        System.Reflection.BindingFlags.Instance | 
-                        System.Reflection.BindingFlags.GetField);
-                        
-                    if (uiField != null)
-                    {
-                        var eventInstance = uiField.GetValue(InventoryManager.Instance) as System.Action;
-                        if (eventInstance != null)
-                        {
-                            eventInstance.Invoke();
-                        }
-                    }
-                }
+                SaveLoadManager.Instance.LoadGame();
+                ShowStatusMessage("Game Loaded via SaveLoadManager");
+
             }
             catch (System.Exception e)
             {
                 ShowStatusMessage($"Load failed: {e.Message}");
             }
-        }
-
-        private void ClearSaveData()
-        {
-            var saveService = new PlayerPrefsInventorySaveService();
-            saveService.DeleteSaveData();
-            ShowStatusMessage("Saved data cleared");
         }
 
         private void ShowStatusMessage(string message)
@@ -180,33 +149,6 @@ namespace Nytherion.UI.Test
             }
         }
 
-       
-        public void DebugSaveData()
-        {
-            string saveKey = "Inventory_DefaultSlot";
-            if (PlayerPrefs.HasKey(saveKey))
-            {
-                string saveJson = PlayerPrefs.GetString(saveKey);
-                
-                try
-                {
-                    var saveData = JsonUtility.FromJson<SaveDataWrapper>(saveJson);
-                    if (saveData != null && !string.IsNullOrEmpty(saveData.data))
-                    {
-                        string decrypted = new PlayerPrefsInventorySaveService().Decrypt(saveData.data);
-                    }
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError($"저장된 데이터 파싱 오류: {e.Message}");
-                }
-            }
-            else
-            {
-                Debug.Log("저장된 데이터가 없습니다.");
-            }
-        }
-        
         public void DebugItemTable()
         {
             if (InventoryManager.Instance == null)
@@ -214,10 +156,10 @@ namespace Nytherion.UI.Test
                 Debug.LogError("InventoryManager 인스턴스를 찾을 수 없습니다.");
                 return;
             }
-            
-            var field = typeof(InventoryManager).GetField("itemTable", 
+
+            var field = typeof(InventoryManager).GetField("itemTable",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                
+
             if (field != null)
             {
                 var itemTable = field.GetValue(InventoryManager.Instance) as System.Collections.Generic.Dictionary<string, ItemData>;
@@ -239,7 +181,7 @@ namespace Nytherion.UI.Test
                 Debug.LogError("itemTable 필드를 찾을 수 없습니다.");
             }
         }
-        
+
         public void DebugCurrentInventory()
         {
             if (InventoryManager.Instance == null)
@@ -247,10 +189,10 @@ namespace Nytherion.UI.Test
                 Debug.LogError("InventoryManager 인스턴스를 찾을 수 없습니다.");
                 return;
             }
-            
-            var field = typeof(InventoryManager).GetField("items", 
+
+            var field = typeof(InventoryManager).GetField("items",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                
+
             if (field != null)
             {
                 var items = field.GetValue(InventoryManager.Instance) as System.Collections.Generic.Dictionary<ItemData, int>;
@@ -272,7 +214,7 @@ namespace Nytherion.UI.Test
                 Debug.LogError("items 필드를 찾을 수 없습니다.");
             }
         }
-        
+
         [System.Serializable]
         private class SaveDataWrapper
         {

@@ -65,17 +65,10 @@ namespace Nytherion.Core
             playerActions.Player.Skill_E.started += ctx => onSkillInput?.Invoke(2);
             playerActions.Player.Skill_R.started += ctx => onSkillInput?.Invoke(3);
 
-            playerActions.Player.QuickSlot_0.started += ctx => onQuickSlotInput?.Invoke(0);
             playerActions.Player.QuickSlot_1.started += ctx => onQuickSlotInput?.Invoke(1);
             playerActions.Player.QuickSlot_2.started += ctx => onQuickSlotInput?.Invoke(2);
             playerActions.Player.QuickSlot_3.started += ctx => onQuickSlotInput?.Invoke(3);
-            playerActions.Player.QuickSlot_4.started += ctx => onQuickSlotInput?.Invoke(4);
-            playerActions.Player.QuickSlot_5.started += ctx => onQuickSlotInput?.Invoke(5);
-            playerActions.Player.QuickSlot_6.started += ctx => onQuickSlotInput?.Invoke(6);
-            playerActions.Player.QuickSlot_7.started += ctx => onQuickSlotInput?.Invoke(7);
-            playerActions.Player.QuickSlot_8.started += ctx => onQuickSlotInput?.Invoke(8);
-            playerActions.Player.QuickSlot_9.started += ctx => onQuickSlotInput?.Invoke(9);
-
+            
             playerActions.EngravingUI.Rotate.performed += _ => onEngravingRotate?.Invoke();
 
             playerActions.Player.Interact.performed += _ => onInteract?.Invoke();

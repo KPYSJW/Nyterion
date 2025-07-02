@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core;
+using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
-    using Nytherion.GamePlay.Combat;
     public class EnemyAIController : MonoBehaviour
     {
         public float detectRange = 8f;
@@ -22,7 +20,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void Awake()
         {
-            var playerInstance = GameObject.FindWithTag("Player");
+            var playerInstance = GameObject.FindWithTag(Tags.Player);
             if (playerInstance == null)
             {
                 enabled = false;

@@ -28,7 +28,6 @@ public abstract class UIPanelBase : MonoBehaviour
     public virtual void Toggle()
     {
         if (controlledCanvasGroup == null) return;
-        Debug.Log(this.name + ": Toggle() 호출됨. 현재 상태(IsOpen): " + IsOpen);
         if (IsOpen) Close();
         else Open();
     }

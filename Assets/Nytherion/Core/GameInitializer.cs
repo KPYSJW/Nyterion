@@ -21,6 +21,7 @@ namespace Nytherion.Core
         [SerializeField] private InventoryPresenter inventoryPresenter;
         [SerializeField] private InventoryUI inventoryUI;
         [SerializeField] private EngravingGridUI engravingGridUI;
+        [SerializeField] private SaveLoadManager saveLoadManager;
 
         private void Start()
         {
@@ -36,13 +37,20 @@ namespace Nytherion.Core
             engravingManager.Initialize();
             playerManager.Initialize();
             gachaManager.Initialize();
+
+            saveLoadManager.Initialize(); 
+
             inventoryPresenter.Initialize();
             inventoryUI.Initialize();
-            inventoryUI.RefreshUI();
             if (engravingGridUI != null)
             {
                 StartCoroutine(engravingGridUI.Initialize());
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            saveLoadManager.SaveGame();
         }
     }
 }

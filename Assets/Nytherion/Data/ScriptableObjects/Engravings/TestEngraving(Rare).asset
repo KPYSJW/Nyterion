@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   engravingName: Rare
   description: 
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 274cc5d353702d54381995dc012cb66f, type: 3}
   rarity: 2
   isCursed: 0
   level: 1

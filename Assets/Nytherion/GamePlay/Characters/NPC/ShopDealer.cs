@@ -1,11 +1,14 @@
 using UnityEngine;
 using Nytherion.UI.Shop;
 using Nytherion.Data.Shop;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.GamePlay.Characters.NPC
 {
     public class ShopDealer : MonoBehaviour, IInteractable
     {
+        public InteractableType Type => InteractableType.ShopDealer;
+
         [Header("Shop Data")]
         [Tooltip("이 상점에서 판매할 상품 데이터")]
         public ShopData shopData;
@@ -18,7 +21,7 @@ namespace Nytherion.GamePlay.Characters.NPC
                 return;
             }
 
-            if (ShopUI.Instance != null)
+           if (ShopUI.Instance != null)
             {
                 ShopUI.Instance.OpenShop(shopData);
             }

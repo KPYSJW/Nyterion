@@ -10,10 +10,11 @@ namespace Nytherion.UI.EngravingBoard
     public class EngravingBlockDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
     {
         public EngravingBlock blockData;
-        public GameObject cellPrefab;
 
         public bool isPlaced = false;
         public Vector2Int gridPosition;
+
+        [SerializeField] private Image iconImage;
 
         private CanvasGroup canvasGroup;
         private RectTransform rectTransform;
@@ -56,6 +57,11 @@ namespace Nytherion.UI.EngravingBoard
                 if (levelText != null)
                 {
                     levelText.transform.rotation = Quaternion.identity;
+                }
+
+                if (iconImage != null)
+                {
+                    iconImage.transform.rotation = Quaternion.identity;
                 }
             }
         }
@@ -125,37 +131,20 @@ namespace Nytherion.UI.EngravingBoard
 
         public void BuildVisualFromShape()
         {
-            TextMeshProUGUI existingLevelText = GetComponentInChildren<TextMeshProUGUI>();
-
-            foreach (Transform child in transform)
+            if (iconImage != null)
             {
-                if (child.GetComponent<TextMeshProUGUI>() == null)
+                if (blockData != null && blockData.SourceData != null)
                 {
-                    Destroy(child.gameObject);
-                }
-            }
-            if (EngravingGridUI.Instance?.gridRoot == null) return;
-
-            var gridLayout = EngravingGridUI.Instance.gridRoot.GetComponent<GridLayoutGroup>();
-            GameObject cell = Instantiate(cellPrefab, transform);
-            RectTransform cellRectTransform = cell.GetComponent<RectTransform>();
-            cellRectTransform.sizeDelta = gridLayout.cellSize;
-            cellRectTransform.anchoredPosition = Vector2.zero;
-
-            if (existingLevelText != null)
-            {
-                existingLevelText.transform.SetAsLastSibling();
-                if (blockData != null)
-                {
-                    existingLevelText.text = blockData.SourceData.level.ToString();
-                    existingLevelText.gameObject.SetActive(true);
+                    iconImage.sprite = blockData.SourceData.Image;
+                    iconImage.enabled = (iconImage.sprite != null);
                 }
                 else
                 {
-                    existingLevelText.gameObject.SetActive(false);
+                    iconImage.enabled = false;
                 }
             }
-            else if (levelText != null)
+
+            if (levelText != null)
             {
                 if (blockData != null)
                 {

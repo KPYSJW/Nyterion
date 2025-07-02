@@ -70,8 +70,6 @@ namespace Nytherion.UI
             else
             {
                 Time.timeScale = 1f;
-                Cursor.lockState = CursorLockMode.Locked; 
-                Cursor.visible = false;
             }
         }
 

@@ -1,6 +1,5 @@
 using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.GamePlay.Engravings;
-using Nytherion.Services;
 using Nytherion.Core.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,7 +25,6 @@ namespace Nytherion.Core
         public event Action OnEngravingStateChanged;
 
         private EngravingGrid logicGrid;
-        private IEngravingSaveService saveService;
         private Dictionary<string, EngravingData> engravingDatabase;
         private List<EngravingBlock> storageBlocks;
         private Dictionary<string, Vector2Int> placedBlockPositions;
@@ -39,23 +37,17 @@ namespace Nytherion.Core
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
-        }
 
-        public void Initialize()
-        {
             logicGrid = new EngravingGrid(gridRows, gridColumns);
             engravingDatabase = new Dictionary<string, EngravingData>();
             storageBlocks = new List<EngravingBlock>();
             placedBlockPositions = new Dictionary<string, Vector2Int>();
-            saveService = new PlayerPrefsEngravingSaveService();
-            LoadEngravingDatabaseFromSO();
-            LoadGrid();
-            OnInitialized?.Invoke();
         }
 
-        private void OnDestroy()
+        public void Initialize()
         {
-            SaveGrid();
+            LoadEngravingDatabaseFromSO();
+            OnInitialized?.Invoke();
         }
 
         #region 드래그 앤 드롭 관리
@@ -102,7 +94,6 @@ namespace Nytherion.Core
             logicGrid.RecalculateAllInfluences();
             currentlyDraggedBlock = null;
             OnEngravingStateChanged?.Invoke();
-            SaveGrid();
         }
         public void RotateDraggedBlock()
         {
@@ -191,10 +182,8 @@ namespace Nytherion.Core
             var newBlock = new EngravingBlock(instanceData);
             storageBlocks.Add(newBlock);
             OnEngravingStateChanged?.Invoke();
-            SaveGrid();
         }
-
-        public void SaveGrid()
+        public EngravingGridState GetEngravingsForSave()
         {
             var state = new EngravingGridState();
             foreach (var pair in placedBlockPositions)
@@ -204,7 +193,7 @@ namespace Nytherion.Core
                 {
                     state.placedBlocks.Add(new EngravingGridState.SavedEngravingBlock
                     {
-                        engravingId = pair.Key,
+                        engravingId = blockOnGrid.BlockId,
                         gridRow = pair.Value.y,
                         gridCol = pair.Value.x,
                         rotationState = blockOnGrid.RotationState
@@ -221,49 +210,40 @@ namespace Nytherion.Core
                     rotationState = block.RotationState
                 });
             }
-            saveService.SaveEngravings(state);
+            return state;
         }
-        public void LoadGrid()
+
+        public void LoadDataFromSave(EngravingGridState state)
         {
             storageBlocks.Clear();
-            if (engravingDatabaseSO != null)
+            logicGrid.Clear();
+            placedBlockPositions.Clear();
+
+            if (state == null || state.placedBlocks.Count == 0)
             {
-                foreach (var originalData in engravingDatabaseSO.allEngravings)
-                {
-                    if (originalData != null)
-                    {
-                        var instanceData = Instantiate(originalData);
-                        var newBlock = new EngravingBlock(instanceData);
-                        if (!storageBlocks.Any(b => b.BlockId == newBlock.BlockId))
-                        {
-                            storageBlocks.Add(newBlock);
-                        }
-                    }
-                }
+                OnEngravingStateChanged?.Invoke();
+                return;
             }
 
-            var state = saveService.LoadEngravings();
-            if (state != null && state.placedBlocks.Count > 0)
+            foreach (var savedBlock in state.placedBlocks)
             {
-                logicGrid.Clear();
-                placedBlockPositions.Clear();
-
-                foreach (var savedBlock in state.placedBlocks)
+                if (engravingDatabase.TryGetValue(savedBlock.engravingId, out EngravingData originalData))
                 {
-                    var blockToPlace = storageBlocks.FirstOrDefault(b => b.BlockId == savedBlock.engravingId);
-                    if (blockToPlace != null)
-                    {
-                        blockToPlace.SetRotationState(savedBlock.rotationState);
+                    var instanceData = Instantiate(originalData);
+                    var newBlock = new EngravingBlock(instanceData);
+                    newBlock.SetRotationState(savedBlock.rotationState);
 
-                        if (savedBlock.gridRow != -1)
+                    if (savedBlock.gridRow != -1)
+                    {
+                        var pos = new Vector2Int(savedBlock.gridCol, savedBlock.gridRow);
+                        if (logicGrid.CanPlaceBlock(pos.y, pos.x))
                         {
-                            var pos = new Vector2Int(savedBlock.gridCol, savedBlock.gridRow);
-                            if (logicGrid.CanPlaceBlock(pos.y, pos.x))
-                            {
-                                PlaceBlockOnGrid(blockToPlace, pos);
-                                storageBlocks.Remove(blockToPlace);
-                            }
+                            PlaceBlockOnGrid(newBlock, pos);
                         }
+                    }
+                    else
+                    {
+                        storageBlocks.Add(newBlock);
                     }
                 }
             }
@@ -271,7 +251,6 @@ namespace Nytherion.Core
             logicGrid.RecalculateAllInfluences();
             OnEngravingStateChanged?.Invoke();
         }
-
         #endregion
     }
 }

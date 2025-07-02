@@ -4,7 +4,10 @@ using Nytherion.Core;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.GamePlay.Engravings;
 using UnityEngine.InputSystem;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.Gacha
 {
@@ -13,6 +16,7 @@ namespace Nytherion.UI.Gacha
         public static GachaUIController Instance { get; private set; }
 
         [Header("UI Panels")]
+        [SerializeField] private GameObject mainPanel;
         [SerializeField] private GameObject resultPanel;
 
         [Header("Buttons")]
@@ -57,6 +61,11 @@ namespace Nytherion.UI.Gacha
             playerAction = new PlayerAction();
             playerAction.GachaUI.Enable();
             playerAction.GachaUI.Close.performed += OnCloseInput;
+
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.OnInteraction += HandleInteraction;
+            }
         }
 
         private void OnDisable()
@@ -69,6 +78,10 @@ namespace Nytherion.UI.Gacha
                 playerAction.GachaUI.Close.performed -= OnCloseInput;
                 playerAction.GachaUI.Disable();
             }
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.OnInteraction -= HandleInteraction;
+            }
         }
 
         private void OnCloseInput(InputAction.CallbackContext context)
@@ -78,6 +91,22 @@ namespace Nytherion.UI.Gacha
                 Close();
             }
         }
+        private void HandleInteraction(InteractableType type)
+        {
+            if (type == InteractableType.GachaNPC)
+            {
+                Toggle();
+            }
+        }
+        public override void Close()
+        {
+            if (resultPanel != null && resultPanel.activeSelf)
+            {
+                CloseResultPanel();
+            }
+            base.Close();
+        }
+
 
         protected override void OnPanelStateChanged(bool isOpen)
         {
@@ -91,8 +120,8 @@ namespace Nytherion.UI.Gacha
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
-            
         }
+
         private void Draw(GachaType type, int count)
         {
             List<ScriptableObject> drawnItems = GachaManager.Instance.TryDrawItems(type, count);
@@ -104,15 +133,44 @@ namespace Nytherion.UI.Gacha
 
         private void ShowResultPanel(List<ScriptableObject> drawnItems)
         {
+
             resultPanel.SetActive(true);
             foreach (Transform child in resultSlotParent) Destroy(child.gameObject);
+
             foreach (ScriptableObject item in drawnItems)
             {
                 GameObject slotGO = Instantiate(resultSlotPrefab, resultSlotParent);
-                if (slotGO.TryGetComponent(out Image itemIcon) && item is ItemData itemData)
+
+                Transform iconTransform = slotGO.transform.Find("Icon");
+                if (iconTransform == null)
+                {
+                    Debug.LogError("ResultSlotPrefab의 자식에서 'Icon' 오브젝트를 찾을 수 없습니다.");
+                    continue;
+                }
+
+                Image itemIcon = iconTransform.GetComponent<Image>();
+                if (itemIcon == null)
+                {
+                    Debug.LogError("'Icon' 오브젝트에서 Image 컴포넌트를 찾을 수 없습니다.");
+                    continue;
+                }
+
+                if (item is ItemData itemData)
                 {
                     itemIcon.sprite = itemData.icon;
                 }
+                else if (item is EngravingData engravingData)
+                {
+                    itemIcon.sprite = engravingData.Image;
+                    GachaResultSlot resultSlot = slotGO.GetComponent<GachaResultSlot>();
+                    if (resultSlot != null)
+                    {
+                        var tempEngravingBlock = new EngravingBlock(engravingData);
+                        resultSlot.Setup(tempEngravingBlock);
+                    }
+                }
+
+                iconTransform.SetAsLastSibling();
             }
         }
         private void CloseResultPanel()

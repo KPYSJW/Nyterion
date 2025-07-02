@@ -6,7 +6,6 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Interfaces;
 using Nytherion.UI.Inventory;
-using Nytherion.Services;
 
 namespace Nytherion.Core
 {
@@ -20,10 +19,6 @@ namespace Nytherion.Core
         public int MaxSlotCount => maxSlotCount;
         public InventoryModel InventoryModel { get; private set; }
 
-        private IInventorySaveService saveService;
-        private bool isScheduledForSave = false;
-        private const float SAVE_DELAY = 2f;
-
         public event Action OnInitialized;
         public event Action<ItemData, int> OnItemAdded;
         public event Action<ItemData, int> OnItemRemoved;
@@ -34,33 +29,41 @@ namespace Nytherion.Core
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
             transform.SetParent(null);
+
+            InventoryModel = new InventoryModel(maxSlotCount);
         }
 
         public void Initialize()
         {
             ItemDatabase.Initialize();
-            InventoryModel = new InventoryModel(maxSlotCount);
-            saveService = new PlayerPrefsInventorySaveService();
-            LoadInventory();
 
-            InventoryModel.OnItemAdded += (item, count) =>
-            {
-                OnItemAdded?.Invoke(item, count);
-                ScheduleSave();
-            };
-            InventoryModel.OnItemRemoved += (item, count) =>
-            {
-                OnItemRemoved?.Invoke(item, count);
-                ScheduleSave();
-            };
+            InventoryModel.OnItemAdded += (item, count) => OnItemAdded?.Invoke(item, count);
+            InventoryModel.OnItemRemoved += (item, count) => OnItemRemoved?.Invoke(item, count);
             InventoryModel.OnInventoryUpdated += () => OnInventoryUpdated?.Invoke();
 
             OnInitialized?.Invoke();
         }
-
-        private void OnDestroy()
+        public InventoryState GetInventoryForSave()
         {
-            if (Instance == this) SaveInventory();
+            return new InventoryState(new Dictionary<ItemData, int>(InventoryModel.Items));
+        }
+
+        public void LoadDataFromSave(InventoryState data)
+        {
+            if (InventoryModel == null)
+            {
+                InventoryModel = new InventoryModel(maxSlotCount);
+            }
+            InventoryModel.Clear();
+            if (data == null) return;
+
+            foreach (var entry in data.Items)
+            {
+                if (string.IsNullOrEmpty(entry.ItemId) || entry.Count <= 0) continue;
+                ItemData item = ItemDatabase.GetItemByID(entry.ItemId);
+                if (item != null) InventoryModel.AddItem(item, entry.Count);
+            }
+            OnInventoryUpdated?.Invoke();
         }
 
         public bool AddItem(ItemData item) => AddItem(item, 1);
@@ -95,45 +98,11 @@ namespace Nytherion.Core
         public bool IsFull => InventoryModel.IsFull;
         public bool HasItem(ItemData item) => InventoryModel.HasItem(item);
         public bool HasItem(string itemId) => InventoryModel.Items.Keys.Any(i => i.ID == itemId);
+
         public void SwapItems(InventorySlotUI fromSlot, InventorySlotUI toSlot)
         {
             if (fromSlot == null || toSlot == null || fromSlot.IsEmpty) return;
             InventoryModel.SwapItems(fromSlot.Item, toSlot.Item);
-        }
-
-        public void SaveInventory()
-        {
-            var state = new InventoryState(new Dictionary<ItemData, int>(InventoryModel.Items));
-            saveService?.SaveInventory(state);
-        }
-
-        public void LoadInventory()
-        {
-            var state = saveService.LoadInventory();
-            if (state == null) return;
-            InventoryModel.Clear();
-            foreach (var entry in state.Items)
-            {
-                if (string.IsNullOrEmpty(entry.ItemId) || entry.Count <= 0) continue;
-                ItemData item = ItemDatabase.GetItemByID(entry.ItemId);
-                if (item != null) InventoryModel.AddItem(item, entry.Count);
-            }
-        }
-
-        private void ScheduleSave()
-        {
-            if (isScheduledForSave) return;
-            isScheduledForSave = true;
-            Invoke(nameof(PerformDelayedSave), SAVE_DELAY);
-        }
-
-        private void PerformDelayedSave()
-        {
-            if (isScheduledForSave)
-            {
-                SaveInventory();
-                isScheduledForSave = false;
-            }
         }
 
         public bool MoveToEquipment(ItemData item, int count = 1)

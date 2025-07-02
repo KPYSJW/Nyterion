@@ -16,4 +16,4 @@ MonoBehaviour:
   drawWeight: 20
   items:
   - item: {fileID: 11400000, guid: 8a1340403fd148641ab9222c79ee9012, type: 2}
-    weight: 0
+    weight: 20

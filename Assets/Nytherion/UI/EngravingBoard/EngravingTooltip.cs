@@ -17,7 +17,7 @@ public class EngravingTooltip : MonoBehaviour
     [SerializeField] private Color centerColor = Color.yellow;
     [SerializeField] private Color levelUpColor = Color.green;
     [SerializeField] private Color levelDownColor = Color.red;
-    [SerializeField] private Color neutralColor = new Color(0.5f, 0.5f, 0.5f, 0.2f);
+    [SerializeField] private Color neutralColor = new Color(50/255f, 50/255f, 50/255f, 200/255f);
 
     private RectTransform rectTransform;
 

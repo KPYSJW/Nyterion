@@ -1,17 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Nytherion.Core.Interfaces;
-using Nytherion.Services;
 
 namespace Nytherion.Core
 {
-    public enum CurrencyType
-    {
-        Gold = 0,
-        Token = 1
-    }
+    public enum CurrencyType { Gold = 0, Token = 1 }
     public class CurrencyManager : MonoBehaviour
     {
         public static CurrencyManager Instance { get; private set; }
@@ -19,99 +12,64 @@ namespace Nytherion.Core
         private Dictionary<CurrencyType, int> currencies = new();
         public event Action<CurrencyType, int> onCurrencyChanged;
 
-        private ICurrencySaveService saveService;
-
         private void Awake()
         {
             if (Instance == null)
             {
                 Instance = this;
-                if (transform.parent != null)
-                {
-                    transform.SetParent(null);
-                }
+                if (transform.parent != null) transform.SetParent(null);
                 DontDestroyOnLoad(gameObject);
             }
-            else if (Instance != this)
+            else
             {
                 Destroy(gameObject);
-                return;
             }
         }
         public void Initialize()
         {
-
-            InitializeSaveService();
-            LoadCurrencies();
-
             OnInitialized?.Invoke();
         }
-        private void InitializeSaveService()
+        public Dictionary<CurrencyType, int> GetCurrenciesForSave()
         {
-            saveService = new PlayerPrefsCurrencySaveService();
+            return currencies;
         }
-
-        private void LoadCurrencies()
+        public void LoadDataFromSave(Dictionary<CurrencyType, int> data)
         {
-            var loadedCurrencies = saveService.LoadCurrencies();
-
-            if (loadedCurrencies == null || loadedCurrencies.Count == 0)
+            if (data == null)
             {
-                InitializeDefaultCurrencies();
+                currencies = new Dictionary<CurrencyType, int>();
+                foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
+                {
+                    currencies[type] = 0;
+                }
             }
             else
             {
-                currencies = loadedCurrencies;
-
-                foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
-                {
-                    if (!currencies.ContainsKey(type))
-                    {
-                        currencies[type] = 0;
-                    }
-                }
+                currencies = data;
             }
-        }
 
-        private void InitializeDefaultCurrencies()
-        {
-            currencies = new Dictionary<CurrencyType, int>();
-            foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
+            foreach (var currencyPair in currencies)
             {
-                currencies[type] = 0;
+                onCurrencyChanged?.Invoke(currencyPair.Key, currencyPair.Value);
             }
         }
-
-        private void SaveCurrencies()
+        public int GetCurrency(CurrencyType type)
         {
-            saveService.SaveCurrencies(currencies);
-        }
-
-        public int GetCurrency(CurrencyType type) 
-        {
-            if(currencies.TryGetValue(type, out int amount))
-            {
-                return amount;
-            }
-            return 0;
+            return currencies.TryGetValue(type, out int amount) ? amount : 0;
         }
         public void AddCurrency(CurrencyType type, int amount)
         {
             if (amount <= 0) return;
-
-            currencies[type] += amount;
+            currencies[type] = GetCurrency(type) + amount;
             onCurrencyChanged?.Invoke(type, currencies[type]);
-            SaveCurrencies();
         }
         public bool SpendCurrency(CurrencyType type, int amount)
         {
             if (amount <= 0) return false;
-
-            if (currencies[type] >= amount)
+            if (GetCurrency(type) >= amount)
             {
                 currencies[type] -= amount;
                 onCurrencyChanged?.Invoke(type, currencies[type]);
-                SaveCurrencies();
                 return true;
             }
             return false;

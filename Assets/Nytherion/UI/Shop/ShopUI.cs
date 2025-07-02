@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Data.Shop;
@@ -8,6 +6,7 @@ using Nytherion.Core;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.UI.Inventory;
 using TMPro;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.Shop
 {
@@ -37,7 +36,6 @@ namespace Nytherion.UI.Shop
                 return;
             }
             Instance = this;
-            Debug.Log("ShopUI.Instance가 설정되었습니다. ID: " + this.GetInstanceID() + ", 오브젝트: " + this.gameObject.name);
 
             base.Awake();
         }
@@ -57,7 +55,10 @@ namespace Nytherion.UI.Shop
         {
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.onCurrencyChanged += UpdateCurrencyUI;
             if (InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated += RefreshPlayerInventoryUI;
-
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.OnInteraction += HandleInteraction;
+            }
             if (playerInventoryParent != null)
             {
                 playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>(true));
@@ -73,8 +74,18 @@ namespace Nytherion.UI.Shop
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.onCurrencyChanged -= UpdateCurrencyUI;
             if (InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated -= RefreshPlayerInventoryUI;
             if (SellSlotUI.Instance != null) SellSlotUI.Instance.OnItemSold -= HandleSellItem;
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.OnInteraction -= HandleInteraction;
+            }
         }
-
+        private void HandleInteraction(InteractableType type)
+        {
+            if (IsOpen && type != InteractableType.ShopDealer)
+            {
+                Close();
+            }
+        }
         public void OpenShop(ShopData data)
         {
             currentShopData = data;

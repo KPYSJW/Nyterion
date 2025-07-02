@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   engravingName: Blood Pact
   description: 
-  Image: {fileID: 0}
+  Image: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   rarity: 2
   isCursed: 1
   level: 1

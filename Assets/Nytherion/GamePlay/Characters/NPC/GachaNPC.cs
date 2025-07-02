@@ -1,17 +1,17 @@
 using UnityEngine;
 using Nytherion.UI.Gacha;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.GamePlay.Characters.NPC
 {
     public class GachaNPC : MonoBehaviour, IInteractable
     {
+        public InteractableType Type => InteractableType.GachaNPC;
         public bool IsInteractable { get; set; } = true;
 
         public void Interact()
         {
-            if (!IsInteractable || GachaUIController.Instance == null) return;
-            
-            GachaUIController.Instance.Toggle();
+            if (!IsInteractable) return;
         }
 
         [Header("Gizmo Settings")]

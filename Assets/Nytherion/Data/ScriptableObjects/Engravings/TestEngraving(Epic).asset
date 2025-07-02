@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   engravingName: Epic
   description: 
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
   rarity: 3
   isCursed: 0
   level: 1
