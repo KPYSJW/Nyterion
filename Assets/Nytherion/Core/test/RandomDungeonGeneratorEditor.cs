@@ -5,7 +5,7 @@ using UnityEngine;
 
 [CustomEditor(typeof(AbstractDungeonGenertor),true)]
 
-public class RandomDungeonGeneratioEditor : Editor
+public class RandomDungeonGeneratorEditor : Editor
 {
     AbstractDungeonGenertor generator;
 
