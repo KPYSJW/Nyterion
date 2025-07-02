@@ -37,26 +37,22 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (currentStageData == null)
             {
-                Debug.LogWarning("StageData is not assigned.");
                 return false;
             }
 
             if (currentStageData.enemyList == null || currentStageData.enemyList.Count == 0)
             {
-                Debug.LogWarning("No enemies in StageData's enemy list.");
                 return false;
             }
 
             if (currentStageData.useRandomSpawn && player == null)
             {
-                Debug.LogError("Random spawn is enabled but player reference is not set.");
                 return false;
             }
 
             if (!currentStageData.useRandomSpawn &&
                 (currentStageData.fixedSpawnPoints == null || currentStageData.fixedSpawnPoints.Count == 0))
             {
-                Debug.LogWarning("Fixed spawn is enabled but no spawn points are set.");
                 return false;
             }
 
@@ -78,7 +74,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             {
                 if (currentStageData.fixedSpawnPoints[i] == null)
                 {
-                    Debug.LogWarning($"Skipping null spawn point at index {i}");
                     continue;
                 }
 
@@ -99,7 +94,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             if (enemyObj == null)
             {
-                Debug.LogWarning($"Failed to spawn enemy: {enemyData.enemyName}");
                 return;
             }
 
@@ -110,7 +104,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
             else
             {
-                Debug.LogWarning($"Spawned object is not an enemy: {enemyData.enemyName}");
                 ObjectPoolManager.Instance.ReturnToPool(enemyData.enemyName, enemyObj);
             }
         }
@@ -119,22 +112,19 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (player == null)
             {
-                Debug.LogError("Player reference is not set in EnemySpawner!");
                 return Vector3.zero;
             }
 
-            // 랜덤한 각도와 반지름으로 위치 계산
             float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
             float randomRadius = Random.Range(minSpawnRadius, maxSpawnRadius);
             
-            // 원형 범위 내 랜덤 위치 계산
             Vector2 offset = new Vector2(
                 Mathf.Cos(randomAngle) * randomRadius,
                 Mathf.Sin(randomAngle) * randomRadius
             );
 
             Vector3 spawnPos = (Vector3)offset + player.position;
-            spawnPos.z = 0f; // 2D 게임이므로 z값은 0으로 고정
+            spawnPos.z = 0f;
             
             return spawnPos;
         }

@@ -17,7 +17,6 @@ public class DragItemIcon : MonoBehaviour
         }
         else if (Instance != this)
         {
-            Debug.LogWarning("[DragItemIcon] Another instance already exists. Destroying this one.");
             Destroy(gameObject);
             return;
         }

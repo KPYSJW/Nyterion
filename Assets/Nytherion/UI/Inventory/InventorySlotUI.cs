@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core;
 using System;
 using Nytherion.UI.Shop;
@@ -32,7 +31,7 @@ namespace Nytherion.UI.Inventory
         {
             if (eventData.button == PointerEventData.InputButton.Right && !IsEmpty)
             {
-                if (ShopUI.Instance != null && ShopUI.Instance.IsShopOpen())
+                if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
                 {
                     OnSellItemAction?.Invoke(this);
                 }

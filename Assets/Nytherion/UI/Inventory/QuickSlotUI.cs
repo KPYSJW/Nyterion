@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Core.Interfaces;
 using Nytherion.Core;
 using System;
 using EventSystem = UnityEngine.EventSystems.EventSystem;
@@ -86,7 +87,6 @@ namespace Nytherion.UI.Inventory
                     SetItem(currentItem, currentCount);
                 }
 
-                InventoryManager.Instance.RequestSlotsUpdate();
 
                 OnItemUsed?.Invoke(currentItem, 1);
             }

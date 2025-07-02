@@ -1,7 +1,5 @@
-using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Characters.Item;
 using Nytherion.Core.Interfaces;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

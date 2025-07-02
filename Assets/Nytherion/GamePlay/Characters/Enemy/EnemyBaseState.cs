@@ -2,11 +2,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
 {
     public abstract class EnemyBaseState
     {
-        protected EnemyAIController _enemyAIController;
+        protected EnemyAIController enemyAIController;
 
         protected EnemyBaseState(EnemyAIController enemyAIController)
         {
-            _enemyAIController = enemyAIController;
+            this.enemyAIController = enemyAIController;
         }
 
         public abstract void EnterState(EnemyAIController enemy);

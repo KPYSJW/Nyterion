@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Nytherion.Core;
 using Nytherion.GamePlay.Engravings;
-using Nytherion.Data.ScriptableObjects.Engravings;
 
 namespace Nytherion.UI.EngravingBoard
 {
@@ -11,23 +11,34 @@ namespace Nytherion.UI.EngravingBoard
     {
         public static EngravingGridUI Instance { get; private set; }
 
-        [Header("Grid Settings")]
-        public int rows = 20;
-        public int columns = 20;
-        public GameObject slotCellPrefab;
+        [Header("UI 구성요소")]
+        [SerializeField] private GameObject slotCellPrefab;
         public RectTransform gridRoot;
         public RectTransform placedBlocksContainer;
-        [Header("Draggable Block Settings")]
-        [SerializeField] private GameObject draggableBlockPrefab;
-        [SerializeField] private Canvas rootCanvas;
-        [Header("Block Storage Settings")]
-        public RectTransform blockStorageParent;
-        public GameObject storageSlotPrefab;
-        private EngravingSlotCell[,] slotCells;
-        private EngravingGrid logicGrid;
+        public RectTransform previewContainer;
 
+        [Header("드래그 블럭 설정")]
+        [SerializeField] private GameObject draggableBlockPrefab;
+        public Canvas rootCanvas;
+
+        [Header("보관소 설정")]
+        [SerializeField] public RectTransform blockStorageParent;
+        [SerializeField] public GameObject storageSlotPrefab;
+
+        [Header("영향 범위 기즈모")]
+        [Tooltip("레벨 업 효과를 표시할 프리팹")]
+        [SerializeField] private GameObject levelUpGizmoPrefab;
+        [Tooltip("레벨 다운 효과를 표시할 프리팹")]
+        [SerializeField] private GameObject levelDownGizmoPrefab;
+
+        private EngravingSlotCell[,] slotCells;
         private EngravingSlotCell currentPointerOverCell;
         public Vector2Int? CurrentGridPos => currentPointerOverCell?.GridPosition;
+
+        private int rows;
+        private int columns;
+
+        private GameObject[,] influenceGizmos;
 
         private void Awake()
         {
@@ -35,101 +46,75 @@ namespace Nytherion.UI.EngravingBoard
             else Destroy(gameObject);
         }
 
-        private void Start()
+        public IEnumerator Initialize()
         {
-            InitializeGrid();
-            TestPlaceSampleBlock();
-        }
-
-        public void AddNewBlockToStorage(EngravingBlock blockData)
-        {
-            if (blockData == null) return;
-
-            GameObject slotObj = Instantiate(storageSlotPrefab, blockStorageParent);
-            GameObject blockObj = Instantiate(draggableBlockPrefab, slotObj.transform);
-            EngravingBlockDraggable draggable = blockObj.GetComponent<EngravingBlockDraggable>();
-
-            draggable.blockData = blockData;
-            draggable.BuildVisualFromShape();
-
-            GridLayoutGroup mainGridLayout = gridRoot.GetComponent<GridLayoutGroup>();
-            Vector2 cellSize = mainGridLayout.cellSize;
-            Vector2 spacing = mainGridLayout.spacing;
-            Vector2 visualCenterOffset = blockData.GetVisualCenterPixelOffset(cellSize, spacing);
-
-            blockObj.GetComponent<RectTransform>().anchoredPosition = -visualCenterOffset;
-
-            Debug.Log($"{blockData.BlockId} 블록이 보관소에 추가되었습니다.");
-        }
-        public void TestAddRandomBlock()
-        {
-            List<Vector2Int> shape = GenerateValidShape();
-
-            EngravingData tempData = ScriptableObject.CreateInstance<EngravingData>();
-            tempData.engravingName = "UserBlock_" + Random.Range(1000, 9999);
-            tempData.shape = shape;
-            tempData.isCursed = false;
-
-            EngravingBlock newBlock = new EngravingBlock(tempData);
-            AddNewBlockToStorage(newBlock);
-        }
-        private void TestPlaceSampleBlock()
-        {
-            List<Vector2Int> shape = new List<Vector2Int>
+            if (EngravingManager.Instance == null)
             {
-                new Vector2Int(0, 0),
-                new Vector2Int(1, 0),
-                new Vector2Int(0, 1),
-                new Vector2Int(1, 1)
-            };
+                Debug.LogError("EngravingManager를 찾을 수 없어 UI를 초기화할 수 없습니다.");
+                yield break;
+            }
 
-            EngravingData tempData = ScriptableObject.CreateInstance<EngravingData>();
-            tempData.engravingName = "TestBlock";
-            tempData.shape = shape;
-            tempData.isCursed = false;
+            this.rows = EngravingManager.Instance.GridRows;
+            this.columns = EngravingManager.Instance.GridColumns;
 
-            EngravingBlock block = new EngravingBlock(tempData);
-            logicGrid.PlaceBlock(block, 2, 2);
-        }
-#if UNITY_EDITOR
-[ContextMenu("▶ Test Add Random Block")]
-#endif
-        public void EditorTestAddRandomBlock()
-        {
-            TestAddRandomBlock();
+            InitializeGridCells();
+            yield return RefreshAllUICoroutine();
         }
 
-        private List<Vector2Int> GenerateValidShape()
+        private void OnEnable()
         {
-            int targetCount = Random.Range(3, 6); 
-            List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };
-
-            while (shape.Count < targetCount)
+            if (EngravingManager.Instance != null)
             {
-                Vector2Int baseCell = shape[Random.Range(0, shape.Count)];
-                Vector2Int[] directions = new Vector2Int[]
-                {
-                    Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
-                };
+                EngravingManager.Instance.OnEngravingStateChanged += HandleEngravingStateChanged;
+                HandleEngravingStateChanged();
+            }
+        }
 
-                foreach (var dir in directions)
+        private void OnDisable()
+        {
+            if (EngravingManager.Instance != null)
+            {
+                EngravingManager.Instance.OnEngravingStateChanged -= HandleEngravingStateChanged;
+            }
+        }
+
+        private void HandleEngravingStateChanged()
+        {
+            if (gameObject.activeInHierarchy && EngravingManager.Instance != null)
+            {
+                StartCoroutine(RefreshAllUICoroutine());
+            }
+        }
+
+        private IEnumerator RefreshAllUICoroutine()
+        {
+            yield return new WaitForEndOfFrame();
+
+            ClearAllVisuals();
+
+            foreach (EngravingBlock block in EngravingManager.Instance.GetStorageBlocks())
+            {
+                CreateBlockInStorage(block);
+            }
+
+            foreach (KeyValuePair<string, Vector2Int> pair in EngravingManager.Instance.GetPlacedBlocks())
+            {
+                EngravingBlock block = EngravingManager.Instance.GetBlockByID(pair.Key);
+                if (block != null)
                 {
-                    Vector2Int newCell = baseCell + dir;
-                    if (!shape.Contains(newCell))
-                    {
-                        shape.Add(newCell);
-                        break;
-                    }
+                    CreateBlockOnGrid(block, pair.Value);
                 }
             }
 
-            return shape;
+            DrawInfluenceGizmos();
         }
 
-        private void InitializeGrid()
+        private void InitializeGridCells()
         {
-            logicGrid = new EngravingGrid(rows, columns);
+            foreach (Transform child in gridRoot) Destroy(child.gameObject);
+
             slotCells = new EngravingSlotCell[rows, columns];
+            influenceGizmos = new GameObject[rows, columns];
 
             for (int y = 0; y < rows; y++)
             {
@@ -143,92 +128,128 @@ namespace Nytherion.UI.EngravingBoard
             }
         }
 
-        public void OnCellPointerEnter(EngravingSlotCell cell)
+        private void ClearAllVisuals()
         {
-            currentPointerOverCell = cell;
+            foreach (Transform child in placedBlocksContainer) Destroy(child.gameObject);
+            foreach (Transform child in blockStorageParent) Destroy(child.gameObject);
+            if (influenceGizmos != null)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    for (int x = 0; x < columns; x++)
+                    {
+                        if (influenceGizmos[y, x] != null) Destroy(influenceGizmos[y, x]);
+                    }
+                }
+            }
+            foreach (Transform child in previewContainer) Destroy(child.gameObject);
         }
 
-        public void OnCellPointerExit(EngravingSlotCell cell)
+
+        private void DrawInfluenceGizmos()
         {
-            if (currentPointerOverCell == cell)
+            for (int y = 0; y < rows; y++)
             {
-                currentPointerOverCell = null;
+                for (int x = 0; x < columns; x++)
+                {
+                    InfluenceType influence = EngravingManager.Instance.GetInfluenceAt(y, x);
+                    GameObject prefabToUse = null;
+
+                    if (influence == InfluenceType.LevelUp)
+                        prefabToUse = levelUpGizmoPrefab;
+                    else if (influence == InfluenceType.LevelDown)
+                        prefabToUse = levelDownGizmoPrefab;
+
+                    if (prefabToUse != null)
+                    {
+                        Vector2 cellPosition = GetLocalPositionFromGridCell(new Vector2Int(x, y));
+                        GameObject gizmo = Instantiate(prefabToUse, placedBlocksContainer);
+                        gizmo.GetComponent<RectTransform>().anchoredPosition = cellPosition;
+                        influenceGizmos[y, x] = gizmo;
+                    }
+                }
             }
         }
-        public bool TryPlaceBlockAt(EngravingBlock block, Vector2Int centerCell)
+
+        private void CreateBlockInStorage(EngravingBlock blockData)
         {
-            return logicGrid.PlaceBlock(block, centerCell.y, centerCell.x);
+            GameObject slotObj = Instantiate(storageSlotPrefab, blockStorageParent);
+            GameObject blockObj = Instantiate(draggableBlockPrefab, slotObj.transform);
+            EngravingBlockDraggable draggable = blockObj.GetComponent<EngravingBlockDraggable>();
+
+            draggable.isPlaced = false;
+            draggable.blockData = blockData;
+            draggable.BuildVisualFromShape();
         }
 
-        public void ShowPlacementPreview(EngravingBlock block, Vector2Int gridPos)
+        private void CreateBlockOnGrid(EngravingBlock blockData, Vector2Int position)
         {
+            GameObject blockObj = Instantiate(draggableBlockPrefab, placedBlocksContainer);
+            EngravingBlockDraggable draggable = blockObj.GetComponent<EngravingBlockDraggable>();
+
+            draggable.isPlaced = true;
+            draggable.gridPosition = position;
+            draggable.blockData = blockData;
+            draggable.BuildVisualFromShape();
+
+            draggable.GetComponent<RectTransform>().anchoredPosition = GetLocalPositionFromGridCell(position);
+        }
+
+        public void OnCellPointerEnter(EngravingSlotCell cell) => currentPointerOverCell = cell;
+        public void OnCellPointerExit(EngravingSlotCell cell) { if (currentPointerOverCell == cell) currentPointerOverCell = null; }
+
+        public void ShowPlacementPreview(EngravingBlock block, Vector2Int? gridPos)
+        {
+            foreach (Transform child in previewContainer) Destroy(child.gameObject);
             ClearPreview();
 
-            foreach (Vector2Int offset in block.Shape)
-            {
-                int x = gridPos.x + offset.x;
-                int y = gridPos.y + offset.y;
+            if (block == null || !gridPos.HasValue) return;
 
-                if (x >= 0 && x < columns && y >= 0 && y < rows)
+            Vector2Int pos = gridPos.Value;
+            if (pos.x >= 0 && pos.x < columns && pos.y >= 0 && pos.y < rows)
+            {
+                slotCells[pos.y, pos.x].Highlight(true);
+            }
+
+            foreach (var zone in block.GetRotatedInfluenceZones())
+            {
+                int targetRow = pos.y - zone.offset.y;
+                int targetCol = pos.x + zone.offset.x;
+
+                if (targetRow >= 0 && targetRow < rows && targetCol >= 0 && targetCol < columns)
                 {
-                    slotCells[y, x].Highlight(true);
+                    GameObject prefabToUse = null;
+                    if (zone.type == InfluenceType.LevelUp) prefabToUse = levelUpGizmoPrefab;
+                    else if (zone.type == InfluenceType.LevelDown) prefabToUse = levelDownGizmoPrefab;
+
+                    if (prefabToUse != null)
+                    {
+                        Vector2 cellPosition = GetLocalPositionFromGridCell(new Vector2Int(targetCol, targetRow));
+                        GameObject gizmo = Instantiate(prefabToUse, previewContainer);
+                        gizmo.GetComponent<RectTransform>().anchoredPosition = cellPosition;
+
+                        Graphic graphic = gizmo.GetComponent<Graphic>();
+                        if (graphic != null)
+                        {
+                            Color color = graphic.color;
+                            color.a = 0.5f;
+                            graphic.color = color;
+                        }
+                    }
                 }
             }
         }
         public void ClearPreview()
         {
-            foreach (var cell in slotCells)
-            {
-                cell.Highlight(false);
-            }
+            foreach (var cell in slotCells) cell.Highlight(false);
         }
-        public bool CanPlacePreview(EngravingBlock block, Vector2Int centerCell)
-        {
-            return logicGrid.CanPlaceBlock(block, centerCell.y, centerCell.x);
-        }
+
         public Vector2 GetLocalPositionFromGridCell(Vector2Int gridPos)
         {
-            if (gridPos.y < 0 || gridPos.y >= rows || gridPos.x < 0 || gridPos.x >= columns)
-            {
-                Debug.LogError("GetLocalPositionFromGridCell: 유효하지 않은 gridPos가 입력되었습니다.");
-                return Vector2.zero;
-            }
+            if (slotCells == null || gridPos.y < 0 || gridPos.y >= rows || gridPos.x < 0 || gridPos.x >= columns) return Vector2.zero;
 
             RectTransform targetCellRect = slotCells[gridPos.y, gridPos.x].GetComponent<RectTransform>();
-
-            Vector3 targetWorldPosition = targetCellRect.position;
-
-            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(rootCanvas.worldCamera, targetWorldPosition);
-            Vector2 localPoint;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                placedBlocksContainer,
-                screenPoint,
-                rootCanvas.worldCamera,
-                out localPoint);
-
-            return localPoint;
+            return placedBlocksContainer.InverseTransformPoint(targetCellRect.position);
         }
-        public bool RemoveBlockFromGrid(string blockId)
-        {
-            return logicGrid.RemoveBlock(blockId);
-        }
-        public void AddEngravingToStorage(EngravingData engravingData)
-        {
-            EngravingBlock block = new EngravingBlock(engravingData);
-
-            GameObject slotObj = Instantiate(storageSlotPrefab, blockStorageParent);
-            GameObject blockObj = Instantiate(draggableBlockPrefab, slotObj.transform);
-
-            EngravingBlockDraggable draggable = blockObj.GetComponent<EngravingBlockDraggable>();
-            draggable.blockData = block;
-            draggable.BuildVisualFromShape();
-
-            GridLayoutGroup gridLayout = gridRoot.GetComponent<GridLayoutGroup>();
-            Vector2 cellSize = gridLayout.cellSize;
-            Vector2 spacing = gridLayout.spacing;
-            Vector2 visualOffset = block.GetVisualCenterPixelOffset(cellSize, spacing);
-            blockObj.GetComponent<RectTransform>().anchoredPosition = -visualOffset;
-        }
-
     }
 }
