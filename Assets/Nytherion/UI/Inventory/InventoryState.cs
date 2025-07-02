@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.UI.Shop;
-using Nytherion.UI.Inventory;
 
 namespace Nytherion.UI.Inventory
 {
