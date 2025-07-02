@@ -2,9 +2,6 @@ using UnityEngine;
 
 namespace Nytherion.GamePlay
 {
-    /// <summary>
-    /// 플레이어를 부드럽게 따라다니는 카메라 컨트롤러
-    /// </summary>
     public class FollowCamera : MonoBehaviour
     {
         [Header("Target")]
@@ -34,17 +31,14 @@ namespace Nytherion.GamePlay
 
         private void Start()
         {
-            // 카메라 Z 위치 강제 고정
             transform.position = new Vector3(transform.position.x, transform.position.y, offset.z);
 
             if (target == null)
             {
-                // 플레이어 태그를 가진 객체를 자동으로 찾아 타겟으로 설정
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 if (player != null)
                 {
                     target = player.transform;
-                    // 플레이어 Z 위치 강제 고정
                     Vector3 playerPos = target.position;
                     playerPos.z = 0f;
                     target.position = playerPos;
@@ -60,14 +54,12 @@ namespace Nytherion.GamePlay
         {
             if (target == null) return;
 
-            // 타겟 위치 계산 (Z축은 항상 0으로 고정)
             Vector3 targetPosition = new Vector3(
                 target.position.x + offset.x,
                 target.position.y + offset.y,
-                offset.z // Z축은 항상 고정
+                offset.z 
             );
 
-            // 플레이어 Z 위치 강제 고정 (혹시 모를 문제 방지)
             if (Mathf.Abs(target.position.z) > 0.01f)
             {
                 Vector3 playerPos = target.position;
@@ -77,7 +69,6 @@ namespace Nytherion.GamePlay
 
             if (useSmoothMovement)
             {
-                // 부드러운 이동 (SmoothDamp 사용)
                 transform.position = Vector3.SmoothDamp(
                     transform.position,
                     targetPosition,
@@ -87,7 +78,6 @@ namespace Nytherion.GamePlay
             }
             else
             {
-                // 즉시 이동 (테스트용)
                 transform.position = new Vector3(
                     Mathf.Clamp(targetPosition.x, minBounds.x, maxBounds.x),
                     Mathf.Clamp(targetPosition.y, minBounds.y, maxBounds.y),
@@ -95,24 +85,19 @@ namespace Nytherion.GamePlay
                 );
             }
 
-            // 경계 제한 (보험용)
             Vector3 clampedPosition = transform.position;
             clampedPosition.x = Mathf.Clamp(clampedPosition.x, minBounds.x, maxBounds.x);
             clampedPosition.y = Mathf.Clamp(clampedPosition.y, minBounds.y, maxBounds.y);
-            clampedPosition.z = offset.z; // Z축은 항상 고정
+            clampedPosition.z = offset.z; 
             transform.position = clampedPosition;
         }
 
-        /// <summary>
-        /// 카메라의 경계를 설정합니다.
-        /// </summary>
         public void SetBounds(Vector2 min, Vector2 max)
         {
             minBounds = min;
             maxBounds = max;
         }
 
-        // 디버그용 Gizmo 그리기
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.green;

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -7,10 +5,9 @@ using UnityEngine.InputSystem;
 
 namespace Nytherion.UI
 {
-    public class MenuManager : MonoBehaviour
+    public class MenuManager : UIPanelBase
     {
         [Header("UI References")]
-        [SerializeField] private GameObject menuUI;
         [SerializeField] private GameObject mainPanel;
         [SerializeField] private Button resumeButton;
         [SerializeField] private Button settingsButton;
@@ -19,35 +16,30 @@ namespace Nytherion.UI
         [SerializeField] private GameObject controlsPanel;
         [SerializeField] private Button mainMenuButton;
 
-
         [Header("Input")]
         [SerializeField] private InputActionReference toggleMenuAction;
 
-        private bool isPaused = false;
+        protected override void Awake()
+        {
+            base.Awake();
+        }
 
         private void OnEnable()
         {
-            // 버튼 이벤트 연결
-            resumeButton.onClick.AddListener(ResumeGame);
+            resumeButton.onClick.AddListener(Close);
             settingsButton.onClick.AddListener(OpenSettings);
             controlButton.onClick.AddListener(OpenControls);
             mainMenuButton.onClick.AddListener(ReturnToMainMenu);
 
-            // 입력 액션 설정
             if (toggleMenuAction != null)
             {
                 toggleMenuAction.action.Enable();
                 toggleMenuAction.action.performed += OnToggleMenu;
             }
-
-            // 초기 상태 설정
-            menuUI.SetActive(false);
         }
-
 
         private void OnDisable()
         {
-            // 입력 액션 정리
             if (toggleMenuAction != null && toggleMenuAction.action != null)
             {
                 toggleMenuAction.action.performed -= OnToggleMenu;
@@ -56,32 +48,29 @@ namespace Nytherion.UI
 
         private void OnToggleMenu(InputAction.CallbackContext context)
         {
-            if (isPaused) ResumeGame();
-            else PauseGame();
+            Toggle();
         }
-
-        private void PauseGame()
+        
+        public override void Open()
         {
-            Time.timeScale = 0f;
-            menuUI.SetActive(true);
+            base.Open();
             mainPanel.SetActive(true);
             settingsPanel.SetActive(false);
             controlsPanel.SetActive(false);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            isPaused = true;
         }
-
-        public void ResumeGame()
+        
+        protected override void OnPanelStateChanged(bool isOpen)
         {
-            Time.timeScale = 1f;
-            menuUI.SetActive(false);
-            mainPanel.SetActive(false);
-            settingsPanel.SetActive(false);
-            controlsPanel.SetActive(false);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            isPaused = false;
+            if (isOpen)
+            {
+                Time.timeScale = 0f;
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+                Time.timeScale = 1f;
+            }
         }
 
         private void OpenSettings()
@@ -89,11 +78,13 @@ namespace Nytherion.UI
             settingsPanel.SetActive(true);
             mainPanel.SetActive(false);
         }
+
         public void CloseSettings()
         {
             settingsPanel.SetActive(false);
             mainPanel.SetActive(true);
         }
+
         private void OpenControls()
         {
             controlsPanel.SetActive(true);

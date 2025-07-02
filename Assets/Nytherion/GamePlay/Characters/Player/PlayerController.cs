@@ -1,62 +1,23 @@
 using Nytherion.Core;
 using Nytherion.Data.ScriptableObjects.Player;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.GamePlay.Characters.NPC;
-using Nytherion.UI.Shop;
-using Nytherion.Data.Shop;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        // --- 인스펙터 설정 변수들 ---
         [Header("Components")]
-        [Tooltip("물리 효과를 위한 Rigidbody2D 컴포넌트")]
         [SerializeField] private Rigidbody2D rb;
-        [Tooltip("스프라이트 렌더러 컴포넌트")]
         [SerializeField] private SpriteRenderer spriteRenderer;
 
-        [Header("Interaction")]
-        [Tooltip("상호작용을 감지할 거리")]
-        [SerializeField] private float interactionDistance = 1.5f;
-        [Tooltip("상호작용 가능한 오브젝트들의 레이어")]
-        [SerializeField] private LayerMask interactableLayer;
-
-
-        // --- 내부 변수들 ---
         private bool isFacingRight = true;
         private bool isDashing = false;
         private float lastDashTime = -999f;
 
-
-        // --- 이벤트 구독 및 해제 ---
-
-        private void OnEnable()
-        {
-            // InputManager가 존재할 때만 이벤트 구독
-            if (InputManager.Instance != null)
-            {
-                InputManager.Instance.onInteract += OnInteract;
-            }
-        }
-
-        private void OnDisable()
-        {
-            if (InputManager.Instance != null)
-            {
-                InputManager.Instance.onInteract -= OnInteract;
-            }
-        }
-
-
-        // --- 프레임별 로직 ---
-
         private void Update()
         {
             if (InputManager.Instance == null) return;
-
             HandleDashInput();
             HandleSpriteFlip();
         }
@@ -64,19 +25,14 @@ namespace Nytherion.GamePlay.Characters.Player
         private void FixedUpdate()
         {
             if (InputManager.Instance == null) return;
-
             HandleMovement();
         }
-
-
-        // --- 주요 기능별 메서드 ---
 
         private void HandleMovement()
         {
             if (isDashing) return;
             Vector2 moveInput = InputManager.Instance.MoveInput;
             float currentSpeed = PlayerManager.Instance.playerData.moveSpeed;
-
             rb.velocity = moveInput * currentSpeed;
         }
 
@@ -91,7 +47,6 @@ namespace Nytherion.GamePlay.Characters.Player
         private void HandleSpriteFlip()
         {
             Vector2 moveInput = InputManager.Instance.MoveInput;
-
             if (moveInput.x > 0 && !isFacingRight)
             {
                 isFacingRight = true;
@@ -104,42 +59,18 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
-        private void OnInteract()
-        {
-            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
-            {
-                ShopUI.Instance.CloseShop();
-                return;
-            }
-            
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, interactionDistance, interactableLayer);
-            foreach (var collider in colliders)
-            {
-                if (collider.TryGetComponent(out IInteractable interactableObject))
-                {
-                    interactableObject.Interact();
-                    break;
-                }
-            }
-        }
-
         private IEnumerator DashCoroutine()
         {
             isDashing = true;
             lastDashTime = Time.time;
-
             Vector2 moveInput = InputManager.Instance.MoveInput;
             Vector2 dashDirection = moveInput.normalized;
-
             if (dashDirection == Vector2.zero)
             {
                 dashDirection = isFacingRight ? Vector2.right : Vector2.left;
             }
-
             rb.velocity = dashDirection * PlayerManager.Instance.playerData.dashSpeed;
-
             yield return new WaitForSeconds(PlayerManager.Instance.playerData.dashDuration);
-
             isDashing = false;
         }
     }

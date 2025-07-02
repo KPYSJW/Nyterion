@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using Nytherion.Core.Enums;
 
-public interface IInteractable 
+public interface IInteractable
 {
+    InteractableType Type { get; }
     void Interact();
 }

@@ -182,69 +182,6 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""QuickSlot_4"",
-                    ""type"": ""Button"",
-                    ""id"": ""5a996ef7-b0b5-4d8a-a106-5c2e5c832806"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""QuickSlot_5"",
-                    ""type"": ""Button"",
-                    ""id"": ""098da227-5661-4c33-a24d-f292d90e12d6"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""QuickSlot_6"",
-                    ""type"": ""Button"",
-                    ""id"": ""298a7fbb-699f-4c5f-ba6b-d1bedb99c250"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""QuickSlot_7"",
-                    ""type"": ""Button"",
-                    ""id"": ""5e9b23cc-d418-494e-9b83-ffd0868d09b2"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""QuickSlot_8"",
-                    ""type"": ""Button"",
-                    ""id"": ""48a3b850-938a-41bf-9c54-96e7b9d4b02a"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""QuickSlot_9"",
-                    ""type"": ""Button"",
-                    ""id"": ""ce3f7590-7253-4578-abbd-c683ebc49c42"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""QuickSlot_0"",
-                    ""type"": ""Button"",
-                    ""id"": ""325f3645-2710-42fb-9c1e-3d05206d8aea"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""ToggleInventory"",
                     ""type"": ""Button"",
                     ""id"": ""99c069fb-891e-4833-ad43-4762fd2513c4"",
@@ -429,83 +366,6 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""777cbd74-117c-4963-afc8-dd18ad4a221b"",
-                    ""path"": ""<Keyboard>/4"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""QuickSlot_4"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4a341f5d-0ce9-4938-9a03-ef41bf039b5b"",
-                    ""path"": ""<Keyboard>/5"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""QuickSlot_5"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3ebbb82c-8479-47d6-b9ce-6f3cff832b1a"",
-                    ""path"": ""<Keyboard>/6"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""QuickSlot_6"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""2cbfdc25-2ce0-4048-9dc2-d3897126c44b"",
-                    ""path"": ""<Keyboard>/7"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""QuickSlot_7"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8527a2db-7ef1-43d6-b377-a1e25239899b"",
-                    ""path"": ""<Keyboard>/8"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""QuickSlot_8"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8fa27ddc-7c4d-4d28-ac5a-128aa645fab3"",
-                    ""path"": ""<Keyboard>/9"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""QuickSlot_9"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""65868d2d-3526-4e61-a60f-f64ca3656b78"",
-                    ""path"": ""<Keyboard>/0"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""QuickSlot_0"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""950b3c00-30d4-4546-87b2-a6e9ff69ad64"",
                     ""path"": ""<Keyboard>/i"",
                     ""interactions"": """",
@@ -568,13 +428,13 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""EngravingUI"",
-            ""id"": ""bed38f45-1dee-4cc5-abc4-f8cd49b09b71"",
+            ""name"": ""GachaUI"",
+            ""id"": ""f791bb46-44b5-4d44-a3c7-229631b7f2c6"",
             ""actions"": [
                 {
-                    ""name"": ""RotateBlock"",
+                    ""name"": ""Close"",
                     ""type"": ""Button"",
-                    ""id"": ""8c5a8f94-8adf-405a-bb30-21034c407433"",
+                    ""id"": ""d42787a3-280e-40f8-bb61-5edac06b1ed0"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -584,12 +444,60 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""b5fc010e-c2ae-4578-b35c-995aaee6fbb8"",
+                    ""id"": ""a796d997-d5de-4285-8655-bbbc5342f16e"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Close"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""EngravingUI"",
+            ""id"": ""dda232da-9121-4334-95c0-dd30162a45df"",
+            ""actions"": [
+                {
+                    ""name"": ""Close"",
+                    ""type"": ""Button"",
+                    ""id"": ""38f976d1-80e4-47fb-b360-de12e2b3539c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rotate"",
+                    ""type"": ""Button"",
+                    ""id"": ""f81c03d9-4ec8-43ca-a0be-d286504df148"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""7c5df341-f736-4139-9b6c-7c3fce9dd4ac"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Close"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d1a20c27-856f-4f41-83b4-b7b4c09c7375"",
                     ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateBlock"",
+                    ""action"": ""Rotate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -622,28 +530,26 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_QuickSlot_1 = m_Player.FindAction("QuickSlot_1", throwIfNotFound: true);
         m_Player_QuickSlot_2 = m_Player.FindAction("QuickSlot_2", throwIfNotFound: true);
         m_Player_QuickSlot_3 = m_Player.FindAction("QuickSlot_3", throwIfNotFound: true);
-        m_Player_QuickSlot_4 = m_Player.FindAction("QuickSlot_4", throwIfNotFound: true);
-        m_Player_QuickSlot_5 = m_Player.FindAction("QuickSlot_5", throwIfNotFound: true);
-        m_Player_QuickSlot_6 = m_Player.FindAction("QuickSlot_6", throwIfNotFound: true);
-        m_Player_QuickSlot_7 = m_Player.FindAction("QuickSlot_7", throwIfNotFound: true);
-        m_Player_QuickSlot_8 = m_Player.FindAction("QuickSlot_8", throwIfNotFound: true);
-        m_Player_QuickSlot_9 = m_Player.FindAction("QuickSlot_9", throwIfNotFound: true);
-        m_Player_QuickSlot_0 = m_Player.FindAction("QuickSlot_0", throwIfNotFound: true);
         m_Player_ToggleInventory = m_Player.FindAction("ToggleInventory", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_WorldMap = m_Player.FindAction("WorldMap", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
+        // GachaUI
+        m_GachaUI = asset.FindActionMap("GachaUI", throwIfNotFound: true);
+        m_GachaUI_Close = m_GachaUI.FindAction("Close", throwIfNotFound: true);
         // EngravingUI
         m_EngravingUI = asset.FindActionMap("EngravingUI", throwIfNotFound: true);
-        m_EngravingUI_RotateBlock = m_EngravingUI.FindAction("RotateBlock", throwIfNotFound: true);
+        m_EngravingUI_Close = m_EngravingUI.FindAction("Close", throwIfNotFound: true);
+        m_EngravingUI_Rotate = m_EngravingUI.FindAction("Rotate", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerAction.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerAction.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_GachaUI.enabled, "This will cause a leak and performance issues, PlayerAction.GachaUI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_EngravingUI.enabled, "This will cause a leak and performance issues, PlayerAction.EngravingUI.Disable() has not been called.");
     }
 
@@ -730,13 +636,6 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_QuickSlot_1;
     private readonly InputAction m_Player_QuickSlot_2;
     private readonly InputAction m_Player_QuickSlot_3;
-    private readonly InputAction m_Player_QuickSlot_4;
-    private readonly InputAction m_Player_QuickSlot_5;
-    private readonly InputAction m_Player_QuickSlot_6;
-    private readonly InputAction m_Player_QuickSlot_7;
-    private readonly InputAction m_Player_QuickSlot_8;
-    private readonly InputAction m_Player_QuickSlot_9;
-    private readonly InputAction m_Player_QuickSlot_0;
     private readonly InputAction m_Player_ToggleInventory;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_WorldMap;
@@ -791,34 +690,6 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/QuickSlot_3".
         /// </summary>
         public InputAction @QuickSlot_3 => m_Wrapper.m_Player_QuickSlot_3;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/QuickSlot_4".
-        /// </summary>
-        public InputAction @QuickSlot_4 => m_Wrapper.m_Player_QuickSlot_4;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/QuickSlot_5".
-        /// </summary>
-        public InputAction @QuickSlot_5 => m_Wrapper.m_Player_QuickSlot_5;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/QuickSlot_6".
-        /// </summary>
-        public InputAction @QuickSlot_6 => m_Wrapper.m_Player_QuickSlot_6;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/QuickSlot_7".
-        /// </summary>
-        public InputAction @QuickSlot_7 => m_Wrapper.m_Player_QuickSlot_7;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/QuickSlot_8".
-        /// </summary>
-        public InputAction @QuickSlot_8 => m_Wrapper.m_Player_QuickSlot_8;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/QuickSlot_9".
-        /// </summary>
-        public InputAction @QuickSlot_9 => m_Wrapper.m_Player_QuickSlot_9;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/QuickSlot_0".
-        /// </summary>
-        public InputAction @QuickSlot_0 => m_Wrapper.m_Player_QuickSlot_0;
         /// <summary>
         /// Provides access to the underlying input action "Player/ToggleInventory".
         /// </summary>
@@ -887,27 +758,6 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @QuickSlot_3.started += instance.OnQuickSlot_3;
             @QuickSlot_3.performed += instance.OnQuickSlot_3;
             @QuickSlot_3.canceled += instance.OnQuickSlot_3;
-            @QuickSlot_4.started += instance.OnQuickSlot_4;
-            @QuickSlot_4.performed += instance.OnQuickSlot_4;
-            @QuickSlot_4.canceled += instance.OnQuickSlot_4;
-            @QuickSlot_5.started += instance.OnQuickSlot_5;
-            @QuickSlot_5.performed += instance.OnQuickSlot_5;
-            @QuickSlot_5.canceled += instance.OnQuickSlot_5;
-            @QuickSlot_6.started += instance.OnQuickSlot_6;
-            @QuickSlot_6.performed += instance.OnQuickSlot_6;
-            @QuickSlot_6.canceled += instance.OnQuickSlot_6;
-            @QuickSlot_7.started += instance.OnQuickSlot_7;
-            @QuickSlot_7.performed += instance.OnQuickSlot_7;
-            @QuickSlot_7.canceled += instance.OnQuickSlot_7;
-            @QuickSlot_8.started += instance.OnQuickSlot_8;
-            @QuickSlot_8.performed += instance.OnQuickSlot_8;
-            @QuickSlot_8.canceled += instance.OnQuickSlot_8;
-            @QuickSlot_9.started += instance.OnQuickSlot_9;
-            @QuickSlot_9.performed += instance.OnQuickSlot_9;
-            @QuickSlot_9.canceled += instance.OnQuickSlot_9;
-            @QuickSlot_0.started += instance.OnQuickSlot_0;
-            @QuickSlot_0.performed += instance.OnQuickSlot_0;
-            @QuickSlot_0.canceled += instance.OnQuickSlot_0;
             @ToggleInventory.started += instance.OnToggleInventory;
             @ToggleInventory.performed += instance.OnToggleInventory;
             @ToggleInventory.canceled += instance.OnToggleInventory;
@@ -958,27 +808,6 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @QuickSlot_3.started -= instance.OnQuickSlot_3;
             @QuickSlot_3.performed -= instance.OnQuickSlot_3;
             @QuickSlot_3.canceled -= instance.OnQuickSlot_3;
-            @QuickSlot_4.started -= instance.OnQuickSlot_4;
-            @QuickSlot_4.performed -= instance.OnQuickSlot_4;
-            @QuickSlot_4.canceled -= instance.OnQuickSlot_4;
-            @QuickSlot_5.started -= instance.OnQuickSlot_5;
-            @QuickSlot_5.performed -= instance.OnQuickSlot_5;
-            @QuickSlot_5.canceled -= instance.OnQuickSlot_5;
-            @QuickSlot_6.started -= instance.OnQuickSlot_6;
-            @QuickSlot_6.performed -= instance.OnQuickSlot_6;
-            @QuickSlot_6.canceled -= instance.OnQuickSlot_6;
-            @QuickSlot_7.started -= instance.OnQuickSlot_7;
-            @QuickSlot_7.performed -= instance.OnQuickSlot_7;
-            @QuickSlot_7.canceled -= instance.OnQuickSlot_7;
-            @QuickSlot_8.started -= instance.OnQuickSlot_8;
-            @QuickSlot_8.performed -= instance.OnQuickSlot_8;
-            @QuickSlot_8.canceled -= instance.OnQuickSlot_8;
-            @QuickSlot_9.started -= instance.OnQuickSlot_9;
-            @QuickSlot_9.performed -= instance.OnQuickSlot_9;
-            @QuickSlot_9.canceled -= instance.OnQuickSlot_9;
-            @QuickSlot_0.started -= instance.OnQuickSlot_0;
-            @QuickSlot_0.performed -= instance.OnQuickSlot_0;
-            @QuickSlot_0.canceled -= instance.OnQuickSlot_0;
             @ToggleInventory.started -= instance.OnToggleInventory;
             @ToggleInventory.performed -= instance.OnToggleInventory;
             @ToggleInventory.canceled -= instance.OnToggleInventory;
@@ -1118,10 +947,107 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     /// </summary>
     public UIActions @UI => new UIActions(this);
 
+    // GachaUI
+    private readonly InputActionMap m_GachaUI;
+    private List<IGachaUIActions> m_GachaUIActionsCallbackInterfaces = new List<IGachaUIActions>();
+    private readonly InputAction m_GachaUI_Close;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "GachaUI".
+    /// </summary>
+    public struct GachaUIActions
+    {
+        private @PlayerAction m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public GachaUIActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "GachaUI/Close".
+        /// </summary>
+        public InputAction @Close => m_Wrapper.m_GachaUI_Close;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_GachaUI; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="GachaUIActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(GachaUIActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="GachaUIActions" />
+        public void AddCallbacks(IGachaUIActions instance)
+        {
+            if (instance == null || m_Wrapper.m_GachaUIActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_GachaUIActionsCallbackInterfaces.Add(instance);
+            @Close.started += instance.OnClose;
+            @Close.performed += instance.OnClose;
+            @Close.canceled += instance.OnClose;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="GachaUIActions" />
+        private void UnregisterCallbacks(IGachaUIActions instance)
+        {
+            @Close.started -= instance.OnClose;
+            @Close.performed -= instance.OnClose;
+            @Close.canceled -= instance.OnClose;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="GachaUIActions.UnregisterCallbacks(IGachaUIActions)" />.
+        /// </summary>
+        /// <seealso cref="GachaUIActions.UnregisterCallbacks(IGachaUIActions)" />
+        public void RemoveCallbacks(IGachaUIActions instance)
+        {
+            if (m_Wrapper.m_GachaUIActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="GachaUIActions.AddCallbacks(IGachaUIActions)" />
+        /// <seealso cref="GachaUIActions.RemoveCallbacks(IGachaUIActions)" />
+        /// <seealso cref="GachaUIActions.UnregisterCallbacks(IGachaUIActions)" />
+        public void SetCallbacks(IGachaUIActions instance)
+        {
+            foreach (var item in m_Wrapper.m_GachaUIActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_GachaUIActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="GachaUIActions" /> instance referencing this action map.
+    /// </summary>
+    public GachaUIActions @GachaUI => new GachaUIActions(this);
+
     // EngravingUI
     private readonly InputActionMap m_EngravingUI;
     private List<IEngravingUIActions> m_EngravingUIActionsCallbackInterfaces = new List<IEngravingUIActions>();
-    private readonly InputAction m_EngravingUI_RotateBlock;
+    private readonly InputAction m_EngravingUI_Close;
+    private readonly InputAction m_EngravingUI_Rotate;
     /// <summary>
     /// Provides access to input actions defined in input action map "EngravingUI".
     /// </summary>
@@ -1134,9 +1060,13 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// </summary>
         public EngravingUIActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "EngravingUI/RotateBlock".
+        /// Provides access to the underlying input action "EngravingUI/Close".
         /// </summary>
-        public InputAction @RotateBlock => m_Wrapper.m_EngravingUI_RotateBlock;
+        public InputAction @Close => m_Wrapper.m_EngravingUI_Close;
+        /// <summary>
+        /// Provides access to the underlying input action "EngravingUI/Rotate".
+        /// </summary>
+        public InputAction @Rotate => m_Wrapper.m_EngravingUI_Rotate;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1163,9 +1093,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Add(instance);
-            @RotateBlock.started += instance.OnRotateBlock;
-            @RotateBlock.performed += instance.OnRotateBlock;
-            @RotateBlock.canceled += instance.OnRotateBlock;
+            @Close.started += instance.OnClose;
+            @Close.performed += instance.OnClose;
+            @Close.canceled += instance.OnClose;
+            @Rotate.started += instance.OnRotate;
+            @Rotate.performed += instance.OnRotate;
+            @Rotate.canceled += instance.OnRotate;
         }
 
         /// <summary>
@@ -1177,9 +1110,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="EngravingUIActions" />
         private void UnregisterCallbacks(IEngravingUIActions instance)
         {
-            @RotateBlock.started -= instance.OnRotateBlock;
-            @RotateBlock.performed -= instance.OnRotateBlock;
-            @RotateBlock.canceled -= instance.OnRotateBlock;
+            @Close.started -= instance.OnClose;
+            @Close.performed -= instance.OnClose;
+            @Close.canceled -= instance.OnClose;
+            @Rotate.started -= instance.OnRotate;
+            @Rotate.performed -= instance.OnRotate;
+            @Rotate.canceled -= instance.OnRotate;
         }
 
         /// <summary>
@@ -1304,55 +1240,6 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnQuickSlot_3(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "QuickSlot_4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnQuickSlot_4(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "QuickSlot_5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnQuickSlot_5(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "QuickSlot_6" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnQuickSlot_6(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "QuickSlot_7" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnQuickSlot_7(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "QuickSlot_8" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnQuickSlot_8(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "QuickSlot_9" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnQuickSlot_9(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "QuickSlot_0" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnQuickSlot_0(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "ToggleInventory" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -1390,6 +1277,21 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         void OnPause(InputAction.CallbackContext context);
     }
     /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "GachaUI" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="GachaUIActions.AddCallbacks(IGachaUIActions)" />
+    /// <seealso cref="GachaUIActions.RemoveCallbacks(IGachaUIActions)" />
+    public interface IGachaUIActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Close" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClose(InputAction.CallbackContext context);
+    }
+    /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "EngravingUI" which allows adding and removing callbacks.
     /// </summary>
     /// <seealso cref="EngravingUIActions.AddCallbacks(IEngravingUIActions)" />
@@ -1397,11 +1299,18 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     public interface IEngravingUIActions
     {
         /// <summary>
-        /// Method invoked when associated input action "RotateBlock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Close" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRotateBlock(InputAction.CallbackContext context);
+        void OnClose(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Rotate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRotate(InputAction.CallbackContext context);
     }
 }

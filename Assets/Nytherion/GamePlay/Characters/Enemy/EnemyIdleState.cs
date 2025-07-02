@@ -8,13 +8,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public override void EnterState(EnemyAIController enemy)
         {
-            // Initialization logic for Idle state, if any
-            Debug.Log("Entering Idle State");
         }
 
         public override void UpdateState(EnemyAIController enemy)
         {
-            // Transition to ChaseState if player is within detectRange
             if (Vector3.Distance(enemy.transform.position, enemy.player.position) < enemy.detectRange)
             {
                 enemy.TransitionToState(enemy.chaseState);
@@ -23,8 +20,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public override void ExitState(EnemyAIController enemy)
         {
-            // Cleanup logic for Idle state, if any
-            Debug.Log("Exiting Idle State");
         }
     }
 }

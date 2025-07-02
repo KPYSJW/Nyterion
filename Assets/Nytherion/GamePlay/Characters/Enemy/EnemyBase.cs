@@ -42,7 +42,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (Random.value < enemyData.dropChance)
             {
-                Debug.Log($"골드 드랍: {enemyData.goldDropAmount}G (CurrencyManager 미구현)");
+                Debug.Log($"골드 드랍: {enemyData.goldDropAmount}G ");
             }
             
         }

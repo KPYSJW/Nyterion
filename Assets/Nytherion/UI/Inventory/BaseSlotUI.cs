@@ -3,29 +3,24 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Core;
 using System;
 
 namespace Nytherion.UI.Inventory
 {
-    // 슬롯 이벤트 델리게이트
     public delegate void SlotEventDelegate(BaseSlotUI slot, PointerEventData eventData);
     public delegate void SlotItemEventDelegate(ItemData item, int count);
     public abstract class BaseSlotUI : MonoBehaviour,
         IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler,
         IPointerEnterHandler, IPointerExitHandler
     {
-        // 이벤트
         public event SlotEventDelegate OnBeginDragEvent;
         public event SlotEventDelegate OnEndDragEvent;
         public event SlotEventDelegate OnPointerClickEvent;
         public event Action<BaseSlotUI> OnSlotUpdated;
 
-        // 아이템 관련 이벤트
         public event SlotItemEventDelegate OnItemSet;
         public event Action OnItemCleared;
         
-        // 현재 아이템과 개수에 대한 프로퍼티
         public ItemData CurrentItem => currentItem;
         public int CurrentCount => currentCount;
         public bool IsEmpty => currentItem == null || currentCount <= 0;
@@ -42,7 +37,6 @@ namespace Nytherion.UI.Inventory
 
         protected virtual void Awake()
         {
-            // 컴포넌트 초기화
             if (iconImage == null) 
             {
                 iconImage = GetComponentInChildren<Image>();
@@ -52,7 +46,6 @@ namespace Nytherion.UI.Inventory
                 }
             }
             
-            // countText는 옵션이므로 찾지 못해도 경고만 표시
             if (countText == null) 
             {
                 countText = GetComponentInChildren<TextMeshProUGUI>();
@@ -86,7 +79,6 @@ namespace Nytherion.UI.Inventory
                 iconImage.sprite = item.icon;
                 iconImage.enabled = true;
                 
-                // countText가 있는 경우에만 텍스트 업데이트
                 if (countText != null)
                 {
                     countText.text = item.isStackable && count > 1 ? count.ToString() : "";

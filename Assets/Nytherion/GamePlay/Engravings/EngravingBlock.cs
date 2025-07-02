@@ -9,58 +9,46 @@ namespace Nytherion.GamePlay.Engravings
         public EngravingData SourceData { get; private set; }
         public string BlockId => SourceData.engravingName;
         public List<Vector2Int> Shape => SourceData.shape;
-        public string BlockType => SourceData.isCursed ? "Cursed" : "Normal";
 
+        private int baseLevel;
+        public int RotationState { get; private set; }
         public EngravingBlock(EngravingData data)
         {
             SourceData = data;
+            baseLevel = data.level;
+            RotationState = 0;
         }
 
-        public IEnumerable<Vector2Int> GetOccupiedCells(Vector2Int gridPosition)
+        public void ChangeLevel(int amount)
         {
-            foreach (var cell in Shape)
-            {
-                yield return gridPosition + cell;
-            }
+            SourceData.level += amount;
         }
 
-        public Vector2 GetVisualCenterPixelOffset(Vector2 cellSize, Vector2 spacing)
+        public void ResetLevel()
         {
-            if (Shape == null || Shape.Count == 0) return Vector2.zero;
-
-            float minX = 0, maxX = 0, minY = 0, maxY = 0;
-            foreach (var offset in Shape)
-            {
-                minX = Mathf.Min(minX, offset.x);
-                maxX = Mathf.Max(maxX, offset.x);
-                minY = Mathf.Min(minY, offset.y);
-                maxY = Mathf.Max(maxY, offset.y);
-            }
-
-            float centerX = (minX + maxX) / 2f;
-            float centerY = (minY + maxY) / 2f;
-
-            float offsetX = centerX * (cellSize.x + spacing.x);
-            float offsetY = -centerY * (cellSize.y + spacing.y);
-
-            return new Vector2(offsetX, offsetY);
+            SourceData.level = baseLevel;
         }
-        public void Rotate(bool clockwise = true)
+        public void Rotate()
         {
-            List<Vector2Int> newShape = new List<Vector2Int>();
-
-            foreach (var cell in Shape)
+            RotationState = (RotationState + 1) % 4;
+        }
+        public void SetRotationState(int newRotationState)
+        {
+            RotationState = newRotationState;
+        }
+        public List<InfluenceZone> GetRotatedInfluenceZones()
+        {
+            var rotatedZones = new List<InfluenceZone>();
+            foreach (var zone in SourceData.influenceZones)
             {
-                if (clockwise)
+                Vector2Int rotatedOffset = zone.offset;
+                for (int i = 0; i < RotationState; i++)
                 {
-                    newShape.Add(new Vector2Int(cell.y, -cell.x));
+                    rotatedOffset = new Vector2Int(-rotatedOffset.y, rotatedOffset.x);
                 }
-                else
-                {
-                    newShape.Add(new Vector2Int(-cell.y, cell.x));
-                }
+                rotatedZones.Add(new InfluenceZone { offset = rotatedOffset, type = zone.type });
             }
-            SourceData.shape = newShape;
+            return rotatedZones;
         }
     }
 }
