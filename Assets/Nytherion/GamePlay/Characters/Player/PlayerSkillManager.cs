@@ -1,7 +1,5 @@
 using Nytherion.Core;
 using Nytherion.GamePlay.Characters.Skill;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Characters.Player

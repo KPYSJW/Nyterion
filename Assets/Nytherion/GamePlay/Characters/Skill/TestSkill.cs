@@ -7,7 +7,5 @@ public class TestSkill : SkillBase
 {
    protected override void Activate()
     {
-        Debug.Log($"스킬 실행:{skillData.skillName}");
-        
     }
 }
