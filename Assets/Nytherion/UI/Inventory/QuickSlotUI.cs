@@ -1,13 +1,10 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Interfaces;
-using Nytherion.Core;
+using Nytherion.Core.Managers;
 using System;
-using EventSystem = UnityEngine.EventSystems.EventSystem;
-using Nytherion.UI.Inventory.Utils;
+
 
 namespace Nytherion.UI.Inventory
 {

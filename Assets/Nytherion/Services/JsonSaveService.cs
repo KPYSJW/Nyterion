@@ -1,5 +1,5 @@
 using UnityEngine;
-using Nytherion.Core;
+using Nytherion.Core.Data;
 using System.IO;
 
 namespace Nytherion.Services

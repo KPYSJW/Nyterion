@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Nytherion.Core;
+using Nytherion.Core.Managers;
 using System;
-using Nytherion.UI.Shop;
 using Nytherion.UI.Inventory.Utils;
+using Nytherion.UI.Controllers;
 
 namespace Nytherion.UI.Inventory
 {

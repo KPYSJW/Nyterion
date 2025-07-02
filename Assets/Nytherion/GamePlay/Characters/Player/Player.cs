@@ -1,6 +1,3 @@
-using Nytherion.Core;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Characters.Player

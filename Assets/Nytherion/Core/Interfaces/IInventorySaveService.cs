@@ -1,4 +1,4 @@
-using Nytherion.UI.Inventory;
+using Nytherion.Core.Data;
 
 namespace Nytherion.Core.Interfaces
 {

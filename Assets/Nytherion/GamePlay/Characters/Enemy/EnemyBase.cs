@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Enemy;
-using Nytherion.Core;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {

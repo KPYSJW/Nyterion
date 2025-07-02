@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Core;
+using Nytherion.Core.Managers;
 using UnityEngine.EventSystems;
 using Nytherion.UI.Inventory;
 

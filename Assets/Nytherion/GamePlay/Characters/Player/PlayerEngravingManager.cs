@@ -1,7 +1,6 @@
 ﻿using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.GamePlay.Combat;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

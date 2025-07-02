@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Nytherion.Core;
+using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Engravings;
 
 namespace Nytherion.UI.EngravingBoard

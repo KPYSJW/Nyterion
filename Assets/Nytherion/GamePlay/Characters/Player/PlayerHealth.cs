@@ -5,7 +5,7 @@ namespace Nytherion.GamePlay.Characters.Player
 {
     public class PlayerHealth : MonoBehaviour
     {
-        public static event Action<float, float> OnHealthChanged; // 현재 HP, 최대 HP
+        public static event Action<float, float> OnHealthChanged; 
 
         [SerializeField] private float maxHealth = 100f;
         public float MaxHealth => maxHealth;
@@ -36,7 +36,6 @@ namespace Nytherion.GamePlay.Characters.Player
         private void Die()
         {
             Debug.Log("플레이어 사망");
-            // 사망 애니메이션, 재시작 처리 등
         }
     }
 }

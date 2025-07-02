@@ -1,5 +1,4 @@
-using Nytherion.Core;
-using Nytherion.Data.ScriptableObjects.Player;
+using Nytherion.Core.Managers;
 using System.Collections;
 using UnityEngine;
 
