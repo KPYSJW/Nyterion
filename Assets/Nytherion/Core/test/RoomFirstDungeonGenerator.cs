@@ -1,20 +1,12 @@
-/* RoomFirstDungeonGenerator.cs
-    (3칸 포탈 및 최적 위치 선정 로직 적용 최종 전체 버전)
+/* RoomFirstDungeonGenerator.cs (장애물 간격 유지 로직 추가)
 
     [역할]
-    이 스크립트는 던전 생성의 모든 핵심 로직을 담당하는 메인 컨트롤 타워입니다.
-    - 방의 배치, 크기, 종류(시작, 보스 등)를 결정합니다.
-    - 방들을 연결하는 3칸짜리 포탈의 위치를 계산합니다.
-    - 최종적으로 계산된 모든 데이터를 TilemapVisualizer와 DungeonManager에 전달하여
-      실제 게임 세계에 던전을 그리도록 지시합니다.
+    이 스크립트는 던전 생성의 모든 핵심 로직을 담당하는 메인 컨트롤 타워.
 
-    [주요 로직 흐름]
-    1. RunProceduralGeneration(): 던전 생성의 모든 단계를 순차적으로 호출하는 메인 함수.
-    2. 방 레이아웃 생성: 그리드 기반으로 방의 논리적 연결 구조를 만듭니다.
-    3. 방 배치 및 겹침 해결: 방의 실제 위치를 계산하고, 겹치지 않도록 조정합니다.
-    4. 특수 방 지정: 막다른 길에 보스방, 시작방 등을 규칙에 따라 배치합니다.
-    5. 바닥 및 포탈 위치 계산: 모든 방의 바닥과 벽, 그리고 방을 잇는 포탈의 위치를 계산합니다.
-    6. 타일맵 그리기 요청: TilemapVisualizer를 통해 계산된 위치에 타일을 그립니다.
+    [핵심 변경점]
+    - (로직 개선) PlaceObstacles 메서드 내에서, 장애물을 하나 배치한 후
+      그 주변의 여유 공간(1칸)까지 함께 다음 배치 후보에서 제외하도록 수정했습니다.
+      이를 통해 장애물끼리 서로 붙어서 생성되는 것을 방지합니다.
 */
 using System;
 using System.Collections.Generic;
@@ -25,28 +17,35 @@ using Random = UnityEngine.Random;
 
 public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
 {
-    // 방의 종류를 정의하는 열거형. 외부에서도 참조할 수 있도록 public으로 선언.
+    /// <summary>
+    /// 배치될 장애물의 최종 데이터를 담는 구조체
+    /// </summary>
+    public struct PlacedObstacleData
+    {
+        public GameObject prefab;
+        public Vector2 worldPosition;
+    }
+
     public enum RoomType { Normal, Start, Boss, Shop, Item }
 
-    // 던전 생성에 필요한 모든 설정값을 담는 ScriptableObject
     [Header("Dungeon Data")]
     [Tooltip("던전 생성을 위한 설정값이 담긴 ScriptableObject 입니다.")]
     [SerializeField]
     private DungeonData dungeonData;
 
-    // 던전 생성이 완료되었을 때, 플레이어 스폰 위치를 알리기 위한 public static 이벤트
-    public static event Action<Vector2> OnDungeonGenerated;
+    [Header("Dependencies")]
+    [Tooltip("씬에 있는 미니맵 컨트롤러를 연결해주세요.")]
+    [SerializeField] private WorldmapController worldmapController;
 
-    /// <summary>
-    /// 던전 생성을 위한 내부 데이터 클래스. 각 방의 정보(그리드 위치, 크기, 타입 등)를 관리합니다.
-    /// </summary>
+    public static event Action<Room> OnDungeonGenerated;
+
     public class Room
     {
-        public Vector2Int gridPos; // 가상 그리드 상의 좌표
-        public Vector2Int size;    // 방의 크기 (가로, 세로)
-        public Vector2 center;     // 실제 월드 좌표상의 중심점
+        public Vector2Int gridPos;
+        public Vector2Int size;
+        public Vector2 center;
         public BoundsInt Bounds => new BoundsInt(Vector3Int.RoundToInt(center - (Vector2)size / 2), (Vector3Int)size);
-        public RoomType type = RoomType.Normal; // 방의 타입 (기본값: 일반 방)
+        public RoomType type = RoomType.Normal;
 
         public Room(Vector2Int gridPos, Vector2Int size)
         {
@@ -55,9 +54,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
         }
     }
 
-    /// <summary>
-    /// 전체 던전 생성 프로세스를 순차적으로 실행하는 메인 함수입니다.
-    /// </summary>
     protected override void RunProceduralGeneration()
     {
         if (dungeonData == null)
@@ -65,43 +61,40 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
             Debug.LogError("DungeonData가 할당되지 않았습니다! Inspector에서 할당해주세요.");
             return;
         }
-
-        // --- 추가: DungeonManager 데이터 초기화 ---
-        // 새로운 던전을 생성하기 전에, 이전 던전의 포탈 연결 정보를 깨끗하게 지웁니다.
         DungeonManager.Instance.ClearDungeonData();
 
-        // --- 1. 파라미터 준비 ---
+        // 1. 파라미터 준비
         int side = Mathf.CeilToInt(Mathf.Sqrt(dungeonData.desiredNumberOfRooms));
         Vector2Int gridSize = new Vector2Int(side * 2, side * 2);
         float roomSpacing = Mathf.Max(dungeonData.maxRoomSize.x, dungeonData.maxRoomSize.y) * 1.2f;
         const int placementIterations = 50;
         const int offset = 1;
 
-        // --- 2. 던전 레이아웃 생성 ---
+        // 2. 던전 레이아웃 생성
         List<Vector2Int> selectedGridPositions = RetrySelectConnectedGridPositions(gridSize);
         if (selectedGridPositions.Count == 0) return;
 
-        // --- 3. 방 데이터 생성 및 배치 ---
+        // 3. 방 데이터 생성 및 배치
         Dictionary<Vector2Int, Room> roomGrid = CreateRoomData(selectedGridPositions);
         PlaceAndAlignRooms(roomGrid, roomSpacing);
         ResolveOverlaps(roomGrid.Values.ToList(), placementIterations, roomSpacing);
 
-        // --- 4. 특수 방 지정 ---
+        // 4. 특수 방 지정
         Dictionary<Vector2Int, int> gridConnectionCount = CalculateGridConnections(selectedGridPositions);
         Room startRoom = DesignateAllSpecialRooms(roomGrid, gridConnectionCount);
 
-        // --- 5. 바닥, 벽, 포탈 생성 ---
+        // 5. 바닥, 벽, 포탈, 장애물 위치 계산
         var roomFloorData = new Dictionary<Room, HashSet<Vector2Int>>();
-        HashSet<Vector2Int> totalFloorPositions = CreateAllRoomFloors(roomGrid, roomFloorData, offset, out var specialRoomFloors);
-        HashSet<Vector2Int> portalPositions = ConnectAdjacentRooms(roomGrid, roomFloorData, totalFloorPositions);
+        HashSet<Vector2Int> totalFloorPositions = CreateAllRoomFloors(roomGrid, roomFloorData, offset);
+        var connectionData = ConnectAdjacentRooms(roomGrid, roomFloorData, totalFloorPositions);
+        HashSet<Vector2Int> portalPositions = connectionData.portalPositions;
+        List<Tuple<Room, Room>> roomConnections = connectionData.connections;
+        List<PlacedObstacleData> obstaclesToPlace = PlaceObstacles(roomFloorData, portalPositions, totalFloorPositions);
 
-        // --- 6. 플레이어 스폰 위치 알림 ---
-        if (startRoom != null)
-        {
-            OnDungeonGenerated?.Invoke(startRoom.center);
-        }
-
-        // --- 7. 최종 타일맵 그리기 ---
+        // 6. 최종 타일맵 및 오브젝트 그리기
+        var wallPositions = WallGenerator.FindWalls(totalFloorPositions);
+        wallPositions.ExceptWith(portalPositions);
+        tilemapVisualizer.PaintWallTiles(wallPositions);
         var normalFloorPositions = new HashSet<Vector2Int>(totalFloorPositions);
         var specialRooms = roomGrid.Values.Where(r => r.type != RoomType.Normal).ToList();
         foreach (var specialRoom in specialRooms)
@@ -111,15 +104,122 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
         }
         tilemapVisualizer.PaintFloorTiles(normalFloorPositions);
         tilemapVisualizer.PaintSpecialRoomFloors(specialRooms, dungeonData, roomFloorData);
-
-        var wallPositions = WallGenerator.FindWalls(totalFloorPositions);
-        wallPositions.ExceptWith(portalPositions);
-        tilemapVisualizer.PaintWallTiles(wallPositions);
         tilemapVisualizer.PaintPortals(portalPositions);
+        tilemapVisualizer.InstantiateObstacles(obstaclesToPlace);
+
+        DungeonManager.Instance.SetAllRooms(new List<Room>(roomGrid.Values));
+        // 7. 미니맵 그리기 (플레이어 스폰 전에 먼저 그립니다)
+        if (worldmapController != null)
+        {
+            worldmapController.DrawMap(roomGrid.Values, roomConnections, dungeonData);
+        }
+        else
+        {
+            Debug.LogWarning("MinimapController가 할당되지 않아 미니맵을 그릴 수 없습니다.");
+        }
+
+        // 8. 플레이어 스폰 위치 알림 (가장 마지막에 호출)
+        if (startRoom != null)
+        {
+            // 이벤트에 Room 객체 전체를 전달합니다.
+            OnDungeonGenerated?.Invoke(startRoom);
+        }
     }
 
-    #region Dungeon Layout and Room Type Designation
+    #region Obstacle Placement
 
+    /// <summary>
+    /// 개별 크기와 간격을 고려하여 장애물을 배치하고, 생성할 프리팹과 월드 좌표 목록을 반환합니다.
+    /// </summary>
+    private List<PlacedObstacleData> PlaceObstacles(Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> portalPositions, HashSet<Vector2Int> allFloorTiles)
+    {
+        var obstaclesToPlace = new List<PlacedObstacleData>();
+        var allWallPositions = WallGenerator.FindWalls(allFloorTiles);
+
+        foreach (var roomData in roomFloorData)
+        {
+            if (roomData.Key.type != RoomType.Normal)
+            {
+                continue;
+            }
+
+            var candidatePositions = new HashSet<Vector2Int>(roomData.Value);
+
+            int numberOfObstacles = Random.Range(dungeonData.minObstaclesPerRoom, dungeonData.maxObstaclesPerRoom + 1);
+
+            for (int i = 0; i < numberOfObstacles && candidatePositions.Count > 1; i++)
+            {
+                if (dungeonData.obstacles.Length == 0) break;
+                var selectedObstacleData = dungeonData.obstacles[Random.Range(0, dungeonData.obstacles.Length)];
+
+                if (selectedObstacleData.prefab == null)
+                {
+                    Debug.LogWarning("DungeonData의 obstacles 배열에 비어있는(null) 프리팹이 있습니다. 건너뜁니다.");
+                    continue;
+                }
+
+                Vector2Int obstacleSize = selectedObstacleData.size;
+
+                int marginX = Mathf.CeilToInt((obstacleSize.x - 1) / 2.0f);
+                int marginY = Mathf.CeilToInt((obstacleSize.y - 1) / 2.0f);
+
+                var validPlacementSpots = new List<Vector2Int>();
+
+                foreach (var potentialCenter in candidatePositions)
+                {
+                    bool isSafe = true;
+                    for (int x = -marginX; x <= marginX; x++)
+                    {
+                        for (int y = -marginY; y <= marginY; y++)
+                        {
+                            Vector2Int checkPos = potentialCenter + new Vector2Int(x, y);
+                            if (allWallPositions.Contains(checkPos) || portalPositions.Contains(checkPos) || !roomData.Value.Contains(checkPos))
+                            {
+                                isSafe = false;
+                                break;
+                            }
+                        }
+                        if (!isSafe) break;
+                    }
+
+                    if (isSafe)
+                    {
+                        validPlacementSpots.Add(potentialCenter);
+                    }
+                }
+
+                if (validPlacementSpots.Count > 0)
+                {
+                    Vector2Int placementCenter = validPlacementSpots[Random.Range(0, validPlacementSpots.Count)];
+
+                    obstaclesToPlace.Add(new PlacedObstacleData
+                    {
+                        prefab = selectedObstacleData.prefab,
+                        worldPosition = (Vector2)placementCenter + new Vector2(0.5f, 0.5f)
+                    });
+
+                    // --- 수정된 부분: 장애물 간격 확보 ---
+                    // 장애물이 차지하는 공간뿐만 아니라, 그 주변 1칸의 여유 공간까지 함께 후보에서 제외합니다.
+                    int exclusionMarginX = marginX + 1;
+                    int exclusionMarginY = marginY + 1;
+
+                    for (int x = -exclusionMarginX; x <= exclusionMarginX; x++)
+                    {
+                        for (int y = -exclusionMarginY; y <= exclusionMarginY; y++)
+                        {
+                            candidatePositions.Remove(placementCenter + new Vector2Int(x, y));
+                        }
+                    }
+                    // --- 여기까지 ---
+                }
+            }
+        }
+        return obstaclesToPlace;
+    }
+
+    #endregion
+
+    #region Dungeon Layout and Room Type Designation
     private List<Vector2Int> RetrySelectConnectedGridPositions(Vector2Int gridSize)
     {
         List<Vector2Int> selectedGridPositions;
@@ -222,11 +322,9 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
     {
         return pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y;
     }
-
     #endregion
 
     #region Room Placement and Alignment
-
     private Dictionary<Vector2Int, Room> CreateRoomData(List<Vector2Int> selectedGridPositions)
     {
         var roomGrid = new Dictionary<Vector2Int, Room>();
@@ -291,18 +389,16 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
             }
         }
     }
-
     #endregion
 
     #region Floor and Portal Generation
-
-    /// <summary> 그리드 상에서 인접한 방들의 벽에 3칸짜리 포탈 위치를 계산하고, 매니저에 등록합니다. </summary>
-    private HashSet<Vector2Int> ConnectAdjacentRooms(
-        Dictionary<Vector2Int, Room> roomGrid,
-        Dictionary<Room, HashSet<Vector2Int>> roomFloorData,
-        HashSet<Vector2Int> allFloorPositions)
+    private (HashSet<Vector2Int> portalPositions, List<Tuple<Room, Room>> connections) ConnectAdjacentRooms(
+      Dictionary<Vector2Int, Room> roomGrid,
+      Dictionary<Room, HashSet<Vector2Int>> roomFloorData,
+      HashSet<Vector2Int> allFloorPositions)
     {
         var portalPositions = new HashSet<Vector2Int>();
+        var connections = new List<Tuple<Room, Room>>();
         var connectionsMade = new HashSet<Tuple<Vector2Int, Vector2Int>>();
 
         foreach (var roomA in roomGrid.Values)
@@ -325,22 +421,20 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
                         Vector3Int centerA = (Vector3Int)portalTilesA[portalTilesA.Count / 2];
                         Vector3Int centerB = (Vector3Int)portalTilesB[portalTilesB.Count / 2];
                         DungeonManager.Instance.RegisterPortalPair(centerA, centerB);
+
+                        // 방 연결 정보를 리스트에 추가합니다.
+                        connections.Add(Tuple.Create(roomA, roomB));
                     }
 
                     portalPositions.UnionWith(portalTilesA);
                     portalPositions.UnionWith(portalTilesB);
-
                     connectionsMade.Add(connectionTuple);
                 }
             }
         }
-        return portalPositions;
+        return (portalPositions, connections);
     }
 
-    /// <summary>
-    /// 주어진 방의 특정 벽면에서, 3칸짜리 포탈을 놓기에 가장 적합한 위치들을 찾습니다.
-    /// (이상: 9칸 직선 벽, 차선: 가장 긴 직선 벽)
-    /// </summary>
     private List<Vector2Int> FindBestPortalTiles(HashSet<Vector2Int> roomFloor, Vector2Int portalDirection, HashSet<Vector2Int> allFloorPositions)
     {
         Vector2Int wallCheckDirection = (portalDirection.x == 0) ? Vector2Int.right : Vector2Int.up;
@@ -397,21 +491,9 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
         };
     }
 
-    private HashSet<Vector2Int> CreateAllRoomFloors(
-        Dictionary<Vector2Int, Room> roomGrid,
-        Dictionary<Room, HashSet<Vector2Int>> roomFloorData,
-        int offset,
-        out Dictionary<RoomType, HashSet<Vector2Int>> specialRoomFloors)
+    private HashSet<Vector2Int> CreateAllRoomFloors(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, int offset)
     {
         var totalFloor = new HashSet<Vector2Int>();
-        specialRoomFloors = new Dictionary<RoomType, HashSet<Vector2Int>>
-        {
-            [RoomType.Start] = new HashSet<Vector2Int>(),
-            [RoomType.Boss] = new HashSet<Vector2Int>(),
-            [RoomType.Shop] = new HashSet<Vector2Int>(),
-            [RoomType.Item] = new HashSet<Vector2Int>()
-        };
-
         foreach (var room in roomGrid.Values)
         {
             HashSet<Vector2Int> roomFloor;
@@ -425,11 +507,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenertor
             }
             roomFloorData.Add(room, roomFloor);
             totalFloor.UnionWith(roomFloor);
-            if (room.type != RoomType.Normal)
-            {
-                if (specialRoomFloors.ContainsKey(room.type))
-                    specialRoomFloors[room.type].UnionWith(roomFloor);
-            }
         }
         return totalFloor;
     }

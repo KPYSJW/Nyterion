@@ -29,7 +29,9 @@ namespace Nytherion.Core
         public event Action OnPausePressed;
 
         public event Action onInteract;
-        
+
+        public event Action onMap;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -79,6 +81,8 @@ namespace Nytherion.Core
             inputActions.Player.QuickSlot_9.started += ctx => onQuickSlotInput?.Invoke(9);
 
             inputActions.Player.Interact.performed += _ => onInteract?.Invoke();
+
+            inputActions.Player.WorldMap.started += ctx => onMap?.Invoke();
         }
 
         private void OnEnable()

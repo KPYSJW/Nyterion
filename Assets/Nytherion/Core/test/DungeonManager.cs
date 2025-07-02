@@ -10,14 +10,19 @@
     - 씬에 빈 게임 오브젝트를 하나 만들고 이 스크립트를 붙여줍니다.
     - 다른 스크립트에서는 'DungeonManager.Instance'를 통해 언제든지 접근할 수 있습니다.
 */
+using Nytherion.Core;
 using System.Collections.Generic;
 using UnityEngine;
+
+
+
 
 public class DungeonManager : MonoBehaviour
 {
     // 싱글턴 인스턴스: 게임 내에서 오직 하나만 존재하도록 보장
     public static DungeonManager Instance { get; private set; }
 
+    public List<RoomFirstDungeonGenerator.Room> AllDungeonRooms { get; private set; }
     // 포탈 연결 정보를 저장하는 딕셔너리
     // Key: 한쪽 포탈의 위치, Value: 연결된 반대편 포탈의 위치
     private Dictionary<Vector3Int, Vector3Int> portalLinks = new Dictionary<Vector3Int, Vector3Int>();
@@ -26,22 +31,30 @@ public class DungeonManager : MonoBehaviour
     // private Dictionary<Vector2Int, bool> roomClearStatus = new Dictionary<Vector2Int, bool>();
 
     public GameObject playerObject;
+    [SerializeField] private GameObject worldMapUI; // worldMapPanel을 여기 연결!
 
     // 스크립트가 활성화될 때 이벤트 구독을 시작합니다.
     private void OnEnable()
     {
         RoomFirstDungeonGenerator.OnDungeonGenerated += SpawnPlayerAtStart;
+        InputManager.Instance.onMap += WorldMapUI;
     }
 
     // 스크립트가 비활성화될 때 이벤트 구독을 해제합니다. (메모리 누수 방지)
     private void OnDisable()
     {
         RoomFirstDungeonGenerator.OnDungeonGenerated -= SpawnPlayerAtStart;
+        InputManager.Instance.onMap -= WorldMapUI;
     }
 
 
     private void Awake()
     {
+        if (worldMapUI != null)
+        {
+            worldMapUI.SetActive(false);
+        }
+
         // 싱글턴 패턴 구현
         if (Instance != null && Instance != this)
         {
@@ -90,27 +103,41 @@ public class DungeonManager : MonoBehaviour
     public void ClearDungeonData()
     {
         portalLinks.Clear();
+        AllDungeonRooms?.Clear();
         // roomClearStatus.Clear();
     }
 
-    private void SpawnPlayerAtStart(Vector2 startRoomCenter)
+    private void SpawnPlayerAtStart(RoomFirstDungeonGenerator.Room startRoom)
     {
-        // 아직 플레이어 참조가 없다면, 씬에서 "Player" 태그로 찾아옵니다.
         if (playerObject == null)
         {
             playerObject = GameObject.FindGameObjectWithTag("Player");
         }
 
-        // 플레이어를 찾았다면 시작 위치로 이동시킵니다.
         if (playerObject != null)
         {
-            // Vector2를 Vector3로 변환하여 위치를 설정합니다.
-            playerObject.transform.position = new Vector3(startRoomCenter.x, startRoomCenter.y, 0);
-            Debug.Log($"플레이어를 시작 지점 {startRoomCenter}에 스폰했습니다!");
+            // Room 객체에서 직접 중심 좌표를 가져와 사용합니다.
+            playerObject.transform.position = new Vector3(startRoom.center.x, startRoom.center.y, 0);
+            Debug.Log($"플레이어를 시작 지점 {startRoom.center}에 스폰했습니다!");
+
+   
         }
         else
         {
             Debug.LogError("Player 오브젝트를 찾을 수 없습니다! 플레이어에 'Player' 태그가 있는지 확인해주세요.");
+        }
+    }
+    public void SetAllRooms(List<RoomFirstDungeonGenerator.Room> allRooms)
+    {
+        AllDungeonRooms = allRooms;
+    }
+
+    void WorldMapUI()
+    {
+        if (worldMapUI != null)
+        {
+            // 현재 활성화 상태의 반대 상태로 변경
+            worldMapUI.SetActive(!worldMapUI.activeSelf);
         }
     }
 }
