@@ -40,10 +40,6 @@ namespace Nytherion.GamePlay.Characters.Player
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
 
-            _playerCombat = GetComponent<PlayerCombat>();
-            playerEngravingManager = GetComponent<PlayerEngravingManager>();
-            playerHealth = GetComponent<PlayerHealth>();
-            currentHP = playerHealth.CurrentHealth;
         }
 
         public void Initialize()

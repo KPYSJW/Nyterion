@@ -32,7 +32,6 @@ namespace Nytherion.UI.Controllers
         {
             if (Instance != null && Instance != this)
             {
-                Debug.LogWarning("씬에 여러 개의 ShopUI가 존재하여 이 인스턴스를 파괴합니다.", this.gameObject);
                 Destroy(this.gameObject);
                 return;
             }
@@ -63,10 +62,6 @@ namespace Nytherion.UI.Controllers
             if (playerInventoryParent != null)
             {
                 playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>(true));
-            }
-            else
-            {
-                Debug.LogError("ShopUI: playerInventoryParent가 할당되지 않았습니다!", this);
             }
         }
 

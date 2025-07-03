@@ -74,6 +74,14 @@ namespace Nytherion.UI.Controllers
             {
                 return;
             }
+            if(!equipmentPanel.activeSelf)
+            {
+                equipmentPanel.SetActive(true);
+            }
+            if(!statsPanel.activeSelf)
+            {
+                statsPanel.SetActive(true);
+            }
             Toggle();
         }
 

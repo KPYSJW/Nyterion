@@ -16,7 +16,6 @@ namespace Nytherion.Core.Managers
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
                 saveService = new JsonSaveService();
             }
             else
