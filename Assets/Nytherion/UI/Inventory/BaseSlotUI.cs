@@ -21,11 +21,11 @@ namespace Nytherion.UI.Inventory
 
         public event SlotItemEventDelegate OnItemSet;
         public event Action OnItemCleared;
-        
+
         public ItemData CurrentItem => currentItem;
         public int CurrentCount => currentCount;
         public bool IsEmpty => currentItem == null || currentCount <= 0;
-    
+
         public virtual bool CanReceiveItem(ItemData item)
         {
             return true;
@@ -38,7 +38,7 @@ namespace Nytherion.UI.Inventory
 
         protected virtual void Awake()
         {
-            if (iconImage == null) 
+            if (iconImage == null)
             {
                 iconImage = GetComponentInChildren<Image>();
                 if (iconImage == null)
@@ -46,8 +46,8 @@ namespace Nytherion.UI.Inventory
                     Debug.LogError($"[{name}] Could not find Image component in children");
                 }
             }
-            
-            if (countText == null) 
+
+            if (countText == null)
             {
                 countText = GetComponentInChildren<TextMeshProUGUI>();
             }
@@ -69,7 +69,7 @@ namespace Nytherion.UI.Inventory
                 return;
             }
 
-            if (item == null) 
+            if (item == null)
             {
                 iconImage.enabled = false;
                 iconImage.sprite = null;
@@ -79,7 +79,7 @@ namespace Nytherion.UI.Inventory
             {
                 iconImage.sprite = item.icon;
                 iconImage.enabled = true;
-                
+
                 if (countText != null)
                 {
                     countText.text = item.isStackable && count > 1 ? count.ToString() : "";
@@ -88,15 +88,15 @@ namespace Nytherion.UI.Inventory
                 RectTransform iconRect = iconImage.rectTransform;
                 if (iconRect != null)
                 {
-                    float scale = 0.7f; 
+                    float scale = 0.7f;
                     iconRect.localScale = new Vector3(scale, scale, 1f);
                 }
             }
         }
 
-        public virtual void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback) 
+        public virtual void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback)
         {
-            if (isSettingItem) return; 
+            if (isSettingItem) return;
             isSettingItem = true;
 
             try
@@ -104,7 +104,7 @@ namespace Nytherion.UI.Inventory
                 this.currentItem = item;
                 this.currentCount = count;
 
-                UpdateVisuals(this.currentItem, this.currentCount); 
+                UpdateVisuals(this.currentItem, this.currentCount);
 
                 if (this.currentItem == null)
                 {
@@ -114,7 +114,7 @@ namespace Nytherion.UI.Inventory
                 {
                     OnItemSet?.Invoke(this.currentItem, this.currentCount);
                 }
-                OnSlotUpdated?.Invoke(this); 
+                OnSlotUpdated?.Invoke(this);
             }
             finally
             {
@@ -124,12 +124,12 @@ namespace Nytherion.UI.Inventory
 
         public virtual void SetItem(ItemData item, int count = 1)
         {
-            SetItem(item, count, null); 
+            SetItem(item, count, null);
         }
 
         public virtual void ClearSlot()
         {
-            SetItem(null, 0, null); 
+            SetItem(null, 0, null);
         }
 
         public virtual void UseItem()
@@ -149,7 +149,7 @@ namespace Nytherion.UI.Inventory
 
         public virtual void IncreaseCount(int amount = 1)
         {
-            if (IsEmpty) return; 
+            if (IsEmpty) return;
             currentCount += amount;
             UpdateVisuals(currentItem, currentCount);
             OnSlotUpdated?.Invoke(this);
@@ -157,11 +157,11 @@ namespace Nytherion.UI.Inventory
 
         public virtual void DecreaseCount(int amount = 1)
         {
-            if (IsEmpty) return; 
+            if (IsEmpty) return;
             currentCount -= amount;
             if (currentCount <= 0)
             {
-                ClearSlot(); 
+                ClearSlot();
             }
             else
             {
@@ -186,7 +186,7 @@ namespace Nytherion.UI.Inventory
 
         public virtual void OnDrag(PointerEventData eventData)
         {
-            if (IsEmpty || DragItemIcon.Instance == null) return; 
+            if (IsEmpty || DragItemIcon.Instance == null) return;
             DragItemIcon.Instance.transform.position = Input.mousePosition;
         }
 

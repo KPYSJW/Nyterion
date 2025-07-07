@@ -4,6 +4,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using System;
+using InventoryUtils = Nytherion.UI.Inventory.Utils;
 
 
 namespace Nytherion.UI.Inventory
@@ -27,8 +28,8 @@ namespace Nytherion.UI.Inventory
                 keyLabelText.gameObject.SetActive(true);
             }
 
-            OnBeginDragEvent += (slot, eventData) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleBeginDragShared(slot);
-            OnEndDragEvent += (slot, eventData) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleEndDragShared(slot, eventData); // allowShiftSwap defaults to true
+            OnBeginDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleBeginDragShared(slot);
+            OnEndDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleEndDragShared(slot, eventData); // allowShiftSwap defaults to true
         }
 
 

@@ -159,7 +159,7 @@ namespace Nytherion.UI.Shop
 
             if (droppedSlot != null && !droppedSlot.IsEmpty)
             {
-                SetItem(droppedSlot.CurrentItem, droppedSlot.CurrentAmount);
+                SetItem(droppedSlot.CurrentItem, droppedSlot.CurrentCount);
             }
         }
     }

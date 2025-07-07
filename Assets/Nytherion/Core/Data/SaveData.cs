@@ -1,21 +1,28 @@
-using Nytherion.Data.ScriptableObjects.Engravings;
 using System.Collections.Generic;
-using Nytherion.UI.Inventory;
 using Nytherion.Core.Managers;
 
 namespace Nytherion.Core.Data
 {
     [System.Serializable]
+    public class ShopStockState
+    {
+        public string shopItemId; 
+        public int remainingStock;
+    }
+    [System.Serializable]
     public class SaveData
     {
-        public Dictionary<CurrencyType, int> currencyData;
+        public List<CurrencyType> currencyTypes = new List<CurrencyType>();
+        public List<int> currencyAmounts = new List<int>();
         public InventoryState inventoryData;
 
         public EngravingGridState engravingData;
+        public List<ShopStockState> shopStockData = new List<ShopStockState>();
 
         public SaveData()
         {
-            currencyData = new Dictionary<CurrencyType, int>();
+            currencyTypes = new List<CurrencyType>();
+            currencyAmounts = new List<int>();
             inventoryData = new InventoryState();
             engravingData = new EngravingGridState();
         }

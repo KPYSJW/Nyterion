@@ -32,7 +32,6 @@ namespace Nytherion.Core.Managers
             {
                 Debug.LogError("Gacha Tables are not assigned in GachaManager!");
             }
-            Debug.Log("GachaManager Initialized");
         }
         public List<ScriptableObject> TryDrawItems(GachaType type, int count)
         {

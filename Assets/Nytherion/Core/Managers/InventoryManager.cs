@@ -39,9 +39,16 @@ namespace Nytherion.Core.Managers
         {
             ItemDatabase.Initialize();
 
-            InventoryModel.OnItemAdded += (item, count) => OnItemAdded?.Invoke(item, count);
-            InventoryModel.OnItemRemoved += (item, count) => OnItemRemoved?.Invoke(item, count);
-            InventoryModel.OnInventoryUpdated += () => OnInventoryUpdated?.Invoke();
+            InventoryModel.OnItemAdded += (item, count) =>
+            {
+                OnItemAdded?.Invoke(item, count);
+                OnInventoryUpdated?.Invoke();
+            };
+            InventoryModel.OnItemRemoved += (item, count) =>
+            {
+                OnItemRemoved?.Invoke(item, count);
+                OnInventoryUpdated?.Invoke();
+            };
 
             OnInitialized?.Invoke();
         }
@@ -59,11 +66,14 @@ namespace Nytherion.Core.Managers
             InventoryModel.Clear();
             if (data == null) return;
 
-            foreach (var entry in data.Items)
+            foreach(var entry in data.Items)
             {
                 if (string.IsNullOrEmpty(entry.ItemId) || entry.Count <= 0) continue;
                 ItemData item = ItemDatabase.GetItemByID(entry.ItemId);
-                if (item != null) InventoryModel.AddItem(item, entry.Count);
+                if (item != null)
+                {
+                    InventoryModel.AddItem(item, entry.Count);
+                }
             }
             OnInventoryUpdated?.Invoke();
         }

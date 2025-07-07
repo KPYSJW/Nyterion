@@ -29,15 +29,70 @@ namespace Nytherion.UI.Inventory
 
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
         {
-            if (eventData.button == PointerEventData.InputButton.Right && !IsEmpty)
+            if (ItemOnCursor.IsHoldingItem)
             {
-                if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+                var (heldItem, heldCount) = ItemOnCursor.GetAndClear();
+                if (IsEmpty || (CurrentItem.ID == heldItem.ID && CurrentItem.isStackable))
                 {
-                    OnSellItemAction?.Invoke(this);
+                    int newCount = IsEmpty ? 0 : CurrentCount;
+                    int total = newCount + heldCount;
+                    int maxStack = heldItem.maxStack;
+
+                    if (total <= maxStack)
+                    {
+                        SetItem(heldItem, total);
+                    }
+                    else
+                    {
+                        SetItem(heldItem, maxStack);
+                        ItemOnCursor.Set(heldItem, total - maxStack);
+                    }
                 }
                 else
                 {
-                    Debug.Log($"[Inventory] Used Item: {currentItem.itemName}");
+                    var myItem = CurrentItem;
+                    var myCount = CurrentCount;
+                    SetItem(heldItem, heldCount);
+                    ItemOnCursor.Set(myItem, myCount);
+                }
+            }
+            else
+            {
+                if (IsEmpty) return;
+
+                if (eventData.button == PointerEventData.InputButton.Right)
+                {
+                    bool ctrlPressed = InputManager.Instance.IsControlPressed;
+                    bool shiftPressed = InputManager.Instance.IsShiftPressed;
+
+                    if (CurrentCount > 1 && (ctrlPressed || shiftPressed))
+                    {
+                        int amountToPickUp = shiftPressed ? Mathf.CeilToInt(CurrentCount / 2.0f) : 1;
+                        
+                        var itemToHold = CurrentItem;
+                        
+                        DecreaseCount(amountToPickUp);
+                        
+                        ItemOnCursor.Set(itemToHold, amountToPickUp);
+                    }
+                    else
+                    {
+                        if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+                        {
+                            OnSellItemAction?.Invoke(this);
+                        }
+                        else
+                        {
+                            Debug.Log($"[Inventory] Used Item: {currentItem.itemName}");
+                        }
+                    }
+                }
+                else if (eventData.button == PointerEventData.InputButton.Left)
+                {
+                    var itemToHold = CurrentItem;
+                    var countToHold = CurrentCount;
+                    ClearSlot();
+                    ItemOnCursor.Set(itemToHold, countToHold);
                 }
             }
         }

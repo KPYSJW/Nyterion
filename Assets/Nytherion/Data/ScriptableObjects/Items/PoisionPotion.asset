@@ -10,12 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6d35d9f608d2a7448c7fdfd9bf9bceb, type: 3}
-  m_Name: MP
+  m_Name: PoisionPotion
   m_EditorClassIdentifier: 
-  itemType: 2
-  _uniqueID: ae059f32-5449-4261-89ce-f8a63f45c772
-  itemName: MP
-  icon: {fileID: 21300000, guid: 10c68a2449febdd418c26ba918d11d74, type: 3}
-  description: 100 MP
+  itemType: 5
+  _uniqueID: 06fef1bd-f33e-414d-a7c4-36bfca5a03d9
+  itemName: PoisionPotion
+  icon: {fileID: 21300000, guid: 443cc43149ae25c4e845be2e3ae73f76, type: 3}
+  description: 
   isStackable: 1
   maxStack: 99
+  baseValue: 10
+  isUsable: 1
+  useEffectPrefab: {fileID: 0}
+  useSound: {fileID: 0}

@@ -4,6 +4,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;
 using ItemType = Nytherion.Data.ScriptableObjects.Items.ItemType;
 using Nytherion.UI.Controllers;
+using InventoryUtils = Nytherion.UI.Inventory.Utils;
 
 namespace Nytherion.UI.Inventory
 {
@@ -15,8 +16,8 @@ namespace Nytherion.UI.Inventory
         protected override void Awake()
         {
             base.Awake();
-            OnBeginDragEvent += (s, e) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleBeginDragShared(s);
-            OnEndDragEvent += (s, e) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleEndDragShared(s, e);
+            OnBeginDragEvent += (s, e) => InventoryUtils.DragDropUIHandler.HandleBeginDragShared(s);
+            OnEndDragEvent += (s, e) => InventoryUtils.DragDropUIHandler.HandleEndDragShared(s, e);
             OnPointerClickEvent += HandlePointerClick;
         }
 

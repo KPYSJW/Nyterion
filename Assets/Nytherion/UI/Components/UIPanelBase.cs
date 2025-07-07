@@ -52,7 +52,6 @@ public abstract class UIPanelBase : MonoBehaviour
             Debug.LogWarning(this.name + ": Close() 호출되었으나, 이미 닫혀있거나 CanvasGroup이 없음.");
             return;
         }
-        Debug.Log(this.name + ": Close() 실행. 패널을 닫습니다.");
         IsOpen = false;
 
         controlledCanvasGroup.alpha = 0f;

@@ -51,14 +51,22 @@ namespace Nytherion.Core.Managers
             if (poolDictionary[tag].Count == 0)
             {
                 Debug.LogWarning($"Pool with tag '{tag}' is empty. Consider increasing pool size or implementing dynamic expansion.");
-                return null; // Or handle by instantiating a new object if dynamic expansion is desired
+                Pool pool = pools.Find(p => p.tag == tag);
+                if (pool != null && pool.prefab != null)
+                {
+                    GameObject newObj = Instantiate(pool.prefab);
+                    newObj.transform.position = position;
+                    newObj.transform.rotation = rotation;
+                    newObj.SetActive(true);
+                    return newObj;
+                }
+                return null;
             }
 
             GameObject obj = poolDictionary[tag].Dequeue();
             obj.SetActive(true);
             obj.transform.position = position;
             obj.transform.rotation = rotation;
-            // poolDictionary[tag].Enqueue(obj); // Object should not be immediately returned
             return obj;
         }
 
@@ -72,7 +80,6 @@ namespace Nytherion.Core.Managers
             }
 
             objectToReturn.SetActive(false);
-            // Optionally, reset object's state here (e.g., position, parent, components)
             poolDictionary[tag].Enqueue(objectToReturn);
         }
     }

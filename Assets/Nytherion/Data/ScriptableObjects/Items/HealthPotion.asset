@@ -20,6 +20,6 @@ MonoBehaviour:
   isStackable: 1
   maxStack: 99
   baseValue: 10
-  isUsable: 0
+  isUsable: 1
   useEffectPrefab: {fileID: 0}
   useSound: {fileID: 0}

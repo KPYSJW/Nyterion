@@ -1,9 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using Nytherion.UI.Inventory;
-using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.UI.Inventory.Utils
 {

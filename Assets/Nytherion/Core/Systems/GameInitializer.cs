@@ -1,9 +1,6 @@
 using UnityEngine;
 using Nytherion.GamePlay.Characters.Player;
-using Nytherion.UI.EngravingBoard;
 using Nytherion.Core.Managers;
-using Nytherion.UI.Controllers;
-using Nytherion.UI.Presenters;
 
 namespace Nytherion.Core.Systems
 {
@@ -20,7 +17,7 @@ namespace Nytherion.Core.Systems
         [SerializeField] private EngravingManager engravingManager;
         [SerializeField] private PlayerManager playerManager;
         [SerializeField] private GachaManager gachaManager;
-
+        [SerializeField] private ShopManager shopManager;
         [SerializeField] private SaveLoadManager saveLoadManager;
         private void Awake()
         {
@@ -48,12 +45,10 @@ namespace Nytherion.Core.Systems
             engravingManager.Initialize();
             playerManager.Initialize();
             gachaManager.Initialize();
+            shopManager.Initialize();
+
             saveLoadManager.Initialize();
         }
 
-        private void OnApplicationQuit()
-        {
-            saveLoadManager.SaveGame();
-        }
     }
 }

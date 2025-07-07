@@ -14,35 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shopName: Village Shop
   itemsForSale:
-  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
+  - shopItemId: be170530-e971-45dc-80c6-bd9140decea4
+    item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
     price: 100
-    stock: 100
+    stock: 50
     isUnlimited: 0
-  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
+  - shopItemId: 997b3097-4085-4a88-b2a2-4c54246d5b76
+    item: {fileID: 11400000, guid: 9c072fcd68323c04b99b233f1630f7db, type: 2}
     price: 100
-    stock: 100
+    stock: 50
     isUnlimited: 1
-  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
+  - shopItemId: adeb466f-1d69-4dd3-bf12-3f1b8c185ca1
+    item: {fileID: 11400000, guid: 40bb36489420ada41b91c4cc1672a9dd, type: 2}
     price: 100
-    stock: 0
-    isUnlimited: 0
-  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
-    price: 100
-    stock: 0
-    isUnlimited: 0
-  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
-    price: 100
-    stock: 0
-    isUnlimited: 0
-  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
-    price: 100
-    stock: 0
-    isUnlimited: 0
-  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
-    price: 100
-    stock: 0
-    isUnlimited: 0
-  - item: {fileID: 11400000, guid: a9fa61137b3da144bb4a093b7a933452, type: 2}
-    price: 100
-    stock: 0
+    stock: 50
     isUnlimited: 0

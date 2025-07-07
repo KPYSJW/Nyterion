@@ -88,16 +88,30 @@ namespace Nytherion.UI.Controllers
             PopulateShop();
             if (InventoryUI.Instance != null) InventoryUI.Instance.OpenForShop();
             UpdateCurrencyUI(CurrencyType.Gold, CurrencyManager.Instance.GetCurrency(CurrencyType.Gold));
+
             Open();
         }
 
+        public override void Open()
+        {
+            base.Open();
+            if (ShopManager.Instance != null)
+            {
+                ShopManager.Instance.OnStockChanged += RefreshShopUI;
+            }
+            RefreshShopUI();
+        }
         public override void Close()
         {
             base.Close();
             if (InventoryUI.Instance != null) InventoryUI.Instance.Close();
             if (SellSlotUI.Instance != null) SellSlotUI.Instance.ClearSlot();
-        }
 
+            if (ShopManager.Instance != null)
+            {
+                ShopManager.Instance.OnStockChanged -= RefreshShopUI;
+            }
+        }
         public void BuyItem(ShopSlotUI slot)
         {
             var shopItem = slot.CurrentItem;
@@ -106,8 +120,11 @@ namespace Nytherion.UI.Controllers
             if (CurrencyManager.Instance.SpendCurrency(CurrencyType.Gold, shopItem.price))
             {
                 InventoryManager.Instance.AddItem(shopItem.item);
-                if (!shopItem.isUnlimited) shopItem.stock--;
-                slot.UpdateStockUI();
+
+                if (ShopManager.Instance != null && !shopItem.isUnlimited)
+                {
+                    ShopManager.Instance.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
+                }
             }
         }
 
@@ -124,7 +141,11 @@ namespace Nytherion.UI.Controllers
         {
             if (currentShopData == null) return;
             foreach (Transform child in shopSlotParent) Destroy(child.gameObject);
-            foreach (ShopItemData shopItem in currentShopData.itemsForSale)
+
+            var itemsToDisplay = ShopManager.Instance.GetShopItems(currentShopData.shopName);
+            if (itemsToDisplay == null) return;
+
+            foreach (ShopItemData shopItem in itemsToDisplay)
             {
                 GameObject slotGO = Instantiate(shopSlotPrefab, shopSlotParent);
                 if (slotGO.TryGetComponent(out ShopSlotUI slotUI)) slotUI.Setup(shopItem);
@@ -157,6 +178,10 @@ namespace Nytherion.UI.Controllers
             {
                 playerGoldText.text = $"{amount} G";
             }
+        }
+        private void RefreshShopUI()
+        {
+            PopulateShop();
         }
     }
 }

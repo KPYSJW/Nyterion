@@ -10,12 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6d35d9f608d2a7448c7fdfd9bf9bceb, type: 3}
-  m_Name: Potion
+  m_Name: MpPotion
   m_EditorClassIdentifier: 
-  itemType: 2
-  _uniqueID: 7ad5d85a-77f0-4ef7-9383-5f63c9ac6f95
-  itemName: Potion
-  icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  description: Potion
+  itemType: 5
+  _uniqueID: 1f512932-bab6-4f12-a9fb-324c386924d3
+  itemName: MpPotion
+  icon: {fileID: 21300000, guid: cc118d167c735714487d7cb34f436df8, type: 3}
+  description: 
   isStackable: 1
   maxStack: 99
+  baseValue: 10
+  isUsable: 1
+  useEffectPrefab: {fileID: 0}
+  useSound: {fileID: 0}
