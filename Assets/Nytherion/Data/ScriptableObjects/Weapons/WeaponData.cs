@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Data.Enums;
+using Nytherion.GamePlay.Combat;
+using UnityEngine;
 
 namespace Nytherion.Data.ScriptableObjects.Weapons
 {
@@ -12,8 +10,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         Ranged
     }
 
-    [CreateAssetMenu(fileName = "NewWeaponData", menuName = "Data/Weapon")]
-    public class WeaponData : ItemData
+    [CreateAssetMenu(fileName = "NewWeaponData", menuName = "Data/Item/Weapon")]
+    public class WeaponData : EquipmentData
     {
         [Header("Weapon Settings")]
         public WeaponType weaponType;
@@ -22,11 +20,6 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float range;
         public float cooldown;
         public GameObject projectilePrefab;
-        public bool isCursed;
-
-        [Header("Gacha Settings")]
-        public Rarity rarity;
+        public WeaponBase weaponPrefab;
     }
-
-
 }

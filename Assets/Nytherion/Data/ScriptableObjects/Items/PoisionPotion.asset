@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6d35d9f608d2a7448c7fdfd9bf9bceb, type: 3}
+  m_Script: {fileID: 11500000, guid: fed1ced5f717156499c282791c4e06c9, type: 3}
   m_Name: PoisionPotion
   m_EditorClassIdentifier: 
-  itemType: 5
-  _uniqueID: 06fef1bd-f33e-414d-a7c4-36bfca5a03d9
+  uniqueID: ac0397c6-d1e2-4707-bc3f-7f42ec235603
   itemName: PoisionPotion
   icon: {fileID: 21300000, guid: 443cc43149ae25c4e845be2e3ae73f76, type: 3}
   description: 
@@ -23,3 +22,7 @@ MonoBehaviour:
   isUsable: 1
   useEffectPrefab: {fileID: 0}
   useSound: {fileID: 0}
+  consumableType: 2
+  healAmount: 0
+  buffDuration: 0
+  projectilePrefab: {fileID: 0}

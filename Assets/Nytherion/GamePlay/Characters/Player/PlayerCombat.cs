@@ -9,16 +9,15 @@ namespace Nytherion.GamePlay.Characters.Player
     {
         [Tooltip("무기가 생성될 위치를 지정하는 트랜스폼")]
         [SerializeField] private Transform weaponPoint;
-        
+
         [Tooltip("현재 플레이어가 장착한 무기")]
         public WeaponBase currentWeapon;
-       
+
         private void Start()
         {
             if (InputManager.Instance != null)
             {
                 InputManager.Instance.onAttackDown += Attack;
-                InputManager.Instance.onAttackUp += AttackEnd;
                 InputManager.Instance.onAttackUp += AttackEnd;
             }
         }
@@ -27,15 +26,23 @@ namespace Nytherion.GamePlay.Characters.Player
             if (currentWeapon != null)
             {
                 Destroy(currentWeapon.gameObject);
+                currentWeapon = null;
             }
+
+            if (weapon == null)
+            {
+                Debug.Log("무기 장착 해제됨.");
+                return;
+            }
+
             WeaponEngravingSynergyData synergy = PlayerManager.Instance.playerEngravingManager.synergyEvaluator.EvaluateSynergy(weapon.weaponData, PlayerManager.Instance.playerEngravingManager.GetCurrentEngravings());
             if (synergy != null)
             {
-                Debug.Log($"✅ 시너지 발동: {synergy.weaponName} + {synergy.engravingName}");
+                Debug.Log($"시너지 발동: {synergy.weaponName} + {synergy.engravingName}");
             }
             else
             {
-                Debug.Log("❌ 시너지 없음.");
+                Debug.Log("시너지 없음.");
             }
             currentWeapon = Instantiate(weapon, weaponPoint.position, Quaternion.identity, weaponPoint);
         }
@@ -60,8 +67,8 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (InputManager.Instance != null)
             {
-                InputManager.Instance.onAttackDown -= Attack;  
-                InputManager.Instance.onAttackUp -= AttackEnd;  
+                InputManager.Instance.onAttackDown -= Attack;
+                InputManager.Instance.onAttackUp -= AttackEnd;
             }
         }
 

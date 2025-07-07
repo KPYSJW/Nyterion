@@ -1,75 +1,102 @@
-using UnityEngine;
 using UnityEngine.EventSystems;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;
-using ItemType = Nytherion.Data.ScriptableObjects.Items.ItemType;
-using Nytherion.UI.Controllers;
-using InventoryUtils = Nytherion.UI.Inventory.Utils;
+using Nytherion.UI.Inventory.Utils;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.GamePlay.Characters.Player;
+using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.UI.Inventory
 {
-    public class EquipmentSlotUI : BaseSlotUI
+    public class EquipmentSlotUI : BaseSlotUI, IDropHandler
     {
-        [SerializeField] private ItemType slotType = ItemType.Weapon; 
-        public ItemType SlotType => slotType;
-        
         protected override void Awake()
         {
             base.Awake();
-            OnBeginDragEvent += (s, e) => InventoryUtils.DragDropUIHandler.HandleBeginDragShared(s);
-            OnEndDragEvent += (s, e) => InventoryUtils.DragDropUIHandler.HandleEndDragShared(s, e);
+            OnBeginDragEvent += (s, e) => DragDropUIHandler.HandleBeginDragShared(s);
+            OnEndDragEvent += (s, e) => DragDropUIHandler.HandleEndDragShared(s, e);
             OnPointerClickEvent += HandlePointerClick;
         }
 
-        public override void SetItem(ItemData newItem, int count = 1)
+        public void OnDrop(PointerEventData eventData)
         {
-            if (currentItem == newItem || (newItem == null && currentItem == null))
-                return;
+            if (eventData.pointerDrag == null) return;
 
-            if (newItem != null && newItem.itemType != slotType)
+            BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
+            if (sourceSlot == null || sourceSlot.IsEmpty || sourceSlot == this)
             {
-                Debug.LogWarning($"[EquipmentSlot] Cannot equip {newItem.itemName} to {slotType} slot");
                 return;
             }
-            
-            base.SetItem(newItem, count);
-        }
-        
-        public override bool CanReceiveItem(ItemData item)
-        {
-            return item == null || item.itemType == slotType;
-        }
 
-        private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
-        {
-            if (eventData.button == PointerEventData.InputButton.Right && !IsEmpty)
+            if (CanReceiveItem(sourceSlot.CurrentItem))
             {
-                UnequipItem();
-            }
-        }
+                ItemData previousItem = CurrentItem;
+                int previousCount = CurrentCount;
 
-        private void UnequipItem()
-        {
-            if (IsEmpty) return;
-            
-            if (InventoryManager.Instance.AddItem(currentItem, 1))
-            {
-                ClearSlot();
-                var inventoryUI = FindObjectOfType<InventoryUI>();
-                if (inventoryUI != null)
+                SetItem(sourceSlot.CurrentItem, sourceSlot.CurrentCount);
+
+                if (previousItem != null)
                 {
-                    inventoryUI.RefreshUI();
+                    sourceSlot.SetItem(previousItem, previousCount);
+                }
+                else
+                {
+                    sourceSlot.ClearSlot();
                 }
             }
         }
 
-        private void SwapEquipment(EquipmentSlotUI otherSlot)
+        public override void SetItem(ItemData newItem, int count = 1)
         {
-            ItemData tempItem = currentItem;
-            int tempCount = currentCount;
-            
-            SetItem(otherSlot.currentItem, otherSlot.currentCount);
-            otherSlot.SetItem(tempItem, tempCount);
+            base.SetItem(newItem, count);
+            UpdatePlayerEquipment(newItem);
+        }
+
+        public override bool CanReceiveItem(ItemData item)
+        {
+            if (item is WeaponData)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void UpdatePlayerEquipment(ItemData itemToEquip)
+        {
+            WeaponBase weaponPrefab = null;
+            if (itemToEquip is WeaponData weaponData)
+            {
+                weaponPrefab = weaponData.weaponPrefab;
+            }
+            PlayerManager.Instance.PlayerCombat.EquipWeapon(weaponPrefab);
+        }
+        
+        private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right && !IsEmpty)
+            {
+                UnequipAndReturnToInventory();
+            }
+        }
+
+        private void UnequipAndReturnToInventory()
+        {
+            if (IsEmpty) return;
+
+            if (InventoryManager.Instance.AddItem(CurrentItem, CurrentCount))
+            {
+                ClearSlot();
+            }
+        }
+
+        public override void ClearSlot()
+        {
+            ItemData itemToClear = CurrentItem;
+            base.ClearSlot();
+            if (itemToClear != null)
+            {
+                UpdatePlayerEquipment(null);
+            }
         }
     }
 }

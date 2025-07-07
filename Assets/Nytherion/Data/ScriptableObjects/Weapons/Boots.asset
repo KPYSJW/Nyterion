@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}
-  m_Name: Helmet
+  m_Name: Boots
   m_EditorClassIdentifier: 
-  uniqueID: a3654fe2-5079-4553-a76c-5d7c8536ee8a
-  itemName: Helmet
-  icon: {fileID: 21300000, guid: 701787b744f4725439f7dd4c61664da6, type: 3}
+  uniqueID: 41e05108-a4dc-4035-b841-100af4cabac8
+  itemName: Boots
+  icon: {fileID: 21300000, guid: d070518e54a7f104eb92dd5f47e2af5d, type: 3}
   description: 
   isStackable: 0
   maxStack: 1
@@ -22,4 +22,4 @@ MonoBehaviour:
   rarity: 0
   isCursed: 0
   armorType: 0
-  defense: 5
+  defense: 4

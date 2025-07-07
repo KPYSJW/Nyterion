@@ -93,8 +93,6 @@ namespace Nytherion.Core.Managers
                 ShopManager.Instance.LoadShopStockFromSave(saveData.shopStockData);
             }
 
-            Debug.Log("<color=lime>[SaveLoadManager] 저장된 데이터를 모두 불러왔습니다.</color>");
-
             isLoadingData = false;
         }
 

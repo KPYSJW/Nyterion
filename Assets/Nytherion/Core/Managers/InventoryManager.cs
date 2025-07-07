@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Interfaces;
 using Nytherion.UI.Inventory;
 using Nytherion.Core.Systems;
@@ -83,8 +82,8 @@ namespace Nytherion.Core.Managers
         public bool AddItem(ItemData item, int count)
         {
             if (item == null || count <= 0) return false;
-            bool isEquipment = item is WeaponData || item.itemType == ItemType.Armor;
-            if (isEquipment)
+
+            if (item is EquipmentData)
             {
                 for (int i = 0; i < count; i++)
                 {
