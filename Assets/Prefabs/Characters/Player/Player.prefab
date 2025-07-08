@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5120804287783034592}
   - component: {fileID: 7144026513014664610}
   - component: {fileID: 1109299525392512216}
-  - component: {fileID: 5086609333881617008}
   - component: {fileID: 2180091910043822190}
   - component: {fileID: 6852058077325633452}
   - component: {fileID: 7562096975272180810}
@@ -109,22 +108,6 @@ MonoBehaviour:
   synergyTable:
   - {fileID: 11400000, guid: 8da7a3dede0d4d94f8f3fa5f84903e06, type: 2}
   - {fileID: 11400000, guid: d3878154a0bdbc14c880ad30395a4649, type: 2}
---- !u!114 &5086609333881617008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5097942217742227509}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aecc2587fc6efe84496d9142a0be9289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentHP: 0
-  _playerCombat: {fileID: 6852058077325633452}
-  playerEngravingManager: {fileID: 1109299525392512216}
-  playerData: {fileID: 11400000, guid: fb11d3df7e5a27d43bd00264c2d31f60, type: 2}
 --- !u!114 &2180091910043822190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,11 +151,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38efd3bc2d510a6438227fb45dfc72c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  dashSpeed: 12
-  dashDuration: 0.2
-  dashCooldown: 3
-  isDash: 0
+  rb: {fileID: 0}
+  spriteRenderer: {fileID: 0}
 --- !u!50 &4926970481670371563
 Rigidbody2D:
   serializedVersion: 4

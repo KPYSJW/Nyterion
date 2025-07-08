@@ -13,6 +13,9 @@ namespace Nytherion.Data.ScriptableObjects.Items
         private string uniqueID;
 
         public string ID => uniqueID;
+        
+        [System.NonSerialized]
+        public string instanceId;
 
         [Header("Basic Info")]
         public string itemName;

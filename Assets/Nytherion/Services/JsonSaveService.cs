@@ -16,9 +16,7 @@ namespace Nytherion.Services
             try
             {
                 File.WriteAllText(path, json);
-                #if UNITY_EDITOR
-                Debug.Log($"<color=cyan>[JsonSaveService] 데이터 저장 성공: {path}</color>");
-                #endif
+                Debug.Log($"<color=cyan>[JsonSaveService] 데이터 저장 성공: {path}\nJSON: {json}</color>");
             }
             catch (System.Exception e)
             {
@@ -35,7 +33,7 @@ namespace Nytherion.Services
                 #if UNITY_EDITOR
                 Debug.LogWarning("[JsonSaveService] 저장된 파일이 없습니다.");
                 #endif
-                return null; 
+                return null;
             }
 
             try
@@ -50,7 +48,7 @@ namespace Nytherion.Services
             catch (System.Exception e)
             {
                 Debug.LogError($"[JsonSaveService] 데이터 로드 실패: {e.Message}");
-                return null; 
+                return null;
             }
         }
     }

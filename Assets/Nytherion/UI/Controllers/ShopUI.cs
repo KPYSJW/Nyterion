@@ -8,6 +8,7 @@ using Nytherion.UI.Inventory;
 using TMPro;
 using Nytherion.Core.Enums;
 using Nytherion.UI.Shop;
+using Nytherion.Data.ScriptableObjects.Weapons;
 
 namespace Nytherion.UI.Controllers
 {
@@ -22,12 +23,12 @@ namespace Nytherion.UI.Controllers
         [SerializeField] private TextMeshProUGUI playerGoldText;
 
         [Header("Player Inventory Display")]
-        [Tooltip("상점 UI에 표시될 플레이어 인벤토리 슬롯들의 부모 오브젝트")]
         [SerializeField] private Transform playerInventoryParent;
         private List<InventorySlotUI> playerInventorySlots;
 
         private ShopData currentShopData;
         private const float SELL_PRICE_RATIO = 0.7f;
+
         protected override void Awake()
         {
             if (Instance != null && Instance != this)
@@ -36,9 +37,9 @@ namespace Nytherion.UI.Controllers
                 return;
             }
             Instance = this;
-
             base.Awake();
         }
+
         private void Start()
         {
             if (closeButton != null)
@@ -75,6 +76,7 @@ namespace Nytherion.UI.Controllers
                 EventManager.Instance.OnInteraction -= HandleInteraction;
             }
         }
+
         private void HandleInteraction(InteractableType type)
         {
             if (IsOpen && type != InteractableType.ShopDealer)
@@ -82,13 +84,13 @@ namespace Nytherion.UI.Controllers
                 Close();
             }
         }
+
         public void OpenShop(ShopData data)
         {
             currentShopData = data;
             PopulateShop();
             if (InventoryUI.Instance != null) InventoryUI.Instance.OpenForShop();
             UpdateCurrencyUI(CurrencyType.Gold, CurrencyManager.Instance.GetCurrency(CurrencyType.Gold));
-
             Open();
         }
 
@@ -101,6 +103,7 @@ namespace Nytherion.UI.Controllers
             }
             RefreshShopUI();
         }
+
         public override void Close()
         {
             base.Close();
@@ -112,18 +115,46 @@ namespace Nytherion.UI.Controllers
                 ShopManager.Instance.OnStockChanged -= RefreshShopUI;
             }
         }
+
         public void BuyItem(ShopSlotUI slot)
         {
             var shopItem = slot.CurrentItem;
-            if (!shopItem.isUnlimited && shopItem.stock <= 0) return;
-
-            if (CurrencyManager.Instance.SpendCurrency(CurrencyType.Gold, shopItem.price))
+            if (shopItem == null || (!shopItem.isUnlimited && shopItem.stock <= 0))
             {
-                InventoryManager.Instance.AddItem(shopItem.item);
+                Debug.LogWarning("[ShopUI] 유효하지 않은 상점 아이템이거나 재고가 없습니다.");
+                return;
+            }
 
-                if (ShopManager.Instance != null && !shopItem.isUnlimited)
+            int amountToBuy = (shopItem.item is EquipmentData) ? 1 : 1;
+
+            if (CurrencyManager.Instance.SpendCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
+            {
+                if (InventoryManager.Instance.AddItem(shopItem.item, amountToBuy))
                 {
-                    ShopManager.Instance.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
+                    Debug.Log($"[ShopUI] '{shopItem.item.itemName}' ({shopItem.item.GetType().Name}) 구매 완료. (ID: {shopItem.shopItemId}) from shop '{currentShopData.shopName}'");
+
+                    if (ShopManager.Instance != null && !shopItem.isUnlimited)
+                    {
+                        ShopManager.Instance.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
+                    }
+
+                    if (shopItem.item is WeaponData weaponData)
+                    {
+                        var equipmentSlot = FindObjectOfType<EquipmentSlotUI>();
+                        if (equipmentSlot != null && equipmentSlot.IsEmpty)
+                        {
+                            if (InventoryManager.Instance.RemoveItem(shopItem.item, 1))
+                            {
+                                equipmentSlot.SetItem(shopItem.item, 1);
+                                Debug.Log($"[ShopUI] '{weaponData.itemName}' 아이템을 장비 슬롯에 자동으로 장착했습니다.");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[ShopUI] 인벤토리에 아이템을 추가하지 못했습니다. 골드를 환불합니다.");
+                    CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, shopItem.price * amountToBuy);
                 }
             }
         }
@@ -148,7 +179,10 @@ namespace Nytherion.UI.Controllers
             foreach (ShopItemData shopItem in itemsToDisplay)
             {
                 GameObject slotGO = Instantiate(shopSlotPrefab, shopSlotParent);
-                if (slotGO.TryGetComponent(out ShopSlotUI slotUI)) slotUI.Setup(shopItem);
+                if (slotGO.TryGetComponent(out ShopSlotUI slotUI))
+                {
+                    slotUI.Setup(shopItem);
+                }
             }
         }
 
@@ -179,6 +213,7 @@ namespace Nytherion.UI.Controllers
                 playerGoldText.text = $"{amount} G";
             }
         }
+
         private void RefreshShopUI()
         {
             PopulateShop();

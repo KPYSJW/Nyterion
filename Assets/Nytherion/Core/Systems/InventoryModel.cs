@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.Core.Systems
@@ -10,12 +11,12 @@ namespace Nytherion.Core.Systems
         public event Action<ItemData, int> OnItemRemoved;
         public event Action OnInventoryUpdated;
 
-        private readonly Dictionary<ItemData, int> items = new();
-        public IReadOnlyDictionary<ItemData, int> Items => items;
+        private readonly List<ItemData> items = new List<ItemData>();
+        public IReadOnlyList<ItemData> Items => items;
 
         private readonly int maxSlots;
-        public bool IsFull => items.Count >= maxSlots;
-        public bool HasEmptySlot => items.Count < maxSlots;
+        public bool IsFull => items.Count(item => !item.isStackable) + items.Where(item => item.isStackable).Select(item => item.ID).Distinct().Count() >= maxSlots;
+        public bool HasEmptySlot => !IsFull;
 
         public InventoryModel(int maxSlots)
         {
@@ -25,23 +26,11 @@ namespace Nytherion.Core.Systems
         public bool AddItem(ItemData item, int count)
         {
             if (item == null || count <= 0) return false;
-
-            if (items.TryGetValue(item, out int currentCount))
+            
+            for (int i = 0; i < count; i++)
             {
-                if (item.isStackable)
-                {
-                    items[item] = currentCount + count;
-                }
-                else
-                {
-                    if (IsFull) return false;
-                    items[item] = count;
-                }
-            }
-            else
-            {
-                if (IsFull) return false;
-                items[item] = count;
+                 if (IsFull) return false;
+                 items.Add(item);
             }
 
             OnItemAdded?.Invoke(item, count);
@@ -51,52 +40,65 @@ namespace Nytherion.Core.Systems
 
         public bool RemoveItem(ItemData item, int count)
         {
-            if (item == null || count <= 0 || !items.ContainsKey(item)) return false;
+            if (item == null || count <= 0) return false;
 
-            if (items[item] > count)
+            int removedCount = 0;
+            for (int i = 0; i < count; i++)
             {
-                items[item] -= count;
-            }
-            else
-            {
-                items.Remove(item);
+                ItemData itemToRemove;
+                if (!item.isStackable && !string.IsNullOrEmpty(item.instanceId))
+                {
+                    itemToRemove = items.FirstOrDefault(x => x.instanceId == item.instanceId);
+                }
+                else
+                {
+                    itemToRemove = items.FirstOrDefault(x => x.ID == item.ID);
+                }
+
+                if (itemToRemove != null)
+                {
+                    items.Remove(itemToRemove);
+                    removedCount++;
+                }
+                else
+                {
+                    break; 
+                }
             }
 
-            OnItemRemoved?.Invoke(item, count);
-            OnInventoryUpdated?.Invoke();
-            return true;
+            if (removedCount > 0)
+            {
+                OnItemRemoved?.Invoke(item, removedCount);
+                OnInventoryUpdated?.Invoke();
+            }
+            
+            return removedCount > 0;
         }
 
         public int GetItemCount(ItemData item)
         {
-            items.TryGetValue(item, out int count);
-            return count;
+            if (item == null) return 0;
+            
+            if (!item.isStackable && !string.IsNullOrEmpty(item.instanceId))
+            {
+                return items.Count(i => i.instanceId == item.instanceId);
+            }
+            return items.Count(i => i.ID == item.ID);
         }
 
         public bool HasItem(ItemData item)
         {
-            return items.ContainsKey(item);
+            if (item == null) return false;
+            if (!item.isStackable && !string.IsNullOrEmpty(item.instanceId))
+            {
+                 return items.Any(i => i.instanceId == item.instanceId);
+            }
+            return items.Any(i => i.ID == item.ID);
         }
 
         public void Clear()
         {
             items.Clear();
-            OnInventoryUpdated?.Invoke();
-        }
-        
-        public void SwapItems(ItemData fromItem, ItemData toItem)
-        {
-            if (fromItem == null || !items.ContainsKey(fromItem)) return;
-            if (toItem == null) return; 
-
-            if(!items.ContainsKey(toItem)) return;
-
-            int fromCount = items[fromItem];
-            int toCount = items[toItem];
-
-            items[fromItem] = toCount;
-            items[toItem] = fromCount;
-            
             OnInventoryUpdated?.Invoke();
         }
     }

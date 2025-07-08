@@ -1,6 +1,11 @@
 using UnityEngine;
 using Nytherion.Services;
 using Nytherion.Core.Data;
+using Nytherion.UI.Inventory;
+using Nytherion.GamePlay.Characters.Player;
+using System.Linq;
+using Nytherion.Data.ScriptableObjects.Items;
+using System.Collections.Generic;
 
 namespace Nytherion.Core.Managers
 {
@@ -11,6 +16,14 @@ namespace Nytherion.Core.Managers
         private JsonSaveService saveService;
         private SaveData saveData;
         private bool isLoadingData = false;
+
+        [SerializeField] private PlayerManager playerManager;
+        [SerializeField] private InventoryManager inventoryManager;
+        [SerializeField] private EngravingManager engravingManager;
+        [SerializeField] private ShopManager shopManager;
+        [SerializeField] private QuickSlotManager quickSlotManager;
+        [SerializeField] private CurrencyManager currencyManager;
+
         private void Awake()
         {
             if (Instance == null)
@@ -27,23 +40,12 @@ namespace Nytherion.Core.Managers
         {
             LoadGame();
 
-            if (CurrencyManager.Instance != null)
-            {
-                CurrencyManager.Instance.onCurrencyChanged += OnCurrencyChanged;
-            }
-            if (EngravingManager.Instance != null)
-            {
-                EngravingManager.Instance.OnEngravingStateChanged += OnDataChanged;
-            }
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.OnInventoryUpdated += OnDataChanged;
-            }
-            if (ShopManager.Instance != null)
-            {
-                ShopManager.Instance.OnStockChanged += OnDataChanged;
-            }
+            if (currencyManager != null) currencyManager.onCurrencyChanged += OnCurrencyChanged;
+            if (engravingManager != null) engravingManager.OnEngravingStateChanged += OnDataChanged;
+            if (inventoryManager != null) inventoryManager.OnInventoryUpdated += OnDataChanged;
+            if (shopManager != null) shopManager.OnStockChanged += OnDataChanged;
         }
+
         private void OnDataChanged()
         {
             if (isLoadingData) return;
@@ -54,24 +56,48 @@ namespace Nytherion.Core.Managers
         {
             OnDataChanged();
         }
+
         public void SaveGame()
         {
             if (isLoadingData) return;
-
             if (saveData == null) saveData = new SaveData();
 
-            CurrencyManager.Instance.GetCurrenciesForSave(saveData);
-            saveData.inventoryData = InventoryManager.Instance.GetInventoryForSave();
-            saveData.engravingData = EngravingManager.Instance.GetEngravingsForSave();
-
-            if (ShopManager.Instance != null)
+            currencyManager.GetCurrenciesForSave(saveData);
+            
+            var allItemsToSave = inventoryManager.GetInventoryForSave();
+            var equippedItemsToSave = new List<ItemEntry>();
+            foreach(var pair in playerManager.EquippedItems)
             {
-                saveData.shopStockData = ShopManager.Instance.GetShopStockForSave();
+                if(pair.Value != null)
+                {
+                    equippedItemsToSave.Add(new ItemEntry {
+                        ItemId = pair.Value.ID,
+                        Count = 1,
+                        InstanceId = pair.Value.instanceId
+                    });
+                }
+            }
+            saveData.inventoryData = allItemsToSave.Concat(equippedItemsToSave).ToList();
+
+            saveData.engravingData = engravingManager.GetEngravingsForSave();
+            saveData.shopStockData = shopManager.GetShopStockForSave();
+            quickSlotManager.GetStateForSave(saveData);
+
+            saveData.equippedItemsData.Clear();
+            foreach (var pair in playerManager.EquippedItems)
+            {
+                if (pair.Value != null)
+                {
+                    saveData.equippedItemsData.Add(new EquippedItemEntry
+                    {
+                        slotType = pair.Key,
+                        instanceId = pair.Value.instanceId
+                    });
+                }
             }
 
             saveService.Save(saveData);
         }
-
 
         public void LoadGame()
         {
@@ -84,49 +110,48 @@ namespace Nytherion.Core.Managers
                 Debug.Log("<color=orange>[SaveLoadManager] 저장 파일이 없어 새 데이터를 생성합니다.</color>");
             }
 
-            CurrencyManager.Instance.LoadDataFromSave(saveData);
-            InventoryManager.Instance.LoadDataFromSave(saveData.inventoryData);
-            EngravingManager.Instance.LoadDataFromSave(saveData.engravingData);
-
-            if (ShopManager.Instance != null)
+            currencyManager.LoadDataFromSave(saveData);
+            inventoryManager.LoadDataFromSave(saveData.inventoryData);
+            engravingManager.LoadDataFromSave(saveData.engravingData);
+            shopManager.LoadShopStockFromSave(saveData.shopStockData);
+            
+            if (saveData.equippedItemsData != null)
             {
-                ShopManager.Instance.LoadShopStockFromSave(saveData.shopStockData);
+                var allLoadedItems = inventoryManager.InventoryModel.Items.ToList();
+                foreach (var entry in saveData.equippedItemsData)
+                {
+                    EquipmentData itemToEquip = allLoadedItems
+                        .FirstOrDefault(item => item.instanceId == entry.instanceId) as EquipmentData;
+
+                    if (itemToEquip != null)
+                    {
+                        playerManager.EquipItem(entry.slotType, itemToEquip);
+                        inventoryManager.RemoveItem(itemToEquip); 
+                    }
+                }
             }
+
+            quickSlotManager.LoadStateFromSave(saveData);
+            
+            inventoryManager.TriggerInventoryUpdate();
 
             isLoadingData = false;
         }
 
-        private void OnApplicationPause(bool pauseStatus)
-        {
-            if (pauseStatus)
-            {
-                SaveGame();
-            }
-        }
-
         private void OnApplicationQuit()
         {
-            SaveGame();
+            if (!isLoadingData)
+            {
+               SaveGame();
+            }
         }
 
         private void OnDestroy()
         {
-            if (CurrencyManager.Instance != null)
-            {
-                CurrencyManager.Instance.onCurrencyChanged -= OnCurrencyChanged;
-            }
-            if (EngravingManager.Instance != null)
-            {
-                EngravingManager.Instance.OnEngravingStateChanged -= OnDataChanged;
-            }
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.OnInventoryUpdated -= OnDataChanged;
-            }
-            if (ShopManager.Instance != null)
-            {
-                ShopManager.Instance.OnStockChanged -= OnDataChanged;
-            }
+            if (currencyManager != null) currencyManager.onCurrencyChanged -= OnCurrencyChanged;
+            if (engravingManager != null) engravingManager.OnEngravingStateChanged -= OnDataChanged;
+            if (inventoryManager != null) inventoryManager.OnInventoryUpdated -= OnDataChanged;
+            if (shopManager != null) shopManager.OnStockChanged -= OnDataChanged;
         }
     }
 }

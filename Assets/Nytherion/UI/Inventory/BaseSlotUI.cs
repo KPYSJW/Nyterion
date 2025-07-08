@@ -43,7 +43,7 @@ namespace Nytherion.UI.Inventory
                 iconImage = GetComponentInChildren<Image>();
                 if (iconImage == null)
                 {
-                    Debug.LogError($"[{name}] Could not find Image component in children");
+                    Debug.LogError($"[{name}] could not find Image component in children");
                 }
             }
 
@@ -178,8 +178,9 @@ namespace Nytherion.UI.Inventory
             OnPointerClickEvent?.Invoke(this, eventData);
         }
 
-        public virtual void OnBeginDrag(PointerEventData eventData)
+       public virtual void OnBeginDrag(PointerEventData eventData)
         {
+            if (IsEmpty) return;
             Debug.Log($"[BaseSlotUI] OnBeginDrag: IsEmpty={IsEmpty}, Item={currentItem?.itemName ?? "null"}");
             OnBeginDragEvent?.Invoke(this, eventData);
         }
@@ -192,7 +193,6 @@ namespace Nytherion.UI.Inventory
 
         public virtual void OnEndDrag(PointerEventData eventData)
         {
-            if (IsEmpty) return;
             OnEndDragEvent?.Invoke(this, eventData);
         }
 

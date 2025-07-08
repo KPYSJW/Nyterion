@@ -7,7 +7,7 @@ using Nytherion.UI.Controllers;
 
 namespace Nytherion.UI.Inventory
 {
-    public class InventorySlotUI : BaseSlotUI
+    public class InventorySlotUI : BaseSlotUI, IDropHandler
     {
         public int SlotIndex { get; private set; }
 
@@ -27,6 +27,17 @@ namespace Nytherion.UI.Inventory
             ClearSlot();
         }
 
+        public void OnDrop(PointerEventData eventData)
+        {
+            if (eventData.pointerDrag == null) return;
+            BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
+            if (sourceSlot == null || sourceSlot.IsEmpty || sourceSlot == this) return;
+
+            if (sourceSlot is EquipmentSlotUI equipmentSourceSlot)
+            {
+                equipmentSourceSlot.UnequipAndReturnToInventory();
+            }
+        }
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
         {
             if (ItemOnCursor.IsHoldingItem)
@@ -68,11 +79,11 @@ namespace Nytherion.UI.Inventory
                     if (CurrentCount > 1 && (ctrlPressed || shiftPressed))
                     {
                         int amountToPickUp = shiftPressed ? Mathf.CeilToInt(CurrentCount / 2.0f) : 1;
-                        
+
                         var itemToHold = CurrentItem;
-                        
+
                         DecreaseCount(amountToPickUp);
-                        
+
                         ItemOnCursor.Set(itemToHold, amountToPickUp);
                     }
                     else

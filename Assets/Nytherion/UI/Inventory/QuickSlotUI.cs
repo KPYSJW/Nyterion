@@ -40,6 +40,10 @@ namespace Nytherion.UI.Inventory
                 keyLabelText.text = label;
             }
         }
+        public override bool CanReceiveItem(ItemData item)
+        {
+            return item is ConsumableData;
+        }
 
         public override void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback = null)
         {
@@ -51,7 +55,7 @@ namespace Nytherion.UI.Inventory
             this.useableItem = item as IUseableItem;
             this.onItemUsed = onUseCallback;
 
-            base.SetItem(item, count, (usedItem, usedCount) => 
+            base.SetItem(item, count, (usedItem, usedCount) =>
             {
                 if (this.useableItem != null)
                 {

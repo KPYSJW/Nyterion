@@ -10,37 +10,27 @@ namespace Nytherion.Core.Systems
         private static Dictionary<string, ItemData> itemTable;
         private static bool isInitialized = false;
 
-        public static void Initialize()
+        public static void Initialize(ItemDatabaseSO databaseSO)
         {
             if (isInitialized) return;
 
             itemTable = new Dictionary<string, ItemData>();
 
-#if UNITY_EDITOR
-            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:ItemData", new[] { "Assets/Nytherion/Data/ScriptableObjects/Items" });
-            foreach (string guid in guids)
+            if (databaseSO == null)
             {
-                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
-                ItemData item = UnityEditor.AssetDatabase.LoadAssetAtPath<ItemData>(path);
+                Debug.LogError("[ItemDatabase] 전달된 ItemDatabaseSO 에셋이 null입니다! GameInitializer를 확인하세요.");
+                return;
+            }
+
+            foreach (var item in databaseSO.allItems)
+            {
                 if (item != null && !string.IsNullOrEmpty(item.ID) && !itemTable.ContainsKey(item.ID))
                 {
                     itemTable[item.ID] = item;
                 }
             }
-#endif
 
-            if (Application.isPlaying && itemTable.Count == 0)
-            {
-                var allItems = Resources.LoadAll<ItemData>("Items");
-                foreach (var item in allItems)
-                {
-                    if (item != null && !string.IsNullOrEmpty(item.ID) && !itemTable.ContainsKey(item.ID))
-                    {
-                        itemTable[item.ID] = item;
-                    }
-                }
-            }
-            
+            Debug.Log($"[ItemDatabase] {itemTable.Count}개의 아이템이 데이터베이스에 로드되었습니다.");
             isInitialized = true;
         }
 

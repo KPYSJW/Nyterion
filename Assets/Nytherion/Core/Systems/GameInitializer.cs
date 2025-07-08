@@ -1,6 +1,7 @@
 using UnityEngine;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Core.Managers;
+using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.Core.Systems
 {
@@ -19,6 +20,9 @@ namespace Nytherion.Core.Systems
         [SerializeField] private GachaManager gachaManager;
         [SerializeField] private ShopManager shopManager;
         [SerializeField] private SaveLoadManager saveLoadManager;
+
+        [Header("Databases")]
+        [SerializeField] private ItemDatabaseSO itemDatabase;
         private void Awake()
         {
             if (Instance == null)
@@ -38,6 +42,10 @@ namespace Nytherion.Core.Systems
 
         private void InitializeAllSystems()
         {
+            ItemDatabase.Initialize(itemDatabase);
+
+            saveLoadManager.Initialize();
+
             inputManager.Initialize();
             audioManager.Initialize();
             currencyManager.Initialize();
@@ -46,9 +54,6 @@ namespace Nytherion.Core.Systems
             playerManager.Initialize();
             gachaManager.Initialize();
             shopManager.Initialize();
-
-            saveLoadManager.Initialize();
         }
-
     }
 }

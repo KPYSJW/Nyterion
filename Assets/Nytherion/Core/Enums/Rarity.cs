@@ -1,5 +1,5 @@
 
-namespace Nytherion.Data.Enums
+namespace Nytherion.Core.Enums
 {
     public enum Rarity
     {

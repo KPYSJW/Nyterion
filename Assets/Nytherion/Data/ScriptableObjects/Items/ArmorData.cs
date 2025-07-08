@@ -1,4 +1,5 @@
 using UnityEngine;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Data.ScriptableObjects.Items
 {
@@ -16,5 +17,13 @@ namespace Nytherion.Data.ScriptableObjects.Items
         [Header("Armor Settings")]
         public ArmorType armorType;
         public float defense;
+
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            equipmentType = EquipmentType.Armor;
+        }
+#endif
     }
 }

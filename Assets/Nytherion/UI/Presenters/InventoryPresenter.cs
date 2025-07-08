@@ -3,6 +3,7 @@ using UnityEngine;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Inventory;
+using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.UI.Presenters
 {
@@ -12,7 +13,7 @@ namespace Nytherion.UI.Presenters
         [SerializeField] private Transform slotParent;
         [SerializeField] private GameObject slotPrefab;
 
-        private List<InventorySlotUI> slotPool = new();
+        private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
         private InventoryModel inventoryModel;
 
         public void Initialize()
@@ -22,15 +23,18 @@ namespace Nytherion.UI.Presenters
 
             InitializeSlots(InventoryManager.Instance.MaxSlotCount);
 
-            inventoryModel.OnInventoryUpdated += UpdateSlotsUI;
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.OnInventoryUpdated += UpdateSlotsUI;
+            }
             UpdateSlotsUI();
         }
 
         private void OnDestroy()
         {
-            if (inventoryModel != null)
+            if (InventoryManager.Instance != null)
             {
-                inventoryModel.OnInventoryUpdated -= UpdateSlotsUI;
+                InventoryManager.Instance.OnInventoryUpdated -= UpdateSlotsUI;
             }
         }
 
@@ -56,15 +60,16 @@ namespace Nytherion.UI.Presenters
 
         private void UpdateSlotsUI()
         {
-            if (inventoryModel == null) return;
+            if (InventoryManager.Instance == null) return;
 
             foreach (var slot in slotPool)
             {
                 slot.ClearSlot();
             }
+            Dictionary<ItemData, int> itemsToDisplay = InventoryManager.Instance.GetAllItems();
 
             int slotIndex = 0;
-            foreach (var itemPair in inventoryModel.Items)
+            foreach (var itemPair in itemsToDisplay)
             {
                 if (slotIndex < slotPool.Count)
                 {

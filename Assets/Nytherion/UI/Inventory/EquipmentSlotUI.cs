@@ -1,21 +1,23 @@
+using UnityEngine;
 using UnityEngine.EventSystems;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Inventory.Utils;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Player;
-using Nytherion.GamePlay.Combat;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.Inventory
 {
     public class EquipmentSlotUI : BaseSlotUI, IDropHandler
     {
+        [SerializeField] private EquipmentSlotType slotType;
         protected override void Awake()
         {
             base.Awake();
             OnBeginDragEvent += (s, e) => DragDropUIHandler.HandleBeginDragShared(s);
-            OnEndDragEvent += (s, e) => DragDropUIHandler.HandleEndDragShared(s, e);
             OnPointerClickEvent += HandlePointerClick;
+            OnEndDragEvent += (s, e) => HandleEndDrag(s, e);
         }
 
         public void OnDrop(PointerEventData eventData)
@@ -23,25 +25,24 @@ namespace Nytherion.UI.Inventory
             if (eventData.pointerDrag == null) return;
 
             BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
+
             if (sourceSlot == null || sourceSlot.IsEmpty || sourceSlot == this)
             {
                 return;
             }
 
-            if (CanReceiveItem(sourceSlot.CurrentItem))
+            if (sourceSlot is InventorySlotUI && CanReceiveItem(sourceSlot.CurrentItem))
             {
-                ItemData previousItem = CurrentItem;
-                int previousCount = CurrentCount;
+                ItemData itemToEquip = sourceSlot.CurrentItem;
 
-                SetItem(sourceSlot.CurrentItem, sourceSlot.CurrentCount);
+                if (InventoryManager.Instance.RemoveItem(itemToEquip, 1))
+                {
+                    if (!IsEmpty)
+                    {
+                        InventoryManager.Instance.AddItem(CurrentItem, 1);
+                    }
 
-                if (previousItem != null)
-                {
-                    sourceSlot.SetItem(previousItem, previousCount);
-                }
-                else
-                {
-                    sourceSlot.ClearSlot();
+                    SetItem(itemToEquip, 1);
                 }
             }
         }
@@ -54,23 +55,53 @@ namespace Nytherion.UI.Inventory
 
         public override bool CanReceiveItem(ItemData item)
         {
-            if (item is WeaponData)
+            if (item == null || !(item is EquipmentData))
             {
-                return true;
+                return false;
             }
-            return false;
+
+            EquipmentData equipment = item as EquipmentData;
+
+            switch (equipment.equipmentType)
+            {
+                case EquipmentType.Weapon:
+                    return this.slotType == EquipmentSlotType.Weapon;
+
+                case EquipmentType.Armor:
+                    if (equipment is ArmorData armor)
+                    {
+                        switch (armor.armorType)
+                        {
+                            case ArmorType.Helmet:
+                                return this.slotType == EquipmentSlotType.Helmet;
+                            case ArmorType.Armor:
+                                return this.slotType == EquipmentSlotType.Armor;
+                            case ArmorType.Boots:
+                                return this.slotType == EquipmentSlotType.Boots;
+                            case ArmorType.Accessory:
+                                return this.slotType == EquipmentSlotType.Accessory;
+                            default:
+                                return false;
+                        }
+                    }
+                    return false;
+
+                default:
+                    return false;
+            }
         }
 
         private void UpdatePlayerEquipment(ItemData itemToEquip)
         {
-            WeaponBase weaponPrefab = null;
-            if (itemToEquip is WeaponData weaponData)
+            if (PlayerManager.Instance == null)
             {
-                weaponPrefab = weaponData.weaponPrefab;
+                Debug.LogError("[EquipmentSlotUI] PlayerManager.Instance is null. 장비를 장착/해제할 수 없습니다.");
+                return;
             }
-            PlayerManager.Instance.PlayerCombat.EquipWeapon(weaponPrefab);
+
+            PlayerManager.Instance.EquipItem(this.slotType, itemToEquip as EquipmentData);
         }
-        
+
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Right && !IsEmpty)
@@ -79,14 +110,10 @@ namespace Nytherion.UI.Inventory
             }
         }
 
-        private void UnequipAndReturnToInventory()
+        public void UnequipAndReturnToInventory()
         {
             if (IsEmpty) return;
-
-            if (InventoryManager.Instance.AddItem(CurrentItem, CurrentCount))
-            {
-                ClearSlot();
-            }
+            PlayerManager.Instance.EquipItem(this.slotType, null);
         }
 
         public override void ClearSlot()

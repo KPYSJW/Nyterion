@@ -1,16 +1,16 @@
 using UnityEngine;
-using Nytherion.Data.Enums;
-using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Data.ScriptableObjects.Items
 {
     public abstract class EquipmentData : ItemData
     {
         [Header("Equipment Settings")]
+        public EquipmentType equipmentType;
         public Rarity rarity;
         public bool isCursed;
 
-        protected virtual void OnEnable()
+        protected void OnEnable()
         {
             isStackable = false;
             maxStack = 1;
