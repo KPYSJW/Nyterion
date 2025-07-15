@@ -1450,6 +1450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 646093295}
   countText: {fileID: 0}
+  slotType: 3
 --- !u!1 &214872912
 GameObject:
   m_ObjectHideFlags: 0
@@ -1644,6 +1645,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e52b6b97c5adce498c1275aea5b1696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerManager: {fileID: 530262200}
+  inventoryManager: {fileID: 1048833958}
+  engravingManager: {fileID: 1400517001}
+  shopManager: {fileID: 919078395}
+  quickSlotManager: {fileID: 545297292}
+  currencyManager: {fileID: 1869006651}
 --- !u!1 &233132554
 GameObject:
   m_ObjectHideFlags: 0
@@ -5130,9 +5137,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aecc2587fc6efe84496d9142a0be9289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHealth: {fileID: 0}
-  currentHP: 0
-  _playerCombat: {fileID: 4867036477210911311}
+  playerHealth: {fileID: 962403859}
+  playerCombat: {fileID: 4867036477210911311}
   playerEngravingManager: {fileID: 4867036477210911312}
   playerData: {fileID: 11400000, guid: fb11d3df7e5a27d43bd00264c2d31f60, type: 2}
 --- !u!1 &535014528
@@ -12490,6 +12496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 334940062}
   countText: {fileID: 0}
+  slotType: 4
 --- !u!1 &1120365806
 GameObject:
   m_ObjectHideFlags: 0
@@ -14230,7 +14237,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -14836,6 +14843,7 @@ MonoBehaviour:
   gachaManager: {fileID: 2085942812}
   shopManager: {fileID: 919078395}
   saveLoadManager: {fileID: 227216699}
+  itemDatabase: {fileID: 11400000, guid: f9b21e1c662560447a97d34c43a8f038, type: 2}
 --- !u!1 &1376049262
 GameObject:
   m_ObjectHideFlags: 0
@@ -20140,6 +20148,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 568426264}
   countText: {fileID: 0}
+  slotType: 2
 --- !u!1 &1927511801
 GameObject:
   m_ObjectHideFlags: 0
@@ -20924,6 +20933,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1137657499}
   countText: {fileID: 0}
+  slotType: 1
 --- !u!1 &2012032537
 GameObject:
   m_ObjectHideFlags: 0
@@ -21255,6 +21265,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1065531337}
   countText: {fileID: 0}
+  slotType: 0
 --- !u!1 &2042787340
 GameObject:
   m_ObjectHideFlags: 0

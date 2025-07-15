@@ -43,17 +43,15 @@ namespace Nytherion.Core.Systems
         private void InitializeAllSystems()
         {
             ItemDatabase.Initialize(itemDatabase);
-
-            saveLoadManager.Initialize();
-
+            playerManager.Initialize();
             inputManager.Initialize();
             audioManager.Initialize();
             currencyManager.Initialize();
             inventoryManager.Initialize();
             engravingManager.Initialize();
-            playerManager.Initialize();
             gachaManager.Initialize();
             shopManager.Initialize();
+            saveLoadManager.Initialize();
         }
     }
 }

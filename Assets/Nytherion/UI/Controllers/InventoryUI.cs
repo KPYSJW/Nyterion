@@ -13,16 +13,13 @@ namespace Nytherion.UI.Controllers
         public static InventoryUI Instance { get; private set; }
 
         [Header("UI Panels")]
-        [Tooltip("캐릭터 장비창 패널")]
         [SerializeField] private GameObject equipmentPanel;
-        [Tooltip("캐릭터 능력치창 패널")]
         [SerializeField] private GameObject statsPanel;
 
         [Header("Input")]
         [SerializeField] private InputActionReference toggleInventoryAction;
         
         [Header("References")]
-        [Tooltip("인벤토리 슬롯들이 있는 부모 오브젝트")]
         [SerializeField] private Transform slotParent;
         [SerializeField] private Button closeButton;
 

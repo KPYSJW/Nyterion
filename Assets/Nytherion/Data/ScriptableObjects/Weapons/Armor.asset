@@ -19,7 +19,8 @@ MonoBehaviour:
   isStackable: 0
   maxStack: 1
   baseValue: 10
+  equipmentType: 1
   rarity: 0
   isCursed: 0
-  armorType: 0
+  armorType: 1
   defense: 10

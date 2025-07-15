@@ -4,6 +4,7 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using UnityEngine;
 using Nytherion.Core.Enums;
 using System.Collections.Generic;
+using System;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -25,6 +26,8 @@ namespace Nytherion.GamePlay.Characters.Player
         private Dictionary<EquipmentSlotType, EquipmentData> equippedItems = new Dictionary<EquipmentSlotType, EquipmentData>();
         
         public IReadOnlyDictionary<EquipmentSlotType, EquipmentData> EquippedItems => equippedItems;
+
+        public event Action<EquipmentSlotType,EquipmentData> OnEquipmentChanged;
 
         private void Awake()
         {
@@ -78,6 +81,7 @@ namespace Nytherion.GamePlay.Characters.Player
                     if(PlayerCombat != null) PlayerCombat.EquipWeapon(null);
                 }
             }
+            OnEquipmentChanged?.Invoke(slotType, item);
         }
 
         private void ApplyStats(EquipmentData item)

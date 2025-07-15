@@ -20,6 +20,27 @@ namespace Nytherion.UI.Inventory
             OnEndDragEvent += (s, e) => HandleEndDrag(s, e);
         }
 
+        public void OnEnable()
+        {
+            if (PlayerManager.Instance != null)
+            {
+                PlayerManager.Instance.OnEquipmentChanged += HandleEquipmentChanged;
+            }
+        }
+        public void OnDisable()
+        {
+            if (PlayerManager.Instance != null)
+            {
+                PlayerManager.Instance.OnEquipmentChanged -= HandleEquipmentChanged;
+            }
+        }
+        private void HandleEquipmentChanged(EquipmentSlotType changedSlotType, EquipmentData newItem)
+        {
+            if (changedSlotType == this.slotType)
+            {
+                base.SetItem(newItem, newItem == null ? 0 : 1);
+            }
+        }
         public void OnDrop(PointerEventData eventData)
         {
             if (eventData.pointerDrag == null) return;
@@ -113,7 +134,10 @@ namespace Nytherion.UI.Inventory
         public void UnequipAndReturnToInventory()
         {
             if (IsEmpty) return;
+            ItemData ItemToReturn = CurrentItem;
             PlayerManager.Instance.EquipItem(this.slotType, null);
+            InventoryManager.Instance.AddItem(ItemToReturn, 1);
+            ClearSlot();
         }
 
         public override void ClearSlot()
@@ -125,5 +149,6 @@ namespace Nytherion.UI.Inventory
                 UpdatePlayerEquipment(null);
             }
         }
+        
     }
 }
