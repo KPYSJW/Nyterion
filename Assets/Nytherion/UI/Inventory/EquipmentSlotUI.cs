@@ -12,6 +12,7 @@ namespace Nytherion.UI.Inventory
     public class EquipmentSlotUI : BaseSlotUI, IDropHandler
     {
         [SerializeField] private EquipmentSlotType slotType;
+        public EquipmentSlotType SlotType { get { return slotType; } }
         protected override void Awake()
         {
             base.Awake();

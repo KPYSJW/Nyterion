@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nytherion.Data.ScriptableObjects.Items;
+using UnityEngine.UIElements;
 
 namespace Nytherion.Core.Systems
 {
@@ -37,6 +38,19 @@ namespace Nytherion.Core.Systems
             OnInventoryUpdated?.Invoke();
             return true;
         }
+        public bool AddItemSilently(ItemData item, int count)
+        {
+            if (item == null || count <= 0) return false;
+            
+            for (int i = 0; i < count; i++)
+            {
+                 if (IsFull) return false;
+                 items.Add(item);
+            }
+
+            OnItemAdded?.Invoke(item, count);
+            return true;
+        }
 
         public bool RemoveItem(ItemData item, int count)
         {
@@ -62,7 +76,7 @@ namespace Nytherion.Core.Systems
                 }
                 else
                 {
-                    break; 
+                    break;
                 }
             }
 
@@ -71,7 +85,7 @@ namespace Nytherion.Core.Systems
                 OnItemRemoved?.Invoke(item, removedCount);
                 OnInventoryUpdated?.Invoke();
             }
-            
+
             return removedCount > 0;
         }
 

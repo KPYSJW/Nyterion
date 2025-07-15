@@ -18,6 +18,11 @@ namespace Nytherion.UI.Inventory.Utils
 
         public static void TransferItem(BaseSlotUI source, BaseSlotUI target)
         {
+            if(source == target)
+            {
+                source.SetItem(source.CurrentItem, source.CurrentCount);
+                return;
+            }
             if (!CanTransferItem(source, target))
             {
                 return;
@@ -32,7 +37,19 @@ namespace Nytherion.UI.Inventory.Utils
             {
                 if (source.CurrentItem == target.CurrentItem && source.CurrentItem.isStackable)
                 {
-                    // 스택 합치기 로직 
+                    int totalAmount = source.CurrentCount + target.CurrentCount;
+                    int maxStack = source.CurrentItem.maxStack;
+
+                    if (totalAmount <= maxStack)
+                    {
+                        target.SetItem(source.CurrentItem, totalAmount);
+                        source.ClearSlot();
+                    }
+                    else
+                    {
+                        target.SetItem(source.CurrentItem, maxStack);
+                        source.SetItem(source.CurrentItem, totalAmount - maxStack);
+                    }
                     return;
                 }
                 

@@ -37,7 +37,7 @@ namespace Nytherion.UI.Inventory.Utils
             foreach (var result in results)
             {
                 var slot = result.gameObject.GetComponentInParent<BaseSlotUI>();
-                if (slot != null && slot != sourceSlot)
+                if (slot != null)
                 {
                     targetSlot = slot;
                     break;
@@ -50,6 +50,7 @@ namespace Nytherion.UI.Inventory.Utils
             }
             else
             {
+                sourceSlot.SetItem(sourceSlot.CurrentItem, sourceSlot.CurrentCount);
                 SlotTransferHelper.HandleDropOnEmptySpace(sourceSlot, eventData);
             }
         }

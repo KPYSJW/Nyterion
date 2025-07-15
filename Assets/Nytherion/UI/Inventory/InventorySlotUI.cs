@@ -4,6 +4,8 @@ using Nytherion.Core.Managers;
 using System;
 using Nytherion.UI.Inventory.Utils;
 using Nytherion.UI.Controllers;
+using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.GamePlay.Characters.Player;
 
 namespace Nytherion.UI.Inventory
 {
@@ -35,7 +37,23 @@ namespace Nytherion.UI.Inventory
 
             if (sourceSlot is EquipmentSlotUI equipmentSourceSlot)
             {
-                equipmentSourceSlot.UnequipAndReturnToInventory();
+                if (this.IsEmpty)
+                {
+                    ItemData itemToMove = equipmentSourceSlot.CurrentItem;
+                    PlayerManager.Instance.EquipItem(equipmentSourceSlot.SlotType, null);
+                    InventoryManager.Instance.AddItemWithoutNotify(itemToMove, 1);
+                    this.SetItem(itemToMove, 1);
+                    equipmentSourceSlot.ClearSlot();
+                }
+                else
+                {
+                    equipmentSourceSlot.SetItem(equipmentSourceSlot.CurrentItem, equipmentSourceSlot.CurrentCount);
+                }
+                return;
+            }
+            if (sourceSlot != this)
+            {
+                SlotTransferHelper.TransferItem(sourceSlot, this);
             }
         }
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)

@@ -14,7 +14,7 @@ namespace Nytherion.GamePlay.Characters.Player
         public static PlayerManager Instance { get; private set; }
 
         public PlayerHealth playerHealth;
-        
+
         [SerializeField]
         private PlayerCombat playerCombat;
 
@@ -24,10 +24,10 @@ namespace Nytherion.GamePlay.Characters.Player
         public PlayerData playerData;
 
         private Dictionary<EquipmentSlotType, EquipmentData> equippedItems = new Dictionary<EquipmentSlotType, EquipmentData>();
-        
+
         public IReadOnlyDictionary<EquipmentSlotType, EquipmentData> EquippedItems => equippedItems;
 
-        public event Action<EquipmentSlotType,EquipmentData> OnEquipmentChanged;
+        public event Action<EquipmentSlotType, EquipmentData> OnEquipmentChanged;
 
         private void Awake()
         {
@@ -64,21 +64,21 @@ namespace Nytherion.GamePlay.Characters.Player
             }
 
             equippedItems[slotType] = item;
-            
+
             if (item != null)
             {
                 ApplyStats(item);
 
                 if (item is WeaponData weaponData)
                 {
-                    if(PlayerCombat != null) PlayerCombat.EquipWeapon(weaponData.weaponPrefab);
+                    if (PlayerCombat != null) PlayerCombat.EquipWeapon(weaponData.weaponPrefab);
                 }
             }
             else
             {
                 if (slotType == EquipmentSlotType.Weapon)
                 {
-                    if(PlayerCombat != null) PlayerCombat.EquipWeapon(null);
+                    if (PlayerCombat != null) PlayerCombat.EquipWeapon(null);
                 }
             }
             OnEquipmentChanged?.Invoke(slotType, item);
@@ -88,7 +88,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (item is ArmorData armor)
             {
-                playerData.maxHealth += armor.defense; 
+                playerData.maxHealth += armor.defense;
             }
         }
 
@@ -99,5 +99,6 @@ namespace Nytherion.GamePlay.Characters.Player
                 playerData.maxHealth -= armor.defense;
             }
         }
+        
     }
 }

@@ -175,6 +175,10 @@ namespace Nytherion.UI.Inventory
 
         public virtual void OnPointerClick(PointerEventData eventData)
         {
+            if(eventData.dragging)
+            {
+                return;
+            }
             OnPointerClickEvent?.Invoke(this, eventData);
         }
 

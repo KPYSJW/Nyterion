@@ -149,7 +149,10 @@ namespace Nytherion.Core.Managers
             }
             return true;
         }
-
+        public bool AddItemWithoutNotify(ItemData item, int count = 1)
+        {
+            return InventoryModel.AddItemSilently(item, count);
+        }
         public bool RemoveItem(ItemData item) => RemoveItem(item, 1);
 
         public bool RemoveItem(ItemData item, int count = 1)

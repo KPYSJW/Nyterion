@@ -81,7 +81,9 @@ namespace Nytherion.Core.Managers
 
             saveData.engravingData = engravingManager.GetEngravingsForSave();
             saveData.shopStockData = shopManager.GetShopStockForSave();
+
             quickSlotManager.GetStateForSave(saveData);
+           
 
             saveData.equippedItemsData.Clear();
             foreach (var pair in playerManager.EquippedItems)
