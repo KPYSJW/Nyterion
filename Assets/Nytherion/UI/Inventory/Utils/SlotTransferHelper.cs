@@ -70,7 +70,6 @@ namespace Nytherion.UI.Inventory.Utils
 
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
-                Debug.Log($"[SlotTransfer] 아이템 버림: {source.CurrentItem.itemName}");
                 source.ClearSlot();
             }
         }

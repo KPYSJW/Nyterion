@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Core.Interfaces;
-using Nytherion.UI.Inventory;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Data;
 
 namespace Nytherion.Core.Managers
 {
-    public class InventoryManager : MonoBehaviour, IInventoryManager
+    public class InventoryManager : MonoBehaviour
     {
         public static InventoryManager Instance { get; private set; }
 
@@ -21,8 +19,6 @@ namespace Nytherion.Core.Managers
         public InventoryModel InventoryModel { get; private set; }
 
         public event Action OnInitialized;
-        public event Action<ItemData, int> OnItemAdded;
-        public event Action<ItemData, int> OnItemRemoved;
         public event Action OnInventoryUpdated;
 
         private void Awake()
@@ -41,44 +37,31 @@ namespace Nytherion.Core.Managers
 
         public void Initialize()
         {
-            InventoryModel.OnItemAdded += (item, count) => OnItemAdded?.Invoke(item, count);
-            InventoryModel.OnItemRemoved += (item, count) => OnItemRemoved?.Invoke(item, count);
             InventoryModel.OnInventoryUpdated += () => OnInventoryUpdated?.Invoke();
             OnInitialized?.Invoke();
         }
+
         public void TriggerInventoryUpdate()
         {
             OnInventoryUpdated?.Invoke();
         }
+
+        // --- Save & Load ---
         public List<ItemEntry> GetInventoryForSave()
         {
             var itemEntries = new List<ItemEntry>();
-            var groupedItems = InventoryModel.Items
-                .GroupBy(item => item.isStackable ? item.ID : item.instanceId);
-
-            foreach (var group in groupedItems)
+            for (int i = 0; i < InventoryModel.MaxSlots; i++)
             {
-                var representativeItem = group.First();
-                if (representativeItem.isStackable)
+                var (item, count) = InventoryModel.GetItemAt(i);
+                if (item != null && count > 0)
                 {
                     itemEntries.Add(new ItemEntry
                     {
-                        ItemId = representativeItem.ID,
-                        Count = group.Count()
+                        slotIndex = i,
+                        itemId = item.ID,
+                        count = count,
+                        instanceId = item.isStackable ? null : item.instanceId
                     });
-                }
-                else
-                {
-                    foreach (var item in group)
-                    {
-                        Debug.Log($"[InventoryManager] Saving item {item.ID} with instanceId {item.instanceId}");
-                        itemEntries.Add(new ItemEntry
-                        {
-                            ItemId = item.ID,
-                            Count = 1,
-                            InstanceId = item.instanceId
-                        });
-                    }
                 }
             }
             return itemEntries;
@@ -95,105 +78,125 @@ namespace Nytherion.Core.Managers
 
             foreach (var entry in itemEntries)
             {
-                ItemData itemAsset = ItemDatabase.GetItemByID(entry.ItemId);
-                if (itemAsset == null)
-                {
-                    Debug.LogWarning($"[InventoryManager] Item with ID {entry.ItemId} not found in ItemDatabase.");
-                    continue;
-                }
+                ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
+                if (itemAsset == null) continue;
 
-                if (itemAsset.isStackable)
+                ItemData itemToPlace = itemAsset;
+                if (!itemAsset.isStackable)
                 {
-                    InventoryModel.AddItem(itemAsset, entry.Count);
+                    itemToPlace = Instantiate(itemAsset);
+                    itemToPlace.instanceId = !string.IsNullOrEmpty(entry.instanceId) ? entry.instanceId : Guid.NewGuid().ToString();
                 }
-                else
-                {
-                    ItemData newItemInstance = Instantiate(itemAsset);
-                    newItemInstance.instanceId = !string.IsNullOrEmpty(entry.InstanceId)
-                        ? entry.InstanceId
-                        : Guid.NewGuid().ToString();
-                    Debug.Log($"[InventoryManager] Loaded item {entry.ItemId} with instanceId {newItemInstance.instanceId}");
-                    InventoryModel.AddItem(newItemInstance, 1);
-                }
+                InventoryModel.AddItemToSlot(itemToPlace, entry.count, entry.slotIndex);
             }
-            OnInventoryUpdated?.Invoke();
         }
 
-        public bool AddItem(ItemData item) => AddItem(item, 1);
-
-        public bool AddItem(ItemData item, int count)
+        public bool AddItem(ItemData item, int count = 1)
         {
-            if (item == null || count <= 0) return false;
-
-            Debug.Log($"[InventoryManager] Attempting to add {item.itemName} (Type: {item.GetType().Name}) x{count}");
-
-            if (item.isStackable)
-            {
-                if (InventoryModel.IsFull) return false;
-                return InventoryModel.AddItem(item, count);
-            }
-            else
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    if (InventoryModel.IsFull)
-                    {
-                        Debug.LogWarning($"인벤토리가 가득 차 {item.itemName}을(를) 추가할 수 없습니다.");
-                        if (i > 0) OnInventoryUpdated?.Invoke();
-                        return i > 0;
-                    }
-                    ItemData newItemInstance = Instantiate(item);
-                    newItemInstance.instanceId = Guid.NewGuid().ToString();
-                    InventoryModel.AddItem(newItemInstance, 1);
-                }
-            }
-            return true;
+            return InventoryModel.AddItem(item, count);
         }
-        public bool AddItemWithoutNotify(ItemData item, int count = 1)
-        {
-            return InventoryModel.AddItemSilently(item, count);
-        }
-        public bool RemoveItem(ItemData item) => RemoveItem(item, 1);
 
         public bool RemoveItem(ItemData item, int count = 1)
         {
             return InventoryModel.RemoveItem(item, count);
         }
 
+        public bool RemoveItemFromSlot(int slotIndex, int count = 1)
+        {
+            var (item, currentCount) = InventoryModel.GetItemAt(slotIndex);
+            if (item == null || currentCount < count) return false;
+
+            InventoryModel.RemoveItemFromSlot(slotIndex, count);
+            return true;
+        }
+
+        public bool RemoveItemByInstanceId(string instanceId)
+        {
+            for (int i = 0; i < InventoryModel.MaxSlots; i++)
+            {
+                var (item, _) = InventoryModel.GetItemAt(i);
+                if (item != null && !item.isStackable && item.instanceId == instanceId)
+                {
+                    InventoryModel.RemoveItemFromSlot(i, 1);
+                    return true;
+                }
+            }
+            return false;
+        }
+        public (ItemData item, int count) RemoveItemFromSlotWithoutNotify(int slotIndex, int count = 1)
+        {
+            var (item, currentCount) = InventoryModel.GetItemAt(slotIndex);
+            if (item == null || currentCount < count) return (null, 0);
+
+            return InventoryModel.RemoveItemFromSlotWithoutNotify(slotIndex, count);
+        }
+        public void SwapItems(int fromIndex, int toIndex)
+        {
+            InventoryModel.SwapItems(fromIndex, toIndex);
+        }
+
         public void ClearInventory() => InventoryModel.Clear();
+
+        // --- Item Query ---
+        public bool IsFull => InventoryModel.IsFull;
+
+        public (ItemData item, int count) GetItemAt(int index)
+        {
+            return InventoryModel.GetItemAt(index);
+        }
+
+        public int GetItemCount(ItemData item)
+        {
+            if (item == null) return 0;
+            int totalCount = 0;
+            for (int i = 0; i < InventoryModel.MaxSlots; i++)
+            {
+                var (slotItem, slotCount) = InventoryModel.GetItemAt(i);
+                if (slotItem != null && slotItem.ID == item.ID)
+                {
+                    totalCount += slotCount;
+                }
+            }
+            return totalCount;
+        }
+
+        public bool HasItem(ItemData item)
+        {
+            return GetItemCount(item) > 0;
+        }
+
+        public bool HasItemByInstanceId(string instanceId)
+        {
+            for (int i = 0; i < InventoryModel.MaxSlots; i++)
+            {
+                var (item, _) = InventoryModel.GetItemAt(i);
+                if (item != null && !item.isStackable && item.instanceId == instanceId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public Dictionary<ItemData, int> GetAllItems()
         {
-            return InventoryModel.Items
-                .GroupBy(item => item.isStackable ? item.ID : item.instanceId)
-                .ToDictionary(
-                    group => group.First(),
-                    group => group.Count()
-                );
-        }
-
-        public int GetItemCount(ItemData item) => InventoryModel.GetItemCount(item);
-        public bool IsFull => InventoryModel.IsFull;
-        public bool HasItem(ItemData item) => InventoryModel.HasItem(item);
-        public bool HasItem(string itemId) => InventoryModel.Items.Any(i => i.ID == itemId);
-        public void SwapItems(InventorySlotUI fromSlot, InventorySlotUI toSlot) { }
-        public bool MoveToEquipment(ItemData item, int count = 1)
-        {
-            if (item == null || count <= 0) return false;
-            if (InventoryModel.GetItemCount(item) < count) return false;
-            return RemoveItem(item, count);
-        }
-        public bool MoveToInventory(ItemData item, int count = 1)
-        {
-            if (item == null || count <= 0) return false;
-            if (InventoryModel.IsFull && !InventoryModel.HasItem(item)) return false;
-            return AddItem(item, count);
-        }
-        public void RegisterQuickSlot(QuickSlotUI quickSlot, ItemData item, int count, Action<ItemData, int> onUseCallback = null)
-        {
-            if (quickSlot == null || item == null || count <= 0) return;
-            Action<ItemData, int> onUsed = onUseCallback ?? ((usedItem, usedCount) => RemoveItem(usedItem, usedCount));
-            quickSlot.SetItem(item, count, onUsed);
+            var allItems = new Dictionary<ItemData, int>();
+            for (int i = 0; i < InventoryModel.MaxSlots; i++)
+            {
+                var (item, count) = InventoryModel.GetItemAt(i);
+                if (item != null)
+                {
+                    if (item.isStackable && allItems.ContainsKey(item))
+                    {
+                        allItems[item] += count;
+                    }
+                    else if (!allItems.ContainsKey(item))
+                    {
+                        allItems[item] = count;
+                    }
+                }
+            }
+            return allItems;
         }
     }
 }

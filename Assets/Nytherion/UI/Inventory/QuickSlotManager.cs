@@ -3,6 +3,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Data;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Managers;
+using System.Collections.Generic;
 
 namespace Nytherion.UI.Inventory
 {
@@ -18,8 +19,10 @@ namespace Nytherion.UI.Inventory
             KeyCode.Alpha2,
             KeyCode.Alpha3,
         };
+
         private ItemData[] quickSlotItems;
         private int[] quickSlotItemCounts;
+
         private void Awake()
         {
             if (Instance == null)
@@ -35,9 +38,10 @@ namespace Nytherion.UI.Inventory
         {
             for (int i = 0; i < slots.Length && i < keys.Length; i++)
             {
+                int slotIndex = i;
                 slots[i].SetKeyLabel(keys[i].ToString().Replace("Alpha", ""));
-                slots[i].OnItemSet += (item, count) => UpdateSlotData(i, item, count);
-                slots[i].OnItemCleared += () => UpdateSlotData(i, null, 0);
+                slots[i].OnItemSet += (item, count) => UpdateSlotData(slotIndex, item, count);
+                slots[i].OnItemCleared += () => UpdateSlotData(slotIndex, null, 0);
             }
         }
 
@@ -51,57 +55,79 @@ namespace Nytherion.UI.Inventory
                 }
             }
         }
+
         private void UpdateSlotData(int index, ItemData item, int count)
         {
             if (index < 0 || index >= quickSlotItems.Length) return;
             quickSlotItems[index] = item;
             quickSlotItemCounts[index] = count;
-            SaveLoadManager.Instance.SaveGame();
+            if(SaveLoadManager.Instance != null)
+            {
+                SaveLoadManager.Instance.SaveGame();
+            }
         }
+
         public void UseSlot(int index)
         {
             if (index < 0 || index >= slots.Length) return;
             slots[index].UseItem();
         }
 
+        public void ClearSlot(int index)
+        {
+            if (index < 0 || index >= slots.Length) return;
+            slots[index].ClearSlot();
+            UpdateSlotData(index, null, 0);
+        }
+        
+        public (ItemData item, int count) GetItemInfo(int index)
+        {
+            if (index < 0 || index >= slots.Length) return (null, 0);
+            return (quickSlotItems[index], quickSlotItemCounts[index]);
+        }
+
         public void GetStateForSave(SaveData saveData)
         {
-            saveData.quickSlotItemIDs.Clear();
-            saveData.quickSlotItemCounts.Clear();
+            saveData.quickSlotData.Clear();
             for (int i = 0; i < slots.Length; i++)
             {
-                if (quickSlotItems[i] == null)
+                if (quickSlotItems[i] != null)
                 {
-                    saveData.quickSlotItemIDs.Add(null);
-                    saveData.quickSlotItemCounts.Add(0);
-                }
-                else
-                {
-                    saveData.quickSlotItemIDs.Add(quickSlotItems[i].ID);
-                    saveData.quickSlotItemCounts.Add(quickSlotItemCounts[i]);
+                    saveData.quickSlotData.Add(new QuickSlotEntry
+                    {
+                        slotIndex = i,
+                        itemId = quickSlotItems[i].ID,
+                        count = quickSlotItemCounts[i],
+                        instanceId = quickSlotItems[i].isStackable ? null : quickSlotItems[i].instanceId
+                    });
                 }
             }
         }
 
         public void LoadStateFromSave(SaveData saveData)
         {
-            if (saveData == null || saveData.quickSlotItemIDs == null) return;
+            if (saveData == null) return;
+        
             for (int i = 0; i < slots.Length; i++)
             {
-                if (i < saveData.quickSlotItemIDs.Count && !string.IsNullOrEmpty(saveData.quickSlotItemIDs[i]))
+                slots[i].ClearSlot();
+            }
+        
+            if (saveData.quickSlotData != null)
+            {
+                foreach (var entry in saveData.quickSlotData)
                 {
-                    ItemData item = ItemDatabase.GetItemByID(saveData.quickSlotItemIDs[i]);
-                    if (item != null)
+                    if (entry.slotIndex < 0 || entry.slotIndex >= slots.Length) continue;
+        
+                    ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
+                    if (itemAsset == null || !(itemAsset is ConsumableData))
                     {
-                        int count = saveData.quickSlotItemCounts[i];
-                        slots[i].SetItem(item, count);
-                        UpdateSlotData(i, item, count);
+                        continue;
                     }
-                }
-                else
-                {
-                    slots[i].ClearSlot();
-                    UpdateSlotData(i, null, 0);
+                    
+                    slots[entry.slotIndex].SetItem(itemAsset, entry.count);
+                    quickSlotItems[entry.slotIndex] = itemAsset;
+                    quickSlotItemCounts[entry.slotIndex] = entry.count;
                 }
             }
         }

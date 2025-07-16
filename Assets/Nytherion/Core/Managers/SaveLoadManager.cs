@@ -3,9 +3,7 @@ using Nytherion.Services;
 using Nytherion.Core.Data;
 using Nytherion.UI.Inventory;
 using Nytherion.GamePlay.Characters.Player;
-using System.Linq;
-using Nytherion.Data.ScriptableObjects.Items;
-using System.Collections.Generic;
+
 
 namespace Nytherion.Core.Managers
 {
@@ -23,6 +21,7 @@ namespace Nytherion.Core.Managers
         [SerializeField] private ShopManager shopManager;
         [SerializeField] private QuickSlotManager quickSlotManager;
         [SerializeField] private CurrencyManager currencyManager;
+        [SerializeField] private EquipmentDataManager equipmentManager; // 추가: EquipmentDataManager 참조
 
         private void Awake()
         {
@@ -36,6 +35,7 @@ namespace Nytherion.Core.Managers
                 Destroy(gameObject);
             }
         }
+
         public void Initialize()
         {
             LoadGame();
@@ -62,41 +62,15 @@ namespace Nytherion.Core.Managers
             if (isLoadingData) return;
             if (saveData == null) saveData = new SaveData();
 
-            currencyManager.GetCurrenciesForSave(saveData);
-            
-            var allItemsToSave = inventoryManager.GetInventoryForSave();
-            var equippedItemsToSave = new List<ItemEntry>();
-            foreach(var pair in playerManager.EquippedItems)
-            {
-                if(pair.Value != null)
-                {
-                    equippedItemsToSave.Add(new ItemEntry {
-                        ItemId = pair.Value.ID,
-                        Count = 1,
-                        InstanceId = pair.Value.instanceId
-                    });
-                }
-            }
-            saveData.inventoryData = allItemsToSave.Concat(equippedItemsToSave).ToList();
+            saveData.inventoryData = inventoryManager.GetInventoryForSave();
 
-            saveData.engravingData = engravingManager.GetEngravingsForSave();
-            saveData.shopStockData = shopManager.GetShopStockForSave();
+            saveData.equippedItemsData = equipmentManager.GetEquipmentForSave();
 
             quickSlotManager.GetStateForSave(saveData);
-           
 
-            saveData.equippedItemsData.Clear();
-            foreach (var pair in playerManager.EquippedItems)
-            {
-                if (pair.Value != null)
-                {
-                    saveData.equippedItemsData.Add(new EquippedItemEntry
-                    {
-                        slotType = pair.Key,
-                        instanceId = pair.Value.instanceId
-                    });
-                }
-            }
+            currencyManager.GetCurrenciesForSave(saveData);
+            saveData.engravingData = engravingManager.GetEngravingsForSave();
+            saveData.shopStockData = shopManager.GetShopStockForSave();
 
             saveService.Save(saveData);
         }
@@ -105,36 +79,18 @@ namespace Nytherion.Core.Managers
         {
             isLoadingData = true;
 
-            saveData = saveService.Load();
-            if (saveData == null)
-            {
-                saveData = new SaveData();
-                Debug.Log("<color=orange>[SaveLoadManager] 저장 파일이 없어 새 데이터를 생성합니다.</color>");
-            }
+            saveData = saveService.Load() ?? new SaveData();
 
-            currencyManager.LoadDataFromSave(saveData);
             inventoryManager.LoadDataFromSave(saveData.inventoryData);
-            engravingManager.LoadDataFromSave(saveData.engravingData);
-            shopManager.LoadShopStockFromSave(saveData.shopStockData);
-            
-            if (saveData.equippedItemsData != null)
-            {
-                var allLoadedItems = inventoryManager.InventoryModel.Items.ToList();
-                foreach (var entry in saveData.equippedItemsData)
-                {
-                    EquipmentData itemToEquip = allLoadedItems
-                        .FirstOrDefault(item => item.instanceId == entry.instanceId) as EquipmentData;
 
-                    if (itemToEquip != null)
-                    {
-                        playerManager.EquipItem(entry.slotType, itemToEquip);
-                        inventoryManager.RemoveItem(itemToEquip); 
-                    }
-                }
-            }
+            equipmentManager.LoadEquipmentFromSave(saveData.equippedItemsData);
 
             quickSlotManager.LoadStateFromSave(saveData);
-            
+
+            currencyManager.LoadDataFromSave(saveData);
+            engravingManager.LoadDataFromSave(saveData.engravingData);
+            shopManager.LoadShopStockFromSave(saveData.shopStockData);
+
             inventoryManager.TriggerInventoryUpdate();
 
             isLoadingData = false;
@@ -144,7 +100,7 @@ namespace Nytherion.Core.Managers
         {
             if (!isLoadingData)
             {
-               SaveGame();
+                SaveGame();
             }
         }
 

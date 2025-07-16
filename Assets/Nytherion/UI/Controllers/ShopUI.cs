@@ -121,7 +121,6 @@ namespace Nytherion.UI.Controllers
             var shopItem = slot.CurrentItem;
             if (shopItem == null || (!shopItem.isUnlimited && shopItem.stock <= 0))
             {
-                Debug.LogWarning("[ShopUI] 유효하지 않은 상점 아이템이거나 재고가 없습니다.");
                 return;
             }
 
@@ -146,14 +145,12 @@ namespace Nytherion.UI.Controllers
                             if (InventoryManager.Instance.RemoveItem(shopItem.item, 1))
                             {
                                 equipmentSlot.SetItem(shopItem.item, 1);
-                                Debug.Log($"[ShopUI] '{weaponData.itemName}' 아이템을 장비 슬롯에 자동으로 장착했습니다.");
                             }
                         }
                     }
                 }
                 else
                 {
-                    Debug.LogWarning("[ShopUI] 인벤토리에 아이템을 추가하지 못했습니다. 골드를 환불합니다.");
                     CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, shopItem.price * amountToBuy);
                 }
             }

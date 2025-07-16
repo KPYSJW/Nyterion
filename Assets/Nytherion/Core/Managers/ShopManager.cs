@@ -40,7 +40,6 @@ namespace Nytherion.Core.Managers
                     isUnlimited = originalItem.isUnlimited
                 }).ToList();
 
-                Debug.Log($"[ShopManager] Initializing shop '{shopDataAsset.shopName}' with {runtimeItems.Count} items.");
                 runtimeShopInventories[shopDataAsset.shopName] = runtimeItems;
             }
         }
@@ -53,26 +52,22 @@ namespace Nytherion.Core.Managers
         
         public void RecordPurchase(string shopName, string shopItemId)
         {
-            Debug.Log($"[ShopManager] Attempting to record purchase for shop '{shopName}', item ID '{shopItemId}'");
             if (runtimeShopInventories.TryGetValue(shopName, out var items))
             {
                 var shopItem = items.FirstOrDefault(i => i.shopItemId == shopItemId);
                 if (shopItem == null)
                 {
-                    Debug.LogWarning($"[ShopManager] Item with shopItemId '{shopItemId}' not found in shop '{shopName}'.");
                     return;
                 }
                 
                 if (shopItem.isUnlimited)
                 {
-                    Debug.Log($"[ShopManager] Item '{shopItem.item.itemName}' is unlimited, no stock reduction.");
                     return;
                 }
 
                 if (shopItem.stock > 0)
                 {
                     shopItem.stock--;
-                    Debug.Log($"[ShopManager] Reduced stock for '{shopItem.item.itemName}' in shop '{shopName}'. New stock: {shopItem.stock}");
                 }
                 else
                 {
@@ -95,7 +90,6 @@ namespace Nytherion.Core.Managers
                 {
                     if (!item.isUnlimited)
                     {
-                        Debug.Log($"[ShopManager] Saving stock for shop '{shopInventoryPair.Key}', item '{item.item.itemName}': {item.stock}");
                         stockStates.Add(new Data.ShopStockState
                         {
                             shopItemId = item.shopItemId,
@@ -120,7 +114,6 @@ namespace Nytherion.Core.Managers
                     var targetItem = shopInventory.FirstOrDefault(i => i.shopItemId == savedItem.shopItemId);
                     if (targetItem != null)
                     {
-                        Debug.Log($"[ShopManager] Loading stock for item '{targetItem.item.itemName}': {savedItem.remainingStock}");
                         targetItem.stock = savedItem.remainingStock;
                         break; 
                     }

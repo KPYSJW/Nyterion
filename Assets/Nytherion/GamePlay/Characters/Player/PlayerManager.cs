@@ -3,8 +3,8 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using UnityEngine;
 using Nytherion.Core.Enums;
-using System.Collections.Generic;
-using System;
+using Nytherion.Core.Managers;
+
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -14,20 +14,10 @@ namespace Nytherion.GamePlay.Characters.Player
         public static PlayerManager Instance { get; private set; }
 
         public PlayerHealth playerHealth;
-
-        [SerializeField]
-        private PlayerCombat playerCombat;
-
+        [SerializeField] private PlayerCombat playerCombat;
         public PlayerCombat PlayerCombat => playerCombat;
-
         public PlayerEngravingManager playerEngravingManager;
         public PlayerData playerData;
-
-        private Dictionary<EquipmentSlotType, EquipmentData> equippedItems = new Dictionary<EquipmentSlotType, EquipmentData>();
-
-        public IReadOnlyDictionary<EquipmentSlotType, EquipmentData> EquippedItems => equippedItems;
-
-        public event Action<EquipmentSlotType, EquipmentData> OnEquipmentChanged;
 
         private void Awake()
         {
@@ -53,35 +43,37 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void Initialize()
         {
-            equippedItems.Clear();
+            if (EquipmentDataManager.Instance != null)
+            {
+                EquipmentDataManager.Instance.OnEquipmentChanged += HandleEquipmentChanged;
+            }
         }
 
-        public void EquipItem(EquipmentSlotType slotType, EquipmentData item)
+        private void OnDestroy()
         {
-            if (equippedItems.ContainsKey(slotType) && equippedItems[slotType] != null)
+            if (EquipmentDataManager.Instance != null)
             {
-                UnequipStats(equippedItems[slotType]);
+                EquipmentDataManager.Instance.OnEquipmentChanged -= HandleEquipmentChanged;
             }
+        }
 
-            equippedItems[slotType] = item;
-
+        private void HandleEquipmentChanged(EquipmentSlotType slotType, EquipmentData item)
+        {
             if (item != null)
             {
                 ApplyStats(item);
-
                 if (item is WeaponData weaponData)
                 {
-                    if (PlayerCombat != null) PlayerCombat.EquipWeapon(weaponData.weaponPrefab);
+                    PlayerCombat?.EquipWeapon(weaponData.weaponPrefab);
                 }
             }
             else
             {
                 if (slotType == EquipmentSlotType.Weapon)
                 {
-                    if (PlayerCombat != null) PlayerCombat.EquipWeapon(null);
+                    PlayerCombat?.EquipWeapon(null);
                 }
             }
-            OnEquipmentChanged?.Invoke(slotType, item);
         }
 
         private void ApplyStats(EquipmentData item)
@@ -99,6 +91,5 @@ namespace Nytherion.GamePlay.Characters.Player
                 playerData.maxHealth -= armor.defense;
             }
         }
-        
     }
 }

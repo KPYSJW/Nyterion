@@ -17,14 +17,12 @@ namespace Nytherion.Core.Data
     {
         public List<CurrencyType> currencyTypes = new List<CurrencyType>();
         public List<int> currencyAmounts = new List<int>();
-
         public List<ItemEntry> inventoryData = new List<ItemEntry>();
-
         public EngravingGridState engravingData;
         public List<ShopStockState> shopStockData = new List<ShopStockState>();
-
         public List<string> quickSlotItemIDs = new List<string>();
         public List<int> quickSlotItemCounts = new List<int>();
+        public List<QuickSlotEntry> quickSlotData = new List<QuickSlotEntry>();
         public List<EquippedItemEntry> equippedItemsData = new List<EquippedItemEntry>();
 
         public SaveData()
@@ -36,20 +34,34 @@ namespace Nytherion.Core.Data
             shopStockData = new List<ShopStockState>();
             quickSlotItemIDs = new List<string>();
             quickSlotItemCounts = new List<int>();
+            quickSlotData = new List<QuickSlotEntry>();
+            equippedItemsData = new List<EquippedItemEntry>();
         }
     }
+
+    [Serializable]
+    public class QuickSlotEntry
+    {
+        public int slotIndex;
+        public string itemId;
+        public int count;
+        public string instanceId;
+    }
+
     [Serializable]
     public class EquippedItemEntry
     {
         public EquipmentSlotType slotType;
+        public string itemId;
         public string instanceId;
     }
+
     [Serializable]
     public class ItemEntry
     {
-        public string ItemId;
-        public int Count;
-        public string InstanceId;
+        public int slotIndex;
+        public string itemId;
+        public int count;
+        public string instanceId;
     }
-
 }

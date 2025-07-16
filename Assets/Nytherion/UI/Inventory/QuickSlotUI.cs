@@ -5,11 +5,11 @@ using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using System;
 using InventoryUtils = Nytherion.UI.Inventory.Utils;
-
+using UnityEngine.EventSystems;
 
 namespace Nytherion.UI.Inventory
 {
-    public class QuickSlotUI : BaseSlotUI
+    public class QuickSlotUI : BaseSlotUI, IDropHandler
     {
         public event Action<ItemData, int> OnItemUsed;
         [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
@@ -29,9 +29,39 @@ namespace Nytherion.UI.Inventory
             }
 
             OnBeginDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleBeginDragShared(slot);
-            OnEndDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleEndDragShared(slot, eventData); // allowShiftSwap defaults to true
+            OnEndDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleEndDragShared(slot, eventData);
         }
 
+        public void OnDrop(PointerEventData eventData)
+        {
+            if (eventData.pointerDrag == null) return;
+            BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
+            if (sourceSlot == null || sourceSlot.IsEmpty) return;
+
+            if (sourceSlot is InventorySlotUI inventorySourceSlot)
+            {
+                if (CanReceiveItem(inventorySourceSlot.CurrentItem))
+                {
+                    var (itemToMove, countToMove) = inventorySourceSlot.GetItemInfo();
+
+                    if (InventoryManager.Instance.RemoveItemFromSlot(inventorySourceSlot.SlotIndex, countToMove))
+                    {
+                        if (!IsEmpty)
+                        {
+                            InventoryManager.Instance.AddItem(CurrentItem, CurrentCount);
+                        }
+
+                        SetItem(itemToMove, countToMove);
+                    }
+                    InventoryUtils.DragDropUIHandler.dropHandled = true;
+                }
+            }
+            else if (sourceSlot is QuickSlotUI)
+            {
+                InventoryUtils.SlotTransferHelper.TransferItem(sourceSlot, this);
+                InventoryUtils.DragDropUIHandler.dropHandled = true;
+            }
+        }
 
         public void SetKeyLabel(string label)
         {
@@ -40,6 +70,7 @@ namespace Nytherion.UI.Inventory
                 keyLabelText.text = label;
             }
         }
+
         public override bool CanReceiveItem(ItemData item)
         {
             return item is ConsumableData;
@@ -76,7 +107,7 @@ namespace Nytherion.UI.Inventory
         {
             if (IsEmpty) return;
 
-            if (InventoryManager.Instance != null && InventoryManager.Instance.RemoveItem(currentItem, 1))
+            if (InventoryManager.Instance.RemoveItem(currentItem, 1))
             {
                 currentCount--;
 
@@ -89,7 +120,6 @@ namespace Nytherion.UI.Inventory
                     SetItem(currentItem, currentCount);
                 }
 
-
                 OnItemUsed?.Invoke(currentItem, 1);
             }
             else
@@ -99,11 +129,9 @@ namespace Nytherion.UI.Inventory
             }
         }
 
-
         public override void ClearSlot()
         {
             this.onItemUsed = null;
-
             base.ClearSlot();
         }
     }

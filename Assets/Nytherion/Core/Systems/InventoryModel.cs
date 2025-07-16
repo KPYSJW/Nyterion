@@ -2,118 +2,137 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nytherion.Data.ScriptableObjects.Items;
-using UnityEngine.UIElements;
+using UnityEngine;
 
 namespace Nytherion.Core.Systems
 {
     public class InventoryModel
     {
-        public event Action<ItemData, int> OnItemAdded;
-        public event Action<ItemData, int> OnItemRemoved;
         public event Action OnInventoryUpdated;
 
-        private readonly List<ItemData> items = new List<ItemData>();
-        public IReadOnlyList<ItemData> Items => items;
+        private readonly (ItemData item, int count)[] slots;
+        public int MaxSlots => slots.Length;
 
-        private readonly int maxSlots;
-        public bool IsFull => items.Count(item => !item.isStackable) + items.Where(item => item.isStackable).Select(item => item.ID).Distinct().Count() >= maxSlots;
-        public bool HasEmptySlot => !IsFull;
+        public bool IsFull => GetFirstEmptySlot() == -1;
+        public bool HasEmptySlot => GetFirstEmptySlot() != -1;
 
         public InventoryModel(int maxSlots)
         {
-            this.maxSlots = maxSlots;
+            slots = new (ItemData, int)[maxSlots];
+        }
+
+        public (ItemData item, int count) GetItemAt(int index)
+        {
+            if (index < 0 || index >= slots.Length) return (null, 0);
+            return slots[index];
         }
 
         public bool AddItem(ItemData item, int count)
         {
             if (item == null || count <= 0) return false;
-            
-            for (int i = 0; i < count; i++)
+
+            if (item.isStackable)
             {
-                 if (IsFull) return false;
-                 items.Add(item);
+                int existingSlot = FindSlotWithItem(item.ID);
+                if (existingSlot != -1)
+                {
+                    slots[existingSlot].count += count;
+                    OnInventoryUpdated?.Invoke();
+                    return true;
+                }
             }
 
-            OnItemAdded?.Invoke(item, count);
-            OnInventoryUpdated?.Invoke();
-            return true;
+            int emptySlot = GetFirstEmptySlot();
+            if (emptySlot != -1)
+            {
+                slots[emptySlot] = (item, count);
+                OnInventoryUpdated?.Invoke();
+                return true;
+            }
+
+            return false;
         }
-        public bool AddItemSilently(ItemData item, int count)
+
+        public void AddItemToSlot(ItemData item, int count, int slotIndex)
         {
-            if (item == null || count <= 0) return false;
-            
-            for (int i = 0; i < count; i++)
-            {
-                 if (IsFull) return false;
-                 items.Add(item);
-            }
-
-            OnItemAdded?.Invoke(item, count);
-            return true;
+            if (slotIndex < 0 || slotIndex >= slots.Length) return;
+            slots[slotIndex] = (item, count);
+            OnInventoryUpdated?.Invoke();
         }
+
 
         public bool RemoveItem(ItemData item, int count)
         {
             if (item == null || count <= 0) return false;
 
-            int removedCount = 0;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < slots.Length; i++)
             {
-                ItemData itemToRemove;
-                if (!item.isStackable && !string.IsNullOrEmpty(item.instanceId))
+                if (slots[i].item != null && slots[i].item.ID == item.ID)
                 {
-                    itemToRemove = items.FirstOrDefault(x => x.instanceId == item.instanceId);
-                }
-                else
-                {
-                    itemToRemove = items.FirstOrDefault(x => x.ID == item.ID);
-                }
-
-                if (itemToRemove != null)
-                {
-                    items.Remove(itemToRemove);
-                    removedCount++;
-                }
-                else
-                {
-                    break;
+                    if (slots[i].count >= count)
+                    {
+                        slots[i].count -= count;
+                        if (slots[i].count <= 0)
+                        {
+                            slots[i] = (null, 0);
+                        }
+                        OnInventoryUpdated?.Invoke();
+                        return true;
+                    }
                 }
             }
-
-            if (removedCount > 0)
-            {
-                OnItemRemoved?.Invoke(item, removedCount);
-                OnInventoryUpdated?.Invoke();
-            }
-
-            return removedCount > 0;
+            return false;
         }
 
-        public int GetItemCount(ItemData item)
+        public void RemoveItemFromSlot(int slotIndex, int count)
         {
-            if (item == null) return 0;
-            
-            if (!item.isStackable && !string.IsNullOrEmpty(item.instanceId))
+            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null) return;
+
+            slots[slotIndex].count -= count;
+            if (slots[slotIndex].count <= 0)
             {
-                return items.Count(i => i.instanceId == item.instanceId);
+                slots[slotIndex] = (null, 0);
             }
-            return items.Count(i => i.ID == item.ID);
+            OnInventoryUpdated?.Invoke();
         }
 
-        public bool HasItem(ItemData item)
+        public void SwapItems(int fromIndex, int toIndex)
         {
-            if (item == null) return false;
-            if (!item.isStackable && !string.IsNullOrEmpty(item.instanceId))
-            {
-                 return items.Any(i => i.instanceId == item.instanceId);
-            }
-            return items.Any(i => i.ID == item.ID);
-        }
+            if (fromIndex < 0 || fromIndex >= slots.Length || toIndex < 0 || toIndex >= slots.Length) return;
 
+            var temp = slots[fromIndex];
+            slots[fromIndex] = slots[toIndex];
+            slots[toIndex] = temp;
+            OnInventoryUpdated?.Invoke();
+        }
+        public (ItemData item, int count) RemoveItemFromSlotWithoutNotify(int slotIndex, int count)
+        {
+            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null) return (null, 0);
+
+            var removedItem = slots[slotIndex];
+
+            slots[slotIndex].count -= count;
+            if (slots[slotIndex].count <= 0)
+            {
+                slots[slotIndex] = (null, 0);
+            }
+
+            return (removedItem.item, count);
+        }
         public void Clear()
         {
-            items.Clear();
+            Array.Clear(slots, 0, slots.Length);
             OnInventoryUpdated?.Invoke();
+        }
+
+        public int GetFirstEmptySlot()
+        {
+            return Array.FindIndex(slots, s => s.item == null);
+        }
+
+        private int FindSlotWithItem(string itemID)
+        {
+            return Array.FindIndex(slots, s => s.item != null && s.item.ID == itemID);
         }
     }
 }
