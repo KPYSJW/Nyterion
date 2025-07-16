@@ -78,10 +78,9 @@ namespace Nytherion.UI.Inventory
 
         public virtual void SetItem(ItemData item, int count)
         {
-             SetItem(item, count, null);
+            SetItem(item, count, null);
         }
 
-        // QuickSlotUI와의 호환성을 위해 다시 추가된 메서드
         public virtual void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback)
         {
             this.currentItem = item;
@@ -103,16 +102,14 @@ namespace Nytherion.UI.Inventory
         {
             SetItem(null, 0, null);
         }
-        
+
         public (ItemData item, int count) GetItemInfo()
         {
             return (currentItem, currentCount);
         }
 
-        // QuickSlotUI와의 호환성을 위해 다시 추가된 메서드
         public virtual void UseItem()
         {
-            // 이 클래스에서는 구현하지 않음
         }
 
         public virtual void OnPointerClick(PointerEventData eventData)

@@ -24,16 +24,19 @@ namespace Nytherion.Core.Systems
 
             foreach (var item in databaseSO.allItems)
             {
-                if (item != null && !string.IsNullOrEmpty(item.ID) && !itemTable.ContainsKey(item.ID))
+                if (item != null && !string.IsNullOrEmpty(item.ID))
                 {
+                    if (itemTable.ContainsKey(item.ID))
+                    {
+                        Debug.LogWarning($"[ItemDatabase] 중복된 아이템 ID를 감지했습니다: {item.ID} (아이템: {item.name})");
+                        continue;
+                    }
                     itemTable[item.ID] = item;
                 }
             }
 
-            Debug.Log($"[ItemDatabase] {itemTable.Count}개의 아이템이 데이터베이스에 로드되었습니다.");
             isInitialized = true;
         }
-
         public static ItemData GetItemByID(string id)
         {
             if (!isInitialized || string.IsNullOrEmpty(id)) return null;

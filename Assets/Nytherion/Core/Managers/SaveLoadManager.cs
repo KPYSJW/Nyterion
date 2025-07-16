@@ -3,7 +3,7 @@ using Nytherion.Services;
 using Nytherion.Core.Data;
 using Nytherion.UI.Inventory;
 using Nytherion.GamePlay.Characters.Player;
-
+using System.Collections;
 
 namespace Nytherion.Core.Managers
 {
@@ -14,14 +14,14 @@ namespace Nytherion.Core.Managers
         private JsonSaveService saveService;
         private SaveData saveData;
         private bool isLoadingData = false;
-
+        private Coroutine saveCoroutine;
         [SerializeField] private PlayerManager playerManager;
         [SerializeField] private InventoryManager inventoryManager;
         [SerializeField] private EngravingManager engravingManager;
         [SerializeField] private ShopManager shopManager;
         [SerializeField] private QuickSlotManager quickSlotManager;
         [SerializeField] private CurrencyManager currencyManager;
-        [SerializeField] private EquipmentDataManager equipmentManager; // 추가: EquipmentDataManager 참조
+        [SerializeField] private EquipmentDataManager equipmentManager;
 
         private void Awake()
         {
@@ -29,6 +29,11 @@ namespace Nytherion.Core.Managers
             {
                 Instance = this;
                 saveService = new JsonSaveService();
+                if (transform.parent != null)
+                {
+                    transform.SetParent(null);
+                }
+                DontDestroyOnLoad(gameObject);
             }
             else
             {
@@ -44,14 +49,28 @@ namespace Nytherion.Core.Managers
             if (engravingManager != null) engravingManager.OnEngravingStateChanged += OnDataChanged;
             if (inventoryManager != null) inventoryManager.OnInventoryUpdated += OnDataChanged;
             if (shopManager != null) shopManager.OnStockChanged += OnDataChanged;
+            if (quickSlotManager != null) quickSlotManager.OnQuickSlotUpdated += OnDataChanged;
         }
 
         private void OnDataChanged()
         {
             if (isLoadingData) return;
-            SaveGame();
+
+            if (saveCoroutine != null)
+            {
+                StopCoroutine(saveCoroutine);
+            }
+            saveCoroutine = StartCoroutine(DelayedSave());
         }
 
+        private IEnumerator DelayedSave()
+        {
+            yield return new WaitForEndOfFrame();
+
+            SaveGame();
+
+            saveCoroutine = null;
+        }
         private void OnCurrencyChanged(CurrencyType type, int amount)
         {
             OnDataChanged();
@@ -59,7 +78,6 @@ namespace Nytherion.Core.Managers
 
         public void SaveGame()
         {
-            if (isLoadingData) return;
             if (saveData == null) saveData = new SaveData();
 
             saveData.inventoryData = inventoryManager.GetInventoryForSave();
@@ -67,7 +85,6 @@ namespace Nytherion.Core.Managers
             saveData.equippedItemsData = equipmentManager.GetEquipmentForSave();
 
             quickSlotManager.GetStateForSave(saveData);
-
             currencyManager.GetCurrenciesForSave(saveData);
             saveData.engravingData = engravingManager.GetEngravingsForSave();
             saveData.shopStockData = shopManager.GetShopStockForSave();
@@ -110,6 +127,7 @@ namespace Nytherion.Core.Managers
             if (engravingManager != null) engravingManager.OnEngravingStateChanged -= OnDataChanged;
             if (inventoryManager != null) inventoryManager.OnInventoryUpdated -= OnDataChanged;
             if (shopManager != null) shopManager.OnStockChanged -= OnDataChanged;
+            if (quickSlotManager != null) quickSlotManager.OnQuickSlotUpdated -= OnDataChanged;
         }
     }
 }

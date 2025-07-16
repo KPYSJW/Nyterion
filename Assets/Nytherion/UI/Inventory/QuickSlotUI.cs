@@ -11,11 +11,15 @@ namespace Nytherion.UI.Inventory
 {
     public class QuickSlotUI : BaseSlotUI, IDropHandler
     {
+        public int SlotIndex { get; private set; }
         public event Action<ItemData, int> OnItemUsed;
         [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
         private Action<ItemData, int> onItemUsed;
         private IUseableItem useableItem;
-
+        public void Initialize(int index)
+        {
+            this.SlotIndex = index;
+        }
         protected override void Awake()
         {
             base.Awake();
@@ -52,6 +56,12 @@ namespace Nytherion.UI.Inventory
                         }
 
                         SetItem(itemToMove, countToMove);
+
+                        if (QuickSlotManager.Instance != null)
+                        {
+                            QuickSlotManager.Instance.UpdateSlotDataExternal(SlotIndex, itemToMove, countToMove);
+                        }
+                        
                     }
                     InventoryUtils.DragDropUIHandler.dropHandled = true;
                 }
@@ -100,31 +110,23 @@ namespace Nytherion.UI.Inventory
                 LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
             }
 
-            Debug.Log($"[QuickSlot] {(item != null ? $"아이템 설정 완료: {item.itemName} x{count}" : "슬롯 비움")}");
+            if (QuickSlotManager.Instance != null)
+            {
+                QuickSlotManager.Instance.UpdateSlotDataExternal(SlotIndex, item, count);
+            }
         }
 
         public override void UseItem()
         {
             if (IsEmpty) return;
 
-            if (InventoryManager.Instance.RemoveItem(currentItem, 1))
+            if (QuickSlotManager.Instance.ConsumeItemInQuickSlot(SlotIndex, 1))
             {
-                currentCount--;
-
-                if (currentCount <= 0)
-                {
-                    ClearSlot();
-                }
-                else
-                {
-                    SetItem(currentItem, currentCount);
-                }
-
+                ItemUsageManager.Instance.UseConsumableItem(currentItem as ConsumableData);
                 OnItemUsed?.Invoke(currentItem, 1);
             }
             else
             {
-                Debug.Log("인벤토리에 해당 아이템이 없어 퀵슬롯에서 제거합니다.");
                 ClearSlot();
             }
         }
