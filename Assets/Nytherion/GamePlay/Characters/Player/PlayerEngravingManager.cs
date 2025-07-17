@@ -47,7 +47,7 @@ namespace Nytherion.GamePlay.Characters.Player
         
         public void EngravingStat(EngravingData engraving)
         {
-            PlayerManager.Instance.playerData.meleeDamage += 1; 
+            PlayerManager.Instance.currentPlayerData.meleeDamage += 1; 
         }
 
     }

@@ -14,7 +14,7 @@ namespace Nytherion.Core.Managers
 
         private Dictionary<EquipmentSlotType, EquipmentData> equippedItems = new Dictionary<EquipmentSlotType, EquipmentData>();
         public IReadOnlyDictionary<EquipmentSlotType, EquipmentData> EquippedItems => equippedItems;
-        public event Action<EquipmentSlotType, EquipmentData> OnEquipmentChanged;
+        public event Action<EquipmentSlotType, EquipmentData, EquipmentData> OnEquipmentChanged;
 
         private void Awake()
         {
@@ -35,6 +35,8 @@ namespace Nytherion.Core.Managers
 
         public void SetEquipment(EquipmentSlotType slotType, EquipmentData equipment)
         {
+            equippedItems.TryGetValue(slotType, out var oldEquipment);
+
             if (equippedItems.ContainsKey(slotType))
             {
                 equippedItems[slotType] = equipment;
@@ -43,7 +45,7 @@ namespace Nytherion.Core.Managers
             {
                 equippedItems.Add(slotType, equipment);
             }
-            OnEquipmentChanged?.Invoke(slotType, equipment);
+            OnEquipmentChanged?.Invoke(slotType, equipment, oldEquipment);
         }
 
         public EquipmentData GetEquipment(EquipmentSlotType slotType)

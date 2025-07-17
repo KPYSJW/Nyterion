@@ -4,37 +4,44 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Data.ScriptableObjects.Player;
+using Nytherion.Core.Managers;
+using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Enums;
+using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.UI.Inventory
 {
     public class CharacterStatsUI : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private PlayerData playerData;
         [SerializeField] private RectTransform statsContainer;
         [SerializeField] private GameObject statCellPrefab;
         [SerializeField] private ScrollRect scrollRect;
 
         private readonly List<GameObject> statCells = new List<GameObject>();
 
-        private void Start()
+        private void OnEnable()
         {
-            if (!ValidateReferences()) 
+            if (PlayerManager.Instance != null)
             {
-                Debug.LogError("필수 참조가 설정되지 않았습니다.", this);
-                return;
+                PlayerManager.Instance.OnPlayerStatsChanged += RefreshStatsUI;
             }
-            
-            ClearStatsUI();
-            CreateStatCells();
-            StartCoroutine(ResetScrollPosition());
+            RefreshStatsUI();
         }
 
+        private void OnDisable()
+        {
+            if (PlayerManager.Instance != null)
+            {
+                PlayerManager.Instance.OnPlayerStatsChanged -= RefreshStatsUI;
+            }
+        }
+        
         private bool ValidateReferences()
         {
-            if (playerData == null)
+            if (PlayerManager.Instance == null)
             {
-                Debug.LogError("PlayerData가 할당되지 않았습니다.", this);
+                Debug.LogError("PlayerManager를 찾을 수 없습니다.", this);
                 return false;
             }
             if (statsContainer == null)
@@ -55,14 +62,24 @@ namespace Nytherion.UI.Inventory
             return true;
         }
 
+        public void RefreshStatsUI()
+        {
+            if (!ValidateReferences()) return;
+
+            ClearStatsUI();
+            CreateStatCells();
+            StartCoroutine(ResetScrollPosition());
+        }
+
         private void CreateStatCells()
         {
-            if (playerData == null) return;
+            PlayerData currentPlayerData = PlayerManager.Instance.currentPlayerData;
+            if (currentPlayerData == null) return;
 
             var fields = typeof(PlayerData).GetFields();
             foreach (var field in fields)
             {
-                var value = field.GetValue(playerData);
+                var value = field.GetValue(currentPlayerData);
                 if (value == null) continue;
 
                 var cell = CreateStatCell(field.Name, value.ToString());
@@ -75,7 +92,7 @@ namespace Nytherion.UI.Inventory
 
         private GameObject CreateStatCell(string statName, string value)
         {
-            if (statCellPrefab == null || statsContainer == null) 
+            if (statCellPrefab == null || statsContainer == null)
                 return null;
 
             try
@@ -99,12 +116,9 @@ namespace Nytherion.UI.Inventory
         {
             foreach (var cell in statCells)
             {
-                if (cell != null) 
+                if (cell != null)
                 {
-                    if (Application.isPlaying)
-                        Destroy(cell);
-                    else
-                        DestroyImmediate(cell);
+                    Destroy(cell);
                 }
             }
             statCells.Clear();
@@ -112,7 +126,7 @@ namespace Nytherion.UI.Inventory
 
         private IEnumerator ResetScrollPosition()
         {
-            yield return null; // 한 프레임 대기
+            yield return new WaitForEndOfFrame();
             if (scrollRect != null)
             {
                 scrollRect.verticalNormalizedPosition = 1f;
@@ -123,15 +137,16 @@ namespace Nytherion.UI.Inventory
         {
             return englishName switch
             {
-                "maxHealth" => "Health",
-                "moveSpeed" => "Move Speed",
-                "meleeDamage" => "Melee Damage",
-                "rangedDamage" => "Ranged Damage",
-                "meleeSpeed" => "Melee Speed",
-                "rangedSpeed" => "Ranged Speed",
-                "dashSpeed" => "Dash Speed",
-                "dashDuration" => "Dash Duration",
-                "dashCooldown" => "Dash Cooldown",
+                "maxHealth" => "최대 체력",
+                "defense" => "방어력",
+                "moveSpeed" => "이동 속도",
+                "meleeDamage" => "근접 공격력",
+                "rangedDamage" => "원거리 공격력",
+                "meleeSpeed" => "근접 공격 속도",
+                "rangedSpeed" => "원거리 공격 속도",
+                "dashSpeed" => "대시 속도",
+                "dashDuration" => "대시 지속시간",
+                "dashCooldown" => "대시 쿨다운",
                 _ => englishName
             };
         }

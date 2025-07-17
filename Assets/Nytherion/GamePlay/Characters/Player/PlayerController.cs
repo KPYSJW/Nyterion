@@ -31,13 +31,13 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (isDashing) return;
             Vector2 moveInput = InputManager.Instance.MoveInput;
-            float currentSpeed = PlayerManager.Instance.playerData.moveSpeed;
+            float currentSpeed = PlayerManager.Instance.currentPlayerData.moveSpeed;
             rb.velocity = moveInput * currentSpeed;
         }
 
         private void HandleDashInput()
         {
-            if (InputManager.Instance.Dash && !isDashing && Time.time >= lastDashTime + PlayerManager.Instance.playerData.dashCooldown)
+            if (InputManager.Instance.Dash && !isDashing && Time.time >= lastDashTime + PlayerManager.Instance.currentPlayerData.dashCooldown)
             {
                 StartCoroutine(DashCoroutine());
             }
@@ -68,8 +68,8 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 dashDirection = isFacingRight ? Vector2.right : Vector2.left;
             }
-            rb.velocity = dashDirection * PlayerManager.Instance.playerData.dashSpeed;
-            yield return new WaitForSeconds(PlayerManager.Instance.playerData.dashDuration);
+            rb.velocity = dashDirection * PlayerManager.Instance.currentPlayerData.dashSpeed;
+            yield return new WaitForSeconds(PlayerManager.Instance.currentPlayerData.dashDuration);
             isDashing = false;
         }
     }

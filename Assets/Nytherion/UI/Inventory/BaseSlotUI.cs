@@ -47,6 +47,16 @@ namespace Nytherion.UI.Inventory
             {
                 countText = GetComponentInChildren<TextMeshProUGUI>();
             }
+
+            if (iconImage != null)
+            {
+                iconImage.enabled = false;
+                iconImage.sprite = null;
+            }
+            if (countText != null)
+            {
+                countText.text = "";
+            }
         }
 
         protected virtual void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)
@@ -59,19 +69,24 @@ namespace Nytherion.UI.Inventory
         {
             if (iconImage == null) return;
 
-            if (item == null || count <= 0)
-            {
-                iconImage.enabled = false;
-                iconImage.sprite = null;
-                if (countText != null) countText.text = "";
-            }
-            else
+            bool hasItem = item != null && count > 0;
+
+            iconImage.enabled = hasItem;
+
+            if (hasItem)
             {
                 iconImage.sprite = item.icon;
-                iconImage.enabled = true;
                 if (countText != null)
                 {
                     countText.text = item.isStackable && count > 1 ? count.ToString() : "";
+                }
+            }
+            else
+            {
+                iconImage.sprite = null;
+                if (countText != null)
+                {
+                    countText.text = "";
                 }
             }
         }

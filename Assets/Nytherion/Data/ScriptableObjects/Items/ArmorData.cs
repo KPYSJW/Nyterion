@@ -16,7 +16,6 @@ namespace Nytherion.Data.ScriptableObjects.Items
     {
         [Header("Armor Settings")]
         public ArmorType armorType;
-        public float defense;
 
 #if UNITY_EDITOR
         protected override void OnValidate()

@@ -4,7 +4,8 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using UnityEngine;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Managers;
-
+using Nytherion.Core.Data;
+using System;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -17,7 +18,11 @@ namespace Nytherion.GamePlay.Characters.Player
         [SerializeField] private PlayerCombat playerCombat;
         public PlayerCombat PlayerCombat => playerCombat;
         public PlayerEngravingManager playerEngravingManager;
-        public PlayerData playerData;
+
+        [Header("Player Data")]
+        [SerializeField] private PlayerData basePlayerData;
+        public PlayerData currentPlayerData;
+        public event Action OnPlayerStatsChanged;
 
         private void Awake()
         {
@@ -30,6 +35,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 Destroy(gameObject);
                 return;
             }
+            currentPlayerData = Instantiate(basePlayerData);
 
             if (playerCombat == null)
             {
@@ -47,6 +53,7 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 EquipmentDataManager.Instance.OnEquipmentChanged += HandleEquipmentChanged;
             }
+            RecalculateStats();
         }
 
         private void OnDestroy()
@@ -57,38 +64,93 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
-        private void HandleEquipmentChanged(EquipmentSlotType slotType, EquipmentData item)
+        private void HandleEquipmentChanged(EquipmentSlotType slotType, EquipmentData newItem, EquipmentData oldItem)
         {
-            if (item != null)
+            RecalculateStats();
+
+            if (newItem != null && newItem is WeaponData weaponData)
             {
-                ApplyStats(item);
-                if (item is WeaponData weaponData)
-                {
-                    PlayerCombat?.EquipWeapon(weaponData.weaponPrefab);
-                }
+                PlayerCombat?.EquipWeapon(weaponData.weaponPrefab);
+            }
+            else if (slotType == EquipmentSlotType.Weapon)
+            {
+                PlayerCombat?.EquipWeapon(null);
+            }
+        }
+        private void RecalculateStats()
+        {
+            if (currentPlayerData == null)
+            {
+                currentPlayerData = Instantiate(basePlayerData);
             }
             else
             {
-                if (slotType == EquipmentSlotType.Weapon)
+                JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(basePlayerData), currentPlayerData);
+            }
+
+            if (EquipmentDataManager.Instance != null)
+            {
+                foreach (var equippedItem in EquipmentDataManager.Instance.EquippedItems.Values)
                 {
-                    PlayerCombat?.EquipWeapon(null);
+                    if (equippedItem != null)
+                    {
+                        ApplyStats(equippedItem);
+                    }
                 }
             }
+
+            if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
+            OnPlayerStatsChanged?.Invoke();
+
+            Debug.Log("[PlayerManager] 모든 능력치를 새로고침했습니다.");
         }
 
         private void ApplyStats(EquipmentData item)
         {
-            if (item is ArmorData armor)
+            if (item.statModifiers == null) return;
+            foreach (StatModifier modifier in item.statModifiers)
             {
-                playerData.maxHealth += armor.defense;
+                ApplyModifierToPlayer(modifier.stat, modifier.value);
             }
         }
 
-        private void UnequipStats(EquipmentData item)
+        private void ApplyModifierToPlayer(StatType stat, float value)
         {
-            if (item is ArmorData armor)
+            switch (stat)
             {
-                playerData.maxHealth -= armor.defense;
+                case StatType.MaxHealth:
+                    currentPlayerData.maxHealth += value;
+                    break;
+                case StatType.Defense:
+                    currentPlayerData.defense += value;
+                    break;
+                case StatType.MoveSpeed:
+                    currentPlayerData.moveSpeed += value;
+                    break;
+                case StatType.MeleeDamage:
+                    currentPlayerData.meleeDamage += value;
+                    break;
+                case StatType.RangedDamage:
+                    currentPlayerData.rangedDamage += value;
+                    break;
+                case StatType.MeleeSpeed:
+                    currentPlayerData.meleeSpeed += value;
+                    break;
+                case StatType.RangedSpeed:
+                    currentPlayerData.rangedSpeed += value;
+                    break;
+                case StatType.DashSpeed:
+                    currentPlayerData.dashSpeed += value;
+                    break;
+                case StatType.DashDuration:
+                    currentPlayerData.dashDuration += value;
+                    break;
+                case StatType.DashCooldown:
+                    currentPlayerData.dashCooldown += value;
+                    break;
+                default:
+                    Debug.LogError($"[PlayerManager] Invalid stat type: {stat}");
+                    break;
             }
         }
     }

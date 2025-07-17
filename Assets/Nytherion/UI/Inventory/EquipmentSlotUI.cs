@@ -36,7 +36,7 @@ namespace Nytherion.UI.Inventory
             }
         }
 
-        private void HandleEquipmentChanged(EquipmentSlotType changedSlotType, EquipmentData newItem)
+        private void HandleEquipmentChanged(EquipmentSlotType changedSlotType, EquipmentData newItem, EquipmentData oldItem)
         {
             if (changedSlotType == this.slotType)
             {
@@ -54,7 +54,7 @@ namespace Nytherion.UI.Inventory
             if (sourceBaseSlot is InventorySlotUI sourceSlot && CanReceiveItem(sourceSlot.CurrentItem))
             {
                 var (itemToEquip, count) = sourceSlot.GetItemInfo();
-                
+
                 if (InventoryManager.Instance.RemoveItemFromSlot(sourceSlot.SlotIndex, 1))
                 {
                     if (!IsEmpty)
@@ -85,9 +85,9 @@ namespace Nytherion.UI.Inventory
                     {
                         switch (armor.armorType)
                         {
-                            case ArmorType.Helmet:  return this.slotType == EquipmentSlotType.Helmet;
-                            case ArmorType.Armor:   return this.slotType == EquipmentSlotType.Armor;
-                            case ArmorType.Boots:   return this.slotType == EquipmentSlotType.Boots;
+                            case ArmorType.Helmet: return this.slotType == EquipmentSlotType.Helmet;
+                            case ArmorType.Armor: return this.slotType == EquipmentSlotType.Armor;
+                            case ArmorType.Boots: return this.slotType == EquipmentSlotType.Boots;
                             case ArmorType.Accessory: return this.slotType == EquipmentSlotType.Accessory;
                         }
                     }
