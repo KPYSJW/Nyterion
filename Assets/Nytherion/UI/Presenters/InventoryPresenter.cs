@@ -2,32 +2,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Inventory;
+using Zenject;
 
 namespace Nytherion.UI.Presenters
 {
     public class InventoryPresenter : MonoBehaviour
     {
         [Header("UI Settings")]
-        [SerializeField] private Transform slotParent;
+        [Inject(Id = "InventorySlotParent")] private Transform slotParent;
+
         [SerializeField] private GameObject slotPrefab;
 
         private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
+        private InventoryManager inventoryManager;
+
+        [Inject]
+        public void Construct(InventoryManager manager)
+        {
+            inventoryManager = manager;
+        }
 
         public void Initialize()
         {
-            if (InventoryManager.Instance == null) return;
+            if (inventoryManager == null) return;
 
-            InitializeSlots(InventoryManager.Instance.MaxSlotCount);
+            InitializeSlots(inventoryManager.MaxSlotCount);
 
-            InventoryManager.Instance.OnInventoryUpdated += UpdateSlotsUI;
+            inventoryManager.OnInventoryUpdated += UpdateSlotsUI;
             UpdateSlotsUI();
         }
 
         private void OnDestroy()
         {
-            if (InventoryManager.Instance != null)
+            if (inventoryManager != null)
             {
-                InventoryManager.Instance.OnInventoryUpdated -= UpdateSlotsUI;
+                inventoryManager.OnInventoryUpdated -= UpdateSlotsUI;
             }
         }
 
@@ -53,12 +62,12 @@ namespace Nytherion.UI.Presenters
 
         private void UpdateSlotsUI()
         {
-            if (InventoryManager.Instance == null || slotPool == null) return;
-            
+            if (inventoryManager == null || slotPool == null) return;
+
             for (int i = 0; i < slotPool.Count; i++)
             {
-                 var (item, count) = InventoryManager.Instance.GetItemAt(i);
-                 slotPool[i].SetItem(item, count);
+                var (item, count) = inventoryManager.GetItemAt(i);
+                slotPool[i].SetItem(item, count);
             }
         }
     }

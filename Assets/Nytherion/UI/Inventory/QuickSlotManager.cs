@@ -4,6 +4,7 @@ using Nytherion.Core.Data;
 using Nytherion.Core.Systems;
 using System;
 using System.Collections.Generic;
+using Zenject;
 
 namespace Nytherion.UI.Inventory
 {
@@ -11,8 +12,13 @@ namespace Nytherion.UI.Inventory
     {
         public static QuickSlotManager Instance { get; private set; }
 
-        [SerializeField] private QuickSlotUI[] slots;
+        private QuickSlotUI[] slots;
 
+        [Inject]
+        public void Construct(QuickSlotUI[] quickSlots)
+        {
+            slots = quickSlots;
+        }
         private void EnsureSlotReferences()
         {
             if (slots == null || slots.Length == 0)

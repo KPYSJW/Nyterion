@@ -6,7 +6,7 @@ public abstract class UIPanelBase : MonoBehaviour
     [Header("Panel Control")]
     [SerializeField] protected CanvasGroup controlledCanvasGroup;
 
-    public bool IsOpen;
+    public bool IsOpen { get; private set; }
 
     public UnityEvent OnPanelOpened;
     public UnityEvent OnPanelClosed;
@@ -15,14 +15,19 @@ public abstract class UIPanelBase : MonoBehaviour
     {
         if (controlledCanvasGroup == null)
         {
-            Debug.LogError("UIPanelBase: 제어할 'Controlled Canvas Group'이 할당되지 않았습니다!", this.gameObject);
+            controlledCanvasGroup = GetComponent<CanvasGroup>();
+        }
+
+        if (controlledCanvasGroup == null)
+        {
+            Debug.LogError("UIPanelBase: 제어할 'Controlled Canvas Group'이 없거나 할당되지 않았습니다!", this.gameObject);
             return;
         }
 
+        IsOpen = false;
         controlledCanvasGroup.alpha = 0f;
         controlledCanvasGroup.interactable = false;
         controlledCanvasGroup.blocksRaycasts = false;
-        IsOpen = false;
     }
 
     public virtual void Toggle()
@@ -49,7 +54,6 @@ public abstract class UIPanelBase : MonoBehaviour
     {
         if (controlledCanvasGroup == null || !IsOpen)
         {
-            Debug.LogWarning(this.name + ": Close() 호출되었으나, 이미 닫혀있거나 CanvasGroup이 없음.");
             return;
         }
         IsOpen = false;

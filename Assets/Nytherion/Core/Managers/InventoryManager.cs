@@ -50,6 +50,12 @@ namespace Nytherion.Core.Managers
         public List<ItemEntry> GetInventoryForSave()
         {
             var itemEntries = new List<ItemEntry>();
+            if (InventoryModel == null)
+            {
+                Debug.LogWarning("InventoryModel is null when trying to save inventory data");
+                return itemEntries;
+            }
+            
             for (int i = 0; i < InventoryModel.MaxSlots; i++)
             {
                 var (item, count) = InventoryModel.GetItemAt(i);
@@ -69,6 +75,12 @@ namespace Nytherion.Core.Managers
 
         public void LoadDataFromSave(List<ItemEntry> itemEntries)
         {
+            if (InventoryModel == null)
+            {
+                Debug.LogWarning("InventoryModel is null when trying to load inventory data");
+                return;
+            }
+            
             InventoryModel.Clear();
             if (itemEntries == null)
             {

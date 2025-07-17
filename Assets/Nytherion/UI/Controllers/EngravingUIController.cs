@@ -1,24 +1,39 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Enums;
+using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
     public class EngravingUIController : UIPanelBase
     {
         public static EngravingUIController Instance { get; private set; }
+        private EventManager _eventManager;
+        private InputManager _inputManager;
+
+        [Inject]
+        public void Construct(
+            [Inject(Id = "EngravingCanvasGroup")] CanvasGroup controlledCanvasGroup,
+            EventManager eventManager, 
+            InputManager inputManager)
+        {
+            this.controlledCanvasGroup = controlledCanvasGroup;
+            _eventManager = eventManager;
+            _inputManager = inputManager;
+        }
+
         private void OnEnable()
         {
-            if (EventManager.Instance != null)
+            if (_eventManager != null)
             {
-                EventManager.Instance.OnInteraction += HandleInteraction;
+                _eventManager.OnInteraction += HandleInteraction;
             }
         }
         private void OnDisable()
         {
-            if (EventManager.Instance != null)
+            if (_eventManager != null)
             {
-                EventManager.Instance.OnInteraction -= HandleInteraction;
+                _eventManager.OnInteraction -= HandleInteraction;
             }
         }
         private void HandleInteraction(InteractableType type)
@@ -36,17 +51,17 @@ namespace Nytherion.UI.Controllers
         }
         protected override void OnPanelStateChanged(bool isOpen)
         {
-            if (InputManager.Instance == null) return;
+            if (_inputManager == null) return;
 
             if (isOpen)
             {
-                InputManager.Instance.DisableMovement();
+                _inputManager.DisableMovement();
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
             else
             {
-                InputManager.Instance.EnableMovement();
+                _inputManager.EnableMovement();
             }
         }
     }

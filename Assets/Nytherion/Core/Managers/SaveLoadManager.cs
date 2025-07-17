@@ -4,6 +4,7 @@ using Nytherion.Core.Data;
 using Nytherion.UI.Inventory;
 using Nytherion.GamePlay.Characters.Player;
 using System.Collections;
+using Zenject; // Zenject 네임스페이스 추가
 
 namespace Nytherion.Core.Managers
 {
@@ -15,13 +16,33 @@ namespace Nytherion.Core.Managers
         private SaveData saveData;
         private bool isLoadingData = false;
         private Coroutine saveCoroutine;
-        [SerializeField] private PlayerManager playerManager;
-        [SerializeField] private InventoryManager inventoryManager;
-        [SerializeField] private EngravingManager engravingManager;
-        [SerializeField] private ShopManager shopManager;
-        [SerializeField] private QuickSlotManager quickSlotManager;
-        [SerializeField] private CurrencyManager currencyManager;
-        [SerializeField] private EquipmentDataManager equipmentManager;
+
+        private PlayerManager playerManager;
+        private InventoryManager inventoryManager;
+        private EngravingManager engravingManager;
+        private ShopManager shopManager;
+        private QuickSlotManager quickSlotManager;
+        private CurrencyManager currencyManager;
+        private EquipmentDataManager equipmentManager;
+
+        [Inject]
+        public void Construct(
+            PlayerManager playerManager,
+            InventoryManager inventoryManager,
+            EngravingManager engravingManager,
+            ShopManager shopManager,
+            QuickSlotManager quickSlotManager,
+            CurrencyManager currencyManager,
+            EquipmentDataManager equipmentManager)
+        {
+            this.playerManager = playerManager;
+            this.inventoryManager = inventoryManager;
+            this.engravingManager = engravingManager;
+            this.shopManager = shopManager;
+            this.quickSlotManager = quickSlotManager;
+            this.currencyManager = currencyManager;
+            this.equipmentManager = equipmentManager;
+        }
 
         private void Awake()
         {
@@ -78,20 +99,41 @@ namespace Nytherion.Core.Managers
 
         public void SaveGame()
         {
+            if (isLoadingData) return;
             if (saveData == null) saveData = new SaveData();
 
-            saveData.inventoryData = inventoryManager.GetInventoryForSave();
+            if (inventoryManager != null)
+            {
+                saveData.inventoryData = inventoryManager.GetInventoryForSave();
+            }
 
-            saveData.equippedItemsData = equipmentManager.GetEquipmentForSave();
+            if (equipmentManager != null)
+            {
+                saveData.equippedItemsData = equipmentManager.GetEquipmentForSave();
+            }
 
-            quickSlotManager.GetStateForSave(saveData);
-            currencyManager.GetCurrenciesForSave(saveData);
-            saveData.engravingData = engravingManager.GetEngravingsForSave();
-            saveData.shopStockData = shopManager.GetShopStockForSave();
+            if (quickSlotManager != null)
+            {
+                quickSlotManager.GetStateForSave(saveData);
+            }
+
+            if (currencyManager != null)
+            {
+                currencyManager.GetCurrenciesForSave(saveData);
+            }
+
+            if (engravingManager != null)
+            {
+                saveData.engravingData = engravingManager.GetEngravingsForSave();
+            }
+
+            if (shopManager != null)
+            {
+                saveData.shopStockData = shopManager.GetShopStockForSave();
+            }
 
             saveService.Save(saveData);
         }
-
         public void LoadGame()
         {
             isLoadingData = true;

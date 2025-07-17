@@ -6,61 +6,57 @@ using Nytherion.Core.Enums;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Data;
 using System;
+using Zenject;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
     [System.Serializable]
     public class PlayerManager : MonoBehaviour
     {
-        public static PlayerManager Instance { get; private set; }
-
-        public PlayerHealth playerHealth;
-        [SerializeField] private PlayerCombat playerCombat;
-        public PlayerCombat PlayerCombat => playerCombat;
-        public PlayerEngravingManager playerEngravingManager;
+        public PlayerHealth playerHealth { get; private set; }
+        public PlayerCombat PlayerCombat { get; private set; }
+        public PlayerEngravingManager playerEngravingManager { get; private set; }
+        
+        private EquipmentDataManager _equipmentDataManager;
 
         [Header("Player Data")]
         [SerializeField] private PlayerData basePlayerData;
         public PlayerData currentPlayerData;
         public event Action OnPlayerStatsChanged;
 
+        [Inject]
+        public void Construct(EquipmentDataManager equipmentDataManager)
+        {
+            _equipmentDataManager = equipmentDataManager;
+        }
+
         private void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-                return;
-            }
-            currentPlayerData = Instantiate(basePlayerData);
+            playerHealth = GetComponent<PlayerHealth>();
+            PlayerCombat = GetComponent<PlayerCombat>();
+            playerEngravingManager = GetComponent<PlayerEngravingManager>();
 
-            if (playerCombat == null)
-            {
-                playerCombat = GetComponent<PlayerCombat>();
-                if (playerCombat == null)
-                {
-                    Debug.LogError("PlayerCombat 컴포넌트를 찾을 수 없습니다.", this);
-                }
-            }
+            currentPlayerData = Instantiate(basePlayerData);
         }
 
         public void Initialize()
         {
-            if (EquipmentDataManager.Instance != null)
-            {
-                EquipmentDataManager.Instance.OnEquipmentChanged += HandleEquipmentChanged;
-            }
             RecalculateStats();
         }
 
-        private void OnDestroy()
+        private void OnEnable()
         {
-            if (EquipmentDataManager.Instance != null)
+            if (_equipmentDataManager != null)
             {
-                EquipmentDataManager.Instance.OnEquipmentChanged -= HandleEquipmentChanged;
+                _equipmentDataManager.OnEquipmentChanged += HandleEquipmentChanged;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_equipmentDataManager != null)
+            {
+                _equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
             }
         }
 
@@ -77,6 +73,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 PlayerCombat?.EquipWeapon(null);
             }
         }
+
         private void RecalculateStats()
         {
             if (currentPlayerData == null)
@@ -88,9 +85,9 @@ namespace Nytherion.GamePlay.Characters.Player
                 JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(basePlayerData), currentPlayerData);
             }
 
-            if (EquipmentDataManager.Instance != null)
+            if (_equipmentDataManager != null)
             {
-                foreach (var equippedItem in EquipmentDataManager.Instance.EquippedItems.Values)
+                foreach (var equippedItem in _equipmentDataManager.EquippedItems.Values)
                 {
                     if (equippedItem != null)
                     {

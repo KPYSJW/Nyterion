@@ -22,5 +22,7 @@ MonoBehaviour:
   equipmentType: 1
   rarity: 0
   isCursed: 0
+  statModifiers:
+  - stat: 1
+    value: 50
   armorType: 1
-  defense: 10

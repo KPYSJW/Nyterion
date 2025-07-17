@@ -4,10 +4,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Data.ScriptableObjects.Player;
-using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Characters.Player;
-using Nytherion.Core.Enums;
-using Nytherion.Data.ScriptableObjects.Items;
+using Zenject;
 
 namespace Nytherion.UI.Inventory
 {
@@ -19,27 +17,34 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private ScrollRect scrollRect;
 
         private readonly List<GameObject> statCells = new List<GameObject>();
+        private PlayerManager _playerManager;
+        
+        [Inject]
+        public void Construct(PlayerManager playerManager)
+        {
+            _playerManager = playerManager;
+        }
 
         private void OnEnable()
         {
-            if (PlayerManager.Instance != null)
+            if (_playerManager != null)
             {
-                PlayerManager.Instance.OnPlayerStatsChanged += RefreshStatsUI;
+                _playerManager.OnPlayerStatsChanged += RefreshStatsUI;
             }
             RefreshStatsUI();
         }
 
         private void OnDisable()
         {
-            if (PlayerManager.Instance != null)
+            if (_playerManager != null)
             {
-                PlayerManager.Instance.OnPlayerStatsChanged -= RefreshStatsUI;
+                _playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
             }
         }
         
         private bool ValidateReferences()
         {
-            if (PlayerManager.Instance == null)
+            if (_playerManager == null)
             {
                 Debug.LogError("PlayerManager를 찾을 수 없습니다.", this);
                 return false;
@@ -73,7 +78,7 @@ namespace Nytherion.UI.Inventory
 
         private void CreateStatCells()
         {
-            PlayerData currentPlayerData = PlayerManager.Instance.currentPlayerData;
+            PlayerData currentPlayerData = _playerManager.currentPlayerData;
             if (currentPlayerData == null) return;
 
             var fields = typeof(PlayerData).GetFields();

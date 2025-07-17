@@ -188,6 +188,12 @@ namespace Nytherion.Core.Managers
         public EngravingGridState GetEngravingsForSave()
         {
             var state = new EngravingGridState();
+            if (placedBlockPositions == null || logicGrid == null)
+            {
+                Debug.LogWarning("EngravingManager not properly initialized when trying to save engraving data");
+                return state;
+            }
+            
             foreach (var pair in placedBlockPositions)
             {
                 EngravingBlock blockOnGrid = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);

@@ -10,7 +10,7 @@ namespace Nytherion.Core.Managers
         public static ShopManager Instance { get; private set; }
 
         private Dictionary<string, List<ShopItemData>> runtimeShopInventories = new Dictionary<string, List<ShopItemData>>();
-        
+
         [SerializeField] private List<ShopData> allShopDataAssets;
 
         public event System.Action OnStockChanged;
@@ -26,7 +26,7 @@ namespace Nytherion.Core.Managers
                 Destroy(gameObject);
             }
         }
-        
+
         public void Initialize()
         {
             foreach (var shopDataAsset in allShopDataAssets)
@@ -46,10 +46,13 @@ namespace Nytherion.Core.Managers
 
         public List<ShopItemData> GetShopItems(string shopName)
         {
-            runtimeShopInventories.TryGetValue(shopName, out var items);
-            return items;
+            if (runtimeShopInventories.TryGetValue(shopName, out var items))
+            {
+                return items;
+            }
+            return null;
         }
-        
+
         public void RecordPurchase(string shopName, string shopItemId)
         {
             if (runtimeShopInventories.TryGetValue(shopName, out var items))
@@ -59,7 +62,7 @@ namespace Nytherion.Core.Managers
                 {
                     return;
                 }
-                
+
                 if (shopItem.isUnlimited)
                 {
                     return;
@@ -115,7 +118,7 @@ namespace Nytherion.Core.Managers
                     if (targetItem != null)
                     {
                         targetItem.stock = savedItem.remainingStock;
-                        break; 
+                        break;
                     }
                 }
             }

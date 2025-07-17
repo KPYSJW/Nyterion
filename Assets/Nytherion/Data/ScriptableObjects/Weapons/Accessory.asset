@@ -19,7 +19,10 @@ MonoBehaviour:
   isStackable: 0
   maxStack: 1
   baseValue: 10
+  equipmentType: 1
   rarity: 0
   isCursed: 0
+  statModifiers:
+  - stat: 3
+    value: 10
   armorType: 3
-  defense: 2

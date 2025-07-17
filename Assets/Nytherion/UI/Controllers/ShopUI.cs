@@ -9,6 +9,7 @@ using TMPro;
 using Nytherion.Core.Enums;
 using Nytherion.UI.Shop;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
@@ -17,17 +18,34 @@ namespace Nytherion.UI.Controllers
         public static ShopUI Instance { get; private set; }
 
         [Header("UI References")]
-        [SerializeField] private Transform shopSlotParent;
-        [SerializeField] private GameObject shopSlotPrefab;
-        [SerializeField] private Button closeButton;
-        [SerializeField] private TextMeshProUGUI playerGoldText;
+        private Transform shopSlotParent;
+        private GameObject shopSlotPrefab;
+        private Button closeButton;
+        private TextMeshProUGUI playerGoldText;
 
         [Header("Player Inventory Display")]
-        [SerializeField] private Transform playerInventoryParent;
+        private Transform playerInventoryParent;
         private List<InventorySlotUI> playerInventorySlots;
 
         private ShopData currentShopData;
         private const float SELL_PRICE_RATIO = 0.7f;
+
+        [Inject]
+        public void Construct(
+            [Inject(Id = "ShopCanvasGroup")] CanvasGroup controlledCanvasGroup,
+            [Inject(Id = "ShopSlotParent")] Transform shopSlotParent,
+            [Inject(Id = "ShopSlotPrefab")] GameObject shopSlotPrefab,
+            [Inject(Id = "ShopCloseButton")] Button closeButton,
+            [Inject(Id = "ShopPlayerGoldText")] TextMeshProUGUI playerGoldText,
+            [Inject(Id = "ShopPlayerInventoryParent")] Transform playerInventoryParent)
+        {
+            this.controlledCanvasGroup = controlledCanvasGroup;
+            this.shopSlotParent = shopSlotParent;
+            this.shopSlotPrefab = shopSlotPrefab;
+            this.closeButton = closeButton;
+            this.playerGoldText = playerGoldText;
+            this.playerInventoryParent = playerInventoryParent;
+        }
 
         protected override void Awake()
         {

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.GamePlay.Characters.Player;
 using TMPro;
+using Zenject;
 
 namespace Nytherion.UI.Components
 {
@@ -9,9 +10,22 @@ namespace Nytherion.UI.Components
     {
         [SerializeField] private Slider hpSlider;
         [SerializeField] private TextMeshProUGUI hpText;
+
+        private PlayerHealth _playerHealth;
+
+        [Inject]
+        public void Construct(PlayerHealth playerHealth)
+        {
+            _playerHealth = playerHealth;
+        }
+
         private void OnEnable()
         {
-            PlayerHealth.OnHealthChanged += UpdateHP;
+            if (_playerHealth != null)
+            {
+                PlayerHealth.OnHealthChanged += UpdateHP;
+                UpdateHP(_playerHealth.CurrentHealth, _playerHealth.MaxHealth);
+            }
         }
 
         private void OnDisable()

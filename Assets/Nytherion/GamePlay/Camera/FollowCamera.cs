@@ -1,12 +1,12 @@
 using UnityEngine;
+using Nytherion.GamePlay.Characters.Player;
+using Zenject;
 
 namespace Nytherion.GamePlay
 {
     public class FollowCamera : MonoBehaviour
     {
-        [Header("Target")]
-        [Tooltip("따라갈 타겟 (플레이어) Transform")]
-        public Transform target;
+        private Transform target;
 
         [Header("Follow Settings")]
         [Tooltip("카메라가 타겟을 따라가는 속도 (높을수록 빠르게 따라감)")]
@@ -29,24 +29,48 @@ namespace Nytherion.GamePlay
 
         private Vector3 velocity = Vector3.zero;
 
+        [Inject]
+        public void Construct(PlayerController playerController)
+        {
+            target = playerController.transform;
+        }
+
         private void Start()
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, offset.z);
 
-            if (target == null)
+            if (target != null)
             {
-                GameObject player = GameObject.FindGameObjectWithTag("Player");
-                if (player != null)
+                Vector3 playerPos = target.position;
+                playerPos.z = 0f;
+                target.position = playerPos;
+            }
+            
+            EnsureSingleAudioListener();
+        }
+        
+        private void EnsureSingleAudioListener()
+        {
+            AudioListener[] listeners = FindObjectsOfType<AudioListener>();
+            
+            if (listeners.Length > 1)
+            {
+                Debug.LogWarning($"발견된 Audio Listener 수: {listeners.Length}");
+                
+                foreach (AudioListener listener in listeners)
                 {
-                    target = player.transform;
-                    Vector3 playerPos = target.position;
-                    playerPos.z = 0f;
-                    target.position = playerPos;
+                    if (listener.gameObject != this.gameObject)
+                    {
+                        Debug.Log($"Audio Listener 제거: {listener.gameObject.name}");
+                        DestroyImmediate(listener);
+                    }
                 }
-                else
-                {
-                    Debug.LogError("FollowCamera: Player not found! Please assign a target or tag a GameObject as 'Player'.");
-                }
+            }
+            
+            if (GetComponent<AudioListener>() == null)
+            {
+                gameObject.AddComponent<AudioListener>();
+                Debug.Log("FollowCamera에 Audio Listener 추가");
             }
         }
 
