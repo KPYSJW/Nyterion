@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Dungeon
@@ -12,10 +13,10 @@ namespace Nytherion.GamePlay.Dungeon
         public void GenerateDungeon()
         {
             tilemapVisualizer.Clear();
-            RunProceduralGeneration();
+            StartCoroutine(RunProceduralGeneration());
         }
 
-        protected abstract void RunProceduralGeneration();
+        protected abstract IEnumerator RunProceduralGeneration();
 
     }
 }

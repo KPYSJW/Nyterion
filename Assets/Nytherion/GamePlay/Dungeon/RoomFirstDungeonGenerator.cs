@@ -1,10 +1,15 @@
+﻿// ScriptsArchive/RoomFirstDungeonGenerator.cs
+
+using Nytherion.Core.Managers; // [수정] DungeonManager 사용을 위해 추가
+using Nytherion.Data.ScriptableObjects.Enemy;
+using Nytherion.UI.Controllers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
-using Nytherion.UI.Controllers;
 
 namespace Nytherion.GamePlay.Dungeon
 {
@@ -24,6 +29,7 @@ namespace Nytherion.GamePlay.Dungeon
 
         [Header("Dependencies")]
         [SerializeField] private WorldmapController worldmapController;
+        [SerializeField] private MinimapTileGenerator minimapGenerator;
 
         public static event Action<Room> OnDungeonGenerated;
 
@@ -42,14 +48,24 @@ namespace Nytherion.GamePlay.Dungeon
             }
         }
 
-        protected override void RunProceduralGeneration()
+
+        public void DungeonStart()
+        {
+            StartCoroutine(RunProceduralGeneration());
+        }
+
+        protected override IEnumerator RunProceduralGeneration()
         {
             if (dungeonData == null)
             {
                 Debug.LogError("DungeonData is not assigned!");
-                return;
+                yield break;
             }
-            DungeonManager.Instance.ClearDungeonData();
+            if (DungeonManager.Instance != null)
+            {
+                DungeonManager.Instance.ClearDungeonData();
+            }
+
 
             int side = Mathf.CeilToInt(Mathf.Sqrt(dungeonData.desiredNumberOfRooms));
             Vector2Int gridSize = new Vector2Int(side * 2, side * 2);
@@ -58,27 +74,36 @@ namespace Nytherion.GamePlay.Dungeon
             const int offset = 1;
 
             List<Vector2Int> selectedGridPositions = RetrySelectConnectedGridPositions(gridSize);
-            if (selectedGridPositions.Count == 0) return;
+            if (selectedGridPositions.Count == 0) yield break;
+            yield return null;
 
             Dictionary<Vector2Int, Room> roomGrid = CreateRoomData(selectedGridPositions);
             PlaceAndAlignRooms(roomGrid, roomSpacing);
-            ResolveOverlaps(roomGrid.Values.ToList(), placementIterations, roomSpacing);
+            yield return null;
+
+            yield return StartCoroutine(ResolveOverlapsCoroutine(roomGrid.Values.ToList(), placementIterations, roomSpacing));
 
             Dictionary<Vector2Int, int> gridConnectionCount = CalculateGridConnections(selectedGridPositions);
             Room startRoom = DesignateAllSpecialRooms(roomGrid, gridConnectionCount);
+            yield return null;
 
             var roomFloorData = new Dictionary<Room, HashSet<Vector2Int>>();
-            HashSet<Vector2Int> totalFloorPositions = CreateAllRoomFloors(roomGrid, roomFloorData, offset);
+            HashSet<Vector2Int> totalFloorPositions = new HashSet<Vector2Int>();
+            yield return StartCoroutine(CreateAllRoomFloorsCoroutine(roomGrid, roomFloorData, totalFloorPositions, offset));
+
+
             var connectionData = ConnectAdjacentRooms(roomGrid, roomFloorData, totalFloorPositions);
             HashSet<Vector2Int> portalPositions = connectionData.portalPositions;
             List<Tuple<Room, Room>> roomConnections = connectionData.connections;
             List<PlacedObstacleData> obstaclesToPlace = PlaceObstacles(roomFloorData, portalPositions, totalFloorPositions);
 
-            var wallPositions = WallGenerator.FindWalls(totalFloorPositions);
-            wallPositions.ExceptWith(portalPositions);
-            tilemapVisualizer.PaintWallTiles(wallPositions);
+           
+            yield return null;
+
             var normalFloorPositions = new HashSet<Vector2Int>(totalFloorPositions);
             var specialRooms = roomGrid.Values.Where(r => r.type != RoomType.Normal).ToList();
+
+
             foreach (var specialRoom in specialRooms)
             {
                 if (roomFloorData.ContainsKey(specialRoom))
@@ -87,12 +112,58 @@ namespace Nytherion.GamePlay.Dungeon
             tilemapVisualizer.PaintFloorTiles(normalFloorPositions);
             tilemapVisualizer.PaintSpecialRoomFloors(specialRooms, dungeonData, roomFloorData);
             tilemapVisualizer.PaintPortals(portalPositions);
+
+            HashSet<Vector2Int> allWallPositions = new HashSet<Vector2Int>();
+            HashSet<Vector2Int> currentLayer = new HashSet<Vector2Int>(totalFloorPositions);
+            HashSet<Vector2Int> nextLayer = new HashSet<Vector2Int>();
+
+            const int wallThickness = 5;
+
+            for (int i = 0; i < wallThickness; i++)
+            {
+                nextLayer.Clear();
+                foreach (var pos in currentLayer)
+                {
+                    foreach (var dir in WallGenerator.Direction2D.cardinalDirectionsList)
+                    {
+                        var neighbor = pos + dir;
+                        if (!totalFloorPositions.Contains(neighbor) && !portalPositions.Contains(neighbor) && !allWallPositions.Contains(neighbor))
+                        {
+                            nextLayer.Add(neighbor);
+                        }
+                    }
+                    foreach (var dir in WallGenerator.Direction2D.diagonalDirectionsList)
+                    {
+                        var neighbor = pos + dir;
+                        if (!totalFloorPositions.Contains(neighbor) && !portalPositions.Contains(neighbor) && !allWallPositions.Contains(neighbor))
+                        {
+                            nextLayer.Add(neighbor);
+                        }
+                    }
+                }
+
+                allWallPositions.UnionWith(nextLayer);
+                currentLayer = new HashSet<Vector2Int>(nextLayer);
+
+                yield return null;
+            }
+            tilemapVisualizer.PaintWallsWithRuleTile(allWallPositions);
+
+
+
             tilemapVisualizer.InstantiateObstacles(obstaclesToPlace);
 
-            DungeonManager.Instance.SetAllRooms(new List<Room>(roomGrid.Values));
-            if (worldmapController != null)
+            if (DungeonManager.Instance != null)
+            {
+                DungeonManager.Instance.SetAllRooms(new List<Room>(roomGrid.Values));
+            }
+
+            SpawnMonsters(roomFloorData, obstaclesToPlace); // [추가] 몬스터 스폰 메서드 호출
+            // [수정] 미니맵 초기화 시 모든 방 정보 전달
+            if (worldmapController != null && minimapGenerator != null)
             {
                 worldmapController.DrawMap(roomGrid.Values, roomConnections, dungeonData);
+                minimapGenerator.InitializeMap(tilemapVisualizer, obstaclesToPlace, portalPositions, roomFloorData, new List<Room>(roomGrid.Values));
             }
             else
             {
@@ -104,6 +175,47 @@ namespace Nytherion.GamePlay.Dungeon
                 OnDungeonGenerated?.Invoke(startRoom);
             }
         }
+
+        #region Monster Spawning
+        // [추가] 몬스터 스폰 로직 전체
+        private void SpawnMonsters(Dictionary<Room, HashSet<Vector2Int>> roomFloorData, List<PlacedObstacleData> obstacles)
+        {
+            if (dungeonData.dungeonMonsters == null || dungeonData.dungeonMonsters.Count == 0) return;
+
+            // 장애물 위치를 빠르게 조회하기 위해 HashSet으로 변환
+            HashSet<Vector2Int> obstaclePositions = new HashSet<Vector2Int>(obstacles.Select(o => Vector2Int.RoundToInt(o.worldPosition)));
+
+            foreach (var roomEntry in roomFloorData)
+            {
+                Room room = roomEntry.Key;
+                if (room.type != RoomType.Normal) continue;
+
+                // 스폰 가능한 위치 선정 (장애물 위치 제외)
+                List<Vector2Int> candidatePositions = roomEntry.Value.Where(pos => !obstaclePositions.Contains(pos)).ToList();
+
+                if (candidatePositions.Count == 0) continue;
+
+                // 방 크기에 비례하여 몬스터 수 결정 (최소 1, 최대 5마리)
+                float roomRatio = (float)(room.size.x * room.size.y) / (dungeonData.maxRoomSize.x * dungeonData.maxRoomSize.y);
+                int monsterCount = Mathf.RoundToInt(Mathf.Lerp(1, 5, roomRatio));
+
+                for (int i = 0; i < monsterCount; i++)
+                {
+                    if (candidatePositions.Count == 0) break; // 더 이상 스폰할 위치가 없으면 중단
+
+                    EnemyData monsterToSpawn = dungeonData.dungeonMonsters[Random.Range(0, dungeonData.dungeonMonsters.Count)];
+                    int randomIndex = Random.Range(0, candidatePositions.Count);
+                    Vector2Int spawnPosition = candidatePositions[randomIndex];
+                    candidatePositions.RemoveAt(randomIndex); // 한 위치에 한 마리만 스폰하도록 스폰된 위치는 후보에서 제거
+
+                    if (DungeonManager.Instance != null)
+                    {
+                        DungeonManager.Instance.SpawnMonster(monsterToSpawn, (Vector3Int)spawnPosition);
+                    }
+                }
+            }
+        }
+        #endregion
 
         #region Obstacle Placement
 
@@ -340,7 +452,9 @@ namespace Nytherion.GamePlay.Dungeon
             }
         }
 
-        private void ResolveOverlaps(List<Room> rooms, int placementIterations, float roomSpacing)
+
+
+        private IEnumerator ResolveOverlapsCoroutine(List<Room> rooms, int placementIterations, float roomSpacing)
         {
             for (int i = 0; i < placementIterations; i++)
             {
@@ -361,6 +475,7 @@ namespace Nytherion.GamePlay.Dungeon
                         }
                     }
                 }
+                yield return null;
             }
         }
         #endregion
@@ -394,7 +509,10 @@ namespace Nytherion.GamePlay.Dungeon
                         {
                             Vector3Int centerA = (Vector3Int)portalTilesA[portalTilesA.Count / 2];
                             Vector3Int centerB = (Vector3Int)portalTilesB[portalTilesB.Count / 2];
-                            DungeonManager.Instance.RegisterPortalPair(centerA, centerB);
+                            if (DungeonManager.Instance != null)
+                            {
+                                DungeonManager.Instance.RegisterPortalPair(centerA, centerB);
+                            }
 
                             connections.Add(Tuple.Create(roomA, roomB));
                         }
@@ -465,9 +583,8 @@ namespace Nytherion.GamePlay.Dungeon
             };
         }
 
-        private HashSet<Vector2Int> CreateAllRoomFloors(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, int offset)
+        private IEnumerator CreateAllRoomFloorsCoroutine(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> totalFloor, int offset)
         {
-            var totalFloor = new HashSet<Vector2Int>();
             foreach (var room in roomGrid.Values)
             {
                 HashSet<Vector2Int> roomFloor;
@@ -481,8 +598,8 @@ namespace Nytherion.GamePlay.Dungeon
                 }
                 roomFloorData.Add(room, roomFloor);
                 totalFloor.UnionWith(roomFloor);
+                yield return null;
             }
-            return totalFloor;
         }
 
         private HashSet<Vector2Int> CreateFloorFromPrefab(Room room, Tilemap prefabTilemap)

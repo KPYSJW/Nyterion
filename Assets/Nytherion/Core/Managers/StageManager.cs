@@ -24,6 +24,7 @@ namespace Nytherion.Core.Managers
         {
             if (_eventManager != null)
             {
+
                 _eventManager.RegisterEnemyDeathListener(OnEnemyDied);
             }
             
@@ -61,6 +62,7 @@ namespace Nytherion.Core.Managers
         {
             if (_eventManager != null)
             {
+
                 _eventManager.UnregisterEnemyDeathListener(OnEnemyDied);
             }
         }
