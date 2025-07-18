@@ -2,6 +2,7 @@ using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.GamePlay.Systems;
 using Zenject;
+using Nytherion.GamePlay.Characters.Enemy;
 
 namespace Nytherion.Core.Managers
 {
@@ -39,7 +40,7 @@ namespace Nytherion.Core.Managers
             spawner.currentStageData = stage;
             spawner.SpawnEnemies();
         }
-        public void OnEnemyDied()
+        public void OnEnemyDied(EnemyBase enemy)
         {
             remainingEnemies--;
             if (remainingEnemies <= 0)
