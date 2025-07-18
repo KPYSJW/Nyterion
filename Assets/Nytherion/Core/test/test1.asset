@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742e9e1339086c94b85fd539b07b2450, type: 3}
   m_Name: test1
   m_EditorClassIdentifier: 
-  desiredNumberOfRooms: 30
-  minRoomSize: {x: 40, y: 40}
-  maxRoomSize: {x: 60, y: 60}
+  desiredNumberOfRooms: 6
+  minRoomSize: {x: 20, y: 20}
+  maxRoomSize: {x: 40, y: 40}
   compoundRoomChance: 1
-  numberOfShopRooms: 2
-  numberOfItemRooms: 2
+  numberOfShopRooms: 1
+  numberOfItemRooms: 1
   bossRoomPrefab: {fileID: 8248369337269133653, guid: 227752a830facb24a806d9acbf79c15e, type: 3}
   obstacles:
   - prefab: {fileID: 5617744718106360532, guid: 2b08b76bb574b344fb055530b354cca9, type: 3}
@@ -25,13 +25,15 @@ MonoBehaviour:
   minObstaclesPerRoom: 1
   maxObstaclesPerRoom: 3
   minimapRoomColors:
-  - type: 0
-    color: {r: 1, g: 1, b: 1, a: 1}
   - type: 1
     color: {r: 1, g: 1, b: 1, a: 1}
   - type: 2
     color: {r: 1, g: 0, b: 0, a: 1}
   - type: 3
-    color: {r: 0, g: 0.03951454, b: 1, a: 1}
+    color: {r: 0, g: 0.15722227, b: 1, a: 1}
   - type: 4
-    color: {r: 1, g: 0.94708705, b: 0, a: 1}
+    color: {r: 0.16368961, g: 1, b: 0, a: 1}
+  - type: 0
+    color: {r: 1, g: 1, b: 1, a: 1}
+  dungeonMonsters:
+  - {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}

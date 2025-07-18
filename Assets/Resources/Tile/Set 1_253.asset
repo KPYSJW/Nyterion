@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Set 1_253
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: -1134930404, guid: 073951dda538ff547b04df432dc6ef84, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.20088713, b: 0, a: 1}
   m_Transform:
     e00: 1
     e01: 0
