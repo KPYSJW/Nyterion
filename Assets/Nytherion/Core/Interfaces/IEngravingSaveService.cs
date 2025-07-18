@@ -1,4 +1,4 @@
-using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Core.Data;
 
 namespace Nytherion.Core.Interfaces
 {

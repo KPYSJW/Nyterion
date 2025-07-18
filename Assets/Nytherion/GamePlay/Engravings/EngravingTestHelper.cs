@@ -1,6 +1,6 @@
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Engravings; 
-using Nytherion.Core;
+using Nytherion.Core.Managers;
 
 public class EngravingTestHelper : MonoBehaviour
 {

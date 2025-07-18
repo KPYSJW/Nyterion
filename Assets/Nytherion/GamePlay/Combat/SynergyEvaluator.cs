@@ -3,8 +3,7 @@ using System.Linq;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Synergy;
-using Nytherion.Core;
-using UnityEngine;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Combat
 {

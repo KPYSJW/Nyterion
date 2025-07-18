@@ -1,6 +1,6 @@
 using UnityEngine;
-using Nytherion.UI.Gacha;
 using Nytherion.Core.Enums;
+using Nytherion.UI.Controllers;
 
 namespace Nytherion.GamePlay.Characters.NPC
 {
@@ -12,6 +12,10 @@ namespace Nytherion.GamePlay.Characters.NPC
         public void Interact()
         {
             if (!IsInteractable) return;
+            if (GachaUIController.Instance != null)
+            {
+                GachaUIController.Instance.Toggle();
+            }
         }
 
         [Header("Gizmo Settings")]

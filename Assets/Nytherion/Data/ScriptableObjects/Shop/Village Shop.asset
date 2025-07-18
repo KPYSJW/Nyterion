@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68de2cfb36cfb704fba29fa081a96eec, type: 3}
+  m_Name: Village Shop
+  m_EditorClassIdentifier: 
+  shopName: Village Shop
+  itemsForSale:
+  - shopItemId: be170530-e971-45dc-80c6-bd9140decea4
+    item: {fileID: 11400000, guid: 78f8a7b860a29e8438d188159adc939c, type: 2}
+    price: 100
+    stock: 50
+    isUnlimited: 0
+  - shopItemId: 997b3097-4085-4a88-b2a2-4c54246d5b76
+    item: {fileID: 11400000, guid: 2e9a2b3543897ce45b1af5ab97a25c2f, type: 2}
+    price: 100
+    stock: 50
+    isUnlimited: 0
+  - shopItemId: adeb466f-1d69-4dd3-bf12-3f1b8c185ca2
+    item: {fileID: 11400000, guid: 9c072fcd68323c04b99b233f1630f7db, type: 2}
+    price: 100
+    stock: 50
+    isUnlimited: 0
+  - shopItemId: adeb466f-1d69-4dd3-bf12-3f1b8c185ca3
+    item: {fileID: 11400000, guid: 316e5f1eb6ea22046852bfce0bd7d0b9, type: 2}
+    price: 500
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: adeb466f-1d69-4dd3-bf12-3f1b8c185ca4
+    item: {fileID: 11400000, guid: 74ea2c6d8da87c5428259194c1c4c4c5, type: 2}
+    price: 200
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: adeb466f-1d69-4dd3-bf12-3f1b8c185ca5
+    item: {fileID: 11400000, guid: 0065191d61e19d34984b1c60a33329a9, type: 2}
+    price: 150
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: adeb466f-1d69-4dd3-bf12-3f1b8c185ca5
+    item: {fileID: 11400000, guid: 858108e2754dda5448d2ad380a6a657d, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0

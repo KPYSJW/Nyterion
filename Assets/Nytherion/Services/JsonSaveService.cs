@@ -1,5 +1,5 @@
 using UnityEngine;
-using Nytherion.Core;
+using Nytherion.Core.Data;
 using System.IO;
 
 namespace Nytherion.Services
@@ -16,9 +16,6 @@ namespace Nytherion.Services
             try
             {
                 File.WriteAllText(path, json);
-                #if UNITY_EDITOR
-                Debug.Log($"<color=cyan>[JsonSaveService] 데이터 저장 성공: {path}</color>");
-                #endif
             }
             catch (System.Exception e)
             {
@@ -32,25 +29,19 @@ namespace Nytherion.Services
 
             if (!File.Exists(path))
             {
-                #if UNITY_EDITOR
-                Debug.LogWarning("[JsonSaveService] 저장된 파일이 없습니다. 새 데이터를 생성합니다.");
-                #endif
-                return new SaveData(); 
+                return null;
             }
 
             try
             {
                 string json = File.ReadAllText(path);
                 SaveData data = JsonUtility.FromJson<SaveData>(json);
-                #if UNITY_EDITOR
-                Debug.Log($"<color=lime>[JsonSaveService] 데이터 로드 성공: {path}</color>");
-                #endif
                 return data;
             }
             catch (System.Exception e)
             {
                 Debug.LogError($"[JsonSaveService] 데이터 로드 실패: {e.Message}");
-                return new SaveData(); 
+                return null;
             }
         }
     }

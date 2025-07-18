@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7717933888258297485
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1832586714874895114}
+  - component: {fileID: 6324277345916687726}
+  - component: {fileID: 8419374414829116023}
+  m_Layer: 0
+  m_Name: 'GachaManager '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1832586714874895114
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7717933888258297485}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6324277345916687726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7717933888258297485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01ea2368f5cb6b84c9b04116666de6f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponGachaTable: {fileID: 11400000, guid: 9c3f2f93501fc444d8541a67f5ed9ef6, type: 2}
+  engravingGachaTable: {fileID: 11400000, guid: 99bebee1759357f4d91283a45ab79543, type: 2}
+--- !u!114 &8419374414829116023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7717933888258297485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c5da2eac1ff994498605950f0839459, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlledCanvasGroup: {fileID: 0}
+  IsOpen: 0
+  OnPanelOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPanelClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  mainPanel: {fileID: 0}
+  resultPanel: {fileID: 0}
+  drawWeaponOnceButton: {fileID: 0}
+  drawWeaponTenTimesButton: {fileID: 0}
+  drawEngravingOnceButton: {fileID: 0}
+  drawEngravingTenTimesButton: {fileID: 0}
+  closeButton: {fileID: 0}
+  resultCloseButton: {fileID: 0}
+  resultSlotParent: {fileID: 0}
+  resultSlotPrefab: {fileID: 1133801556008070876, guid: 55eed6146f7338d44ab6fc5a565a32a0, type: 3}
+  tokenCountText: {fileID: 0}

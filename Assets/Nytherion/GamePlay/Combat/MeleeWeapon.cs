@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Interfaces;
 
@@ -11,8 +9,6 @@ namespace Nytherion.GamePlay.Combat
         [Tooltip("무기의 시각적 표현을 담당하는 스프라이트 렌더러")]
 
         public Collider2D col;
-
-
 
         public void Collider(bool value)
         {
@@ -34,7 +30,6 @@ namespace Nytherion.GamePlay.Combat
                 {
                     target.TakeDamage(weaponData.damage);
                     
-                    // 여기에 추가 효과 (넉백, 상태 이상 등)를 구현할 수 있음
                 }
             }
 

@@ -1,16 +1,15 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using Nytherion.UI.Inventory;
-using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.UI.Inventory.Utils
 {
     public static class DragDropUIHandler
     {
+        public static bool dropHandled = false;
         public static void HandleBeginDragShared(BaseSlotUI slotBeingDragged)
         {
+            dropHandled = false;
             if (slotBeingDragged == null || slotBeingDragged.IsEmpty) return;
 
             if (DragItemIcon.Instance != null && slotBeingDragged.CurrentItem != null && slotBeingDragged.CurrentItem.icon != null)
@@ -31,6 +30,8 @@ namespace Nytherion.UI.Inventory.Utils
             if (DragItemIcon.Instance != null)
                 DragItemIcon.Instance.Hide();
 
+            if (dropHandled) return;
+
             if (sourceSlot == null || sourceSlot.IsEmpty) return;
 
             var results = new List<RaycastResult>();
@@ -40,7 +41,7 @@ namespace Nytherion.UI.Inventory.Utils
             foreach (var result in results)
             {
                 var slot = result.gameObject.GetComponentInParent<BaseSlotUI>();
-                if (slot != null && slot != sourceSlot)
+                if (slot != null)
                 {
                     targetSlot = slot;
                     break;
@@ -53,6 +54,7 @@ namespace Nytherion.UI.Inventory.Utils
             }
             else
             {
+                sourceSlot.SetItem(sourceSlot.CurrentItem, sourceSlot.CurrentCount);
                 SlotTransferHelper.HandleDropOnEmptySpace(sourceSlot, eventData);
             }
         }

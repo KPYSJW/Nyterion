@@ -1,6 +1,7 @@
 using UnityEngine;
-using Nytherion.Core;
+using Nytherion.Core.Systems;
 using Nytherion.GamePlay.Combat;
+using Nytherion.GamePlay.Characters.Enemy.States;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {

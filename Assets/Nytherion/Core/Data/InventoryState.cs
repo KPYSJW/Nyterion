@@ -1,0 +1,59 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.UI.Controllers;
+
+namespace Nytherion.Core.Data
+{
+    [Serializable]
+    public class InventoryState
+    {
+        [Serializable]
+        public class ItemEntry
+        {
+            public string ItemId;
+            public int Count;
+
+            public ItemEntry() { }
+
+            public ItemEntry(string itemId, int count)
+            {
+                ItemId = itemId;
+                Count = count;
+            }
+        }
+
+        [SerializeField] private List<ItemEntry> items = new List<ItemEntry>();
+
+        public IReadOnlyList<ItemEntry> Items => items;
+
+        [Obsolete("Use Items property instead")]
+        public IReadOnlyList<string> ItemIds => items.Select(entry => entry.ItemId).ToList();
+
+        public InventoryState() { }
+
+        public InventoryState(IEnumerable<ItemData> items) : this()
+        {
+            this.items = items.Select(item => new ItemEntry(item.ID, 1)).ToList();
+        }
+        public InventoryState(Dictionary<ItemData, int> itemDictionary) : this()
+        {
+            items = itemDictionary.Select(pair => new ItemEntry(pair.Key.ID, pair.Value)).ToList();
+        }
+        public void ToggleInventory()
+        {
+            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+            {
+                return;
+            }
+
+            if (InventoryUI.Instance != null)
+            {
+                bool isActive = !InventoryUI.Instance.gameObject.activeSelf;
+                InventoryUI.Instance.gameObject.SetActive(isActive);
+            }
+        }
+    }
+}

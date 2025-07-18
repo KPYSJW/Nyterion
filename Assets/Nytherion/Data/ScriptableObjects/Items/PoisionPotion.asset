@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fed1ced5f717156499c282791c4e06c9, type: 3}
+  m_Name: PoisionPotion
+  m_EditorClassIdentifier: 
+  uniqueID: ac0397c6-d1e2-4707-bc3f-7f42ec235603
+  itemName: PoisionPotion
+  icon: {fileID: 21300000, guid: 443cc43149ae25c4e845be2e3ae73f76, type: 3}
+  description: 
+  isStackable: 1
+  maxStack: 99
+  baseValue: 10
+  isUsable: 1
+  useEffectPrefab: {fileID: 0}
+  useSound: {fileID: 0}
+  consumableType: 2
+  healAmount: 0
+  buffDuration: 0
+  projectilePrefab: {fileID: 0}
