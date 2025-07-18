@@ -3,6 +3,7 @@ using Nytherion.GamePlay.Characters.Skill;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Nytherion.UI.Skill
 {
@@ -18,6 +19,14 @@ namespace Nytherion.UI.Skill
         }
 
         public SkillSlotUI[] skillSlots= new SkillSlotUI[4];
+        
+        private PlayerSkillManager _playerSkillManager;
+        
+        [Inject]
+        public void Construct(PlayerSkillManager playerSkillManager)
+        {
+            _playerSkillManager = playerSkillManager;
+        }
 
         private void Update()
         {
@@ -26,13 +35,15 @@ namespace Nytherion.UI.Skill
         }
         void UpdateSkill()
         {
+            if (_playerSkillManager == null) return;
+            
             for(int i=0;i<skillSlots.Length; i++)
             {
-                if(PlayerSkillManager.Instance.equippedSkills[i]==null) skillSlots[i].icon.gameObject.SetActive(false);
+                if(_playerSkillManager.equippedSkills[i]==null) skillSlots[i].icon.gameObject.SetActive(false);
                 else
                 {
-                    skillSlots[i].icon.sprite = PlayerSkillManager.Instance.equippedSkills[i].skillData.icon;
-                    skillSlots[i].SkillBase = PlayerSkillManager.Instance.equippedSkills[i];
+                    skillSlots[i].icon.sprite = _playerSkillManager.equippedSkills[i].skillData.icon;
+                    skillSlots[i].SkillBase = _playerSkillManager.equippedSkills[i];
                 }
                
             }

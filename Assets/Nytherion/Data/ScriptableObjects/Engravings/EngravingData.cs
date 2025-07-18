@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.Data.Enums;
+using Nytherion.Core.Enums;
 using Nytherion.GamePlay.Engravings; 
 
 namespace Nytherion.Data.ScriptableObjects.Engravings

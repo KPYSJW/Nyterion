@@ -3,6 +3,8 @@ using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.GamePlay.Characters.Player;
+using Zenject;
 
 namespace Nytherion.GamePlay.Systems
 {
@@ -11,14 +13,21 @@ namespace Nytherion.GamePlay.Systems
         [Header("Spawn Settings")]
         public StageData currentStageData;
         
-        [Header("Player Reference")]
-        [SerializeField] private Transform player;
+        private Transform player;
+        private ObjectPoolManager _objectPoolManager;
         
         [Header("Spawn Radius")]
         [Tooltip("적이 스폰될 최소 반지름")]
         [SerializeField] private float minSpawnRadius = 5f;
         [Tooltip("적이 스폰될 최대 반지름")]
         [SerializeField] private float maxSpawnRadius = 15f;
+
+        [Inject]
+        public void Construct(PlayerController playerController, ObjectPoolManager objectPoolManager)
+        {
+            player = playerController.transform;
+            _objectPoolManager = objectPoolManager;
+        }
 
         public void SpawnEnemies()
         {
@@ -86,9 +95,9 @@ namespace Nytherion.GamePlay.Systems
         private void SpawnSingleEnemy(EnemyData enemyData, Vector3 spawnPosition)
         {
             if (enemyData == null) return;
-            if (ObjectPoolManager.Instance == null) return;
+            if (_objectPoolManager == null) return;
 
-            GameObject enemyObj = ObjectPoolManager.Instance.SpawnFromPool(
+            GameObject enemyObj = _objectPoolManager.SpawnFromPool(
                 enemyData.enemyName,
                 spawnPosition,
                 Quaternion.identity);
@@ -105,7 +114,7 @@ namespace Nytherion.GamePlay.Systems
             }
             else
             {
-                ObjectPoolManager.Instance.ReturnToPool(enemyData.enemyName, enemyObj);
+                _objectPoolManager.ReturnToPool(enemyData.enemyName, enemyObj);
             }
         }
 

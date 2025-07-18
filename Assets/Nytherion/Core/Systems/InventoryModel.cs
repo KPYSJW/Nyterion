@@ -1,103 +1,138 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nytherion.Data.ScriptableObjects.Items;
+using UnityEngine;
 
 namespace Nytherion.Core.Systems
 {
     public class InventoryModel
     {
-        public event Action<ItemData, int> OnItemAdded;
-        public event Action<ItemData, int> OnItemRemoved;
         public event Action OnInventoryUpdated;
 
-        private readonly Dictionary<ItemData, int> items = new();
-        public IReadOnlyDictionary<ItemData, int> Items => items;
+        private readonly (ItemData item, int count)[] slots;
+        public int MaxSlots => slots.Length;
 
-        private readonly int maxSlots;
-        public bool IsFull => items.Count >= maxSlots;
-        public bool HasEmptySlot => items.Count < maxSlots;
+        public bool IsFull => GetFirstEmptySlot() == -1;
+        public bool HasEmptySlot => GetFirstEmptySlot() != -1;
 
         public InventoryModel(int maxSlots)
         {
-            this.maxSlots = maxSlots;
+            slots = new (ItemData, int)[maxSlots];
+        }
+
+        public (ItemData item, int count) GetItemAt(int index)
+        {
+            if (index < 0 || index >= slots.Length) return (null, 0);
+            return slots[index];
         }
 
         public bool AddItem(ItemData item, int count)
         {
             if (item == null || count <= 0) return false;
 
-            if (items.TryGetValue(item, out int currentCount))
+            if (item.isStackable)
             {
-                if (item.isStackable)
+                int existingSlot = FindSlotWithItem(item.ID);
+                if (existingSlot != -1)
                 {
-                    items[item] = currentCount + count;
+                    slots[existingSlot].count += count;
+                    OnInventoryUpdated?.Invoke();
+                    return true;
                 }
-                else
-                {
-                    if (IsFull) return false;
-                    items[item] = count;
-                }
-            }
-            else
-            {
-                if (IsFull) return false;
-                items[item] = count;
             }
 
-            OnItemAdded?.Invoke(item, count);
-            OnInventoryUpdated?.Invoke();
-            return true;
+            int emptySlot = GetFirstEmptySlot();
+            if (emptySlot != -1)
+            {
+                slots[emptySlot] = (item, count);
+                OnInventoryUpdated?.Invoke();
+                return true;
+            }
+
+            return false;
         }
+
+        public void AddItemToSlot(ItemData item, int count, int slotIndex)
+        {
+            if (slotIndex < 0 || slotIndex >= slots.Length) return;
+            slots[slotIndex] = (item, count);
+            OnInventoryUpdated?.Invoke();
+        }
+
 
         public bool RemoveItem(ItemData item, int count)
         {
-            if (item == null || count <= 0 || !items.ContainsKey(item)) return false;
+            if (item == null || count <= 0) return false;
 
-            if (items[item] > count)
+            for (int i = 0; i < slots.Length; i++)
             {
-                items[item] -= count;
+                if (slots[i].item != null && slots[i].item.ID == item.ID)
+                {
+                    if (slots[i].count >= count)
+                    {
+                        slots[i].count -= count;
+                        if (slots[i].count <= 0)
+                        {
+                            slots[i] = (null, 0);
+                        }
+                        OnInventoryUpdated?.Invoke();
+                        return true;
+                    }
+                }
             }
-            else
-            {
-                items.Remove(item);
-            }
+            return false;
+        }
 
-            OnItemRemoved?.Invoke(item, count);
+        public void RemoveItemFromSlot(int slotIndex, int count)
+        {
+            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null) return;
+
+            slots[slotIndex].count -= count;
+            if (slots[slotIndex].count <= 0)
+            {
+                slots[slotIndex] = (null, 0);
+            }
             OnInventoryUpdated?.Invoke();
-            return true;
         }
 
-        public int GetItemCount(ItemData item)
+        public void SwapItems(int fromIndex, int toIndex)
         {
-            items.TryGetValue(item, out int count);
-            return count;
-        }
+            if (fromIndex < 0 || fromIndex >= slots.Length || toIndex < 0 || toIndex >= slots.Length) return;
 
-        public bool HasItem(ItemData item)
+            var temp = slots[fromIndex];
+            slots[fromIndex] = slots[toIndex];
+            slots[toIndex] = temp;
+            OnInventoryUpdated?.Invoke();
+        }
+        public (ItemData item, int count) RemoveItemFromSlotWithoutNotify(int slotIndex, int count)
         {
-            return items.ContainsKey(item);
-        }
+            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null) return (null, 0);
 
+            var removedItem = slots[slotIndex];
+
+            slots[slotIndex].count -= count;
+            if (slots[slotIndex].count <= 0)
+            {
+                slots[slotIndex] = (null, 0);
+            }
+
+            return (removedItem.item, count);
+        }
         public void Clear()
         {
-            items.Clear();
+            Array.Clear(slots, 0, slots.Length);
             OnInventoryUpdated?.Invoke();
         }
-        
-        public void SwapItems(ItemData fromItem, ItemData toItem)
+
+        public int GetFirstEmptySlot()
         {
-            if (fromItem == null || !items.ContainsKey(fromItem)) return;
-            if (toItem == null) return; 
+            return Array.FindIndex(slots, s => s.item == null);
+        }
 
-            if(!items.ContainsKey(toItem)) return;
-
-            int fromCount = items[fromItem];
-            int toCount = items[toItem];
-
-            items[fromItem] = toCount;
-            items[toItem] = fromCount;
-            
-            OnInventoryUpdated?.Invoke();
+        private int FindSlotWithItem(string itemID)
+        {
+            return Array.FindIndex(slots, s => s.item != null && s.item.ID == itemID);
         }
     }
 }

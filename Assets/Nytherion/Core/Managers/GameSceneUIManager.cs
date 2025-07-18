@@ -1,27 +1,34 @@
 using UnityEngine;
-using Nytherion.UI.Inventory;
 using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Presenters;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
     public class GameSceneUIManager : MonoBehaviour
     {
-        [SerializeField] private InventoryPresenter inventoryPresenter;
-        [SerializeField] private InventoryUI inventoryUI;
-        [SerializeField] private QuickSlotManager quickSlotManager;
+        [Inject] private InventoryPresenter inventoryPresenter;
+        [Inject] private InventoryUI inventoryUI;
         [SerializeField] private EngravingGridUI engravingGridUI;
 
-        private void Start()
+        [Inject]
+        public void Initialize()
         {
             InitializeSceneUI();
         }
 
         private void InitializeSceneUI()
         {
-            inventoryPresenter.Initialize();
-            inventoryUI.Initialize();
+            if (inventoryPresenter != null)
+            {
+                inventoryPresenter.Initialize();
+            }
+
+            if (inventoryUI != null)
+            {
+                inventoryUI.Initialize();
+            }
 
             if (engravingGridUI != null)
             {

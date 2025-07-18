@@ -1,32 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Data.Enums;
+using Nytherion.GamePlay.Combat;
+using UnityEngine;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Data.ScriptableObjects.Weapons
 {
-    public enum WeaponType
-    {
-        Melee,
-        Ranged
-    }
-
-    [CreateAssetMenu(fileName = "NewWeaponData", menuName = "Data/Weapon")]
-    public class WeaponData : ItemData
+    [CreateAssetMenu(fileName = "NewWeaponData", menuName = "Data/Item/Weapon")]
+    public class WeaponData : EquipmentData
     {
         [Header("Weapon Settings")]
-        public WeaponType weaponType;
         public string weaponName;
         public float damage;
         public float range;
         public float cooldown;
         public GameObject projectilePrefab;
-        public bool isCursed;
+        public WeaponBase weaponPrefab;
 
-        [Header("Gacha Settings")]
-        public Rarity rarity;
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            equipmentType = EquipmentType.Weapon;
+        }
+#endif
     }
-
-
 }

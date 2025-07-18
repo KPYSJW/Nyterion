@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 namespace Nytherion.UI.EngravingBoard
 {
@@ -10,6 +11,9 @@ namespace Nytherion.UI.EngravingBoard
         [SerializeField] private Image engravingIcon;
 
         public Vector2Int GridPosition { get; private set; }
+        
+        public event Action<EngravingSlotCell> OnCellPointerEnter;
+        public event Action<EngravingSlotCell> OnCellPointerExit;
 
         public void Initialize(Vector2Int position)
         {
@@ -18,18 +22,12 @@ namespace Nytherion.UI.EngravingBoard
         }
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (EngravingGridUI.Instance != null)
-            {
-                EngravingGridUI.Instance.OnCellPointerEnter(this);
-            }
+            OnCellPointerEnter?.Invoke(this);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (EngravingGridUI.Instance != null)
-            {
-                EngravingGridUI.Instance.OnCellPointerExit(this);
-            }
+            OnCellPointerExit?.Invoke(this);
         }
         public void SetEngraving(Sprite icon)
         {

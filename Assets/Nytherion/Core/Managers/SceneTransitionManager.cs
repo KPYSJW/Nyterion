@@ -25,7 +25,6 @@ namespace Nytherion.Core.Managers
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
                 InitializeFadeCanvas();
             }
             else

@@ -8,6 +8,7 @@ using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.GamePlay.Engravings;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Enums;
+using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
@@ -15,42 +16,84 @@ namespace Nytherion.UI.Controllers
     {
         public static GachaUIController Instance { get; private set; }
 
-        [Header("UI Panels")]
-        [SerializeField] private GameObject mainPanel;
-        [SerializeField] private GameObject resultPanel;
-
-        [Header("Buttons")]
-        [SerializeField] private Button drawWeaponOnceButton;
-        [SerializeField] private Button drawWeaponTenTimesButton;
-        [SerializeField] private Button drawEngravingOnceButton;
-        [SerializeField] private Button drawEngravingTenTimesButton;
-        [SerializeField] private Button closeButton;
-        [SerializeField] private Button resultCloseButton;
-
-        [Header("Result Panel Settings")]
-        [SerializeField] private Transform resultSlotParent;
-        [SerializeField] private GameObject resultSlotPrefab;
-
-        [Header("Currency Display")]
-        [SerializeField] private TextMeshProUGUI tokenCountText;
+        private GameObject mainPanel;
+        private GameObject resultPanel;
+        private Button drawWeaponOnceButton;
+        private Button drawWeaponTenTimesButton;
+        private Button drawEngravingOnceButton;
+        private Button drawEngravingTenTimesButton;
+        private Button closeButton;
+        private Button resultCloseButton;
+        private Transform resultSlotParent;
+        private GameObject resultSlotPrefab;
+        private TextMeshProUGUI tokenCountText;
 
         private PlayerAction playerAction;
+
+        [Inject]
+        public void Construct(
+            [Inject(Id = "GachaCanvasGroup")] CanvasGroup controlledCanvasGroup,
+            [Inject(Id = "GachaMainPanel")] GameObject mainPanel,
+            [Inject(Id = "GachaResultPanel")] GameObject resultPanel,
+            [Inject(Id = "DrawWeaponOnceButton")] Button drawWeaponOnceButton,
+            [Inject(Id = "DrawWeaponTenTimesButton")] Button drawWeaponTenTimesButton,
+            [Inject(Id = "DrawEngravingOnceButton")] Button drawEngravingOnceButton,
+            [Inject(Id = "DrawEngravingTenTimesButton")] Button drawEngravingTenTimesButton,
+            [Inject(Id = "GachaCloseButton")] Button closeButton,
+            [Inject(Id = "ResultCloseButton")] Button resultCloseButton,
+            [Inject(Id = "ResultSlotParent")] Transform resultSlotParent,
+            [Inject(Id = "ResultSlotPrefab")] GameObject resultSlotPrefab,
+            [Inject(Id = "TokenCountText")] TextMeshProUGUI tokenCountText)
+        {
+            this.controlledCanvasGroup = controlledCanvasGroup;
+            this.mainPanel = mainPanel;
+            this.resultPanel = resultPanel;
+            this.drawWeaponOnceButton = drawWeaponOnceButton;
+            this.drawWeaponTenTimesButton = drawWeaponTenTimesButton;
+            this.drawEngravingOnceButton = drawEngravingOnceButton;
+            this.drawEngravingTenTimesButton = drawEngravingTenTimesButton;
+            this.closeButton = closeButton;
+            this.resultCloseButton = resultCloseButton;
+            this.resultSlotParent = resultSlotParent;
+            this.resultSlotPrefab = resultSlotPrefab;
+            this.tokenCountText = tokenCountText;
+        }
 
         protected override void Awake()
         {
             base.Awake();
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+        }
 
-            drawWeaponOnceButton.onClick.AddListener(() => Draw(GachaType.Weapon, 1));
-            drawWeaponTenTimesButton.onClick.AddListener(() => Draw(GachaType.Weapon, 10));
-            drawEngravingOnceButton.onClick.AddListener(() => Draw(GachaType.Engraving, 1));
-            drawEngravingTenTimesButton.onClick.AddListener(() => Draw(GachaType.Engraving, 10));
+        private void Start()
+        {
+            if (drawWeaponOnceButton != null)
+                drawWeaponOnceButton.onClick.AddListener(() => Draw(GachaType.Weapon, 1));
 
-            closeButton.onClick.AddListener(Close);
-            resultCloseButton.onClick.AddListener(CloseResultPanel);
+            if (drawWeaponTenTimesButton != null)
+                drawWeaponTenTimesButton.onClick.AddListener(() => Draw(GachaType.Weapon, 10));
 
-            resultPanel.SetActive(false);
+            if (drawEngravingOnceButton != null)
+                drawEngravingOnceButton.onClick.AddListener(() => Draw(GachaType.Engraving, 1));
+
+            if (drawEngravingTenTimesButton != null)
+                drawEngravingTenTimesButton.onClick.AddListener(() => Draw(GachaType.Engraving, 10));
+
+            if (closeButton != null)
+                closeButton.onClick.AddListener(Close);
+
+            if (resultCloseButton != null)
+                resultCloseButton.onClick.AddListener(CloseResultPanel);
+
+            if (resultPanel != null)
+            {
+                resultPanel.SetActive(false);
+            }
+            else
+            {
+                Debug.LogError("'resultPanel'이 GachaUIController에 할당되지 않았습니다.", this);
+            }
         }
 
         private void OnEnable()
@@ -93,9 +136,9 @@ namespace Nytherion.UI.Controllers
         }
         private void HandleInteraction(InteractableType type)
         {
-            if (type == InteractableType.GachaNPC)
+            if (IsOpen && type != InteractableType.GachaNPC)
             {
-                Toggle();
+                Close();
             }
         }
         public override void Close()

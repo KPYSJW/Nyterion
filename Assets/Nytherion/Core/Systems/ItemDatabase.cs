@@ -10,40 +10,33 @@ namespace Nytherion.Core.Systems
         private static Dictionary<string, ItemData> itemTable;
         private static bool isInitialized = false;
 
-        public static void Initialize()
+        public static void Initialize(ItemDatabaseSO databaseSO)
         {
             if (isInitialized) return;
 
             itemTable = new Dictionary<string, ItemData>();
 
-#if UNITY_EDITOR
-            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:ItemData", new[] { "Assets/Nytherion/Data/ScriptableObjects/Items" });
-            foreach (string guid in guids)
+            if (databaseSO == null)
             {
-                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
-                ItemData item = UnityEditor.AssetDatabase.LoadAssetAtPath<ItemData>(path);
-                if (item != null && !string.IsNullOrEmpty(item.ID) && !itemTable.ContainsKey(item.ID))
+                Debug.LogError("[ItemDatabase] 전달된 ItemDatabaseSO 에셋이 null입니다! GameInitializer를 확인하세요.");
+                return;
+            }
+
+            foreach (var item in databaseSO.allItems)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.ID))
                 {
+                    if (itemTable.ContainsKey(item.ID))
+                    {
+                        Debug.LogWarning($"[ItemDatabase] 중복된 아이템 ID를 감지했습니다: {item.ID} (아이템: {item.name})");
+                        continue;
+                    }
                     itemTable[item.ID] = item;
                 }
             }
-#endif
 
-            if (Application.isPlaying && itemTable.Count == 0)
-            {
-                var allItems = Resources.LoadAll<ItemData>("Items");
-                foreach (var item in allItems)
-                {
-                    if (item != null && !string.IsNullOrEmpty(item.ID) && !itemTable.ContainsKey(item.ID))
-                    {
-                        itemTable[item.ID] = item;
-                    }
-                }
-            }
-            
             isInitialized = true;
         }
-
         public static ItemData GetItemByID(string id)
         {
             if (!isInitialized || string.IsNullOrEmpty(id)) return null;

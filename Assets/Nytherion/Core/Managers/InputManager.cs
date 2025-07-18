@@ -12,6 +12,10 @@ namespace Nytherion.Core.Managers
 
         public bool Dash { get; private set; }
 
+
+        public bool IsControlPressed { get; private set; }
+        public bool IsShiftPressed { get; private set; }
+
         public event Action onAttackDown;
 
         public event Action onAttackUp;
@@ -65,7 +69,12 @@ namespace Nytherion.Core.Managers
 
             playerActions.Player.QuickSlot_1.started += ctx => onQuickSlotInput?.Invoke(1);
             playerActions.Player.QuickSlot_2.started += ctx => onQuickSlotInput?.Invoke(2);
-            playerActions.Player.QuickSlot_3.started += ctx => onQuickSlotInput?.Invoke(3); 
+            playerActions.Player.QuickSlot_3.started += ctx => onQuickSlotInput?.Invoke(3);
+
+            playerActions.Player.Control.performed += ctx => IsControlPressed = true;
+            playerActions.Player.Control.canceled += ctx => IsControlPressed = false;
+            playerActions.Player.Shift.performed += ctx => IsShiftPressed = true;
+            playerActions.Player.Shift.canceled += ctx => IsShiftPressed = false;
 
             playerActions.Player.Interact.performed += _ => onInteract?.Invoke();
 
@@ -74,8 +83,18 @@ namespace Nytherion.Core.Managers
             playerActions.EngravingUI.Rotate.performed += _ => onEngravingRotate?.Invoke();
 
         }
-        private void OnEnable() => playerActions?.Enable();
-        private void OnDisable() => playerActions?.Disable();
+        private void OnEnable()
+        {
+            playerActions?.Enable();
+            playerActions.Player.Control.Enable();
+            playerActions.Player.Shift.Enable();
+        }
+        private void OnDisable()
+        {
+            playerActions?.Disable();
+            playerActions.Player.Control.Disable();
+            playerActions.Player.Shift.Disable();
+        }
 
         public void DisableMovement()
         {
