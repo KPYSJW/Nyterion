@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Nytherion.Core.Data;
 
 namespace Nytherion.Core.Managers
 {
@@ -29,15 +30,21 @@ namespace Nytherion.Core.Managers
         {
             OnInitialized?.Invoke();
         }
-        public Dictionary<CurrencyType, int> GetCurrenciesForSave()
+        public void GetCurrenciesForSave(SaveData saveData)
         {
-            return currencies;
-        }
-        public void LoadDataFromSave(Dictionary<CurrencyType, int> data)
-        {
-            if (data == null)
+            saveData.currencyTypes.Clear();
+            saveData.currencyAmounts.Clear();
+            foreach (var currencyPair in currencies)
             {
-                currencies = new Dictionary<CurrencyType, int>();
+                saveData.currencyTypes.Add(currencyPair.Key);
+                saveData.currencyAmounts.Add(currencyPair.Value);
+            }
+        }
+        public void LoadDataFromSave(SaveData data)
+        {
+            currencies = new Dictionary<CurrencyType, int>();
+            if (data == null || data.currencyTypes.Count != data.currencyAmounts.Count)
+            {
                 foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
                 {
                     currencies[type] = 0;
@@ -45,7 +52,10 @@ namespace Nytherion.Core.Managers
             }
             else
             {
-                currencies = data;
+                for (int i = 0; i < data.currencyTypes.Count; i++)
+                {
+                    currencies[data.currencyTypes[i]] = data.currencyAmounts[i];
+                }
             }
 
             foreach (var currencyPair in currencies)

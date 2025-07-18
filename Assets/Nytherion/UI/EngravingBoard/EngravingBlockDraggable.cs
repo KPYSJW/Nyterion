@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Nytherion.GamePlay.Engravings;
 using Nytherion.Core.Managers;
 using TMPro;
+using Zenject;
 
 namespace Nytherion.UI.EngravingBoard
 {
@@ -20,6 +21,20 @@ namespace Nytherion.UI.EngravingBoard
         private RectTransform rectTransform;
         [SerializeField] private TextMeshProUGUI levelText;
         private bool isDragging = false;
+        
+        private InputManager _inputManager;
+        private EngravingManager _engravingManager;
+        private EngravingGridUI _engravingGridUI;
+        private EngravingTooltip _engravingTooltip;
+        
+        [Inject]
+        public void Construct(InputManager inputManager, EngravingManager engravingManager, EngravingGridUI engravingGridUI, EngravingTooltip engravingTooltip)
+        {
+            _inputManager = inputManager;
+            _engravingManager = engravingManager;
+            _engravingGridUI = engravingGridUI;
+            _engravingTooltip = engravingTooltip;
+        }
         private void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
@@ -32,26 +47,26 @@ namespace Nytherion.UI.EngravingBoard
         }
         private void OnEnable()
         {
-            if (InputManager.Instance != null)
+            if (_inputManager != null)
             {
-                InputManager.Instance.onEngravingRotate += HandleRotation;
+                _inputManager.onEngravingRotate += HandleRotation;
             }
         }
 
         private void OnDisable()
         {
-            if (InputManager.Instance != null)
+            if (_inputManager != null)
             {
-                InputManager.Instance.onEngravingRotate -= HandleRotation;
+                _inputManager.onEngravingRotate -= HandleRotation;
             }
         }
         private void Update()
         {
             if (isDragging)
             {
-                if (EngravingGridUI.Instance != null)
+                if (_engravingGridUI != null)
                 {
-                    EngravingGridUI.Instance.ShowPlacementPreview(blockData, EngravingGridUI.Instance.CurrentGridPos);
+                    _engravingGridUI.ShowPlacementPreview(blockData, _engravingGridUI.CurrentGridPos);
                 }
 
                 if (levelText != null)
@@ -69,34 +84,34 @@ namespace Nytherion.UI.EngravingBoard
         {
             if (isDragging)
             {
-                if (EngravingManager.Instance != null)
+                if (_engravingManager != null)
                 {
-                    EngravingManager.Instance.RotateDraggedBlock();
+                    _engravingManager.RotateDraggedBlock();
                     rectTransform.Rotate(0, 0, 90);
                 }
-                if (EngravingGridUI.Instance != null)
+                if (_engravingGridUI != null)
                 {
-                    EngravingGridUI.Instance.ShowPlacementPreview(blockData, EngravingGridUI.Instance.CurrentGridPos);
+                    _engravingGridUI.ShowPlacementPreview(blockData, _engravingGridUI.CurrentGridPos);
                 }
             }
         }
         public void OnBeginDrag(PointerEventData eventData)
         {
-            EngravingTooltip.Instance?.Hide();
-            if (blockData == null || EngravingManager.Instance == null) return;
+            _engravingTooltip?.Hide();
+            if (blockData == null || _engravingManager == null) return;
 
             isDragging = true;
 
             if (isPlaced)
             {
-                EngravingManager.Instance.StartDraggingFromGrid(blockData, gridPosition);
+                _engravingManager.StartDraggingFromGrid(blockData, gridPosition);
             }
             else
             {
-                EngravingManager.Instance.StartDraggingFromStorage(blockData);
+                _engravingManager.StartDraggingFromStorage(blockData);
             }
 
-            transform.SetParent(EngravingGridUI.Instance.rootCanvas.transform, true);
+            transform.SetParent(_engravingGridUI.rootCanvas.transform, true);
             canvasGroup.blocksRaycasts = false;
             rectTransform.rotation = Quaternion.Euler(0, 0, blockData.RotationState * 90);
         }
@@ -111,20 +126,20 @@ namespace Nytherion.UI.EngravingBoard
             isDragging = false;
             canvasGroup.blocksRaycasts = true;
 
-            if (EngravingGridUI.Instance != null)
+            if (_engravingGridUI != null)
             {
-                EngravingGridUI.Instance.ShowPlacementPreview(null, null);
+                _engravingGridUI.ShowPlacementPreview(null, null);
             }
 
-            if (EngravingManager.Instance == null)
+            if (_engravingManager == null)
             {
                 Destroy(gameObject);
                 return;
             }
 
-            Vector2Int? dropGridPosition = EngravingGridUI.Instance.CurrentGridPos;
+            Vector2Int? dropGridPosition = _engravingGridUI.CurrentGridPos;
 
-            EngravingManager.Instance.EndDrag(dropGridPosition);
+            _engravingManager.EndDrag(dropGridPosition);
 
             Destroy(gameObject);
         }
@@ -160,29 +175,29 @@ namespace Nytherion.UI.EngravingBoard
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (isDragging || EngravingTooltip.Instance == null) return;
+            if (isDragging || _engravingTooltip == null) return;
 
             EngravingBlock liveBlockData = null;
 
             if (isPlaced)
             {
-                liveBlockData = EngravingManager.Instance.GetBlockAt(gridPosition.y, gridPosition.x);
+                liveBlockData = _engravingManager.GetBlockAt(gridPosition.y, gridPosition.x);
             }
             else
             {
-                liveBlockData = EngravingManager.Instance.GetBlockByID(blockData.BlockId);
+                liveBlockData = _engravingManager.GetBlockByID(blockData.BlockId);
             }
 
             if (liveBlockData != null)
             {
-                EngravingTooltip.Instance.Show(liveBlockData);
+                _engravingTooltip.Show(liveBlockData);
             }
         }
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (EngravingTooltip.Instance != null)
+            if (_engravingTooltip != null)
             {
-                EngravingTooltip.Instance.Hide();
+                _engravingTooltip.Hide();
             }
         }
     }

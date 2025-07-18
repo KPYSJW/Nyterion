@@ -3,20 +3,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Core.Managers;
 using TMPro;
+using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
     public class SettingsManager : MonoBehaviour
     {
-        [Header("Audio")]
-        [SerializeField] private Slider masterSlider;
-        [SerializeField] private Slider bgmSlider;
-        [SerializeField] private Slider sfxSlider;
-
-        [Header("Graphics")]
-        [SerializeField] private Toggle fullscreenToggle;
-        [SerializeField] private TMP_Dropdown resolutionDropdown;
-
+        private Slider masterSlider;
+        private Slider bgmSlider;
+        private Slider sfxSlider;
+        private Toggle fullscreenToggle;
+        private TMP_Dropdown resolutionDropdown;
+        private AudioManager _audioManager;
         private List<Resolution> customResolutions = new List<Resolution>
         {
             new Resolution { width = 1280, height = 720 },
@@ -24,7 +22,22 @@ namespace Nytherion.UI.Controllers
             new Resolution { width = 1920, height = 1080 },
             new Resolution { width = 2560, height = 1440 }
         };
-
+        [Inject]
+        public void Construct(
+            AudioManager audioManager,
+            [Inject(Id = "MasterSlider")] Slider masterSlider,
+            [Inject(Id = "BGMSlider")] Slider bgmSlider,
+            [Inject(Id = "SFXSlider")] Slider sfxSlider,
+            [Inject(Id = "FullscreenToggle")] Toggle fullscreenToggle,
+            [Inject(Id = "ResolutionDropdown")] TMP_Dropdown resolutionDropdown)
+        {
+            _audioManager = audioManager;
+            this.masterSlider = masterSlider;
+            this.bgmSlider = bgmSlider;
+            this.sfxSlider = sfxSlider;
+            this.fullscreenToggle = fullscreenToggle;
+            this.resolutionDropdown = resolutionDropdown;
+        }
         private void Start()
         {
             masterSlider.onValueChanged.AddListener(SetMasterVolume);
@@ -37,7 +50,10 @@ namespace Nytherion.UI.Controllers
             PopulateResolutions();
             resolutionDropdown.onValueChanged.AddListener(SetResolution);
 
-            bgmSlider.value = AudioManager.Instance.GetBGMVolume();
+            if (_audioManager != null)
+            {
+                bgmSlider.value = _audioManager.GetBGMVolume();
+            }
         }
 
         private void PopulateResolutions()
@@ -77,13 +93,13 @@ namespace Nytherion.UI.Controllers
 
         private void SetMasterVolume(float value)
         {
-            AudioListener.volume = value; 
+            AudioListener.volume = value;
         }
 
         private void SetBGMVolume(float value)
         {
-            if (AudioManager.Instance == null) return;
-            AudioManager.Instance.SetBGMVolume(value);
+            if (_audioManager == null) return;
+            _audioManager.SetBGMVolume(value);
         }
 
         private void SetSFXVolume(float value)

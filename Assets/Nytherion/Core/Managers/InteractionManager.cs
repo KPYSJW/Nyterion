@@ -1,6 +1,8 @@
 using UnityEngine;
 using Nytherion.UI.Controllers;
 using Nytherion.Core.Systems;
+using Nytherion.GamePlay.Characters.Player;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
@@ -11,7 +13,16 @@ namespace Nytherion.Core.Managers
         [Header("Interaction Settings")]
         [SerializeField] private float interactionDistance = 1.5f;
         [SerializeField] private LayerMask interactableLayer;
-        [SerializeField] private Transform playerTransform;
+        
+        private Transform playerTransform;
+        private InputManager _inputManager;
+
+        [Inject]
+        public void Construct(InputManager inputManager, PlayerController playerController)
+        {
+            _inputManager = inputManager;
+            playerTransform = playerController.transform;
+        }
 
         private void Awake()
         {
@@ -21,22 +32,15 @@ namespace Nytherion.Core.Managers
 
         private void Start()
         {
-            if (InputManager.Instance != null)
+            if (_inputManager != null)
             {
-                InputManager.Instance.onInteract += HandleInteraction;
-            }
-
-            if (playerTransform == null)
-            {
-                GameObject player = GameObject.FindGameObjectWithTag(Tags.Player);
-                if (player != null) playerTransform = player.transform;
-                else Debug.LogError("InteractionManager: 'Player' 태그를 가진 오브젝트를 찾을 수 없습니다!");
+                _inputManager.onInteract += HandleInteraction;
             }
         }
 
         private void OnDestroy()
         {
-            if (InputManager.Instance != null) InputManager.Instance.onInteract -= HandleInteraction;
+            if (_inputManager != null) _inputManager.onInteract -= HandleInteraction;
         }
 
         private void HandleInteraction()

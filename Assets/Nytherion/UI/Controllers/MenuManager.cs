@@ -2,22 +2,44 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
     public class MenuManager : UIPanelBase
     {
         [Header("UI References")]
-        [SerializeField] private GameObject mainPanel;
-        [SerializeField] private Button resumeButton;
-        [SerializeField] private Button settingsButton;
-        [SerializeField] private GameObject settingsPanel;
-        [SerializeField] private Button controlButton;
-        [SerializeField] private GameObject controlsPanel;
-        [SerializeField] private Button mainMenuButton;
+        private GameObject mainPanel;
+        private Button resumeButton;
+        private Button settingsButton;
+        private GameObject settingsPanel;
+        private Button controlButton;
+        private GameObject controlsPanel;
+        private Button mainMenuButton;
 
         [Header("Input")]
         [SerializeField] private InputActionReference toggleMenuAction;
+
+        [Inject]
+        public void Construct(
+            [Inject(Id = "MenuCanvasGroup")] CanvasGroup controlledCanvasGroup,
+            [Inject(Id = "MenuMainPanel")] GameObject mainPanel,
+            [Inject(Id = "MenuResumeButton")] Button resumeButton,
+            [Inject(Id = "MenuSettingsButton")] Button settingsButton,
+            [Inject(Id = "MenuSettingsPanel")] GameObject settingsPanel,
+            [Inject(Id = "MenuControlButton")] Button controlButton,
+            [Inject(Id = "MenuControlsPanel")] GameObject controlsPanel,
+            [Inject(Id = "MenuMainMenuButton")] Button mainMenuButton)
+        {
+            this.controlledCanvasGroup = controlledCanvasGroup;
+            this.mainPanel = mainPanel;
+            this.resumeButton = resumeButton;
+            this.settingsButton = settingsButton;
+            this.settingsPanel = settingsPanel;
+            this.controlButton = controlButton;
+            this.controlsPanel = controlsPanel;
+            this.mainMenuButton = mainMenuButton;
+        }
 
         protected override void Awake()
         {

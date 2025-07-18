@@ -4,17 +4,22 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using System;
-
+using InventoryUtils = Nytherion.UI.Inventory.Utils;
+using UnityEngine.EventSystems;
 
 namespace Nytherion.UI.Inventory
 {
-    public class QuickSlotUI : BaseSlotUI
+    public class QuickSlotUI : BaseSlotUI, IDropHandler
     {
+        public int SlotIndex { get; private set; }
         public event Action<ItemData, int> OnItemUsed;
         [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
         private Action<ItemData, int> onItemUsed;
         private IUseableItem useableItem;
-
+        public void Initialize(int index)
+        {
+            this.SlotIndex = index;
+        }
         protected override void Awake()
         {
             base.Awake();
@@ -27,10 +32,46 @@ namespace Nytherion.UI.Inventory
                 keyLabelText.gameObject.SetActive(true);
             }
 
-            OnBeginDragEvent += (slot, eventData) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleBeginDragShared(slot);
-            OnEndDragEvent += (slot, eventData) => Nytherion.UI.Inventory.Utils.DragDropUIHandler.HandleEndDragShared(slot, eventData); // allowShiftSwap defaults to true
+            OnBeginDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleBeginDragShared(slot);
+            OnEndDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleEndDragShared(slot, eventData);
         }
 
+        public void OnDrop(PointerEventData eventData)
+        {
+            if (eventData.pointerDrag == null) return;
+            BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
+            if (sourceSlot == null || sourceSlot.IsEmpty) return;
+
+            if (sourceSlot is InventorySlotUI inventorySourceSlot)
+            {
+                if (CanReceiveItem(inventorySourceSlot.CurrentItem))
+                {
+                    var (itemToMove, countToMove) = inventorySourceSlot.GetItemInfo();
+
+                    if (InventoryManager.Instance.RemoveItemFromSlot(inventorySourceSlot.SlotIndex, countToMove))
+                    {
+                        if (!IsEmpty)
+                        {
+                            InventoryManager.Instance.AddItem(CurrentItem, CurrentCount);
+                        }
+
+                        SetItem(itemToMove, countToMove);
+
+                        if (QuickSlotManager.Instance != null)
+                        {
+                            QuickSlotManager.Instance.UpdateSlotDataExternal(SlotIndex, itemToMove, countToMove);
+                        }
+                        
+                    }
+                    InventoryUtils.DragDropUIHandler.dropHandled = true;
+                }
+            }
+            else if (sourceSlot is QuickSlotUI)
+            {
+                InventoryUtils.SlotTransferHelper.TransferItem(sourceSlot, this);
+                InventoryUtils.DragDropUIHandler.dropHandled = true;
+            }
+        }
 
         public void SetKeyLabel(string label)
         {
@@ -38,6 +79,11 @@ namespace Nytherion.UI.Inventory
             {
                 keyLabelText.text = label;
             }
+        }
+
+        public override bool CanReceiveItem(ItemData item)
+        {
+            return item is ConsumableData;
         }
 
         public override void SetItem(ItemData item, int count, Action<ItemData, int> onUseCallback = null)
@@ -50,7 +96,7 @@ namespace Nytherion.UI.Inventory
             this.useableItem = item as IUseableItem;
             this.onItemUsed = onUseCallback;
 
-            base.SetItem(item, count, (usedItem, usedCount) => 
+            base.SetItem(item, count, (usedItem, usedCount) =>
             {
                 if (this.useableItem != null)
                 {
@@ -64,41 +110,30 @@ namespace Nytherion.UI.Inventory
                 LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
             }
 
-            Debug.Log($"[QuickSlot] {(item != null ? $"아이템 설정 완료: {item.itemName} x{count}" : "슬롯 비움")}");
+            if (QuickSlotManager.Instance != null)
+            {
+                QuickSlotManager.Instance.UpdateSlotDataExternal(SlotIndex, item, count);
+            }
         }
 
         public override void UseItem()
         {
             if (IsEmpty) return;
 
-            if (InventoryManager.Instance != null && InventoryManager.Instance.RemoveItem(currentItem, 1))
+            if (QuickSlotManager.Instance.ConsumeItemInQuickSlot(SlotIndex, 1))
             {
-                currentCount--;
-
-                if (currentCount <= 0)
-                {
-                    ClearSlot();
-                }
-                else
-                {
-                    SetItem(currentItem, currentCount);
-                }
-
-
+                ItemUsageManager.Instance.UseConsumableItem(currentItem as ConsumableData);
                 OnItemUsed?.Invoke(currentItem, 1);
             }
             else
             {
-                Debug.Log("인벤토리에 해당 아이템이 없어 퀵슬롯에서 제거합니다.");
                 ClearSlot();
             }
         }
 
-
         public override void ClearSlot()
         {
             this.onItemUsed = null;
-
             base.ClearSlot();
         }
     }

@@ -21,3 +21,4 @@ MonoBehaviour:
   dashSpeed: 12
   dashDuration: 0.2
   dashCooldown: 3
+  defense: 0

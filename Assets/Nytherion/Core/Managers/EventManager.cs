@@ -1,11 +1,13 @@
-using UnityEngine;
-using System;
-using Nytherion.Data.ScriptableObjects.Enemy;
-using Nytherion.Data.ScriptableObjects.Stage;
-using Nytherion.Data.ScriptableObjects.Weapons;
-using Nytherion.Data.ScriptableObjects.Engravings;
-using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Core.Enums;
+using Nytherion.Data.ScriptableObjects.Enemy;
+using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Stage;
+using Nytherion.Data.ScriptableObjects.Synergy;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.GamePlay.Characters.Enemy;
+using System;
+using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Nytherion.Core.Managers
 {
@@ -18,7 +20,7 @@ namespace Nytherion.Core.Managers
             else Destroy(gameObject);
         }
 
-        public event Action OnEnemyDeathEvent;
+        public event Action<EnemyBase> OnEnemyDied;
         public event Action<StageData> OnBossClearedEvent;
         public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;
 
@@ -27,21 +29,22 @@ namespace Nytherion.Core.Managers
         {
             OnInteraction?.Invoke(type);
         }
-        public void TriggerEnemyDeathEvent(EnemyData data)
+        public void TriggerEnemyDeathEvent(EnemyBase enemy)
         {
-            OnEnemyDeathEvent?.Invoke();
+            OnEnemyDied?.Invoke(enemy);
         }
         public void TriggerBossClearedEvent(StageData stage)
         {
             OnBossClearedEvent?.Invoke(stage);
         }
-        public void RegisterEnemyDeathListener(Action listener)
+        public void RegisterEnemyDeathListener(Action<EnemyBase> listener) 
         {
-            OnEnemyDeathEvent += listener;
+            OnEnemyDied += listener;
         }
-        public void UnregisterEnemyDeathListener(Action listener)
+
+        public void UnregisterEnemyDeathListener(Action<EnemyBase> listener) 
         {
-            OnEnemyDeathEvent -= listener;
+            OnEnemyDied -= listener;
         }
         public void RegisterBossClearedListener(Action<StageData> listener)
         {

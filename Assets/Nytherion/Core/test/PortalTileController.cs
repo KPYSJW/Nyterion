@@ -1,3 +1,4 @@
+using Nytherion.GamePlay.Dungeon;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -84,33 +85,23 @@ public class PortalTileController : MonoBehaviour
         }
     }
 
-    
+
     private void TeleportPlayer(Collider2D player, Vector3Int destinationPortalCell)
     {
-        if (DungeonManager.Instance.IsRoomCleared(Vector2Int.zero))
+        
+        if (TryFindSpawnPoint(destinationPortalCell, out Vector3Int spawnCell))
         {
-            
-            if (TryFindSpawnPoint(destinationPortalCell, out Vector3Int spawnCell))
-            {
-                Vector3 targetWorldPos = floorTilemap.GetCellCenterWorld(spawnCell);
-                player.transform.position = targetWorldPos;
-                Debug.Log($"÷̾ {targetWorldPos} ̵!");
-            }
-            else
-            {
-                
-                Vector3 targetWorldPos = portalTilemap.GetCellCenterWorld(destinationPortalCell);
-                player.transform.position = targetWorldPos;
-                Debug.LogWarning($" ã ޾ ̵.");
-            }
+            Vector3 targetWorldPos = floorTilemap.GetCellCenterWorld(spawnCell);
+            player.transform.position = targetWorldPos;
         }
         else
         {
-            Debug.Log(" ޸ ó.");
+            Vector3 targetWorldPos = portalTilemap.GetCellCenterWorld(destinationPortalCell);
+            player.transform.position = targetWorldPos;
         }
     }
 
-    
+
     private bool TryFindSpawnPoint(Vector3Int portalCenterCell, out Vector3Int spawnPoint)
     {
         

@@ -1,23 +1,37 @@
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Characters.Skill;
 using UnityEngine;
+using Zenject;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
     public class PlayerSkillManager : MonoBehaviour
     {
         public SkillBase[] equippedSkills = new SkillBase[4];
-        public static PlayerSkillManager Instance { get; private set; }
-
-        private void Awake()
+        
+        private InputManager _inputManager;
+        
+        [Inject]
+        public void Construct(InputManager inputManager)
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            _inputManager = inputManager;
         }
+
 
         void Start()
         {
-            InputManager.Instance.onSkillInput += SkillInput;
+            if (_inputManager != null)
+            {
+                _inputManager.onSkillInput += SkillInput;
+            }
+        }
+        
+        private void OnDestroy()
+        {
+            if (_inputManager != null)
+            {
+                _inputManager.onSkillInput -= SkillInput;
+            }
         }
 
         void SkillInput(int i)

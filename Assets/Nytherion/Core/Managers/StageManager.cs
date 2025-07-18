@@ -1,6 +1,7 @@
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.GamePlay.Systems;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
@@ -10,13 +11,21 @@ namespace Nytherion.Core.Managers
         private int currentStageIndex = 0;
         private int remainingEnemies = 0;
 
-        public EnemySpawner spawner;
+        private EnemySpawner spawner;
+        private EventManager _eventManager;
+
+        [Inject]
+        public void Construct(EnemySpawner enemySpawner, EventManager eventManager)
+        {
+            spawner = enemySpawner;
+            _eventManager = eventManager;
+        }
         void Start()
         {
-
-            if (EventManager.Instance != null)
+            if (_eventManager != null)
             {
-                EventManager.Instance.RegisterEnemyDeathListener(OnEnemyDied);
+
+                _eventManager.RegisterEnemyDeathListener(OnEnemyDied);
             }
             
             LoadStage(currentStageIndex);
@@ -51,9 +60,10 @@ namespace Nytherion.Core.Managers
         
         private void OnDisable()
         {
-            if (EventManager.Instance != null)
+            if (_eventManager != null)
             {
-                EventManager.Instance.UnregisterEnemyDeathListener(OnEnemyDied);
+
+                _eventManager.UnregisterEnemyDeathListener(OnEnemyDied);
             }
         }
         

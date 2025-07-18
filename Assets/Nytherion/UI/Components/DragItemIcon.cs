@@ -41,6 +41,13 @@ public class DragItemIcon : MonoBehaviour
         }
         Hide();
     }
+    private void Update()
+    {
+        if (iconImage != null && iconImage.enabled)
+        {
+            transform.position = Input.mousePosition;
+        }
+    }
 
     private void OnDestroy()
     {

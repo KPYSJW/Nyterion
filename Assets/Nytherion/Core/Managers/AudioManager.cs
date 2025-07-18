@@ -22,7 +22,6 @@ namespace Nytherion.Core.Managers
 
             transform.SetParent(null);
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         public void Initialize()
         {

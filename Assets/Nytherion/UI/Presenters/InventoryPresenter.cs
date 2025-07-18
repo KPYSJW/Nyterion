@@ -1,36 +1,42 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.Core.Systems;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Inventory;
+using Zenject;
 
 namespace Nytherion.UI.Presenters
 {
     public class InventoryPresenter : MonoBehaviour
     {
         [Header("UI Settings")]
-        [SerializeField] private Transform slotParent;
+        [Inject(Id = "InventorySlotParent")] private Transform slotParent;
+
         [SerializeField] private GameObject slotPrefab;
 
-        private List<InventorySlotUI> slotPool = new();
-        private InventoryModel inventoryModel;
+        private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
+        private InventoryManager inventoryManager;
+
+        [Inject]
+        public void Construct(InventoryManager manager)
+        {
+            inventoryManager = manager;
+        }
 
         public void Initialize()
         {
-            if (InventoryManager.Instance == null) return;
-            inventoryModel = InventoryManager.Instance.InventoryModel;
+            if (inventoryManager == null) return;
 
-            InitializeSlots(InventoryManager.Instance.MaxSlotCount);
+            InitializeSlots(inventoryManager.MaxSlotCount);
 
-            inventoryModel.OnInventoryUpdated += UpdateSlotsUI;
+            inventoryManager.OnInventoryUpdated += UpdateSlotsUI;
             UpdateSlotsUI();
         }
 
         private void OnDestroy()
         {
-            if (inventoryModel != null)
+            if (inventoryManager != null)
             {
-                inventoryModel.OnInventoryUpdated -= UpdateSlotsUI;
+                inventoryManager.OnInventoryUpdated -= UpdateSlotsUI;
             }
         }
 
@@ -56,22 +62,12 @@ namespace Nytherion.UI.Presenters
 
         private void UpdateSlotsUI()
         {
-            if (inventoryModel == null) return;
+            if (inventoryManager == null || slotPool == null) return;
 
-            foreach (var slot in slotPool)
+            for (int i = 0; i < slotPool.Count; i++)
             {
-                slot.ClearSlot();
-            }
-
-            int slotIndex = 0;
-            foreach (var itemPair in inventoryModel.Items)
-            {
-                if (slotIndex < slotPool.Count)
-                {
-                    slotPool[slotIndex].SetItem(itemPair.Key, itemPair.Value);
-                    slotIndex++;
-                }
-                else break;
+                var (item, count) = inventoryManager.GetItemAt(i);
+                slotPool[i].SetItem(item, count);
             }
         }
     }

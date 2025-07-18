@@ -13,7 +13,13 @@ MonoBehaviour:
   m_Name: Common_Weapon
   m_EditorClassIdentifier: 
   rarity: 0
-  drawWeight: 0
+  drawWeight: 100
   items:
-  - item: {fileID: 11400000, guid: 79a5f1b4642118e44be9799c0bd66e88, type: 2}
-    weight: 0
+  - item: {fileID: 11400000, guid: 74ea2c6d8da87c5428259194c1c4c4c5, type: 2}
+    weight: 25
+  - item: {fileID: 11400000, guid: 858108e2754dda5448d2ad380a6a657d, type: 2}
+    weight: 25
+  - item: {fileID: 11400000, guid: 0065191d61e19d34984b1c60a33329a9, type: 2}
+    weight: 25
+  - item: {fileID: 11400000, guid: 316e5f1eb6ea22046852bfce0bd7d0b9, type: 2}
+    weight: 25

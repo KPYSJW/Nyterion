@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Nytherion.Data.Enums;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Data.ScriptableObjects.Gacha
 {

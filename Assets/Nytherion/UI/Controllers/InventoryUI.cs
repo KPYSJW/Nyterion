@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Components;
 using Nytherion.UI.Inventory;
+using Nytherion.Data.ScriptableObjects.Items;
+using System.Linq;
 
 namespace Nytherion.UI.Controllers
 {
@@ -13,18 +16,17 @@ namespace Nytherion.UI.Controllers
         public static InventoryUI Instance { get; private set; }
 
         [Header("UI Panels")]
-        [Tooltip("캐릭터 장비창 패널")]
         [SerializeField] private GameObject equipmentPanel;
-        [Tooltip("캐릭터 능력치창 패널")]
         [SerializeField] private GameObject statsPanel;
 
         [Header("Input")]
         [SerializeField] private InputActionReference toggleInventoryAction;
         
         [Header("References")]
-        [Tooltip("인벤토리 슬롯들이 있는 부모 오브젝트")]
         [SerializeField] private Transform slotParent;
         [SerializeField] private Button closeButton;
+
+        private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
 
         public event Action<bool> OnInventoryToggled;
 
@@ -33,6 +35,8 @@ namespace Nytherion.UI.Controllers
             base.Awake();
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+            
+            InitializeSlotPool();
         }
 
         public void Initialize()
@@ -40,6 +44,15 @@ namespace Nytherion.UI.Controllers
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(Close);
+            }
+        }
+
+        private void InitializeSlotPool()
+        {
+            slotPool = slotParent.GetComponentsInChildren<InventorySlotUI>(true).ToList();
+            for (int i = 0; i < slotPool.Count; i++)
+            {
+                slotPool[i].Initialize(i);
             }
         }
 
@@ -65,7 +78,9 @@ namespace Nytherion.UI.Controllers
             }
 
             if (InventoryManager.Instance != null)
+            {
                 InventoryManager.Instance.OnInventoryUpdated -= RefreshUI;
+            }
         }
 
         private void OnToggleAction(InputAction.CallbackContext context)
@@ -74,12 +89,22 @@ namespace Nytherion.UI.Controllers
             {
                 return;
             }
+            if(!equipmentPanel.activeSelf)
+            {
+                equipmentPanel.SetActive(true);
+            }
+            if(!statsPanel.activeSelf)
+            {
+                statsPanel.SetActive(true);
+            }
             Toggle();
         }
 
         protected override void OnPanelStateChanged(bool isOpen)
         {
             OnInventoryToggled?.Invoke(isOpen);
+
+            if (isOpen) RefreshUI();
 
             if (!isOpen && TooltipPanel.Instance != null)
             {
@@ -93,26 +118,23 @@ namespace Nytherion.UI.Controllers
             if (statsPanel != null) statsPanel.SetActive(false);
             Open();
         }
-        
+
         public void RefreshUI()
         {
-            if (slotParent == null || InventoryManager.Instance == null) return;
+            if (slotPool == null || InventoryManager.Instance == null) return;
 
-            var slots = slotParent.GetComponentsInChildren<InventorySlotUI>(true);
-            if (slots == null || slots.Length == 0) return;
-
-            foreach (var slot in slots) slot?.ClearSlot();
-
-            var items = InventoryManager.Instance.GetAllItems();
-            int slotIndex = 0;
-            foreach (var item in items)
+            for (int i = 0; i < slotPool.Count; i++)
             {
-                if (slotIndex >= slots.Length) break;
-                if (item.Key != null && slots[slotIndex] != null)
+                if (i < InventoryManager.Instance.MaxSlotCount)
                 {
-                    slots[slotIndex].SetItem(item.Key, item.Value);
+                    var (item, count) = InventoryManager.Instance.GetItemAt(i);
+                    slotPool[i].SetItem(item, count);
                 }
-                slotIndex++;
+                else
+                {
+                    slotPool[i].ClearSlot();
+                    slotPool[i].gameObject.SetActive(false);
+                }
             }
         }
     }

@@ -181,11 +181,19 @@ namespace Nytherion.Core.Managers
             var instanceData = Instantiate(data);
             var newBlock = new EngravingBlock(instanceData);
             storageBlocks.Add(newBlock);
+
             OnEngravingStateChanged?.Invoke();
         }
+
         public EngravingGridState GetEngravingsForSave()
         {
             var state = new EngravingGridState();
+            if (placedBlockPositions == null || logicGrid == null)
+            {
+                Debug.LogWarning("EngravingManager not properly initialized when trying to save engraving data");
+                return state;
+            }
+            
             foreach (var pair in placedBlockPositions)
             {
                 EngravingBlock blockOnGrid = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
@@ -249,7 +257,7 @@ namespace Nytherion.Core.Managers
             }
 
             logicGrid.RecalculateAllInfluences();
-            OnEngravingStateChanged?.Invoke();
+             OnEngravingStateChanged?.Invoke();
         }
         #endregion
     }

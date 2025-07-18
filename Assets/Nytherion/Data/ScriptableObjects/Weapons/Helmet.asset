@@ -9,23 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}
   m_Name: Helmet
   m_EditorClassIdentifier: 
-  itemType: 1
-  _uniqueID: d74e457c-7ba1-4842-af37-23865fcd2e9f
+  uniqueID: a3654fe2-5079-4553-a76c-5d7c8536ee8a
   itemName: Helmet
-  icon: {fileID: 21300000, guid: 78aac96169c97544ab51668fe388158c, type: 3}
-  description: Damage 10
+  icon: {fileID: 21300000, guid: 701787b744f4725439f7dd4c61664da6, type: 3}
+  description: 
   isStackable: 0
-  maxStack: 99
-  isUsable: 0
-  useEffectPrefab: {fileID: 0}
-  useSound: {fileID: 0}
-  weaponType: 0
-  weaponName: Helmet
-  damage: 1
-  range: 1
-  cooldown: 1
-  projectilePrefab: {fileID: 0}
+  maxStack: 1
+  baseValue: 10
+  equipmentType: 1
+  rarity: 0
   isCursed: 0
+  statModifiers:
+  - stat: 0
+    value: 100
+  armorType: 0

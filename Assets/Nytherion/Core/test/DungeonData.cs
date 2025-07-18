@@ -1,7 +1,9 @@
+using Nytherion.Data.ScriptableObjects.Enemy;
+using Nytherion.GamePlay.Dungeon;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Nytherion.GamePlay.Dungeon;
 
 [Serializable]
 public struct MinimapRoomColor
@@ -40,7 +42,11 @@ public class DungeonData : ScriptableObject
     [Header("Minimap Settings")]
     [Tooltip("Minimap room colors array.")]
     public MinimapRoomColor[] minimapRoomColors;
-    
+
+    [Header("Monster Settings")] // [2]
+    [Tooltip("이 던전에서 스폰될 몬스터 종류")] // [2]
+    public List<EnemyData> dungeonMonsters; // [2]
+
 }
 
 

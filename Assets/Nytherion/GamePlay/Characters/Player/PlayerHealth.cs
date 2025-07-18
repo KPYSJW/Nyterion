@@ -5,10 +5,10 @@ namespace Nytherion.GamePlay.Characters.Player
 {
     public class PlayerHealth : MonoBehaviour
     {
-        public static event Action<float, float> OnHealthChanged; 
+        public static event Action<float, float> OnHealthChanged;
 
         [SerializeField] private float maxHealth = 100f;
-        public float MaxHealth => maxHealth;
+        public float MaxHealth { get { return maxHealth; } }
         public float CurrentHealth { get; private set; }
 
         private void Awake()
@@ -30,6 +30,12 @@ namespace Nytherion.GamePlay.Characters.Player
         public void Heal(float amount)
         {
             CurrentHealth = Mathf.Min(CurrentHealth + amount, maxHealth);
+            OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
+        }
+        public void UpdateMaxHealth(float newMaxHealth)
+        {
+            maxHealth = newMaxHealth;
+            CurrentHealth = Mathf.Min(CurrentHealth, maxHealth);
             OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         }
 
