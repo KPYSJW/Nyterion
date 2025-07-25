@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Palyer
   m_EditorClassIdentifier: 
   maxHealth: 100
-  moveSpeed: 5
+  moveSpeed: 1
   meleeDamage: 1
   rangedDamage: 1
   meleeSpeed: 1
   rangedSpeed: 1
   dashSpeed: 12
-  dashDuration: 0.2
+  dashDuration: 0.6
   dashCooldown: 3
   defense: 0
