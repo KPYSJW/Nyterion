@@ -1,24 +1,23 @@
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.GamePlay.Characters.Player;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
     public class ItemUsageManager : MonoBehaviour
     {
-        public static ItemUsageManager Instance { get; private set; }
 
-        private void Awake()
+        private InventoryManager inventoryManager;
+        private PlayerHealth playerHealth;
+
+        [Inject]
+        public void Construct(
+            InventoryManager inventoryManager,
+            PlayerHealth playerHealth)
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            this.inventoryManager = inventoryManager;
+            this.playerHealth = playerHealth;
         }
 
         public void UseConsumableItem(ConsumableData consumable)
@@ -28,7 +27,7 @@ namespace Nytherion.Core.Managers
                 return;
             }
 
-            if (InventoryManager.Instance.RemoveItem(consumable, 1))
+            if (inventoryManager.RemoveItem(consumable, 1))
             {
                 ApplyItemEffect(consumable);
             }
@@ -61,7 +60,6 @@ namespace Nytherion.Core.Managers
 
         private void UseHealthPotion(ConsumableData potion)
         {
-            PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
             if (playerHealth != null)
             {
                 playerHealth.Heal(potion.healAmount);

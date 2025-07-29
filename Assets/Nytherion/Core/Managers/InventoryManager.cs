@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Data;
+using Nytherion.Core.Interfaces;
 
 namespace Nytherion.Core.Managers
 {
-    public class InventoryManager : MonoBehaviour
+    public class InventoryManager : MonoBehaviour, ISaveable
     {
-        public static InventoryManager Instance { get; private set; }
 
         [Header("Inventory Settings")]
         [SerializeField] private int maxSlotCount = 24;
@@ -23,15 +22,6 @@ namespace Nytherion.Core.Managers
 
         private void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-
             InventoryModel = new InventoryModel(maxSlotCount);
         }
 
@@ -46,14 +36,13 @@ namespace Nytherion.Core.Managers
             OnInventoryUpdated?.Invoke();
         }
 
-        // --- Save & Load ---
-        public List<ItemEntry> GetInventoryForSave()
+        public void PopulateSaveData(SaveData saveData)
         {
             var itemEntries = new List<ItemEntry>();
             if (InventoryModel == null)
             {
                 Debug.LogWarning("InventoryModel is null when trying to save inventory data");
-                return itemEntries;
+                return;
             }
             
             for (int i = 0; i < InventoryModel.MaxSlots; i++)
@@ -70,17 +59,18 @@ namespace Nytherion.Core.Managers
                     });
                 }
             }
-            return itemEntries;
+            saveData.inventoryData = itemEntries;
         }
 
-        public void LoadDataFromSave(List<ItemEntry> itemEntries)
+        public void LoadFromSaveData(SaveData saveData)
         {
+            var itemEntries = saveData.inventoryData;
             if (InventoryModel == null)
             {
                 Debug.LogWarning("InventoryModel is null when trying to load inventory data");
                 return;
             }
-            
+
             InventoryModel.Clear();
             if (itemEntries == null)
             {
@@ -101,6 +91,7 @@ namespace Nytherion.Core.Managers
                 }
                 InventoryModel.AddItemToSlot(itemToPlace, entry.count, entry.slotIndex);
             }
+            TriggerInventoryUpdate();
         }
 
         public bool AddItem(ItemData item, int count = 1)

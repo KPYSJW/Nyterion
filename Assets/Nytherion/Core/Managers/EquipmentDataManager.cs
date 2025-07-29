@@ -5,28 +5,18 @@ using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Data;
 using Nytherion.Core.Systems;
+using Nytherion.Core.Interfaces;
+
 
 namespace Nytherion.Core.Managers
 {
-    public class EquipmentDataManager : MonoBehaviour
+    public class EquipmentDataManager : MonoBehaviour, ISaveable
     {
-        public static EquipmentDataManager Instance { get; private set; }
 
         private Dictionary<EquipmentSlotType, EquipmentData> equippedItems = new Dictionary<EquipmentSlotType, EquipmentData>();
         public IReadOnlyDictionary<EquipmentSlotType, EquipmentData> EquippedItems => equippedItems;
         public event Action<EquipmentSlotType, EquipmentData, EquipmentData> OnEquipmentChanged;
 
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
 
         public void Initialize()
         {
@@ -53,7 +43,7 @@ namespace Nytherion.Core.Managers
             return equippedItems.TryGetValue(slotType, out var equipment) ? equipment : null;
         }
 
-        public List<EquippedItemEntry> GetEquipmentForSave()
+        private List<EquippedItemEntry> GetEquipmentForSave()
         {
             var entries = new List<EquippedItemEntry>();
             foreach (var kvp in equippedItems)
@@ -71,7 +61,7 @@ namespace Nytherion.Core.Managers
             return entries;
         }
 
-        public void LoadEquipmentFromSave(List<EquippedItemEntry> entries)
+        private void LoadEquipmentFromSave(List<EquippedItemEntry> entries)
         {
             equippedItems.Clear();
             if (entries == null) return;
@@ -98,6 +88,15 @@ namespace Nytherion.Core.Managers
             {
                 SetEquipment(slot, null);
             }
+        }
+
+        public void PopulateSaveData(SaveData saveData)
+        {
+            saveData.equippedItemsData = GetEquipmentForSave();
+        }
+        public void LoadFromSaveData(SaveData saveData)
+        {
+            LoadEquipmentFromSave(saveData.equippedItemsData);
         }
     }
 }

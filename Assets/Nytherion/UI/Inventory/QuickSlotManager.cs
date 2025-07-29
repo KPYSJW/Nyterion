@@ -1,6 +1,7 @@
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Data;
+using Nytherion.Core.Interfaces;
 using Nytherion.Core.Systems;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ using Zenject;
 
 namespace Nytherion.UI.Inventory
 {
-    public class QuickSlotManager : MonoBehaviour
+    public class QuickSlotManager : MonoBehaviour, ISaveable
     {
-        public static QuickSlotManager Instance { get; private set; }
+        
 
         private QuickSlotUI[] slots;
 
@@ -40,17 +41,8 @@ namespace Nytherion.UI.Inventory
         private void Awake()
         {
             EnsureSlotReferences();
-            if (Instance == null)
-            {
-                Instance = this;
-                quickSlotItems = new ItemData[slots.Length];
-                quickSlotItemCounts = new int[slots.Length];
-            }
-            else
-            {
-                Destroy(gameObject);
-                return;
-            }
+            quickSlotItems = new ItemData[slots.Length];
+            quickSlotItemCounts = new int[slots.Length];
 
             for (int i = 0; i < slots.Length && i < keys.Length; i++)
             {
@@ -105,7 +97,7 @@ namespace Nytherion.UI.Inventory
             return (quickSlotItems[index], quickSlotItemCounts[index]);
         }
 
-        public void GetStateForSave(SaveData saveData)
+        public void PopulateSaveData(SaveData saveData)
         {
             if (saveData == null) return;
 
@@ -174,7 +166,7 @@ namespace Nytherion.UI.Inventory
 
             return true;
         }
-        public void LoadStateFromSave(SaveData saveData)
+        public void LoadFromSaveData(SaveData saveData)
         {
             if (saveData == null) return;
 

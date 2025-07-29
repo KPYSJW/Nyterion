@@ -2,35 +2,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Nytherion.Core.Data;
+using Nytherion.Core.Interfaces;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
     public enum CurrencyType { Gold = 0, Token = 1 }
-    public class CurrencyManager : MonoBehaviour
+    public class CurrencyManager : MonoBehaviour, ISaveable
     {
-        public static CurrencyManager Instance { get; private set; }
         public event Action OnInitialized;
         private Dictionary<CurrencyType, int> currencies = new();
         public event Action<CurrencyType, int> onCurrencyChanged;
+        private SaveLoadManager saveLoadManager;
 
-        private void Awake()
+        [Inject]
+        public void Construct(SaveLoadManager saveLoadManager)
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                if (transform.parent != null) transform.SetParent(null);
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            this.saveLoadManager = saveLoadManager;
         }
+        
         public void Initialize()
         {
             OnInitialized?.Invoke();
         }
-        public void GetCurrenciesForSave(SaveData saveData)
+        public void PopulateSaveData(SaveData saveData)
         {
             saveData.currencyTypes.Clear();
             saveData.currencyAmounts.Clear();
@@ -40,7 +35,7 @@ namespace Nytherion.Core.Managers
                 saveData.currencyAmounts.Add(currencyPair.Value);
             }
         }
-        public void LoadDataFromSave(SaveData data)
+        public void LoadFromSaveData(SaveData data)
         {
             currencies = new Dictionary<CurrencyType, int>();
             if (data == null || data.currencyTypes.Count != data.currencyAmounts.Count)
@@ -72,6 +67,7 @@ namespace Nytherion.Core.Managers
             if (amount <= 0) return;
             currencies[type] = GetCurrency(type) + amount;
             onCurrencyChanged?.Invoke(type, currencies[type]);
+            saveLoadManager.SaveGame();
         }
         public bool SpendCurrency(CurrencyType type, int amount)
         {
@@ -80,6 +76,7 @@ namespace Nytherion.Core.Managers
             {
                 currencies[type] -= amount;
                 onCurrencyChanged?.Invoke(type, currencies[type]);
+                saveLoadManager.SaveGame();
                 return true;
             }
             return false;

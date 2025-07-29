@@ -1,6 +1,4 @@
-﻿// ScriptsArchive/RoomFirstDungeonGenerator.cs
-
-using Nytherion.Core.Managers; // [수정] DungeonManager 사용을 위해 추가
+﻿using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.UI.Controllers;
 using System;
@@ -10,6 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
+using Zenject;
 
 namespace Nytherion.GamePlay.Dungeon
 {
@@ -32,6 +31,14 @@ namespace Nytherion.GamePlay.Dungeon
         [SerializeField] private MinimapTileGenerator minimapGenerator;
 
         public static event Action<Room> OnDungeonGenerated;
+
+        private DungeonManager dungeonManager;
+
+        [Inject]
+        public void Construct(DungeonManager dungeonManager)
+        {
+            this.dungeonManager = dungeonManager;
+        }
 
         public class Room
         {
@@ -61,9 +68,9 @@ namespace Nytherion.GamePlay.Dungeon
                 Debug.LogError("DungeonData is not assigned!");
                 yield break;
             }
-            if (DungeonManager.Instance != null)
+            if (dungeonManager != null)
             {
-                DungeonManager.Instance.ClearDungeonData();
+                dungeonManager.ClearDungeonData();
             }
 
 
@@ -153,9 +160,9 @@ namespace Nytherion.GamePlay.Dungeon
 
             tilemapVisualizer.InstantiateObstacles(obstaclesToPlace);
 
-            if (DungeonManager.Instance != null)
+            if (dungeonManager != null)
             {
-                DungeonManager.Instance.SetAllRooms(new List<Room>(roomGrid.Values));
+                dungeonManager.SetAllRooms(new List<Room>(roomGrid.Values));
             }
 
             SpawnMonsters(roomFloorData, obstaclesToPlace); // [추가] 몬스터 스폰 메서드 호출
@@ -208,9 +215,9 @@ namespace Nytherion.GamePlay.Dungeon
                     Vector2Int spawnPosition = candidatePositions[randomIndex];
                     candidatePositions.RemoveAt(randomIndex); // 한 위치에 한 마리만 스폰하도록 스폰된 위치는 후보에서 제거
 
-                    if (DungeonManager.Instance != null)
+                    if (dungeonManager != null)
                     {
-                        DungeonManager.Instance.SpawnMonster(monsterToSpawn, (Vector3Int)spawnPosition);
+                        dungeonManager.SpawnMonster(monsterToSpawn, (Vector3Int)spawnPosition);
                     }
                 }
             }
@@ -509,9 +516,9 @@ namespace Nytherion.GamePlay.Dungeon
                         {
                             Vector3Int centerA = (Vector3Int)portalTilesA[portalTilesA.Count / 2];
                             Vector3Int centerB = (Vector3Int)portalTilesB[portalTilesB.Count / 2];
-                            if (DungeonManager.Instance != null)
+                            if (dungeonManager != null)
                             {
-                                DungeonManager.Instance.RegisterPortalPair(centerA, centerB);
+                                dungeonManager.RegisterPortalPair(centerA, centerB);
                             }
 
                             connections.Add(Tuple.Create(roomA, roomB));

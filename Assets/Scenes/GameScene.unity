@@ -1838,7 +1838,6 @@ GameObject:
   - component: {fileID: 252889445}
   - component: {fileID: 252889443}
   - component: {fileID: 252889447}
-  - component: {fileID: 252889446}
   m_Layer: 5
   m_Name: InventoryCanvas
   m_TagString: Untagged
@@ -1909,30 +1908,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 100
   m_TargetDisplay: 0
---- !u!114 &252889446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 252889441}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92ca4198d07bcad46949cb46689ac3d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controlledCanvasGroup: {fileID: 252889447}
-  OnPanelOpened:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPanelClosed:
-    m_PersistentCalls:
-      m_Calls: []
-  equipmentPanel: {fileID: 1283523266}
-  statsPanel: {fileID: 2093746632}
-  toggleInventoryAction: {fileID: -7465380718014958578, guid: 846a314fc817f66499dcadf2d56158a7, type: 3}
-  slotParent: {fileID: 2077232006}
-  closeButton: {fileID: 1188433269}
 --- !u!225 &252889447
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6136,7 +6111,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f13e4146fcbdd0540bfbdb9b11f03466, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionRange: 2
 --- !u!95 &657457746
 Animator:
   serializedVersion: 5
@@ -8267,10 +8241,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12d711c284467844b8a0f9f034b0e723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryUI: {fileID: 252889446}
   engravingGridUI: {fileID: 1594981877}
   engravingTooltip: {fileID: 1798887818}
   inventorySlotParent: {fileID: 2077232006}
+  inventoryCanvasGroup: {fileID: 252889447}
+  equipmentPanel: {fileID: 1283523266}
+  statsPanel: {fileID: 2093746632}
+  closeButton: {fileID: 1188433269}
   gachaUIPrefab: {fileID: 8419374414829116023, guid: 11f9d19a26b69664c853ec605580bf08, type: 3}
   gachaCanvasGroup: {fileID: 1274291717}
   gachaMainPanel: {fileID: 441272438}
@@ -15909,7 +15886,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1721288126}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.375
+  m_Size: 0.75
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -19006,6 +18983,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1965122791}
   m_CullTransparentMesh: 1
+--- !u!114 &1974062067 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -3426222900903197820, guid: 819391e7ef2372c4f987fd864182a082, type: 3}
+  m_PrefabInstance: {fileID: 348831343}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2365d712b7b83244a957f2df3698fa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1974485872
 GameObject:
   m_ObjectHideFlags: 0
@@ -19372,7 +19360,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.25
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -21046,7 +21034,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4726c4df8b507024da03d2139986d8af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sellSlotUIPrefab: {fileID: 1974062067}
+  inventoryUIPrefab: {fileID: 8904536052482001746, guid: 8d104a9ea69e2db4485f645416c87f95, type: 3}
   playerPrefab: {fileID: 5097942217742227509, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
+  playerManagerPrefab: {fileID: -2891475838477974602, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
   inputManagerPrefab: {fileID: 178222708281695647, guid: a165060af635a7843a8762e0718dbdf0, type: 3}
   audioManagerPrefab: {fileID: 4032553791337175984, guid: a4a4b80b1b905474e8ab3602db3af216, type: 3}
   currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
@@ -21061,12 +21052,16 @@ MonoBehaviour:
   stageManagerPrefab: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}
   eventManagerPrefab: {fileID: 6703879477207762094, guid: 42b39eabf4bd1a34db877fb5adf9535f, type: 3}
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
+  itemUsageManagerPrefab: {fileID: 7984585239593921606, guid: 4d55406ce8a55294dbc5ee1bb0d895af, type: 3}
+  quickSlotManagerPrefab: {fileID: 1073868026320572463, guid: d8e41a7f68c20bd46a54a5324c19797f, type: 3}
   gameUIInstaller: {fileID: 876260761}
-  gameSceneUIManager: {fileID: 4230186580368840452}
+  gameSceneUIManager: {fileID: 8384210597063002988, guid: 5f3cd501b1e31ff45b36c99fa51fb6a0, type: 3}
   enemySpawnerPrefab: {fileID: 3311273739936786302, guid: fab70de81019c214485cbcb07e8c6f08, type: 3}
   followCameraPrefab: {fileID: 1351506084518171216, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
   settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
   itemDatabase: {fileID: 11400000, guid: f9b21e1c662560447a97d34c43a8f038, type: 2}
+  inventoryPresenterPrefab: {fileID: 5460479264783606384, guid: 42fd5338b2e9454409cda7953ccbd408, type: 3}
+  shopUIPrefab: {fileID: 8585506431199400136, guid: 64f76ba40056f374d8a12a54fa013056, type: 3}
 --- !u!4 &2146021660
 Transform:
   m_ObjectHideFlags: 0
@@ -21146,36 +21141,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4230186580368840452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6116877229775394737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cd0199c5123aed4db4de1607168a27d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  engravingGridUI: {fileID: 1594981877}
---- !u!1 &6116877229775394737
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7310880498300083598}
-  - component: {fileID: 4230186580368840452}
-  m_Layer: 0
-  m_Name: GameSceneUIManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &7202145273731109110
 GameObject:
   m_ObjectHideFlags: 0
@@ -21193,21 +21158,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7310880498300083598
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6116877229775394737}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &9182511890406947015
 Transform:
   m_ObjectHideFlags: 0
@@ -21234,7 +21184,6 @@ SceneRoots:
   - {fileID: 1548097609}
   - {fileID: 1900859948}
   - {fileID: 657457748}
-  - {fileID: 7310880498300083598}
   - {fileID: 1721750529}
   - {fileID: 2146021660}
   - {fileID: 876260762}

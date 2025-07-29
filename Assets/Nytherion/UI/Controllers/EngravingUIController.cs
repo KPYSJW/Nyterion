@@ -7,9 +7,8 @@ namespace Nytherion.UI.Controllers
 {
     public class EngravingUIController : UIPanelBase
     {
-        public static EngravingUIController Instance { get; private set; }
-        private EventManager _eventManager;
-        private InputManager _inputManager;
+        private EventManager eventManager;
+        private InputManager inputManager;
 
         [Inject]
         public void Construct(
@@ -18,22 +17,22 @@ namespace Nytherion.UI.Controllers
             InputManager inputManager)
         {
             this.controlledCanvasGroup = controlledCanvasGroup;
-            _eventManager = eventManager;
-            _inputManager = inputManager;
+            this.eventManager = eventManager;
+            this.inputManager = inputManager;
         }
 
         private void OnEnable()
         {
-            if (_eventManager != null)
+            if (eventManager != null)
             {
-                _eventManager.OnInteraction += HandleInteraction;
+                eventManager.OnInteraction += HandleInteraction;
             }
         }
         private void OnDisable()
         {
-            if (_eventManager != null)
+            if (eventManager != null)
             {
-                _eventManager.OnInteraction -= HandleInteraction;
+                eventManager.OnInteraction -= HandleInteraction;
             }
         }
         private void HandleInteraction(InteractableType type)
@@ -46,22 +45,20 @@ namespace Nytherion.UI.Controllers
         protected override void Awake()
         {
             base.Awake();
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
         }
         protected override void OnPanelStateChanged(bool isOpen)
         {
-            if (_inputManager == null) return;
+            if (inputManager == null) return;
 
             if (isOpen)
             {
-                _inputManager.DisableMovement();
+                inputManager.DisableMovement();
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
             else
             {
-                _inputManager.EnableMovement();
+                inputManager.EnableMovement();
             }
         }
     }

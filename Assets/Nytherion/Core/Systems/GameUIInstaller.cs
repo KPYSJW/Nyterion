@@ -16,12 +16,17 @@ namespace Nytherion.Core.Systems
             this.Container = container;
         }
         [Header("Core UI Components")]
-        [SerializeField] private InventoryUI inventoryUI;
         [SerializeField] private EngravingGridUI engravingGridUI;
         [SerializeField] private EngravingTooltip engravingTooltip;
 
         [Header("Inventory UI References")]
         [SerializeField] private Transform inventorySlotParent;
+        
+        [SerializeField] private CanvasGroup inventoryCanvasGroup;
+        [SerializeField] private GameObject equipmentPanel;
+        [SerializeField] private GameObject statsPanel;
+        [SerializeField] private Button closeButton;
+
 
         [Header("Gacha UI References")]
         [SerializeField] private GachaUIController gachaUIPrefab;
@@ -78,16 +83,47 @@ namespace Nytherion.Core.Systems
 
         public override void InstallBindings()
         {
-            if (inventoryUI != null)
-                Container.Bind<InventoryUI>().FromInstance(inventoryUI).AsSingle();
+            if (inventoryCanvasGroup != null)
+            {
+                Container.Bind<CanvasGroup>()
+                    .WithId("InventoryCanvasGroup")
+                    .FromInstance(inventoryCanvasGroup)
+                    .AsCached();
+            }
+            
+            if (equipmentPanel != null)
+                Container.Bind<GameObject>()
+                    .WithId("EquipmentPanel")
+                    .FromInstance(equipmentPanel)
+                    .AsCached();
+
+            if (statsPanel != null)
+                Container.Bind<GameObject>()
+                    .WithId("StatsPanel")
+                    .FromInstance(statsPanel)
+                    .AsCached();
 
             if (inventorySlotParent != null)
             {
-                Container.Bind<Transform>().WithId("InventorySlotParent").FromInstance(inventorySlotParent);
+                if (shopPlayerInventoryParent == null)
+                {
+                    shopPlayerInventoryParent = inventorySlotParent;
+                }
+                
+                // Single binding for InventorySlotParent
+                Container.Bind<Transform>()
+                    .WithId("InventorySlotParent")
+                    .FromInstance(inventorySlotParent);
             }
 
+            if (closeButton != null)
+                Container.Bind<Button>()
+                    .WithId("CloseButton")
+                    .FromInstance(closeButton)
+                    .AsCached();
+
             if (engravingGridUI != null)
-                Container.Bind<EngravingGridUI>().FromInstance(engravingGridUI).AsSingle();
+                Container.Bind<EngravingGridUI>().FromInstance(engravingGridUI).AsSingle().NonLazy();
 
             if (engravingTooltip != null)
                 Container.Bind<EngravingTooltip>().FromInstance(engravingTooltip).AsSingle();
@@ -177,10 +213,6 @@ namespace Nytherion.Core.Systems
             if (shopPlayerInventoryParent != null)
                 Container.Bind<Transform>().WithId("ShopPlayerInventoryParent").FromInstance(shopPlayerInventoryParent);
 
-            if (shopUIPrefab != null)
-            {
-                Container.Bind<ShopUI>().FromComponentInNewPrefab(shopUIPrefab).AsSingle().NonLazy();
-            }
 
             if (menuCanvasGroup != null)
                 Container.Bind<CanvasGroup>().WithId("MenuCanvasGroup").FromInstance(menuCanvasGroup);

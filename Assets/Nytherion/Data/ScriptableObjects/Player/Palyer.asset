@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Palyer
   m_EditorClassIdentifier: 
   maxHealth: 100
-  moveSpeed: 1
+  moveSpeed: 6
   meleeDamage: 1
   rangedDamage: 1
   meleeSpeed: 1

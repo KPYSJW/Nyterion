@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using Zenject;
 
 public class MinimapTileGenerator : MonoBehaviour
 {
@@ -45,6 +46,13 @@ public class MinimapTileGenerator : MonoBehaviour
     private RectTransform playerIconInstance;
     private List<RectTransform> enemyIconInstances = new List<RectTransform>();
     private List<GameObject> activeEnemiesRef; // 활성 상태인 적 목록 참조
+
+    private DungeonManager dungeonManager;
+    [Inject]
+    public void Construct(DungeonManager dungeonManager)
+    {
+        this.dungeonManager = dungeonManager;
+    }
 
     public void InitializeMap(TilemapVisualizer visualizer, List<RoomFirstDungeonGenerator.PlacedObstacleData> obstacles, HashSet<Vector2Int> portals, Dictionary<RoomFirstDungeonGenerator.Room, HashSet<Vector2Int>> roomFloorData, List<RoomFirstDungeonGenerator.Room> allRooms)
     {
@@ -144,18 +152,18 @@ public class MinimapTileGenerator : MonoBehaviour
         }
 
         // 적 아이콘 풀을 위한 참조 설정
-        if (enemyIconPrefab != null && DungeonManager.Instance != null)
+        if (enemyIconPrefab != null && dungeonManager != null)
         {
-            activeEnemiesRef = DungeonManager.Instance.activeEnemies;
+            activeEnemiesRef = dungeonManager.activeEnemies;
         }
     }
 
     void LateUpdate()
     {
-        if (!isInitialized || DungeonManager.Instance == null) return;
+        if (!isInitialized || dungeonManager == null) return;
 
         // 플레이어 방 찾기 및 뷰 업데이트
-        RoomFirstDungeonGenerator.Room currentPlayerRoom = DungeonManager.Instance.FindCurrentPlayerRoom();
+        RoomFirstDungeonGenerator.Room currentPlayerRoom = dungeonManager.FindCurrentPlayerRoom();
         if (currentPlayerRoom != null && currentPlayerRoom != lastPlayerRoom)
         {
             lastPlayerRoom = currentPlayerRoom;
@@ -175,9 +183,9 @@ public class MinimapTileGenerator : MonoBehaviour
     private void UpdateDynamicIconsPosition()
     {
         // 플레이어 아이콘 위치 업데이트
-        if (playerIconInstance != null && DungeonManager.Instance.playerObject != null)
+        if (playerIconInstance != null && dungeonManager.playerObject != null)
         {
-            playerIconInstance.anchoredPosition = WorldToMinimapPosition(DungeonManager.Instance.playerObject.transform.position);
+            playerIconInstance.anchoredPosition = WorldToMinimapPosition(dungeonManager.playerObject.transform.position);
         }
 
         // 적 아이콘 위치 업데이트

@@ -1,6 +1,7 @@
 using UnityEngine;
 using Nytherion.Core.Enums;
 using Nytherion.UI.Controllers;
+using Zenject;
 
 namespace Nytherion.GamePlay.Characters.NPC
 {
@@ -9,21 +10,17 @@ namespace Nytherion.GamePlay.Characters.NPC
         public InteractableType Type => InteractableType.GachaNPC;
         public bool IsInteractable { get; set; } = true;
 
+        private GachaUIController gachaUIController;
+
+        [Inject]
+        public void Construct(GachaUIController gachaUIController)
+        {
+            this.gachaUIController = gachaUIController;
+        }
         public void Interact()
         {
             if (!IsInteractable) return;
-            if (GachaUIController.Instance != null)
-            {
-                GachaUIController.Instance.Toggle();
-            }
-        }
-
-        [Header("Gizmo Settings")]
-        [SerializeField] private float interactionRange = 2f;
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, interactionRange);
+            gachaUIController.Toggle();
         }
     }
 }

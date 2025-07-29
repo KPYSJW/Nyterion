@@ -10,9 +10,14 @@ namespace Nytherion.Core.Managers
     {
         [Inject] private InventoryPresenter inventoryPresenter;
         [Inject] private InventoryUI inventoryUI;
-        [SerializeField] private EngravingGridUI engravingGridUI;
+        private EngravingGridUI engravingGridUI;
 
         [Inject]
+        public void Construct(EngravingGridUI engravingGridUI)
+        {
+            this.engravingGridUI = engravingGridUI;
+        }
+
         public void Initialize()
         {
             InitializeSceneUI();

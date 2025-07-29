@@ -6,6 +6,7 @@ using Nytherion.Core.Managers;
 using System;
 using InventoryUtils = Nytherion.UI.Inventory.Utils;
 using UnityEngine.EventSystems;
+using Zenject;
 
 namespace Nytherion.UI.Inventory
 {
@@ -16,6 +17,21 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
         private Action<ItemData, int> onItemUsed;
         private IUseableItem useableItem;
+        private InventoryManager inventoryManager;
+        private QuickSlotManager quickSlotManager;
+        private ItemUsageManager itemUsageManager;
+
+        [Inject]
+        public void Construct(
+            InventoryManager inventoryManager,
+            QuickSlotManager quickSlotManager,
+            ItemUsageManager itemUsageManager)
+        {
+            this.inventoryManager = inventoryManager;
+            this.quickSlotManager = quickSlotManager;
+            this.itemUsageManager = itemUsageManager;
+        }
+
         public void Initialize(int index)
         {
             this.SlotIndex = index;
@@ -48,18 +64,18 @@ namespace Nytherion.UI.Inventory
                 {
                     var (itemToMove, countToMove) = inventorySourceSlot.GetItemInfo();
 
-                    if (InventoryManager.Instance.RemoveItemFromSlot(inventorySourceSlot.SlotIndex, countToMove))
+                    if (inventoryManager.RemoveItemFromSlot(inventorySourceSlot.SlotIndex, countToMove))
                     {
                         if (!IsEmpty)
                         {
-                            InventoryManager.Instance.AddItem(CurrentItem, CurrentCount);
+                            inventoryManager.AddItem(CurrentItem, CurrentCount);
                         }
 
                         SetItem(itemToMove, countToMove);
 
-                        if (QuickSlotManager.Instance != null)
+                        if (quickSlotManager != null)
                         {
-                            QuickSlotManager.Instance.UpdateSlotDataExternal(SlotIndex, itemToMove, countToMove);
+                            quickSlotManager.UpdateSlotDataExternal(SlotIndex, itemToMove, countToMove);
                         }
                         
                     }
@@ -110,9 +126,9 @@ namespace Nytherion.UI.Inventory
                 LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
             }
 
-            if (QuickSlotManager.Instance != null)
+            if (quickSlotManager != null)
             {
-                QuickSlotManager.Instance.UpdateSlotDataExternal(SlotIndex, item, count);
+                quickSlotManager.UpdateSlotDataExternal(SlotIndex, item, count);
             }
         }
 
@@ -120,9 +136,9 @@ namespace Nytherion.UI.Inventory
         {
             if (IsEmpty) return;
 
-            if (QuickSlotManager.Instance.ConsumeItemInQuickSlot(SlotIndex, 1))
+            if (quickSlotManager.ConsumeItemInQuickSlot(SlotIndex, 1))
             {
-                ItemUsageManager.Instance.UseConsumableItem(currentItem as ConsumableData);
+                itemUsageManager.UseConsumableItem(currentItem as ConsumableData);
                 OnItemUsed?.Invoke(currentItem, 1);
             }
             else

@@ -2,30 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Nytherion.Data.ScriptableObjects.Shop;
 using UnityEngine;
+using Nytherion.Core.Interfaces;
+using Nytherion.Core.Data;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class ShopManager : MonoBehaviour
+    public class ShopManager : MonoBehaviour, ISaveable
     {
-        public static ShopManager Instance { get; private set; }
-
         private Dictionary<string, List<ShopItemData>> runtimeShopInventories = new Dictionary<string, List<ShopItemData>>();
 
         [SerializeField] private List<ShopData> allShopDataAssets;
 
         public event System.Action OnStockChanged;
-
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
 
         public void Initialize()
         {
@@ -84,16 +73,16 @@ namespace Nytherion.Core.Managers
             }
         }
 
-        public List<Data.ShopStockState> GetShopStockForSave()
+        private List<ShopStockState> GetShopStockForSave()
         {
-            var stockStates = new List<Data.ShopStockState>();
+            var stockStates = new List<ShopStockState>();
             foreach (var shopInventoryPair in runtimeShopInventories)
             {
                 foreach (var item in shopInventoryPair.Value)
                 {
                     if (!item.isUnlimited)
                     {
-                        stockStates.Add(new Data.ShopStockState
+                        stockStates.Add(new ShopStockState
                         {
                             shopItemId = item.shopItemId,
                             remainingStock = item.stock
@@ -104,7 +93,7 @@ namespace Nytherion.Core.Managers
             return stockStates;
         }
 
-        public void LoadShopStockFromSave(List<Data.ShopStockState> savedStocks)
+        private void LoadShopStockFromSave(List<ShopStockState> savedStocks)
         {
             if (savedStocks == null) return;
 
@@ -123,6 +112,16 @@ namespace Nytherion.Core.Managers
                 }
             }
             OnStockChanged?.Invoke();
+        }
+
+        public void PopulateSaveData(SaveData saveData)
+        {
+            saveData.shopStockData = GetShopStockForSave();
+        }
+
+        public void LoadFromSaveData(SaveData saveData)
+        {
+            LoadShopStockFromSave(saveData.shopStockData);
         }
     }
 }

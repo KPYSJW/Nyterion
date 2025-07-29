@@ -1,5 +1,4 @@
 using Nytherion.Core.Enums;
-using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.Data.ScriptableObjects.Synergy;
@@ -7,19 +6,11 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Enemy;
 using System;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Nytherion.Core.Managers
 {
     public class EventManager : MonoBehaviour
     {
-        public static EventManager Instance { get; private set; }
-        private void Awake()
-        {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-        }
-
         public event Action<EnemyBase> OnEnemyDied;
         public event Action<StageData> OnBossClearedEvent;
         public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;

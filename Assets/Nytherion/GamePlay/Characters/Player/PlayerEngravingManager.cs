@@ -3,6 +3,7 @@ using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.GamePlay.Combat;
 using System.Collections.Generic;
 using UnityEngine;
+using Nytherion.Core.Managers;
 using Zenject;
 
 namespace Nytherion.GamePlay.Characters.Player
@@ -13,11 +14,12 @@ namespace Nytherion.GamePlay.Characters.Player
         [SerializeField] public List<WeaponEngravingSynergyData> synergyTable;
         public SynergyEvaluator synergyEvaluator;
 
-        private PlayerManager _playerManager;
+        private PlayerManager playerManager;
 
-        private void Awake()
+        [Inject]
+        public void Construct(PlayerManager playerManager)
         {
-            _playerManager = GetComponent<PlayerManager>();
+            this.playerManager = playerManager;
             synergyEvaluator = new SynergyEvaluator(synergyTable);
         }
 
@@ -29,7 +31,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 return;
             }
             equippedEngravings.Add(engraving);
-            WeaponEngravingSynergyData SynergyData = synergyEvaluator.EvaluateSynergy(_playerManager.PlayerCombat.currentWeapon.weaponData, GetCurrentEngravings());
+            WeaponEngravingSynergyData SynergyData = synergyEvaluator.EvaluateSynergy(playerManager.PlayerCombat.currentWeapon.weaponData, GetCurrentEngravings());
             if (SynergyData != null)
             {
                 Debug.Log($"✅ 시너지 발동: {SynergyData.weaponName} + {SynergyData.engravingName}");
@@ -52,7 +54,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void EngravingStat(EngravingData engraving)
         {
-            _playerManager.currentPlayerData.meleeDamage += 1;
+            playerManager.currentPlayerData.meleeDamage += 1;
         }
     }
 }

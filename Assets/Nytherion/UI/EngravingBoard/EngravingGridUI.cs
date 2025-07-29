@@ -10,15 +10,8 @@ namespace Nytherion.UI.EngravingBoard
 {
     public class EngravingGridUI : MonoBehaviour
     {
-        private EngravingManager _engravingManager;
-        private DiContainer _container;
-        
-        [Inject]
-        public void Construct(EngravingManager engravingManager, DiContainer container)
-        {
-            _engravingManager = engravingManager;
-            _container = container;
-        }
+        private EngravingManager engravingManager;
+        private DiContainer container;
 
         [Header("UI 구성요소")]
         [SerializeField] private GameObject slotCellPrefab;
@@ -49,17 +42,26 @@ namespace Nytherion.UI.EngravingBoard
 
         private GameObject[,] influenceGizmos;
 
+        [Inject]
+        public void Construct(EngravingManager engravingManager, DiContainer container)
+        {
+            this.engravingManager = engravingManager;
+            this.container = container;
+        }
 
         public IEnumerator Initialize()
         {
-            if (_engravingManager == null)
+            if (engravingManager == null)
             {
                 Debug.LogError("EngravingManager를 찾을 수 없어 UI를 초기화할 수 없습니다.");
                 yield break;
             }
 
-            this.rows = _engravingManager.GridRows;
-            this.columns = _engravingManager.GridColumns;
+            this.rows = engravingManager.GridRows;
+            this.columns = engravingManager.GridColumns;
+
+            engravingManager.OnEngravingStateChanged -= HandleEngravingStateChanged; // 중복 구독 방지
+            engravingManager.OnEngravingStateChanged += HandleEngravingStateChanged;
 
             InitializeGridCells();
             yield return RefreshAllUICoroutine();
@@ -67,24 +69,20 @@ namespace Nytherion.UI.EngravingBoard
 
         private void OnEnable()
         {
-            if (_engravingManager != null)
-            {
-                _engravingManager.OnEngravingStateChanged += HandleEngravingStateChanged;
-                HandleEngravingStateChanged();
-            }
+            StartCoroutine(Initialize());
         }
 
         private void OnDisable()
         {
-            if (_engravingManager != null)
+            if (engravingManager != null)
             {
-                _engravingManager.OnEngravingStateChanged -= HandleEngravingStateChanged;
+                engravingManager.OnEngravingStateChanged -= HandleEngravingStateChanged;
             }
         }
 
         private void HandleEngravingStateChanged()
         {
-            if (gameObject.activeInHierarchy && _engravingManager != null)
+            if (gameObject.activeInHierarchy && engravingManager != null)
             {
                 StartCoroutine(RefreshAllUICoroutine());
             }
@@ -96,17 +94,23 @@ namespace Nytherion.UI.EngravingBoard
 
             ClearAllVisuals();
 
-            foreach (EngravingBlock block in _engravingManager.GetStorageBlocks())
+            if (engravingManager.GetStorageBlocks() != null)
             {
-                CreateBlockInStorage(block);
+                foreach (EngravingBlock block in engravingManager.GetStorageBlocks())
+                {
+                    CreateBlockInStorage(block);
+                }
             }
 
-            foreach (KeyValuePair<string, Vector2Int> pair in _engravingManager.GetPlacedBlocks())
+            if (engravingManager.GetPlacedBlocks() != null)
             {
-                EngravingBlock block = _engravingManager.GetBlockByID(pair.Key);
-                if (block != null)
+                foreach (KeyValuePair<string, Vector2Int> pair in engravingManager.GetPlacedBlocks())
                 {
-                    CreateBlockOnGrid(block, pair.Value);
+                    EngravingBlock block = engravingManager.GetBlockByID(pair.Key);
+                    if (block != null)
+                    {
+                        CreateBlockOnGrid(block, pair.Value);
+                    }
                 }
             }
 
@@ -115,7 +119,12 @@ namespace Nytherion.UI.EngravingBoard
 
         private void InitializeGridCells()
         {
+            if (slotCells != null && slotCells.Length > 0) return;
+
             foreach (Transform child in gridRoot) Destroy(child.gameObject);
+
+            this.rows = engravingManager.GridRows;
+            this.columns = engravingManager.GridColumns;
 
             slotCells = new EngravingSlotCell[rows, columns];
             influenceGizmos = new GameObject[rows, columns];
@@ -126,6 +135,11 @@ namespace Nytherion.UI.EngravingBoard
                 {
                     GameObject cellGO = Instantiate(slotCellPrefab, gridRoot);
                     EngravingSlotCell cell = cellGO.GetComponent<EngravingSlotCell>();
+                    if (cell == null)
+                    {
+                        Debug.LogError($"EngravingSlotCell component not found on prefab for cell at ({x}, {y}).");
+                        continue;
+                    }
                     cell.Initialize(new Vector2Int(x, y));
                     cell.OnCellPointerEnter += OnCellPointerEnter;
                     cell.OnCellPointerExit += OnCellPointerExit;
@@ -158,7 +172,7 @@ namespace Nytherion.UI.EngravingBoard
             {
                 for (int x = 0; x < columns; x++)
                 {
-                    InfluenceType influence = _engravingManager.GetInfluenceAt(y, x);
+                    InfluenceType influence = engravingManager.GetInfluenceAt(y, x);
                     GameObject prefabToUse = null;
 
                     if (influence == InfluenceType.LevelUp)
@@ -180,7 +194,7 @@ namespace Nytherion.UI.EngravingBoard
         private void CreateBlockInStorage(EngravingBlock blockData)
         {
             GameObject slotObj = Instantiate(storageSlotPrefab, blockStorageParent);
-            GameObject blockObj = _container.InstantiatePrefab(draggableBlockPrefab, slotObj.transform);
+            GameObject blockObj = container.InstantiatePrefab(draggableBlockPrefab, slotObj.transform);
             EngravingBlockDraggable draggable = blockObj.GetComponent<EngravingBlockDraggable>();
 
             draggable.isPlaced = false;
@@ -190,7 +204,7 @@ namespace Nytherion.UI.EngravingBoard
 
         private void CreateBlockOnGrid(EngravingBlock blockData, Vector2Int position)
         {
-            GameObject blockObj = _container.InstantiatePrefab(draggableBlockPrefab, placedBlocksContainer);
+            GameObject blockObj = container.InstantiatePrefab(draggableBlockPrefab, placedBlocksContainer);
             EngravingBlockDraggable draggable = blockObj.GetComponent<EngravingBlockDraggable>();
 
             draggable.isPlaced = true;

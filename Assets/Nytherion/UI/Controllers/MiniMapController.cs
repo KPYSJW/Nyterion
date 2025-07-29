@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using Nytherion.GamePlay.Dungeon;
+using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
@@ -12,9 +13,13 @@ namespace Nytherion.UI.Controllers
 
         private RoomFirstDungeonGenerator.Room currentRoom;
 
-        [Tooltip(" ǥ ,  ׵ ϴ.")]
         public float padding = 2f;
-
+        private DungeonManager dungeonManager;
+        [Inject]
+        public void Construct(DungeonManager dungeonManager)
+        {
+            this.dungeonManager = dungeonManager;
+        }
         void Start()
         {
             minimapCamera = GetComponent<Camera>();
@@ -22,7 +27,7 @@ namespace Nytherion.UI.Controllers
 
         void LateUpdate()
         {
-            if (playerTransform == null || DungeonManager.Instance == null || DungeonManager.Instance.AllDungeonRooms == null) return;
+            if (playerTransform == null || dungeonManager == null || dungeonManager.AllDungeonRooms == null) return;
 
             RoomFirstDungeonGenerator.Room roomPlayerIsIn = FindCurrentPlayerRoom();
 
@@ -37,7 +42,7 @@ namespace Nytherion.UI.Controllers
 
         public RoomFirstDungeonGenerator.Room FindCurrentPlayerRoom()
         {
-            return DungeonManager.Instance.AllDungeonRooms
+            return dungeonManager.AllDungeonRooms
                 .OrderBy(room => Vector2.Distance(playerTransform.position, room.center))
                 .FirstOrDefault();
         }
