@@ -1,5 +1,7 @@
-using UnityEngine;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.GamePlay.Dungeon;
+using Unity.VisualScripting;
+using UnityEngine;
 using Zenject;
 
 namespace Nytherion.GamePlay
@@ -32,6 +34,7 @@ namespace Nytherion.GamePlay
         [Inject]
         public void Construct(PlayerController playerController)
         {
+            
             target = playerController.transform;
         }
 
@@ -74,16 +77,62 @@ namespace Nytherion.GamePlay
             }
         }
 
+        /* private void LateUpdate()
+         {
+             if (target == null) return;
+
+            Debug.Log(target.transform.position.x);
+             Debug.Log(target.transform.position.y);
+             Vector3 targetPosition = new Vector3(
+                 target.position.x + offset.x,
+                 target.position.y + offset.y,
+                 offset.z 
+             );
+
+             if (Mathf.Abs(target.position.z) > 0.01f)
+             {
+                 Vector3 playerPos = target.position;
+                 playerPos.z = 0f;
+                 target.position = playerPos;
+             }
+
+             if (useSmoothMovement)
+             {
+                 transform.position = Vector3.SmoothDamp(
+                     transform.position,
+                     targetPosition,
+                     ref velocity,
+                     1f / smoothSpeed
+                 );
+             }
+             else
+             {
+                 transform.position = new Vector3(
+                     Mathf.Clamp(targetPosition.x, minBounds.x, maxBounds.x),
+                     Mathf.Clamp(targetPosition.y, minBounds.y, maxBounds.y),
+                     offset.z
+                 );
+             }
+
+             Vector3 clampedPosition = transform.position;
+             clampedPosition.x = Mathf.Clamp(clampedPosition.x, minBounds.x, maxBounds.x);
+             clampedPosition.y = Mathf.Clamp(clampedPosition.y, minBounds.y, maxBounds.y);
+             clampedPosition.z = offset.z; 
+             transform.position = clampedPosition;
+         }*/
+
         private void LateUpdate()
         {
             if (target == null) return;
 
+         
             Vector3 targetPosition = new Vector3(
                 target.position.x + offset.x,
                 target.position.y + offset.y,
-                offset.z 
+                offset.z
             );
 
+     
             if (Mathf.Abs(target.position.z) > 0.01f)
             {
                 Vector3 playerPos = target.position;
@@ -91,29 +140,13 @@ namespace Nytherion.GamePlay
                 target.position = playerPos;
             }
 
-            if (useSmoothMovement)
-            {
-                transform.position = Vector3.SmoothDamp(
-                    transform.position,
-                    targetPosition,
-                    ref velocity,
-                    1f / smoothSpeed
-                );
-            }
-            else
-            {
-                transform.position = new Vector3(
-                    Mathf.Clamp(targetPosition.x, minBounds.x, maxBounds.x),
-                    Mathf.Clamp(targetPosition.y, minBounds.y, maxBounds.y),
-                    offset.z
-                );
-            }
-
-            Vector3 clampedPosition = transform.position;
-            clampedPosition.x = Mathf.Clamp(clampedPosition.x, minBounds.x, maxBounds.x);
-            clampedPosition.y = Mathf.Clamp(clampedPosition.y, minBounds.y, maxBounds.y);
-            clampedPosition.z = offset.z; 
-            transform.position = clampedPosition;
+           
+            transform.position = Vector3.SmoothDamp(
+                transform.position,
+                targetPosition,
+                ref velocity,
+                1f / smoothSpeed
+            );
         }
 
         public void SetBounds(Vector2 min, Vector2 max)

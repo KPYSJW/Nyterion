@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Zenject;
 
 public class TilemapVisualizer : MonoBehaviour
 {
-    [Header("Tilemap Settings")]
-    [SerializeField] public Tilemap floorTilemap;
-    [SerializeField] public Tilemap wallTilemap;
-    [SerializeField] public Tilemap portalTilemap;
+
+    public Tilemap floorTilemap;
+    public Tilemap wallTilemap;
+    public Tilemap portalTilemap;
 
     [Header("Object Holders")]
     [Tooltip(" ֹ Ʈ ϴ.")]
@@ -29,6 +30,12 @@ public class TilemapVisualizer : MonoBehaviour
     [SerializeField] private TileBase shopRoomTile;
     [SerializeField] private TileBase itemRoomTile;
 
+    public void InitializeTilemaps(Tilemap floor, Tilemap wall, Tilemap portal)
+    {
+        this.floorTilemap = floor;
+        this.wallTilemap = wall;
+        this.portalTilemap = portal;
+    }
 
     public void InstantiateObstacles(List<RoomFirstDungeonGenerator.PlacedObstacleData> obstaclesToPlace)
     {

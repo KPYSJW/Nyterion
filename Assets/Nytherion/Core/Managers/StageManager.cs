@@ -26,7 +26,7 @@ namespace Nytherion.Core.Managers
             if (_eventManager != null)
             {
 
-                _eventManager.RegisterEnemyDeathListener(OnEnemyDied);
+                //_eventManager.RegisterEnemyDeathListener(OnEnemyDied);
             }
             
             LoadStage(currentStageIndex);
@@ -64,7 +64,7 @@ namespace Nytherion.Core.Managers
             if (_eventManager != null)
             {
 
-                _eventManager.UnregisterEnemyDeathListener(OnEnemyDied);
+                //_eventManager.UnregisterEnemyDeathListener(OnEnemyDied);
             }
         }
         

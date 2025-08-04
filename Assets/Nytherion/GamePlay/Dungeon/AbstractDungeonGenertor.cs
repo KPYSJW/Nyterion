@@ -12,6 +12,7 @@ namespace Nytherion.GamePlay.Dungeon
 
         public void GenerateDungeon()
         {
+      
             tilemapVisualizer.Clear();
             StartCoroutine(RunProceduralGeneration());
         }

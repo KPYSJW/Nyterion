@@ -47,6 +47,10 @@ public class DungeonData : ScriptableObject
     [Tooltip("이 던전에서 스폰될 몬스터 종류")] // [2]
     public List<EnemyData> dungeonMonsters; // [2]
 
+    [Header("Wall Settings")]
+    [Tooltip("벽의 두께를 설정합니다. (기본값: 1)")]
+    [Range(1, 5)]
+    public int wallThickness = 1;
 }
 
 
@@ -58,3 +62,4 @@ public class ObstacleData
     [Tooltip("Obstacle size (in grid units).")]
     public Vector2Int size = Vector2Int.one;
 }
+

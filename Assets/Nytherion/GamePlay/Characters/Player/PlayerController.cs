@@ -40,6 +40,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void HandleMovement()
         {
+          
             if (isDashing) return;
             Vector2 moveInput = inputManager.MoveInput;
             float currentSpeed = playerManager.currentPlayerData.moveSpeed;

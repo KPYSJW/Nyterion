@@ -14,57 +14,42 @@ namespace Nytherion.GamePlay.Dungeon
             new Vector2Int( 1,  1), new Vector2Int( 1, -1),
             new Vector2Int(-1, -1), new Vector2Int(-1,  1)
         };
+            public static List<Vector2Int> eightDirectionsList = new List<Vector2Int> {
+            Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left,
+            new Vector2Int( 1,  1), new Vector2Int( 1, -1),
+            new Vector2Int(-1, -1), new Vector2Int(-1,  1)
+        };
         }
 
-
-        public static HashSet<Vector2Int> FindWalls(HashSet<Vector2Int> floorPositions)
+        // 두꺼운 직각 벽을 만드는 최종 함수!
+        public static HashSet<Vector2Int> FindWalls(HashSet<Vector2Int> floorPositions, int thickness)
         {
-            var wallPositions = new HashSet<Vector2Int>();
-            var basicWallPositions = FindWallsInDirections(floorPositions, Direction2D.cardinalDirectionsList);
-            var cornerWallPositions = FindCornerWalls(floorPositions);
+            var finalWallPositions = new HashSet<Vector2Int>();
+            var currentShape = new HashSet<Vector2Int>(floorPositions);
 
-            wallPositions.UnionWith(basicWallPositions);
-            wallPositions.UnionWith(cornerWallPositions);
-
-            return wallPositions;
-        }
-
-        private static HashSet<Vector2Int> FindCornerWalls(HashSet<Vector2Int> floorPositions)
-        {
-            var cornerWallPositions = new HashSet<Vector2Int>();
-            foreach (var position in floorPositions)
+            for (int i = 0; i < thickness; i++)
             {
-                foreach (var direction in Direction2D.diagonalDirectionsList)
+                var newWallLayer = new HashSet<Vector2Int>();
+                foreach (var position in currentShape)
                 {
-                    var cornerPosition = position + direction;
-                    if (floorPositions.Contains(cornerPosition)) continue;
-
-                    var neighbourCheck1 = position + new Vector2Int(direction.x, 0);
-                    var neighbourCheck2 = position + new Vector2Int(0, direction.y);
-                    if (!floorPositions.Contains(neighbourCheck1) && !floorPositions.Contains(neighbourCheck2))
+                    // 8방향을 모두 탐색해서 빈틈없이 벽을 만듦
+                    foreach (var direction in Direction2D.eightDirectionsList)
                     {
-                        cornerWallPositions.Add(cornerPosition);
+                        var neighbourPosition = position + direction;
+                        if (!currentShape.Contains(neighbourPosition))
+                        {
+                            newWallLayer.Add(neighbourPosition);
+                        }
                     }
                 }
+                finalWallPositions.UnionWith(newWallLayer);
+                currentShape.UnionWith(newWallLayer);
             }
-            return cornerWallPositions;
-        }
-
-        private static HashSet<Vector2Int> FindWallsInDirections(HashSet<Vector2Int> floorPositions, List<Vector2Int> directionsList)
-        {
-            var wallPositions = new HashSet<Vector2Int>();
-            foreach (var position in floorPositions)
-            {
-                foreach (var direction in directionsList)
-                {
-                    var neighbourPosition = position + direction;
-                    if (!floorPositions.Contains(neighbourPosition))
-                    {
-                        wallPositions.Add(neighbourPosition);
-                    }
-                }
-            }
-            return wallPositions;
+            return finalWallPositions;
         }
     }
 }
+
+
+     
+    

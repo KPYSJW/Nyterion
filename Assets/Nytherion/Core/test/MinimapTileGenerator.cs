@@ -1,9 +1,12 @@
-﻿using Nytherion.GamePlay.Dungeon;
+﻿// ScriptsArchive/MinimapTileGenerator.cs
+
+using Nytherion.GamePlay.Dungeon;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using Zenject; // Zenject 네임스페이스 추가
 
 public class MinimapTileGenerator : MonoBehaviour
 {
@@ -11,7 +14,6 @@ public class MinimapTileGenerator : MonoBehaviour
     public RawImage mapImage;
 
     [Header("아이콘 스타일")]
-    [Tooltip("기본 아이콘의 크기 (픽셀 단위)")]
     [Range(1, 10)]
     public int iconPixelRadius = 2;
     public Color floorColor = new Color(0.15f, 0.15f, 0.15f);
@@ -21,16 +23,12 @@ public class MinimapTileGenerator : MonoBehaviour
     public Color backgroundColor = Color.clear;
 
     [Header("뷰 설정")]
-    [Tooltip("미니맵에 보여줄 영역의 세로 크기 (타일 개수 단위). 이 값을 조절해 줌 레벨을 바꿀 수 있어.")]
     public float fixedViewHeightInTiles = 30f;
 
     [Header("동적 아이콘 프리팹")]
-    [Tooltip("플레이어 아이콘으로 사용할 UI 프리팹 (Image 컴포넌트 필요)")]
     public RectTransform playerIconPrefab;
-    [Tooltip("적 아이콘으로 사용할 UI 프리팹 (Image 컴포넌트 필요)")]
     public RectTransform enemyIconPrefab;
 
-    // --- 내부 변수 ---
     private Texture2D minimapTexture;
     private Vector2Int mapOffset;
     private int mapWidth;
@@ -40,11 +38,18 @@ public class MinimapTileGenerator : MonoBehaviour
     private Dictionary<RoomFirstDungeonGenerator.Room, HashSet<Vector2Int>> roomFloorData;
     private List<RoomFirstDungeonGenerator.Room> AllDungeonRooms = new List<RoomFirstDungeonGenerator.Room>();
 
-
-    // 동적 아이콘 인스턴스 관리
     private RectTransform playerIconInstance;
     private List<RectTransform> enemyIconInstances = new List<RectTransform>();
-    private List<GameObject> activeEnemiesRef; // 활성 상태인 적 목록 참조
+    private List<GameObject> activeEnemiesRef;
+
+    // --- 의존성 주입 ---
+    private DungeonManager _dungeonManager;
+
+    [Inject]
+    public void Construct(DungeonManager dungeonManager)
+    {
+        _dungeonManager = dungeonManager;
+    }
 
     public void InitializeMap(TilemapVisualizer visualizer, List<RoomFirstDungeonGenerator.PlacedObstacleData> obstacles, HashSet<Vector2Int> portals, Dictionary<RoomFirstDungeonGenerator.Room, HashSet<Vector2Int>> roomFloorData, List<RoomFirstDungeonGenerator.Room> allRooms)
     {
@@ -63,7 +68,6 @@ public class MinimapTileGenerator : MonoBehaviour
         floorTilemap.CompressBounds();
         wallTilemap.CompressBounds();
 
-        // 1. 실제 콘텐츠(바닥, 벽)의 경계를 먼저 계산
         BoundsInt contentBounds = floorTilemap.cellBounds;
         contentBounds.xMin = Mathf.Min(contentBounds.xMin, wallTilemap.cellBounds.xMin);
         contentBounds.yMin = Mathf.Min(contentBounds.yMin, wallTilemap.cellBounds.yMin);
@@ -72,15 +76,13 @@ public class MinimapTileGenerator : MonoBehaviour
 
         if (contentBounds.size.x == 0 || contentBounds.size.y == 0) return;
 
-        // 2. [핵심 수정] 계산된 경계에 여백(Padding)을 추가해서 최종 텍스처 크기를 결정
-        int padding = 30; // 외곽에 추가할 타일 여백 크기. 이 값을 조절하면 돼.
+        int padding = 30;
         BoundsInt textureBounds = contentBounds;
         textureBounds.xMin -= padding;
         textureBounds.yMin -= padding;
         textureBounds.xMax += padding;
         textureBounds.yMax += padding;
 
-        // 3. 확장된 경계를 기반으로 미니맵 텍스처 생성
         mapOffset = (Vector2Int)textureBounds.min;
         mapWidth = textureBounds.size.x;
         mapHeight = textureBounds.size.y;
@@ -89,7 +91,6 @@ public class MinimapTileGenerator : MonoBehaviour
         minimapTexture.filterMode = FilterMode.Point;
         Color[] baseLayerPixels = new Color[mapWidth * mapHeight];
 
-        // 4. 확장된 텍스처에 타일 정보 그리기
         for (int y = 0; y < mapHeight; y++)
         {
             for (int x = 0; x < mapWidth; x++)
@@ -106,8 +107,6 @@ public class MinimapTileGenerator : MonoBehaviour
             }
         }
 
-
-        // 정적 아이콘(장애물, 포탈)은 텍스처에 한 번만 그림
         foreach (var obstacleData in obstacles)
         {
             Vector2Int gridPos = Vector2Int.RoundToInt(obstacleData.worldPosition);
@@ -123,39 +122,33 @@ public class MinimapTileGenerator : MonoBehaviour
         minimapTexture.Apply();
         mapImage.texture = minimapTexture;
 
-        // 동적 아이콘 생성
         InitializeDynamicIcons();
-
         isInitialized = true;
     }
 
     private void InitializeDynamicIcons()
     {
-        // 기존 아이콘들 제거
         if (playerIconInstance != null) Destroy(playerIconInstance.gameObject);
         foreach (var icon in enemyIconInstances) if (icon != null) Destroy(icon.gameObject);
         enemyIconInstances.Clear();
 
-        // 플레이어 아이콘 생성
         if (playerIconPrefab != null && mapImage != null)
         {
             playerIconInstance = Instantiate(playerIconPrefab, mapImage.transform);
             playerIconInstance.gameObject.SetActive(true);
         }
 
-        // 적 아이콘 풀을 위한 참조 설정
-        if (enemyIconPrefab != null && DungeonManager.Instance != null)
+        if (enemyIconPrefab != null && _dungeonManager != null)
         {
-            activeEnemiesRef = DungeonManager.Instance.activeEnemies;
+            activeEnemiesRef = _dungeonManager.activeEnemies;
         }
     }
 
     void LateUpdate()
     {
-        if (!isInitialized || DungeonManager.Instance == null) return;
+        if (!isInitialized || _dungeonManager == null) return;
 
-        // 플레이어 방 찾기 및 뷰 업데이트
-        RoomFirstDungeonGenerator.Room currentPlayerRoom = DungeonManager.Instance.FindCurrentPlayerRoom();
+        RoomFirstDungeonGenerator.Room currentPlayerRoom = _dungeonManager.FindCurrentPlayerRoom();
         if (currentPlayerRoom != null && currentPlayerRoom != lastPlayerRoom)
         {
             lastPlayerRoom = currentPlayerRoom;
@@ -163,28 +156,23 @@ public class MinimapTileGenerator : MonoBehaviour
         }
         else if (lastPlayerRoom == null && AllDungeonRooms != null && AllDungeonRooms.Count > 0)
         {
-            // 플레이어가 아직 특정 방에 속하지 않을 경우 (예: 로딩 직후) 첫 번째 방을 기준으로 뷰 설정
             lastPlayerRoom = AllDungeonRooms[0];
             UpdateMinimapView(lastPlayerRoom);
         }
 
-        // 동적 아이콘 위치 업데이트
         UpdateDynamicIconsPosition();
     }
 
     private void UpdateDynamicIconsPosition()
     {
-        // 플레이어 아이콘 위치 업데이트
-        if (playerIconInstance != null && DungeonManager.Instance.playerObject != null)
+        if (playerIconInstance != null && _dungeonManager.playerObject != null)
         {
-            playerIconInstance.anchoredPosition = WorldToMinimapPosition(DungeonManager.Instance.playerObject.transform.position);
+            playerIconInstance.anchoredPosition = WorldToMinimapPosition(_dungeonManager.playerObject.transform.position);
         }
-
-        // 적 아이콘 위치 업데이트
         UpdateEnemyIcons();
     }
 
-    // 월드 좌표를 미니맵 UI 좌표로 변환하는 헬퍼 함수
+    // ... (WorldToMinimapPosition, UpdateEnemyIcons, UpdateMinimapView, DrawStaticIcon 메서드는 변경 없음) ...
     private Vector2 WorldToMinimapPosition(Vector3 worldPosition)
     {
         if (mapWidth == 0 || mapHeight == 0) return Vector2.zero;
@@ -274,8 +262,6 @@ public class MinimapTileGenerator : MonoBehaviour
         mapImage.uvRect = new Rect(startX, startY, uvWidth, uvHeight);
     }
 
-
-    // 정적 아이콘(장애물, 포탈)을 그리는 함수
     private void DrawStaticIcon(Color[] pixelBuffer, int centerX, int centerY, Color color, int? optionalRadius = null)
     {
         int radius = optionalRadius ?? iconPixelRadius;

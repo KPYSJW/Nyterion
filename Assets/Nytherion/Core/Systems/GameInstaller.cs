@@ -1,12 +1,14 @@
-using UnityEngine;
-using Zenject;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.GamePlay.Characters.Player;
-using Nytherion.UI.Presenters;
-using Nytherion.GamePlay.Systems;
 using Nytherion.GamePlay;
+using Nytherion.GamePlay.Characters.Player;
+using Nytherion.GamePlay.Dungeon;
+using Nytherion.GamePlay.Systems;
 using Nytherion.UI.Controllers;
+using Nytherion.UI.Presenters;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+using Zenject;
 
 namespace Nytherion.Core.Systems
 {
@@ -28,7 +30,7 @@ namespace Nytherion.Core.Systems
         [SerializeField] private StageManager stageManagerPrefab;
         [SerializeField] private EventManager eventManagerPrefab;
         [SerializeField] private MenuManager menuManagerPrefab;
-
+        [SerializeField] private DungeonManager dungeonManagerPrefab;
         [Header("UI System")]
         [SerializeField] private GameUIInstaller gameUIInstaller;
         [SerializeField] private GameSceneUIManager gameSceneUIManager;
@@ -40,6 +42,11 @@ namespace Nytherion.Core.Systems
 
         [Header("Databases")]
         [SerializeField] private ItemDatabaseSO itemDatabase;
+
+        [Header("Scene Tilemaps")]
+        [SerializeField] private Tilemap floorTilemap;
+        [SerializeField] private Tilemap wallTilemap;
+        [SerializeField] private Tilemap portalTilemap;
 
         public override void InstallBindings()
         {
@@ -56,6 +63,7 @@ namespace Nytherion.Core.Systems
             Container.Bind<InteractionManager>().FromComponentInNewPrefab(interactionManagerPrefab).AsSingle().NonLazy();
             Container.Bind<StageManager>().FromComponentInNewPrefab(stageManagerPrefab).AsSingle().NonLazy();
             Container.Bind<EventManager>().FromComponentInNewPrefab(eventManagerPrefab).AsSingle().NonLazy();
+            Container.Bind<DungeonManager>().FromComponentInNewPrefab(dungeonManagerPrefab).AsSingle().NonLazy();
 
             Container.Bind<ItemDatabaseSO>().FromInstance(itemDatabase).AsSingle();
             ItemDatabase.Initialize(itemDatabase);
@@ -69,7 +77,7 @@ namespace Nytherion.Core.Systems
             Container.Bind<InventoryPresenter>().FromComponentInNewPrefab(inventoryManagerPrefab).AsSingle().NonLazy();
 
             if (enemySpawnerPrefab != null)
-            {
+           {
                 Container.Bind<EnemySpawner>().FromComponentInNewPrefab(enemySpawnerPrefab).AsSingle().NonLazy();
             }
 
@@ -98,6 +106,10 @@ namespace Nytherion.Core.Systems
             {
                 Container.Bind<GameSceneUIManager>().FromInstance(gameSceneUIManager).AsSingle();
             }
+
+            Container.Bind<Tilemap>().WithId("FloorTilemap").FromInstance(floorTilemap).AsCached();
+            Container.Bind<Tilemap>().WithId("WallTilemap").FromInstance(wallTilemap).AsCached();
+            Container.Bind<Tilemap>().WithId("PortalTilemap").FromInstance(portalTilemap).AsCached();
         }
 
         public override void Start()

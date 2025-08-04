@@ -76,6 +76,9 @@ namespace Nytherion.Core.Systems
         [SerializeField] private EngravingUIController engravingUIControllerPrefab;
         [SerializeField] private CanvasGroup engravingCanvasGroup;
 
+
+        [Header("Dungeon UI")]
+        [SerializeField] private GameObject worldMapUI;
         public override void InstallBindings()
         {
             if (inventoryUI != null)
@@ -212,6 +215,10 @@ namespace Nytherion.Core.Systems
             if (engravingUIControllerPrefab != null)
             {
                 Container.Bind<EngravingUIController>().FromComponentInNewPrefab(engravingUIControllerPrefab).AsSingle().NonLazy();
+            }
+            if (worldMapUI != null)
+            {
+                Container.Bind<GameObject>().WithId("WorldMapUI").FromInstance(worldMapUI).AsCached();
             }
         }
     }

@@ -1,18 +1,27 @@
+// ScriptsArchive/PortalTileController.cs
+
 using Nytherion.GamePlay.Dungeon;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Zenject; // Zenject 네임스페이스 추가
 
 [RequireComponent(typeof(Tilemap), typeof(TilemapCollider2D))]
 public class PortalTileController : MonoBehaviour
 {
-    
     [Header("Tilemap References")]
-    [Tooltip(" ã ϴ.")]
-    [SerializeField] private Tilemap floorTilemap; 
-    
+    [SerializeField] private Tilemap floorTilemap;
 
     private Tilemap portalTilemap;
     private Collider2D tilemapCollider;
+
+    // --- 의존성 주입 ---
+    private DungeonManager _dungeonManager;
+
+    [Inject]
+    public void Construct(DungeonManager dungeonManager)
+    {
+        _dungeonManager = dungeonManager;
+    }
 
     private void Awake()
     {
@@ -21,7 +30,7 @@ public class PortalTileController : MonoBehaviour
 
         if (floorTilemap == null)
         {
-            Debug.LogError("FloorTilemap PortalTileController Ҵ ʾҽϴ!", this.gameObject);
+            Debug.LogError("FloorTilemap이 PortalTileController에 할당되지 않았습니다!", this.gameObject);
         }
     }
 
@@ -31,6 +40,9 @@ public class PortalTileController : MonoBehaviour
         {
             return;
         }
+
+        // DungeonManager가 없으면 아무것도 하지 않음
+        if (_dungeonManager == null) return;
 
         Vector3 contactPoint = tilemapCollider.ClosestPoint(other.transform.position);
         Vector3Int initialContactCell = portalTilemap.WorldToCell(contactPoint);
@@ -77,7 +89,8 @@ public class PortalTileController : MonoBehaviour
 
         foreach (var pos in positionsToCheck)
         {
-            if (DungeonManager.Instance.TryGetDestination(pos, out Vector3Int destinationPos))
+            // DungeonManager.Instance 대신 주입받은 _dungeonManager 사용
+            if (_dungeonManager.TryGetDestination(pos, out Vector3Int destinationPos))
             {
                 TeleportPlayer(player, destinationPos);
                 return;
@@ -85,10 +98,8 @@ public class PortalTileController : MonoBehaviour
         }
     }
 
-
     private void TeleportPlayer(Collider2D player, Vector3Int destinationPortalCell)
     {
-        
         if (TryFindSpawnPoint(destinationPortalCell, out Vector3Int spawnCell))
         {
             Vector3 targetWorldPos = floorTilemap.GetCellCenterWorld(spawnCell);
@@ -101,29 +112,23 @@ public class PortalTileController : MonoBehaviour
         }
     }
 
-
+    // ... (TryFindSpawnPoint 메서드는 변경 없음) ...
     private bool TryFindSpawnPoint(Vector3Int portalCenterCell, out Vector3Int spawnPoint)
     {
-        
-        
         bool isHorizontal = portalTilemap.HasTile(portalCenterCell + Vector3Int.left) || portalTilemap.HasTile(portalCenterCell + Vector3Int.right);
-
         Vector3Int checkDir1, checkDir2;
 
         if (isHorizontal)
         {
-            
             checkDir1 = Vector3Int.up;
             checkDir2 = Vector3Int.down;
         }
         else
         {
-            
             checkDir1 = Vector3Int.left;
             checkDir2 = Vector3Int.right;
         }
 
-        
         if (floorTilemap.HasTile(portalCenterCell + checkDir1 * 2))
         {
             spawnPoint = portalCenterCell + checkDir1 * 2;
@@ -135,7 +140,6 @@ public class PortalTileController : MonoBehaviour
             return true;
         }
 
-        
         if (floorTilemap.HasTile(portalCenterCell + checkDir1))
         {
             spawnPoint = portalCenterCell + checkDir1;
@@ -147,7 +151,6 @@ public class PortalTileController : MonoBehaviour
             return true;
         }
 
-        
         spawnPoint = Vector3Int.zero;
         return false;
     }

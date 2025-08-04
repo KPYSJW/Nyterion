@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2666481534861343662
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 270229399695615807}
+  - component: {fileID: -8684038073368422215}
+  - component: {fileID: -2933753644565975262}
+  - component: {fileID: 1573712204440672803}
+  m_Layer: 0
+  m_Name: DungeonManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &270229399695615807
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2666481534861343662}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-8684038073368422215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2666481534861343662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69a976ddf71a2a04698c1ee69f97ccc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeEnemies:
+  - {fileID: 0}
+  roomFirstDungeonGenerator: {fileID: -2933753644565975262}
+  worldMapUI: {fileID: 0}
+  portalTilemap: {fileID: 0}
+  tilemapVisualizer: {fileID: 1573712204440672803}
+  playerObject: {fileID: 0}
+--- !u!114 &-2933753644565975262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2666481534861343662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baa513e4b67cd0947af9de02b2932997, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemapVisualizer: {fileID: 0}
+  startPosition: {x: 0, y: 0}
+  dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
+  worldmapController: {fileID: 0}
+  minimapGenerator: {fileID: 0}
+--- !u!114 &1573712204440672803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2666481534861343662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d404cee1a441114a83756ab09389e28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floorTilemap: {fileID: 0}
+  wallTilemap: {fileID: 0}
+  portalTilemap: {fileID: 0}
+  obstacleHolder: {fileID: 0}
+  floorTile: {fileID: 11400000, guid: 9e5382f372f0ce4488b5ef0e96eb74e7, type: 2}
+  portalTile: {fileID: 11400000, guid: 7548f31a59a6cae4497801b352b88f66, type: 2}
+  wallRuleTile: {fileID: 11400000, guid: e715ec13e27404e4cbfb845dc945425f, type: 2}
+  startRoomTile: {fileID: 11400000, guid: a7c853772eaab2b409cbf83f72b080a4, type: 2}
+  shopRoomTile: {fileID: 11400000, guid: 1f0045fdb32520747aa566f03edfa5d4, type: 2}
+  itemRoomTile: {fileID: 11400000, guid: 66c234c6c071dc64790e31ceaf40a979, type: 2}

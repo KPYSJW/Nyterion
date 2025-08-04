@@ -261,6 +261,71 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &488166345
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 488166347}
+  - component: {fileID: 488166346}
+  m_Layer: 0
+  m_Name: GameInstaller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &488166346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488166345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4726c4df8b507024da03d2139986d8af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 5097942217742227509, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
+  inputManagerPrefab: {fileID: 178222708281695647, guid: a165060af635a7843a8762e0718dbdf0, type: 3}
+  audioManagerPrefab: {fileID: 4032553791337175984, guid: a4a4b80b1b905474e8ab3602db3af216, type: 3}
+  currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
+  inventoryManagerPrefab: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
+  engravingManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
+  equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
+  gachaManagerPrefab: {fileID: 6324277345916687726, guid: 11f9d19a26b69664c853ec605580bf08, type: 3}
+  shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
+  saveLoadManagerPrefab: {fileID: 1223338905626847151, guid: d1dc8b91acef336499702f2dedaf5330, type: 3}
+  objectPoolManagerPrefab: {fileID: 2073554065287845231, guid: 43b2dead484a1fa43aa9656366557b9b, type: 3}
+  interactionManagerPrefab: {fileID: 698421397120775284, guid: 33122866e9f99104786f6979d96cafc0, type: 3}
+  stageManagerPrefab: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}
+  eventManagerPrefab: {fileID: 6703879477207762094, guid: 42b39eabf4bd1a34db877fb5adf9535f, type: 3}
+  menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
+  gameUIInstaller: {fileID: 0}
+  gameSceneUIManager: {fileID: 0}
+  enemySpawnerPrefab: {fileID: 3311273739936786302, guid: fab70de81019c214485cbcb07e8c6f08, type: 3}
+  followCameraPrefab: {fileID: 1351506084518171216, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
+  settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
+  itemDatabase: {fileID: 11400000, guid: f9b21e1c662560447a97d34c43a8f038, type: 2}
+--- !u!4 &488166347
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488166345}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &616643198
 GameObject:
   m_ObjectHideFlags: 0
@@ -1279,7 +1344,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1306631107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1325,9 +1390,11 @@ MonoBehaviour:
   currencyManager: {fileID: 0}
   inventoryManager: {fileID: 0}
   engravingManager: {fileID: 0}
-  playerManager: {fileID: 1474220890}
+  playerManager: {fileID: 1474220888}
   gachaManager: {fileID: 0}
+  shopManager: {fileID: 0}
   saveLoadManager: {fileID: 0}
+  itemDatabase: {fileID: 0}
 --- !u!114 &1306631110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1429,9 +1496,9 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 16, y: 16}
   m_Direction: 0
---- !u!114 &1474220890 stripped
+--- !u!114 &1474220888 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5086609333881617008, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
+  m_CorrespondingSourceObject: {fileID: -2891475838477974602, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
   m_PrefabInstance: {fileID: 1254756027}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1474220875}
@@ -1894,3 +1961,4 @@ SceneRoots:
   - {fileID: 1791413767}
   - {fileID: 1850918123}
   - {fileID: 746675964}
+  - {fileID: 488166347}
