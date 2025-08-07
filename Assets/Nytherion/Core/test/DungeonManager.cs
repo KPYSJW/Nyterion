@@ -3,6 +3,7 @@
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.UI.Controllers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,9 @@ namespace Nytherion.GamePlay.Dungeon
 
         [Header("Component References")]
         [SerializeField] private RoomFirstDungeonGenerator roomFirstDungeonGenerator;
-        [SerializeField] private GameObject worldMapUI;
+     
         [SerializeField] private Tilemap portalTilemap;
-        [SerializeField] private TilemapVisualizer tilemapVisualizer;
+        [SerializeField] public TilemapVisualizer tilemapVisualizer;
 
         private Rigidbody2D portalRigidbody;
         private TilemapCollider2D portalCollider;
@@ -38,7 +39,7 @@ namespace Nytherion.GamePlay.Dungeon
         private InputManager _inputManager;
         private EventManager _eventManager;
         public ObjectPoolManager _objectPoolManager;
-
+        public WorldmapController _worldmapController;
         [Inject]
         public void Construct(
            InputManager inputManager,
@@ -47,13 +48,14 @@ namespace Nytherion.GamePlay.Dungeon
            Characters.Player.PlayerController playerController,
            [Inject(Id = "FloorTilemap")] Tilemap floorTilemap,
            [Inject(Id = "WallTilemap")] Tilemap wallTilemap,
-           [Inject(Id = "PortalTilemap")] Tilemap portalTilemapInstance)
+           [Inject(Id = "PortalTilemap")] Tilemap portalTilemapInstance,
+           WorldmapController worldmapController)
         {
             _inputManager = inputManager;
             _eventManager = eventManager;
             _objectPoolManager = objectPoolManager;
             playerObject = playerController.gameObject;
-
+            _worldmapController= worldmapController;
             this.portalTilemap = portalTilemapInstance;
             // --- 이제 자식에게 물려주자! ---
             if (tilemapVisualizer != null)
@@ -69,8 +71,7 @@ namespace Nytherion.GamePlay.Dungeon
 
         private void Awake()
         {
-            if (worldMapUI != null) worldMapUI.SetActive(false);
-            
+           
             if (portalTilemap != null)
             {
                 portalRigidbody = portalTilemap.GetComponent<Rigidbody2D>();
@@ -82,7 +83,7 @@ namespace Nytherion.GamePlay.Dungeon
         {
             // 주입받은 매니저들의 이벤트에 리스너 등록
             _eventManager.RegisterEnemyDeathListener(HandleEnemyDeath);
-            _inputManager.onMap += WorldMapUI;
+            _inputManager.onMap += ToggleWorldMap; 
             RoomFirstDungeonGenerator.OnDungeonGenerated += SpawnPlayerAtStart;
 
             // 던전 생성 시작
@@ -98,7 +99,7 @@ namespace Nytherion.GamePlay.Dungeon
             }
             if (_inputManager != null)
             {
-                _inputManager.onMap -= WorldMapUI;
+                _inputManager.onMap += ToggleWorldMap;
             }
             if (roomFirstDungeonGenerator != null)
             {
@@ -154,11 +155,13 @@ namespace Nytherion.GamePlay.Dungeon
             AllDungeonRooms = allRooms;
         }
 
-        void WorldMapUI()
+        void ToggleWorldMap()
         {
-            if (worldMapUI != null)
+            Debug.Log("월드맵1");
+            if (_worldmapController != null)
             {
-                worldMapUI.SetActive(!worldMapUI.activeSelf);
+                Debug.Log("월드맵2");
+                _worldmapController.Toggle();
             }
         }
 

@@ -29,9 +29,7 @@ namespace Nytherion.GamePlay.Dungeon
         [SerializeField]
         private DungeonData dungeonData;
 
-        [Header("Dependencies")]
-        [SerializeField] private WorldmapController worldmapController;
-        [SerializeField] private MinimapTileGenerator minimapGenerator;
+   
 
         public static event Action<Room> OnDungeonGenerated;
 
@@ -52,11 +50,15 @@ namespace Nytherion.GamePlay.Dungeon
 
         // --- 의존성 주입 ---
         private DungeonManager _dungeonManager;
+        [SerializeField] private WorldmapController _worldmapController;
+        [SerializeField] private MinimapTileGenerator _minimapGenerator;
 
         [Inject]
-        public void Construct(DungeonManager dungeonManager)
+        public void Construct(DungeonManager dungeonManager, WorldmapController worldmapController, MinimapTileGenerator minimapGenerator)
         {
             _dungeonManager = dungeonManager;
+            _worldmapController = worldmapController;
+            _minimapGenerator = minimapGenerator;   
         }
 
 
@@ -137,10 +139,11 @@ namespace Nytherion.GamePlay.Dungeon
 
             SpawnMonsters(roomFloorData, obstaclesToPlace);
 
-            if (worldmapController != null && minimapGenerator != null)
+            if (_worldmapController != null && _minimapGenerator != null)
             {
-                worldmapController.DrawMap(roomGrid.Values, roomConnections, dungeonData);
-                minimapGenerator.InitializeMap(tilemapVisualizer, obstaclesToPlace, portalPositions, roomFloorData, new List<Room>(roomGrid.Values));
+                yield return null;
+                _worldmapController.DrawMap(roomGrid.Values, roomConnections, dungeonData);
+                _minimapGenerator.InitializeMap(tilemapVisualizer, obstaclesToPlace, portalPositions, roomFloorData, new List<Room>(roomGrid.Values));
             }
             else
             {
@@ -245,6 +248,16 @@ namespace Nytherion.GamePlay.Dungeon
             var obstaclesToPlace = new List<PlacedObstacleData>();
             var allWallPositions = WallGenerator.FindWalls(allFloorTiles, dungeonData.wallThickness);
 
+            var portalExclusionZone = new HashSet<Vector2Int>(portalPositions);
+            foreach (var portalPos in portalPositions)
+            {
+                // 포탈의 8방향 주변 타일을 모두 금지 구역에 추가합니다.
+                foreach (var direction in WallGenerator.Direction2D.eightDirectionsList)
+                {
+                    portalExclusionZone.Add(portalPos + direction);
+                }
+            }
+
             foreach (var roomData in roomFloorData)
             {
                 if (roomData.Key.type != RoomType.Normal)
@@ -282,7 +295,7 @@ namespace Nytherion.GamePlay.Dungeon
                             for (int y = -marginY; y <= marginY; y++)
                             {
                                 Vector2Int checkPos = potentialCenter + new Vector2Int(x, y);
-                                if (allWallPositions.Contains(checkPos) || portalPositions.Contains(checkPos) || !roomData.Value.Contains(checkPos))
+                                if (allWallPositions.Contains(checkPos) || portalExclusionZone.Contains(checkPos) || !roomData.Value.Contains(checkPos))
                                 {
                                     isSafe = false;
                                     break;

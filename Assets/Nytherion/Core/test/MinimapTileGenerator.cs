@@ -55,13 +55,22 @@ public class MinimapTileGenerator : MonoBehaviour
     {
         this.roomFloorData = roomFloorData;
         this.AllDungeonRooms = allRooms;
-
-        if (mapImage == null || visualizer == null || visualizer.floorTilemap == null)
+       
+        if (mapImage == null)
         {
-            Debug.LogError("미니맵 초기화 실패: 주요 참조가 없습니다.");
+            Debug.LogError("1");
             return;
         }
-
+        if (visualizer == null)
+        {
+            Debug.LogError("2");
+            return;
+        }
+        if ( visualizer.floorTilemap == null)
+        {
+            Debug.LogError("3");
+            return;
+        }
         Tilemap floorTilemap = visualizer.floorTilemap;
         Tilemap wallTilemap = visualizer.wallTilemap;
 

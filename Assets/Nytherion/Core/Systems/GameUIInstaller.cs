@@ -1,11 +1,12 @@
-using UnityEngine;
-using Zenject;
 using Nytherion.UI.Controllers;
-using Nytherion.UI.Presenters;
 using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Inventory;
-using UnityEngine.UI;
+
+using Nytherion.UI.Presenters;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using Zenject;
 
 namespace Nytherion.Core.Systems
 {
@@ -77,8 +78,13 @@ namespace Nytherion.Core.Systems
         [SerializeField] private CanvasGroup engravingCanvasGroup;
 
 
+
+
         [Header("Dungeon UI")]
-        [SerializeField] private GameObject worldMapUI;
+        [SerializeField] private WorldmapController worldmapController;
+        [SerializeField] private MinimapTileGenerator minimapTileGenerator;
+
+
         public override void InstallBindings()
         {
             if (inventoryUI != null)
@@ -216,9 +222,15 @@ namespace Nytherion.Core.Systems
             {
                 Container.Bind<EngravingUIController>().FromComponentInNewPrefab(engravingUIControllerPrefab).AsSingle().NonLazy();
             }
-            if (worldMapUI != null)
+
+            if (worldmapController != null)
             {
-                Container.Bind<GameObject>().WithId("WorldMapUI").FromInstance(worldMapUI).AsCached();
+                Container.Bind<WorldmapController>().FromInstance(worldmapController).AsSingle();
+            }
+
+            if (minimapTileGenerator != null)
+            {
+                Container.Bind<MinimapTileGenerator>().FromInstance(minimapTileGenerator).AsSingle();
             }
         }
     }

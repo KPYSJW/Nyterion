@@ -38,8 +38,24 @@ namespace Nytherion.UI.Controllers
         private void Awake()
         {
             viewPort = transform as RectTransform;
+            Hide();
+        }
+        public void Toggle()
+        {
+            // activeSelf를 이용해 현재 상태에 따라 껐다 켰다 함
+            bool isActive = gameObject.activeSelf;
+            gameObject.SetActive(!isActive);
         }
 
+        public void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
         private void OnEnable()
         {
             if (_dungeonManager != null && _dungeonManager.playerObject != null && playerIcon != null)
