@@ -1,7 +1,7 @@
 using Nytherion.UI.Controllers;
 using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Inventory;
-
+using Nytherion.UI.Map;
 using Nytherion.UI.Presenters;
 using TMPro;
 using UnityEngine;

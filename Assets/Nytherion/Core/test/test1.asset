@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742e9e1339086c94b85fd539b07b2450, type: 3}
   m_Name: test1
   m_EditorClassIdentifier: 
-  desiredNumberOfRooms: 6
+  desiredNumberOfRooms: 12
   minRoomSize: {x: 20, y: 20}
   maxRoomSize: {x: 40, y: 40}
   compoundRoomChance: 1
@@ -38,3 +38,6 @@ MonoBehaviour:
   dungeonMonsters:
   - {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
   wallThickness: 5
+  roomSpacingMultiplier: 1.502
+  placementIterations: 50
+  maxGenerationAttempts: 200
