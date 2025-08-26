@@ -31,8 +31,11 @@ namespace Nytherion.UI.Inventory
             OnEndDragEvent += HandleEndDrag;
         }
 
-        private void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)
+        protected override void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)
         {
+            // 기본 드래그 종료 처리 호출
+            base.HandleEndDrag(slot, eventData);
+            
             DragDropUIHandler.HandleEndDragShared(slot, eventData);
             if (!eventData.pointerEnter)
             {

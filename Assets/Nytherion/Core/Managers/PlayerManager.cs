@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 namespace Nytherion.Core.Managers
 {
-    public class PlayerManager : MonoBehaviour, ISaveable
+    public class PlayerManager : BaseManager, ISaveable
     {
         public PlayerHealth playerHealth { get; private set; }
         public PlayerCombat PlayerCombat { get; private set; }
@@ -32,17 +32,13 @@ namespace Nytherion.Core.Managers
             this.equipmentDataManager = equipmentDataManager;
         }
 
-        private void Awake()
+        protected override void OnInitializeInternal()
         {
             playerHealth = GetComponent<PlayerHealth>();
             PlayerCombat = GetComponent<PlayerCombat>();
             playerEngravingManager = GetComponent<PlayerEngravingManager>();
 
             currentPlayerData = Instantiate(basePlayerData);
-        }
-
-        public void Initialize()
-        {
             RecalculateStats();
         }
 
@@ -164,14 +160,14 @@ namespace Nytherion.Core.Managers
             }
         }
 
-        public void PopulateSaveData(SaveData saveData)
+        public override void PopulateSaveData(SaveData saveData)
         {
             if (saveData == null) return;
 
            
         }
 
-        public void LoadFromSaveData(SaveData saveData)
+        public override void LoadFromSaveData(SaveData saveData)
         {
             if (saveData == null) return;
         }

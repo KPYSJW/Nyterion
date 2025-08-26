@@ -1,18 +1,19 @@
 using UnityEngine;
 using Nytherion.UI.Controllers;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Data;
 using Zenject;
+using Unity.VisualScripting;
 
 namespace Nytherion.Core.Managers
 {
-    public class InteractionManager : MonoBehaviour
+    public class InteractionManager : BaseManager
     {
-        public static InteractionManager Instance { get; private set; }
 
         [Header("Interaction Settings")]
         [SerializeField] private float interactionDistance = 1.5f;
         [SerializeField] private LayerMask interactableLayer;
-        
+
         private Transform playerTransform;
         private InputManager inputManager;
         private EventManager eventManager;
@@ -22,9 +23,9 @@ namespace Nytherion.Core.Managers
 
         [Inject]
         public void Construct(
-            InputManager inputManager, 
+            InputManager inputManager,
             EventManager eventManager,
-            ShopUI shopUI, 
+            ShopUI shopUI,
             GachaUIController gachaUIController,
             EngravingUIController engravingUIController,
             PlayerController playerController)
@@ -37,13 +38,7 @@ namespace Nytherion.Core.Managers
             playerTransform = playerController.transform;
         }
 
-        private void Awake()
-        {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-        }
-
-        private void Start()
+        protected override void OnInitializeInternal()
         {
             if (inputManager != null)
             {
@@ -51,9 +46,10 @@ namespace Nytherion.Core.Managers
             }
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             if (inputManager != null) inputManager.onInteract -= HandleInteraction;
+            base.OnDestroy();
         }
 
         private void HandleInteraction()
@@ -99,6 +95,16 @@ namespace Nytherion.Core.Managers
 
                 closestInteractable.Interact();
             }
+        }
+
+        public override void PopulateSaveData(SaveData saveData)
+        {
+
+        }
+        
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+
         }
     }
 }

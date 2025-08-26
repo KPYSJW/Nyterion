@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Nytherion.Data.ScriptableObjects.Items;
-using UnityEngine;
 
 namespace Nytherion.Core.Systems
 {

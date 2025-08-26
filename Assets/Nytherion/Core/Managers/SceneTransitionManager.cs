@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using Nytherion.Core.Data;
 using System.Collections;
 
 namespace Nytherion.Core.Managers
 {
-    public class SceneTransitionManager : MonoBehaviour
+    public class SceneTransitionManager : BaseManager
     {
-        public static SceneTransitionManager Instance { get; private set; }
 
         [Header("Scene Settings")]
         [SerializeField] private string defaultSceneToLoad = "GameScene";
@@ -20,19 +20,10 @@ namespace Nytherion.Core.Managers
         private CanvasGroup fadeCanvasGroup;
         private bool isTransitioning = false;
 
-        private void Awake()
+        protected override void OnInitializeInternal()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                InitializeFadeCanvas();
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            InitializeFadeCanvas();
         }
-
         private void Start()
         {
             if (fadeCanvasGroup != null)
@@ -75,7 +66,6 @@ namespace Nytherion.Core.Managers
             LoadScene(defaultSceneToLoad);
         }
 
-
         public void LoadScene(string sceneName)
         {
             if (isTransitioning) return;
@@ -86,6 +76,16 @@ namespace Nytherion.Core.Managers
             }
 
             StartCoroutine(TransitionRoutine(sceneName));
+        }
+
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            if (saveData == null) return;
+        }
+
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            if (saveData == null) return;
         }
 
         private IEnumerator TransitionRoutine(string sceneName)

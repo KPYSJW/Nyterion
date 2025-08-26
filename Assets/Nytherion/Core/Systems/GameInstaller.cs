@@ -28,6 +28,7 @@ namespace Nytherion.Core.Systems
         [SerializeField] private EngravingManager engravingManagerPrefab;
         [SerializeField] private EquipmentDataManager equipmentDataManagerPrefab;
         [SerializeField] private GachaManager gachaManagerPrefab;
+        [SerializeField] private GachaUIController gachaUIControllerPrefab;
         [SerializeField] private ShopManager shopManagerPrefab;
         [SerializeField] private SaveLoadManager saveLoadManagerPrefab;
         [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
@@ -57,44 +58,92 @@ namespace Nytherion.Core.Systems
 
         public override void InstallBindings()
         {
-            Container.Bind<InputManager>().FromComponentInNewPrefab(inputManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<AudioManager>().FromComponentInNewPrefab(audioManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<CurrencyManager>().FromComponentInNewPrefab(currencyManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<InventoryManager>()
+            Container.BindInterfacesAndSelfTo<InputManager>()
+                .FromComponentInNewPrefab(inputManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+            Container.Bind<AudioManager>()
+                .FromComponentInNewPrefab(audioManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<CurrencyManager>()
+                .FromComponentInNewPrefab(currencyManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<InventoryManager>()
                 .FromComponentInNewPrefab(inventoryManagerPrefab)
                 .AsSingle()
                 .NonLazy();
 
-            Container.Bind<InventoryManager>()
-                .WithId("InventoryManager")
-                .FromResolveGetter<DiContainer>(container => container.Resolve<InventoryManager>())
-                .AsCached();
-            Container.Bind<EngravingManager>().FromComponentInNewPrefab(engravingManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<EquipmentDataManager>().FromComponentInNewPrefab(equipmentDataManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<GachaManager>().FromComponentInNewPrefab(gachaManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<ShopManager>().FromComponentInNewPrefab(shopManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<SaveLoadManager>().FromComponentInNewPrefab(saveLoadManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<ObjectPoolManager>().FromComponentInNewPrefab(objectPoolManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<InteractionManager>().FromComponentInNewPrefab(interactionManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<StageManager>().FromComponentInNewPrefab(stageManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<EventManager>().FromComponentInNewPrefab(eventManagerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<EngravingManager>()
+                .FromComponentInNewPrefab(engravingManagerPrefab)
+                .AsSingle()
+                .NonLazy();
 
-            // Bind all ISaveable implementations
+            Container.BindInterfacesAndSelfTo<EquipmentDataManager>()
+                .FromComponentInNewPrefab(equipmentDataManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.Bind<GachaManager>()
+                .FromComponentInNewPrefab(gachaManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.Bind<GachaUIController>()
+                .FromComponentInNewPrefab(gachaUIControllerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.BindInterfacesAndSelfTo<ShopManager>()
+                .FromComponentInNewPrefab(shopManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.BindInterfacesAndSelfTo<SaveLoadManager>()
+                .FromComponentInNewPrefab(saveLoadManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.Bind<ObjectPoolManager>()
+                .FromComponentInNewPrefab(objectPoolManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.Bind<InteractionManager>()
+                .FromComponentInNewPrefab(interactionManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.Bind<StageManager>()
+                .FromComponentInNewPrefab(stageManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.Bind<EventManager>()
+                .FromComponentInNewPrefab(eventManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
             Container.Bind<ISaveable>().To<CurrencyManager>().FromResolve();
             Container.Bind<ISaveable>().To<InventoryManager>().FromResolve();
             Container.Bind<ISaveable>().To<EngravingManager>().FromResolve();
             Container.Bind<ISaveable>().To<ShopManager>().FromResolve();
             Container.Bind<ISaveable>().To<QuickSlotManager>().FromResolve();
             Container.Bind<ISaveable>().To<EquipmentDataManager>().FromResolve();
+
             Container.Bind<SellSlotUI>()
-                 .WithId("SellSlotUI")
                  .FromComponentInNewPrefab(sellSlotUIPrefab)
-                 .AsSingle();
-            Container.Bind<InventoryUI>()
-                 .WithId("InventoryUI")
+                 .AsSingle()
+                 .NonLazy();
+
+            Container.BindInterfacesAndSelfTo<InventoryUI>()
                  .FromComponentInNewPrefab(inventoryUIPrefab)
-                 .AsSingle();
+                 .AsSingle()
+                 .NonLazy();
+
             Container.Bind<ItemDatabaseSO>().FromInstance(itemDatabase).AsSingle();
+
             ItemDatabase.Initialize(itemDatabase);
 
             if (playerManagerPrefab != null)
@@ -119,36 +168,42 @@ namespace Nytherion.Core.Systems
             }
             if (inventoryPresenterPrefab != null)
             {
-                // 1. ID 없이 바인딩 (GameSceneUIManager용)
                 Container.Bind<InventoryPresenter>()
                     .FromComponentInNewPrefab(inventoryPresenterPrefab)
                     .AsSingle()
                     .NonLazy();
 
-                // 2. ID로도 바인딩 (다른 컴포넌트용)
-                Container.Bind<InventoryPresenter>()
-                    .WithId("InventoryPresenter")
-                    .FromResolveGetter<DiContainer>(container => container.Resolve<InventoryPresenter>())
-                    .AsCached();
             }
             if (enemySpawnerPrefab != null)
             {
-                Container.Bind<EnemySpawner>().FromComponentInNewPrefab(enemySpawnerPrefab).AsSingle().NonLazy();
+                Container.Bind<EnemySpawner>()
+                    .FromComponentInNewPrefab(enemySpawnerPrefab)
+                    .AsSingle()
+                    .NonLazy();
             }
 
             if (followCameraPrefab != null)
             {
-                Container.Bind<FollowCamera>().FromComponentInNewPrefab(followCameraPrefab).AsSingle().NonLazy();
+                Container.Bind<FollowCamera>()
+                    .FromComponentInNewPrefab(followCameraPrefab)
+                    .AsSingle()
+                    .NonLazy();
             }
 
             if (settingsManagerPrefab != null)
             {
-                Container.Bind<SettingsManager>().FromComponentInNewPrefab(settingsManagerPrefab).AsSingle().NonLazy();
+                Container.Bind<SettingsManager>()
+                    .FromComponentInNewPrefab(settingsManagerPrefab)
+                    .AsSingle()
+                    .NonLazy();
             }
 
             if (menuManagerPrefab != null)
             {
-                Container.Bind<MenuManager>().FromComponentInNewPrefab(menuManagerPrefab).AsSingle().NonLazy();
+                Container.Bind<MenuManager>()
+                    .FromComponentInNewPrefab(menuManagerPrefab)
+                    .AsSingle()
+                    .NonLazy();
             }
 
             if (gameUIInstaller != null)
@@ -163,17 +218,10 @@ namespace Nytherion.Core.Systems
             }
             if (shopUIPrefab != null)
             {
-                // 1. ID 없이 바인딩 (InteractionManager용)
-                Container.Bind<ShopUI>()
+                Container.BindInterfacesAndSelfTo<ShopUI>()
                     .FromComponentInNewPrefab(shopUIPrefab)
                     .AsSingle()
                     .NonLazy();
-
-                // 2. ID로도 바인딩 (InventoryUI용)
-                Container.Bind<ShopUI>()
-                    .WithId("ShopUI")
-                    .FromResolveGetter<DiContainer>(container => container.Resolve<ShopUI>())
-                    .AsCached();
             }
             if (itemUsageManagerPrefab != null)
             {
@@ -196,13 +244,7 @@ namespace Nytherion.Core.Systems
             {
                 Debug.LogError("PlayerManager binding not found");
             }
-            Container.Resolve<InputManager>().Initialize();
-            Container.Resolve<InventoryManager>().Initialize();
-            Container.Resolve<EngravingManager>().Initialize();
-            Container.Resolve<CurrencyManager>().Initialize();
-            Container.Resolve<EquipmentDataManager>().Initialize();
-            Container.Resolve<ShopManager>().Initialize();
-            Container.Resolve<SaveLoadManager>().Initialize();
+           
         }
     }
 }

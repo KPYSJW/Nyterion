@@ -1,11 +1,12 @@
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Data;
 using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class ItemUsageManager : MonoBehaviour
+    public class ItemUsageManager : BaseManager
     {
 
         private InventoryManager inventoryManager;
@@ -20,6 +21,10 @@ namespace Nytherion.Core.Managers
             this.playerHealth = playerHealth;
         }
 
+        protected override void OnInitializeInternal()
+        {
+
+        }
         public void UseConsumableItem(ConsumableData consumable)
         {
             if (consumable == null)
@@ -77,6 +82,16 @@ namespace Nytherion.Core.Managers
             {
                 // 투척 로직
             }
+        }
+        
+        public override void PopulateSaveData(SaveData saveData)
+        {
+
+        }
+        
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+
         }
     }
 }

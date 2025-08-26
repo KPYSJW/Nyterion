@@ -28,9 +28,7 @@ namespace Nytherion.UI.EngravingBoard
         [SerializeField] public GameObject storageSlotPrefab;
 
         [Header("영향 범위 기즈모")]
-        [Tooltip("레벨 업 효과를 표시할 프리팹")]
         [SerializeField] private GameObject levelUpGizmoPrefab;
-        [Tooltip("레벨 다운 효과를 표시할 프리팹")]
         [SerializeField] private GameObject levelDownGizmoPrefab;
 
         private EngravingSlotCell[,] slotCells;

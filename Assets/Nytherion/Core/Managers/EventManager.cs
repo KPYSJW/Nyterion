@@ -16,9 +16,20 @@ namespace Nytherion.Core.Managers
         public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;
 
         public event Action<InteractableType> OnInteraction;
+
+        public event Action OnOpenInventoryForShop;
+        public event Action OnCloseInventoryForShop;
         public void TriggerInteractionEvent(InteractableType type)
         {
             OnInteraction?.Invoke(type);
+        }
+        public void TriggerOpenInventoryForShop()
+        {
+            OnOpenInventoryForShop?.Invoke();
+        }
+         public void TriggerCloseInventoryForShop()
+        {
+            OnCloseInventoryForShop?.Invoke();
         }
         public void TriggerEnemyDeathEvent(EnemyBase enemy)
         {

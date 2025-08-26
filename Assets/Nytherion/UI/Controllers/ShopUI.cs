@@ -13,7 +13,7 @@ using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
-    public class ShopUI : UIPanelBase
+    public class ShopUI : UIPanelBase, IInitializable
     {
 
         [Header("UI References")]
@@ -33,7 +33,6 @@ namespace Nytherion.UI.Controllers
         private EventManager eventManager;
         private ShopManager shopManager;
         private SellSlotUI sellSlotUI;
-        private InventoryUI inventoryUI;
         private DiContainer container;
 
 
@@ -49,8 +48,7 @@ namespace Nytherion.UI.Controllers
             [Inject(Id = "ShopCloseButton")] Button closeButton,
             [Inject(Id = "ShopPlayerGoldText")] TextMeshProUGUI playerGoldText,
             [Inject(Id = "ShopPlayerInventoryParent")] Transform playerInventoryParent,
-            [Inject(Id = "SellSlotUI")] SellSlotUI sellSlotUI,
-            [Inject(Id = "InventoryUI")] InventoryUI inventoryUI,
+            SellSlotUI sellSlotUI,
             DiContainer container)
         {
             this.controlledCanvasGroup = controlledCanvasGroup;
@@ -64,7 +62,6 @@ namespace Nytherion.UI.Controllers
             this.currencyManager = currencyManager;
             this.eventManager = eventManager;
             this.shopManager = shopManager;
-            this.inventoryUI = inventoryUI;
             this.container = container;
         }
 
@@ -72,9 +69,9 @@ namespace Nytherion.UI.Controllers
         {
             base.Awake();
         }
-
-        private void Start()
+        public void Initialize()
         {
+            Debug.Log("ShopUI.Initialize() 호출됨!");
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(Close);
@@ -83,12 +80,14 @@ namespace Nytherion.UI.Controllers
             {
                 sellSlotUI.OnItemSold += HandleSellItem;
             }
-        }
-
-        private void OnEnable()
-        {
-            if (currencyManager != null) currencyManager.onCurrencyChanged += UpdateCurrencyUI;
-            if (inventoryManager != null) inventoryManager.OnInventoryUpdated += RefreshPlayerInventoryUI;
+            if (currencyManager != null)
+            {
+                currencyManager.onCurrencyChanged += UpdateCurrencyUI;
+            }
+            if (inventoryManager != null)
+            {
+                inventoryManager.OnInventoryUpdated += RefreshPlayerInventoryUI;
+            }
             if (eventManager != null)
             {
                 eventManager.OnInteraction += HandleInteraction;
@@ -97,18 +96,45 @@ namespace Nytherion.UI.Controllers
             {
                 playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>(true));
             }
-        }
 
-        private void OnDisable()
-        {
-            if (currencyManager != null) currencyManager.onCurrencyChanged -= UpdateCurrencyUI;
-            if (inventoryManager != null) inventoryManager.OnInventoryUpdated -= RefreshPlayerInventoryUI;
-            if (sellSlotUI != null) sellSlotUI.OnItemSold -= HandleSellItem;
-            if (eventManager != null)
-            {
-                eventManager.OnInteraction -= HandleInteraction;
-            }
+            Close();
         }
+        // private void Start()
+        // {
+        //     if (closeButton != null)
+        //     {
+        //         closeButton.onClick.AddListener(Close);
+        //     }
+        //     if (sellSlotUI != null)
+        //     {
+        //         sellSlotUI.OnItemSold += HandleSellItem;
+        //     }
+        // }
+
+        // private void OnEnable()
+        // {
+        //     if (currencyManager != null) currencyManager.onCurrencyChanged += UpdateCurrencyUI;
+        //     if (inventoryManager != null) inventoryManager.OnInventoryUpdated += RefreshPlayerInventoryUI;
+        //     if (eventManager != null)
+        //     {
+        //         eventManager.OnInteraction += HandleInteraction;
+        //     }
+        //     if (playerInventoryParent != null)
+        //     {
+        //         playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>(true));
+        //     }
+        // }
+
+        // private void OnDisable()
+        // {
+        //     if (currencyManager != null) currencyManager.onCurrencyChanged -= UpdateCurrencyUI;
+        //     if (inventoryManager != null) inventoryManager.OnInventoryUpdated -= RefreshPlayerInventoryUI;
+        //     if (sellSlotUI != null) sellSlotUI.OnItemSold -= HandleSellItem;
+        //     if (eventManager != null)
+        //     {
+        //         eventManager.OnInteraction -= HandleInteraction;
+        //     }
+        // }
 
         private void HandleInteraction(InteractableType type)
         {
@@ -122,7 +148,8 @@ namespace Nytherion.UI.Controllers
         {
             currentShopData = data;
             PopulateShop();
-            if (inventoryUI != null) inventoryUI.OpenForShop();
+            Debug.Log("[ShopUI] 인벤토리 열기 이벤트 발생시킴!");
+            eventManager.TriggerOpenInventoryForShop();
             UpdateCurrencyUI(CurrencyType.Gold, currencyManager.GetCurrency(CurrencyType.Gold));
             Open();
         }
@@ -132,6 +159,7 @@ namespace Nytherion.UI.Controllers
             base.Open();
             if (shopManager != null)
             {
+                shopManager.SetShopState(true);
                 shopManager.OnStockChanged += RefreshShopUI;
             }
             RefreshShopUI();
@@ -140,7 +168,11 @@ namespace Nytherion.UI.Controllers
         public override void Close()
         {
             base.Close();
-            if (inventoryUI != null) inventoryUI.Close();
+            if (shopManager != null)
+            {
+                shopManager.SetShopState(false);
+            }
+            eventManager.TriggerCloseInventoryForShop();
             if (sellSlotUI != null) sellSlotUI.ClearSlot();
 
             if (shopManager != null)

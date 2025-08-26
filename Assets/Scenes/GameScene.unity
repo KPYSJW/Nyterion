@@ -8248,7 +8248,6 @@ MonoBehaviour:
   equipmentPanel: {fileID: 1283523266}
   statsPanel: {fileID: 2093746632}
   closeButton: {fileID: 1188433269}
-  gachaUIPrefab: {fileID: 8419374414829116023, guid: 11f9d19a26b69664c853ec605580bf08, type: 3}
   gachaCanvasGroup: {fileID: 1274291717}
   gachaMainPanel: {fileID: 441272438}
   gachaResultPanel: {fileID: 859027671}
@@ -15886,7 +15885,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1721288126}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.75
+  m_Size: 0.375
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -19360,7 +19359,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.5
+  m_Size: 0.25
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -21045,6 +21044,7 @@ MonoBehaviour:
   engravingManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
   equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
   gachaManagerPrefab: {fileID: 6324277345916687726, guid: 11f9d19a26b69664c853ec605580bf08, type: 3}
+  gachaUIControllerPrefab: {fileID: 955757730080653849, guid: cd3095b76e21de446b975b43a7af50c9, type: 3}
   shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
   saveLoadManagerPrefab: {fileID: 1223338905626847151, guid: d1dc8b91acef336499702f2dedaf5330, type: 3}
   objectPoolManagerPrefab: {fileID: 2073554065287845231, guid: 43b2dead484a1fa43aa9656366557b9b, type: 3}

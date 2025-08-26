@@ -13,20 +13,20 @@ namespace Nytherion.Core.Managers
         private int remainingEnemies = 0;
 
         private EnemySpawner spawner;
-        private EventManager _eventManager;
+        private EventManager eventManager;
 
         [Inject]
         public void Construct(EnemySpawner enemySpawner, EventManager eventManager)
         {
             spawner = enemySpawner;
-            _eventManager = eventManager;
+            this.eventManager = eventManager;
         }
         void Start()
         {
-            if (_eventManager != null)
+            if (eventManager != null)
             {
 
-                _eventManager.RegisterEnemyDeathListener(OnEnemyDied);
+                eventManager.RegisterEnemyDeathListener(OnEnemyDied);
             }
             
             LoadStage(currentStageIndex);
@@ -61,10 +61,10 @@ namespace Nytherion.Core.Managers
         
         private void OnDisable()
         {
-            if (_eventManager != null)
+            if (eventManager != null)
             {
 
-                _eventManager.UnregisterEnemyDeathListener(OnEnemyDied);
+                eventManager.UnregisterEnemyDeathListener(OnEnemyDied);
             }
         }
         

@@ -12,7 +12,7 @@ using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
-    public class InventoryUI : UIPanelBase
+    public class InventoryUI : UIPanelBase, IInitializable
     {
 
         [Header("Input")]
@@ -23,7 +23,8 @@ namespace Nytherion.UI.Controllers
         public event Action<bool> OnInventoryToggled;
 
         private InventoryManager inventoryManager;
-        private ShopUI shopUI;
+        private EventManager eventManager;
+        private ShopManager shopManager;
         private GameObject equipmentPanel;
         private GameObject statsPanel;
         private Transform inventorySlotParent;
@@ -32,8 +33,9 @@ namespace Nytherion.UI.Controllers
 
         [Inject]
         public void Construct(
-         [Inject(Id = "InventoryManager")] InventoryManager inventoryManager,
-         [Inject(Id = "ShopUI")] ShopUI shopUI,
+         InventoryManager inventoryManager,
+         EventManager eventManager,
+         ShopManager shopManager,
          [Inject(Id = "EquipmentPanel")] GameObject equipmentPanel,
          [Inject(Id = "StatsPanel")] GameObject statsPanel,
          [Inject(Id = "InventorySlotParent")] Transform inventorySlotParent,
@@ -42,7 +44,8 @@ namespace Nytherion.UI.Controllers
          InventoryPresenter inventoryPresenter)
         {
             this.inventoryManager = inventoryManager;
-            this.shopUI = shopUI;
+            this.eventManager = eventManager;
+            this.shopManager = shopManager;
             this.equipmentPanel = equipmentPanel;
             this.statsPanel = statsPanel;
             this.inventorySlotParent = inventorySlotParent;
@@ -53,58 +56,19 @@ namespace Nytherion.UI.Controllers
         protected override void Awake()
         {
             base.Awake();
-            
+
             inventoryPresenter?.Initialize();
-            
+
             InitializeSlotPool();
         }
 
         public void Initialize()
         {
+            Debug.Log("InventoryUI.Initialize() 호출됨!");
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(Close);
             }
-        }
-        
-        private void OnDisable()
-        {
-            if (toggleInventoryAction != null && toggleInventoryAction.action != null)
-            {
-                toggleInventoryAction.action.performed -= OnToggleAction;
-            }
-
-            if (inventoryManager != null)
-            {
-                inventoryManager.OnInventoryUpdated -= RefreshUI;
-            }
-            
-            if (closeButton != null)
-            {
-                closeButton.onClick.RemoveListener(Close);
-            }
-            
-            if (inventoryPresenter != null)
-            {
-                var cleanupMethod = inventoryPresenter.GetType().GetMethod("Cleanup");
-                cleanupMethod?.Invoke(inventoryPresenter, null);
-            }
-        }
-
-        private void InitializeSlotPool()
-        {
-            slotPool = inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true).ToList();
-            
-            if (slotPool.Count == 0) return;
-            
-            for (int i = 0; i < slotPool.Count; i++)
-            {
-                slotPool[i].Initialize(i);
-            }
-        }
-
-        private void OnEnable()
-        {
             if (inventoryManager != null)
             {
                 inventoryManager.OnInventoryUpdated += RefreshUI;
@@ -115,12 +79,86 @@ namespace Nytherion.UI.Controllers
                 toggleInventoryAction.action.performed += OnToggleAction;
                 toggleInventoryAction.action.Enable();
             }
+
+            if (eventManager != null)
+            {
+                eventManager.OnOpenInventoryForShop += OpenForShop;
+                eventManager.OnCloseInventoryForShop += Close;
+            }
+
+            inventoryPresenter?.Initialize();
+            InitializeSlotPool();
+
+            Close();
         }
 
+        private void InitializeSlotPool()
+        {
+            slotPool = inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true).ToList();
+
+            if (slotPool.Count == 0) return;
+
+            for (int i = 0; i < slotPool.Count; i++)
+            {
+                slotPool[i].Initialize(i);
+            }
+        }
+
+        // private void OnEnable()
+        // {
+        //     if (inventoryManager != null)
+        //     {
+        //         inventoryManager.OnInventoryUpdated += RefreshUI;
+        //     }
+
+        //     if (toggleInventoryAction != null && toggleInventoryAction.action != null)
+        //     {
+        //         toggleInventoryAction.action.performed += OnToggleAction;
+        //         toggleInventoryAction.action.Enable();
+        //     }
+        //     if (eventManager != null)
+        //     {
+        //         eventManager.OnOpenInventoryForShop += OpenForShop;
+        //         eventManager.OnCloseInventoryForShop += Close;
+        //     }
+        // }
+        // private void OnDisable()
+        // {
+        //     if (toggleInventoryAction != null && toggleInventoryAction.action != null)
+        //     {
+        //         toggleInventoryAction.action.performed -= OnToggleAction;
+        //     }
+
+        //     if (inventoryManager != null)
+        //     {
+        //         inventoryManager.OnInventoryUpdated -= RefreshUI;
+        //     }
+
+        //     if (closeButton != null)
+        //     {
+        //         closeButton.onClick.RemoveListener(Close);
+        //     }
+
+        //     if (inventoryPresenter != null)
+        //     {
+        //         var cleanupMethod = inventoryPresenter.GetType().GetMethod("Cleanup");
+        //         cleanupMethod?.Invoke(inventoryPresenter, null);
+        //     }
+        // }
         private void OnToggleAction(InputAction.CallbackContext context)
         {
-            if (shopUI != null && shopUI.IsOpen)
+            Debug.Log("[InventoryUI] 토글 액션 입력 받음");
+            if (shopManager != null)
             {
+                Debug.Log($"[InventoryUI] 현재 상점 상태(IsShopOpen): {shopManager.IsShopOpen}");
+                if (shopManager.IsShopOpen)
+                {
+                    return;
+                }
+            }
+            if (IsOpen)
+            {
+                Close();
                 return;
             }
             if (!equipmentPanel.activeSelf)
@@ -148,6 +186,7 @@ namespace Nytherion.UI.Controllers
 
         public void OpenForShop()
         {
+            Debug.Log("[InventoryUI] 상점 열기 이벤트 수신!");
             if (equipmentPanel != null) equipmentPanel.SetActive(false);
             if (statsPanel != null) statsPanel.SetActive(false);
             Open();

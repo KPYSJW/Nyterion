@@ -10,7 +10,7 @@ using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class EngravingManager : MonoBehaviour, ISaveable
+    public class EngravingManager : MonoBehaviour, ISaveable, IInitializable
     {
         [Header("Database")]
         [SerializeField] private EngravingDatabaseSO engravingDatabaseSO;

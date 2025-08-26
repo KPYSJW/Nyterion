@@ -5,10 +5,11 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.Core.Managers
 {
-    public class InventoryManager : MonoBehaviour, ISaveable
+    public class InventoryManager : BaseManager
     {
 
         [Header("Inventory Settings")]
@@ -17,18 +18,22 @@ namespace Nytherion.Core.Managers
         public int MaxSlotCount => maxSlotCount;
         public InventoryModel InventoryModel { get; private set; }
 
-        public event Action OnInitialized;
         public event Action OnInventoryUpdated;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             InventoryModel = new InventoryModel(maxSlotCount);
         }
 
-        public void Initialize()
+        protected override void OnInitializeInternal()
         {
+            if (InventoryModel == null)
+            {
+                InventoryModel = new InventoryModel(maxSlotCount);
+            }
+            
             InventoryModel.OnInventoryUpdated += () => OnInventoryUpdated?.Invoke();
-            OnInitialized?.Invoke();
         }
 
         public void TriggerInventoryUpdate()
@@ -36,13 +41,22 @@ namespace Nytherion.Core.Managers
             OnInventoryUpdated?.Invoke();
         }
 
-        public void PopulateSaveData(SaveData saveData)
+        public override void PopulateSaveData(SaveData saveData)
         {
-            var itemEntries = new List<ItemEntry>();
+            SaveLoadHelper.SafePopulateCollection(
+                saveData,
+                GetItemEntriesForSave(),
+                (data, entries) => data.inventoryData = entries,
+                nameof(InventoryManager)
+            );
+        }
+
+        private IEnumerable<ItemEntry> GetItemEntriesForSave()
+        {
             if (InventoryModel == null)
             {
-                Debug.LogWarning("InventoryModel is null when trying to save inventory data");
-                return;
+                Debug.LogWarning("[InventoryManager] InventoryModel is null when trying to get save data");
+                yield break;
             }
             
             for (int i = 0; i < InventoryModel.MaxSlots; i++)
@@ -50,48 +64,77 @@ namespace Nytherion.Core.Managers
                 var (item, count) = InventoryModel.GetItemAt(i);
                 if (item != null && count > 0)
                 {
-                    itemEntries.Add(new ItemEntry
+                    yield return new ItemEntry
                     {
                         slotIndex = i,
                         itemId = item.ID,
                         count = count,
                         instanceId = item.isStackable ? null : item.instanceId
-                    });
+                    };
                 }
             }
-            saveData.inventoryData = itemEntries;
         }
 
-        public void LoadFromSaveData(SaveData saveData)
+        public override void LoadFromSaveData(SaveData saveData)
         {
-            var itemEntries = saveData.inventoryData;
-            if (InventoryModel == null)
-            {
-                Debug.LogWarning("InventoryModel is null when trying to load inventory data");
-                return;
-            }
-
-            InventoryModel.Clear();
-            if (itemEntries == null)
-            {
-                OnInventoryUpdated?.Invoke();
-                return;
-            }
-
-            foreach (var entry in itemEntries)
-            {
-                ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
-                if (itemAsset == null) continue;
-
-                ItemData itemToPlace = itemAsset;
-                if (!itemAsset.isStackable)
+            SaveLoadHelper.SafeLoadCollection(
+                saveData,
+                data => data?.inventoryData,
+                itemEntries =>
                 {
-                    itemToPlace = Instantiate(itemAsset);
-                    itemToPlace.instanceId = !string.IsNullOrEmpty(entry.instanceId) ? entry.instanceId : Guid.NewGuid().ToString();
-                }
-                InventoryModel.AddItemToSlot(itemToPlace, entry.count, entry.slotIndex);
-            }
-            TriggerInventoryUpdate();
+                    if (InventoryModel == null)
+                    {
+                        Debug.LogWarning("[InventoryManager] InventoryModel is null when trying to load inventory data");
+                        return;
+                    }
+
+                    InventoryModel.Clear();
+
+                    if (itemEntries == null || itemEntries.Count == 0)
+                    {
+                        TriggerInventoryUpdate();
+                        return;
+                    }
+
+                    foreach (var entry in itemEntries)
+                    {
+                        try
+                        {
+                            ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
+                            if (itemAsset == null)
+                            {
+                                Debug.LogWarning($"[InventoryManager] Item with ID '{entry.itemId}' not found in database");
+                                continue;
+                            }
+
+                            ItemData itemToPlace = itemAsset;
+                            if (!itemAsset.isStackable)
+                            {
+                                itemToPlace = Instantiate(itemAsset);
+                                itemToPlace.instanceId = !string.IsNullOrEmpty(entry.instanceId) 
+                                    ? entry.instanceId 
+                                    : Guid.NewGuid().ToString();
+                            }
+
+                            if (entry.slotIndex >= 0 && entry.slotIndex < InventoryModel.MaxSlots)
+                            {
+                                InventoryModel.AddItemToSlot(itemToPlace, entry.count, entry.slotIndex);
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"[InventoryManager] Invalid slot index: {entry.slotIndex}");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError($"[InventoryManager] Error loading item entry: {e.Message}");
+                        }
+                    }
+
+                    TriggerInventoryUpdate();
+                },
+                nameof(InventoryManager)
+            );
         }
 
         public bool AddItem(ItemData item, int count = 1)
@@ -200,6 +243,53 @@ namespace Nytherion.Core.Managers
                 }
             }
             return allItems;
+        }
+
+        /// <summary>
+        /// 인벤토리의 빈 슬롯 수를 반환합니다.
+        /// </summary>
+        public int GetEmptySlotCount()
+        {
+            if (InventoryModel == null) return 0;
+            
+            int emptyCount = 0;
+            for (int i = 0; i < InventoryModel.MaxSlots; i++)
+            {
+                var (item, _) = InventoryModel.GetItemAt(i);
+                if (item == null)
+                {
+                    emptyCount++;
+                }
+            }
+            return emptyCount;
+        }
+
+        /// <summary>
+        /// 인벤토리 상태 정보를 반환합니다.
+        /// </summary>
+        public override string GetStatusInfo()
+        {
+            if (InventoryModel == null)
+            {
+                return $"{base.GetStatusInfo()}, InventoryModel: null";
+            }
+
+            int usedSlots = MaxSlotCount - GetEmptySlotCount();
+            return $"{base.GetStatusInfo()}, Slots: {usedSlots}/{MaxSlotCount}";
+        }
+
+        /// <summary>
+        /// 메모리 정리
+        /// </summary>
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            OnInventoryUpdated = null;
+            
+            if (InventoryModel != null)
+            {
+                InventoryModel.OnInventoryUpdated -= () => OnInventoryUpdated?.Invoke();
+            }
         }
     }
 }

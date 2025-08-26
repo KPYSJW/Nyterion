@@ -1,7 +1,6 @@
 using UnityEngine;
 using Zenject;
 using Nytherion.UI.Controllers;
-using Nytherion.UI.Presenters;
 using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Inventory;
 using UnityEngine.UI;
@@ -29,7 +28,6 @@ namespace Nytherion.Core.Systems
 
 
         [Header("Gacha UI References")]
-        [SerializeField] private GachaUIController gachaUIPrefab;
         [SerializeField] private CanvasGroup gachaCanvasGroup;
         [SerializeField] private GameObject gachaMainPanel;
         [SerializeField] private GameObject gachaResultPanel;
@@ -109,8 +107,6 @@ namespace Nytherion.Core.Systems
                 {
                     shopPlayerInventoryParent = inventorySlotParent;
                 }
-                
-                // Single binding for InventorySlotParent
                 Container.Bind<Transform>()
                     .WithId("InventorySlotParent")
                     .FromInstance(inventorySlotParent);
@@ -179,11 +175,6 @@ namespace Nytherion.Core.Systems
 
             if (resolutionDropdown != null)
                 Container.Bind<TMP_Dropdown>().WithId("ResolutionDropdown").FromInstance(resolutionDropdown);
-
-            if (gachaUIPrefab != null)
-            {
-                Container.Bind<GachaUIController>().FromComponentInNewPrefab(gachaUIPrefab).AsSingle().NonLazy();
-            }
 
             if (quickSlotManagerPrefab != null)
             {

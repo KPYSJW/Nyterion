@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class SaveLoadManager : MonoBehaviour
+    public class SaveLoadManager : MonoBehaviour, IInitializable
     {
         private JsonSaveService saveService;
         private SaveData saveData;

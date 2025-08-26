@@ -31,6 +31,12 @@ namespace Nytherion.UI.Inventory
             this.itemUsageManager = itemUsageManager;
             this.inventoryManager = inventoryManager;
             this.shopUI = shopUI;
+            
+            Debug.Log($"[InventorySlotUI] Dependencies injected - " +
+                     $"EquipmentManager: {equipmentDataManager != null}, " +
+                     $"InventoryManager: {inventoryManager != null}, " +
+                     $"ItemUsageManager: {itemUsageManager != null}, " +
+                     $"ShopUI: {shopUI != null}");
         }
         protected override void Awake()
         {
@@ -47,9 +53,61 @@ namespace Nytherion.UI.Inventory
 
         public void OnDrop(PointerEventData eventData)
         {
-            if (eventData.pointerDrag == null) return;
+            Debug.Log($"[InventorySlotUI] OnDrop called on slot {SlotIndex}");
+            
+            if (eventData.pointerDrag == null) 
+            {
+                Debug.LogWarning("[InventorySlotUI] eventData.pointerDrag is null");
+                return;
+            }
+            
             BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
-            if (sourceSlot == null || sourceSlot.IsEmpty || sourceSlot == this) return;
+            if (sourceSlot == null) 
+            {
+                Debug.LogWarning("[InventorySlotUI] sourceSlot is null");
+                return;
+            }
+            
+            if (sourceSlot.IsEmpty) 
+            {
+                Debug.LogWarning("[InventorySlotUI] sourceSlot is empty");
+                return;
+            }
+            
+            if (sourceSlot == this) 
+            {
+                Debug.Log("[InventorySlotUI] Dropping on same slot, ignoring");
+                return;
+            }
+            
+            Debug.Log($"[InventorySlotUI] Valid drop from {sourceSlot.GetType().Name}");
+
+            // 필수 매니저들의 null 체크 및 폴백
+            if (inventoryManager == null)
+            {
+                Debug.LogWarning("[InventorySlotUI] InventoryManager is null, trying to find it...");
+                inventoryManager = FindObjectOfType<InventoryManager>();
+                if (inventoryManager == null)
+                {
+                    Debug.LogError("[InventorySlotUI] InventoryManager not found. Cannot perform drop operation.");
+                    return;
+                }
+                Debug.Log("[InventorySlotUI] Found InventoryManager via FindObjectOfType");
+            }
+
+            if (equipmentDataManager == null)
+            {
+                Debug.LogWarning("[InventorySlotUI] EquipmentDataManager is null, trying to find it...");
+                equipmentDataManager = FindObjectOfType<EquipmentDataManager>();
+                if (equipmentDataManager == null)
+                {
+                    Debug.LogError("[InventorySlotUI] EquipmentDataManager not found. Equipment operations will be disabled.");
+                }
+                else
+                {
+                    Debug.Log("[InventorySlotUI] Found EquipmentDataManager via FindObjectOfType");
+                }
+            }
 
             if (sourceSlot is InventorySlotUI inventorySourceSlot)
             {
@@ -59,6 +117,12 @@ namespace Nytherion.UI.Inventory
             {
                 // 유효성 검사 추가
                 if (equipmentSourceSlot == null || equipmentSourceSlot.IsEmpty) return;
+                
+                if (equipmentDataManager == null)
+                {
+                    Debug.LogError("[InventorySlotUI] EquipmentDataManager is still null. Cannot perform equipment drop operation.");
+                    return;
+                }
                 
                 try
                 {

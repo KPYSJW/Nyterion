@@ -3,14 +3,17 @@ using UnityEngine;
 using System;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
+using Nytherion.Core.Utils;
 using Zenject;
 
 namespace Nytherion.Core.Managers
 {
     public enum CurrencyType { Gold = 0, Token = 1 }
-    public class CurrencyManager : MonoBehaviour, ISaveable
+    public class CurrencyManager : BaseManager
     {
-        public event Action OnInitialized;
+        [Header("Currency Settings")]
+        [SerializeField] private bool enableAutoSave = true;
+        
         private Dictionary<CurrencyType, int> currencies = new();
         public event Action<CurrencyType, int> onCurrencyChanged;
         private SaveLoadManager saveLoadManager;
@@ -21,42 +24,60 @@ namespace Nytherion.Core.Managers
             this.saveLoadManager = saveLoadManager;
         }
         
-        public void Initialize()
+        protected override void OnInitializeInternal()
         {
-            OnInitialized?.Invoke();
-        }
-        public void PopulateSaveData(SaveData saveData)
-        {
-            saveData.currencyTypes.Clear();
-            saveData.currencyAmounts.Clear();
-            foreach (var currencyPair in currencies)
+            // 모든 통화 타입을 0으로 초기화
+            foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
             {
-                saveData.currencyTypes.Add(currencyPair.Key);
-                saveData.currencyAmounts.Add(currencyPair.Value);
-            }
-        }
-        public void LoadFromSaveData(SaveData data)
-        {
-            currencies = new Dictionary<CurrencyType, int>();
-            if (data == null || data.currencyTypes.Count != data.currencyAmounts.Count)
-            {
-                foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
+                if (!currencies.ContainsKey(type))
                 {
                     currencies[type] = 0;
                 }
             }
-            else
-            {
-                for (int i = 0; i < data.currencyTypes.Count; i++)
+        }
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            SaveLoadHelper.SafePopulateDictionary(
+                saveData,
+                currencies,
+                (data, keys) => { data.currencyTypes.Clear(); data.currencyTypes.AddRange(keys); },
+                (data, values) => { data.currencyAmounts.Clear(); data.currencyAmounts.AddRange(values); },
+                nameof(CurrencyManager)
+            );
+        }
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            SaveLoadHelper.SafeLoadDictionary(
+                saveData,
+                data => data?.currencyTypes,
+                data => data?.currencyAmounts,
+                loadedCurrencies =>
                 {
-                    currencies[data.currencyTypes[i]] = data.currencyAmounts[i];
-                }
-            }
+                    currencies = new Dictionary<CurrencyType, int>();
+                    
+                    // 로드된 데이터가 있으면 사용, 없으면 기본값으로 초기화
+                    if (loadedCurrencies.Count > 0)
+                    {
+                        currencies = loadedCurrencies;
+                    }
+                    
+                    // 누락된 통화 타입들을 0으로 초기화
+                    foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
+                    {
+                        if (!currencies.ContainsKey(type))
+                        {
+                            currencies[type] = 0;
+                        }
+                    }
 
-            foreach (var currencyPair in currencies)
-            {
-                onCurrencyChanged?.Invoke(currencyPair.Key, currencyPair.Value);
-            }
+                    // 모든 통화에 대해 변경 이벤트 발생
+                    foreach (var currencyPair in currencies)
+                    {
+                        onCurrencyChanged?.Invoke(currencyPair.Key, currencyPair.Value);
+                    }
+                },
+                nameof(CurrencyManager)
+            );
         }
         public int GetCurrency(CurrencyType type)
         {
@@ -64,22 +85,66 @@ namespace Nytherion.Core.Managers
         }
         public void AddCurrency(CurrencyType type, int amount)
         {
-            if (amount <= 0) return;
-            currencies[type] = GetCurrency(type) + amount;
-            onCurrencyChanged?.Invoke(type, currencies[type]);
-            saveLoadManager.SaveGame();
+            if (amount <= 0) 
+            {
+                Debug.LogWarning($"[CurrencyManager] Invalid amount to add: {amount}. Amount must be positive.");
+                return;
+            }
+
+            int newAmount = GetCurrency(type) + amount;
+            currencies[type] = newAmount;
+            onCurrencyChanged?.Invoke(type, newAmount);
+            
+            if (enableAutoSave && saveLoadManager != null)
+            {
+                saveLoadManager.SaveGame();
+            }
+            
+            Debug.Log($"[CurrencyManager] Added {amount} {type}. New total: {newAmount}");
         }
+        
         public bool SpendCurrency(CurrencyType type, int amount)
         {
-            if (amount <= 0) return false;
-            if (GetCurrency(type) >= amount)
+            if (amount <= 0) 
             {
-                currencies[type] -= amount;
-                onCurrencyChanged?.Invoke(type, currencies[type]);
-                saveLoadManager.SaveGame();
+                Debug.LogWarning($"[CurrencyManager] Invalid amount to spend: {amount}. Amount must be positive.");
+                return false;
+            }
+
+            int currentAmount = GetCurrency(type);
+            if (currentAmount >= amount)
+            {
+                int newAmount = currentAmount - amount;
+                currencies[type] = newAmount;
+                onCurrencyChanged?.Invoke(type, newAmount);
+                
+                if (enableAutoSave && saveLoadManager != null)
+                {
+                    saveLoadManager.SaveGame();
+                }
+                
+                Debug.Log($"[CurrencyManager] Spent {amount} {type}. Remaining: {newAmount}");
                 return true;
             }
+            
+            Debug.LogWarning($"[CurrencyManager] Insufficient {type}. Required: {amount}, Available: {currentAmount}");
             return false;
+        }
+
+        // 재화가 충분한지 확인 
+        public bool HasEnoughCurrency(CurrencyType type, int amount)
+        {
+            return GetCurrency(type) >= amount;
+        }
+
+        public override string GetStatusInfo()
+        {
+            var currencyInfo = "";
+            foreach (var currency in currencies)
+            {
+                currencyInfo += $"{currency.Key}: {currency.Value}, ";
+            }
+            return $"{base.GetStatusInfo()}, Currencies: [{currencyInfo.TrimEnd(',', ' ')}]";
         }
 
     }

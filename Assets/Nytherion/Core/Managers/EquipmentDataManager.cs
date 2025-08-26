@@ -6,11 +6,11 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Data;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Interfaces;
-
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class EquipmentDataManager : MonoBehaviour, ISaveable
+    public class EquipmentDataManager : MonoBehaviour, ISaveable, IInitializable
     {
 
         private Dictionary<EquipmentSlotType, EquipmentData> equippedItems = new Dictionary<EquipmentSlotType, EquipmentData>();
