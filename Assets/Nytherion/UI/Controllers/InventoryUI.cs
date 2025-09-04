@@ -6,61 +6,72 @@ using UnityEngine.InputSystem;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Components;
 using Nytherion.UI.Inventory;
-using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.UI.Presenters;
 using System.Linq;
+using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
-    public class InventoryUI : UIPanelBase
+    public class InventoryUI : UIPanelBase, IInitializable
     {
-        public static InventoryUI Instance { get; private set; }
-
-        [Header("UI Panels")]
-        [SerializeField] private GameObject equipmentPanel;
-        [SerializeField] private GameObject statsPanel;
 
         [Header("Input")]
         [SerializeField] private InputActionReference toggleInventoryAction;
-        
-        [Header("References")]
-        [SerializeField] private Transform slotParent;
-        [SerializeField] private Button closeButton;
 
         private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
 
         public event Action<bool> OnInventoryToggled;
 
+        private InventoryManager inventoryManager;
+        private EventManager eventManager;
+        private ShopManager shopManager;
+        private GameObject equipmentPanel;
+        private GameObject statsPanel;
+        private Transform inventorySlotParent;
+        private Button closeButton;
+        private InventoryPresenter inventoryPresenter;
+
+        [Inject]
+        public void Construct(
+         InventoryManager inventoryManager,
+         EventManager eventManager,
+         ShopManager shopManager,
+         [Inject(Id = "EquipmentPanel")] GameObject equipmentPanel,
+         [Inject(Id = "StatsPanel")] GameObject statsPanel,
+         [Inject(Id = "InventorySlotParent")] Transform inventorySlotParent,
+         [Inject(Id = "CloseButton")] Button closeButton,
+         [Inject(Id = "InventoryCanvasGroup")] CanvasGroup canvasGroup,
+         InventoryPresenter inventoryPresenter)
+        {
+            this.inventoryManager = inventoryManager;
+            this.eventManager = eventManager;
+            this.shopManager = shopManager;
+            this.equipmentPanel = equipmentPanel;
+            this.statsPanel = statsPanel;
+            this.inventorySlotParent = inventorySlotParent;
+            this.closeButton = closeButton;
+            this.controlledCanvasGroup = canvasGroup;
+            this.inventoryPresenter = inventoryPresenter;
+        }
         protected override void Awake()
         {
             base.Awake();
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-            
+
+            inventoryPresenter?.Initialize();
+
             InitializeSlotPool();
         }
 
         public void Initialize()
         {
+            Debug.Log("InventoryUI.Initialize() 호출됨!");
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(Close);
             }
-        }
-
-        private void InitializeSlotPool()
-        {
-            slotPool = slotParent.GetComponentsInChildren<InventorySlotUI>(true).ToList();
-            for (int i = 0; i < slotPool.Count; i++)
+            if (inventoryManager != null)
             {
-                slotPool[i].Initialize(i);
-            }
-        }
-
-        private void OnEnable()
-        {
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.OnInventoryUpdated += RefreshUI;
+                inventoryManager.OnInventoryUpdated += RefreshUI;
             }
 
             if (toggleInventoryAction != null && toggleInventoryAction.action != null)
@@ -68,32 +79,93 @@ namespace Nytherion.UI.Controllers
                 toggleInventoryAction.action.performed += OnToggleAction;
                 toggleInventoryAction.action.Enable();
             }
+
+            if (eventManager != null)
+            {
+                eventManager.OnOpenInventoryForShop += OpenForShop;
+                eventManager.OnCloseInventoryForShop += Close;
+            }
+
+            inventoryPresenter?.Initialize();
+            InitializeSlotPool();
+
+            Close();
         }
 
-        private void OnDisable()
+        private void InitializeSlotPool()
         {
-            if (toggleInventoryAction != null && toggleInventoryAction.action != null)
-            {
-                toggleInventoryAction.action.performed -= OnToggleAction;
-            }
+            slotPool = inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true).ToList();
 
-            if (InventoryManager.Instance != null)
+            if (slotPool.Count == 0) return;
+
+            for (int i = 0; i < slotPool.Count; i++)
             {
-                InventoryManager.Instance.OnInventoryUpdated -= RefreshUI;
+                slotPool[i].Initialize(i);
             }
         }
 
+        // private void OnEnable()
+        // {
+        //     if (inventoryManager != null)
+        //     {
+        //         inventoryManager.OnInventoryUpdated += RefreshUI;
+        //     }
+
+        //     if (toggleInventoryAction != null && toggleInventoryAction.action != null)
+        //     {
+        //         toggleInventoryAction.action.performed += OnToggleAction;
+        //         toggleInventoryAction.action.Enable();
+        //     }
+        //     if (eventManager != null)
+        //     {
+        //         eventManager.OnOpenInventoryForShop += OpenForShop;
+        //         eventManager.OnCloseInventoryForShop += Close;
+        //     }
+        // }
+        // private void OnDisable()
+        // {
+        //     if (toggleInventoryAction != null && toggleInventoryAction.action != null)
+        //     {
+        //         toggleInventoryAction.action.performed -= OnToggleAction;
+        //     }
+
+        //     if (inventoryManager != null)
+        //     {
+        //         inventoryManager.OnInventoryUpdated -= RefreshUI;
+        //     }
+
+        //     if (closeButton != null)
+        //     {
+        //         closeButton.onClick.RemoveListener(Close);
+        //     }
+
+        //     if (inventoryPresenter != null)
+        //     {
+        //         var cleanupMethod = inventoryPresenter.GetType().GetMethod("Cleanup");
+        //         cleanupMethod?.Invoke(inventoryPresenter, null);
+        //     }
+        // }
         private void OnToggleAction(InputAction.CallbackContext context)
         {
-            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+            Debug.Log("[InventoryUI] 토글 액션 입력 받음");
+            if (shopManager != null)
             {
+                Debug.Log($"[InventoryUI] 현재 상점 상태(IsShopOpen): {shopManager.IsShopOpen}");
+                if (shopManager.IsShopOpen)
+                {
+                    return;
+                }
+            }
+            if (IsOpen)
+            {
+                Close();
                 return;
             }
-            if(!equipmentPanel.activeSelf)
+            if (!equipmentPanel.activeSelf)
             {
                 equipmentPanel.SetActive(true);
             }
-            if(!statsPanel.activeSelf)
+            if (!statsPanel.activeSelf)
             {
                 statsPanel.SetActive(true);
             }
@@ -111,9 +183,10 @@ namespace Nytherion.UI.Controllers
                 TooltipPanel.Instance.HideTooltip();
             }
         }
-        
+
         public void OpenForShop()
         {
+            Debug.Log("[InventoryUI] 상점 열기 이벤트 수신!");
             if (equipmentPanel != null) equipmentPanel.SetActive(false);
             if (statsPanel != null) statsPanel.SetActive(false);
             Open();
@@ -121,13 +194,13 @@ namespace Nytherion.UI.Controllers
 
         public void RefreshUI()
         {
-            if (slotPool == null || InventoryManager.Instance == null) return;
+            if (slotPool == null || inventoryManager == null) return;
 
             for (int i = 0; i < slotPool.Count; i++)
             {
-                if (i < InventoryManager.Instance.MaxSlotCount)
+                if (i < inventoryManager.MaxSlotCount)
                 {
-                    var (item, count) = InventoryManager.Instance.GetItemAt(i);
+                    var (item, count) = inventoryManager.GetItemAt(i);
                     slotPool[i].SetItem(item, count);
                 }
                 else

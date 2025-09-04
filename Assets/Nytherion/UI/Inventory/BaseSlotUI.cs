@@ -18,6 +18,8 @@ namespace Nytherion.UI.Inventory
         public event SlotEventDelegate OnBeginDragEvent;
         public event SlotEventDelegate OnEndDragEvent;
         public event SlotEventDelegate OnPointerClickEvent;
+        public event SlotEventDelegate OnPointerEnterEvent;
+        public event SlotEventDelegate OnPointerExitEvent;
         public event Action<BaseSlotUI> OnSlotUpdated;
         public event SlotItemEventDelegate OnItemSet;
         public event Action OnItemCleared;
@@ -151,13 +153,20 @@ namespace Nytherion.UI.Inventory
 
         public virtual void OnPointerEnter(PointerEventData eventData)
         {
-            if (currentItem != null && TooltipPanel.Instance != null)
+            OnPointerEnterEvent?.Invoke(this, eventData);
+            
+            // 기본 툴팁 동작 (이벤트 핸들러가 없을 때의 폴백)
+            if (OnPointerEnterEvent == null && currentItem != null && TooltipPanel.Instance != null)
                 TooltipPanel.Instance.ShowTooltip(currentItem);
         }
 
         public virtual void OnPointerExit(PointerEventData eventData)
         {
-            TooltipPanel.Instance?.HideTooltip();
+            OnPointerExitEvent?.Invoke(this, eventData);
+            
+            // 기본 툴팁 숨김 동작 (이벤트 핸들러가 없을 때의 폴백)
+            if (OnPointerExitEvent == null)
+                TooltipPanel.Instance?.HideTooltip();
         }
     }
 }

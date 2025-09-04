@@ -1,31 +1,22 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Nytherion.Core.Data;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class AudioManager : MonoBehaviour
+    public class AudioManager : BaseManager, IInitializable
     {
-        public static AudioManager Instance { get; private set; }
 
         [SerializeField] private AudioSource bgmSource;
         [SerializeField] private AudioClip titleBGM;
         [SerializeField] private AudioClip stageBGM;
         [SerializeField] private AudioClip villageBGM;
 
-        private void Awake()
-        {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
 
-            transform.SetParent(null);
-            Instance = this;
-        }
-        public void Initialize()
+        public override void Initialize()
         {
-            
+
         }
 
         private void OnEnable()
@@ -59,12 +50,19 @@ namespace Nytherion.Core.Managers
                     return null;
             }
         }
-
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            // 저장할 데이터 설정
+        }
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            // 저장된 데이터 로드
+        }
         public void PlayBGM(AudioClip clip)
         {
             if (clip == null || bgmSource == null) return;
 
-            if (bgmSource.clip == clip) return; // 동일한 BGM이면 재생하지 않음
+            if (bgmSource.clip == clip) return;
 
             bgmSource.clip = clip;
             bgmSource.loop = true;

@@ -1,63 +1,71 @@
 using UnityEngine;
 using Nytherion.UI.Controllers;
-using Nytherion.Core.Systems;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Data;
 using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class InteractionManager : MonoBehaviour
+    public class InteractionManager : BaseManager
     {
-        public static InteractionManager Instance { get; private set; }
 
         [Header("Interaction Settings")]
         [SerializeField] private float interactionDistance = 1.5f;
         [SerializeField] private LayerMask interactableLayer;
-        
+
         private Transform playerTransform;
-        private InputManager _inputManager;
+        private InputManager inputManager;
+        private EventManager eventManager;
+        private ShopUI shopUI;
+        private GachaUIController gachaUIController;
+        private EngravingUIController engravingUIController;
 
         [Inject]
-        public void Construct(InputManager inputManager, PlayerController playerController)
+        public void Construct(
+            InputManager inputManager,
+            EventManager eventManager,
+            ShopUI shopUI,
+            GachaUIController gachaUIController,
+            EngravingUIController engravingUIController,
+            PlayerController playerController)
         {
-            _inputManager = inputManager;
+            this.inputManager = inputManager;
+            this.eventManager = eventManager;
+            this.shopUI = shopUI;
+            this.gachaUIController = gachaUIController;
+            this.engravingUIController = engravingUIController;
             playerTransform = playerController.transform;
         }
 
-        private void Awake()
+        protected override void OnInitializeInternal()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-        }
-
-        private void Start()
-        {
-            if (_inputManager != null)
+            if (inputManager != null)
             {
-                _inputManager.onInteract += HandleInteraction;
+                inputManager.onInteract += HandleInteraction;
             }
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            if (_inputManager != null) _inputManager.onInteract -= HandleInteraction;
+            if (inputManager != null) inputManager.onInteract -= HandleInteraction;
+            base.OnDestroy();
         }
 
         private void HandleInteraction()
         {
-            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+            if (shopUI != null && shopUI.IsOpen)
             {
-                ShopUI.Instance.Close();
+                shopUI.Close();
                 return;
             }
-            if (GachaUIController.Instance != null && GachaUIController.Instance.IsOpen)
+            if (gachaUIController != null && gachaUIController.IsOpen)
             {
-                GachaUIController.Instance.Close();
+                gachaUIController.Close();
                 return;
             }
-            if (EngravingUIController.Instance != null && EngravingUIController.Instance.IsOpen)
+            if (engravingUIController != null && engravingUIController.IsOpen)
             {
-                EngravingUIController.Instance.Close();
+                engravingUIController.Close();
                 return;
             }
             if (playerTransform == null) return;
@@ -82,10 +90,20 @@ namespace Nytherion.Core.Managers
 
             if (closestInteractable != null)
             {
-                EventManager.Instance.TriggerInteractionEvent(closestInteractable.Type);
+                eventManager.TriggerInteractionEvent(closestInteractable.Type);
 
                 closestInteractable.Interact();
             }
+        }
+
+        public override void PopulateSaveData(SaveData saveData)
+        {
+
+        }
+        
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+
         }
     }
 }

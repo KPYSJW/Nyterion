@@ -1,171 +1,212 @@
+using Nytherion.Data.ScriptableObjects.Dungeon;
 using Nytherion.GamePlay.Dungeon;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class TilemapVisualizer : MonoBehaviour
+namespace Nytherion.GamePlay.Dungeon
 {
-    [Header("Tilemap Settings")]
-    [SerializeField] public Tilemap floorTilemap;
-    [SerializeField] public Tilemap wallTilemap;
-    [SerializeField] public Tilemap portalTilemap;
-
-    [Header("Object Holders")]
-    [Tooltip(" ֹ Ʈ ϴ.")]
-    [SerializeField] private Transform obstacleHolder;
-
-    [Header("Tile Assets")]
-    [SerializeField] private TileBase floorTile;
-    [SerializeField] private TileBase portalTile;
-
-
-
-    [Header("벽 타일 세트")]
-    public RuleTile wallRuleTile;
-
-    [Header("Special Room Tile Assets")]
-    [SerializeField] private TileBase startRoomTile;
-    [SerializeField] private TileBase shopRoomTile;
-    [SerializeField] private TileBase itemRoomTile;
-
-
-    public void InstantiateObstacles(List<RoomFirstDungeonGenerator.PlacedObstacleData> obstaclesToPlace)
+    /// <summary>
+    /// 절차적으로 생성된 던전 데이터를 받아 실제 타일맵에 타일을 그리거나 오브젝트를 배치하는 클래스입니다.
+    /// </summary>
+    public class TilemapVisualizer : MonoBehaviour
     {
-        if (obstacleHolder != null)
+        [Header("타일맵 참조")]
+        [Tooltip("바닥 타일을 그릴 타일맵")]
+        public Tilemap floorTilemap;
+        [Tooltip("벽 타일을 그릴 타일맵")]
+        public Tilemap wallTilemap;
+        [Tooltip("포탈 타일을 그릴 타일맵")]
+        public Tilemap portalTilemap;
+
+        [Header("오브젝트 부모")]
+        [Tooltip("생성된 장애물 오브젝트들을 담을 부모 Transform")]
+        [SerializeField] private Transform obstacleHolder;
+
+        [Header("타일 에셋")]
+        [SerializeField] private TileBase floorTile;
+        [SerializeField] private TileBase portalTile;
+        [SerializeField] private RuleTile wallRuleTile; // 벽은 RuleTile을 사용하여 자동으로 연결 부위를 처리
+
+        [Header("특수 방 타일 에셋")]
+        [SerializeField] private TileBase startRoomTile;
+        [SerializeField] private TileBase shopRoomTile;
+        [SerializeField] private TileBase itemRoomTile;
+
+        /// <summary>
+        /// 외부(주로 Zenject Installer)에서 타일맵 참조를 설정하기 위한 초기화 메서드입니다.
+        /// </summary>
+        public void InitializeTilemaps(Tilemap floor, Tilemap wall, Tilemap portal)
         {
-            foreach (Transform child in obstacleHolder)
-            {
-                if (Application.isPlaying) Destroy(child.gameObject);
-                else DestroyImmediate(child.gameObject);
-            }
-        }
-        if (obstaclesToPlace == null) return;
-        foreach (var obstacleData in obstaclesToPlace)
-        {
-            if (obstacleData.prefab != null)
-            {
-                Instantiate(obstacleData.prefab, obstacleData.worldPosition, Quaternion.identity, obstacleHolder);
-            }
-        }
-    }
-
-
-    public void PaintFloorTiles(IEnumerable<Vector2Int> floorPositions)
-    {
-        PaintTiles(floorPositions, floorTilemap, floorTile);
-    }
-
-
-    public void PaintWallsWithRuleTile(IEnumerable<Vector2Int> wallPositions)
-    {
-        if (wallRuleTile == null)
-        {
-            Debug.LogError("Wall Rule Tile이 할당되지 않았습니다!");
-            return;
+            this.floorTilemap = floor;
+            this.wallTilemap = wall;
+            this.portalTilemap = portal;
         }
 
-        foreach (var position in wallPositions)
+        /// <summary>
+        /// 전달받은 장애물 데이터를 기반으로 실제 게임 오브젝트를 생성합니다.
+        /// </summary>
+        public void InstantiateObstacles(List<RoomFirstDungeonGenerator.PlacedObstacleData> obstaclesToPlace)
         {
-            PaintSingleTile(position, wallTilemap, wallRuleTile);
-        }
-    }
-
-
-
-    public void PaintPortals(IEnumerable<Vector2Int> portalPositions)
-    {
-        PaintTiles(portalPositions, portalTilemap, portalTile);
-    }
-
-    
-    public void PaintSpecialRoomFloors(
-        List<RoomFirstDungeonGenerator.Room> specialRooms,
-        DungeonData dungeonData,
-        Dictionary<RoomFirstDungeonGenerator.Room, HashSet<Vector2Int>> roomFloorData)
-    {
-        foreach (var room in specialRooms)
-        {
-            if (room.type == RoomFirstDungeonGenerator.RoomType.Boss && dungeonData.bossRoomPrefab != null)
+            // 기존에 생성된 장애물이 있다면 모두 삭제합니다.
+            if (obstacleHolder != null)
             {
-                PaintPrefab(room.center, dungeonData.bossRoomPrefab);
-            }
-            else
-            {
-                TileBase tileToUse = GetTileForRoomType(room.type);
-                if (tileToUse != null && roomFloorData.TryGetValue(room, out var floorPositions))
+                // 자식 오브젝트를 역순으로 순회하며 삭제해야 안전합니다.
+                for (int i = obstacleHolder.childCount - 1; i >= 0; i--)
                 {
-                    PaintTiles(floorPositions, floorTilemap, tileToUse);
+                    Transform child = obstacleHolder.GetChild(i);
+                    if (Application.isPlaying)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                    else
+                    {
+                        // 에디터 모드에서 실행될 경우를 대비
+                        DestroyImmediate(child.gameObject);
+                    }
+                }
+            }
+
+            if (obstaclesToPlace == null) return;
+
+            foreach (RoomFirstDungeonGenerator.PlacedObstacleData obstacleData in obstaclesToPlace)
+            {
+                if (obstacleData.prefab != null)
+                {
+                    Instantiate(obstacleData.prefab, obstacleData.worldPosition, Quaternion.identity, obstacleHolder);
                 }
             }
         }
-    }
 
-
-    private void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
-    {
-        if (tile == null || tilemap == null || !positions.Any()) return;
-
-        // 1. Vector2Int 컬렉션을 Vector3Int 배열로 변환
-        Vector3Int[] positionArray = positions.Select(pos => (Vector3Int)pos).ToArray();
-
-        // 2. 타일 배열 생성
-        TileBase[] tileArray = Enumerable.Repeat(tile, positionArray.Length).ToArray();
-
-        // 3. SetTiles 메서드로 한 번에 그리기
-        tilemap.SetTiles(positionArray, tileArray);
-    }
-
-    private void PaintSingleTile(Vector2Int position, Tilemap tilemap, TileBase tile)
-    {
-        var tilePosition = tilemap.WorldToCell((Vector3Int)position);
-        tilemap.SetTile(tilePosition, tile);
-    }
-
-    public void Clear()
-    {
-        floorTilemap?.ClearAllTiles();
-        wallTilemap?.ClearAllTiles();
-        portalTilemap?.ClearAllTiles();
-
-        if (obstacleHolder != null)
+        /// <summary>
+        /// 일반 바닥 타일을 그립니다.
+        /// </summary>
+        public void PaintFloorTiles(IEnumerable<Vector2Int> floorPositions)
         {
-            for (int i = obstacleHolder.childCount - 1; i >= 0; i--)
+            PaintTiles(floorPositions, floorTilemap, floorTile);
+        }
+
+        /// <summary>
+        /// RuleTile을 사용하여 벽 타일을 그립니다.
+        /// </summary>
+        public void PaintWallsWithRuleTile(IEnumerable<Vector2Int> wallPositions)
+        {
+            PaintTiles(wallPositions, wallTilemap, wallRuleTile);
+        }
+
+        /// <summary>
+        /// 포탈 타일을 그립니다.
+        /// </summary>
+        public void PaintPortals(IEnumerable<Vector2Int> portalPositions)
+        {
+            PaintTiles(portalPositions, portalTilemap, portalTile);
+        }
+
+        /// <summary>
+        /// 시작 방, 상점 방 등 특수 방의 바닥을 종류에 맞는 타일로 그립니다.
+        /// </summary>
+        public void PaintSpecialRoomFloors(
+            List<RoomFirstDungeonGenerator.Room> specialRooms,
+            DungeonData dungeonData,
+            Dictionary<RoomFirstDungeonGenerator.Room, HashSet<Vector2Int>> roomFloorData)
+        {
+            foreach (RoomFirstDungeonGenerator.Room room in specialRooms)
             {
-                Transform child = obstacleHolder.GetChild(i);
-                if (Application.isPlaying) Destroy(child.gameObject);
-                else DestroyImmediate(child.gameObject);
+                // 보스 방이고, 프리팹이 지정되어 있다면 프리팹을 그립니다.
+                if (room.type == RoomFirstDungeonGenerator.RoomType.Boss && dungeonData.bossRoomPrefab != null)
+                {
+                    PaintPrefab(room.center, dungeonData.bossRoomPrefab.GetComponent<Tilemap>());
+                }
+                else // 그 외의 특수 방
+                {
+                    TileBase tileToUse = GetTileForRoomType(room.type);
+                    if (tileToUse != null && roomFloorData.TryGetValue(room, out HashSet<Vector2Int> floorPositions))
+                    {
+                        PaintTiles(floorPositions, floorTilemap, tileToUse);
+                    }
+                }
             }
         }
-    }
 
-
-
-    private TileBase GetTileForRoomType(RoomFirstDungeonGenerator.RoomType type)
-    {
-        switch (type)
+        /// <summary>
+        /// 모든 타일맵과 생성된 오브젝트를 지웁니다.
+        /// </summary>
+        public void Clear()
         {
-            case RoomFirstDungeonGenerator.RoomType.Start:
-                return startRoomTile;
-            case RoomFirstDungeonGenerator.RoomType.Shop:
-                return shopRoomTile;
-            case RoomFirstDungeonGenerator.RoomType.Item:
-                return itemRoomTile;
-            default:
-                return null;
-        }
-    }
+            floorTilemap?.ClearAllTiles();
+            wallTilemap?.ClearAllTiles();
+            portalTilemap?.ClearAllTiles();
 
-    
-    private void PaintPrefab(Vector2 roomCenter, Tilemap prefabTilemap)
-    {
-        foreach (var tilePos in prefabTilemap.cellBounds.allPositionsWithin)
-        {
-            TileBase tile = prefabTilemap.GetTile(tilePos);
-            if (tile != null)
+            // 장애물 홀더의 자식 오브젝트들도 모두 삭제합니다.
+            if (obstacleHolder != null)
             {
-                Vector3Int worldPos = Vector3Int.RoundToInt(roomCenter) + tilePos;
-                floorTilemap.SetTile(worldPos, tile);
+                for (int i = obstacleHolder.childCount - 1; i >= 0; i--)
+                {
+                    Transform child = obstacleHolder.GetChild(i);
+                    if (Application.isPlaying)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                    else
+                    {
+                        DestroyImmediate(child.gameObject);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 여러 개의 타일을 한 번에 그리는 최적화된 메서드입니다.
+        /// SetTile을 반복 호출하는 것보다 SetTiles를 한 번 호출하는 것이 훨씬 빠릅니다.
+        /// </summary>
+        public void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
+        {
+            if (tile == null || tilemap == null || positions == null || !positions.Any()) return;
+
+            // 1. Vector2Int 컬렉션을 Vector3Int 배열로 변환합니다.
+            Vector3Int[] positionArray = positions.Select(pos => (Vector3Int)pos).ToArray();
+            // 2. 타일 배열을 생성합니다.
+            TileBase[] tileArray = Enumerable.Repeat(tile, positionArray.Length).ToArray();
+            // 3. SetTiles 메서드로 한 번에 그립니다.
+            tilemap.SetTiles(positionArray, tileArray);
+        }
+
+        /// <summary>
+        /// 방 종류에 맞는 타일 에셋을 반환합니다.
+        /// </summary>
+        public TileBase GetTileForRoomType(RoomFirstDungeonGenerator.RoomType type)
+        {
+            switch (type)
+            {
+                case RoomFirstDungeonGenerator.RoomType.Start:
+                    return startRoomTile;
+                case RoomFirstDungeonGenerator.RoomType.Shop:
+                    return shopRoomTile;
+                case RoomFirstDungeonGenerator.RoomType.Item:
+                    return itemRoomTile;
+                default:
+                    return floorTile; // 일반 방이나 보스 방은 다른 방식으로 처리되므로 null 반환
+            }
+        }
+
+        /// <summary>
+        /// 지정된 Tilemap 프리팹을 특정 위치에 그립니다.
+        /// </summary>
+        private void PaintPrefab(Vector2 roomCenter, Tilemap prefabTilemap)
+        {
+            if (prefabTilemap == null) return;
+
+            // 프리팹 타일맵의 모든 타일을 순회합니다.
+            foreach (Vector3Int tilePos in prefabTilemap.cellBounds.allPositionsWithin)
+            {
+                TileBase tile = prefabTilemap.GetTile(tilePos);
+                if (tile != null)
+                {
+                    // 프리팹의 로컬 타일 위치를 월드 위치로 변환하여 그립니다.
+                    Vector3Int worldPos = Vector3Int.RoundToInt(roomCenter) + tilePos;
+                    floorTilemap.SetTile(worldPos, tile);
+                }
             }
         }
     }

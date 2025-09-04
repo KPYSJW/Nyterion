@@ -1,11 +1,12 @@
-using UnityEngine;
-using Zenject;
 using Nytherion.UI.Controllers;
-using Nytherion.UI.Presenters;
 using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Inventory;
-using UnityEngine.UI;
+using Nytherion.UI.Map;
+using Nytherion.UI.Presenters;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using Zenject;
 
 namespace Nytherion.Core.Systems
 {
@@ -16,15 +17,19 @@ namespace Nytherion.Core.Systems
             this.Container = container;
         }
         [Header("Core UI Components")]
-        [SerializeField] private InventoryUI inventoryUI;
         [SerializeField] private EngravingGridUI engravingGridUI;
         [SerializeField] private EngravingTooltip engravingTooltip;
 
         [Header("Inventory UI References")]
         [SerializeField] private Transform inventorySlotParent;
+        
+        [SerializeField] private CanvasGroup inventoryCanvasGroup;
+        [SerializeField] private GameObject equipmentPanel;
+        [SerializeField] private GameObject statsPanel;
+        [SerializeField] private Button closeButton;
+
 
         [Header("Gacha UI References")]
-        [SerializeField] private GachaUIController gachaUIPrefab;
         [SerializeField] private CanvasGroup gachaCanvasGroup;
         [SerializeField] private GameObject gachaMainPanel;
         [SerializeField] private GameObject gachaResultPanel;
@@ -76,18 +81,55 @@ namespace Nytherion.Core.Systems
         [SerializeField] private EngravingUIController engravingUIControllerPrefab;
         [SerializeField] private CanvasGroup engravingCanvasGroup;
 
+
+
+
+        [Header("Dungeon UI")]
+        [SerializeField] private WorldmapController worldmapController;
+        [SerializeField] private MinimapTileGenerator minimapTileGenerator;
+
+
         public override void InstallBindings()
         {
-            if (inventoryUI != null)
-                Container.Bind<InventoryUI>().FromInstance(inventoryUI).AsSingle();
+            if (inventoryCanvasGroup != null)
+            {
+                Container.Bind<CanvasGroup>()
+                    .WithId("InventoryCanvasGroup")
+                    .FromInstance(inventoryCanvasGroup)
+                    .AsCached();
+            }
+            
+            if (equipmentPanel != null)
+                Container.Bind<GameObject>()
+                    .WithId("EquipmentPanel")
+                    .FromInstance(equipmentPanel)
+                    .AsCached();
+
+            if (statsPanel != null)
+                Container.Bind<GameObject>()
+                    .WithId("StatsPanel")
+                    .FromInstance(statsPanel)
+                    .AsCached();
 
             if (inventorySlotParent != null)
             {
-                Container.Bind<Transform>().WithId("InventorySlotParent").FromInstance(inventorySlotParent);
+                if (shopPlayerInventoryParent == null)
+                {
+                    shopPlayerInventoryParent = inventorySlotParent;
+                }
+                Container.Bind<Transform>()
+                    .WithId("InventorySlotParent")
+                    .FromInstance(inventorySlotParent);
             }
 
+            if (closeButton != null)
+                Container.Bind<Button>()
+                    .WithId("CloseButton")
+                    .FromInstance(closeButton)
+                    .AsCached();
+
             if (engravingGridUI != null)
-                Container.Bind<EngravingGridUI>().FromInstance(engravingGridUI).AsSingle();
+                Container.Bind<EngravingGridUI>().FromInstance(engravingGridUI).AsSingle().NonLazy();
 
             if (engravingTooltip != null)
                 Container.Bind<EngravingTooltip>().FromInstance(engravingTooltip).AsSingle();
@@ -144,14 +186,9 @@ namespace Nytherion.Core.Systems
             if (resolutionDropdown != null)
                 Container.Bind<TMP_Dropdown>().WithId("ResolutionDropdown").FromInstance(resolutionDropdown);
 
-            if (gachaUIPrefab != null)
-            {
-                Container.Bind<GachaUIController>().FromComponentInNewPrefab(gachaUIPrefab).AsSingle().NonLazy();
-            }
-
             if (quickSlotManagerPrefab != null)
             {
-                Container.Bind<QuickSlotManager>().FromComponentInNewPrefab(quickSlotManagerPrefab).AsSingle().NonLazy();
+                Container.BindInterfacesAndSelfTo<QuickSlotManager>().FromComponentInNewPrefab(quickSlotManagerPrefab).AsSingle().NonLazy();
             }
             if (quickSlotUIArray != null && quickSlotUIArray.Length > 0)
             {
@@ -177,10 +214,6 @@ namespace Nytherion.Core.Systems
             if (shopPlayerInventoryParent != null)
                 Container.Bind<Transform>().WithId("ShopPlayerInventoryParent").FromInstance(shopPlayerInventoryParent);
 
-            if (shopUIPrefab != null)
-            {
-                Container.Bind<ShopUI>().FromComponentInNewPrefab(shopUIPrefab).AsSingle().NonLazy();
-            }
 
             if (menuCanvasGroup != null)
                 Container.Bind<CanvasGroup>().WithId("MenuCanvasGroup").FromInstance(menuCanvasGroup);
@@ -212,6 +245,16 @@ namespace Nytherion.Core.Systems
             if (engravingUIControllerPrefab != null)
             {
                 Container.Bind<EngravingUIController>().FromComponentInNewPrefab(engravingUIControllerPrefab).AsSingle().NonLazy();
+            }
+
+            if (worldmapController != null)
+            {
+                Container.Bind<WorldmapController>().FromInstance(worldmapController).AsSingle();
+            }
+
+            if (minimapTileGenerator != null)
+            {
+                Container.Bind<MinimapTileGenerator>().FromInstance(minimapTileGenerator).AsSingle();
             }
         }
     }

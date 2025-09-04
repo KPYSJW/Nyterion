@@ -1,5 +1,5 @@
 using Nytherion.Data.ScriptableObjects.Engravings;
-using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Managers;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,12 +11,12 @@ namespace Nytherion.UI.Controllers
     {
         public Image[] engraveSlots;
         
-        private PlayerManager _playerManager;
+        private PlayerManager playerManager;
         
         [Inject]
         public void Construct(PlayerManager playerManager)
         {
-            _playerManager = playerManager;
+            this.playerManager = playerManager;
         }
 
         private void Update()
@@ -26,13 +26,13 @@ namespace Nytherion.UI.Controllers
 
         public void UpdateEngraveUI()
         {
-            if (_playerManager == null) return;
+            if (playerManager == null) return;
             
             foreach (Image slot in engraveSlots)
             {
                 slot.gameObject.SetActive(false);
             }
-            List<EngravingData> engrave = _playerManager.playerEngravingManager.GetCurrentEngravings();
+            List<EngravingData> engrave = playerManager.playerEngravingManager.GetCurrentEngravings();
             for (int i=0;i< engrave.Count;++i)
             {
                 engraveSlots[i].gameObject.SetActive(true);

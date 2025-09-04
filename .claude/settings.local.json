@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__sequential-thinking__sequentialthinking",
+      "Read(/C:\\Users\\kyung\\OneDrive\\바탕 화면\\RoguelikePrototype\\Assets\\Nytherion\\Core\\Systems/**)",
+      "Read(/C:\\Users\\kyung\\OneDrive\\바탕 화면\\RoguelikePrototype\\Assets\\Nytherion\\Core\\Managers/**)",
+      "Read(/C:\\Users\\kyung\\OneDrive\\바탕 화면\\RoguelikePrototype\\Assets\\Nytherion\\Core\\test/**)",
+      "Read(/C:\\Users\\kyung\\OneDrive\\바탕 화면\\RoguelikePrototype\\Assets\\Nytherion\\UI\\Controllers/**)",
+      "Read(/C:\\Users\\kyung\\OneDrive\\바탕 화면\\RoguelikePrototype\\Assets\\Nytherion\\Core\\Systems/**)",
+      "Read(/C:\\Users\\kyung\\OneDrive\\바탕 화면\\RoguelikePrototype\\Assets\\Nytherion\\Core\\test/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

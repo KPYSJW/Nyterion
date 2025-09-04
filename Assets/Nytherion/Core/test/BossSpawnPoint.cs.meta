@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Nytherion/Core/Managers/BaseManager.cs.meta
+guid: 423373671c2229d4e864b7a5aa857914
+========
+guid: 7839ebcce69c2a84e9328f2239a93428
+>>>>>>>> KimYoungJoo:Assets/Nytherion/Core/test/BossSpawnPoint.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

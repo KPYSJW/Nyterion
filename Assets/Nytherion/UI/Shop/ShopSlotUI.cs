@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Shop;
 using Nytherion.UI.Controllers;
+using Zenject;
 
 namespace Nytherion.UI.Shop
 {
@@ -17,6 +18,13 @@ namespace Nytherion.UI.Shop
         [SerializeField] private CanvasGroup canvasGroup;
 
         public ShopItemData CurrentItem { get; private set; }
+        private ShopUI shopUI;
+
+        [Inject]
+        public void Construct(ShopUI shopUI)
+        {
+            this.shopUI = shopUI;
+        }
 
         public void Setup(ShopItemData shopItem)
         {
@@ -62,9 +70,9 @@ namespace Nytherion.UI.Shop
 
         private void OnBuyButtonClicked()
         {
-            if (ShopUI.Instance != null)
+            if (shopUI != null)
             {
-                ShopUI.Instance.BuyItem(this);
+                shopUI.BuyItem(this);
             }
         }
         private void ApplySoldOutVisual()

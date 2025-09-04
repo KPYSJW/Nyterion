@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Core.Managers;
 using Nytherion.UI.Controllers;
+using Zenject;
 
 namespace Nytherion.Core.Data
 {
@@ -25,6 +27,16 @@ namespace Nytherion.Core.Data
             }
         }
 
+        private InventoryManager inventoryManager;
+        private ShopUI shopUI;
+
+        [Inject]
+        public void Construct(InventoryManager inventoryManager, ShopUI shopUI)
+        {
+            this.inventoryManager = inventoryManager;
+            this.shopUI = shopUI;
+        }
+
         [SerializeField] private List<ItemEntry> items = new List<ItemEntry>();
 
         public IReadOnlyList<ItemEntry> Items => items;
@@ -44,15 +56,15 @@ namespace Nytherion.Core.Data
         }
         public void ToggleInventory()
         {
-            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+            if (shopUI != null && shopUI.IsOpen)
             {
                 return;
             }
 
-            if (InventoryUI.Instance != null)
+            if (inventoryManager != null)
             {
-                bool isActive = !InventoryUI.Instance.gameObject.activeSelf;
-                InventoryUI.Instance.gameObject.SetActive(isActive);
+                bool isActive = !inventoryManager.gameObject.activeSelf;
+                inventoryManager.gameObject.SetActive(isActive);
             }
         }
     }
