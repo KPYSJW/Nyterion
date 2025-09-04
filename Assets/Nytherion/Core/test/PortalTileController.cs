@@ -1,6 +1,6 @@
-using Nytherion.GamePlay.Dungeon;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Zenject;
 
 [RequireComponent(typeof(Tilemap), typeof(TilemapCollider2D))]
 public class PortalTileController : MonoBehaviour
@@ -13,6 +13,12 @@ public class PortalTileController : MonoBehaviour
 
     private Tilemap portalTilemap;
     private Collider2D tilemapCollider;
+    private DungeonManager dungeonManager;
+    [Inject]
+    public void Construct(DungeonManager dungeonManager)
+    {
+        this.dungeonManager = dungeonManager;
+    }
 
     private void Awake()
     {
@@ -77,7 +83,7 @@ public class PortalTileController : MonoBehaviour
 
         foreach (var pos in positionsToCheck)
         {
-            if (DungeonManager.Instance.TryGetDestination(pos, out Vector3Int destinationPos))
+            if (dungeonManager.TryGetDestination(pos, out Vector3Int destinationPos))
             {
                 TeleportPlayer(player, destinationPos);
                 return;

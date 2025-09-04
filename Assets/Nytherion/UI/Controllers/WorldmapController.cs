@@ -4,33 +4,33 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.GamePlay.Dungeon;
+using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
     public class WorldmapController : MonoBehaviour
     {
         [Header("UI References")]
-        [Tooltip(" ĵ Ȱ ϴ.")]
         [SerializeField] private RectTransform mapContent;
-        [Tooltip(" ϳ Ÿ UI ϴ.")]
         [SerializeField] private GameObject roomIconPrefab;
-        [Tooltip("÷̾ ġ Ÿ UI ϴ.  ϴ.")]
         [SerializeField] private RectTransform playerIcon;
-        [Tooltip(" ϴ ̹ ϴ.")]
         [SerializeField] private Image linePrefab;
 
         [Header("Map Settings")]
-        [Tooltip(" ǥ ũϴ.")]
         [SerializeField] private float roomIconSize = 20f;
-        [Tooltip(" ϴ.")]
         [SerializeField] private float iconSpacing = 30f;
-        [Tooltip(" ڸ ȭ ׵ ϴ.")]
         [SerializeField] private float mapPadding = 50f;
 
         private List<RoomFirstDungeonGenerator.Room> allRooms;
         private Dictionary<Vector2Int, RectTransform> roomIconMap = new Dictionary<Vector2Int, RectTransform>();
         private RectTransform viewPort;
 
+        private DungeonManager dungeonManager;
+        [Inject]
+        public void Construct(DungeonManager dungeonManager)
+        {
+            this.dungeonManager = dungeonManager;
+        }
         private void Awake()
         {
             viewPort = transform as RectTransform;
@@ -39,7 +39,7 @@ namespace Nytherion.UI.Controllers
 
         private void OnEnable()
         {
-            if (DungeonManager.Instance != null && DungeonManager.Instance.playerObject != null && playerIcon != null)
+            if (dungeonManager != null && dungeonManager.playerObject != null && playerIcon != null)
             {
 
                 playerIcon.SetParent(mapContent, false);
@@ -53,7 +53,7 @@ namespace Nytherion.UI.Controllers
         }
         private void LateUpdate()
         {
-            if (DungeonManager.Instance != null && DungeonManager.Instance.playerObject != null && playerIcon.gameObject.activeSelf)
+            if (dungeonManager != null && dungeonManager.playerObject != null && playerIcon.gameObject.activeSelf)
             {
                 UpdatePlayerIconPosition();
             }
@@ -130,7 +130,7 @@ namespace Nytherion.UI.Controllers
         {
             if (allRooms == null || allRooms.Count == 0) return;
 
-            Transform playerTransform = DungeonManager.Instance.playerObject.transform;
+            Transform playerTransform = dungeonManager.playerObject.transform;
 
             RoomFirstDungeonGenerator.Room closestRoom = allRooms
                 .OrderBy(room => ((Vector2)playerTransform.position - room.center).sqrMagnitude)

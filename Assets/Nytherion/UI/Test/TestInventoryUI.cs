@@ -4,6 +4,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;  
 using TMPro;
 using System.Linq;
+using Zenject;
 
 namespace Nytherion.UI.Test
 {
@@ -35,6 +36,16 @@ namespace Nytherion.UI.Test
 
         private float messageTimer;
         private string currentMessage;
+
+        private InventoryManager inventoryManager;
+        private SaveLoadManager saveLoadManager;
+
+        [Inject]
+        public void Construct(InventoryManager inventoryManager, SaveLoadManager saveLoadManager)
+        {
+            this.inventoryManager = inventoryManager;
+            this.saveLoadManager = saveLoadManager;
+        }
 
         private void Start()
         {
@@ -74,7 +85,7 @@ namespace Nytherion.UI.Test
                 return;
             }
 
-            bool success = InventoryManager.Instance.AddItem(itemData, count);
+            bool success = inventoryManager.AddItem(itemData, count);
             if (success)
             {
                 ShowStatusMessage($"{itemData.name} added x{count}");
@@ -87,7 +98,7 @@ namespace Nytherion.UI.Test
 
         private void RemoveTestItem1()
         {
-            var items = InventoryManager.Instance.GetAllItems();
+            var items = inventoryManager.GetAllItems();
 
             if (items.Count == 0)
             {
@@ -99,7 +110,7 @@ namespace Nytherion.UI.Test
             int count = items[firstItem];
 
             int removeCount = Mathf.Min(1, count);
-            bool success = InventoryManager.Instance.RemoveItem(firstItem, removeCount);
+            bool success = inventoryManager.RemoveItem(firstItem, removeCount);
 
             if (success)
             {
@@ -113,13 +124,13 @@ namespace Nytherion.UI.Test
 
         private void ClearInventory()
         {
-            InventoryManager.Instance.ClearInventory();
+            inventoryManager.ClearInventory();
             ShowStatusMessage("Inventory cleared");
         }
 
         private void SaveInventory()
         {
-            SaveLoadManager.Instance.SaveGame();
+            saveLoadManager.SaveGame();
             ShowStatusMessage("Game Saved via SaveLoadManager");
         }
 
@@ -127,7 +138,7 @@ namespace Nytherion.UI.Test
         {
             try
             {
-                SaveLoadManager.Instance.LoadGame();
+                saveLoadManager.LoadGame();
                 ShowStatusMessage("Game Loaded via SaveLoadManager");
 
             }
@@ -149,7 +160,7 @@ namespace Nytherion.UI.Test
 
         public void DebugItemTable()
         {
-            if (InventoryManager.Instance == null)
+            if (inventoryManager == null)
             {
                 Debug.LogError("InventoryManager 인스턴스를 찾을 수 없습니다.");
                 return;
@@ -160,7 +171,7 @@ namespace Nytherion.UI.Test
 
             if (field != null)
             {
-                var itemTable = field.GetValue(InventoryManager.Instance) as System.Collections.Generic.Dictionary<string, ItemData>;
+                var itemTable = field.GetValue(inventoryManager) as System.Collections.Generic.Dictionary<string, ItemData>;
                 if (itemTable != null && itemTable.Count > 0)
                 {
                     Debug.Log($"=== 아이템 테이블 (총 {itemTable.Count}개) ===");
@@ -182,7 +193,7 @@ namespace Nytherion.UI.Test
 
         public void DebugCurrentInventory()
         {
-            if (InventoryManager.Instance == null)
+            if (inventoryManager == null)
             {
                 Debug.LogError("InventoryManager 인스턴스를 찾을 수 없습니다.");
                 return;
@@ -193,7 +204,7 @@ namespace Nytherion.UI.Test
 
             if (field != null)
             {
-                var items = field.GetValue(InventoryManager.Instance) as System.Collections.Generic.Dictionary<ItemData, int>;
+                var items = field.GetValue(inventoryManager) as System.Collections.Generic.Dictionary<ItemData, int>;
                 if (items != null && items.Count > 0)
                 {
                     Debug.Log($"=== 현재 인벤토리 (총 {items.Count}종류) ===");

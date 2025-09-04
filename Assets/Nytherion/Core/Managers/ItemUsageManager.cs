@@ -1,26 +1,30 @@
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Data;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class ItemUsageManager : MonoBehaviour
+    public class ItemUsageManager : BaseManager
     {
-        public static ItemUsageManager Instance { get; private set; }
 
-        private void Awake()
+        private InventoryManager inventoryManager;
+        private PlayerHealth playerHealth;
+
+        [Inject]
+        public void Construct(
+            InventoryManager inventoryManager,
+            PlayerHealth playerHealth)
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            this.inventoryManager = inventoryManager;
+            this.playerHealth = playerHealth;
         }
 
+        protected override void OnInitializeInternal()
+        {
+
+        }
         public void UseConsumableItem(ConsumableData consumable)
         {
             if (consumable == null)
@@ -28,7 +32,7 @@ namespace Nytherion.Core.Managers
                 return;
             }
 
-            if (InventoryManager.Instance.RemoveItem(consumable, 1))
+            if (inventoryManager.RemoveItem(consumable, 1))
             {
                 ApplyItemEffect(consumable);
             }
@@ -61,7 +65,6 @@ namespace Nytherion.Core.Managers
 
         private void UseHealthPotion(ConsumableData potion)
         {
-            PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
             if (playerHealth != null)
             {
                 playerHealth.Heal(potion.healAmount);
@@ -79,6 +82,16 @@ namespace Nytherion.Core.Managers
             {
                 // 투척 로직
             }
+        }
+        
+        public override void PopulateSaveData(SaveData saveData)
+        {
+
+        }
+        
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+
         }
     }
 }

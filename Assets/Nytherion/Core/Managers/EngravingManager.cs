@@ -5,13 +5,13 @@ using UnityEngine;
 using System;
 using System.Linq;
 using Nytherion.Core.Data;
+using Nytherion.Core.Interfaces;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class EngravingManager : MonoBehaviour
+    public class EngravingManager : MonoBehaviour, ISaveable, IInitializable
     {
-        public static EngravingManager Instance { get; private set; }
-
         [Header("Database")]
         [SerializeField] private EngravingDatabaseSO engravingDatabaseSO;
 
@@ -35,9 +35,6 @@ namespace Nytherion.Core.Managers
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-
             logicGrid = new EngravingGrid(gridRows, gridColumns);
             engravingDatabase = new Dictionary<string, EngravingData>();
             storageBlocks = new List<EngravingBlock>();
@@ -185,7 +182,7 @@ namespace Nytherion.Core.Managers
             OnEngravingStateChanged?.Invoke();
         }
 
-        public EngravingGridState GetEngravingsForSave()
+        private EngravingGridState GetEngravingsForSave()
         {
             var state = new EngravingGridState();
             if (placedBlockPositions == null || logicGrid == null)
@@ -193,7 +190,7 @@ namespace Nytherion.Core.Managers
                 Debug.LogWarning("EngravingManager not properly initialized when trying to save engraving data");
                 return state;
             }
-            
+
             foreach (var pair in placedBlockPositions)
             {
                 EngravingBlock blockOnGrid = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
@@ -221,7 +218,7 @@ namespace Nytherion.Core.Managers
             return state;
         }
 
-        public void LoadDataFromSave(EngravingGridState state)
+        private void LoadDataFromSave(EngravingGridState state)
         {
             storageBlocks.Clear();
             logicGrid.Clear();
@@ -257,7 +254,17 @@ namespace Nytherion.Core.Managers
             }
 
             logicGrid.RecalculateAllInfluences();
-             OnEngravingStateChanged?.Invoke();
+            OnEngravingStateChanged?.Invoke();
+        }
+
+        public void PopulateSaveData(SaveData saveData)
+        {
+            saveData.engravingData = GetEngravingsForSave();
+        }
+
+        public void LoadFromSaveData(SaveData saveData)
+        {
+            LoadDataFromSave(saveData.engravingData);
         }
         #endregion
     }

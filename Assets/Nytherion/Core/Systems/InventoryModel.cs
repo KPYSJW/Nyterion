@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Nytherion.Data.ScriptableObjects.Items;
-using UnityEngine;
 
 namespace Nytherion.Core.Systems
 {
@@ -58,6 +55,16 @@ namespace Nytherion.Core.Systems
             if (slotIndex < 0 || slotIndex >= slots.Length) return;
             slots[slotIndex] = (item, count);
             OnInventoryUpdated?.Invoke();
+        }
+
+        public bool AddItemToSlot(ItemData item, int count, int slotIndex, bool overwrite)
+        {
+            if (slotIndex < 0 || slotIndex >= slots.Length) return false;
+            if (!overwrite && slots[slotIndex].item != null) return false;
+
+            slots[slotIndex] = (item, count);
+            OnInventoryUpdated?.Invoke();
+            return true;
         }
 
 

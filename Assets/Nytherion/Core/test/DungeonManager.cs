@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Zenject;
 
 public class DungeonManager : MonoBehaviour
 {
-    public static DungeonManager Instance { get; private set; }
     public RoomFirstDungeonGenerator RoomFirstDungeonGenerator;
     public List<RoomFirstDungeonGenerator.Room> AllDungeonRooms { get; private set; }
     private Dictionary<Vector3Int, Vector3Int> portalLinks = new Dictionary<Vector3Int, Vector3Int>();
@@ -28,43 +28,42 @@ public class DungeonManager : MonoBehaviour
     private RoomFirstDungeonGenerator.Room currentPlayerRoom = null;
     private RoomFirstDungeonGenerator.Room previousPlayerRoom = null;
 
+    private EventManager eventManager;
+    public InputManager inputManager;
 
+    [Inject]
+    public void Construct(EventManager eventManager, InputManager inputManager)
+    {
+        this.eventManager = eventManager;
+        this.inputManager = inputManager;
+    }
 
     private void Awake()
     {
         if (worldMapUI != null) worldMapUI.SetActive(false);
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else
+
+        if (portalTilemap != null)
         {
-            Instance = this;
-            // [추가] portalTilemap에서 Rigidbody2D 컴포넌트를 찾아옴
-            if (portalTilemap != null)
-            {
-                portalRigidbody = portalTilemap.GetComponent<Rigidbody2D>();
-                portalCollider = portalTilemap.GetComponent<TilemapCollider2D>();
-            }
+            portalRigidbody = portalTilemap.GetComponent<Rigidbody2D>();
+            portalCollider = portalTilemap.GetComponent<TilemapCollider2D>();
         }
     }
 
     public void Start()
     {
-       
+
         StartCoroutine(RegisterEventListeners());
         RoomFirstDungeonGenerator.DungeonStart();
     }
     private IEnumerator RegisterEventListeners()
     {
-        // EventManager.Instance가 null이 아닐 때까지 매 프레임 기다립니다.
-        yield return new WaitUntil(() => EventManager.Instance != null);
-
-        // EventManager가 준비되었으므로 안전하게 리스너를 등록합니다.
-        EventManager.Instance.RegisterEnemyDeathListener(HandleEnemyDeath);
+        yield return new WaitUntil(() => eventManager != null);
+        eventManager.RegisterEnemyDeathListener(HandleEnemyDeath);
         Debug.Log("DungeonManager: EnemyDeath 리스너 등록 성공!");
 
-        // InputManager 리스너도 여기서 등록하는 것이 더 안전합니다.
-        if (InputManager.Instance != null)
+        if (inputManager != null)
         {
-            InputManager.Instance.onMap += WorldMapUI;
+            inputManager.onMap += WorldMapUI;
         }
 
         // 던전 생성 이벤트 리스너 등록
@@ -72,13 +71,13 @@ public class DungeonManager : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (EventManager.Instance != null)
+        if (eventManager != null)
         {
-            EventManager.Instance.UnregisterEnemyDeathListener(HandleEnemyDeath);
+            eventManager.UnregisterEnemyDeathListener(HandleEnemyDeath);
         }
-        if (InputManager.Instance != null)
+        if (inputManager != null)
         {
-            InputManager.Instance.onMap -= WorldMapUI;
+            inputManager.onMap -= WorldMapUI;
         }
         RoomFirstDungeonGenerator.OnDungeonGenerated -= SpawnPlayerAtStart;
     }
@@ -101,15 +100,12 @@ public class DungeonManager : MonoBehaviour
         portalLinks[portalB] = portalA;
     }
 
-    
+
     public bool TryGetDestination(Vector3Int currentPortalPos, out Vector3Int destinationPos)
     {
         return portalLinks.TryGetValue(currentPortalPos, out destinationPos);
     }
 
-
-
-    
     public void ClearDungeonData()
     {
         portalLinks.Clear();
@@ -125,7 +121,7 @@ public class DungeonManager : MonoBehaviour
 
         if (playerObject != null)
         {
-            
+
             playerObject.transform.position = new Vector3(startRoom.center.x, startRoom.center.y, 0);
             Debug.Log($"÷̾ {startRoom.center} ̵!");
         }
@@ -137,7 +133,7 @@ public class DungeonManager : MonoBehaviour
     public void SetAllRooms(List<RoomFirstDungeonGenerator.Room> allRooms)
     {
         AllDungeonRooms = allRooms;
-       
+
     }
 
     void WorldMapUI()
@@ -145,7 +141,7 @@ public class DungeonManager : MonoBehaviour
         if (worldMapUI != null)
         {
             worldMapUI.SetActive(!worldMapUI.activeSelf);
-       
+
         }
     }
     private void SetMonstersActive(RoomFirstDungeonGenerator.Room room, bool isActive)
@@ -186,14 +182,10 @@ public class DungeonManager : MonoBehaviour
 
     private void HandleEnemyDeath(EnemyBase deadEnemy)
     {
-        // 죽은 몬스터가 속한 방을 찾는다.
         RoomFirstDungeonGenerator.Room room = deadEnemy.homeRoom;
         Debug.Log($"sdsdsdd.");
-        // 방 정보가 있고, 그 방에 몬스터 목록이 있다면
         if (room != null && roomEnemies.ContainsKey(room))
         {
-            // [핵심 수정] 이 방의 모든 몬스터가 사망 상태인지 확인한다.
-            // LINQ의 All() 메서드를 사용해서 리스트의 모든 요소가 특정 조건을 만족하는지 검사
             bool allMonstersAreDead = roomEnemies[room].All(monster => monster.isDead);
 
             if (allMonstersAreDead)
@@ -203,10 +195,10 @@ public class DungeonManager : MonoBehaviour
             }
 
             // 죽은 몬스터가 보스인지 확인 (보스전 로직은 그대로 유지)
-           // if (deadEnemy == bossInstance)
-           // {
-           //     OnBossDefeated(deadEnemy);
-           // }
+            // if (deadEnemy == bossInstance)
+            // {
+            //     OnBossDefeated(deadEnemy);
+            // }
         }
     }
 
@@ -228,7 +220,6 @@ public class DungeonManager : MonoBehaviour
         {
             SetMonstersActive(roomEntry.Key, false);
         }
-        // [추가] 게임 시작 시 포탈이 열려 있도록 보장
         UnlockPortals();
     }
     private void OnPlayerEnteredRoom(RoomFirstDungeonGenerator.Room newRoom, RoomFirstDungeonGenerator.Room oldRoom)
@@ -239,13 +230,11 @@ public class DungeonManager : MonoBehaviour
         }
         SetMonstersActive(newRoom, true);
 
-        // [수정] 방에 몬스터가 남아있다면 모든 포탈을 잠근다.
         if (!IsRoomCleared(newRoom))
         {
             LockPortals();
         }
     }
-    // [수정] 플레이어가 현재 있는 방을 찾는 메서드
     public RoomFirstDungeonGenerator.Room FindCurrentPlayerRoom()
     {
         if (playerObject == null || AllDungeonRooms == null) return null;
@@ -257,7 +246,6 @@ public class DungeonManager : MonoBehaviour
         if (room == null) return true;
         if (!roomEnemies.ContainsKey(room) || roomEnemies[room].Count == 0) return true;
 
-        // 방에 있는 모든 몬스터의 isDead 상태를 확인
         return roomEnemies[room].All(monster => monster.isDead);
     }
 

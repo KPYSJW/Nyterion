@@ -4,6 +4,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Inventory.Utils;
 using Nytherion.Core.Enums;
+using Zenject;
 
 namespace Nytherion.UI.Inventory
 {
@@ -12,27 +13,63 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private EquipmentSlotType slotType;
         public EquipmentSlotType SlotType => slotType;
 
+        private EquipmentDataManager equipmentDataManager;
+        private InventoryManager inventoryManager;
+
+        [Inject]
+        public void Construct(EquipmentDataManager equipmentDataManager, InventoryManager inventoryManager)
+        {
+            this.equipmentDataManager = equipmentDataManager;
+            this.inventoryManager = inventoryManager;
+        }
+
         protected override void Awake()
         {
             base.Awake();
             OnBeginDragEvent += (s, e) => DragDropUIHandler.HandleBeginDragShared(s);
             OnPointerClickEvent += HandlePointerClick;
-            OnEndDragEvent += (s, e) => HandleEndDrag(s, e);
+            OnEndDragEvent += HandleEndDrag;
+        }
+
+        protected override void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)
+        {
+            // 기본 드래그 종료 처리 호출
+            base.HandleEndDrag(slot, eventData);
+            
+            DragDropUIHandler.HandleEndDragShared(slot, eventData);
+            if (!eventData.pointerEnter)
+            {
+                // 드롭에 성공하지 못했다면, 아이콘을 다시 활성화
+                if (iconImage != null) iconImage.enabled = true;
+            }
+            else
+            {
+                // 드롭에 성공했다면, 슬롯을 비움
+                BaseSlotUI dropTarget = eventData.pointerEnter.GetComponent<BaseSlotUI>();
+                if (dropTarget != null && dropTarget.CanReceiveItem(this.CurrentItem))
+                {
+                    ClearSlot();
+                }
+                else
+                { 
+                    if (iconImage != null) iconImage.enabled = true;
+                }
+            }
         }
 
         public void OnEnable()
         {
-            if (EquipmentDataManager.Instance != null)
+            if (equipmentDataManager != null)
             {
-                EquipmentDataManager.Instance.OnEquipmentChanged += HandleEquipmentChanged;
+                equipmentDataManager.OnEquipmentChanged += HandleEquipmentChanged;
             }
         }
 
         public void OnDisable()
         {
-            if (EquipmentDataManager.Instance != null)
+            if (equipmentDataManager != null)
             {
-                EquipmentDataManager.Instance.OnEquipmentChanged -= HandleEquipmentChanged;
+                equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
             }
         }
 
@@ -54,12 +91,13 @@ namespace Nytherion.UI.Inventory
             if (sourceBaseSlot is InventorySlotUI sourceSlot && CanReceiveItem(sourceSlot.CurrentItem))
             {
                 var (itemToEquip, count) = sourceSlot.GetItemInfo();
+                if (itemToEquip == null) return;
 
-                if (InventoryManager.Instance.RemoveItemFromSlot(sourceSlot.SlotIndex, 1))
+                if (inventoryManager.RemoveItemFromSlot(sourceSlot.SlotIndex, 1))
                 {
                     if (!IsEmpty)
                     {
-                        InventoryManager.Instance.AddItem(CurrentItem, 1);
+                        inventoryManager.AddItem(CurrentItem, 1);
                     }
                     SetItem(itemToEquip, 1);
                 }
@@ -99,8 +137,8 @@ namespace Nytherion.UI.Inventory
 
         private void UpdateEquipment(ItemData itemToEquip)
         {
-            if (EquipmentDataManager.Instance == null) return;
-            EquipmentDataManager.Instance.SetEquipment(this.slotType, itemToEquip as EquipmentData);
+            if (equipmentDataManager == null) return;
+            equipmentDataManager.SetEquipment(this.slotType, itemToEquip as EquipmentData);
         }
 
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
@@ -115,7 +153,7 @@ namespace Nytherion.UI.Inventory
         {
             if (IsEmpty) return;
 
-            if (InventoryManager.Instance.AddItem(CurrentItem, 1))
+            if (inventoryManager.AddItem(CurrentItem, 1))
             {
                 ClearSlot();
             }
