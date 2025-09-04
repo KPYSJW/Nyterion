@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefabs/Managers/GachaUIController.prefab.meta
 guid: cd3095b76e21de446b975b43a7af50c9
+========
+guid: 7cf9391b6913dd64fb3a669d92f24364
+>>>>>>>> KimYoungJoo:Assets/Nytherion/Core/test/BossPortal.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

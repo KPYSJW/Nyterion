@@ -39,6 +39,7 @@ namespace Nytherion.Core.Managers
             playerEngravingManager = GetComponent<PlayerEngravingManager>();
 
             currentPlayerData = Instantiate(basePlayerData);
+
             RecalculateStats();
         }
 

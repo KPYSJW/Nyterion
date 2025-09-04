@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Nytherion/GamePlay/Characters/Player/PlayerState.cs.meta
+guid: 251d2f4aaa5d8904aa5e542bbad2090e
+========
+guid: fcc2c00ae5e28244e94411fd81dfe828
+>>>>>>>> KimYoungJoo:Assets/Nytherion/Core/Enums/BossPortal.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

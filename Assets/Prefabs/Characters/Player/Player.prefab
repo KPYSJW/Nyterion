@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: -2891475838477974602}
   - component: {fileID: -2633095540676331646}
   - component: {fileID: 4850890469495388231}
+  - component: {fileID: 3558908687109346775}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -179,7 +180,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &-2891475838477974602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,6 +193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aecc2587fc6efe84496d9142a0be9289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
   basePlayerData: {fileID: 11400000, guid: fb11d3df7e5a27d43bd00264c2d31f60, type: 2}
   currentPlayerData: {fileID: 0}
 --- !u!114 &-2633095540676331646
@@ -228,6 +230,41 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!70 &3558908687109346775
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5097942217742227509}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.77, y: 0.96}
+  m_Direction: 0
 --- !u!1 &7305831967822275261
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,5 +20,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
   fixedSpawnPoints: []
   useRandomSpawn: 1
-  enemyCount: 3
+  enemyCount: 0
   stageBackground: {fileID: 0}
+  dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
+  nextStageData: {fileID: 11400000, guid: cab0721464693eb498d35c1ee19dbd6f, type: 2}
+  victorySceneName: GameScene
