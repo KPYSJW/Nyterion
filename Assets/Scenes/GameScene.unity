@@ -8287,6 +8287,8 @@ MonoBehaviour:
   menuMainMenuButton: {fileID: 2042787342}
   engravingUIControllerPrefab: {fileID: 350585857376641199, guid: 12b4aadbf60eb3f418d9c62526b30c73, type: 3}
   engravingCanvasGroup: {fileID: 535014532}
+  worldmapController: {fileID: 0}
+  minimapTileGenerator: {fileID: 0}
 --- !u!4 &876260762
 Transform:
   m_ObjectHideFlags: 0
@@ -21054,6 +21056,8 @@ MonoBehaviour:
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
   itemUsageManagerPrefab: {fileID: 7984585239593921606, guid: 4d55406ce8a55294dbc5ee1bb0d895af, type: 3}
   quickSlotManagerPrefab: {fileID: 1073868026320572463, guid: d8e41a7f68c20bd46a54a5324c19797f, type: 3}
+  sceneTransitionManagerPrefab: {fileID: 3582742344203591957, guid: e7f174a1dd4b4e9468001f3debdfe3a7, type: 3}
+  dungeonManagerPrefab: {fileID: -8684038073368422215, guid: 9df737e19a6bd5044b571a31aed06b12, type: 3}
   gameUIInstaller: {fileID: 876260761}
   gameSceneUIManager: {fileID: 8384210597063002988, guid: 5f3cd501b1e31ff45b36c99fa51fb6a0, type: 3}
   enemySpawnerPrefab: {fileID: 3311273739936786302, guid: fab70de81019c214485cbcb07e8c6f08, type: 3}
@@ -21077,44 +21081,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &353351211561466454
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9182511890406947015}
-  - component: {fileID: 755859471045784191}
-  m_Layer: 0
-  m_Name: SceneTransitionManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &755859471045784191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 353351211561466454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5aa675cd8846d4289c0b62a4e672b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  autoInitializeOnAwake: 0
-  defaultSceneToLoad: GameScene
-  fadeDuration: 0.5
-  OnSceneStartLoading:
-    m_PersistentCalls:
-      m_Calls: []
-  OnSceneLoaded:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &2538578656122281182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21159,21 +21125,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9182511890406947015
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 353351211561466454}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -21181,7 +21132,6 @@ SceneRoots:
   - {fileID: 2012032541}
   - {fileID: 998235449}
   - {fileID: 2770329131098211101}
-  - {fileID: 9182511890406947015}
   - {fileID: 1548097609}
   - {fileID: 1900859948}
   - {fileID: 657457748}

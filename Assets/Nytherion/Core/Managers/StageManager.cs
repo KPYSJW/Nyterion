@@ -20,8 +20,8 @@ namespace Nytherion.Core.Managers
         [Inject]
         public void Construct(SceneTransitionManager sceneTransitionManager, DungeonManager dungeonManager)
         {
-            sceneTransitionManager = sceneTransitionManager;
-            dungeonManager = dungeonManager;
+            this.sceneTransitionManager = sceneTransitionManager;
+            this.dungeonManager = dungeonManager;
         }
 
         private void Awake()

@@ -18,8 +18,6 @@ using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 using Zenject;
 
-using Zenject;
-
 using Nytherion.GamePlay.Characters.Enemy;
 
 using Nytherion.Data.ScriptableObjects.Dungeon;

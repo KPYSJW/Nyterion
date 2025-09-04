@@ -1,14 +1,17 @@
+using UnityEngine;
+using Zenject;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.GamePlay;
 using Nytherion.GamePlay.Characters.Player;
-using Nytherion.GamePlay.Dungeon;
+using Nytherion.UI.Presenters;
 using Nytherion.GamePlay.Systems;
+using Nytherion.GamePlay;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Shop;
 using Nytherion.UI.Inventory;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Interfaces;
+using Nytherion.GamePlay.Dungeon;
 
 namespace Nytherion.Core.Systems
 {
@@ -36,6 +39,8 @@ namespace Nytherion.Core.Systems
         [SerializeField] private MenuManager menuManagerPrefab;
         [SerializeField] private ItemUsageManager itemUsageManagerPrefab;
         [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
+        [SerializeField] private SceneTransitionManager sceneTransitionManagerPrefab;
+        [SerializeField] private DungeonManager dungeonManagerPrefab;
 
         [Header("UI System")]
         [SerializeField] private GameUIInstaller gameUIInstaller;
@@ -53,11 +58,6 @@ namespace Nytherion.Core.Systems
 
         [Header("UI References")]
         [SerializeField] private ShopUI shopUIPrefab;
-
-        [Header("Scene Tilemaps")]
-        [SerializeField] private Tilemap floorTilemap;
-        [SerializeField] private Tilemap wallTilemap;
-        [SerializeField] private Tilemap portalTilemap;
 
         public override void InstallBindings()
         {
@@ -120,6 +120,16 @@ namespace Nytherion.Core.Systems
 
             Container.BindInterfacesAndSelfTo<StageManager>()
                 .FromComponentInNewPrefab(stageManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.BindInterfacesAndSelfTo<SceneTransitionManager>()
+                .FromComponentInNewPrefab(sceneTransitionManagerPrefab)
+                .AsSingle()
+                .NonLazy();
+
+            Container.BindInterfacesAndSelfTo<DungeonManager>()
+                .FromComponentInNewPrefab(dungeonManagerPrefab)
                 .AsSingle()
                 .NonLazy();
 
