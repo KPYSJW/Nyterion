@@ -34,8 +34,8 @@ namespace Nytherion.UI.Map
         public Color backgroundColor = Color.clear;
 
         [Header("뷰 설정")]
-        [Tooltip("미니맵에 한번에 보여줄 영역의 높이 (타일 단위)")]
-        public float fixedViewHeightInTiles = 30f;
+        [Tooltip("미니맵에 표시될 방 주변의 여백 크기 (타일 단위)")]
+        public float viewPaddingInTiles = 10f; 
 
         [Header("동적 아이콘 프리팹")]
         [Tooltip("플레이어 아이콘으로 사용할 UI 프리팹")]
@@ -285,6 +285,10 @@ namespace Nytherion.UI.Map
         /// <summary>
         /// 플레이어가 있는 방을 중심으로 미니맵 뷰(보여지는 영역)를 업데이트합니다.
         /// </summary>
+        /// <summary>
+        /// 플레이어가 있는 방을 중심으로 미니맵 뷰(보여지는 영역)를 업데이트합니다.
+        /// 방의 크기에 맞춰 뷰의 크기가 동적으로 조절됩니다.
+        /// </summary>
         private void UpdateMinimapView(RoomFirstDungeonGenerator.Room room)
         {
             if (roomFloorData == null || !roomFloorData.TryGetValue(room, out HashSet<Vector2Int> tilesInRoom) || tilesInRoom.Count == 0)
@@ -292,7 +296,7 @@ namespace Nytherion.UI.Map
                 return;
             }
 
-            // 방의 시각적 중심점을 계산합니다.
+            // 1. 방의 경계와 시각적 중심점을 계산합니다.
             Vector2Int minPos = tilesInRoom.First();
             Vector2Int maxPos = tilesInRoom.First();
             foreach (Vector2Int tile in tilesInRoom)
@@ -303,12 +307,19 @@ namespace Nytherion.UI.Map
                 maxPos.y = Mathf.Max(maxPos.y, tile.y);
             }
             Vector2 visualCenter = ((Vector2)minPos + (Vector2)maxPos) / 2.0f;
+            float roomWidth = maxPos.x - minPos.x + 1;
+            float roomHeight = maxPos.y - minPos.y + 1;
 
-            // RawImage의 uvRect를 조절하여 줌인/줌아웃 및 스크롤 효과를 구현합니다.
+            // 2. 방이 잘리지 않도록 미니맵 뷰의 크기를 동적으로 계산합니다.
             float uiAspectRatio = mapImage.rectTransform.rect.width / mapImage.rectTransform.rect.height;
-            float viewHeightInTiles = fixedViewHeightInTiles;
+
+            // 방의 가로 길이를 화면 비율에 맞게 보여주기 위해 필요한 세로 길이를 계산하고,
+            // 실제 방의 세로 길이와 비교하여 더 큰 값을 기준으로 뷰 크기를 정합니다.
+            float requiredHeightForWidth = roomWidth / uiAspectRatio;
+            float viewHeightInTiles = Mathf.Max(roomHeight, requiredHeightForWidth) + viewPaddingInTiles; // 여백 추가
             float viewWidthInTiles = viewHeightInTiles * uiAspectRatio;
 
+            // 3. RawImage의 uvRect를 조절하여 줌인/줌아웃 및 스크롤 효과를 구현합니다.
             float uvWidth = viewWidthInTiles / mapWidth;
             float uvHeight = viewHeightInTiles / mapHeight;
             float centerX_uv = (visualCenter.x - mapOffset.x + 0.5f) / mapWidth;

@@ -96,7 +96,7 @@ namespace Nytherion.GamePlay.Dungeon
 
             public RoomType type = RoomType.Normal; // 방의 종류
 
-
+            public Vector2? bossSpawnPoint; // 보스가 스폰될 위치 (보스방 전용)
 
             // 방의 경계를 나타내는 BoundsInt. 계산된 프로퍼티입니다.
 
@@ -190,7 +190,7 @@ namespace Nytherion.GamePlay.Dungeon
 
         [SerializeField]
 
-        private DungeonData dungeonData;
+        public DungeonData dungeonData;
 
 
 
@@ -527,11 +527,11 @@ namespace Nytherion.GamePlay.Dungeon
             // 특수 방 바닥과 포탈, 벽을 그립니다.
             tilemapVisualizer.PaintSpecialRoomFloors(specialRooms, dungeonData, roomFloorData);
             tilemapVisualizer.PaintPortals(portalPositions);
+           
             HashSet<Vector2Int> allWallPositions = WallGenerator.FindWalls(totalFloorPositions, dungeonData.wallThickness);
-
             // --- [수정된 로직 호출!] ---
             // 생성된 벽들 중에서 얇은 벽을 찾아 바닥으로 변환하고, 즉시 그립니다.
-            RemoveThinWalls(totalFloorPositions, allWallPositions, tilemapVisualizer);
+            RemoveThinWalls(totalFloorPositions, allWallPositions, tilemapVisualizer, roomFloorData); 
             // --------------------------
 
             tilemapVisualizer.PaintWallsWithRuleTile(allWallPositions);
@@ -1035,62 +1035,114 @@ namespace Nytherion.GamePlay.Dungeon
 
 
 
-        /// <summary>
+        /// <summary>
 
-        /// 필요한 만큼의 막다른 길(dead-end)이 나올 때까지 그리드 위치 선택을 재시도합니다.
+        /// 필요한 만큼의 막다른 길(dead-end)이 나올 때까지 그리드 위치 선택을 재시도합니다.
 
-        /// </summary>
+        /// </summary>
 
-        private List<Vector2Int> RetrySelectConnectedGridPositions(Vector2Int gridSize)
-
+        private List<Vector2Int> RetrySelectConnectedGridPositions(Vector2Int gridSize)
         {
+            // 1단계: 일단 어떻게든 연결된 방들의 위치를 생성한다.
+            List<Vector2Int> selectedGridPositions = SelectConnectedGridPositions(gridSize);
+            int requiredDeadEnds = 2 + dungeonData.numberOfShopRooms + dungeonData.numberOfItemRooms;
 
-            List<Vector2Int> selectedGridPositions;
-
-            int generationAttempts = 0;
-
-            // 보스, 시작, 상점, 아이템 방은 막다른 길에 배치하는 것이 이상적입니다.
-
-            int requiredDeadEnds = 2 + dungeonData.numberOfShopRooms + dungeonData.numberOfItemRooms;
-
-
-
-            while (true)
-
-            {
-
-                generationAttempts++;
-
-                if (generationAttempts > dungeonData.maxGenerationAttempts)
-
-                {
-
-                    Debug.LogError($"던전 생성 실패: {dungeonData.maxGenerationAttempts}번 시도 후에도 유효한 그리드를 생성하지 못했습니다.");
-
-                    return new List<Vector2Int>();
-
-                }
-
-                selectedGridPositions = SelectConnectedGridPositions(gridSize);
-
-                if (selectedGridPositions.Count < dungeonData.desiredNumberOfRooms) continue;
-
-
-
-                Dictionary<Vector2Int, int> gridConnectionCount = CalculateGridConnections(selectedGridPositions);
-
-                int deadEndCount = gridConnectionCount.Values.Count(c => c == 1); // 연결이 하나뿐인 방 = 막다른 길
-
-
-
-                if (deadEndCount >= requiredDeadEnds) break; // 필요한 만큼의 막다른 길이 확보되면 성공
-
-            }
+            // 2단계: 생성된 구조를 분석하고, 필요하다면 '가지치기'를 시작한다.
+            selectedGridPositions = PruneConnectionsToCreateDeadEnds(selectedGridPositions, requiredDeadEnds);
 
             return selectedGridPositions;
-
         }
 
+        private List<Vector2Int> PruneConnectionsToCreateDeadEnds(List<Vector2Int> positions, int requiredDeadEnds)
+        {
+            // 안전장치: 너무 많이 시도하지 않도록 제한
+            int safetyBreak = 100;
+            while (safetyBreak-- > 0)
+            {
+                Dictionary<Vector2Int, int> gridConnectionCount = CalculateGridConnections(positions);
+                int deadEndCount = gridConnectionCount.Values.Count(c => c == 1);
+
+                // 막다른 길이 충분하면 즉시 성공!
+                if (deadEndCount >= requiredDeadEnds)
+                {
+                    return positions;
+                }
+
+                // 막다른 길이 아닌 방(연결이 2개 이상)들을 '가지치기' 후보로 선정
+                List<Vector2Int> candidates = positions.Where(p => gridConnectionCount[p] > 1).OrderBy(p => Random.value).ToList();
+
+                bool connectionPruned = false;
+                foreach (var candidate in candidates)
+                {
+                    // 후보 방과 연결된 이웃들을 찾는다.
+                    List<Vector2Int> neighbors = new List<Vector2Int>();
+                    foreach (var dir in WallGenerator.Direction2D.cardinalDirectionsList)
+                    {
+                        if (positions.Contains(candidate + dir))
+                        {
+                            neighbors.Add(candidate + dir);
+                        }
+                    }
+
+                    // 이웃 중 하나의 연결을 끊어본다.
+                    if (neighbors.Count > 1)
+                    {
+                        Vector2Int neighborToDisconnect = neighbors[0];
+
+                        // 임시로 연결을 끊어보고, 그래도 던전 전체가 연결되어 있는지 확인
+                        List<Vector2Int> tempPositions = new List<Vector2Int>(positions);
+                        tempPositions.Remove(candidate); // 연결 상태 확인을 위해 후보를 잠시 제거
+
+                        // 만약 이 길을 끊어도 모두가 연결되어 있다면 (즉, 고립되는 방이 없다면)
+                        if (IsGraphConnected(tempPositions, neighborToDisconnect))
+                        {
+                            // 진짜로 길을 끊는다! (후보 방을 리스트에서 제거)
+                            positions.Remove(candidate);
+                            connectionPruned = true;
+                            break; // 가지치기 한 번 성공했으니 다시 처음부터 개수 확인
+                        }
+                    }
+                }
+
+                // 더 이상 안전하게 끊을 수 있는 길이 없으면 중단
+                if (!connectionPruned)
+                {
+                    Debug.LogWarning("가지치기 중단: 더 이상 안전하게 제거할 수 있는 방 연결이 없습니다.");
+                    break;
+                }
+            }
+
+            return positions;
+        }
+
+
+        private bool IsGraphConnected(List<Vector2Int> positions, Vector2Int startNode)
+        {
+            if (positions.Count == 0) return true;
+
+            Queue<Vector2Int> queue = new Queue<Vector2Int>();
+            HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+
+            queue.Enqueue(startNode);
+            visited.Add(startNode);
+
+            while (queue.Count > 0)
+            {
+                Vector2Int current = queue.Dequeue();
+                foreach (var dir in WallGenerator.Direction2D.cardinalDirectionsList)
+                {
+                    Vector2Int neighbor = current + dir;
+                    if (positions.Contains(neighbor) && !visited.Contains(neighbor))
+                    {
+                        visited.Add(neighbor);
+                        queue.Enqueue(neighbor);
+                    }
+                }
+            }
+
+            // 방문한 방의 개수와 전체 방의 개수가 같으면, 모두 연결되어 있다는 뜻!
+            return visited.Count == positions.Count;
+        }
 
 
         /// <summary>
@@ -1636,41 +1688,50 @@ namespace Nytherion.GamePlay.Dungeon
         /// </summary>
 
         private IEnumerator CreateAllRoomFloorsCoroutine(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> totalFloor, int offset)
-
         {
-
             foreach (Room room in roomGrid.Values)
-
             {
-
                 HashSet<Vector2Int> roomFloor;
 
-                // 보스 방이고 프리팹이 지정되어 있으면 프리팹 기반으로 바닥 생성
-
-                if (room.type == RoomType.Boss && dungeonData.bossRoomPrefab != null)
-
+                // 보스 방이고 프리팹이 지정되어 있으면 프리팹을 분석하여 바닥과 스폰 위치를 설정합니다.
+                if (room.type == RoomType.Boss && dungeonData.bossRoomPrefab != null)
                 {
+                    // 1. 프리팹에서 Tilemap 컴포넌트를 찾습니다.
+                    Tilemap prefabTilemap = dungeonData.bossRoomPrefab.GetComponentInChildren<Tilemap>();
+                    if (prefabTilemap != null)
+                    {
+                        // 찾은 타일맵을 사용해 바닥을 찍어냅니다.
+                        roomFloor = CreateFloorFromPrefab(room, prefabTilemap);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"'{dungeonData.bossRoomPrefab.name}' 프리팹에 Tilemap 컴포넌트가 없어 기본 사각형으로 바닥을 생성합니다.");
+                        roomFloor = CreateRectangularFloor(room.Bounds, offset);
+                    }
 
-                    roomFloor = CreateFloorFromPrefab(room, dungeonData.bossRoomPrefab);
-
+                    // 2. 프리팹에서 BossSpawnPoint 마커를 찾습니다.
+                    BossSpawnPoint spawnPointMarker = dungeonData.bossRoomPrefab.GetComponentInChildren<BossSpawnPoint>();
+                    if (spawnPointMarker != null)
+                    {
+                        // 마커의 로컬 위치(프리팹 기준)를 방의 중심에 더해 실제 월드 스폰 위치를 계산합니다.
+                        room.bossSpawnPoint = room.center + (Vector2)spawnPointMarker.transform.localPosition;
+                    }
+                    else
+                    {
+                        // 마커가 없으면 방의 중심으로 설정합니다.
+                        room.bossSpawnPoint = room.center;
+                        Debug.LogWarning($"'{dungeonData.bossRoomPrefab.name}' 프리팹에 BossSpawnPoint 컴포넌트가 없어 방의 중심으로 스폰 위치를 설정합니다.");
+                    }
                 }
-
                 else // 그 외의 방은 절차적으로 생성
-
-                {
-
+                {
                     roomFloor = CreateCompoundRoom(room, offset);
-
                 }
 
                 roomFloorData.Add(room, roomFloor);
-
                 totalFloor.UnionWith(roomFloor);
-
                 yield return null; // 방 하나 생성 후 한 프레임 대기
-
-            }
-
+            }
         }
 
 
@@ -1988,67 +2049,96 @@ namespace Nytherion.GamePlay.Dungeon
         /// <param name="allFloorPositions">전체 바닥 타일의 위치 데이터입니다. 이 Set은 변환된 벽 타일을 포함하도록 수정됩니다.</param>
         /// <param name="allWallPositions">전체 벽 타일의 위치 데이터입니다. 이 Set은 변환된 벽 타일이 제거되도록 수정됩니다.</param>
         /// <param name="visualizer">타일을 실제로 그리는 역할을 하는 시각화 컴포넌트입니다.</param>
-        private void RemoveThinWalls(HashSet<Vector2Int> allFloorPositions, HashSet<Vector2Int> allWallPositions, TilemapVisualizer visualizer)
+        private void RemoveThinWalls(
+    HashSet<Vector2Int> allFloorPositions,
+    HashSet<Vector2Int> allWallPositions,
+    TilemapVisualizer visualizer,
+    Dictionary<Room, HashSet<Vector2Int>> roomFloorData)
         {
-            HashSet<Vector2Int> wallsToConvert = new HashSet<Vector2Int>();
-
-            // 모든 벽 타일을 순회하며 검사합니다.
-            foreach (Vector2Int wallPos in allWallPositions)
+            // 성능을 위해 타일 위치에서 방을 바로 찾을 수 있는 역참조 맵을 생성합니다.
+            Dictionary<Vector2Int, Room> tileToRoomMap = new Dictionary<Vector2Int, Room>();
+            foreach (var entry in roomFloorData)
             {
-                // 이 타일이 이미 다른 벽(2칸 두께)의 일부로 변환 대상에 포함되었다면, 중복 검사를 피합니다.
-                if (wallsToConvert.Contains(wallPos))
+                foreach (var tilePos in entry.Value)
                 {
-                    continue;
-                }
-
-                // --- 1칸 두께의 벽 감지 ---
-                // 수직 체크: 타일의 위쪽과 아래쪽이 모두 바닥인가? (세로로 얇은 벽)
-                if (allFloorPositions.Contains(wallPos + Vector2Int.up) && allFloorPositions.Contains(wallPos + Vector2Int.down))
-                {
-                    wallsToConvert.Add(wallPos);
-                    continue; // 얇은 벽으로 확정되었으므로 다음 타일 검사로 넘어갑니다.
-                }
-
-                // 수평 체크: 타일의 왼쪽과 오른쪽이 모두 바닥인가? (가로로 얇은 벽)
-                if (allFloorPositions.Contains(wallPos + Vector2Int.left) && allFloorPositions.Contains(wallPos + Vector2Int.right))
-                {
-                    wallsToConvert.Add(wallPos);
-                    continue;
-                }
-
-                // --- 2칸 두께의 벽 감지 ---
-                // 수직 체크: 아래는 바닥, 위는 벽, 그 위는 바닥인가? [바닥] [현재타일] [벽] [바닥] (세로)
-                if (allFloorPositions.Contains(wallPos + Vector2Int.down) &&
-                    allWallPositions.Contains(wallPos + Vector2Int.up) &&
-                    allFloorPositions.Contains(wallPos + Vector2Int.up * 2))
-                {
-                    wallsToConvert.Add(wallPos);
-                    wallsToConvert.Add(wallPos + Vector2Int.up);
-                    continue;
-                }
-
-                // 수평 체크: 왼쪽은 바닥, 오른쪽은 벽, 그 오른쪽은 바닥인가? [바닥][현재타일][벽][바닥] (가로)
-                if (allFloorPositions.Contains(wallPos + Vector2Int.left) &&
-                    allWallPositions.Contains(wallPos + Vector2Int.right) &&
-                    allFloorPositions.Contains(wallPos + Vector2Int.right * 2))
-                {
-                    wallsToConvert.Add(wallPos);
-                    wallsToConvert.Add(wallPos + Vector2Int.right);
-                    continue;
+                    tileToRoomMap[tilePos] = entry.Key;
                 }
             }
 
-            // 검사를 통해 찾아낸 얇은 벽들이 있다면,
-            if (wallsToConvert.Count > 0)
-            {
-                // 벽 목록에서는 제거하고,
-                allWallPositions.ExceptWith(wallsToConvert);
-                // 바닥 목록에 추가합니다.
-                allFloorPositions.UnionWith(wallsToConvert);
+            // 변환할 벽들을 소속된 방 별로 분류해서 저장할 딕셔너리입니다.
+            Dictionary<Room, HashSet<Vector2Int>> wallsToConvertByRoom = new Dictionary<Room, HashSet<Vector2Int>>();
+            HashSet<Vector2Int> totalWallsToConvert = new HashSet<Vector2Int>();
 
-                // --- [가장 중요한 수정!] ---
-                // 새로 생긴 바닥 타일을 즉시 그려주어 구멍이 생기지 않도록 합니다.
-                visualizer.PaintFloorTiles(wallsToConvert);
+            // 검사 도중 Set이 변경될 수 있으므로 원본 벽 리스트의 복사본을 순회합니다.
+            foreach (Vector2Int wallPos in new List<Vector2Int>(allWallPositions))
+            {
+                if (totalWallsToConvert.Contains(wallPos)) continue;
+
+                // 이 벽이 어느 방에 인접해 있는지 확인합니다.
+                Room adjacentRoom = null;
+                foreach (var dir in WallGenerator.Direction2D.cardinalDirectionsList)
+                {
+                    if (tileToRoomMap.TryGetValue(wallPos + dir, out Room room))
+                    {
+                        adjacentRoom = room;
+                        break;
+                    }
+                }
+                if (adjacentRoom == null) continue;
+
+                // 변환할 벽을 방 별로 추가하는 헬퍼 함수입니다.
+                Action<Vector2Int> addWall = (pos) =>
+                {
+                    if (!wallsToConvertByRoom.ContainsKey(adjacentRoom))
+                    {
+                        wallsToConvertByRoom[adjacentRoom] = new HashSet<Vector2Int>();
+                    }
+                    wallsToConvertByRoom[adjacentRoom].Add(pos);
+                    totalWallsToConvert.Add(pos);
+                };
+
+                // --- 얇은 벽 감지 로직 (이전과 동일) ---
+                // 1칸 두께 (세로)
+                if (allFloorPositions.Contains(wallPos + Vector2Int.up) && allFloorPositions.Contains(wallPos + Vector2Int.down))
+                {
+                    addWall(wallPos); continue;
+                }
+                // 1칸 두께 (가로)
+                if (allFloorPositions.Contains(wallPos + Vector2Int.left) && allFloorPositions.Contains(wallPos + Vector2Int.right))
+                {
+                    addWall(wallPos); continue;
+                }
+                // 2칸 두께 (세로)
+                if (allFloorPositions.Contains(wallPos + Vector2Int.down) && allWallPositions.Contains(wallPos + Vector2Int.up) && allFloorPositions.Contains(wallPos + Vector2Int.up * 2))
+                {
+                    addWall(wallPos); addWall(wallPos + Vector2Int.up); continue;
+                }
+                // 2칸 두께 (가로)
+                if (allFloorPositions.Contains(wallPos + Vector2Int.left) && allWallPositions.Contains(wallPos + Vector2Int.right) && allFloorPositions.Contains(wallPos + Vector2Int.right * 2))
+                {
+                    addWall(wallPos); addWall(wallPos + Vector2Int.right); continue;
+                }
+            }
+
+            // --- 타일 그리기 및 데이터 업데이트 ---
+            if (totalWallsToConvert.Count > 0)
+            {
+                // 먼저 전체 벽/바닥 데이터를 업데이트합니다.
+                allWallPositions.ExceptWith(totalWallsToConvert);
+                allFloorPositions.UnionWith(totalWallsToConvert);
+
+                // 방 별로 분류된 벽들을 순회하며 각 방에 맞는 올바른 타일로 그려줍니다.
+                foreach (var entry in wallsToConvertByRoom)
+                {
+                    Room room = entry.Key;
+                    HashSet<Vector2Int> positions = entry.Value;
+
+                    // 시각화 담당에게 이 방 타입에 맞는 타일이 뭔지 물어봅니다.
+                    TileBase tileToUse = visualizer.GetTileForRoomType(room.type);
+
+                    // 해당 타일로 바닥을 그려줍니다.
+                    visualizer.PaintTiles(positions, visualizer.floorTilemap, tileToUse);
+                }
             }
         }
         #endregion

@@ -116,7 +116,7 @@ namespace Nytherion.GamePlay.Dungeon
                 // 보스 방이고, 프리팹이 지정되어 있다면 프리팹을 그립니다.
                 if (room.type == RoomFirstDungeonGenerator.RoomType.Boss && dungeonData.bossRoomPrefab != null)
                 {
-                    PaintPrefab(room.center, dungeonData.bossRoomPrefab);
+                    PaintPrefab(room.center, dungeonData.bossRoomPrefab.GetComponent<Tilemap>());
                 }
                 else // 그 외의 특수 방
                 {
@@ -160,7 +160,7 @@ namespace Nytherion.GamePlay.Dungeon
         /// 여러 개의 타일을 한 번에 그리는 최적화된 메서드입니다.
         /// SetTile을 반복 호출하는 것보다 SetTiles를 한 번 호출하는 것이 훨씬 빠릅니다.
         /// </summary>
-        private void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
+        public void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
         {
             if (tile == null || tilemap == null || positions == null || !positions.Any()) return;
 
@@ -175,7 +175,7 @@ namespace Nytherion.GamePlay.Dungeon
         /// <summary>
         /// 방 종류에 맞는 타일 에셋을 반환합니다.
         /// </summary>
-        private TileBase GetTileForRoomType(RoomFirstDungeonGenerator.RoomType type)
+        public TileBase GetTileForRoomType(RoomFirstDungeonGenerator.RoomType type)
         {
             switch (type)
             {
@@ -186,7 +186,7 @@ namespace Nytherion.GamePlay.Dungeon
                 case RoomFirstDungeonGenerator.RoomType.Item:
                     return itemRoomTile;
                 default:
-                    return null; // 일반 방이나 보스 방은 다른 방식으로 처리되므로 null 반환
+                    return floorTile; // 일반 방이나 보스 방은 다른 방식으로 처리되므로 null 반환
             }
         }
 

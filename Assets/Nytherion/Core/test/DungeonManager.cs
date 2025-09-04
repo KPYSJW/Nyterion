@@ -1,4 +1,5 @@
 using Nytherion.Core.Managers;
+using Nytherion.Data.ScriptableObjects.Dungeon;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Map;
@@ -63,12 +64,14 @@ namespace Nytherion.GamePlay.Dungeon
         private RoomFirstDungeonGenerator.Room currentPlayerRoom = null;
         private RoomFirstDungeonGenerator.Room previousPlayerRoom = null;
 
+        private bool hasBossSpawned = false; // 보스가 이미 스폰되었는지 확인하는 플래그
+
         // 의존성 주입으로 받아올 매니저들
         private EventManager _eventManager;
         public ObjectPoolManager _objectPoolManager;
         private InputManager _inputManager;
         private WorldmapController _worldmapController;
-
+        private StageManager _stageManager;
         #endregion
 
         #region 의존성 주입
@@ -83,6 +86,7 @@ namespace Nytherion.GamePlay.Dungeon
            Characters.Player.PlayerController playerController,
            InputManager inputManager,
            WorldmapController worldmapController,
+           StageManager stageManager,
            [Inject(Id = "FloorTilemap")] Tilemap floorTilemap,
            [Inject(Id = "WallTilemap")] Tilemap wallTilemap,
            [Inject(Id = "PortalTilemap")] Tilemap portalTilemapInstance)
@@ -93,7 +97,7 @@ namespace Nytherion.GamePlay.Dungeon
             _inputManager = inputManager;
             _worldmapController = worldmapController;
             this.portalTilemap = portalTilemapInstance;
-
+            _stageManager = stageManager;
             // TilemapVisualizer에 필요한 타일맵들을 초기화합니다.
             if (tilemapVisualizer != null)
             {
@@ -126,7 +130,7 @@ namespace Nytherion.GamePlay.Dungeon
             }
 
             // 던전 생성을 시작합니다.
-            roomFirstDungeonGenerator.DungeonStart();
+            StartDungeonGeneration();
         }
 
         private void OnDestroy()
@@ -162,6 +166,26 @@ namespace Nytherion.GamePlay.Dungeon
             }
         }
 
+        public void RegenerateDungeon()
+        {
+            Debug.Log("[DungeonManager] 던전 재생성을 시작합니다...");
+            StartDungeonGeneration();
+        }
+
+        private void StartDungeonGeneration()
+        {
+            // StageManager로부터 현재 스테이지 정보를 받아와 던전 생성을 시작합니다.
+            if (_stageManager != null && _stageManager.CurrentStage != null)
+            {
+                // 현재 스테이지에 맞는 DungeonData를 생성기에 할당합니다.
+                roomFirstDungeonGenerator.dungeonData = _stageManager.CurrentStage.dungeonData;
+                roomFirstDungeonGenerator.DungeonStart();
+            }
+            else
+            {
+                Debug.LogError("StageManager 또는 현재 스테이지 데이터가 없습니다! 던전을 생성할 수 없습니다.");
+            }
+        }
         #endregion
 
         #region Public 데이터 설정 메서드
@@ -199,6 +223,7 @@ namespace Nytherion.GamePlay.Dungeon
             AllDungeonRooms?.Clear();
             roomLookup?.Clear();
             roomFloorData?.Clear();
+            hasBossSpawned = false; // 보스 스폰 플래그 초기화
         }
 
         #endregion
@@ -312,11 +337,17 @@ namespace Nytherion.GamePlay.Dungeon
         private void HandleEnemyDeath(EnemyBase deadEnemy)
         {
             RoomFirstDungeonGenerator.Room room = deadEnemy.homeRoom;
-            // 죽은 적이 속한 방이 있고, 그 방의 모든 적이 죽었다면
             if (room != null && IsRoomCleared(room))
             {
-                // 포탈의 잠금을 해제합니다.
-                UnlockPortals();
+                // 보스가 죽었다는 사실을 StageManager(총감독)에게 보고!
+                if (room.type == RoomFirstDungeonGenerator.RoomType.Boss)
+                {
+                    _stageManager?.SpawnBossPortal(deadEnemy.transform.position);
+                }
+                else // 일반 방은 포탈만 연다
+                {
+                    UnlockPortals();
+                }
             }
         }
 
@@ -330,6 +361,12 @@ namespace Nytherion.GamePlay.Dungeon
             // 새로 들어온 방의 몬스터는 활성화합니다.
             newRoom?.ActivateEnemies();
 
+            // 만약 새로 들어온 방이 보스 방이고, 아직 보스가 소환되지 않았다면 보스를 소환합니다.
+            if (newRoom.type == RoomFirstDungeonGenerator.RoomType.Boss && !hasBossSpawned)
+            {
+                SpawnBoss(newRoom);
+            }
+
             // 새로 들어온 방이 아직 클리어되지 않았다면 포탈을 잠급니다.
             if (!IsRoomCleared(newRoom))
             {
@@ -340,7 +377,51 @@ namespace Nytherion.GamePlay.Dungeon
                 UnlockPortals();
             }
         }
+    
+        /// <summary>
+        /// 보스 방에 보스를 스폰합니다.
+        /// </summary>
+        /// <param name="bossRoom">보스가 스폰될 방</param>
+        private void SpawnBoss(RoomFirstDungeonGenerator.Room bossRoom)
+        {
+            // DungeonData를 직접 참조하여 보스 정보를 가져옵니다.
+            DungeonData dungeonData = roomFirstDungeonGenerator.GetComponent<RoomFirstDungeonGenerator>().dungeonData;
 
+            if (dungeonData.bossMonsterData == null)
+            {
+                Debug.LogWarning("DungeonData에 보스 몬스터 데이터가 할당되지 않았습니다.");
+                return;
+            }
+
+            if (!bossRoom.bossSpawnPoint.HasValue)
+            {
+                Debug.LogError("보스 방에 스폰 위치가 지정되지 않았습니다! RoomFirstDungeonGenerator를 확인하세요.");
+                return;
+            }
+
+            Vector3 spawnPosition = bossRoom.bossSpawnPoint.Value;
+
+            // 오브젝트 풀을 사용하여 보스를 스폰합니다.
+            GameObject bossObj = _objectPoolManager.SpawnFromPool(
+                dungeonData.bossMonsterData.enemyName,
+                spawnPosition,
+                Quaternion.identity);
+
+            if (bossObj != null && bossObj.TryGetComponent<EnemyBase>(out var bossEnemy))
+            {
+                bossEnemy.Initialize(dungeonData.bossMonsterData);
+                bossEnemy.homeRoom = bossRoom;      // 보스가 어느 방 소속인지 알려줍니다.
+                bossRoom.enemies.Add(bossEnemy);  // 방 클리어 로직을 위해 리스트에 추가합니다.
+                hasBossSpawned = true;            // 보스가 스폰되었다고 표시합니다.
+
+                Debug.Log($"<color=red><b>보스 등장!</b></color> '{dungeonData.bossMonsterData.enemyName}' 스폰 완료!");
+            }
+            else
+            {
+                Debug.LogError($"오브젝트 풀에서 '{dungeonData.bossMonsterData.enemyName}' 태그를 가진 오브젝트를 스폰하는데 실패했습니다. ObjectPoolManager 설정을 확인하세요.");
+            }
+        }
+        // --- ▲▲▲ 여기까지 ▲▲▲ ---
         #endregion
     }
 }

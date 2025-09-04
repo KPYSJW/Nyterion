@@ -37,6 +37,7 @@ namespace Nytherion.GamePlay.Characters.Player
             playerEngravingManager = GetComponent<PlayerEngravingManager>();
 
             currentPlayerData = Instantiate(basePlayerData);
+            DontDestroyOnLoad(gameObject);
         }
 
         public void Initialize()

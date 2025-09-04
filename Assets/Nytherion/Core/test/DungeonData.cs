@@ -58,7 +58,10 @@ namespace Nytherion.Data.ScriptableObjects.Dungeon
 
         [Header("Prefabricated Rooms")]
         [Tooltip("보스 방으로 사용될 타일맵 프리팹입니다. 설정하지 않으면 일반 방처럼 생성됩니다.")]
-        public Tilemap bossRoomPrefab;
+        public GameObject bossRoomPrefab;
+
+        [Tooltip("보스 방에 스폰될 보스 몬스터의 데이터입니다.")]
+        public EnemyData bossMonsterData;
 
         [Header("Obstacle Settings")]
         [Tooltip("방 안에 배치될 수 있는 장애물 종류의 목록입니다.")]
@@ -89,5 +92,9 @@ namespace Nytherion.Data.ScriptableObjects.Dungeon
         public int placementIterations = 50;
         [Tooltip("요구 조건을 만족하는 던전 구조 생성에 실패했을 때, 재시도할 최대 횟수입니다.")]
         public int maxGenerationAttempts = 200;
+
+        [Header("Portal Settings")]
+        [Tooltip("보스 처치 후 생성될 승리 포탈 프리팹입니다.")]
+        public GameObject victoryPortalPrefab;
     }
 }

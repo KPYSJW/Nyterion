@@ -31,6 +31,7 @@ namespace Nytherion.Core.Systems
         [SerializeField] private EventManager eventManagerPrefab;
         [SerializeField] private MenuManager menuManagerPrefab;
         [SerializeField] private DungeonManager dungeonManagerPrefab;
+        [SerializeField] private SceneTransitionManager sceneTransitionManagerInstance;
         [Header("UI System")]
         [SerializeField] private GameUIInstaller gameUIInstaller;
         [SerializeField] private GameSceneUIManager gameSceneUIManager;
@@ -50,15 +51,15 @@ namespace Nytherion.Core.Systems
 
         public override void InstallBindings()
         {
-            Container.Bind<InputManager>().FromComponentInNewPrefab(inputManagerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<InputManager>().FromComponentInNewPrefab(inputManagerPrefab).AsSingle().NonLazy();
             Container.Bind<AudioManager>().FromComponentInNewPrefab(audioManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<CurrencyManager>().FromComponentInNewPrefab(currencyManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<InventoryManager>().FromComponentInNewPrefab(inventoryManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<EngravingManager>().FromComponentInNewPrefab(engravingManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<EquipmentDataManager>().FromComponentInNewPrefab(equipmentDataManagerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<CurrencyManager>().FromComponentInNewPrefab(currencyManagerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<InventoryManager>().FromComponentInNewPrefab(inventoryManagerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<EngravingManager>().FromComponentInNewPrefab(engravingManagerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<EquipmentDataManager>().FromComponentInNewPrefab(equipmentDataManagerPrefab).AsSingle().NonLazy();
             Container.Bind<GachaManager>().FromComponentInNewPrefab(gachaManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<ShopManager>().FromComponentInNewPrefab(shopManagerPrefab).AsSingle().NonLazy();
-            Container.Bind<SaveLoadManager>().FromComponentInNewPrefab(saveLoadManagerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ShopManager>().FromComponentInNewPrefab(shopManagerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<SaveLoadManager>().FromComponentInNewPrefab(saveLoadManagerPrefab).AsSingle().NonLazy();
             Container.Bind<ObjectPoolManager>().FromComponentInNewPrefab(objectPoolManagerPrefab).AsSingle().NonLazy();
             Container.Bind<InteractionManager>().FromComponentInNewPrefab(interactionManagerPrefab).AsSingle().NonLazy();
             Container.Bind<StageManager>().FromComponentInNewPrefab(stageManagerPrefab).AsSingle().NonLazy();
@@ -68,7 +69,7 @@ namespace Nytherion.Core.Systems
             Container.Bind<ItemDatabaseSO>().FromInstance(itemDatabase).AsSingle();
             ItemDatabase.Initialize(itemDatabase);
             
-            Container.Bind<PlayerManager>().FromComponentInNewPrefab(playerPrefab).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<PlayerManager>().FromComponentInNewPrefab(playerPrefab).AsSingle().NonLazy();
             Container.Bind<PlayerHealth>().FromResolveGetter<PlayerManager>(x => x.playerHealth).AsSingle();
             Container.Bind<PlayerCombat>().FromResolveGetter<PlayerManager>(x => x.PlayerCombat).AsSingle();
             Container.Bind<PlayerSkillManager>().FromResolveGetter<PlayerManager>(x => x.GetComponent<PlayerSkillManager>()).AsSingle();
@@ -107,6 +108,11 @@ namespace Nytherion.Core.Systems
                 Container.Bind<GameSceneUIManager>().FromInstance(gameSceneUIManager).AsSingle();
             }
 
+            if (sceneTransitionManagerInstance != null)
+            {
+                Container.Bind<SceneTransitionManager>().FromInstance(sceneTransitionManagerInstance).AsSingle();
+            }
+
             Container.Bind<Tilemap>().WithId("FloorTilemap").FromInstance(floorTilemap).AsCached();
             Container.Bind<Tilemap>().WithId("WallTilemap").FromInstance(wallTilemap).AsCached();
             Container.Bind<Tilemap>().WithId("PortalTilemap").FromInstance(portalTilemap).AsCached();
@@ -116,13 +122,13 @@ namespace Nytherion.Core.Systems
         {
             base.Start();
 
-            Container.Resolve<InputManager>().Initialize();
+         /*   Container.Resolve<InputManager>().Initialize();
             Container.Resolve<InventoryManager>().Initialize();
             Container.Resolve<EngravingManager>().Initialize();
             Container.Resolve<CurrencyManager>().Initialize();
             Container.Resolve<EquipmentDataManager>().Initialize();
             Container.Resolve<ShopManager>().Initialize();
-            Container.Resolve<SaveLoadManager>().Initialize();
+            Container.Resolve<SaveLoadManager>().Initialize();*/
         }
     }
 }
