@@ -62,7 +62,7 @@ namespace Nytherion.Core.Systems
                 .FromComponentInNewPrefab(inputManagerPrefab)
                 .AsSingle()
                 .NonLazy();
-            Container.Bind<AudioManager>()
+            Container.BindInterfacesAndSelfTo<AudioManager>()
                 .FromComponentInNewPrefab(audioManagerPrefab)
                 .AsSingle()
                 .NonLazy();
@@ -85,12 +85,12 @@ namespace Nytherion.Core.Systems
                 .AsSingle()
                 .NonLazy();
 
-            Container.Bind<GachaManager>()
+            Container.BindInterfacesAndSelfTo<GachaManager>()
                 .FromComponentInNewPrefab(gachaManagerPrefab)
                 .AsSingle()
                 .NonLazy();
 
-            Container.Bind<GachaUIController>()
+            Container.BindInterfacesAndSelfTo<GachaUIController>()
                 .FromComponentInNewPrefab(gachaUIControllerPrefab)
                 .AsSingle()
                 .NonLazy();
@@ -105,22 +105,22 @@ namespace Nytherion.Core.Systems
                 .AsSingle()
                 .NonLazy();
 
-            Container.Bind<ObjectPoolManager>()
+            Container.BindInterfacesAndSelfTo<ObjectPoolManager>()
                 .FromComponentInNewPrefab(objectPoolManagerPrefab)
                 .AsSingle()
                 .NonLazy();
 
-            Container.Bind<InteractionManager>()
+            Container.BindInterfacesAndSelfTo<InteractionManager>()
                 .FromComponentInNewPrefab(interactionManagerPrefab)
                 .AsSingle()
                 .NonLazy();
 
-            Container.Bind<StageManager>()
+            Container.BindInterfacesAndSelfTo<StageManager>()
                 .FromComponentInNewPrefab(stageManagerPrefab)
                 .AsSingle()
                 .NonLazy();
 
-            Container.Bind<EventManager>()
+            Container.BindInterfacesAndSelfTo<EventManager>()
                 .FromComponentInNewPrefab(eventManagerPrefab)
                 .AsSingle()
                 .NonLazy();
@@ -148,7 +148,7 @@ namespace Nytherion.Core.Systems
 
             if (playerManagerPrefab != null)
             {
-                Container.Bind<PlayerManager>()
+                Container.BindInterfacesAndSelfTo<PlayerManager>()
                     .FromComponentInNewPrefab(playerManagerPrefab)
                     .AsSingle()
                     .NonLazy();
@@ -192,7 +192,7 @@ namespace Nytherion.Core.Systems
 
             if (settingsManagerPrefab != null)
             {
-                Container.Bind<SettingsManager>()
+                Container.BindInterfacesAndSelfTo<SettingsManager>()
                     .FromComponentInNewPrefab(settingsManagerPrefab)
                     .AsSingle()
                     .NonLazy();
@@ -200,7 +200,7 @@ namespace Nytherion.Core.Systems
 
             if (menuManagerPrefab != null)
             {
-                Container.Bind<MenuManager>()
+                Container.BindInterfacesAndSelfTo<MenuManager>()
                     .FromComponentInNewPrefab(menuManagerPrefab)
                     .AsSingle()
                     .NonLazy();
@@ -214,7 +214,7 @@ namespace Nytherion.Core.Systems
 
             if (gameSceneUIManager != null)
             {
-                Container.Bind<GameSceneUIManager>().FromInstance(gameSceneUIManager).AsSingle();
+                Container.BindInterfacesAndSelfTo<GameSceneUIManager>().FromInstance(gameSceneUIManager).AsSingle();
             }
             if (shopUIPrefab != null)
             {
@@ -225,26 +225,35 @@ namespace Nytherion.Core.Systems
             }
             if (itemUsageManagerPrefab != null)
             {
-                Container.Bind<ItemUsageManager>()
+                Container.BindInterfacesAndSelfTo<ItemUsageManager>()
                     .FromComponentInNewPrefab(itemUsageManagerPrefab)
                     .AsSingle()
                     .NonLazy();
             }
+
+            // UI 컴포넌트들을 IInitializable로 바인딩
+            Container.BindInterfacesAndSelfTo<Nytherion.UI.Inventory.CharacterStatsUI>()
+                .FromComponentsInHierarchy()
+                .AsCached();
+
+            Container.BindInterfacesAndSelfTo<Nytherion.UI.EngravingBoard.EngravingGridUI>()
+                .FromComponentsInHierarchy()
+                .AsCached();
         }
 
-        public override void Start()
-        {
-            base.Start();
-            if (Container.HasBinding<PlayerManager>())
-            {
-                var playerManager = Container.Resolve<PlayerManager>();
-                Debug.Log("PlayerManager resolved successfully");
-            }
-            else
-            {
-                Debug.LogError("PlayerManager binding not found");
-            }
+        // public override void Start()
+        // {
+        //     base.Start();
+        //     if (Container.HasBinding<PlayerManager>())
+        //     {
+        //         var playerManager = Container.Resolve<PlayerManager>();
+        //         Debug.Log("PlayerManager resolved successfully");
+        //     }
+        //     else
+        //     {
+        //         Debug.LogError("PlayerManager binding not found");
+        //     }
            
-        }
+        // }
     }
 }

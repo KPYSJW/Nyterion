@@ -178,7 +178,7 @@ namespace Nytherion.Core.Systems
 
             if (quickSlotManagerPrefab != null)
             {
-                Container.Bind<QuickSlotManager>().FromComponentInNewPrefab(quickSlotManagerPrefab).AsSingle().NonLazy();
+                Container.BindInterfacesAndSelfTo<QuickSlotManager>().FromComponentInNewPrefab(quickSlotManagerPrefab).AsSingle().NonLazy();
             }
             if (quickSlotUIArray != null && quickSlotUIArray.Length > 0)
             {

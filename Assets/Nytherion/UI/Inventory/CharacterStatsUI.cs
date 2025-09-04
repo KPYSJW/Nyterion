@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Nytherion.UI.Inventory
 {
-    public class CharacterStatsUI : MonoBehaviour
+    public class CharacterStatsUI : MonoBehaviour, IInitializable
     {
         [Header("References")]
         [SerializeField] private RectTransform statsContainer;
@@ -18,20 +18,28 @@ namespace Nytherion.UI.Inventory
 
         private readonly List<GameObject> statCells = new List<GameObject>();
         private PlayerManager playerManager;
-        
+
         [Inject]
         public void Construct(PlayerManager playerManager)
         {
             this.playerManager = playerManager;
         }
+        public void Initialize()
+        {
+            RefreshStatsUI();
+        }
 
+        private void Start()
+        {
+            // Initialize()로 이동했으므로 비워둠
+        }
         private void OnEnable()
         {
             if (playerManager != null)
-            {   
+            {
+                playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
                 playerManager.OnPlayerStatsChanged += RefreshStatsUI;
             }
-            RefreshStatsUI();
         }
 
         private void OnDisable()
@@ -41,7 +49,7 @@ namespace Nytherion.UI.Inventory
                 playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
             }
         }
-        
+
         private bool ValidateReferences()
         {
             if (playerManager == null)

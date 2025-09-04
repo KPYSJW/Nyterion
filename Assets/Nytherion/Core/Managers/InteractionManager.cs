@@ -3,7 +3,6 @@ using Nytherion.UI.Controllers;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Core.Data;
 using Zenject;
-using Unity.VisualScripting;
 
 namespace Nytherion.Core.Managers
 {

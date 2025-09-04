@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Nytherion.UI.EngravingBoard
 {
-    public class EngravingGridUI : MonoBehaviour
+    public class EngravingGridUI : MonoBehaviour, IInitializable
     {
         private EngravingManager engravingManager;
         private DiContainer container;
@@ -37,7 +37,7 @@ namespace Nytherion.UI.EngravingBoard
 
         private int rows;
         private int columns;
-
+        private bool isInitialized = false;
         private GameObject[,] influenceGizmos;
 
         [Inject]
@@ -46,8 +46,20 @@ namespace Nytherion.UI.EngravingBoard
             this.engravingManager = engravingManager;
             this.container = container;
         }
+        public void Initialize()
+        {
+            if (!isInitialized)
+            {
+                StartCoroutine(InitializeCoroutine());
+            }
+        }
 
-        public IEnumerator Initialize()
+        private void Start()
+        {
+            // Initialize()로 이동했으므로 비워둠
+        }
+
+        public IEnumerator InitializeCoroutine()
         {
             if (engravingManager == null)
             {
@@ -67,7 +79,16 @@ namespace Nytherion.UI.EngravingBoard
 
         private void OnEnable()
         {
-            StartCoroutine(Initialize());
+            if (engravingManager != null)
+            {
+                engravingManager.OnEngravingStateChanged -= HandleEngravingStateChanged;
+                engravingManager.OnEngravingStateChanged += HandleEngravingStateChanged;
+            }
+
+            if (isInitialized)
+            {
+                HandleEngravingStateChanged();
+            }
         }
 
         private void OnDisable()
