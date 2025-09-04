@@ -2574,7 +2574,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -99.999985}
+  m_AnchoredPosition: {x: 0, y: -100.000015}
   m_SizeDelta: {x: 680, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &277789569
@@ -19021,17 +19021,17 @@ MonoBehaviour:
   stageManagerPrefab: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}
   eventManagerPrefab: {fileID: 6703879477207762094, guid: 42b39eabf4bd1a34db877fb5adf9535f, type: 3}
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
-  dungeonManagerPrefab: {fileID: 0}
-  sceneTransitionManagerInstance: {fileID: 0}
+  dungeonManagerPrefab: {fileID: -8684038073368422215, guid: ea78a9981880a3048a394ef3f8660789, type: 3}
+  sceneTransitionManagerInstance: {fileID: 2103672193}
   gameUIInstaller: {fileID: 5579463}
   gameSceneUIManager: {fileID: 1140675646}
   enemySpawnerPrefab: {fileID: 3311273739936786302, guid: fab70de81019c214485cbcb07e8c6f08, type: 3}
   followCameraPrefab: {fileID: 1351506084518171216, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
   settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
   itemDatabase: {fileID: 11400000, guid: f9b21e1c662560447a97d34c43a8f038, type: 2}
-  floorTilemap: {fileID: 0}
-  wallTilemap: {fileID: 0}
-  portalTilemap: {fileID: 0}
+  floorTilemap: {fileID: 1858158465}
+  wallTilemap: {fileID: 1407961085}
+  portalTilemap: {fileID: 1487465912}
 --- !u!4 &1891181552
 Transform:
   m_ObjectHideFlags: 0
