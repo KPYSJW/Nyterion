@@ -193,6 +193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aecc2587fc6efe84496d9142a0be9289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
   basePlayerData: {fileID: 11400000, guid: fb11d3df7e5a27d43bd00264c2d31f60, type: 2}
   currentPlayerData: {fileID: 0}
 --- !u!114 &-2633095540676331646
@@ -262,7 +263,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 11, y: 14.4}
+  m_Size: {x: 0.77, y: 0.96}
   m_Direction: 0
 --- !u!1 &7305831967822275261
 GameObject:
