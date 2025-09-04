@@ -1,11 +1,9 @@
-using UnityEngine;
-using Zenject;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.GamePlay.Characters.Player;
-using Nytherion.UI.Presenters;
-using Nytherion.GamePlay.Systems;
 using Nytherion.GamePlay;
+using Nytherion.GamePlay.Characters.Player;
+using Nytherion.GamePlay.Dungeon;
+using Nytherion.GamePlay.Systems;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Shop;
 using Nytherion.UI.Inventory;
@@ -55,6 +53,11 @@ namespace Nytherion.Core.Systems
 
         [Header("UI References")]
         [SerializeField] private ShopUI shopUIPrefab;
+
+        [Header("Scene Tilemaps")]
+        [SerializeField] private Tilemap floorTilemap;
+        [SerializeField] private Tilemap wallTilemap;
+        [SerializeField] private Tilemap portalTilemap;
 
         public override void InstallBindings()
         {

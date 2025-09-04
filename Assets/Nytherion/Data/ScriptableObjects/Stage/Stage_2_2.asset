@@ -10,18 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04c2145fed0a5294d82373ddbf684387, type: 3}
-  m_Name: Stage_1_1
+  m_Name: Stage_2_2
   m_EditorClassIdentifier: 
-  stageName: '"1-1"'
+  stageName: '"2-2"'
   chapterNumber: 1
-  stageNumber: 1
+  stageNumber: 5
   isBossStage: 0
-  enemyList:
-  - {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
+  enemyList: []
   fixedSpawnPoints: []
   useRandomSpawn: 1
-  enemyCount: 0
+  enemyCount: 1
   stageBackground: {fileID: 0}
   dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
-  nextStageData: {fileID: 11400000, guid: cab0721464693eb498d35c1ee19dbd6f, type: 2}
+  nextStageData: {fileID: 11400000, guid: ce856ef82b02f804fad9b4988afc82ac, type: 2}
   victorySceneName: GameScene

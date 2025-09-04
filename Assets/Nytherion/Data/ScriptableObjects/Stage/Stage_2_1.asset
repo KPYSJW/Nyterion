@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04c2145fed0a5294d82373ddbf684387, type: 3}
-  m_Name: Stage_1_1
+  m_Name: Stage_2_1
   m_EditorClassIdentifier: 
-  stageName: '"1-1"'
+  stageName: '"2-1"'
   chapterNumber: 1
   stageNumber: 1
   isBossStage: 0
@@ -23,5 +23,5 @@ MonoBehaviour:
   enemyCount: 0
   stageBackground: {fileID: 0}
   dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
-  nextStageData: {fileID: 11400000, guid: cab0721464693eb498d35c1ee19dbd6f, type: 2}
+  nextStageData: {fileID: 11400000, guid: ef8bcaf75497cbc4ab4eb6bd670e0f78, type: 2}
   victorySceneName: GameScene

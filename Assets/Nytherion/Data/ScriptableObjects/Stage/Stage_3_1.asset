@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04c2145fed0a5294d82373ddbf684387, type: 3}
-  m_Name: Stage_1_5
+  m_Name: Stage_3_1
   m_EditorClassIdentifier: 
-  stageName: '"1-5"'
+  stageName: '"3-1"'
   chapterNumber: 1
   stageNumber: 5
   isBossStage: 0
@@ -21,3 +21,6 @@ MonoBehaviour:
   useRandomSpawn: 1
   enemyCount: 1
   stageBackground: {fileID: 0}
+  dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
+  nextStageData: {fileID: 0}
+  victorySceneName: Village
