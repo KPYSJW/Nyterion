@@ -13,9 +13,8 @@ using Zenject;
 
 namespace Nytherion.UI.Controllers
 {
-    public class ShopUI : UIPanelBase
+    public class ShopUI : UIPanelBase, IInitializable
     {
-        public static ShopUI Instance { get; private set; }
 
         [Header("UI References")]
         private Transform shopSlotParent;
@@ -29,15 +28,28 @@ namespace Nytherion.UI.Controllers
 
         private ShopData currentShopData;
         private const float SELL_PRICE_RATIO = 0.7f;
+        private InventoryManager inventoryManager;
+        private CurrencyManager currencyManager;
+        private EventManager eventManager;
+        private ShopManager shopManager;
+        private SellSlotUI sellSlotUI;
+        private DiContainer container;
+
 
         [Inject]
         public void Construct(
+            InventoryManager inventoryManager,
+            CurrencyManager currencyManager,
+            EventManager eventManager,
+            ShopManager shopManager,
             [Inject(Id = "ShopCanvasGroup")] CanvasGroup controlledCanvasGroup,
             [Inject(Id = "ShopSlotParent")] Transform shopSlotParent,
             [Inject(Id = "ShopSlotPrefab")] GameObject shopSlotPrefab,
             [Inject(Id = "ShopCloseButton")] Button closeButton,
             [Inject(Id = "ShopPlayerGoldText")] TextMeshProUGUI playerGoldText,
-            [Inject(Id = "ShopPlayerInventoryParent")] Transform playerInventoryParent)
+            [Inject(Id = "ShopPlayerInventoryParent")] Transform playerInventoryParent,
+            SellSlotUI sellSlotUI,
+            DiContainer container)
         {
             this.controlledCanvasGroup = controlledCanvasGroup;
             this.shopSlotParent = shopSlotParent;
@@ -45,55 +57,84 @@ namespace Nytherion.UI.Controllers
             this.closeButton = closeButton;
             this.playerGoldText = playerGoldText;
             this.playerInventoryParent = playerInventoryParent;
+            this.sellSlotUI = sellSlotUI;
+            this.inventoryManager = inventoryManager;
+            this.currencyManager = currencyManager;
+            this.eventManager = eventManager;
+            this.shopManager = shopManager;
+            this.container = container;
         }
 
         protected override void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(this.gameObject);
-                return;
-            }
-            Instance = this;
             base.Awake();
         }
-
-        private void Start()
+        public void Initialize()
         {
+            Debug.Log("ShopUI.Initialize() 호출됨!");
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(Close);
             }
-            if (SellSlotUI.Instance != null)
+            if (sellSlotUI != null)
             {
-                SellSlotUI.Instance.OnItemSold += HandleSellItem;
+                sellSlotUI.OnItemSold += HandleSellItem;
             }
-        }
-
-        private void OnEnable()
-        {
-            if (CurrencyManager.Instance != null) CurrencyManager.Instance.onCurrencyChanged += UpdateCurrencyUI;
-            if (InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated += RefreshPlayerInventoryUI;
-            if (EventManager.Instance != null)
+            if (currencyManager != null)
             {
-                EventManager.Instance.OnInteraction += HandleInteraction;
+                currencyManager.onCurrencyChanged += UpdateCurrencyUI;
+            }
+            if (inventoryManager != null)
+            {
+                inventoryManager.OnInventoryUpdated += RefreshPlayerInventoryUI;
+            }
+            if (eventManager != null)
+            {
+                eventManager.OnInteraction += HandleInteraction;
             }
             if (playerInventoryParent != null)
             {
                 playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>(true));
             }
-        }
 
-        private void OnDisable()
-        {
-            if (CurrencyManager.Instance != null) CurrencyManager.Instance.onCurrencyChanged -= UpdateCurrencyUI;
-            if (InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated -= RefreshPlayerInventoryUI;
-            if (SellSlotUI.Instance != null) SellSlotUI.Instance.OnItemSold -= HandleSellItem;
-            if (EventManager.Instance != null)
-            {
-                EventManager.Instance.OnInteraction -= HandleInteraction;
-            }
+            Close();
         }
+        // private void Start()
+        // {
+        //     if (closeButton != null)
+        //     {
+        //         closeButton.onClick.AddListener(Close);
+        //     }
+        //     if (sellSlotUI != null)
+        //     {
+        //         sellSlotUI.OnItemSold += HandleSellItem;
+        //     }
+        // }
+
+        // private void OnEnable()
+        // {
+        //     if (currencyManager != null) currencyManager.onCurrencyChanged += UpdateCurrencyUI;
+        //     if (inventoryManager != null) inventoryManager.OnInventoryUpdated += RefreshPlayerInventoryUI;
+        //     if (eventManager != null)
+        //     {
+        //         eventManager.OnInteraction += HandleInteraction;
+        //     }
+        //     if (playerInventoryParent != null)
+        //     {
+        //         playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>(true));
+        //     }
+        // }
+
+        // private void OnDisable()
+        // {
+        //     if (currencyManager != null) currencyManager.onCurrencyChanged -= UpdateCurrencyUI;
+        //     if (inventoryManager != null) inventoryManager.OnInventoryUpdated -= RefreshPlayerInventoryUI;
+        //     if (sellSlotUI != null) sellSlotUI.OnItemSold -= HandleSellItem;
+        //     if (eventManager != null)
+        //     {
+        //         eventManager.OnInteraction -= HandleInteraction;
+        //     }
+        // }
 
         private void HandleInteraction(InteractableType type)
         {
@@ -107,17 +148,19 @@ namespace Nytherion.UI.Controllers
         {
             currentShopData = data;
             PopulateShop();
-            if (InventoryUI.Instance != null) InventoryUI.Instance.OpenForShop();
-            UpdateCurrencyUI(CurrencyType.Gold, CurrencyManager.Instance.GetCurrency(CurrencyType.Gold));
+            Debug.Log("[ShopUI] 인벤토리 열기 이벤트 발생시킴!");
+            eventManager.TriggerOpenInventoryForShop();
+            UpdateCurrencyUI(CurrencyType.Gold, currencyManager.GetCurrency(CurrencyType.Gold));
             Open();
         }
 
         public override void Open()
         {
             base.Open();
-            if (ShopManager.Instance != null)
+            if (shopManager != null)
             {
-                ShopManager.Instance.OnStockChanged += RefreshShopUI;
+                shopManager.SetShopState(true);
+                shopManager.OnStockChanged += RefreshShopUI;
             }
             RefreshShopUI();
         }
@@ -125,12 +168,16 @@ namespace Nytherion.UI.Controllers
         public override void Close()
         {
             base.Close();
-            if (InventoryUI.Instance != null) InventoryUI.Instance.Close();
-            if (SellSlotUI.Instance != null) SellSlotUI.Instance.ClearSlot();
-
-            if (ShopManager.Instance != null)
+            if (shopManager != null)
             {
-                ShopManager.Instance.OnStockChanged -= RefreshShopUI;
+                shopManager.SetShopState(false);
+            }
+            eventManager.TriggerCloseInventoryForShop();
+            if (sellSlotUI != null) sellSlotUI.ClearSlot();
+
+            if (shopManager != null)
+            {
+                shopManager.OnStockChanged -= RefreshShopUI;
             }
         }
 
@@ -144,15 +191,15 @@ namespace Nytherion.UI.Controllers
 
             int amountToBuy = (shopItem.item is EquipmentData) ? 1 : 1;
 
-            if (CurrencyManager.Instance.SpendCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
+            if (currencyManager.SpendCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
             {
-                if (InventoryManager.Instance.AddItem(shopItem.item, amountToBuy))
+                if (inventoryManager.AddItem(shopItem.item, amountToBuy))
                 {
                     Debug.Log($"[ShopUI] '{shopItem.item.itemName}' ({shopItem.item.GetType().Name}) 구매 완료. (ID: {shopItem.shopItemId}) from shop '{currentShopData.shopName}'");
 
-                    if (ShopManager.Instance != null && !shopItem.isUnlimited)
+                    if (shopManager != null && !shopItem.isUnlimited)
                     {
-                        ShopManager.Instance.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
+                        shopManager.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
                     }
 
                     if (shopItem.item is WeaponData weaponData)
@@ -160,7 +207,7 @@ namespace Nytherion.UI.Controllers
                         var equipmentSlot = FindObjectOfType<EquipmentSlotUI>();
                         if (equipmentSlot != null && equipmentSlot.IsEmpty)
                         {
-                            if (InventoryManager.Instance.RemoveItem(shopItem.item, 1))
+                            if (inventoryManager.RemoveItem(shopItem.item, 1))
                             {
                                 equipmentSlot.SetItem(shopItem.item, 1);
                             }
@@ -169,17 +216,17 @@ namespace Nytherion.UI.Controllers
                 }
                 else
                 {
-                    CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, shopItem.price * amountToBuy);
+                    currencyManager.AddCurrency(CurrencyType.Gold, shopItem.price * amountToBuy);
                 }
             }
         }
 
         private void HandleSellItem(ItemData item, int amount)
         {
-            if (InventoryManager.Instance.RemoveItem(item, amount))
+            if (inventoryManager.RemoveItem(item, amount))
             {
                 int totalPrice = Mathf.RoundToInt(item.baseValue * SELL_PRICE_RATIO) * amount;
-                CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, totalPrice);
+                currencyManager.AddCurrency(CurrencyType.Gold, totalPrice);
             }
         }
 
@@ -188,13 +235,13 @@ namespace Nytherion.UI.Controllers
             if (currentShopData == null) return;
             foreach (Transform child in shopSlotParent) Destroy(child.gameObject);
 
-            var itemsToDisplay = ShopManager.Instance.GetShopItems(currentShopData.shopName);
+            var itemsToDisplay = shopManager.GetShopItems(currentShopData.shopName);
             if (itemsToDisplay == null) return;
 
             foreach (ShopItemData shopItem in itemsToDisplay)
             {
-                GameObject slotGO = Instantiate(shopSlotPrefab, shopSlotParent);
-                if (slotGO.TryGetComponent(out ShopSlotUI slotUI))
+                ShopSlotUI slotUI = container.InstantiatePrefabForComponent<ShopSlotUI>(shopSlotPrefab, shopSlotParent);
+                if (slotUI != null)
                 {
                     slotUI.Setup(shopItem);
                 }
@@ -204,7 +251,7 @@ namespace Nytherion.UI.Controllers
         private void RefreshPlayerInventoryUI()
         {
             if (!IsOpen || playerInventorySlots == null) return;
-            var items = InventoryManager.Instance.GetAllItems();
+            var items = inventoryManager.GetAllItems();
             int i = 0;
             foreach (var itemEntry in items)
             {

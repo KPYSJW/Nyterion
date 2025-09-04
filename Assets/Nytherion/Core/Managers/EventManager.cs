@@ -23,6 +23,8 @@ namespace Nytherion.Core.Managers
         public event Action<EnemyBase> OnEnemyDied;
         public event Action<StageData> OnBossClearedEvent;
         public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;
+        public event Action OnOpenInventoryForShop;
+        public event Action OnCloseInventoryForShop;
 
         public event Action<InteractableType> OnInteraction;
         public void TriggerInteractionEvent(InteractableType type)
@@ -37,12 +39,12 @@ namespace Nytherion.Core.Managers
         {
             OnBossClearedEvent?.Invoke(stage);
         }
-        public void RegisterEnemyDeathListener(Action<EnemyBase> listener) 
+        public void RegisterEnemyDeathListener(Action<EnemyBase> listener)
         {
             OnEnemyDied += listener;
         }
 
-        public void UnregisterEnemyDeathListener(Action<EnemyBase> listener) 
+        public void UnregisterEnemyDeathListener(Action<EnemyBase> listener)
         {
             OnEnemyDied -= listener;
         }
@@ -57,6 +59,14 @@ namespace Nytherion.Core.Managers
         public void TriggerSynergyEvaluated(WeaponData weapon, EngravingData engraving, WeaponEngravingSynergyData synergy)
         {
             OnSynergyEvaluated?.Invoke(weapon, engraving, synergy);
+        }
+        public void TriggerOpenInventoryForShop()
+        {
+            OnOpenInventoryForShop?.Invoke();
+        }
+        public void TriggerCloseInventoryForShop()
+        {
+            OnCloseInventoryForShop?.Invoke();
         }
     }
 }

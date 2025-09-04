@@ -1,6 +1,6 @@
 using Nytherion.GamePlay.Combat;
 using Nytherion.Core.Interfaces;
-using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Managers;
 using UnityEngine;
 using Zenject;
 

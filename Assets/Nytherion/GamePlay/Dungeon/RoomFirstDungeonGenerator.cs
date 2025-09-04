@@ -1,5 +1,4 @@
 ﻿using Nytherion.Core.Managers;
-
 using Nytherion.Data.ScriptableObjects.Enemy;
 
 using Nytherion.UI.Controllers;
@@ -17,7 +16,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 using Random = UnityEngine.Random;
-
 using Zenject;
 
 using Nytherion.GamePlay.Characters.Enemy;

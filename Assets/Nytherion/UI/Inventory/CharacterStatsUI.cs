@@ -4,12 +4,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Data.ScriptableObjects.Player;
-using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Managers;
 using Zenject;
 
 namespace Nytherion.UI.Inventory
 {
-    public class CharacterStatsUI : MonoBehaviour
+    public class CharacterStatsUI : MonoBehaviour, IInitializable
     {
         [Header("References")]
         [SerializeField] private RectTransform statsContainer;
@@ -17,34 +17,42 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private ScrollRect scrollRect;
 
         private readonly List<GameObject> statCells = new List<GameObject>();
-        private PlayerManager _playerManager;
-        
+        private PlayerManager playerManager;
+
         [Inject]
         public void Construct(PlayerManager playerManager)
         {
-            _playerManager = playerManager;
+            this.playerManager = playerManager;
+        }
+        public void Initialize()
+        {
+            RefreshStatsUI();
         }
 
+        private void Start()
+        {
+            // Initialize()로 이동했으므로 비워둠
+        }
         private void OnEnable()
         {
-            if (_playerManager != null)
+            if (playerManager != null)
             {
-                _playerManager.OnPlayerStatsChanged += RefreshStatsUI;
+                playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
+                playerManager.OnPlayerStatsChanged += RefreshStatsUI;
             }
-            RefreshStatsUI();
         }
 
         private void OnDisable()
         {
-            if (_playerManager != null)
+            if (playerManager != null)
             {
-                _playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
+                playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
             }
         }
-        
+
         private bool ValidateReferences()
         {
-            if (_playerManager == null)
+            if (playerManager == null)
             {
                 Debug.LogError("PlayerManager를 찾을 수 없습니다.", this);
                 return false;
@@ -78,7 +86,7 @@ namespace Nytherion.UI.Inventory
 
         private void CreateStatCells()
         {
-            PlayerData currentPlayerData = _playerManager.currentPlayerData;
+            PlayerData currentPlayerData = playerManager.currentPlayerData;
             if (currentPlayerData == null) return;
 
             var fields = typeof(PlayerData).GetFields();

@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefabs/Managers/InventoryPresenter.prefab.meta
+guid: 9df737e19a6bd5044b571a31aed06b12
+========
 guid: ea78a9981880a3048a394ef3f8660789
+>>>>>>>> KimYoungJoo:Assets/Prefabs/Managers/DungeonManager.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

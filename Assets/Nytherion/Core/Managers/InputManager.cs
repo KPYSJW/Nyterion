@@ -1,9 +1,10 @@
 using UnityEngine;
 using System;
+using Zenject;
 
 namespace Nytherion.Core.Managers
 {
-    public class InputManager : MonoBehaviour
+    public class InputManager : MonoBehaviour, IInitializable
     {
         public static InputManager Instance { get; private set; }
         private PlayerAction playerActions;

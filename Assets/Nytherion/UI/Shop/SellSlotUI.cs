@@ -5,12 +5,12 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;
 using UnityEngine.EventSystems;
 using Nytherion.UI.Inventory;
+using Zenject;
 
 namespace Nytherion.UI.Shop
 {
     public class SellSlotUI : MonoBehaviour, IDropHandler
     {
-        public static SellSlotUI Instance { get; private set; }
         [Header("References")]
         [SerializeField] private Image itemIcon;
         [SerializeField] private TMP_InputField amountInput;
@@ -25,12 +25,16 @@ namespace Nytherion.UI.Shop
         private int maxAmount = 1;
         public event System.Action<ItemData, int> OnItemSold;
         public const float SELL_PRICE_RATIO = 0.7f;
+        private InventoryManager inventoryManager;
+
+        [Inject]
+        public void Construct(InventoryManager inventoryManager)
+        {
+            this.inventoryManager = inventoryManager;
+        }
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-
             sellButton.onClick.AddListener(OnSellButtonClicked);
             increaseButton.onClick.AddListener(() => ChangeAmount(1));
             decreaseButton.onClick.AddListener(() => ChangeAmount(-1));
@@ -49,8 +53,8 @@ namespace Nytherion.UI.Shop
             }
 
             currentItem = item;
-            currentAmount = Mathf.Clamp(amount, 1, InventoryManager.Instance.GetItemCount(item));
-            maxAmount = InventoryManager.Instance.GetItemCount(item);
+            currentAmount = Mathf.Clamp(amount, 1, inventoryManager.GetItemCount(item));
+            maxAmount = inventoryManager.GetItemCount(item);
             sellPrice = CalculateSellPrice(item);
 
             itemIcon.sprite = item.icon;
@@ -66,7 +70,7 @@ namespace Nytherion.UI.Shop
         {
             if (currentItem == null) return;
 
-            maxAmount = InventoryManager.Instance.GetItemCount(currentItem);
+            maxAmount = inventoryManager.GetItemCount(currentItem);
 
             currentAmount = Mathf.Clamp(newAmount, 1, maxAmount);
 
@@ -95,7 +99,7 @@ namespace Nytherion.UI.Shop
                 parsed = 1;
             }
 
-            int maxAmount = InventoryManager.Instance.GetItemCount(currentItem);
+            int maxAmount = inventoryManager.GetItemCount(currentItem);
             parsed = Mathf.Clamp(parsed, 1, maxAmount);
 
             currentAmount = parsed;
@@ -146,13 +150,7 @@ namespace Nytherion.UI.Shop
         {
             return true;
         }
-        private void OnDestroy()
-        {
-            if (Instance == this)
-            {
-                Instance = null;
-            }
-        }
+        
         public void OnDrop(PointerEventData eventData)
         {
             InventorySlotUI droppedSlot = eventData.pointerDrag?.GetComponent<InventorySlotUI>();

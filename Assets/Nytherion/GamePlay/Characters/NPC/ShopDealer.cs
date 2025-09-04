@@ -2,6 +2,7 @@ using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Shop;
 using Nytherion.Core.Enums;
 using Nytherion.UI.Controllers;
+using Zenject;
 
 namespace Nytherion.GamePlay.Characters.NPC
 {
@@ -10,8 +11,14 @@ namespace Nytherion.GamePlay.Characters.NPC
         public InteractableType Type => InteractableType.ShopDealer;
 
         [Header("Shop Data")]
-        [Tooltip("이 상점에서 판매할 상품 데이터")]
         public ShopData shopData;
+        private ShopUI shopUI;
+        
+        [Inject]
+        public void Construct(ShopUI shopUI)
+        {
+            this.shopUI = shopUI;
+        }
 
         public void Interact()
         {
@@ -21,9 +28,9 @@ namespace Nytherion.GamePlay.Characters.NPC
                 return;
             }
 
-           if (ShopUI.Instance != null)
+            if (shopUI != null)
             {
-                ShopUI.Instance.OpenShop(shopData);
+                shopUI.OpenShop(shopData);
             }
         }
     }

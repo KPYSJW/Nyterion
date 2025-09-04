@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Managers;
+using Nytherion.UI.Inventory;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
@@ -14,7 +15,6 @@ namespace Nytherion.UI.Controllers
 {
     public class GachaUIController : UIPanelBase
     {
-        public static GachaUIController Instance { get; private set; }
 
         private GameObject mainPanel;
         private GameObject resultPanel;
@@ -29,6 +29,11 @@ namespace Nytherion.UI.Controllers
         private TextMeshProUGUI tokenCountText;
 
         private PlayerAction playerAction;
+        private InventoryManager inventoryManager;
+        private CurrencyManager currencyManager;
+        private GachaManager gachaManager;
+        private EventManager eventManager;
+
 
         [Inject]
         public void Construct(
@@ -43,7 +48,11 @@ namespace Nytherion.UI.Controllers
             [Inject(Id = "ResultCloseButton")] Button resultCloseButton,
             [Inject(Id = "ResultSlotParent")] Transform resultSlotParent,
             [Inject(Id = "ResultSlotPrefab")] GameObject resultSlotPrefab,
-            [Inject(Id = "TokenCountText")] TextMeshProUGUI tokenCountText)
+            [Inject(Id = "TokenCountText")] TextMeshProUGUI tokenCountText,
+            InventoryManager inventoryManager,
+            CurrencyManager currencyManager,
+            GachaManager gachaManager,
+            EventManager eventManager)
         {
             this.controlledCanvasGroup = controlledCanvasGroup;
             this.mainPanel = mainPanel;
@@ -57,13 +66,15 @@ namespace Nytherion.UI.Controllers
             this.resultSlotParent = resultSlotParent;
             this.resultSlotPrefab = resultSlotPrefab;
             this.tokenCountText = tokenCountText;
+            this.inventoryManager = inventoryManager;
+            this.currencyManager = currencyManager;
+            this.gachaManager = gachaManager;
+            this.eventManager = eventManager;
         }
 
         protected override void Awake()
         {
             base.Awake();
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
         }
 
         private void Start()
@@ -98,32 +109,32 @@ namespace Nytherion.UI.Controllers
 
         private void OnEnable()
         {
-            if (CurrencyManager.Instance != null)
-                CurrencyManager.Instance.onCurrencyChanged += UpdateTokenUI;
+            if (currencyManager != null)
+                currencyManager.onCurrencyChanged += UpdateTokenUI;
 
             playerAction = new PlayerAction();
             playerAction.GachaUI.Enable();
             playerAction.GachaUI.Close.performed += OnCloseInput;
 
-            if (EventManager.Instance != null)
+            if (eventManager != null)
             {
-                EventManager.Instance.OnInteraction += HandleInteraction;
+                eventManager.OnInteraction += HandleInteraction;
             }
         }
 
         private void OnDisable()
         {
-            if (CurrencyManager.Instance != null)
-                CurrencyManager.Instance.onCurrencyChanged -= UpdateTokenUI;
+            if (currencyManager != null)
+                currencyManager.onCurrencyChanged -= UpdateTokenUI;
 
             if (playerAction != null)
             {
                 playerAction.GachaUI.Close.performed -= OnCloseInput;
                 playerAction.GachaUI.Disable();
             }
-            if (EventManager.Instance != null)
+            if (eventManager != null)
             {
-                EventManager.Instance.OnInteraction -= HandleInteraction;
+                eventManager.OnInteraction -= HandleInteraction;
             }
         }
 
@@ -153,9 +164,9 @@ namespace Nytherion.UI.Controllers
 
         protected override void OnPanelStateChanged(bool isOpen)
         {
-            if (isOpen && CurrencyManager.Instance != null)
+            if (isOpen && currencyManager != null)
             {
-                UpdateTokenUI(CurrencyType.Token, CurrencyManager.Instance.GetCurrency(CurrencyType.Token));
+                UpdateTokenUI(CurrencyType.Token, currencyManager.GetCurrency(CurrencyType.Token));
             }
 
             if (isOpen)
@@ -167,7 +178,7 @@ namespace Nytherion.UI.Controllers
 
         private void Draw(GachaType type, int count)
         {
-            List<ScriptableObject> drawnItems = GachaManager.Instance.TryDrawItems(type, count);
+            List<ScriptableObject> drawnItems = gachaManager.TryDrawItems(type, count);
             if (drawnItems != null && drawnItems.Count > 0)
             {
                 ShowResultPanel(drawnItems);

@@ -11,16 +11,17 @@ namespace Nytherion.Core.Managers
         [Tooltip("게임 시작 시 로드할 가장 첫 번째 스테이지 데이터입니다.")]
         [SerializeField] private StageData startingStage;
 
+
         public StageData CurrentStage { get; private set; }
 
-        private SceneTransitionManager _sceneTransitionManager;
-        private DungeonManager _dungeonManager;
+        private SceneTransitionManager sceneTransitionManager;
+        private DungeonManager dungeonManager;
 
         [Inject]
         public void Construct(SceneTransitionManager sceneTransitionManager, DungeonManager dungeonManager)
         {
-            _sceneTransitionManager = sceneTransitionManager;
-            _dungeonManager = dungeonManager;
+            this.sceneTransitionManager = sceneTransitionManager;
+            this.dungeonManager = dungeonManager;
         }
 
         private void Awake()
@@ -65,11 +66,11 @@ namespace Nytherion.Core.Managers
             if (sceneToLoad == "Village")
             {
                 Debug.Log($"마을로 이동");
-                _sceneTransitionManager.LoadScene(sceneToLoad);
+                sceneTransitionManager.LoadScene(sceneToLoad);
             }
             else
             {
-                _dungeonManager?.RegenerateDungeon();
+                dungeonManager?.RegenerateDungeon();
             }
         }
     }

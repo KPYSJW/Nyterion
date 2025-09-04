@@ -15,6 +15,7 @@ namespace Nytherion.UI.Presenters
 
         private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
         private InventoryManager inventoryManager;
+        private bool isInitialized = false;
 
         [Inject]
         public void Construct(InventoryManager manager)
@@ -24,12 +25,33 @@ namespace Nytherion.UI.Presenters
 
         public void Initialize()
         {
-            if (inventoryManager == null) return;
+            if (inventoryManager == null || isInitialized) return;
 
-            InitializeSlots(inventoryManager.MaxSlotCount);
+            // Clear any existing slots
+            foreach (Transform child in slotParent)
+            {
+                Destroy(child.gameObject);
+            }
+            slotPool.Clear();
+
+            // Create new slots
+            for (int i = 0; i < inventoryManager.MaxSlotCount; i++)
+            {
+                if (slotPrefab != null)
+                {
+                    var slotObj = Instantiate(slotPrefab, slotParent);
+                    slotObj.SetActive(true);
+                    if (slotObj.TryGetComponent(out InventorySlotUI slot))
+                    {
+                        slot.Initialize(i);
+                        slotPool.Add(slot);
+                    }
+                }
+            }
 
             inventoryManager.OnInventoryUpdated += UpdateSlotsUI;
             UpdateSlotsUI();
+            isInitialized = true;
         }
 
         private void OnDestroy()
@@ -40,24 +62,14 @@ namespace Nytherion.UI.Presenters
             }
         }
 
-        private void InitializeSlots(int slotCount)
+        // Cleanup method to be called when the inventory is closed or destroyed
+        public void Cleanup()
         {
-            foreach (Transform child in slotParent)
+            if (inventoryManager != null)
             {
-                Destroy(child.gameObject);
+                inventoryManager.OnInventoryUpdated -= UpdateSlotsUI;
             }
-            slotPool.Clear();
-
-            for (int i = 0; i < slotCount; i++)
-            {
-                var slotObj = Instantiate(slotPrefab, slotParent);
-                slotObj.SetActive(true);
-                if (slotObj.TryGetComponent(out InventorySlotUI slot))
-                {
-                    slot.Initialize(i);
-                    slotPool.Add(slot);
-                }
-            }
+            isInitialized = false;
         }
 
         private void UpdateSlotsUI()

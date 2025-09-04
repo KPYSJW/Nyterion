@@ -4,12 +4,20 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Core.Managers;
+using Zenject;
 
 namespace Nytherion.GamePlay.Combat
 {
     public class SynergyEvaluator :ISynergyEvaluator
     {
         private readonly List<WeaponEngravingSynergyData> synergyTable;
+        private EventManager eventManager;
+
+        [Inject]
+        public void Construct(EventManager eventManager)
+        {
+            this.eventManager = eventManager;
+        }
 
         public SynergyEvaluator(List<WeaponEngravingSynergyData> synergyDataList)
         {
@@ -28,12 +36,12 @@ namespace Nytherion.GamePlay.Combat
 
                 if (match != null)
                 {
-                    EventManager.Instance?.TriggerSynergyEvaluated(weapon, engraving, match);
+                    eventManager.TriggerSynergyEvaluated(weapon, engraving, match);
                     return match;
                 }
             }
 
-            EventManager.Instance?.TriggerSynergyEvaluated(weapon, null, null);
+            eventManager.TriggerSynergyEvaluated(weapon, null, null);
             return null;
         }
     }

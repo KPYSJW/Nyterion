@@ -30,14 +30,13 @@ namespace Nytherion.UI.Map
         private RectTransform viewPort; // 월드맵이 표시되는 화면(보통 이 스크립트가 붙은 RectTransform)
 
         // --- 의존성 주입 ---
-        private DungeonManager _dungeonManager;
+        private DungeonManager dungeonManager;
 
         [Inject]
         public void Construct(DungeonManager dungeonManager)
         {
-            _dungeonManager = dungeonManager;
+            this.dungeonManager = dungeonManager;
         }
-
         private void Awake()
         {
             viewPort = transform as RectTransform;
@@ -47,7 +46,7 @@ namespace Nytherion.UI.Map
         private void OnEnable()
         {
             // 월드맵이 활성화될 때 플레이어 아이콘을 맵 컨텐츠의 자식으로 설정
-            if (_dungeonManager != null && _dungeonManager.playerObject != null && playerIcon != null)
+            if (dungeonManager != null && dungeonManager.playerObject != null && playerIcon != null)
             {
                 playerIcon.SetParent(mapContent, false);
                 playerIcon.transform.SetAsLastSibling(); // 항상 맨 위에 보이도록
@@ -62,7 +61,7 @@ namespace Nytherion.UI.Map
         private void LateUpdate()
         {
             // 플레이어 아이콘이 활성화되어 있다면 매 프레임 위치를 업데이트
-            if (_dungeonManager != null && _dungeonManager.playerObject != null && playerIcon.gameObject.activeSelf)
+            if (dungeonManager != null && dungeonManager.playerObject != null && playerIcon.gameObject.activeSelf)
             {
                 UpdatePlayerIconPosition();
             }
@@ -164,7 +163,7 @@ namespace Nytherion.UI.Map
         private void UpdatePlayerIconPosition()
         {
             // DungeonManager에게 현재 플레이어가 있는 방을 직접 물어봅니다. (O(1) 시간 복잡도)
-            RoomFirstDungeonGenerator.Room currentPlayerRoom = _dungeonManager.FindCurrentPlayerRoom();
+            RoomFirstDungeonGenerator.Room currentPlayerRoom = dungeonManager.FindCurrentPlayerRoom();
 
             // 현재 방이 있고, 해당 방의 아이콘이 맵에 존재한다면
             if (currentPlayerRoom != null && roomIconMap.TryGetValue(currentPlayerRoom.gridPos, out RectTransform roomIcon))

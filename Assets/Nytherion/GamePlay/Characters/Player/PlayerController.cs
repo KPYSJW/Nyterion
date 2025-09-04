@@ -1,4 +1,5 @@
 using Nytherion.Core.Managers;
+using Nytherion.Data.ScriptableObjects.Player;
 using System.Collections;
 using UnityEngine;
 using Zenject;
@@ -10,13 +11,20 @@ namespace Nytherion.GamePlay.Characters.Player
         [Header("Components")]
         [SerializeField] private Rigidbody2D rb;
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Animator animator;
 
-        private bool isFacingRight = true;
-        private bool isDashing = false;
-        private float lastDashTime = -999f;
+        public Vector2 MoveInput => inputManager.MoveInput;
+        public bool IsDashPressed => inputManager.Dash;
+        public PlayerData PlayerData => playerManager.currentPlayerData;
+
+        public bool IsFacingRight { get; private set; } = true;
+        public bool IsDashing { get; set; } = false;
+        public float LastDashTime { get; set; } = -999f;
 
         private InputManager inputManager;
         private PlayerManager playerManager;
+        private PlayerState currentState;
+
 
         [Inject]
         public void Construct(InputManager inputManager, PlayerManager playerManager)
@@ -24,11 +32,15 @@ namespace Nytherion.GamePlay.Characters.Player
             this.inputManager = inputManager;
             this.playerManager = playerManager;
         }
-
+        private void Start()
+        {
+            ChangeState(new IdleState());
+        }
         private void Update()
         {
-            if (inputManager == null || playerManager == null) return;
-            HandleDashInput();
+            if (inputManager == null || playerManager == null || currentState == null) return;
+
+            currentState.Execute(this);
             HandleSpriteFlip();
         }
 
@@ -38,50 +50,45 @@ namespace Nytherion.GamePlay.Characters.Player
             HandleMovement();
         }
 
-        private void HandleMovement()
+        public void HandleMovement()
         {
-          
-            if (isDashing) return;
-            Vector2 moveInput = inputManager.MoveInput;
-            float currentSpeed = playerManager.currentPlayerData.moveSpeed;
-            rb.velocity = moveInput * currentSpeed;
-        }
-
-        private void HandleDashInput()
-        {
-            if (inputManager.Dash && !isDashing && Time.time >= lastDashTime + playerManager.currentPlayerData.dashCooldown)
-            {
-                StartCoroutine(DashCoroutine());
-            }
+            if (IsDashing) return;
+            rb.velocity = MoveInput * PlayerData.moveSpeed;
         }
         private void HandleSpriteFlip()
         {
             Vector2 moveInput = inputManager.MoveInput;
-            if (moveInput.x > 0 && !isFacingRight)
+            if (moveInput.x > 0 && !IsFacingRight)
             {
-                isFacingRight = true;
+                IsFacingRight = true;
                 spriteRenderer.flipX = false;
             }
-            else if (moveInput.x < 0 && isFacingRight)
+            else if (moveInput.x < 0 && IsFacingRight)
             {
-                isFacingRight = false;
+                IsFacingRight = false;
                 spriteRenderer.flipX = true;
             }
         }
-
-        private IEnumerator DashCoroutine()
+        public void ApplyDashVelocity()
         {
-            isDashing = true;
-            lastDashTime = Time.time;
-            Vector2 moveInput = inputManager.MoveInput;
-            Vector2 dashDirection = moveInput.normalized;
+            Vector2 dashDirection = MoveInput.normalized;
             if (dashDirection == Vector2.zero)
             {
-                dashDirection = isFacingRight ? Vector2.right : Vector2.left;
+                dashDirection = IsFacingRight ? Vector2.right : Vector2.left;
             }
-            rb.velocity = dashDirection * playerManager.currentPlayerData.dashSpeed;
-            yield return new WaitForSeconds(playerManager.currentPlayerData.dashDuration);
-            isDashing = false;
+            rb.velocity = dashDirection * PlayerData.dashSpeed;
         }
+        public void ChangeState(PlayerState newState)
+        {
+            currentState?.Exit(this);
+
+            currentState = newState;
+            currentState.Enter(this);
+        }
+        public void PlayAnimation(string animationName)
+        {
+            animator.Play(animationName);
+        }
+
     }
 }

@@ -3,21 +3,23 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using UnityEngine;
 using Nytherion.Core.Enums;
-using Nytherion.Core.Managers;
+using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Core.Data;
+using Nytherion.Core.Interfaces;
 using System;
 using Zenject;
+using System.Collections.Generic;
 
-namespace Nytherion.GamePlay.Characters.Player
+
+namespace Nytherion.Core.Managers
 {
-    [System.Serializable]
-    public class PlayerManager : MonoBehaviour
+    public class PlayerManager : BaseManager, ISaveable
     {
         public PlayerHealth playerHealth { get; private set; }
         public PlayerCombat PlayerCombat { get; private set; }
         public PlayerEngravingManager playerEngravingManager { get; private set; }
-        
-        private EquipmentDataManager _equipmentDataManager;
+
+        private EquipmentDataManager equipmentDataManager;
 
         [Header("Player Data")]
         [SerializeField] private PlayerData basePlayerData;
@@ -27,37 +29,33 @@ namespace Nytherion.GamePlay.Characters.Player
         [Inject]
         public void Construct(EquipmentDataManager equipmentDataManager)
         {
-            _equipmentDataManager = equipmentDataManager;
+            this.equipmentDataManager = equipmentDataManager;
         }
 
-        private void Awake()
+        protected override void OnInitializeInternal()
         {
             playerHealth = GetComponent<PlayerHealth>();
             PlayerCombat = GetComponent<PlayerCombat>();
             playerEngravingManager = GetComponent<PlayerEngravingManager>();
 
             currentPlayerData = Instantiate(basePlayerData);
-            DontDestroyOnLoad(gameObject);
-        }
 
-        public void Initialize()
-        {
             RecalculateStats();
         }
 
         private void OnEnable()
         {
-            if (_equipmentDataManager != null)
+            if (equipmentDataManager != null)
             {
-                _equipmentDataManager.OnEquipmentChanged += HandleEquipmentChanged;
+                equipmentDataManager.OnEquipmentChanged += HandleEquipmentChanged;
             }
         }
 
         private void OnDisable()
         {
-            if (_equipmentDataManager != null)
+            if (equipmentDataManager != null)
             {
-                _equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
+                equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
             }
         }
 
@@ -86,13 +84,24 @@ namespace Nytherion.GamePlay.Characters.Player
                 JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(basePlayerData), currentPlayerData);
             }
 
-            if (_equipmentDataManager != null)
+            if (equipmentDataManager != null)
             {
-                foreach (var equippedItem in _equipmentDataManager.EquippedItems.Values)
+                foreach (var equippedItem in equipmentDataManager.EquippedItems.Values)
                 {
                     if (equippedItem != null)
                     {
-                        ApplyStats(equippedItem);
+                        ApplyStatModifiers(equippedItem.statModifiers);
+                    }
+                }
+            }
+            if (playerEngravingManager != null)
+            {
+                var currentEngravings = playerEngravingManager.GetCurrentEngravings();
+                foreach (var engraving in currentEngravings)
+                {
+                    if (engraving != null)
+                    {
+                        //ApplyStatModifiers(engraving.statModifiers);
                     }
                 }
             }
@@ -103,10 +112,10 @@ namespace Nytherion.GamePlay.Characters.Player
             Debug.Log("[PlayerManager] 모든 능력치를 새로고침했습니다.");
         }
 
-        private void ApplyStats(EquipmentData item)
+        private void ApplyStatModifiers(IEnumerable<StatModifier> modifiers)
         {
-            if (item.statModifiers == null) return;
-            foreach (StatModifier modifier in item.statModifiers)
+            if (modifiers == null) return;
+            foreach (StatModifier modifier in modifiers)
             {
                 ApplyModifierToPlayer(modifier.stat, modifier.value);
             }
@@ -150,6 +159,18 @@ namespace Nytherion.GamePlay.Characters.Player
                     Debug.LogError($"[PlayerManager] Invalid stat type: {stat}");
                     break;
             }
+        }
+
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            if (saveData == null) return;
+
+           
+        }
+
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            if (saveData == null) return;
         }
     }
 }

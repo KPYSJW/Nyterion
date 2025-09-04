@@ -6,6 +6,7 @@ using Nytherion.UI.Inventory.Utils;
 using Nytherion.UI.Controllers;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Enums;
+using Zenject;
 
 namespace Nytherion.UI.Inventory
 {
@@ -14,6 +15,29 @@ namespace Nytherion.UI.Inventory
         public int SlotIndex { get; private set; }
         public event Action<BaseSlotUI> OnSellItemAction;
 
+        private EquipmentDataManager equipmentDataManager;
+        private ItemUsageManager itemUsageManager;
+        private InventoryManager inventoryManager;
+        private ShopUI shopUI;
+
+        [Inject]
+        public void Construct(
+            EquipmentDataManager equipmentDataManager,
+            ItemUsageManager itemUsageManager,
+            InventoryManager inventoryManager,
+            ShopUI shopUI)
+        {
+            this.equipmentDataManager = equipmentDataManager;
+            this.itemUsageManager = itemUsageManager;
+            this.inventoryManager = inventoryManager;
+            this.shopUI = shopUI;
+            
+            Debug.Log($"[InventorySlotUI] Dependencies injected - " +
+                     $"EquipmentManager: {equipmentDataManager != null}, " +
+                     $"InventoryManager: {inventoryManager != null}, " +
+                     $"ItemUsageManager: {itemUsageManager != null}, " +
+                     $"ShopUI: {shopUI != null}");
+        }
         protected override void Awake()
         {
             base.Awake();
@@ -21,7 +45,6 @@ namespace Nytherion.UI.Inventory
             OnEndDragEvent += (s, e) => DragDropUIHandler.HandleEndDragShared(s, e);
             OnPointerClickEvent += HandlePointerClick;
         }
-
         public void Initialize(int index)
         {
             SlotIndex = index;
@@ -30,32 +53,106 @@ namespace Nytherion.UI.Inventory
 
         public void OnDrop(PointerEventData eventData)
         {
-            if (eventData.pointerDrag == null) return;
-            BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
-            if (sourceSlot == null || sourceSlot.IsEmpty || sourceSlot == this) return;
-
-            if (sourceSlot is InventorySlotUI inventorySourceSlot)
+            Debug.Log($"[InventorySlotUI] OnDrop called on slot {SlotIndex}");
+            
+            if (eventData.pointerDrag == null) 
             {
-                InventoryManager.Instance.SwapItems(inventorySourceSlot.SlotIndex, this.SlotIndex);
+                Debug.LogWarning("[InventorySlotUI] eventData.pointerDrag is null");
+                return;
             }
-            else if (sourceSlot is EquipmentSlotUI equipmentSourceSlot)
+            
+            BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
+            if (sourceSlot == null) 
             {
-                var (equippedItem, equippedItemCount) = equipmentSourceSlot.GetItemInfo();
-                var (inventoryItem, inventoryItemCount) = this.GetItemInfo();
+                Debug.LogWarning("[InventorySlotUI] sourceSlot is null");
+                return;
+            }
+            
+            if (sourceSlot.IsEmpty) 
+            {
+                Debug.LogWarning("[InventorySlotUI] sourceSlot is empty");
+                return;
+            }
+            
+            if (sourceSlot == this) 
+            {
+                Debug.Log("[InventorySlotUI] Dropping on same slot, ignoring");
+                return;
+            }
+            
+            Debug.Log($"[InventorySlotUI] Valid drop from {sourceSlot.GetType().Name}");
 
-                if (this.IsEmpty)
+            // 필수 매니저들의 null 체크 및 폴백
+            if (inventoryManager == null)
+            {
+                Debug.LogWarning("[InventorySlotUI] InventoryManager is null, trying to find it...");
+                inventoryManager = FindObjectOfType<InventoryManager>();
+                if (inventoryManager == null)
                 {
-                    equipmentSourceSlot.ClearSlot();
-                    InventoryManager.Instance.InventoryModel.AddItemToSlot(equippedItem, equippedItemCount, this.SlotIndex);
+                    Debug.LogError("[InventorySlotUI] InventoryManager not found. Cannot perform drop operation.");
+                    return;
+                }
+                Debug.Log("[InventorySlotUI] Found InventoryManager via FindObjectOfType");
+            }
+
+            if (equipmentDataManager == null)
+            {
+                Debug.LogWarning("[InventorySlotUI] EquipmentDataManager is null, trying to find it...");
+                equipmentDataManager = FindObjectOfType<EquipmentDataManager>();
+                if (equipmentDataManager == null)
+                {
+                    Debug.LogError("[InventorySlotUI] EquipmentDataManager not found. Equipment operations will be disabled.");
                 }
                 else
                 {
-                    if (equipmentSourceSlot.CanReceiveItem(inventoryItem))
+                    Debug.Log("[InventorySlotUI] Found EquipmentDataManager via FindObjectOfType");
+                }
+            }
+
+            if (sourceSlot is InventorySlotUI inventorySourceSlot)
+            {
+                inventoryManager.SwapItems(inventorySourceSlot.SlotIndex, this.SlotIndex);
+            }
+            else if (sourceSlot is EquipmentSlotUI equipmentSourceSlot)
+            {
+                // 유효성 검사 추가
+                if (equipmentSourceSlot == null || equipmentSourceSlot.IsEmpty) return;
+                
+                if (equipmentDataManager == null)
+                {
+                    Debug.LogError("[InventorySlotUI] EquipmentDataManager is still null. Cannot perform equipment drop operation.");
+                    return;
+                }
+                
+                try
+                {
+                    var (itemToUnequip, _) = equipmentSourceSlot.GetItemInfo();
+                    if (itemToUnequip == null) return;
+
+                    // 인벤토리 슬롯에 있던 아이템 (없으면 null)
+                    ItemData itemInThisSlot = CurrentItem;
+                    int countInThisSlot = CurrentCount;
+
+                    // 1. 먼저 장비 슬롯을 비웁니다.
+                    equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, null);
+
+                    // 2. 인벤토리 슬롯으로 아이템 이동
+                    if (inventoryManager != null && inventoryManager.InventoryModel != null)
                     {
-                        InventoryManager.Instance.RemoveItemFromSlot(this.SlotIndex, inventoryItemCount);
-                        equipmentSourceSlot.SetItem(inventoryItem, inventoryItemCount);
-                        InventoryManager.Instance.InventoryModel.AddItemToSlot(equippedItem, equippedItemCount, this.SlotIndex);
+                        bool addSuccess = inventoryManager.InventoryModel.AddItemToSlot(itemToUnequip, 1, this.SlotIndex, true);
+                        
+                        // 3. 원래 인벤토리 슬롯에 아이템이 있었다면 해당 아이템을 장비 슬롯에 장착
+                        if (addSuccess && itemInThisSlot != null && 
+                            equipmentSourceSlot.CanReceiveItem(itemInThisSlot as EquipmentData))
+                        {
+                            equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, itemInThisSlot as EquipmentData);
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error in OnDrop (EquipmentSlot): {e.Message}");
+                    return;
                 }
             }
             else if (sourceSlot is QuickSlotUI quickSourceSlot)
@@ -68,7 +165,7 @@ namespace Nytherion.UI.Inventory
                 {
                     quickSourceSlot.ClearSlot();
 
-                    InventoryManager.Instance.InventoryModel.AddItemToSlot(itemToMove, countToMove, this.SlotIndex);
+                    inventoryManager.InventoryModel.AddItemToSlot(itemToMove, countToMove, this.SlotIndex);
                 }
                 else
                 {
@@ -78,19 +175,19 @@ namespace Nytherion.UI.Inventory
                     {
                         quickSourceSlot.SetItem(itemInThisSlot, countInThisSlot);
 
-                        InventoryManager.Instance.InventoryModel.AddItemToSlot(itemToMove, countToMove, this.SlotIndex);
+                        inventoryManager.InventoryModel.AddItemToSlot(itemToMove, countToMove, this.SlotIndex);
                     }
                 }
 
                 DragDropUIHandler.dropHandled = true;
             }
         }
-        
+
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
         {
             if (IsEmpty || eventData.button != PointerEventData.InputButton.Right) return;
 
-            if (ShopUI.Instance != null && ShopUI.Instance.IsOpen)
+            if (shopUI != null && shopUI.IsOpen)
             {
                 OnSellItemAction?.Invoke(this);
             }
@@ -106,9 +203,9 @@ namespace Nytherion.UI.Inventory
                 {
                     switch (armor.armorType)
                     {
-                        case ArmorType.Helmet:    targetSlotType = EquipmentSlotType.Helmet; break;
-                        case ArmorType.Armor:     targetSlotType = EquipmentSlotType.Armor; break;
-                        case ArmorType.Boots:     targetSlotType = EquipmentSlotType.Boots; break;
+                        case ArmorType.Helmet: targetSlotType = EquipmentSlotType.Helmet; break;
+                        case ArmorType.Armor: targetSlotType = EquipmentSlotType.Armor; break;
+                        case ArmorType.Boots: targetSlotType = EquipmentSlotType.Boots; break;
                         case ArmorType.Accessory: targetSlotType = EquipmentSlotType.Accessory; break;
                         default: return;
                     }
@@ -118,25 +215,25 @@ namespace Nytherion.UI.Inventory
                     return;
                 }
 
-                if (InventoryManager.Instance.RemoveItemFromSlot(SlotIndex, 1))
+                if (inventoryManager.RemoveItemFromSlot(SlotIndex, 1))
                 {
-                    EquipmentData previouslyEquipped = EquipmentDataManager.Instance.GetEquipment(targetSlotType);
+                    EquipmentData previouslyEquipped = equipmentDataManager.GetEquipment(targetSlotType);
 
-                    EquipmentDataManager.Instance.SetEquipment(targetSlotType, equipment);
+                    equipmentDataManager.SetEquipment(targetSlotType, equipment);
 
                     if (previouslyEquipped != null)
                     {
-                        InventoryManager.Instance.AddItem(previouslyEquipped, 1);
+                        inventoryManager.AddItem(previouslyEquipped, 1);
                     }
                 }
             }
-            else if(CurrentItem is ConsumableData consumable)
+            else if (CurrentItem is ConsumableData consumable)
             {
-                ItemUsageManager.Instance.UseConsumableItem(consumable);
+                itemUsageManager.UseConsumableItem(consumable);
             }
             else
             {
-                Debug.Log($"[Inventory] Used Item: {currentItem.itemName}");
+                Debug.Log($"[Inventory] Used Item: {CurrentItem.itemName}");
             }
         }
     }
