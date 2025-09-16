@@ -9,22 +9,23 @@ using TMPro;
 using Nytherion.Core.Enums;
 using Nytherion.UI.Shop;
 using Nytherion.Data.ScriptableObjects.Weapons;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.UI.Controllers
 {
     public class ShopUI : UIPanelBase, IInitializable
     {
-
+        private GameSceneUIRefs gameSceneuiRefs;
         [Header("UI References")]
         private Transform shopSlotParent;
         private GameObject shopSlotPrefab;
+        private TextMeshProUGUI goldText;
         private Button closeButton;
-        private TextMeshProUGUI playerGoldText;
 
         [Header("Player Inventory Display")]
-        private Transform playerInventoryParent;
-        private List<InventorySlotUI> playerInventorySlots;
+        private Transform inventorySlotParent;
+        private List<InventorySlotUI> inventorySlots;
 
         private ShopData currentShopData;
         private const float SELL_PRICE_RATIO = 0.7f;
@@ -33,36 +34,119 @@ namespace Nytherion.UI.Controllers
         private EventManager eventManager;
         private ShopManager shopManager;
         private SellSlotUI sellSlotUI;
-        private DiContainer container;
 
+        private IObjectResolver container;
 
         [Inject]
-        public void Construct(
-            InventoryManager inventoryManager,
-            CurrencyManager currencyManager,
-            EventManager eventManager,
-            ShopManager shopManager,
-            [Inject(Id = "ShopCanvasGroup")] CanvasGroup controlledCanvasGroup,
-            [Inject(Id = "ShopSlotParent")] Transform shopSlotParent,
-            [Inject(Id = "ShopSlotPrefab")] GameObject shopSlotPrefab,
-            [Inject(Id = "ShopCloseButton")] Button closeButton,
-            [Inject(Id = "ShopPlayerGoldText")] TextMeshProUGUI playerGoldText,
-            [Inject(Id = "ShopPlayerInventoryParent")] Transform playerInventoryParent,
-            SellSlotUI sellSlotUI,
-            DiContainer container)
+        public void Construct(IObjectResolver container,
+            GameSceneUIRefs gameSceneuiRefs,
+            ShopManager shopManagerPrefab,
+            CurrencyManager currencyManagerPrefab,
+            EventManager eventManagerPrefab)
         {
-            this.controlledCanvasGroup = controlledCanvasGroup;
-            this.shopSlotParent = shopSlotParent;
-            this.shopSlotPrefab = shopSlotPrefab;
-            this.closeButton = closeButton;
-            this.playerGoldText = playerGoldText;
-            this.playerInventoryParent = playerInventoryParent;
-            this.sellSlotUI = sellSlotUI;
-            this.inventoryManager = inventoryManager;
-            this.currencyManager = currencyManager;
-            this.eventManager = eventManager;
-            this.shopManager = shopManager;
             this.container = container;
+            this.gameSceneuiRefs = gameSceneuiRefs;
+            this.shopManager = shopManagerPrefab;
+            this.currencyManager = currencyManagerPrefab;
+            this.eventManager = eventManagerPrefab;
+            this.sellSlotUI = gameSceneuiRefs.SellSlotUI;
+            this.closeButton = gameSceneuiRefs.ShopCloseButton;
+            this.goldText = gameSceneuiRefs.ShopPlayerGoldText;
+            this.shopSlotParent = gameSceneuiRefs.ShopSlotParent;
+            this.shopSlotPrefab = gameSceneuiRefs.ShopSlotPrefab;
+            this.inventorySlotParent = gameSceneuiRefs.InventorySlotParent;
+            this.controlledCanvasGroup = gameSceneuiRefs.ShopCanvasGroup;
+        }
+
+        private InventoryManager GetInventoryManager()
+        {
+            if (inventoryManager == null && container != null)
+            {
+                try
+                {
+                    inventoryManager = container.Resolve<InventoryManager>();
+                }
+                catch (VContainerException e)
+                {
+                    Debug.LogError($"[ShopUI] Failed to resolve InventoryManager: {e.Message}");
+                    return null;
+                }
+            }
+            return inventoryManager;
+        }
+
+        private CurrencyManager GetCurrencyManager()
+        {
+            if (currencyManager == null && container != null)
+            {
+                try
+                {
+                    currencyManager = container.Resolve<CurrencyManager>();
+                }
+                catch (VContainerException e)
+                {
+                    Debug.LogError($"[ShopUI] Failed to resolve CurrencyManager: {e.Message}");
+                    return null;
+                }
+            }
+            return currencyManager;
+        }
+
+        private EventManager GetEventManager()
+        {
+            if (eventManager == null && container != null)
+            {
+                try
+                {
+                    eventManager = container.Resolve<EventManager>();
+                }
+                catch (VContainerException e)
+                {
+                    Debug.LogError($"[ShopUI] Failed to resolve EventManager: {e.Message}");
+                    return null;
+                }
+            }
+            return eventManager;
+        }
+
+        private ShopManager GetShopManager()
+        {
+            if (shopManager == null && container != null)
+            {
+                try
+                {
+                    shopManager = container.Resolve<ShopManager>();
+                }
+                catch (VContainerException e)
+                {
+                    Debug.LogError($"[ShopUI] Failed to resolve ShopManager: {e.Message}");
+                    return null;
+                }
+            }
+            return shopManager;
+        }
+
+        private void FindUIElements()
+        {
+            // UI 요소들을 동적으로 찾기
+            if (controlledCanvasGroup == null)
+                controlledCanvasGroup = GetComponent<CanvasGroup>();
+
+            if (closeButton == null)
+                closeButton = GetComponentInChildren<Button>();
+
+            if (goldText == null)
+                goldText = GetComponentInChildren<TextMeshProUGUI>();
+
+            // SellSlotUI는 GameSceneUIRefs에서 이미 설정됨
+            if (sellSlotUI != null)
+            {
+                Debug.Log($"[ShopUI] SellSlotUI from GameSceneUIRefs: {sellSlotUI.name}, Instance ID: {sellSlotUI.GetInstanceID()}");
+            }
+            else
+            {
+                Debug.LogError("[ShopUI] SellSlotUI is null from GameSceneUIRefs!");
+            }
         }
 
         protected override void Awake()
@@ -71,30 +155,52 @@ namespace Nytherion.UI.Controllers
         }
         public void Initialize()
         {
-            Debug.Log("ShopUI.Initialize() 호출됨!");
+
+            // UI 요소들 찾기
+            FindUIElements();
+
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(Close);
             }
+
+            // SellSlotUI 이벤트 구독 처리
             if (sellSlotUI != null)
             {
+                Debug.Log($"[ShopUI] Subscribing to SellSlotUI.OnItemSold event, Instance ID: {sellSlotUI.GetInstanceID()}");
+
+                // 기존 구독 해제 (중복 구독 방지)
+                sellSlotUI.OnItemSold -= HandleSellItem;
+
+                // 새로 구독
                 sellSlotUI.OnItemSold += HandleSellItem;
             }
-            if (currencyManager != null)
+            else
             {
-                currencyManager.onCurrencyChanged += UpdateCurrencyUI;
+                Debug.LogError("[ShopUI] SellSlotUI is null, cannot subscribe to OnItemSold event");
             }
-            if (inventoryManager != null)
+
+            // Lazy resolution으로 매니저들 가져오기
+            CurrencyManager currencyMgr = GetCurrencyManager();
+            if (currencyMgr != null)
             {
-                inventoryManager.OnInventoryUpdated += RefreshPlayerInventoryUI;
+                currencyMgr.onCurrencyChanged += UpdateCurrencyUI;
             }
-            if (eventManager != null)
+
+            InventoryManager inventoryMgr = GetInventoryManager();
+            if (inventoryMgr != null)
             {
-                eventManager.OnInteraction += HandleInteraction;
+                inventoryMgr.OnInventoryUpdated += RefreshPlayerInventoryUI;
             }
-            if (playerInventoryParent != null)
+
+            EventManager eventMgr = GetEventManager();
+            if (eventMgr != null)
             {
-                playerInventorySlots = new List<InventorySlotUI>(playerInventoryParent.GetComponentsInChildren<InventorySlotUI>(true));
+                eventMgr.OnInteraction += HandleInteraction;
+            }
+            if (inventorySlotParent != null)
+            {
+                inventorySlots = new List<InventorySlotUI>(inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true));
             }
 
             Close();
@@ -148,19 +254,30 @@ namespace Nytherion.UI.Controllers
         {
             currentShopData = data;
             PopulateShop();
-            Debug.Log("[ShopUI] 인벤토리 열기 이벤트 발생시킴!");
-            eventManager.TriggerOpenInventoryForShop();
-            UpdateCurrencyUI(CurrencyType.Gold, currencyManager.GetCurrency(CurrencyType.Gold));
+
+            EventManager eventMgr = GetEventManager();
+            if (eventMgr != null)
+            {
+                eventMgr.TriggerOpenInventoryForShop();
+            }
+
+            CurrencyManager currencyMgr = GetCurrencyManager();
+            if (currencyMgr != null)
+            {
+                UpdateCurrencyUI(CurrencyType.Gold, currencyMgr.GetCurrency(CurrencyType.Gold));
+            }
+
             Open();
         }
 
         public override void Open()
         {
             base.Open();
-            if (shopManager != null)
+            ShopManager shopMgr = GetShopManager();
+            if (shopMgr != null)
             {
-                shopManager.SetShopState(true);
-                shopManager.OnStockChanged += RefreshShopUI;
+                shopMgr.SetShopState(true);
+                shopMgr.OnStockChanged += RefreshShopUI;
             }
             RefreshShopUI();
         }
@@ -168,17 +285,20 @@ namespace Nytherion.UI.Controllers
         public override void Close()
         {
             base.Close();
-            if (shopManager != null)
+            ShopManager shopMgr = GetShopManager();
+            if (shopMgr != null)
             {
-                shopManager.SetShopState(false);
+                shopMgr.SetShopState(false);
+                shopMgr.OnStockChanged -= RefreshShopUI;
             }
-            eventManager.TriggerCloseInventoryForShop();
-            if (sellSlotUI != null) sellSlotUI.ClearSlot();
 
-            if (shopManager != null)
+            EventManager eventMgr = GetEventManager();
+            if (eventMgr != null)
             {
-                shopManager.OnStockChanged -= RefreshShopUI;
+                eventMgr.TriggerCloseInventoryForShop();
             }
+
+            if (sellSlotUI != null) sellSlotUI.ClearSlot();
         }
 
         public void BuyItem(ShopSlotUI slot)
@@ -186,28 +306,63 @@ namespace Nytherion.UI.Controllers
             var shopItem = slot.CurrentItem;
             if (shopItem == null || (!shopItem.isUnlimited && shopItem.stock <= 0))
             {
+                Debug.Log($"[ShopUI] 구매 불가: 아이템이 없거나 재고가 부족합니다.");
                 return;
             }
 
+            // 구매 중복 방지를 위해 즉시 버튼 비활성화
+            slot.SetInteractable(false);
+
             int amountToBuy = (shopItem.item is EquipmentData) ? 1 : 1;
+            CurrencyManager currencyMgr = GetCurrencyManager();
+            InventoryManager inventoryMgr = GetInventoryManager();
 
-            if (currencyManager.SpendCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
+            if (currencyMgr == null || inventoryMgr == null)
             {
-                if (inventoryManager.AddItem(shopItem.item, amountToBuy))
-                {
-                    Debug.Log($"[ShopUI] '{shopItem.item.itemName}' ({shopItem.item.GetType().Name}) 구매 완료. (ID: {shopItem.shopItemId}) from shop '{currentShopData.shopName}'");
+                Debug.LogError("[ShopUI] 필수 매니저가 없습니다.");
+                slot.SetInteractable(true);
+                return;
+            }
 
-                    if (shopManager != null && !shopItem.isUnlimited)
+            // 재고 및 가격 재확인
+            if (!currencyMgr.HasEnoughCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
+            {
+                Debug.Log($"[ShopUI] 골드 부족: 필요 {shopItem.price * amountToBuy}, 보유 {currencyMgr.GetCurrency(CurrencyType.Gold)}");
+                slot.SetInteractable(true);
+                return;
+            }
+
+            if (currencyMgr.SpendCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
+            {
+                if (inventoryMgr.AddItem(shopItem.item, amountToBuy))
+                {
+                    Debug.Log($"[ShopUI] '{shopItem.item.itemName}' 구매 완료. (ID: {shopItem.shopItemId})");
+
+                    // 재고 감소 처리
+                    if (!shopItem.isUnlimited)
                     {
-                        shopManager.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
+                        ShopManager shopMgr = GetShopManager();
+                        if (shopMgr != null)
+                        {
+                            shopMgr.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
+                        }
+
+                        // 즉시 UI 업데이트
+                        slot.UpdateStockUI();
+                    }
+                    else
+                    {
+                        // 무제한 아이템도 버튼 다시 활성화
+                        slot.SetInteractable(true);
                     }
 
+                    // 무기 자동 장착 로직
                     if (shopItem.item is WeaponData weaponData)
                     {
                         var equipmentSlot = FindObjectOfType<EquipmentSlotUI>();
                         if (equipmentSlot != null && equipmentSlot.IsEmpty)
                         {
-                            if (inventoryManager.RemoveItem(shopItem.item, 1))
+                            if (inventoryMgr.RemoveItem(shopItem.item, 1))
                             {
                                 equipmentSlot.SetItem(shopItem.item, 1);
                             }
@@ -216,17 +371,54 @@ namespace Nytherion.UI.Controllers
                 }
                 else
                 {
-                    currencyManager.AddCurrency(CurrencyType.Gold, shopItem.price * amountToBuy);
+                    // 인벤토리 추가 실패 시 환불
+                    currencyMgr.AddCurrency(CurrencyType.Gold, shopItem.price * amountToBuy);
+                    Debug.LogWarning("[ShopUI] 인벤토리가 가득참. 구매가 취소되었습니다.");
+                    slot.SetInteractable(true);
                 }
+            }
+            else
+            {
+                Debug.LogWarning("[ShopUI] 골드 지출 실패.");
+                slot.SetInteractable(true);
             }
         }
 
         private void HandleSellItem(ItemData item, int amount)
         {
-            if (inventoryManager.RemoveItem(item, amount))
+            Debug.Log($"[ShopUI] HandleSellItem called: {item?.itemName} x{amount}, ID: {item?.ID}");
+
+            InventoryManager inventoryMgr = GetInventoryManager();
+            CurrencyManager currencyMgr = GetCurrencyManager();
+
+            if (inventoryMgr == null || currencyMgr == null)
+            {
+                Debug.LogError("[ShopUI] 판매 처리에 필요한 매니저가 없습니다.");
+                return;
+            }
+
+            // 현재 인벤토리에서 해당 아이템의 개수 확인
+            int currentCount = inventoryMgr.GetItemCount(item);
+            Debug.Log($"[ShopUI] 인벤토리에 있는 '{item.itemName}' 개수: {currentCount}");
+
+            if (currentCount < amount)
+            {
+                Debug.LogWarning($"[ShopUI] 판매 실패: 인벤토리에 충분한 아이템이 없습니다. 요청: {amount}, 보유: {currentCount}");
+                return;
+            }
+
+            if (inventoryMgr.RemoveItem(item, amount))
             {
                 int totalPrice = Mathf.RoundToInt(item.baseValue * SELL_PRICE_RATIO) * amount;
-                currencyManager.AddCurrency(CurrencyType.Gold, totalPrice);
+                currencyMgr.AddCurrency(CurrencyType.Gold, totalPrice);
+                Debug.Log($"[ShopUI] '{item.itemName}' {amount}개 판매 완료. 획득 골드: {totalPrice}");
+
+                // 인벤토리 업데이트 강제 실행
+                inventoryMgr.TriggerInventoryUpdate();
+            }
+            else
+            {
+                Debug.LogWarning($"[ShopUI] '{item.itemName}' 판매 실패: 인벤토리에서 아이템 제거 실패");
             }
         }
 
@@ -235,44 +427,52 @@ namespace Nytherion.UI.Controllers
             if (currentShopData == null) return;
             foreach (Transform child in shopSlotParent) Destroy(child.gameObject);
 
-            var itemsToDisplay = shopManager.GetShopItems(currentShopData.shopName);
+            ShopManager shopMgr = GetShopManager();
+            if (shopMgr == null) return;
+
+            var itemsToDisplay = shopMgr.GetShopItems(currentShopData.shopName);
             if (itemsToDisplay == null) return;
 
             foreach (ShopItemData shopItem in itemsToDisplay)
             {
-                ShopSlotUI slotUI = container.InstantiatePrefabForComponent<ShopSlotUI>(shopSlotPrefab, shopSlotParent);
+                ShopSlotUI slotUI = container.Instantiate(shopSlotPrefab, shopSlotParent).GetComponent<ShopSlotUI>();
                 if (slotUI != null)
                 {
-                    slotUI.Setup(shopItem);
+                    slotUI.Setup(shopItem, currentShopData.shopName);
                 }
             }
         }
 
         private void RefreshPlayerInventoryUI()
         {
-            if (!IsOpen || playerInventorySlots == null) return;
-            var items = inventoryManager.GetAllItems();
+            if (!IsOpen || inventorySlots == null) return;
+
+            InventoryManager inventoryMgr = GetInventoryManager();
+            if (inventoryMgr == null) return;
+
+            var items = inventoryMgr.GetAllItems();
             int i = 0;
             foreach (var itemEntry in items)
             {
-                if (i >= playerInventorySlots.Count) break;
-                if (playerInventorySlots[i] != null && itemEntry.Key != null)
+                if (i >= inventorySlots.Count) break;
+                if (inventorySlots[i] != null && itemEntry.Key != null)
                 {
-                    playerInventorySlots[i].SetItem(itemEntry.Key, itemEntry.Value);
+
+                    inventorySlots[i].SetItem(itemEntry.Key, itemEntry.Value);
                 }
                 i++;
             }
-            for (; i < playerInventorySlots.Count; i++)
+            for (; i < inventorySlots.Count; i++)
             {
-                if (playerInventorySlots[i] != null) playerInventorySlots[i].ClearSlot();
+                if (inventorySlots[i] != null) inventorySlots[i].ClearSlot();
             }
         }
 
         private void UpdateCurrencyUI(CurrencyType type, int amount)
         {
-            if (type == CurrencyType.Gold && playerGoldText != null)
+            if (type == CurrencyType.Gold && goldText != null)
             {
-                playerGoldText.text = $"{amount} G";
+                goldText.text = $"{amount} G";
             }
         }
 

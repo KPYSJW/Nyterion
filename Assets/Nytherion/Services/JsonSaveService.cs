@@ -15,6 +15,7 @@ namespace Nytherion.Services
 
             try
             {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
                 File.WriteAllText(path, json);
             }
             catch (System.Exception e)

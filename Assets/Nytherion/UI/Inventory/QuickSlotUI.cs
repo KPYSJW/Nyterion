@@ -6,7 +6,8 @@ using Nytherion.Core.Managers;
 using System;
 using InventoryUtils = Nytherion.UI.Inventory.Utils;
 using UnityEngine.EventSystems;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.UI.Inventory
 {
@@ -30,6 +31,31 @@ namespace Nytherion.UI.Inventory
             this.inventoryManager = inventoryManager;
             this.quickSlotManager = quickSlotManager;
             this.itemUsageManager = itemUsageManager;
+        }
+
+        private void Start()
+        {
+            if (inventoryManager == null || quickSlotManager == null || itemUsageManager == null)
+            {
+                var lifetimeScope = LifetimeScope.Find<GameSceneLifetimeScope>();
+                if (lifetimeScope != null)
+                {
+                    if (inventoryManager == null && lifetimeScope.Container.TryResolve<InventoryManager>(out var invManager))
+                    {
+                        inventoryManager = invManager;
+                    }
+
+                    if (quickSlotManager == null && lifetimeScope.Container.TryResolve<QuickSlotManager>(out var quickManager))
+                    {
+                        quickSlotManager = quickManager;
+                    }
+
+                    if (itemUsageManager == null && lifetimeScope.Container.TryResolve<ItemUsageManager>(out var usageManager))
+                    {
+                        itemUsageManager = usageManager;
+                    }
+                }
+            }
         }
 
         public void Initialize(int index)

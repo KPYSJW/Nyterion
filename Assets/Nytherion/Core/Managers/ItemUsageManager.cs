@@ -2,7 +2,8 @@ using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Core.Data;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {

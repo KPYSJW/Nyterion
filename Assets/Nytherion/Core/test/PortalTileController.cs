@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.GamePlay.Dungeon
 {
@@ -24,9 +24,9 @@ namespace Nytherion.GamePlay.Dungeon
         /// </summary>
         [Inject]
         public void Construct(
-            DungeonManager dungeonManager,
-            [Inject(Id = "FloorTilemap")] Tilemap floorTilemap, // "FloorTilemap" ID로 바인딩된 Tilemap 주입
-            [Inject(Id = "PortalTilemap")] Tilemap portalTilemapInstance // "PortalTilemap" ID로 바인딩된 Tilemap 주입
+            DungeonManager dungeonManager = null,
+             Tilemap floorTilemap = null, // "FloorTilemap" ID로 바인딩된 Tilemap 주입
+             Tilemap portalTilemapInstance = null // "PortalTilemap" ID로 바인딩된 Tilemap 주입
         )
         {
             _dungeonManager = dungeonManager;
@@ -55,6 +55,13 @@ namespace Nytherion.GamePlay.Dungeon
             if (_dungeonManager == null)
             {
                 Debug.LogError("[PortalTileController] DungeonManager is not injected!");
+                return;
+            }
+
+            // Tilemap이 주입되지 않았으면 포탈 기능을 사용할 수 없음
+            if (portalTilemap == null || floorTilemap == null)
+            {
+                Debug.LogError("[PortalTileController] Required Tilemaps are not injected!");
                 return;
             }
 
@@ -122,6 +129,9 @@ namespace Nytherion.GamePlay.Dungeon
 
             foreach (Vector3Int pos in positionsToCheck)
             {
+                // DungeonManager가 없으면 포탈 기능을 사용할 수 없음
+                if (_dungeonManager == null) continue;
+                
                 // DungeonManager에게 해당 위치가 등록된 포탈인지, 그렇다면 목적지가 어디인지 물어봅니다.
                 if (_dungeonManager.TryGetDestination(pos, out Vector3Int destinationPos))
                 {

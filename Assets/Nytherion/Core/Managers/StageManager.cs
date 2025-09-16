@@ -1,7 +1,8 @@
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.GamePlay.Dungeon;
 using UnityEngine;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
@@ -18,9 +19,13 @@ namespace Nytherion.Core.Managers
         private DungeonManager dungeonManager;
 
         [Inject]
-        public void Construct(SceneTransitionManager sceneTransitionManager, DungeonManager dungeonManager)
+        public void Construct(SceneTransitionManager sceneTransitionManager)
         {
             this.sceneTransitionManager = sceneTransitionManager;
+        }
+        
+        public void SetDungeonManager(DungeonManager dungeonManager)
+        {
             this.dungeonManager = dungeonManager;
         }
 

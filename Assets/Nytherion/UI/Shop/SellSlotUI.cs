@@ -5,7 +5,8 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;
 using UnityEngine.EventSystems;
 using Nytherion.UI.Inventory;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.UI.Shop
 {
@@ -44,11 +45,41 @@ namespace Nytherion.UI.Shop
             ClearSlot();
         }
 
+        private void Start()
+        {
+            if (inventoryManager == null)
+            {
+                var gameSceneScope = LifetimeScope.Find<GameSceneLifetimeScope>();
+                if (gameSceneScope != null)
+                {
+                    if (gameSceneScope.Container.TryResolve<InventoryManager>(out var invManager))
+                    {
+                        inventoryManager = invManager;
+                    }
+                }
+
+                if (inventoryManager == null)
+                {
+                    inventoryManager = FindObjectOfType<InventoryManager>();
+                    if (inventoryManager == null)
+                    {
+                        Debug.LogError("[SellSlotUI] InventoryManager not found. SellSlot operations will be disabled.");
+                    }
+                }
+            }
+        }
+
         public void SetItem(ItemData item, int amount = 1)
         {
             if (item == null)
             {
                 ClearSlot();
+                return;
+            }
+
+            if (inventoryManager == null)
+            {
+                Debug.LogError("[SellSlotUI] InventoryManager is null. Cannot set item.");
                 return;
             }
 
@@ -125,9 +156,24 @@ namespace Nytherion.UI.Shop
 
         private void OnSellButtonClicked()
         {
-            if (currentItem == null || currentAmount <= 0) return;
+            if (currentItem == null || currentAmount <= 0)
+            {
+                Debug.LogWarning("[SellSlotUI] OnSellButtonClicked: currentItem is null or amount <= 0");
+                return;
+            }
 
-            OnItemSold?.Invoke(currentItem, currentAmount);
+            Debug.Log($"[SellSlotUI] OnSellButtonClicked: Selling {currentItem.itemName} x{currentAmount}, ID: {currentItem.ID}");
+
+            if (OnItemSold != null)
+            {
+                Debug.Log($"[SellSlotUI] Instance ID: {GetInstanceID()}, OnItemSold event has {OnItemSold.GetInvocationList().Length} subscribers");
+                OnItemSold.Invoke(currentItem, currentAmount);
+            }
+            else
+            {
+                Debug.LogError($"[SellSlotUI] Instance ID: {GetInstanceID()}, OnItemSold event has no subscribers!");
+            }
+
             ClearSlot();
         }
 
@@ -157,6 +203,13 @@ namespace Nytherion.UI.Shop
 
             if (droppedSlot != null && !droppedSlot.IsEmpty)
             {
+                if (inventoryManager == null)
+                {
+                    Debug.LogError("[SellSlotUI] InventoryManager is null in OnDrop. Cannot process drop operation.");
+                    return;
+                }
+
+                Debug.Log($"[SellSlotUI] OnDrop: Dragged item {droppedSlot.CurrentItem?.itemName} x{droppedSlot.CurrentCount}, ID: {droppedSlot.CurrentItem?.ID}");
                 SetItem(droppedSlot.CurrentItem, droppedSlot.CurrentCount);
             }
         }

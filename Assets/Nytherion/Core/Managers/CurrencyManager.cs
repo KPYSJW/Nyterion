@@ -4,29 +4,40 @@ using System;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Utils;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
+using TMPro;
 
 namespace Nytherion.Core.Managers
 {
     public enum CurrencyType { Gold = 0, Token = 1 }
     public class CurrencyManager : BaseManager
     {
-        [Header("Currency Settings")]
-        [SerializeField] private bool enableAutoSave = true;
-        
         private Dictionary<CurrencyType, int> currencies = new();
         public event Action<CurrencyType, int> onCurrencyChanged;
         private SaveLoadManager saveLoadManager;
+        private IObjectResolver container;
+        private GameSceneUIRefs gameSceneUIRefs;
+        private TMP_Text goldText;
+        private TMP_Text tokenText;
 
         [Inject]
-        public void Construct(SaveLoadManager saveLoadManager)
+        public void Construct(IObjectResolver container,
+            GameSceneUIRefs gameSceneUIRefs)
         {
-            this.saveLoadManager = saveLoadManager;
+            this.container = container;
+            this.gameSceneUIRefs = gameSceneUIRefs;
+            this.goldText = gameSceneUIRefs.CurrencyDisplays[0].AmountText;
+            this.tokenText = gameSceneUIRefs.CurrencyDisplays[1].AmountText;
         }
-        
+
         protected override void OnInitializeInternal()
         {
-            // 모든 통화 타입을 0으로 초기화
+            if (saveLoadManager == null && container != null)
+            {
+                saveLoadManager = container.Resolve<SaveLoadManager>();
+            }
+
             foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
             {
                 if (!currencies.ContainsKey(type))
@@ -54,14 +65,12 @@ namespace Nytherion.Core.Managers
                 loadedCurrencies =>
                 {
                     currencies = new Dictionary<CurrencyType, int>();
-                    
-                    // 로드된 데이터가 있으면 사용, 없으면 기본값으로 초기화
+
                     if (loadedCurrencies.Count > 0)
                     {
                         currencies = loadedCurrencies;
                     }
-                    
-                    // 누락된 통화 타입들을 0으로 초기화
+
                     foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
                     {
                         if (!currencies.ContainsKey(type))
@@ -70,7 +79,6 @@ namespace Nytherion.Core.Managers
                         }
                     }
 
-                    // 모든 통화에 대해 변경 이벤트 발생
                     foreach (var currencyPair in currencies)
                     {
                         onCurrencyChanged?.Invoke(currencyPair.Key, currencyPair.Value);
@@ -78,6 +86,8 @@ namespace Nytherion.Core.Managers
                 },
                 nameof(CurrencyManager)
             );
+            UpdateCurrency(CurrencyType.Gold, currencies[CurrencyType.Gold], "");
+            UpdateCurrency(CurrencyType.Token, currencies[CurrencyType.Token], "");
         }
         public int GetCurrency(CurrencyType type)
         {
@@ -87,47 +97,26 @@ namespace Nytherion.Core.Managers
         {
             if (amount <= 0) 
             {
-                Debug.LogWarning($"[CurrencyManager] Invalid amount to add: {amount}. Amount must be positive.");
                 return;
             }
 
-            int newAmount = GetCurrency(type) + amount;
-            currencies[type] = newAmount;
-            onCurrencyChanged?.Invoke(type, newAmount);
-            
-            if (enableAutoSave && saveLoadManager != null)
-            {
-                saveLoadManager.SaveGame();
-            }
-            
-            Debug.Log($"[CurrencyManager] Added {amount} {type}. New total: {newAmount}");
+            UpdateCurrency(type, GetCurrency(type) + amount, $"Added {amount} {type}.");
         }
         
         public bool SpendCurrency(CurrencyType type, int amount)
         {
             if (amount <= 0) 
             {
-                Debug.LogWarning($"[CurrencyManager] Invalid amount to spend: {amount}. Amount must be positive.");
                 return false;
             }
 
             int currentAmount = GetCurrency(type);
             if (currentAmount >= amount)
             {
-                int newAmount = currentAmount - amount;
-                currencies[type] = newAmount;
-                onCurrencyChanged?.Invoke(type, newAmount);
-                
-                if (enableAutoSave && saveLoadManager != null)
-                {
-                    saveLoadManager.SaveGame();
-                }
-                
-                Debug.Log($"[CurrencyManager] Spent {amount} {type}. Remaining: {newAmount}");
+                UpdateCurrency(type, currentAmount - amount, $"Spent {amount} {type}.");
                 return true;
             }
             
-            Debug.LogWarning($"[CurrencyManager] Insufficient {type}. Required: {amount}, Available: {currentAmount}");
             return false;
         }
 
@@ -135,6 +124,45 @@ namespace Nytherion.Core.Managers
         public bool HasEnoughCurrency(CurrencyType type, int amount)
         {
             return GetCurrency(type) >= amount;
+        }
+
+        private void UpdateCurrency(CurrencyType type, int newAmount, string logMessage)
+        {
+            currencies[type] = newAmount;
+            onCurrencyChanged?.Invoke(type, newAmount);
+
+            if (type == CurrencyType.Gold)
+            {
+                goldText.text = newAmount.ToString();
+            }
+            else if (type == CurrencyType.Token)
+            {
+                tokenText.text = newAmount.ToString();
+            }
+
+            // 자동 저장은 너무 빈번하므로 주석 처리 - 게임 종료시에만 저장
+            // if (enableAutoSave && GetSaveLoadManager() != null)
+            // {
+            //     GetSaveLoadManager().SaveGame();
+            // }
+
+        }
+        
+        private SaveLoadManager GetSaveLoadManager()
+        {
+            if (saveLoadManager == null && container != null)
+            {
+                try
+                {
+                    saveLoadManager = container.Resolve<SaveLoadManager>();
+                }
+                catch (VContainerException)
+                {
+                    // SaveLoadManager가 아직 해결되지 않은 경우 null을 반환
+                    return null;
+                }
+            }
+            return saveLoadManager;
         }
 
         public override string GetStatusInfo()

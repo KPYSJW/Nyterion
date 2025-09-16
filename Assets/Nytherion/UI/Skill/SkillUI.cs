@@ -3,7 +3,7 @@ using Nytherion.GamePlay.Characters.Skill;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Skill
 {

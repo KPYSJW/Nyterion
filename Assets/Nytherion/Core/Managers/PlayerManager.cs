@@ -7,7 +7,8 @@ using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using System;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 using System.Collections.Generic;
 
 
@@ -20,6 +21,8 @@ namespace Nytherion.Core.Managers
         public PlayerEngravingManager playerEngravingManager { get; private set; }
 
         private EquipmentDataManager equipmentDataManager;
+        private InputManager inputManager;
+        private PlayerController playerController;
 
         [Header("Player Data")]
         [SerializeField] private PlayerData basePlayerData;
@@ -27,18 +30,32 @@ namespace Nytherion.Core.Managers
         public event Action OnPlayerStatsChanged;
 
         [Inject]
-        public void Construct(EquipmentDataManager equipmentDataManager)
+        public void Construct(EquipmentDataManager equipmentDataManager, InputManager inputManager)
         {
             this.equipmentDataManager = equipmentDataManager;
+            this.inputManager = inputManager;
         }
 
         protected override void OnInitializeInternal()
         {
+            
             playerHealth = GetComponent<PlayerHealth>();
             PlayerCombat = GetComponent<PlayerCombat>();
             playerEngravingManager = GetComponent<PlayerEngravingManager>();
+            playerController = GetComponent<PlayerController>();
+
+            if (basePlayerData == null)
+            {
+                return;
+            }
 
             currentPlayerData = Instantiate(basePlayerData);
+
+            // PlayerController에 수동으로 의존성 주입
+            if (playerController != null && inputManager != null)
+            {
+                playerController.Construct(inputManager, this);
+            }
 
             RecalculateStats();
         }
@@ -109,7 +126,6 @@ namespace Nytherion.Core.Managers
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
             OnPlayerStatsChanged?.Invoke();
 
-            Debug.Log("[PlayerManager] 모든 능력치를 새로고침했습니다.");
         }
 
         private void ApplyStatModifiers(IEnumerable<StatModifier> modifiers)

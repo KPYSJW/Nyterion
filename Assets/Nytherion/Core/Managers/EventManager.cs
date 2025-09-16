@@ -1,5 +1,4 @@
 using Nytherion.Core.Enums;
-using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.Data.ScriptableObjects.Synergy;
@@ -7,29 +6,31 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Enemy;
 using System;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
-    public class EventManager : MonoBehaviour
+    public class EventManager : MonoBehaviour, IInitializable
     {
-        public static EventManager Instance { get; private set; }
-        private void Awake()
-        {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-        }
-
         public event Action<EnemyBase> OnEnemyDied;
         public event Action<StageData> OnBossClearedEvent;
         public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;
-        public event Action OnOpenInventoryForShop;
-        public event Action OnCloseInventoryForShop;
 
         public event Action<InteractableType> OnInteraction;
+
+        public event Action OnOpenInventoryForShop;
+        public event Action OnCloseInventoryForShop;
         public void TriggerInteractionEvent(InteractableType type)
         {
             OnInteraction?.Invoke(type);
+        }
+        public void TriggerOpenInventoryForShop()
+        {
+            OnOpenInventoryForShop?.Invoke();
+        }
+         public void TriggerCloseInventoryForShop()
+        {
+            OnCloseInventoryForShop?.Invoke();
         }
         public void TriggerEnemyDeathEvent(EnemyBase enemy)
         {
@@ -39,12 +40,12 @@ namespace Nytherion.Core.Managers
         {
             OnBossClearedEvent?.Invoke(stage);
         }
-        public void RegisterEnemyDeathListener(Action<EnemyBase> listener)
+        public void RegisterEnemyDeathListener(Action<EnemyBase> listener) 
         {
             OnEnemyDied += listener;
         }
 
-        public void UnregisterEnemyDeathListener(Action<EnemyBase> listener)
+        public void UnregisterEnemyDeathListener(Action<EnemyBase> listener) 
         {
             OnEnemyDied -= listener;
         }
@@ -60,13 +61,9 @@ namespace Nytherion.Core.Managers
         {
             OnSynergyEvaluated?.Invoke(weapon, engraving, synergy);
         }
-        public void TriggerOpenInventoryForShop()
+
+        public void Initialize()
         {
-            OnOpenInventoryForShop?.Invoke();
-        }
-        public void TriggerCloseInventoryForShop()
-        {
-            OnCloseInventoryForShop?.Invoke();
         }
     }
 }

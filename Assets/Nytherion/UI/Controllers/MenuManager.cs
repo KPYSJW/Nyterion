@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Controllers
 {
@@ -16,29 +16,24 @@ namespace Nytherion.UI.Controllers
         private Button controlButton;
         private GameObject controlsPanel;
         private Button mainMenuButton;
+        [SerializeField] private GameSceneUIRefs gameSceneuiRefs;
 
         [Header("Input")]
         [SerializeField] private InputActionReference toggleMenuAction;
 
         [Inject]
         public void Construct(
-            [Inject(Id = "MenuCanvasGroup")] CanvasGroup controlledCanvasGroup,
-            [Inject(Id = "MenuMainPanel")] GameObject mainPanel,
-            [Inject(Id = "MenuResumeButton")] Button resumeButton,
-            [Inject(Id = "MenuSettingsButton")] Button settingsButton,
-            [Inject(Id = "MenuSettingsPanel")] GameObject settingsPanel,
-            [Inject(Id = "MenuControlButton")] Button controlButton,
-            [Inject(Id = "MenuControlsPanel")] GameObject controlsPanel,
-            [Inject(Id = "MenuMainMenuButton")] Button mainMenuButton)
+             CanvasGroup controlledCanvasGroup,
+             GameSceneUIRefs gameSceneuiRefs)
         {
             this.controlledCanvasGroup = controlledCanvasGroup;
-            this.mainPanel = mainPanel;
-            this.resumeButton = resumeButton;
-            this.settingsButton = settingsButton;
-            this.settingsPanel = settingsPanel;
-            this.controlButton = controlButton;
-            this.controlsPanel = controlsPanel;
-            this.mainMenuButton = mainMenuButton;
+            this.mainPanel = gameSceneuiRefs.MenuMainPanel;
+            this.resumeButton = gameSceneuiRefs.MenuResumeButton;
+            this.settingsButton = gameSceneuiRefs.MenuSettingsButton;
+            this.settingsPanel = gameSceneuiRefs.MenuSettingsPanel;
+            this.controlButton = gameSceneuiRefs.MenuControlButton;
+            this.controlsPanel = gameSceneuiRefs.MenuControlsPanel;
+            this.mainMenuButton = gameSceneuiRefs.MenuMainMenuButton;
         }
 
         protected override void Awake()

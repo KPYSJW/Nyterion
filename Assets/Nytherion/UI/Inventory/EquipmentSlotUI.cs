@@ -4,7 +4,8 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Inventory.Utils;
 using Nytherion.Core.Enums;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.UI.Inventory
 {
@@ -23,6 +24,45 @@ namespace Nytherion.UI.Inventory
             this.inventoryManager = inventoryManager;
         }
 
+        private void Start()
+        {
+            if (inventoryManager == null || equipmentDataManager == null)
+            {
+                var gameSceneScope = LifetimeScope.Find<GameSceneLifetimeScope>();
+                if (gameSceneScope != null)
+                {
+                    if (inventoryManager == null && gameSceneScope.Container.TryResolve<InventoryManager>(out var invManager))
+                    {
+                        inventoryManager = invManager;
+                    }
+
+                    if (equipmentDataManager == null && gameSceneScope.Container.TryResolve<EquipmentDataManager>(out var equipManager))
+                    {
+                        equipmentDataManager = equipManager;
+                    }
+                }
+            }
+
+            InitializeEquipmentState();
+        }
+
+        private void InitializeEquipmentState()
+        {
+            if (equipmentDataManager != null)
+            {
+                var currentEquipment = equipmentDataManager.GetEquipment(this.slotType);
+                if (currentEquipment != null)
+                {
+                    base.SetItem(currentEquipment, 1);
+                }
+            }
+        }
+
+        public void RefreshFromLoadedData()
+        {
+            InitializeEquipmentState();
+        }
+
         protected override void Awake()
         {
             base.Awake();
@@ -33,18 +73,15 @@ namespace Nytherion.UI.Inventory
 
         protected override void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)
         {
-            // 기본 드래그 종료 처리 호출
             base.HandleEndDrag(slot, eventData);
             
             DragDropUIHandler.HandleEndDragShared(slot, eventData);
             if (!eventData.pointerEnter)
             {
-                // 드롭에 성공하지 못했다면, 아이콘을 다시 활성화
                 if (iconImage != null) iconImage.enabled = true;
             }
             else
             {
-                // 드롭에 성공했다면, 슬롯을 비움
                 BaseSlotUI dropTarget = eventData.pointerEnter.GetComponent<BaseSlotUI>();
                 if (dropTarget != null && dropTarget.CanReceiveItem(this.CurrentItem))
                 {
@@ -62,6 +99,12 @@ namespace Nytherion.UI.Inventory
             if (equipmentDataManager != null)
             {
                 equipmentDataManager.OnEquipmentChanged += HandleEquipmentChanged;
+
+                var currentEquipment = equipmentDataManager.GetEquipment(this.slotType);
+                if (currentEquipment != null && base.IsEmpty)
+                {
+                    base.SetItem(currentEquipment, 1);
+                }
             }
         }
 
@@ -138,7 +181,17 @@ namespace Nytherion.UI.Inventory
         private void UpdateEquipment(ItemData itemToEquip)
         {
             if (equipmentDataManager == null) return;
-            equipmentDataManager.SetEquipment(this.slotType, itemToEquip as EquipmentData);
+
+            EquipmentData equipment = itemToEquip as EquipmentData;
+            if (equipment != null)
+            {
+                if (string.IsNullOrEmpty(equipment.instanceId))
+                {
+                    equipment.instanceId = System.Guid.NewGuid().ToString();
+                }
+            }
+
+            equipmentDataManager.SetEquipment(this.slotType, equipment);
         }
 
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)

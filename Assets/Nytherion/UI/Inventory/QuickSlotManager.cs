@@ -5,7 +5,7 @@ using Nytherion.Core.Interfaces;
 using Nytherion.Core.Systems;
 using System;
 using System.Collections.Generic;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Inventory
 {
@@ -15,16 +15,42 @@ namespace Nytherion.UI.Inventory
 
         private QuickSlotUI[] slots;
 
-        [Inject]
-        public void Construct(QuickSlotUI[] quickSlots)
+        public void TryInjectSlots(QuickSlotUI[] quickSlots)
         {
-            slots = quickSlots;
+            if (quickSlots != null && quickSlots.Length > 0)
+            {
+                slots = quickSlots;
+            }
         }
+
+        private void Start()
+        {
+            
+        }
+        private GameSceneUIRefs uiRefs;
+
+        [Inject]
+        public void Construct(GameSceneUIRefs uiRefs)
+        {
+            this.uiRefs = uiRefs;
+        }
+
         private void EnsureSlotReferences()
         {
             if (slots == null || slots.Length == 0)
             {
-                slots = GetComponentsInChildren<QuickSlotUI>(includeInactive: true);
+                if (uiRefs != null && uiRefs.QuickSlots != null && uiRefs.QuickSlots.Length > 0)
+                {
+                    slots = uiRefs.QuickSlots;
+                }
+                else
+                {
+                    slots = GetComponentsInChildren<QuickSlotUI>(includeInactive: true);
+                    if (slots == null || slots.Length == 0)
+                    {
+                        slots = new QuickSlotUI[0];
+                    }
+                }
             }
         }
         [SerializeField]
@@ -41,16 +67,24 @@ namespace Nytherion.UI.Inventory
         private void Awake()
         {
             EnsureSlotReferences();
-            quickSlotItems = new ItemData[slots.Length];
-            quickSlotItemCounts = new int[slots.Length];
 
-            for (int i = 0; i < slots.Length && i < keys.Length; i++)
+            if (slots != null && slots.Length > 0)
             {
-                int slotIndex = i;
-                slots[i].Initialize(slotIndex);
-                slots[i].SetKeyLabel(keys[i].ToString().Replace("Alpha", ""));
-                slots[i].OnItemSet += (item, count) => UpdateSlotData(slotIndex, item, count);
-                slots[i].OnItemCleared += () => UpdateSlotData(slotIndex, null, 0);
+                quickSlotItems = new ItemData[slots.Length];
+                quickSlotItemCounts = new int[slots.Length];
+
+                for (int i = 0; i < slots.Length && i < keys.Length; i++)
+                {
+                    int slotIndex = i;
+                    slots[i].Initialize(slotIndex);
+                    slots[i].SetKeyLabel(keys[i].ToString().Replace("Alpha", ""));
+                    slots[i].OnItemSet += (item, count) => UpdateSlotData(slotIndex, item, count);
+                    slots[i].OnItemCleared += () => UpdateSlotData(slotIndex, null, 0);
+                }
+            }
+            else
+            {
+                Debug.LogError("[QuickSlotManager] Awake에서 슬롯을 찾을 수 없어 초기화를 건너뜁니다.");
             }
         }
 

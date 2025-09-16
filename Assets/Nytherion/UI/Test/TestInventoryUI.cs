@@ -4,7 +4,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;  
 using TMPro;
 using System.Linq;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Test
 {

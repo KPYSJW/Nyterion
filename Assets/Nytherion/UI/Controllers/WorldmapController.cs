@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.GamePlay.Dungeon;
-using Zenject;
+using VContainer;
 using Nytherion.Data.ScriptableObjects.Dungeon;
 
 namespace Nytherion.UI.Map
@@ -33,9 +33,17 @@ namespace Nytherion.UI.Map
         private DungeonManager dungeonManager;
 
         [Inject]
-        public void Construct(DungeonManager dungeonManager)
+        public void Construct(DungeonManager dungeonManager = null)
         {
             this.dungeonManager = dungeonManager;
+            if (dungeonManager == null)
+            {
+                Debug.LogWarning("[WorldmapController] DungeonManager가 주입되지 않았습니다. 던전 관련 기능이 작동하지 않습니다.");
+            }
+            else
+            {
+                Debug.Log("[WorldmapController] DungeonManager가 성공적으로 주입되었습니다.");
+            }
         }
         private void Awake()
         {
@@ -162,6 +170,9 @@ namespace Nytherion.UI.Map
         /// </summary>
         private void UpdatePlayerIconPosition()
         {
+            // DungeonManager가 없으면 업데이트할 수 없음
+            if (dungeonManager == null) return;
+            
             // DungeonManager에게 현재 플레이어가 있는 방을 직접 물어봅니다. (O(1) 시간 복잡도)
             RoomFirstDungeonGenerator.Room currentPlayerRoom = dungeonManager.FindCurrentPlayerRoom();
 
