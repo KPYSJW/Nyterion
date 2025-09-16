@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2668176659709937370
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6166412075011731613}
+  - component: {fileID: 7709267149889733427}
+  m_Layer: 0
+  m_Name: ProjectInstaller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6166412075011731613
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668176659709937370}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7709267149889733427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668176659709937370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad2718f3e01e5254fb8cbbbcd15dca7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventManagerPrefab: {fileID: 6703879477207762094, guid: 42b39eabf4bd1a34db877fb5adf9535f, type: 3}
+  objectPoolManagerPrefab: {fileID: 2073554065287845231, guid: 43b2dead484a1fa43aa9656366557b9b, type: 3}
+  itemDatabase: {fileID: 11400000, guid: f9b21e1c662560447a97d34c43a8f038, type: 2}
+  saveLoadManagerPrefab: {fileID: 1223338905626847151, guid: d1dc8b91acef336499702f2dedaf5330, type: 3}
+  currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
+  inventoryManagerPrefab: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
+  engravingManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
+  equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
+  shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
+  audioManagerPrefab: {fileID: 4032553791337175984, guid: a4a4b80b1b905474e8ab3602db3af216, type: 3}
+  sceneTransitionManagerPrefab: {fileID: 3582742344203591957, guid: e7f174a1dd4b4e9468001f3debdfe3a7, type: 3}
+  inputManagerPrefab: {fileID: 178222708281695647, guid: a165060af635a7843a8762e0718dbdf0, type: 3}

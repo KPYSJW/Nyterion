@@ -1,29 +1,33 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Nytherion.GamePlay.Engravings;
+using Nytherion.UI.EngravingBoard;
 
-public class GachaResultSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+namespace Nytherion.UI.Gacha
 {
-    private EngravingBlock associatedBlock;
-
-    public void Setup(EngravingBlock block)
+    public class GachaResultSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        this.associatedBlock = block;
-    }
+        private EngravingBlock associatedBlock;
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (associatedBlock != null && EngravingTooltip.Instance != null)
+        public void Setup(EngravingBlock block)
         {
-            EngravingTooltip.Instance.Show(associatedBlock);
+            this.associatedBlock = block;
         }
-    }
 
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        if (EngravingTooltip.Instance != null)
+        public void OnPointerEnter(PointerEventData eventData)
         {
-            EngravingTooltip.Instance.Hide();
+            if (associatedBlock != null && EngravingTooltip.Instance != null)
+            {
+                EngravingTooltip.Instance.Show(associatedBlock);
+            }
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (EngravingTooltip.Instance != null)
+            {
+                EngravingTooltip.Instance.Hide();
+            }
         }
     }
 }

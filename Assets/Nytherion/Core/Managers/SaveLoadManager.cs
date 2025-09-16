@@ -3,8 +3,10 @@ using Nytherion.Services;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using System.Collections;
+using Nytherion.UI.Inventory;
 using System.Collections.Generic;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
@@ -13,12 +15,13 @@ namespace Nytherion.Core.Managers
         private JsonSaveService saveService;
         private SaveData saveData;
         private bool isLoadingData = false;
+        private bool hasLoadedData = false;
 
-        private List<ISaveable> saveableEntities;
+        private IReadOnlyList<ISaveable> saveableEntities;
 
         [Inject]
         public void Construct(
-            List<ISaveable> saveableEntities)
+            IReadOnlyList<ISaveable> saveableEntities)
         {
             this.saveableEntities = saveableEntities;
         }
@@ -30,13 +33,31 @@ namespace Nytherion.Core.Managers
 
         public void Initialize()
         {
+            StartCoroutine(DelayedLoadCoroutine());
+        }
+
+        private System.Collections.IEnumerator DelayedLoadCoroutine()
+        {
+            yield return null;
+            yield return new UnityEngine.WaitForSeconds(0.1f);
+
             LoadGame();
+        }
+
+        public void LoadGameIfNeeded()
+        {
+            if (!hasLoadedData)
+            {
+                LoadGame();
+            }
         }
 
         public void SaveGame()
         {
             if (isLoadingData) return;
             if (saveData == null) saveData = new SaveData();
+
+
             foreach (var entity in saveableEntities)
             {
                 entity.PopulateSaveData(saveData);
@@ -46,7 +67,13 @@ namespace Nytherion.Core.Managers
        
         public void LoadGame()
         {
+            if (hasLoadedData)
+            {
+                return;
+            }
+
             isLoadingData = true;
+
 
             saveData = saveService.Load() ?? new SaveData();
             foreach (var entity in saveableEntities)
@@ -55,11 +82,42 @@ namespace Nytherion.Core.Managers
             }
 
             isLoadingData = false;
+            hasLoadedData = true;
+
+
+            StartCoroutine(NotifyUIAfterLoad());
+        }
+
+        private System.Collections.IEnumerator NotifyUIAfterLoad()
+        {
+            yield return null;
+
+            var equipmentSlots = FindObjectsOfType<EquipmentSlotUI>();
+            foreach (var slot in equipmentSlots)
+            {
+                slot.SendMessage("RefreshFromLoadedData", SendMessageOptions.DontRequireReceiver);
+            }
         }
 
         private void OnApplicationQuit()
         {
             if (!isLoadingData)
+            {
+                SaveGame();
+            }
+        }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (pauseStatus && !isLoadingData)
+            {
+                SaveGame();
+            }
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (!hasFocus && !isLoadingData)
             {
                 SaveGame();
             }

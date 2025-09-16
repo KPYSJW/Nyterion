@@ -9,6 +9,7 @@ namespace Nytherion.GamePlay.Engravings
         public EngravingData SourceData { get; private set; }
         public string BlockId => SourceData.engravingName;
         public List<Vector2Int> Shape => SourceData.shape;
+        public int Level => SourceData.level;
 
         private int baseLevel;
         public int RotationState { get; private set; }
@@ -16,6 +17,14 @@ namespace Nytherion.GamePlay.Engravings
         {
             SourceData = data;
             baseLevel = data.level;
+            RotationState = 0;
+        }
+
+        public EngravingBlock(EngravingData data, int level)
+        {
+            SourceData = data;
+            baseLevel = level;
+            SourceData.level = level;
             RotationState = 0;
         }
 

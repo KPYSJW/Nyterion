@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using UnityEngine;  
+using UnityEngine;
 
 namespace Nytherion.Core.Managers
 {
@@ -27,7 +27,6 @@ namespace Nytherion.Core.Managers
             {
                 if (pool.prefab == null)
                 {
-                    Debug.LogWarning($"Pool with tag '{pool.tag}' has a null prefab. Skipping this pool.");
                     continue; 
                 }
                 Queue<GameObject> objectPool = new Queue<GameObject>();
@@ -50,7 +49,6 @@ namespace Nytherion.Core.Managers
 
             if (poolDictionary[tag].Count == 0)
             {
-                Debug.LogWarning($"Pool with tag '{tag}' is empty. Consider increasing pool size or implementing dynamic expansion.");
                 Pool pool = pools.Find(p => p.tag == tag);
                 if (pool != null && pool.prefab != null)
                 {
@@ -74,7 +72,6 @@ namespace Nytherion.Core.Managers
         {
             if (!poolDictionary.ContainsKey(tag))
             {
-                Debug.LogWarning($"Pool with tag '{tag}' does not exist. Destroying object instead.");
                 Destroy(objectToReturn);
                 return;
             }

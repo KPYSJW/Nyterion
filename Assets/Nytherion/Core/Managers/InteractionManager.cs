@@ -2,7 +2,9 @@ using UnityEngine;
 using Nytherion.UI.Controllers;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Core.Data;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
+using System;
 
 namespace Nytherion.Core.Managers
 {
@@ -43,6 +45,7 @@ namespace Nytherion.Core.Managers
             {
                 inputManager.onInteract += HandleInteraction;
             }
+            base.OnInitializeInternal();
         }
 
         protected override void OnDestroy()
@@ -90,9 +93,14 @@ namespace Nytherion.Core.Managers
 
             if (closestInteractable != null)
             {
-                eventManager.TriggerInteractionEvent(closestInteractable.Type);
-
+                // InteractionManager는 이벤트를 직접 발생시키지 않고,
+                // 각 Interactable 객체가 자신의 Interact() 메서드에서 책임을 지도록 위임합니다.
+                Debug.Log($"[InteractionManager] {closestInteractable.GetType().Name}.Interact() 호출");
                 closestInteractable.Interact();
+            }
+            else
+            {
+                Debug.Log("[InteractionManager] 상호작용 가능한 객체를 찾지 못했습니다");
             }
         }
 

@@ -2,7 +2,8 @@ using System;
 using UnityEngine;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
@@ -40,7 +41,6 @@ namespace Nytherion.Core.Managers
                 IsInitialized = true;
                 OnInitialized?.Invoke();
                 
-                Debug.Log($"[{GetType().Name}] Successfully initialized.");
             }
             catch (Exception e)
             {

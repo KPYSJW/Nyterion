@@ -10,6 +10,8 @@ public class WalkState : PlayerState
 
     public override void Execute(PlayerController playerController)
     {
+        Vector2 moveInput = playerController.MoveInput;
+        
         playerController.HandleMovement();
 
         if (playerController.IsDashPressed && 
@@ -19,7 +21,7 @@ public class WalkState : PlayerState
             return;
         }
 
-        if (playerController.MoveInput.magnitude == 0)
+        if (moveInput.magnitude == 0)
         {
             playerController.ChangeState(new IdleState());
             return;

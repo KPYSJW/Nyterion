@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Data.ScriptableObjects.Player;
 using Nytherion.Core.Managers;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.UI.Inventory
 {

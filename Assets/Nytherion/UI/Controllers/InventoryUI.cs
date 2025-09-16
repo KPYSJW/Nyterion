@@ -8,7 +8,8 @@ using Nytherion.UI.Components;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Presenters;
 using System.Linq;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.UI.Controllers
 {
@@ -17,11 +18,15 @@ namespace Nytherion.UI.Controllers
 
         [Header("Input")]
         [SerializeField] private InputActionReference toggleInventoryAction;
+        [SerializeField] private GameSceneUIRefs gameSceneuiRefs;
 
+        [Header("UI References")]
         private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
+        private bool isSlotPoolInitialized = false;
 
         public event Action<bool> OnInventoryToggled;
 
+        [Header("Managers")]
         private InventoryManager inventoryManager;
         private EventManager eventManager;
         private ShopManager shopManager;
@@ -30,28 +35,70 @@ namespace Nytherion.UI.Controllers
         private Transform inventorySlotParent;
         private Button closeButton;
         private InventoryPresenter inventoryPresenter;
+        private IObjectResolver container;
 
         [Inject]
-        public void Construct(
-         InventoryManager inventoryManager,
-         EventManager eventManager,
-         ShopManager shopManager,
-         [Inject(Id = "EquipmentPanel")] GameObject equipmentPanel,
-         [Inject(Id = "StatsPanel")] GameObject statsPanel,
-         [Inject(Id = "InventorySlotParent")] Transform inventorySlotParent,
-         [Inject(Id = "CloseButton")] Button closeButton,
-         [Inject(Id = "InventoryCanvasGroup")] CanvasGroup canvasGroup,
-         InventoryPresenter inventoryPresenter)
+        public void Construct(IObjectResolver container,
+            GameSceneUIRefs gameSceneuiRefs)
         {
-            this.inventoryManager = inventoryManager;
-            this.eventManager = eventManager;
-            this.shopManager = shopManager;
-            this.equipmentPanel = equipmentPanel;
-            this.statsPanel = statsPanel;
-            this.inventorySlotParent = inventorySlotParent;
-            this.closeButton = closeButton;
-            this.controlledCanvasGroup = canvasGroup;
-            this.inventoryPresenter = inventoryPresenter;
+            this.container = container;
+            this.gameSceneuiRefs = gameSceneuiRefs;
+            this.equipmentPanel = gameSceneuiRefs.EquipmentPanel;
+            this.statsPanel = gameSceneuiRefs.StatsPanel;
+            this.inventorySlotParent = gameSceneuiRefs.InventorySlotParent;
+            this.closeButton = gameSceneuiRefs.InventoryCloseButton;
+            this.controlledCanvasGroup = gameSceneuiRefs.InventoryCanvasGroup;
+        }
+
+        private InventoryManager GetInventoryManager()
+        {
+            if (inventoryManager == null && container != null)
+            {
+                try
+                {
+                    inventoryManager = container.Resolve<InventoryManager>();
+                }
+                catch (VContainerException e)
+                {
+                    Debug.LogError($"[InventoryUI] Failed to resolve InventoryManager: {e.Message}");
+                    return null;
+                }
+            }
+            return inventoryManager;
+        }
+
+        private EventManager GetEventManager()
+        {
+            if (eventManager == null && container != null)
+            {
+                try
+                {
+                    eventManager = container.Resolve<EventManager>();
+                }
+                catch (VContainerException e)
+                {
+                    Debug.LogError($"[InventoryUI] Failed to resolve EventManager: {e.Message}");
+                    return null;
+                }
+            }
+            return eventManager;
+        }
+
+        private ShopManager GetShopManager()
+        {
+            if (shopManager == null && container != null)
+            {
+                try
+                {
+                    shopManager = container.Resolve<ShopManager>();
+                }
+                catch (VContainerException e)
+                {
+                    Debug.LogError($"[InventoryUI] Failed to resolve ShopManager: {e.Message}");
+                    return null;
+                }
+            }
+            return shopManager;
         }
         protected override void Awake()
         {
@@ -64,14 +111,26 @@ namespace Nytherion.UI.Controllers
 
         public void Initialize()
         {
-            Debug.Log("InventoryUI.Initialize() 호출됨!");
+            
+            FindUIElements();
+            
             if (closeButton != null)
             {
                 closeButton.onClick.AddListener(Close);
             }
-            if (inventoryManager != null)
+            else
             {
-                inventoryManager.OnInventoryUpdated += RefreshUI;
+                Debug.LogWarning("[InventoryUI] closeButton이 null입니다.");
+            }
+
+            InventoryManager inventoryMgr = GetInventoryManager();
+            if (inventoryMgr != null)
+            {
+                inventoryMgr.OnInventoryUpdated += RefreshUI;
+            }
+            else
+            {
+                Debug.LogError("[InventoryUI] InventoryManager를 찾을 수 없습니다!");
             }
 
             if (toggleInventoryAction != null && toggleInventoryAction.action != null)
@@ -80,10 +139,15 @@ namespace Nytherion.UI.Controllers
                 toggleInventoryAction.action.Enable();
             }
 
-            if (eventManager != null)
+            EventManager eventMgr = GetEventManager();
+            if (eventMgr != null)
             {
-                eventManager.OnOpenInventoryForShop += OpenForShop;
-                eventManager.OnCloseInventoryForShop += Close;
+                eventMgr.OnOpenInventoryForShop += OpenForShop;
+                eventMgr.OnCloseInventoryForShop += Close;
+            }
+            else
+            {
+                Debug.LogWarning("[InventoryUI] EventManager를 찾을 수 없습니다.");
             }
 
             inventoryPresenter?.Initialize();
@@ -92,15 +156,76 @@ namespace Nytherion.UI.Controllers
             Close();
         }
 
+        private void FindUIElements()
+        {
+            // UI 요소들을 동적으로 찾기
+            if (closeButton == null)
+                closeButton = GetComponentInChildren<Button>();
+            
+            if (inventorySlotParent == null)
+            {
+                var slotParentGO = transform.Find("InventorySlotParent");
+                if (slotParentGO != null)
+                    inventorySlotParent = slotParentGO;
+            }
+
+            if (inventoryPresenter == null)
+                inventoryPresenter = GetComponentInChildren<InventoryPresenter>();
+        }
+
         private void InitializeSlotPool()
         {
+            if (isSlotPoolInitialized)
+            {
+                return;
+            }
+
+            if (inventorySlotParent == null)
+            {
+                return;
+            }
+
+            // 기존 슬롯들 먼저 찾기
             slotPool = inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true).ToList();
 
-            if (slotPool.Count == 0) return;
+            // 슬롯이 없고 프리팹이 설정되어 있으면 동적 생성
+            if (slotPool.Count == 0 && gameSceneuiRefs?.InventorySlotPrefab != null)
+            {
+                CreateSlotsFromPrefab();
+            }
 
+            // 슬롯 초기화
             for (int i = 0; i < slotPool.Count; i++)
             {
                 slotPool[i].Initialize(i);
+            }
+            
+            isSlotPoolInitialized = true;
+        }
+
+        private void CreateSlotsFromPrefab()
+        {
+            InventoryManager inventoryMgr = GetInventoryManager();
+            int slotCount = inventoryMgr?.MaxSlotCount ?? 24;
+            
+            GameObject prefab = gameSceneuiRefs.InventorySlotPrefab;
+
+            slotPool = new List<InventorySlotUI>();
+            
+            for (int i = 0; i < slotCount; i++)
+            {
+                GameObject slotObj = Instantiate(prefab, inventorySlotParent);
+                slotObj.name = $"InventorySlot_{i}";
+                
+                InventorySlotUI slotUI = slotObj.GetComponent<InventorySlotUI>();
+                if (slotUI != null)
+                {
+                    slotPool.Add(slotUI);
+                }
+                else
+                {
+                    Debug.LogWarning($"[InventoryUI] 슬롯 {i}에 InventorySlotUI 컴포넌트가 없습니다!");
+                }
             }
         }
 
@@ -147,14 +272,10 @@ namespace Nytherion.UI.Controllers
         // }
         private void OnToggleAction(InputAction.CallbackContext context)
         {
-            Debug.Log("[InventoryUI] 토글 액션 입력 받음");
-            if (shopManager != null)
+            ShopManager shopMgr = GetShopManager();
+            if (shopMgr != null && shopMgr.IsShopOpen)
             {
-                Debug.Log($"[InventoryUI] 현재 상점 상태(IsShopOpen): {shopManager.IsShopOpen}");
-                if (shopManager.IsShopOpen)
-                {
-                    return;
-                }
+                return;
             }
             if (IsOpen)
             {
@@ -194,13 +315,14 @@ namespace Nytherion.UI.Controllers
 
         public void RefreshUI()
         {
-            if (slotPool == null || inventoryManager == null) return;
+            InventoryManager inventoryMgr = GetInventoryManager();
+            if (slotPool == null || inventoryMgr == null) return;
 
             for (int i = 0; i < slotPool.Count; i++)
             {
-                if (i < inventoryManager.MaxSlotCount)
+                if (i < inventoryMgr.MaxSlotCount)
                 {
-                    var (item, count) = inventoryManager.GetItemAt(i);
+                    var (item, count) = inventoryMgr.GetItemAt(i);
                     slotPool[i].SetItem(item, count);
                 }
                 else
@@ -208,6 +330,28 @@ namespace Nytherion.UI.Controllers
                     slotPool[i].ClearSlot();
                     slotPool[i].gameObject.SetActive(false);
                 }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            // 이벤트 구독 해제
+            InventoryManager inventoryMgr = GetInventoryManager();
+            if (inventoryMgr != null)
+            {
+                inventoryMgr.OnInventoryUpdated -= RefreshUI;
+            }
+
+            EventManager eventMgr = GetEventManager();
+            if (eventMgr != null)
+            {
+                eventMgr.OnOpenInventoryForShop -= OpenForShop;
+                eventMgr.OnCloseInventoryForShop -= Close;
+            }
+
+            if (toggleInventoryAction != null && toggleInventoryAction.action != null)
+            {
+                toggleInventoryAction.action.performed -= OnToggleAction;
             }
         }
     }

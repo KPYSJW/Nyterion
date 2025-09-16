@@ -2,30 +2,52 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Inventory;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Presenters
 {
     public class InventoryPresenter : MonoBehaviour
     {
         [Header("UI Settings")]
-        [Inject(Id = "InventorySlotParent")] private Transform slotParent;
+        [SerializeField] private Transform slotParent;
 
         [SerializeField] private GameObject slotPrefab;
 
         private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
         private InventoryManager inventoryManager;
         private bool isInitialized = false;
+        private IObjectResolver container;
+        private GameSceneUIRefs gameSceneuiRefs;
 
         [Inject]
-        public void Construct(InventoryManager manager)
+        public void Construct(IObjectResolver container, GameSceneUIRefs gameSceneuiRefs)
         {
-            inventoryManager = manager;
+            this.container = container;
+            this.gameSceneuiRefs = gameSceneuiRefs;
+        }
+
+        private InventoryManager GetInventoryManager()
+        {
+            if (inventoryManager == null && container != null)
+            {
+                try
+                {
+                    inventoryManager = container.Resolve<InventoryManager>();
+                    Debug.Log("[InventoryPresenter] Successfully resolved InventoryManager");
+                }
+                catch (VContainerException e)
+                {
+                    Debug.LogError($"[InventoryPresenter] Failed to resolve InventoryManager: {e.Message}");
+                    return null;
+                }
+            }
+            return inventoryManager;
         }
 
         public void Initialize()
         {
-            if (inventoryManager == null || isInitialized) return;
+            InventoryManager manager = GetInventoryManager();
+            if (manager == null || isInitialized) return;
 
             // Clear any existing slots
             foreach (Transform child in slotParent)
@@ -35,7 +57,7 @@ namespace Nytherion.UI.Presenters
             slotPool.Clear();
 
             // Create new slots
-            for (int i = 0; i < inventoryManager.MaxSlotCount; i++)
+            for (int i = 0; i < manager.MaxSlotCount; i++)
             {
                 if (slotPrefab != null)
                 {
@@ -49,36 +71,39 @@ namespace Nytherion.UI.Presenters
                 }
             }
 
-            inventoryManager.OnInventoryUpdated += UpdateSlotsUI;
+            manager.OnInventoryUpdated += UpdateSlotsUI;
             UpdateSlotsUI();
             isInitialized = true;
         }
 
         private void OnDestroy()
         {
-            if (inventoryManager != null)
+            InventoryManager manager = GetInventoryManager();
+            if (manager != null)
             {
-                inventoryManager.OnInventoryUpdated -= UpdateSlotsUI;
+                manager.OnInventoryUpdated -= UpdateSlotsUI;
             }
         }
 
         // Cleanup method to be called when the inventory is closed or destroyed
         public void Cleanup()
         {
-            if (inventoryManager != null)
+            InventoryManager manager = GetInventoryManager();
+            if (manager != null)
             {
-                inventoryManager.OnInventoryUpdated -= UpdateSlotsUI;
+                manager.OnInventoryUpdated -= UpdateSlotsUI;
             }
             isInitialized = false;
         }
 
         private void UpdateSlotsUI()
         {
-            if (inventoryManager == null || slotPool == null) return;
+            InventoryManager manager = GetInventoryManager();
+            if (manager == null || slotPool == null) return;
 
             for (int i = 0; i < slotPool.Count; i++)
             {
-                var (item, count) = inventoryManager.GetItemAt(i);
+                var (item, count) = manager.GetItemAt(i);
                 slotPool[i].SetItem(item, count);
             }
         }

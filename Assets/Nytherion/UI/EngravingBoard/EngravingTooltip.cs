@@ -3,7 +3,9 @@ using UnityEngine.UI;
 using TMPro;
 using Nytherion.GamePlay.Engravings;
 
-public class EngravingTooltip : MonoBehaviour
+namespace Nytherion.UI.EngravingBoard
+{
+    public class EngravingTooltip : MonoBehaviour
 {
     public static EngravingTooltip Instance { get; private set; }
 
@@ -97,4 +99,5 @@ public class EngravingTooltip : MonoBehaviour
             }
         }
     }
+}
 }
