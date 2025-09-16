@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/kyung/OneDrive/바탕 화면/RoguelikePrototype/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

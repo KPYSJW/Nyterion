@@ -6,10 +6,11 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Enemy;
 using System;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
-    public class EventManager : MonoBehaviour
+    public class EventManager : MonoBehaviour, IInitializable
     {
         public event Action<EnemyBase> OnEnemyDied;
         public event Action<StageData> OnBossClearedEvent;
@@ -59,6 +60,10 @@ namespace Nytherion.Core.Managers
         public void TriggerSynergyEvaluated(WeaponData weapon, EngravingData engraving, WeaponEngravingSynergyData synergy)
         {
             OnSynergyEvaluated?.Invoke(weapon, engraving, synergy);
+        }
+
+        public void Initialize()
+        {
         }
     }
 }

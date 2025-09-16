@@ -4,7 +4,7 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Core.Managers;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.GamePlay.Combat
 {

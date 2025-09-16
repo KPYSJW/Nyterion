@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
@@ -51,11 +52,16 @@ namespace Nytherion.Core.Managers
             playerActions.UI.Enable();
             playerActions.UI.Pause.performed += ctx =>
             {
-                Debug.Log("Pause pressed");
                 OnPausePressed?.Invoke();
             };
-            playerActions.Player.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
-            playerActions.Player.Move.canceled += ctx => MoveInput = Vector2.zero;
+            playerActions.Player.Move.performed += ctx => 
+            {
+                MoveInput = ctx.ReadValue<Vector2>();
+            };
+            playerActions.Player.Move.canceled += ctx => 
+            {
+                MoveInput = Vector2.zero;
+            };
 
             playerActions.Player.Attack.performed += ctx => onAttackDown?.Invoke();
             playerActions.Player.Attack.canceled += ctx => onAttackUp?.Invoke();

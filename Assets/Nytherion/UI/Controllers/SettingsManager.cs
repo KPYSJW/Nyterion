@@ -3,18 +3,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Core.Managers;
 using TMPro;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Controllers
 {
     public class SettingsManager : MonoBehaviour
     {
-        private Slider masterSlider;
-        private Slider bgmSlider;
-        private Slider sfxSlider;
-        private Toggle fullscreenToggle;
-        private TMP_Dropdown resolutionDropdown;
-        private AudioManager _audioManager;
+        [SerializeField] private GameSceneUIRefs gameSceneuiRefs;
+        private readonly AudioManager audioManager;
+        private readonly Slider masterSlider;
+        private readonly Slider bgmSlider;
+        private readonly Slider sfxSlider;
+        private readonly Toggle fullscreenToggle;
+        private readonly TMP_Dropdown resolutionDropdown;
         private List<Resolution> customResolutions = new List<Resolution>
         {
             new Resolution { width = 1280, height = 720 },
@@ -23,20 +24,17 @@ namespace Nytherion.UI.Controllers
             new Resolution { width = 2560, height = 1440 }
         };
         [Inject]
-        public void Construct(
+        public SettingsManager(
             AudioManager audioManager,
-            [Inject(Id = "MasterSlider")] Slider masterSlider,
-            [Inject(Id = "BGMSlider")] Slider bgmSlider,
-            [Inject(Id = "SFXSlider")] Slider sfxSlider,
-            [Inject(Id = "FullscreenToggle")] Toggle fullscreenToggle,
-            [Inject(Id = "ResolutionDropdown")] TMP_Dropdown resolutionDropdown)
+           GameSceneUIRefs gameSceneuiRefs
+            )
         {
-            _audioManager = audioManager;
-            this.masterSlider = masterSlider;
-            this.bgmSlider = bgmSlider;
-            this.sfxSlider = sfxSlider;
-            this.fullscreenToggle = fullscreenToggle;
-            this.resolutionDropdown = resolutionDropdown;
+            this.audioManager = audioManager;
+            this.masterSlider = gameSceneuiRefs.MasterSlider;
+            this.bgmSlider = gameSceneuiRefs.BgmSlider;
+            this.sfxSlider = gameSceneuiRefs.SfxSlider;
+            this.fullscreenToggle = gameSceneuiRefs.FullscreenToggle;
+            this.resolutionDropdown = gameSceneuiRefs.ResolutionDropdown;
         }
         private void Start()
         {
@@ -50,9 +48,9 @@ namespace Nytherion.UI.Controllers
             PopulateResolutions();
             resolutionDropdown.onValueChanged.AddListener(SetResolution);
 
-            if (_audioManager != null)
+            if (audioManager != null)
             {
-                bgmSlider.value = _audioManager.GetBGMVolume();
+                bgmSlider.value = audioManager.GetBGMVolume();
             }
         }
 
@@ -98,8 +96,8 @@ namespace Nytherion.UI.Controllers
 
         private void SetBGMVolume(float value)
         {
-            if (_audioManager == null) return;
-            _audioManager.SetBGMVolume(value);
+            if (audioManager == null) return;
+            audioManager.SetBGMVolume(value);
         }
 
         private void SetSFXVolume(float value)

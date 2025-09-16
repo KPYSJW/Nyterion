@@ -3,11 +3,11 @@ using Nytherion.Core.Managers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
+using VContainer;
 
 public class VillagePortal : MonoBehaviour
 {
-    public InteractableType Type => InteractableType.None; // Æ¯º°ÇÑ Å¸ÀÔÀÌ ÇÊ¿ä ¾ø´Ù¸é NoneÀ¸·Î µÖµµ µÅ.
+    public InteractableType Type => InteractableType.None; // Æ¯ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ Noneï¿½ï¿½ï¿½ï¿½ ï¿½Öµï¿½ ï¿½ï¿½.
 
     private SceneTransitionManager _sceneTransitionManager;
 
@@ -15,20 +15,21 @@ public class VillagePortal : MonoBehaviour
     public void Construct(SceneTransitionManager sceneTransitionManager)
     {
         _sceneTransitionManager = sceneTransitionManager;
+        Debug.Log($"[VillagePortal] SceneTransitionManager injected: {_sceneTransitionManager != null}");
     }
 
     public void Interact()
     {
-        Debug.Log("¸¶À» Æ÷Å»°ú »óÈ£ÀÛ¿ë! ´ÙÀ½ ½ºÅ×ÀÌÁö°¡ ÀÖ´Â GameSceneÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+        Debug.Log($"[VillagePortal] Interact() called. SceneTransitionManager: {_sceneTransitionManager != null}");
 
         if (_sceneTransitionManager != null)
         {
-            // ÀÌ Æ÷Å»ÀÇ À¯ÀÏÇÑ ÀÓ¹«! ±×³É GameSceneÀ» ·ÎµåÇÏ´Â °Í!
+            Debug.Log($"[VillagePortal] Calling LoadScene(GameScene)");
             _sceneTransitionManager.LoadScene("GameScene");
         }
         else
         {
-            Debug.LogError("SceneTransitionManager¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.LogError("[VillagePortal] SceneTransitionManager is null!");
         }
     }
 }

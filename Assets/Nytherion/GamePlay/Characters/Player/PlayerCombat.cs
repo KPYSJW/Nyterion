@@ -2,7 +2,7 @@ using Nytherion.GamePlay.Combat;
 using Nytherion.Core.Managers;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Synergy;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Player
 {

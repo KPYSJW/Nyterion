@@ -3,27 +3,45 @@ using Nytherion.Core.Managers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class BossPortal : MonoBehaviour,IInteractable
+public class BossPortal : MonoBehaviour, IInteractable
 {
     public InteractableType Type => InteractableType.BossPortal;
-    private StageManager _stageManager;
+    public bool IsInteractable { get; set; } = true;
+
+    private StageManager stageManager;
+
+    [Inject]
+    public void Construct(StageManager stageManager)
+    {
+        this.stageManager = stageManager;
+    }
+
+    // ë ˆê±°ì‹œ í˜¸í™˜ì„ ìœ„í•œ ë©”ì„œë“œ
     public void Initialize(StageManager manager)
     {
-        _stageManager = manager;
+        this.stageManager = manager;
     }
 
     public void Interact()
     {
-        Debug.Log("½Â¸® Æ÷Å»°ú »óÈ£ÀÛ¿ë! ´ÙÀ½ ½ºÅ×ÀÌÁö·Î ÀÌµ¿ÇÕ´Ï´Ù.");
-        if (_stageManager != null)
+        if (!IsInteractable) return;
+        Debug.Log("ï¿½Â¸ï¿½ ï¿½ï¿½Å»ï¿½ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½! ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½.");
+        // VContainer ì£¼ì…ì´ ì—†ìœ¼ë©´ ì§ì ‘ ì°¾ê¸°
+        if (stageManager == null)
         {
-            _stageManager.AdvanceToNextStage();
+            stageManager = FindObjectOfType<StageManager>();
+        }
+
+        if (stageManager != null)
+        {
+            stageManager.AdvanceToNextStage();
             Destroy(gameObject);
         }
         else
         {
-            Debug.LogError("StageManager°¡ BossPortal¿¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù!");
+            Debug.LogError("StageManagerï¿½ï¿½ BossPortalï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½!");
         }
     }
 }

@@ -3,7 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Shop;
 using Nytherion.UI.Controllers;
-using Zenject;
+using Nytherion.Core.Managers;
+using VContainer;
 
 namespace Nytherion.UI.Shop
 {
@@ -19,6 +20,7 @@ namespace Nytherion.UI.Shop
 
         public ShopItemData CurrentItem { get; private set; }
         private ShopUI shopUI;
+        private string currentShopName;
 
         [Inject]
         public void Construct(ShopUI shopUI)
@@ -26,9 +28,10 @@ namespace Nytherion.UI.Shop
             this.shopUI = shopUI;
         }
 
-        public void Setup(ShopItemData shopItem)
+        public void Setup(ShopItemData shopItem, string shopName = "")
         {
             CurrentItem = shopItem;
+            currentShopName = shopName;
 
             if (CurrentItem != null && CurrentItem.item != null)
             {
@@ -60,11 +63,53 @@ namespace Nytherion.UI.Shop
         {
             if (CurrentItem != null)
             {
-                stockText.text = CurrentItem.isUnlimited ? "" : $"X {CurrentItem.stock}";
+                // ShopManager에서 최신 재고 정보 가져오기
+                var shopManager = FindObjectOfType<ShopManager>();
+                if (shopManager != null && !string.IsNullOrEmpty(currentShopName))
+                {
+                    var shopItems = shopManager.GetShopItems(currentShopName);
+                    if (shopItems != null)
+                    {
+                        var updatedItem = shopItems.Find(item => item.shopItemId == CurrentItem.shopItemId);
+                        if (updatedItem != null)
+                        {
+                            // 실제 ShopManager의 재고로 업데이트
+                            CurrentItem.stock = updatedItem.stock;
+                            Debug.Log($"[ShopSlotUI] '{CurrentItem.item.itemName}' 재고 업데이트: {CurrentItem.stock}");
+                        }
+                    }
+                }
+
+                // 재고 표시 업데이트
+                if (stockText != null)
+                {
+                    stockText.text = CurrentItem.isUnlimited ? "" : $"X {CurrentItem.stock}";
+                }
+
+                // 매진 상태 확인 및 시각적 업데이트
                 if (IsSoldOut())
                 {
                     ApplySoldOutVisual();
+                    Debug.Log($"[ShopSlotUI] '{CurrentItem.item.itemName}' 매진 처리");
                 }
+                else
+                {
+                    ResetVisual();
+                }
+            }
+        }
+
+        public void SetInteractable(bool interactable)
+        {
+            if (buyButton != null)
+            {
+                buyButton.interactable = interactable;
+            }
+
+            if (canvasGroup != null)
+            {
+                canvasGroup.interactable = interactable;
+                canvasGroup.blocksRaycasts = interactable;
             }
         }
 

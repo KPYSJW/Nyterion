@@ -5,7 +5,7 @@ using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Controllers;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.Core.Data
 {

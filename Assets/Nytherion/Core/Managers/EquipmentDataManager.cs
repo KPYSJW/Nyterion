@@ -6,7 +6,8 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Data;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Interfaces;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
@@ -27,14 +28,15 @@ namespace Nytherion.Core.Managers
         {
             equippedItems.TryGetValue(slotType, out var oldEquipment);
 
-            if (equippedItems.ContainsKey(slotType))
+            if (equipment == null)
             {
-                equippedItems[slotType] = equipment;
+                equippedItems.Remove(slotType);
             }
             else
             {
-                equippedItems.Add(slotType, equipment);
+                equippedItems[slotType] = equipment;
             }
+
             OnEquipmentChanged?.Invoke(slotType, equipment, oldEquipment);
         }
 
@@ -71,7 +73,6 @@ namespace Nytherion.Core.Managers
                 ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
                 if (itemAsset == null || !(itemAsset is EquipmentData))
                 {
-                    Debug.LogWarning($"[EquipmentDataManager] Equipment with ID {entry.itemId} not found.");
                     continue;
                 }
 
@@ -92,7 +93,9 @@ namespace Nytherion.Core.Managers
 
         public void PopulateSaveData(SaveData saveData)
         {
-            saveData.equippedItemsData = GetEquipmentForSave();
+            var equipmentToSave = GetEquipmentForSave();
+            saveData.equippedItemsData = equipmentToSave;
+
         }
         public void LoadFromSaveData(SaveData saveData)
         {

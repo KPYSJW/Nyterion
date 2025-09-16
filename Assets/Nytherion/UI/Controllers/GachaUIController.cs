@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.UI.Inventory;
+using Nytherion.UI.Gacha;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
@@ -9,24 +10,26 @@ using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.GamePlay.Engravings;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Enums;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Controllers
 {
     public class GachaUIController : UIPanelBase
     {
-
-        private GameObject mainPanel;
-        private GameObject resultPanel;
-        private Button drawWeaponOnceButton;
-        private Button drawWeaponTenTimesButton;
-        private Button drawEngravingOnceButton;
-        private Button drawEngravingTenTimesButton;
-        private Button closeButton;
-        private Button resultCloseButton;
-        private Transform resultSlotParent;
-        private GameObject resultSlotPrefab;
-        private TextMeshProUGUI tokenCountText;
+        private GameSceneUIRefs gameSceneuiRefs;
+        
+        [Header("UI References")]
+        [SerializeField] private GameObject mainPanel;
+        [SerializeField] private GameObject resultPanel;
+        [SerializeField] private Button drawWeaponOnceButton;
+        [SerializeField] private Button drawWeaponTenTimesButton;
+        [SerializeField] private Button drawEngravingOnceButton;
+        [SerializeField] private Button drawEngravingTenTimesButton;
+        [SerializeField] private Button closeButton;
+        [SerializeField] private Button resultCloseButton;
+        [SerializeField] private Transform resultSlotParent;
+        [SerializeField] private GameObject resultSlotPrefab;
+        [SerializeField] private TextMeshProUGUI tokenCountText;
 
         private PlayerAction playerAction;
         private InventoryManager inventoryManager;
@@ -34,42 +37,31 @@ namespace Nytherion.UI.Controllers
         private GachaManager gachaManager;
         private EventManager eventManager;
 
-
         [Inject]
         public void Construct(
-            [Inject(Id = "GachaCanvasGroup")] CanvasGroup controlledCanvasGroup,
-            [Inject(Id = "GachaMainPanel")] GameObject mainPanel,
-            [Inject(Id = "GachaResultPanel")] GameObject resultPanel,
-            [Inject(Id = "DrawWeaponOnceButton")] Button drawWeaponOnceButton,
-            [Inject(Id = "DrawWeaponTenTimesButton")] Button drawWeaponTenTimesButton,
-            [Inject(Id = "DrawEngravingOnceButton")] Button drawEngravingOnceButton,
-            [Inject(Id = "DrawEngravingTenTimesButton")] Button drawEngravingTenTimesButton,
-            [Inject(Id = "GachaCloseButton")] Button closeButton,
-            [Inject(Id = "ResultCloseButton")] Button resultCloseButton,
-            [Inject(Id = "ResultSlotParent")] Transform resultSlotParent,
-            [Inject(Id = "ResultSlotPrefab")] GameObject resultSlotPrefab,
-            [Inject(Id = "TokenCountText")] TextMeshProUGUI tokenCountText,
             InventoryManager inventoryManager,
             CurrencyManager currencyManager,
             GachaManager gachaManager,
-            EventManager eventManager)
+            EventManager eventManager,
+            GameSceneUIRefs gameSceneuiRefs)
         {
-            this.controlledCanvasGroup = controlledCanvasGroup;
-            this.mainPanel = mainPanel;
-            this.resultPanel = resultPanel;
-            this.drawWeaponOnceButton = drawWeaponOnceButton;
-            this.drawWeaponTenTimesButton = drawWeaponTenTimesButton;
-            this.drawEngravingOnceButton = drawEngravingOnceButton;
-            this.drawEngravingTenTimesButton = drawEngravingTenTimesButton;
-            this.closeButton = closeButton;
-            this.resultCloseButton = resultCloseButton;
-            this.resultSlotParent = resultSlotParent;
-            this.resultSlotPrefab = resultSlotPrefab;
-            this.tokenCountText = tokenCountText;
             this.inventoryManager = inventoryManager;
             this.currencyManager = currencyManager;
             this.gachaManager = gachaManager;
             this.eventManager = eventManager;
+            this.gameSceneuiRefs = gameSceneuiRefs;
+            this.resultPanel = gameSceneuiRefs.GachaResultPanel;
+            this.mainPanel = gameSceneuiRefs.GachaMainPanel;
+            this.resultCloseButton = gameSceneuiRefs.ResultCloseButton;
+            this.closeButton = gameSceneuiRefs.GachaCloseButton;
+            this.drawWeaponOnceButton = gameSceneuiRefs.DrawWeaponOnceButton;
+            this.drawWeaponTenTimesButton = gameSceneuiRefs.DrawWeaponTenTimesButton;
+            this.drawEngravingOnceButton = gameSceneuiRefs.DrawEngravingOnceButton;
+            this.drawEngravingTenTimesButton = gameSceneuiRefs.DrawEngravingTenTimesButton;
+            this.resultSlotParent = gameSceneuiRefs.ResultSlotParent;
+            this.resultSlotPrefab = gameSceneuiRefs.ResultSlotPrefab;
+            this.tokenCountText = gameSceneuiRefs.TokenCountText;
+            this.controlledCanvasGroup = gameSceneuiRefs.GachaCanvasGroup;
         }
 
         protected override void Awake()

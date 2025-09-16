@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
-using Zenject;
+using VContainer;
 using Nytherion.GamePlay.Characters.Enemy;
 
 namespace Nytherion.UI.Map
@@ -61,9 +61,13 @@ namespace Nytherion.UI.Map
         private DungeonManager _dungeonManager;
 
         [Inject]
-        public void Construct(DungeonManager dungeonManager)
+        public void Construct(DungeonManager dungeonManager = null)
         {
             _dungeonManager = dungeonManager;
+            if (dungeonManager == null)
+            {
+                Debug.LogWarning("[MinimapTileGenerator] DungeonManager가 주입되지 않았습니다. 미니맵 기능이 작동하지 않습니다.");
+            }
         }
 
         /// <summary>

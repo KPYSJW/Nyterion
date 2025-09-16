@@ -2,7 +2,7 @@ using Nytherion.GamePlay.Combat;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using UnityEngine;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Items
 {
