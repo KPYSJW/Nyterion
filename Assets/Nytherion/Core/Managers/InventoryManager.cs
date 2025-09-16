@@ -55,7 +55,6 @@ namespace Nytherion.Core.Managers
         {
             if (InventoryModel == null)
             {
-                Debug.LogWarning("[InventoryManager] InventoryModel is null when trying to get save data");
                 yield break;
             }
             
@@ -84,7 +83,6 @@ namespace Nytherion.Core.Managers
                 {
                     if (InventoryModel == null)
                     {
-                        Debug.LogWarning("[InventoryManager] InventoryModel is null when trying to load inventory data");
                         return;
                     }
 
@@ -103,7 +101,6 @@ namespace Nytherion.Core.Managers
                             ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
                             if (itemAsset == null)
                             {
-                                Debug.LogWarning($"[InventoryManager] Item with ID '{entry.itemId}' not found in database");
                                 continue;
                             }
 
@@ -285,10 +282,11 @@ namespace Nytherion.Core.Managers
         {
             base.OnDestroy();
             OnInventoryUpdated = null;
-            
+
             if (InventoryModel != null)
             {
                 InventoryModel.OnInventoryUpdated -= () => OnInventoryUpdated?.Invoke();
+                InventoryModel = null;
             }
         }
     }

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.GamePlay.Characters.Player;
 using TMPro;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Components
 {

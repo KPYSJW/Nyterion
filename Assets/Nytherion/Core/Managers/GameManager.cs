@@ -1,5 +1,6 @@
 using UnityEngine;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
@@ -13,6 +14,8 @@ namespace Nytherion.Core.Managers
         }
         private void Update()
         {
+            if (currencyManager == null) return;
+
             if (Input.GetKeyDown(KeyCode.F1))
             {
                 currencyManager.AddCurrency(CurrencyType.Gold, 1000);

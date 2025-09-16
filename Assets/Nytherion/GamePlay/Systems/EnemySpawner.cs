@@ -4,7 +4,7 @@ using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.GamePlay.Characters.Player;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.GamePlay.Systems
 {

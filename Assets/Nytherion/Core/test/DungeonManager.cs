@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.GamePlay.Dungeon
 {
@@ -72,6 +72,11 @@ namespace Nytherion.GamePlay.Dungeon
         private InputManager _inputManager;
         private WorldmapController _worldmapController;
         private StageManager _stageManager;
+        
+        // Tilemap 참조들
+        private Tilemap floorTilemap;
+        private Tilemap wallTilemap;
+        private Tilemap portalTilemapInstance;
         #endregion
 
         #region 의존성 주입
@@ -85,19 +90,57 @@ namespace Nytherion.GamePlay.Dungeon
            ObjectPoolManager objectPoolManager,
            Characters.Player.PlayerController playerController,
            InputManager inputManager,
-           WorldmapController worldmapController,
-           StageManager stageManager,
-           [Inject(Id = "FloorTilemap")] Tilemap floorTilemap,
-           [Inject(Id = "WallTilemap")] Tilemap wallTilemap,
-           [Inject(Id = "PortalTilemap")] Tilemap portalTilemapInstance)
+           GameSceneUIRefs gameSceneUIRefs = null)
         {
             _eventManager = eventManager;
             _objectPoolManager = objectPoolManager;
             playerObject = playerController.gameObject;
             _inputManager = inputManager;
-            _worldmapController = worldmapController;
-            this.portalTilemap = portalTilemapInstance;
-            _stageManager = stageManager;
+            
+            // GameSceneUIRefs를 통해 UI 컴포넌트들을 가져옵니다
+            if (gameSceneUIRefs != null)
+            {
+                _worldmapController = gameSceneUIRefs.WorldmapController;
+            }
+            else
+            {
+                FindSceneReferences();
+            }
+            
+            // Tilemap들은 여전히 씬에서 찾기 (GameObject.Find 사용)
+            FindTilemapReferences();
+        }
+        
+        private void FindSceneReferences()
+        {
+            // WorldmapController 찾기 (fallback method)
+            _worldmapController = FindObjectOfType<WorldmapController>();
+            if (_worldmapController == null)
+            {
+                Debug.LogWarning("[DungeonManager] WorldmapController를 씬에서 찾을 수 없습니다.");
+            }
+        }
+        
+        private void FindTilemapReferences()
+        {
+            // Tilemap들 찾기 - 이름으로 찾기
+            GameObject floorTilemapObj = GameObject.Find("FloorTilemap");
+            GameObject wallTilemapObj = GameObject.Find("WallTilemap");
+            GameObject portalTilemapObj = GameObject.Find("PortalTilemap");
+            
+            if (floorTilemapObj != null) this.floorTilemap = floorTilemapObj.GetComponent<Tilemap>();
+            if (wallTilemapObj != null) this.wallTilemap = wallTilemapObj.GetComponent<Tilemap>();
+            if (portalTilemapObj != null) 
+            {
+                this.portalTilemapInstance = portalTilemapObj.GetComponent<Tilemap>();
+                this.portalTilemap = this.portalTilemapInstance;
+            }
+            
+        }
+        
+        public void SetStageManager(StageManager stageManager)
+        {
+            this._stageManager = stageManager;
             // TilemapVisualizer에 필요한 타일맵들을 초기화합니다.
             if (tilemapVisualizer != null)
             {
@@ -120,8 +163,16 @@ namespace Nytherion.GamePlay.Dungeon
 
         private void Start()
         {
+            
             // 필요한 이벤트 리스너들을 등록합니다.
-            _eventManager.RegisterEnemyDeathListener(HandleEnemyDeath);
+            if (_eventManager != null)
+            {
+                _eventManager.RegisterEnemyDeathListener(HandleEnemyDeath);
+            }
+            else
+            {
+                Debug.LogError("[DungeonManager] _eventManager가 null입니다! 의존성 주입이 실패했습니다.");
+            }
             RoomFirstDungeonGenerator.OnDungeonGenerated += SpawnPlayerAtStart;
 
             if (_inputManager != null)

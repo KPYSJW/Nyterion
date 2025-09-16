@@ -3,7 +3,7 @@ using Nytherion.Core.Managers;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.Controllers
 {

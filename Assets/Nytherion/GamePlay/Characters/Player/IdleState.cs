@@ -11,6 +11,8 @@ public class IdleState : PlayerState
 
     public override void Execute(PlayerController playerController)
     {   
+        Vector2 moveInput = playerController.MoveInput;
+        
         if (playerController.IsDashPressed &&
             UnityEngine.Time.time >= playerController.LastDashTime + playerController.PlayerData.dashCooldown)
         {
@@ -18,7 +20,7 @@ public class IdleState : PlayerState
             return;
         }
 
-        if (playerController.MoveInput.magnitude > 0)
+        if (moveInput.magnitude > 0)
         {
             playerController.ChangeState(new WalkState());
             return;

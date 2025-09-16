@@ -3,19 +3,27 @@ using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Presenters;
 using Nytherion.Core.Data;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
     public class GameSceneUIManager : BaseManager
     {
-        [Inject] private InventoryPresenter inventoryPresenter;
-        [Inject] private InventoryUI inventoryUI;
+        private readonly GameSceneUIRefs gameSceneUIRefs;
+        private readonly InventoryPresenter inventoryPresenter;
+        private readonly InventoryUI inventoryUI;
         private EngravingGridUI engravingGridUI;
 
         [Inject]
-        public void Construct(EngravingGridUI engravingGridUI)
+        public GameSceneUIManager(GameSceneUIRefs gameSceneUIRefs,
+            InventoryPresenter inventoryPresenter,
+            InventoryUI inventoryUI,
+            EngravingGridUI engravingGridUI)
         {
+            this.gameSceneUIRefs = gameSceneUIRefs;
+            this.inventoryPresenter = inventoryPresenter;
+            this.inventoryUI = inventoryUI;
             this.engravingGridUI = engravingGridUI;
         }
 

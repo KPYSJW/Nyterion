@@ -16,7 +16,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 using Random = UnityEngine.Random;
-using Zenject;
+using VContainer;
 
 using Nytherion.GamePlay.Characters.Enemy;
 
@@ -226,9 +226,10 @@ namespace Nytherion.GamePlay.Dungeon
 
         /// </summary>
 
-        [Inject]
 
-        public void Construct(DungeonManager dungeonManager, WorldmapController worldmapController, MinimapTileGenerator minimapGenerator)
+
+        [Inject]
+        public void Construct(DungeonManager dungeonManager = null, WorldmapController worldmapController = null, MinimapTileGenerator minimapGenerator = null)
 
         {
 

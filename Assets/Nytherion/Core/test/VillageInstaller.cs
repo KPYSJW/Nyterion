@@ -1,15 +1,16 @@
 using Nytherion.Core.Managers;
 using UnityEngine;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
-public class VillageInstaller : MonoInstaller
+public class VillageInstaller : LifetimeScope
 {
-    public override void InstallBindings()
+    protected override void Configure(IContainerBuilder builder)
     {
-        Container.Bind<StageManager>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<SceneTransitionManager>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<InputManager>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<EventManager>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<InteractionManager>().FromComponentInHierarchy().AsSingle();
+        builder.RegisterComponentInHierarchy<StageManager>();
+        builder.RegisterComponentInHierarchy<SceneTransitionManager>();
+        builder.RegisterComponentInHierarchy<InputManager>();
+        builder.RegisterComponentInHierarchy<EventManager>();
+        builder.RegisterComponentInHierarchy<InteractionManager>();
     }
 }

@@ -4,7 +4,7 @@ using Nytherion.GamePlay.Combat;
 using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Managers;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Player
 {

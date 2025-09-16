@@ -4,7 +4,7 @@ using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.GamePlay.Dungeon;
 using UnityEngine;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {

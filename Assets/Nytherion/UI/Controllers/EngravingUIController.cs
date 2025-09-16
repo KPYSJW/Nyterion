@@ -1,24 +1,38 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Enums;
-using Zenject;
+using Nytherion.UI.EngravingBoard;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.UI.Controllers
 {
-    public class EngravingUIController : UIPanelBase
+    public class EngravingUIController : UIPanelBase, IInitializable
     {
         private EventManager eventManager;
         private InputManager inputManager;
+        private GameSceneUIRefs gameSceneUIRefs;
+        private EngravingGridUI engravingGridUI;
 
         [Inject]
         public void Construct(
-            [Inject(Id = "EngravingCanvasGroup")] CanvasGroup controlledCanvasGroup,
-            EventManager eventManager, 
-            InputManager inputManager)
+            GameSceneUIRefs gameSceneUIRefs,
+            EventManager eventManager,
+            InputManager inputManager,
+            EngravingGridUI engravingGridUI
+            )
         {
-            this.controlledCanvasGroup = controlledCanvasGroup;
+            Debug.Log("[EngravingUIController] Construct 호출됨");
+            this.gameSceneUIRefs = gameSceneUIRefs;
             this.eventManager = eventManager;
             this.inputManager = inputManager;
+            this.engravingGridUI = engravingGridUI;
+            this.controlledCanvasGroup = gameSceneUIRefs.EngravingCanvasGroup;
+
+            if (engravingGridUI != null && controlledCanvasGroup != null)
+            {
+                bool isChildOfCanvasGroup = engravingGridUI.transform.IsChildOf(controlledCanvasGroup.transform);
+            }
         }
 
         private void OnEnable()
@@ -46,6 +60,42 @@ namespace Nytherion.UI.Controllers
         {
             base.Awake();
         }
+        private void Start()
+        {
+            base.Awake();
+        }
+
+        private string GetTransformPath(Transform transform)
+        {
+            if (transform == null) return "null";
+
+            string path = transform.name;
+            Transform parent = transform.parent;
+
+            while (parent != null)
+            {
+                path = parent.name + "/" + path;
+                parent = parent.parent;
+            }
+
+            return path;
+        }
+
+        public void Initialize()
+        {
+            if (gameSceneUIRefs != null && controlledCanvasGroup == null)
+            {
+                controlledCanvasGroup = gameSceneUIRefs.EngravingCanvasGroup;
+
+                if (controlledCanvasGroup != null)
+                {
+                    controlledCanvasGroup.alpha = 0f;
+                    controlledCanvasGroup.interactable = false;
+                    controlledCanvasGroup.blocksRaycasts = false;
+                }
+            }
+        }
+
         protected override void OnPanelStateChanged(bool isOpen)
         {
             if (inputManager == null) return;
@@ -55,6 +105,15 @@ namespace Nytherion.UI.Controllers
                 inputManager.DisableMovement();
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+
+                if (engravingGridUI != null)
+                {
+                    StartCoroutine(engravingGridUI.Initialize());
+                }
+                else
+                {
+                    Debug.LogWarning("[EngravingUIController] EngravingGridUI가 null이어서 새로고침할 수 없습니다");
+                }
             }
             else
             {

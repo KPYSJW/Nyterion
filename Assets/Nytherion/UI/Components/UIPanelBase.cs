@@ -32,14 +32,35 @@ public abstract class UIPanelBase : MonoBehaviour
 
     public virtual void Toggle()
     {
-        if (controlledCanvasGroup == null) return;
-        if (IsOpen) Close();
-        else Open();
+        if (controlledCanvasGroup == null)
+        {
+            Debug.LogError($"[UIPanelBase] {gameObject.name}의 ControlledCanvasGroup이 null이어서 Toggle 불가!");
+            return;
+        }
+
+        if (IsOpen)
+        {
+            Close();
+        }
+        else
+        {
+            Open();
+        }
     }
 
     public virtual void Open()
     {
-        if (controlledCanvasGroup == null || IsOpen) return;
+        if (controlledCanvasGroup == null)
+        {
+            Debug.LogError($"[UIPanelBase] {gameObject.name}의 ControlledCanvasGroup이 null이어서 Open 불가!");
+            return;
+        }
+
+        if (IsOpen)
+        {
+            return;
+        }
+
         IsOpen = true;
 
         controlledCanvasGroup.alpha = 1f;

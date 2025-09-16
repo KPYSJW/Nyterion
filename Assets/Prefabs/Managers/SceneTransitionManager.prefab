@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoInitializeOnAwake: 0
-  defaultSceneToLoad: GameScene
   fadeDuration: 0.5
   OnSceneStartLoading:
     m_PersistentCalls:

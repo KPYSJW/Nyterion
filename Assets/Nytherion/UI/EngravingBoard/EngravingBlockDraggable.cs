@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using Nytherion.GamePlay.Engravings;
 using Nytherion.Core.Managers;
 using TMPro;
-using Zenject;
+using VContainer;
 
 namespace Nytherion.UI.EngravingBoard
 {
@@ -29,9 +29,9 @@ namespace Nytherion.UI.EngravingBoard
         
         [Inject]
         public void Construct(
-            InputManager inputManager, 
-            EngravingManager engravingManager, 
-            EngravingGridUI engravingGridUI, 
+            InputManager inputManager,
+            EngravingManager engravingManager,
+            EngravingGridUI engravingGridUI,
             EngravingTooltip engravingTooltip)
         {
             this.inputManager = inputManager;

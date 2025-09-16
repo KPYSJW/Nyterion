@@ -25,8 +25,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 216239736823964324}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -395.64102, y: -765.10547, z: -1.6030271}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -51,6 +51,6 @@ MonoBehaviour:
   obstacleColor: {r: 0.6, g: 0.4, b: 0.2, a: 1}
   portalColor: {r: 1, g: 0, b: 1, a: 1}
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.5}
-  fixedViewHeightInTiles: 80
+  viewPaddingInTiles: 10
   playerIconPrefab: {fileID: 5505683442110060723, guid: af282e69b28cd2c4ea48f547b4138330, type: 3}
   enemyIconPrefab: {fileID: 5505683442110060723, guid: 866521b032fe8fe478385ed438ac6b12, type: 3}

@@ -6,7 +6,8 @@ using System;
 using System.Linq;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
@@ -141,7 +142,14 @@ namespace Nytherion.Core.Managers
 
         private void LoadEngravingDatabaseFromSO()
         {
-            if (engravingDatabaseSO == null) return;
+
+            if (engravingDatabaseSO == null)
+            {
+                Debug.LogError("[EngravingManager] EngravingDatabaseSO가 null입니다!");
+                return;
+            }
+
+
             foreach (var engraving in engravingDatabaseSO.allEngravings)
             {
                 if (engraving != null && !engravingDatabase.ContainsKey(engraving.engravingName))
@@ -149,10 +157,38 @@ namespace Nytherion.Core.Managers
                     engravingDatabase.Add(engraving.engravingName, engraving);
                 }
             }
+
+            AddTestBlocks();
         }
 
-        public IEnumerable<EngravingBlock> GetStorageBlocks() => storageBlocks;
-        public IEnumerable<KeyValuePair<string, Vector2Int>> GetPlacedBlocks() => placedBlockPositions;
+        private void AddTestBlocks()
+        {
+            if (engravingDatabase.Count == 0)
+            {
+                return;
+            }
+
+            // 첫 번째 각인 데이터로 테스트 블록 생성
+            var firstEngraving = engravingDatabase.Values.FirstOrDefault();
+            if (firstEngraving != null)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var testBlock = new EngravingBlock(firstEngraving, i + 1);
+                    storageBlocks.Add(testBlock);
+                }
+            }
+        }
+
+        public IEnumerable<EngravingBlock> GetStorageBlocks()
+        {
+            return storageBlocks;
+        }
+
+        public IEnumerable<KeyValuePair<string, Vector2Int>> GetPlacedBlocks()
+        {
+            return placedBlockPositions;
+        }
 
         public EngravingBlock GetBlockByID(string id)
         {
@@ -187,7 +223,6 @@ namespace Nytherion.Core.Managers
             var state = new EngravingGridState();
             if (placedBlockPositions == null || logicGrid == null)
             {
-                Debug.LogWarning("EngravingManager not properly initialized when trying to save engraving data");
                 return state;
             }
 
