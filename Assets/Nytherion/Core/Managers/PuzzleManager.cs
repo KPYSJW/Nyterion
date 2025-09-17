@@ -25,7 +25,7 @@ namespace Nytherion.Core.Managers
             _eventManager = eventManager;
         }
 
-        protected override void Initialize()
+        public override void Initialize()
         {
             base.Initialize();
             _puzzleAttempts = new Dictionary<string, PuzzleAttemptData>();
@@ -180,7 +180,7 @@ namespace Nytherion.Core.Managers
         }
 
         // ISaveable 구현
-        public void PopulateSaveData(SaveData saveData)
+        public override void PopulateSaveData(SaveData saveData)
         {
             Dictionary<string, PuzzleAttemptData> puzzleSaveData = new Dictionary<string, PuzzleAttemptData>();
 
@@ -194,7 +194,7 @@ namespace Nytherion.Core.Managers
             Debug.Log($"[PuzzleManager] 퍼즐 데이터 저장: {puzzleSaveData.Count}개 퍼즐");
         }
 
-        public void LoadFromSaveData(SaveData saveData)
+        public override void LoadFromSaveData(SaveData saveData)
         {
             // SaveData에서 퍼즐 데이터 로드 (SaveData 클래스에 필드 추가 필요)
             // if (saveData.puzzleAttempts != null)
