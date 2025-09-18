@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using VContainer;
@@ -19,19 +21,19 @@ namespace Nytherion.GamePlay.Dungeon
         // --- 컴포넌트 참조 ---
         private Collider2D tilemapCollider;
 
-        /// <summary>
-        /// Zenject 컨테이너가 이 클래스의 인스턴스를 생성할 때 호출되어 필요한 의존성을 주입합니다.
-        /// </summary>
+       
         [Inject]
         public void Construct(
-            DungeonManager dungeonManager = null,
-             Tilemap floorTilemap = null, // "FloorTilemap" ID로 바인딩된 Tilemap 주입
-             Tilemap portalTilemapInstance = null // "PortalTilemap" ID로 바인딩된 Tilemap 주입
+            DungeonManager dungeonManager,
+             IReadOnlyList<Tilemap> tilemaps
         )
         {
             _dungeonManager = dungeonManager;
-            this.floorTilemap = floorTilemap;
-            this.portalTilemap = portalTilemapInstance;
+            this.floorTilemap = tilemaps.FirstOrDefault(t => t.gameObject.name == "FloorTilemap");
+            this.portalTilemap = tilemaps.FirstOrDefault(t => t.gameObject.name == "PortalTilemap");
+            Debug.Log($"[포탈 디버그] DungeonManager 주입 성공: {_dungeonManager != null}");
+            Debug.Log($"[포탈 디버그] FloorTilemap 찾음: {floorTilemap != null}, PortalTilemap 찾음: {portalTilemap != null}");
+        
         }
 
         private void Awake()
@@ -46,8 +48,13 @@ namespace Nytherion.GamePlay.Dungeon
         private void OnTriggerEnter2D(Collider2D other)
         {
             // 충돌한 오브젝트가 "Player" 태그를 가지고 있지 않으면 아무것도 하지 않습니다.
+
+            Debug.Log($"[포탈 디버그] OnTriggerEnter2D! 충돌한 객체: {other.name}, 태그: {other.tag}");
+
             if (!other.CompareTag("Player"))
             {
+                Debug.LogWarning($"[포탈 디버그] 플레이어가 아닌 객체와 충돌하여 무시합니다.");
+
                 return;
             }
 
@@ -55,6 +62,7 @@ namespace Nytherion.GamePlay.Dungeon
             if (_dungeonManager == null)
             {
                 Debug.LogError("[PortalTileController] DungeonManager is not injected!");
+
                 return;
             }
 
@@ -70,11 +78,20 @@ namespace Nytherion.GamePlay.Dungeon
             // 월드 좌표를 타일맵의 셀 좌표로 변환합니다.
             Vector3Int initialContactCell = portalTilemap.WorldToCell(contactPoint);
 
+            Debug.Log($"[포탈 디버그] 충돌 지점 {initialContactCell} 근처에서 포탈 타일 검색 시작...");
+
             // 플레이어의 충돌 지점 및 그 주변에서 포탈 타일을 찾습니다.
             if (TryFindNearbyPortalTile(initialContactCell, out Vector3Int portalCellPos))
             {
+                Debug.Log($"[포탈 디버그] 포탈 타일 발견: {portalCellPos}! 텔레포트 시도...");
+
                 // 찾은 포탈 타일을 사용하여 텔레포트를 시도합니다.
                 TryToFindAndUsePortal(portalCellPos, other);
+            }
+            else
+            {
+                Debug.LogError($"[포탈 디버그] 실패: 충돌 지점 근처에서 포탈 타일을 찾지 못했습니다.");
+
             }
         }
 
@@ -135,11 +152,15 @@ namespace Nytherion.GamePlay.Dungeon
                 // DungeonManager에게 해당 위치가 등록된 포탈인지, 그렇다면 목적지가 어디인지 물어봅니다.
                 if (_dungeonManager.TryGetDestination(pos, out Vector3Int destinationPos))
                 {
+                    Debug.Log($"<color=green>[포탈 디버그] 성공! 목적지 {destinationPos}로 텔레포트합니다.</color>");
+
                     // 목적지를 찾았다면 플레이어를 텔레포트시키고 함수를 종료합니다.
                     TeleportPlayer(player, destinationPos);
                     return;
                 }
             }
+            Debug.LogError($"[포탈 디버그] 실패: DungeonManager에 목적지가 등록된 포탈을 찾지 못했습니다. (검색 위치: {position})");
+
         }
 
         /// <summary>
