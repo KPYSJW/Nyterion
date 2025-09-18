@@ -6,7 +6,6 @@ namespace Nytherion.Core.Enums
         GachaNPC,
         EngravingAltar,
         ShopDealer,
-        BossPortal,
-        Puzzle
+        BossPortal
     }
 }
