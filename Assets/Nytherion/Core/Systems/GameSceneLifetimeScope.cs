@@ -40,13 +40,11 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private EngravingManager engravingManagerPrefab;
     [SerializeField] private EquipmentDataManager equipmentDataManagerPrefab;
     [SerializeField] private ShopManager shopManagerPrefab;
-    [SerializeField] private PuzzleManager puzzleManagerPrefab;
 
     [Header("GameScene Only UI")]
     [SerializeField] private InventoryUI inventoryUIPrefab;
     [SerializeField] private ShopUI shopUIPrefab;
     [SerializeField] private EngravingUIController engravingUIControllerPrefab;
-    [SerializeField] private PuzzleUIController puzzleUIControllerPrefab;
 
     [Header("GameScene Only Systems")]
     [SerializeField] private PlayerManager playerManagerPrefab;
@@ -210,13 +208,6 @@ public class GameSceneLifetimeScope : LifetimeScope
                     .AsSelf();
         }
 
-        if (puzzleUIControllerPrefab != null)
-        {
-            builder.RegisterComponentInNewPrefab(puzzleUIControllerPrefab, Lifetime.Singleton)
-                    .AsImplementedInterfaces()
-                    .AsSelf();
-        }
-
         if (gameSceneUIManager != null)
         {
             builder.RegisterComponent(gameSceneUIManager).AsImplementedInterfaces().AsSelf();
@@ -232,7 +223,7 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsSelf();
 
         // EngravingTooltip을 싱글톤으로 등록
-        builder.RegisterComponentInHierarchy<EngravingTooltip>()
+        builder.RegisterComponentInHierarchy<Nytherion.UI.EngravingBoard.EngravingTooltip>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
@@ -265,12 +256,7 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsSelf();
 
         // EngravingAltar를 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<EngravingAltar>()
-                .AsImplementedInterfaces()
-                .AsSelf();
-
-        // PuzzleNPC를 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<PuzzleNPC>()
+        builder.RegisterComponentInHierarchy<Nytherion.GamePlay.Characters.NPC.EngravingAltar>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
@@ -280,15 +266,15 @@ public class GameSceneLifetimeScope : LifetimeScope
     private void RegisterInventoryUIComponents(IContainerBuilder builder)
     {
         // 인벤토리 UI 슬롯 컴포넌트들을 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<InventorySlotUI>()
+        builder.RegisterComponentInHierarchy<Nytherion.UI.Inventory.InventorySlotUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInHierarchy<EquipmentSlotUI>()
+        builder.RegisterComponentInHierarchy<Nytherion.UI.Inventory.EquipmentSlotUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInHierarchy<QuickSlotUI>()
+        builder.RegisterComponentInHierarchy<Nytherion.UI.Inventory.QuickSlotUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
@@ -557,19 +543,6 @@ public class GameSceneLifetimeScope : LifetimeScope
         {
             Debug.LogError("[GameSceneLifetimeScope] ShopManager 프리팹이 할당되지 않았습니다!");
         }
-
-        if (puzzleManagerPrefab != null)
-        {
-            builder.RegisterComponentInNewPrefab(puzzleManagerPrefab, Lifetime.Singleton)
-                .UnderTransform(this.transform)
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .As<ISaveable>();
-        }
-        else
-        {
-            Debug.LogError("[GameSceneLifetimeScope] PuzzleManager 프리팹이 할당되지 않았습니다!");
-        }
     }
 
     private void RegisterISaveableEntities(IContainerBuilder builder)
@@ -584,7 +557,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     private void RegisterEngravingSystemDebugger(IContainerBuilder builder)
     {
         // 씬에서 먼저 찾아보기
-        var existingDebugger = FindObjectOfType<EngravingSystemDebugger>();
+        var existingDebugger = FindObjectOfType<Nytherion.GamePlay.Engravings.EngravingSystemDebugger>();
         if (existingDebugger != null)
         {
             builder.RegisterComponent(existingDebugger)
