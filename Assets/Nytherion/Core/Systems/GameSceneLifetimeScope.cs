@@ -1,19 +1,22 @@
-using UnityEngine;
-using VContainer;
-using VContainer.Unity;
-using Nytherion.Core.Managers;
-using Nytherion.GamePlay.Characters.Player;
-using Nytherion.GamePlay.Characters.NPC;
-using Nytherion.UI.EngravingBoard;
-using Nytherion.UI.Presenters;
-using Nytherion.GamePlay.Systems;
-using Nytherion.GamePlay;
-using Nytherion.UI.Controllers;
-using Nytherion.UI.Shop;
-using Nytherion.UI.Inventory;
 using Nytherion.Core.Interfaces;
+using Nytherion.Core.Managers;
+using Nytherion.GamePlay;
+using Nytherion.GamePlay.Characters.NPC;
+using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Dungeon;
 using Nytherion.GamePlay.Engravings;
+using Nytherion.GamePlay.Systems;
+using Nytherion.UI.Controllers;
+using Nytherion.UI.EngravingBoard;
+using Nytherion.UI.Inventory;
+using Nytherion.UI.Map;
+using Nytherion.UI.Presenters;
+using Nytherion.UI.Shop;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+using VContainer;
+using VContainer.Unity;
 
 public class GameSceneLifetimeScope : LifetimeScope
 {
@@ -28,6 +31,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private DungeonManager dungeonManagerPrefab;
     [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
     [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
+
 
     [Header("Data Managers - SaveLoadManager와 함께 관리")]
     [SerializeField] private SaveLoadManager saveLoadManagerPrefab;
@@ -73,9 +77,9 @@ public class GameSceneLifetimeScope : LifetimeScope
 
         InstallGameSceneOnlySystems(builder);
 
-
+        builder.RegisterEntryPoint<GameSceneInitializer>();
         //InstallUIFromHierarchy(builder);
-     }
+    }
 
     private void RegisterParentScopeDependencies(IContainerBuilder builder)
     {
@@ -137,10 +141,18 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInNewPrefab(dungeonManagerPrefab, Lifetime.Singleton)
-                .AsImplementedInterfaces()
-                .AsSelf();
+        
+        builder.RegisterComponentInHierarchy<WorldmapController>();
+        builder.RegisterComponentInHierarchy<MinimapTileGenerator>();
+        builder.RegisterComponentInHierarchy<PortalTileController>();
 
+        builder.RegisterComponentInNewPrefab(dungeonManagerPrefab, Lifetime.Singleton)
+       .AsImplementedInterfaces()
+       .AsSelf();
+       
+
+        var tilemaps = FindObjectsOfType<Tilemap>(includeInactive: true);
+        builder.RegisterInstance<IReadOnlyList<Tilemap>>(tilemaps);
 
         builder.RegisterComponentInNewPrefab(objectPoolManagerPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
@@ -565,40 +577,41 @@ public class GameSceneLifetimeScope : LifetimeScope
         }
     }
 
-    private void Start()
-    {
-        // 이 로직은 GameScene에서만 실행되어야 합니다.
-        // Title 씬 등 다른 씬에서 NullReferenceException을 유발하는 것을 방지합니다.
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "GameScene")
-        {
-            return;
-        }
+   /* private void Start()
+     {
+         // 이 로직은 GameScene에서만 실행되어야 합니다.
+         // Title 씬 등 다른 씬에서 NullReferenceException을 유발하는 것을 방지합니다.
+         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "GameScene")
+         {
+             return;
+         }
 
-        StartCoroutine(LinkManagersAfterBuild());
-    }
+         StartCoroutine(LinkManagersAfterBuild());
+     }
 
-        private System.Collections.IEnumerator LinkManagersAfterBuild()
-        {
-            yield return new UnityEngine.WaitForEndOfFrame();
-            
-            try
-            {
-                var container = Container;
-                if (container != null && 
-                    container.TryResolve<StageManager>(out var stageManager) && 
-                    container.TryResolve<DungeonManager>(out var dungeonManager))
-                {
-                    stageManager.SetDungeonManager(dungeonManager);
+         private System.Collections.IEnumerator LinkManagersAfterBuild()
+         {
+             yield return new UnityEngine.WaitForEndOfFrame();
+
+             try
+             {
+                 var container = Container;
+                 if (container != null && 
+                     container.TryResolve<StageManager>(out var stageManager) && 
+                     container.TryResolve<DungeonManager>(out var dungeonManager))
+                 {
                     dungeonManager.SetStageManager(stageManager);
-                }
-                else
-                {
-                    Debug.LogWarning("[GameSceneLifetimeScope] Could not resolve StageManager or DungeonManager");
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"[GameInstaller] Failed to link StageManager and DungeonManager: {e.Message}");
-            }
-        }
+                    stageManager.SetDungeonManager(dungeonManager);
+                    dungeonManager.StartDungeonGeneration();
+                 }
+                 else
+                 {
+                     Debug.LogWarning("[GameSceneLifetimeScope] Could not resolve StageManager or DungeonManager");
+                 }
+             }
+             catch (System.Exception e)
+             {
+                 Debug.LogError($"[GameInstaller] Failed to link StageManager and DungeonManager: {e.Message}");
+             }
+         }*/
 }
