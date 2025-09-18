@@ -36,8 +36,7 @@
       "Bash(del \"C:\\Users\\kyung\\OneDrive\\바탕 화면\\RoguelikePrototype\\Assets\\Nytherion\\Core\\Systems\\ProjectContextInitializer.cs\")",
       "Bash(find:*)",
       "Bash(sed:*)",
-      "Bash(powershell:*)",
-      "Bash(del \"C:\\Users\\kyung\\OneDrive\\바탕 화면\\RoguelikePrototype\\Assets\\Nytherion\\Core\\Managers\\InventoryDataManager.cs\")"
+      "Bash(powershell:*)"
     ],
     "deny": [],
     "ask": []

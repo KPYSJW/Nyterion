@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
@@ -17,6 +19,14 @@ namespace Nytherion.Core.Managers
         public List<Pool> pools;
         public Dictionary<string, Queue<GameObject>> poolDictionary;
 
+        private IObjectResolver container;
+
+        [Inject]
+        public void Construct(IObjectResolver container)
+        {
+            this.container = container;
+        }
+
         private void Awake()
         {
             if (Instance == null) Instance = this;
@@ -32,7 +42,7 @@ namespace Nytherion.Core.Managers
                 Queue<GameObject> objectPool = new Queue<GameObject>();
                 for (int i = 0; i < pool.size; i++)
                 {
-                    GameObject obj = Instantiate(pool.prefab);
+                    GameObject obj = container.Instantiate(pool.prefab);
                     obj.SetActive(false);
                     objectPool.Enqueue(obj);
                 }
@@ -52,7 +62,7 @@ namespace Nytherion.Core.Managers
                 Pool pool = pools.Find(p => p.tag == tag);
                 if (pool != null && pool.prefab != null)
                 {
-                    GameObject newObj = Instantiate(pool.prefab);
+                    GameObject newObj = container.Instantiate(pool.prefab);
                     newObj.transform.position = position;
                     newObj.transform.rotation = rotation;
                     newObj.SetActive(true);

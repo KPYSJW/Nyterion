@@ -4,7 +4,6 @@ using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Presenters;
 using Nytherion.UI.Shop;
-using Nytherion.GamePlay.Puzzle;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -130,36 +129,6 @@ public class GameSceneUIRefs : MonoBehaviour
     [Header("Currency Display")]
     [SerializeField] private CurrencyDisplay[] currencyDisplays;
     public CurrencyDisplay[] CurrencyDisplays => currencyDisplays;
-
-    [Header("Puzzle UI References")]
-    [SerializeField] private GameObject puzzlePanel;
-    public GameObject PuzzlePanel => puzzlePanel;
-    [SerializeField] private PuzzleGridView puzzleGridView;
-    public PuzzleGridView PuzzleGridView => puzzleGridView;
-    [SerializeField] private Button puzzleStartButton;
-    public Button PuzzleStartButton => puzzleStartButton;
-    [SerializeField] private Button puzzleResetButton;
-    public Button PuzzleResetButton => puzzleResetButton;
-    [SerializeField] private Button puzzleExitButton;
-    public Button PuzzleExitButton => puzzleExitButton;
-    [SerializeField] private TextMeshProUGUI puzzleAttemptsText;
-    public TextMeshProUGUI PuzzleAttemptsText => puzzleAttemptsText;
-    [SerializeField] private TextMeshProUGUI puzzleLevelText;
-    public TextMeshProUGUI PuzzleLevelText => puzzleLevelText;
-    [SerializeField] private TextMeshProUGUI puzzleStatusText;
-    public TextMeshProUGUI PuzzleStatusText => puzzleStatusText;
-
-    [Header("Difficulty Selection UI References")]
-    [SerializeField] private GameObject difficultySelectionPanel;
-    public GameObject DifficultySelectionPanel => difficultySelectionPanel;
-    [SerializeField] private ScrollRect difficultyScrollRect;
-    public ScrollRect DifficultyScrollRect => difficultyScrollRect;
-    [SerializeField] private Transform difficultyContentParent;
-    public Transform DifficultyContentParent => difficultyContentParent;
-    [SerializeField] private Button difficultyCloseButton;
-    public Button DifficultyCloseButton => difficultyCloseButton;
-    [SerializeField] private GameObject difficultyItemPrefab;
-    public GameObject DifficultyItemPrefab => difficultyItemPrefab;
 
     private void Awake()
     {

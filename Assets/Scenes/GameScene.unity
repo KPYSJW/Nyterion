@@ -1987,16 +1987,16 @@ RectTransform:
   m_GameObject: {fileID: 222799437}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.9914258, y: 1.9914258, z: 1.9914258}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1829985178}
   - {fileID: 831227313}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2012032541}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 419.1, y: 228.2}
+  m_AnchoredPosition: {x: -125.26071, y: -85.63136}
   m_SizeDelta: {x: 800, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &231422553
@@ -2565,7 +2565,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4d15b149c624ac408e67bb56d152eff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapImage: {fileID: 0}
+  mapImage: {fileID: 541548124}
   iconPixelRadius: 1
   floorColor: {r: 0.15, g: 0.15, b: 0.15, a: 1}
   wallColor: {r: 0.4, g: 0.4, b: 0.4, a: 1}
@@ -3899,7 +3899,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -99.999985}
+  m_AnchoredPosition: {x: 0, y: -99.99992}
   m_SizeDelta: {x: 680, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &349391062
@@ -6443,14 +6443,14 @@ RectTransform:
   m_GameObject: {fileID: 541548122}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.9914258, y: 1.9914258, z: 1.9914258}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2012032541}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 738.2, y: 356.4}
+  m_AnchoredPosition: {x: -200, y: -200}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &545190296
@@ -10760,7 +10760,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 585024138}
   m_HandleRect: {fileID: 585024137}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -12516,11 +12516,9 @@ MonoBehaviour:
   engravingManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
   equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
   shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
-  puzzleManagerPrefab: {fileID: 4566964917642569557, guid: 844e5ee6a717311408187112738841b2, type: 3}
   inventoryUIPrefab: {fileID: 8904536052482001746, guid: 8d104a9ea69e2db4485f645416c87f95, type: 3}
   shopUIPrefab: {fileID: 8585506431199400136, guid: 64f76ba40056f374d8a12a54fa013056, type: 3}
   engravingUIControllerPrefab: {fileID: 350585857376641199, guid: 12b4aadbf60eb3f418d9c62526b30c73, type: 3}
-  puzzleUIControllerPrefab: {fileID: 0}
   playerManagerPrefab: {fileID: -2891475838477974602, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
   itemUsageManagerPrefab: {fileID: 7984585239593921606, guid: 4d55406ce8a55294dbc5ee1bb0d895af, type: 3}
@@ -20102,7 +20100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451803222681576171, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
       propertyPath: orthographic size
-      value: 5.4
+      value: 2.71
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20854,19 +20852,6 @@ MonoBehaviour:
   currencyDisplays:
   - {fileID: 655474229}
   - {fileID: 758589164}
-  puzzlePanel: {fileID: 0}
-  puzzleGridView: {fileID: 0}
-  puzzleStartButton: {fileID: 0}
-  puzzleResetButton: {fileID: 0}
-  puzzleExitButton: {fileID: 0}
-  puzzleAttemptsText: {fileID: 0}
-  puzzleLevelText: {fileID: 0}
-  puzzleStatusText: {fileID: 0}
-  difficultySelectionPanel: {fileID: 0}
-  difficultyScrollRect: {fileID: 0}
-  difficultyContentParent: {fileID: 0}
-  difficultyCloseButton: {fileID: 0}
-  difficultyItemPrefab: {fileID: 0}
 --- !u!4 &1734481919
 Transform:
   m_ObjectHideFlags: 0
@@ -23805,6 +23790,8 @@ RectTransform:
   - {fileID: 1274291713}
   - {fileID: 857515128}
   - {fileID: 271859086}
+  - {fileID: 222799442}
+  - {fileID: 541548126}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -23941,8 +23928,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 113935554}
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.25
+  m_Value: 0.9999998
+  m_Size: 0.25000015
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -24794,7 +24781,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100}
+  m_AnchoredPosition: {x: 0, y: -99.99997}
   m_SizeDelta: {x: 660, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2077232007
@@ -25746,8 +25733,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2012032541}
-  - {fileID: 222799442}
-  - {fileID: 541548126}
   - {fileID: 998235449}
   - {fileID: 2770329131098211101}
   - {fileID: 1548097609}

@@ -73,7 +73,12 @@ namespace Nytherion.UI.Map
         /// <summary>
         /// 던전 데이터를 기반으로 미니맵을 초기화하고 생성합니다.
         /// </summary>
-        public void InitializeMap(TilemapVisualizer visualizer, List<RoomFirstDungeonGenerator.PlacedObstacleData> obstacles, HashSet<Vector2Int> portals, Dictionary<RoomFirstDungeonGenerator.Room, HashSet<Vector2Int>> roomFloorData, List<RoomFirstDungeonGenerator.Room> allRooms)
+        public void InitializeMap(TilemapVisualizer visualizer, 
+            List<RoomFirstDungeonGenerator.PlacedObstacleData> obstacles, 
+            HashSet<Vector2Int> portals, 
+            Dictionary<RoomFirstDungeonGenerator.Room, HashSet<Vector2Int>> roomFloorData, 
+            List<RoomFirstDungeonGenerator.Room> allRooms,
+            RoomFirstDungeonGenerator.Room startRoom)
         {
             if (!ValidateInitializationParameters(visualizer)) return;
 
@@ -93,6 +98,12 @@ namespace Nytherion.UI.Map
             // 플레이어, 적 등 동적 아이콘을 초기화합니다.
             InitializeDynamicIcons();
             isInitialized = true;
+
+            if(startRoom != null)
+            {
+                lastPlayerRoom = startRoom;
+                UpdateMinimapView(startRoom);
+            }
         }
 
         private void LateUpdate()

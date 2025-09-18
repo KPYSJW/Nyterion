@@ -33,7 +33,7 @@ namespace Nytherion.UI.Map
         private DungeonManager dungeonManager;
 
         [Inject]
-        public void Construct(DungeonManager dungeonManager = null)
+        public void Construct(DungeonManager dungeonManager )
         {
             this.dungeonManager = dungeonManager;
             if (dungeonManager == null)
@@ -56,6 +56,7 @@ namespace Nytherion.UI.Map
             // 월드맵이 활성화될 때 플레이어 아이콘을 맵 컨텐츠의 자식으로 설정
             if (dungeonManager != null && dungeonManager.playerObject != null && playerIcon != null)
             {
+                playerIcon.gameObject.SetActive(true);
                 playerIcon.SetParent(mapContent, false);
                 playerIcon.transform.SetAsLastSibling(); // 항상 맨 위에 보이도록
             }
@@ -170,16 +171,16 @@ namespace Nytherion.UI.Map
         /// </summary>
         private void UpdatePlayerIconPosition()
         {
-            // DungeonManager가 없으면 업데이트할 수 없음
+        
             if (dungeonManager == null) return;
-            
-            // DungeonManager에게 현재 플레이어가 있는 방을 직접 물어봅니다. (O(1) 시간 복잡도)
-            RoomFirstDungeonGenerator.Room currentPlayerRoom = dungeonManager.FindCurrentPlayerRoom();
 
-            // 현재 방이 있고, 해당 방의 아이콘이 맵에 존재한다면
+          
+            RoomFirstDungeonGenerator.Room currentPlayerRoom = dungeonManager.CurrentPlayerRoom;
+
+          
             if (currentPlayerRoom != null && roomIconMap.TryGetValue(currentPlayerRoom.gridPos, out RectTransform roomIcon))
             {
-                // 플레이어 아이콘의 위치를 현재 방 아이콘의 위치로 바로 설정합니다.
+            
                 playerIcon.anchoredPosition = roomIcon.anchoredPosition;
             }
         }
