@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742e9e1339086c94b85fd539b07b2450, type: 3}
   m_Name: test1
   m_EditorClassIdentifier: 
-  desiredNumberOfRooms: 2
+  desiredNumberOfRooms: 6
   minRoomSize: {x: 20, y: 20}
   maxRoomSize: {x: 40, y: 40}
   compoundRoomChance: 1
-  numberOfShopRooms: 0
-  numberOfItemRooms: 0
+  numberOfShopRooms: 1
+  numberOfItemRooms: 1
   bossRoomPrefab: {fileID: 2311304213159145408, guid: 227752a830facb24a806d9acbf79c15e, type: 3}
   bossMonsterData: {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
   obstacles:
@@ -42,4 +42,4 @@ MonoBehaviour:
   roomSpacingMultiplier: 2
   placementIterations: 50
   maxGenerationAttempts: 200
-  victoryPortalPrefab: {fileID: 7692483418629133086, guid: 7cf9391b6913dd64fb3a669d92f24364, type: 3}
+  victoryPortalPrefab: {fileID: 7692483418629133086, guid: 1c4a0d2897d8c53429317d5f90b902b6, type: 3}
