@@ -24,6 +24,12 @@ namespace Nytherion.Core.Data
         public List<int> quickSlotItemCounts = new List<int>();
         public List<QuickSlotEntry> quickSlotData = new List<QuickSlotEntry>();
         public List<EquippedItemEntry> equippedItemsData = new List<EquippedItemEntry>();
+        public Dictionary<string, PuzzleAttemptData> puzzleAttempts = new Dictionary<string, PuzzleAttemptData>();
+
+        // Puzzle System Data
+        public int puzzleCurrentLevel = 0;
+        public int puzzleState = 0; // PuzzleState enum as int
+        public int puzzleRemainingAttempts = 0;
 
         public SaveData()
         {
@@ -36,6 +42,7 @@ namespace Nytherion.Core.Data
             quickSlotItemCounts = new List<int>();
             quickSlotData = new List<QuickSlotEntry>();
             equippedItemsData = new List<EquippedItemEntry>();
+            puzzleAttempts = new Dictionary<string, PuzzleAttemptData>();
         }
     }
 
@@ -63,5 +70,32 @@ namespace Nytherion.Core.Data
         public string itemId;
         public int count;
         public string instanceId;
+    }
+
+    [Serializable]
+    public class PuzzleAttemptData
+    {
+        public string puzzleId;
+        public int attemptsUsed;
+        public bool isCompleted;
+        public float bestTime;
+        public DateTime lastAttemptTime;
+
+        public PuzzleAttemptData()
+        {
+            attemptsUsed = 0;
+            isCompleted = false;
+            bestTime = float.MaxValue;
+            lastAttemptTime = DateTime.MinValue;
+        }
+
+        public PuzzleAttemptData(string puzzleId)
+        {
+            this.puzzleId = puzzleId;
+            attemptsUsed = 0;
+            isCompleted = false;
+            bestTime = float.MaxValue;
+            lastAttemptTime = DateTime.MinValue;
+        }
     }
 }
