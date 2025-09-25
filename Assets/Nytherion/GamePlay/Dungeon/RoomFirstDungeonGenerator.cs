@@ -303,7 +303,9 @@ namespace Nytherion.GamePlay.Dungeon
             }
         }
 
-        private (HashSet<Vector2Int>, List<Tuple<Room, Room>>) ConnectRoomsAndCreatePortals(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> allFloorPositions)
+
+
+        /*private (HashSet<Vector2Int>, List<Tuple<Room, Room>>) ConnectRoomsAndCreatePortals(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> allFloorPositions)
         {
             HashSet<Vector2Int> portalPositions = new HashSet<Vector2Int>();
             List<Tuple<Room, Room>> connections = new List<Tuple<Room, Room>>();
@@ -316,7 +318,7 @@ namespace Nytherion.GamePlay.Dungeon
                     Vector2Int neighborGridPos = roomA.gridPos + direction;
                     if (roomGrid.TryGetValue(neighborGridPos, out Room roomB))
                     {
-                       
+
 
                         Tuple<Vector2Int, Vector2Int> connectionTuple = (roomA.gridPos.x < roomB.gridPos.x || (roomA.gridPos.x == roomB.gridPos.x && roomA.gridPos.y < roomB.gridPos.y))
             ? Tuple.Create(roomA.gridPos, roomB.gridPos) : Tuple.Create(roomB.gridPos, roomA.gridPos);
@@ -347,6 +349,79 @@ namespace Nytherion.GamePlay.Dungeon
                 }
             }
             return (portalPositions, connections);
+        }*/
+
+        private (HashSet<Vector2Int>, List<Tuple<Room, Room>>) ConnectRoomsAndCreatePortals(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> allFloorPositions)
+        {
+            var portalPositions = new HashSet<Vector2Int>();
+            var finalConnections = new List<Tuple<Room, Room>>();
+            var connectionsMade = new HashSet<Tuple<Vector2Int, Vector2Int>>();
+
+            // 1. 모든 방을 순회하며 '초기 설계도'상의 이웃을 찾는다 (이래야 모든 방이 연결됨)
+            foreach (Room roomA in roomGrid.Values)
+            {
+                foreach (Vector2Int direction in WallGenerator.Direction2D.cardinalDirectionsList)
+                {
+                    Vector2Int neighborGridPos = roomA.gridPos + direction;
+                    if (roomGrid.TryGetValue(neighborGridPos, out Room roomB))
+                    {
+                        var connectionTuple = (roomA.gridPos.x < roomB.gridPos.x || (roomA.gridPos.x == roomB.gridPos.x && roomA.gridPos.y < roomB.gridPos.y))
+                            ? Tuple.Create(roomA.gridPos, roomB.gridPos) : Tuple.Create(roomB.gridPos, roomA.gridPos);
+                        if (connectionsMade.Contains(connectionTuple)) continue;
+
+                        // --- 여기가 핵심! 두 방의 '가장 가까운 벽'을 직접 찾는다 ---
+                        HashSet<Vector2Int> floorA = roomFloorData[roomA];
+                        HashSet<Vector2Int> floorB = roomFloorData[roomB];
+
+                        // A방의 벽 타일 후보들 (A방 바닥 타일 바로 옆 칸들)
+                        var wallCandidatesA = floorA.Select(p => p + direction).Where(p => !floorA.Contains(p));
+                        // B방의 벽 타일 후보들
+                        var wallCandidatesB = floorB.Select(p => p - direction).Where(p => !floorB.Contains(p));
+
+                        Vector2Int portalPointA = Vector2Int.zero;
+                        Vector2Int portalPointB = Vector2Int.zero;
+                        float minSqrDistance = float.MaxValue;
+
+                        // 모든 벽 후보들을 비교해서, 서로 가장 가까운 벽 타일 한 쌍을 찾는다.
+                        foreach (var wallA in wallCandidatesA)
+                        {
+                            foreach (var wallB in wallCandidatesB)
+                            {
+                                float sqrDist = (wallB - wallA).sqrMagnitude;
+                                if (sqrDist < minSqrDistance)
+                                {
+                                    minSqrDistance = sqrDist;
+                                    portalPointA = wallA;
+                                    portalPointB = wallB;
+                                }
+                            }
+                        }
+
+                        // 가장 가까운 벽 한 쌍을 찾았으면 포탈을 생성하고 등록한다.
+                        if (minSqrDistance != float.MaxValue)
+                        {
+                            _dungeonManager?.RegisterPortalPair((Vector3Int)portalPointA, (Vector3Int)portalPointB);
+
+                            // A방 포탈 그리기
+                            Vector2Int spanDirA = (direction.x == 0) ? Vector2Int.right : Vector2Int.up;
+                            portalPositions.Add(portalPointA);
+                            portalPositions.Add(portalPointA - spanDirA);
+                            portalPositions.Add(portalPointA + spanDirA);
+
+                            // B방 포탈 그리기
+                            Vector2Int spanDirB = (direction.x == 0) ? Vector2Int.right : Vector2Int.up;
+                            portalPositions.Add(portalPointB);
+                            portalPositions.Add(portalPointB - spanDirB);
+                            portalPositions.Add(portalPointB + spanDirB);
+
+                            finalConnections.Add(Tuple.Create(roomA, roomB));
+                        }
+
+                        connectionsMade.Add(connectionTuple);
+                    }
+                }
+            }
+            return (portalPositions, finalConnections);
         }
 
         private List<PlacedObstacleData> PlaceObstacles(Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> portalPositions, HashSet<Vector2Int> allFloorTiles)
@@ -734,61 +809,7 @@ namespace Nytherion.GamePlay.Dungeon
             }
         }
 
-        /* private List<Vector2Int> FindBestPortalTiles(HashSet<Vector2Int> roomFloor, Vector2Int portalDirection, HashSet<Vector2Int> allFloorPositions)
-         {
-             Vector2Int wallCheckDirection = (portalDirection.x == 0) ? Vector2Int.right : Vector2Int.up;
-
-             HashSet<Vector2Int> edgeWallCandidates = new HashSet<Vector2Int>();
-             foreach (Vector2Int floorPos in roomFloor)
-             {
-                 Vector2Int wallPos = floorPos + portalDirection;
-                 if (!allFloorPositions.Contains(wallPos))
-                 {
-                     edgeWallCandidates.Add(wallPos);
-                 }
-             }
-
-             HashSet<Vector2Int> checkedWalls = new HashSet<Vector2Int>();
-             List<List<Vector2Int>> lines = new List<List<Vector2Int>>();
-             foreach (Vector2Int wall in edgeWallCandidates)
-             {
-                 if (checkedWalls.Contains(wall)) continue;
-                 List<Vector2Int> currentLine = new List<Vector2Int> { wall };
-                 checkedWalls.Add(wall);
-                 for (int i = 1; i < 20; i++) { Vector2Int next = wall + wallCheckDirection * i; if (edgeWallCandidates.Contains(next)) { currentLine.Add(next); checkedWalls.Add(next); } else break; }
-                 for (int i = 1; i < 20; i++) { Vector2Int next = wall - wallCheckDirection * i; if (edgeWallCandidates.Contains(next)) { currentLine.Add(next); checkedWalls.Add(next); } else break; }
-                 lines.Add(currentLine);
-             }
-
-             if (lines.Count == 0) return new List<Vector2Int>();
-
-             List<Vector2Int> bestLine;
-             List<List<Vector2Int>> linesLongerThan8 = lines.Where(l => l.Count >= 9).ToList();
-             if (linesLongerThan8.Count > 0)
-             {
-                 bestLine = linesLongerThan8[Random.Range(0, linesLongerThan8.Count)];
-             }
-             else
-             {
-                 bestLine = lines.OrderByDescending(l => l.Count).First();
-             }
-
-             if (bestLine.Count < 3)
-             {
-                 Vector2Int fallbackCenter = bestLine.Count > 0 ? bestLine[0] : edgeWallCandidates.First();
-                 return new List<Vector2Int> { fallbackCenter - wallCheckDirection, fallbackCenter, fallbackCenter + wallCheckDirection };
-             }
-
-             bestLine.Sort((a, b) => (a.x == b.x) ? a.y.CompareTo(b.y) : a.x.CompareTo(b.x));
-             Vector2Int centerTile = bestLine[bestLine.Count / 2];
-
-             return new List<Vector2Int>
-       {
-         centerTile - wallCheckDirection,
-         centerTile,
-         centerTile + wallCheckDirection
-       };
-         }*/
+        
 
         private List<Vector2Int> FindBestPortalTiles(HashSet<Vector2Int> roomFloor, Vector2Int portalDirection, HashSet<Vector2Int> allFloorPositions)
         {
@@ -840,11 +861,11 @@ namespace Nytherion.GamePlay.Dungeon
             Vector2Int centerTile = bestLine[bestLine.Count / 2];
 
             return new List<Vector2Int>
-    {
-        centerTile - wallCheckDirection,
-        centerTile,
-        centerTile + wallCheckDirection
-    };
+                {
+                    centerTile - wallCheckDirection,
+                    centerTile,
+                    centerTile + wallCheckDirection
+                };
         }
 
         private IEnumerator CreateAllRoomFloorsCoroutine(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> totalFloor, int offset)
