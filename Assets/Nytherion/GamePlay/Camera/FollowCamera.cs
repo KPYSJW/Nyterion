@@ -9,8 +9,8 @@ namespace Nytherion.GamePlay
     public class FollowCamera : MonoBehaviour
     {
         private Transform target;
-        private bool isPlayerReady = false; // 플레이어가 최종 위치에 준비되었는지 확인
-        private Vector3 lastPlayerPosition = Vector3.zero; // 플레이어의 마지막 위치를 추적
+        private bool isPlayerReady = false;
+        private Vector3 lastPlayerPosition = Vector3.zero;
 
         [Header("Follow Settings")]
         [Tooltip("카메라가 타겟을 따라가는 속도 (높을수록 빠르게 따라감)")]
@@ -36,8 +36,8 @@ namespace Nytherion.GamePlay
         public float playerReadyCheckTime = 1f;
 
         private Vector3 velocity = Vector3.zero;
-        private float timeSinceLastPositionChange = 0f;
-
+        private float timeSinceLastPositionChange = 0f; 
+        private bool debugLogging = false;
         [Inject]
         public void Construct(PlayerController playerController)
         {
@@ -61,7 +61,6 @@ namespace Nytherion.GamePlay
                 Vector3 playerPos = target.position;
                 playerPos.z = 0f;
                 target.position = playerPos;
-                Debug.Log("[FollowCamera] Player target 설정 완료");
             }
             else
             {
@@ -133,58 +132,12 @@ namespace Nytherion.GamePlay
             }
         }
 
-        /* private void LateUpdate()
-         {
-             if (target == null) return;
-
-            Debug.Log(target.transform.position.x);
-             Debug.Log(target.transform.position.y);
-             Vector3 targetPosition = new Vector3(
-                 target.position.x + offset.x,
-                 target.position.y + offset.y,
-                 offset.z 
-             );
-
-             if (Mathf.Abs(target.position.z) > 0.01f)
-             {
-                 Vector3 playerPos = target.position;
-                 playerPos.z = 0f;
-                 target.position = playerPos;
-             }
-
-             if (useSmoothMovement)
-             {
-                 transform.position = Vector3.SmoothDamp(
-                     transform.position,
-                     targetPosition,
-                     ref velocity,
-                     1f / smoothSpeed
-                 );
-             }
-             else
-             {
-                 transform.position = new Vector3(
-                     Mathf.Clamp(targetPosition.x, minBounds.x, maxBounds.x),
-                     Mathf.Clamp(targetPosition.y, minBounds.y, maxBounds.y),
-                     offset.z
-                 );
-             }
-
-             Vector3 clampedPosition = transform.position;
-             clampedPosition.x = Mathf.Clamp(clampedPosition.x, minBounds.x, maxBounds.x);
-             clampedPosition.y = Mathf.Clamp(clampedPosition.y, minBounds.y, maxBounds.y);
-             clampedPosition.z = offset.z; 
-             transform.position = clampedPosition;
-         }*/
 
         private void LateUpdate()
         {
             if (target == null) return;
 
-            // 플레이어 준비 상태 확인
             CheckPlayerReadyState();
-
-            // 플레이어가 준비되지 않았으면 카메라 업데이트 중단
             if (!isPlayerReady) return;
 
             Vector3 targetPosition = new Vector3(
@@ -193,7 +146,6 @@ namespace Nytherion.GamePlay
                 offset.z
             );
 
-            // Z축 보정
             if (Mathf.Abs(target.position.z) > 0.01f)
             {
                 Vector3 playerPos = target.position;
@@ -201,7 +153,6 @@ namespace Nytherion.GamePlay
                 target.position = playerPos;
             }
 
-            // 카메라 이동
             transform.position = Vector3.SmoothDamp(
                 transform.position,
                 targetPosition,
@@ -219,7 +170,6 @@ namespace Nytherion.GamePlay
 
             Vector3 currentPosition = target.position;
             
-            // 플레이어가 (0,0,0) 근처에 있으면 아직 준비되지 않은 것으로 간주
             if (Vector3.Distance(currentPosition, Vector3.zero) < 1f)
             {
                 lastPlayerPosition = currentPosition;
@@ -227,7 +177,6 @@ namespace Nytherion.GamePlay
                 return;
             }
 
-            // 플레이어 위치가 변경되었는지 확인
             if (Vector3.Distance(currentPosition, lastPlayerPosition) > 0.1f)
             {
                 lastPlayerPosition = currentPosition;
@@ -237,12 +186,10 @@ namespace Nytherion.GamePlay
             {
                 timeSinceLastPositionChange += Time.deltaTime;
                 
-                // 일정 시간 동안 위치가 안정적이면 플레이어가 준비된 것으로 간주
                 if (timeSinceLastPositionChange >= playerReadyCheckTime)
                 {
                     isPlayerReady = true;
-                    
-                    // 카메라를 플레이어 위치로 즉시 이동
+
                     Vector3 immediatePosition = new Vector3(
                         currentPosition.x + offset.x,
                         currentPosition.y + offset.y,
@@ -253,10 +200,43 @@ namespace Nytherion.GamePlay
             }
         }
 
+        /// <summary>
+        /// 포탈 이동 시 카메라를 즉시 플레이어 위치로 이동시킵니다.
+        /// </summary>
+        public void TeleportToPlayer()
+        {
+            if (target == null) return;
+
+            Vector3 newPosition = new Vector3(
+                target.position.x + offset.x,
+                target.position.y + offset.y,
+                offset.z
+            );
+
+            // 경계 제한 적용
+            newPosition.x = Mathf.Clamp(newPosition.x, minBounds.x, maxBounds.x);
+            newPosition.y = Mathf.Clamp(newPosition.y, minBounds.y, maxBounds.y);
+
+            transform.position = newPosition;
+
+            if (debugLogging)
+            {
+                Debug.Log($"[FollowCamera] 카메라가 플레이어 위치로 즉시 이동했습니다: {newPosition}");
+            }
+        }
+
+        /// <summary>
+        /// 맵 경계를 설정합니다 (던전 크기에 맞춰 동적 설정용)
+        /// </summary>
         public void SetBounds(Vector2 min, Vector2 max)
         {
             minBounds = min;
             maxBounds = max;
+
+            if (debugLogging)
+            {
+                Debug.Log($"[FollowCamera] 카메라 경계 설정: Min{minBounds}, Max{maxBounds}");
+            }
         }
 
         private void OnDrawGizmosSelected()

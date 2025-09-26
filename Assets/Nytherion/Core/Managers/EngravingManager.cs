@@ -11,7 +11,7 @@ using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
-    public class EngravingManager : MonoBehaviour, ISaveable, IInitializable
+    public class EngravingManager : BaseManager
     {
         [Header("Database")]
         [SerializeField] private EngravingDatabaseSO engravingDatabaseSO;
@@ -22,7 +22,6 @@ namespace Nytherion.Core.Managers
         public int GridRows => gridRows;
         public int GridColumns => gridColumns;
 
-        public event Action OnInitialized;
         public event Action OnEngravingStateChanged;
 
         private EngravingGrid logicGrid;
@@ -34,18 +33,18 @@ namespace Nytherion.Core.Managers
         private bool isDraggingFromGrid;
         private Vector2Int dragStartPosition;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             logicGrid = new EngravingGrid(gridRows, gridColumns);
             engravingDatabase = new Dictionary<string, EngravingData>();
             storageBlocks = new List<EngravingBlock>();
             placedBlockPositions = new Dictionary<string, Vector2Int>();
         }
 
-        public void Initialize()
+        protected override void OnInitializeInternal()
         {
             LoadEngravingDatabaseFromSO();
-            OnInitialized?.Invoke();
         }
 
         #region 드래그 앤 드롭 관리
@@ -292,12 +291,12 @@ namespace Nytherion.Core.Managers
             OnEngravingStateChanged?.Invoke();
         }
 
-        public void PopulateSaveData(SaveData saveData)
+        public override void PopulateSaveData(SaveData saveData)
         {
             saveData.engravingData = GetEngravingsForSave();
         }
 
-        public void LoadFromSaveData(SaveData saveData)
+        public override void LoadFromSaveData(SaveData saveData)
         {
             LoadDataFromSave(saveData.engravingData);
         }

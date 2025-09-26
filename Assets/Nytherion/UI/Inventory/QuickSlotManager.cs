@@ -11,7 +11,6 @@ namespace Nytherion.UI.Inventory
 {
     public class QuickSlotManager : MonoBehaviour, ISaveable
     {
-        
 
         private QuickSlotUI[] slots;
 
@@ -61,8 +60,6 @@ namespace Nytherion.UI.Inventory
             KeyCode.Alpha3,
         };
 
-        private ItemData[] quickSlotItems;
-        private int[] quickSlotItemCounts;
         public event Action OnQuickSlotUpdated;
         private void Awake()
         {
@@ -70,16 +67,13 @@ namespace Nytherion.UI.Inventory
 
             if (slots != null && slots.Length > 0)
             {
-                quickSlotItems = new ItemData[slots.Length];
-                quickSlotItemCounts = new int[slots.Length];
-
                 for (int i = 0; i < slots.Length && i < keys.Length; i++)
                 {
                     int slotIndex = i;
                     slots[i].Initialize(slotIndex);
                     slots[i].SetKeyLabel(keys[i].ToString().Replace("Alpha", ""));
-                    slots[i].OnItemSet += (item, count) => UpdateSlotData(slotIndex, item, count);
-                    slots[i].OnItemCleared += () => UpdateSlotData(slotIndex, null, 0);
+                    slots[i].OnItemSet += (item, count) => OnQuickSlotUpdated?.Invoke();
+                    slots[i].OnItemCleared += () => OnQuickSlotUpdated?.Invoke();
                 }
             }
             else
@@ -101,14 +95,7 @@ namespace Nytherion.UI.Inventory
 
         public void UpdateSlotDataExternal(int index, ItemData item, int count)
         {
-            UpdateSlotData(index, item, count);
-        }
-
-        private void UpdateSlotData(int index, ItemData item, int count)
-        {
-            if (index < 0 || index >= quickSlotItems.Length) return;
-            quickSlotItems[index] = item;
-            quickSlotItemCounts[index] = count;
+            // 더 이상 내부 배열을 업데이트하지 않고 이벤트만 발생
             OnQuickSlotUpdated?.Invoke();
         }
 
@@ -122,59 +109,37 @@ namespace Nytherion.UI.Inventory
         {
             if (index < 0 || index >= slots.Length) return;
             slots[index].ClearSlot();
-            UpdateSlotData(index, null, 0);
         }
 
         public (ItemData item, int count) GetItemInfo(int index)
         {
             if (index < 0 || index >= slots.Length) return (null, 0);
-            return (quickSlotItems[index], quickSlotItemCounts[index]);
+            return slots[index].GetItemInfo();
         }
 
         public void PopulateSaveData(SaveData saveData)
         {
-            if (saveData == null) return;
-
-            if (quickSlotItems == null || quickSlotItems.Length != slots.Length)
+            if (saveData == null)
             {
-                quickSlotItems = new ItemData[slots.Length];
-                quickSlotItemCounts = new int[slots.Length];
+                Debug.LogWarning("[QuickSlotManager] PopulateSaveData: saveData가 null");
+                return;
             }
+
+            saveData.quickSlotData.Clear();
 
             for (int i = 0; i < slots.Length; i++)
             {
                 var (uiItem, uiCount) = slots[i].GetItemInfo();
-                quickSlotItems[i] = uiItem;
-                quickSlotItemCounts[i] = uiCount;
-            }
 
-            saveData.quickSlotData.Clear();
-            saveData.quickSlotItemIDs.Clear();
-            saveData.quickSlotItemCounts.Clear();
-
-            for (int i = 0; i < quickSlotItems.Length; i++)
-            {
-                var item = quickSlotItems[i];
-                var count = quickSlotItemCounts[i];
-
-                if (item != null && count > 0)
+                if (uiItem != null && uiCount > 0)
                 {
                     saveData.quickSlotData.Add(new QuickSlotEntry
                     {
                         slotIndex = i,
-                        itemId = item.ID,
-                        count = count,
-                        instanceId = item.isStackable ? null : item.instanceId
+                        itemId = uiItem.ID,
+                        count = uiCount,
+                        instanceId = uiItem.isStackable ? null : uiItem.instanceId
                     });
-
-                    saveData.quickSlotItemIDs.Add(item.ID);
-                    saveData.quickSlotItemCounts.Add(count);
-
-                }
-                else
-                {
-                    saveData.quickSlotItemIDs.Add(string.Empty);
-                    saveData.quickSlotItemCounts.Add(0);
                 }
             }
         }
@@ -195,64 +160,31 @@ namespace Nytherion.UI.Inventory
             else
             {
                 slots[slotIndex].SetItem(item, newCount);
-                UpdateSlotData(slotIndex, item, newCount);
             }
 
             return true;
         }
         public void LoadFromSaveData(SaveData saveData)
         {
-            if (saveData == null) return;
-
+            // 모든 슬롯 초기화
             for (int i = 0; i < slots.Length; i++)
             {
                 slots[i].ClearSlot();
             }
 
-            List<QuickSlotEntry> entries = null;
-
-            if (saveData.quickSlotData != null && saveData.quickSlotData.Count > 0)
+            if (saveData?.quickSlotData == null || saveData.quickSlotData.Count == 0)
             {
-                entries = saveData.quickSlotData;
-            }
-            else if (saveData.quickSlotItemIDs != null && saveData.quickSlotItemIDs.Count > 0)
-            {
-                entries = new List<QuickSlotEntry>();
-                for (int i = 0; i < saveData.quickSlotItemIDs.Count && i < slots.Length; i++)
-                {
-                    string legacyId = saveData.quickSlotItemIDs[i];
-                    if (string.IsNullOrEmpty(legacyId)) continue;
-
-                    int legacyCount = (i < saveData.quickSlotItemCounts.Count) ? saveData.quickSlotItemCounts[i] : 1;
-
-                    entries.Add(new QuickSlotEntry
-                    {
-                        slotIndex = i,
-                        itemId = legacyId,
-                        count = legacyCount,
-                        instanceId = null
-                    });
-                }
-
-                saveData.quickSlotData = entries;
+                return;
             }
 
-            if (entries == null) return;
-
-            foreach (var entry in entries)
+            foreach (var entry in saveData.quickSlotData)
             {
                 if (entry.slotIndex < 0 || entry.slotIndex >= slots.Length) continue;
 
                 ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
-                if (itemAsset == null)
-                {
-                    continue;
-                }
+                if (itemAsset == null) continue;
 
-                if (!(itemAsset is ConsumableData))
-                {
-                    continue;
-                }
+                if (!(itemAsset is ConsumableData)) continue;
 
                 ItemData itemToPlace = itemAsset;
                 if (!itemToPlace.isStackable)

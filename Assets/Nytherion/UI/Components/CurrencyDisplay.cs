@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 using VContainer;
 using VContainer.Unity;
 using System.Collections;
@@ -11,6 +12,7 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
     [SerializeField] private CurrencyType type;
     [SerializeField] private TMP_Text amountText;
     public TMP_Text AmountText => amountText;
+    public CurrencyType CurrencyType => type;
 
     [Header("Display Options")]
     [SerializeField] private string prefix = "";
@@ -22,7 +24,10 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
     public void Construct(CurrencyManager currencyManager)
     {
         this.currencyManager = currencyManager;
-        Debug.Log($"[CurrencyDisplay] {gameObject.name} - CurrencyManager 주입 성공: {currencyManager != null}");
+        if (currencyManager == null)
+        {
+            Debug.LogError($"[CurrencyDisplay] {gameObject.name} - CurrencyManager 주입 실패!");
+        }
     }
 
     public void Initialize()
@@ -37,7 +42,6 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
             UpdateUI(currentAmount);
             if (currentAmount == 0)
             {
-                Debug.Log($"[CurrencyDisplay] {gameObject.name} - 초기값이 0이므로 다음 프레임에 재시도");
                 StartCoroutine(DelayedUpdateUI());
             }
         }
@@ -55,7 +59,6 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
         if (currencyManager != null)
         {
             int currentAmount = currencyManager.GetCurrency(type);
-            Debug.Log($"[CurrencyDisplay] {gameObject.name} - 지연 업데이트: {type} = {currentAmount}");
             UpdateUI(currentAmount);
         }
     }
@@ -96,6 +99,30 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
 
         string newText = prefix + formattedAmount + suffix;
         amountText.text = newText;
+    }
+
+    public void UpdateAmount(int amount)
+    {
+        UpdateUI(amount);
+    }
+
+    public void ShowGainEffect(int amount)
+    {
+        // TODO: Add visual effect for currency gain
+    }
+
+    public void ShowLossEffect(int amount)
+    {
+        // TODO: Add visual effect for currency loss
+    }
+
+    public int GetDisplayedAmount()
+    {
+        if (currencyManager != null)
+        {
+            return currencyManager.GetCurrency(type);
+        }
+        return 0;
     }
 
     public void SetDisplayType(CurrencyType newType)

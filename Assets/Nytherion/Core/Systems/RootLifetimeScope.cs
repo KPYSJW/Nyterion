@@ -32,15 +32,7 @@ public class RootLifetimeScope : LifetimeScope
     [Header("Core Infrastructure")]
     [SerializeField] private EventManager eventManagerPrefab;
     [SerializeField] private ItemDatabaseSO itemDatabase;
-    // SaveLoadManager는 GameSceneLifetimeScope로 이동
-    // [SerializeField] private SaveLoadManager saveLoadManagerPrefab;
-
-    [Header("Data Managers - 모두 GameSceneLifetimeScope로 이동")]
-    // [SerializeField] private CurrencyManager currencyManagerPrefab;
-    // [SerializeField] private InventoryManager inventoryManagerPrefab;
-    // [SerializeField] private EngravingManager engravingManagerPrefab;
-    // [SerializeField] private EquipmentDataManager equipmentDataManagerPrefab;
-    // [SerializeField] private ShopManager shopManagerPrefab;
+    [SerializeField] private DataLifetimeScope dataLifetimeScopePrefab;
 
     [Header("System Managers")]
     [SerializeField] private AudioManager audioManagerPrefab;
@@ -50,10 +42,6 @@ public class RootLifetimeScope : LifetimeScope
     protected override void Configure(IContainerBuilder builder)
     {
         InstallCoreInfrastructure(builder);
-
-        // 데이터 매니저들은 GameSceneLifetimeScope에서 관리
-        // InstallDataManagers(builder);
-
         InstallSystemManagers(builder);
 
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -63,11 +51,32 @@ public class RootLifetimeScope : LifetimeScope
     {
         if (scene.name == "Boot")
         {
+            // DataLifetimeScope 생성
+            CreateDataLifetimeScope();
+
             var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
             sceneTransitionManager.LoadTargetScene("Title");
         }
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
+    private void CreateDataLifetimeScope()
+    {
+        // 이미 씬에 DataLifetimeScope가 존재하는지 확인
+        var existingDataScope = FindObjectOfType<DataLifetimeScope>();
+        if (existingDataScope != null)
+        {
+            return;
+        }
+
+        if (dataLifetimeScopePrefab != null && DataLifetimeScope.Instance == null)
+        {
+            var dataScope = Instantiate(dataLifetimeScopePrefab);
+        }
+        else if (dataLifetimeScopePrefab == null)
+        {
+            Debug.LogError("[RootLifetimeScope] DataLifetimeScope 프리팹이 할당되지 않았습니다!");
+        }
     }
 
     private void InstallCoreInfrastructure(IContainerBuilder builder)
@@ -97,7 +106,7 @@ public class RootLifetimeScope : LifetimeScope
             ItemDatabase.Initialize(itemDatabase);
         }
 
-        // SaveLoadManager는 GameSceneLifetimeScope로 이동됨
+        // SaveLoadManager는 DataLifetimeScope로 이동됨
         
     }
 

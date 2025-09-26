@@ -33,7 +33,6 @@ namespace Nytherion.Core.Utils
                 slot.OnEndDragEvent += CommonDragHandler.HandleEndDrag;
             }
 
-            // 드롭 기능은 개별 슬롯 타입에서 IDropHandler 인터페이스로 구현되므로 여기서는 설정하지 않음
         }
 
         /// <summary>
@@ -104,8 +103,6 @@ namespace Nytherion.Core.Utils
             SetupDragDrop(slot, config.EnableDrag, config.EnableDrop);
             SetupTooltip(slot, config.EnableTooltip);
             SetupClickEvents(slot, config.OnLeftClick, config.OnRightClick);
-
-            Debug.Log($"[UISlotFactory] Successfully configured slot: {slot.name}");
         }
 
         /// <summary>
@@ -125,8 +122,6 @@ namespace Nytherion.Core.Utils
             {
                 SetupSlot(slot, config);
             }
-
-            Debug.Log($"[UISlotFactory] Successfully configured {slots.Length} slots.");
         }
     }
 
@@ -221,7 +216,6 @@ namespace Nytherion.Core.Utils
             EnableTooltip = true,
             OnRightClick = (slot, eventData) =>
             {
-                // 기본 우클릭 동작: 아이템 사용
                 if (!slot.IsEmpty && slot.CurrentItem is ConsumableData)
                 {
                     Debug.Log($"Using item: {slot.CurrentItem.itemName}");
@@ -239,7 +233,6 @@ namespace Nytherion.Core.Utils
             EnableTooltip = true,
             OnLeftClick = (slot, eventData) =>
             {
-                // 기본 좌클릭 동작: 구매
                 Debug.Log($"Attempting to buy: {slot.CurrentItem?.itemName}");
             }
         };

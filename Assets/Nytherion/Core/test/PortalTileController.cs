@@ -18,10 +18,7 @@ namespace Nytherion.GamePlay.Dungeon
         private Tilemap portalTilemap;
         private DungeonManager _dungeonManager;
 
-        // --- 컴포넌트 참조 ---
         private Collider2D tilemapCollider;
-
-       
         [Inject]
         public void Construct(
             DungeonManager dungeonManager,
@@ -31,9 +28,6 @@ namespace Nytherion.GamePlay.Dungeon
             _dungeonManager = dungeonManager;
             this.floorTilemap = tilemaps.FirstOrDefault(t => t.gameObject.name == "FloorTilemap");
             this.portalTilemap = tilemaps.FirstOrDefault(t => t.gameObject.name == "PortalTilemap");
-            Debug.Log($"[포탈 디버그] DungeonManager 주입 성공: {_dungeonManager != null}");
-            Debug.Log($"[포탈 디버그] FloorTilemap 찾음: {floorTilemap != null}, PortalTilemap 찾음: {portalTilemap != null}");
-        
         }
 
         private void Awake()
@@ -49,12 +43,9 @@ namespace Nytherion.GamePlay.Dungeon
         {
             // 충돌한 오브젝트가 "Player" 태그를 가지고 있지 않으면 아무것도 하지 않습니다.
 
-            Debug.Log($"[포탈 디버그] OnTriggerEnter2D! 충돌한 객체: {other.name}, 태그: {other.tag}");
-
             if (!other.CompareTag("Player"))
             {
                 Debug.LogWarning($"[포탈 디버그] 플레이어가 아닌 객체와 충돌하여 무시합니다.");
-
                 return;
             }
 
@@ -62,7 +53,6 @@ namespace Nytherion.GamePlay.Dungeon
             if (_dungeonManager == null)
             {
                 Debug.LogError("[PortalTileController] DungeonManager is not injected!");
-
                 return;
             }
 
@@ -91,7 +81,6 @@ namespace Nytherion.GamePlay.Dungeon
             else
             {
                 Debug.LogError($"[포탈 디버그] 실패: 충돌 지점 근처에서 포탈 타일을 찾지 못했습니다.");
-
             }
         }
 
@@ -111,10 +100,10 @@ namespace Nytherion.GamePlay.Dungeon
 
             // 중앙에 없다면, 주변 8방향의 이웃 타일들을 정의합니다.
             Vector3Int[] neighbors = {
-            centerPos + Vector3Int.up, centerPos + Vector3Int.down, centerPos + Vector3Int.left,
-            centerPos + Vector3Int.right, centerPos + new Vector3Int(1, 1, 0), centerPos + new Vector3Int(1, -1, 0),
-            centerPos + new Vector3Int(-1, -1, 0), centerPos + new Vector3Int(-1, 1, 0)
-        };
+                centerPos + Vector3Int.up, centerPos + Vector3Int.down, centerPos + Vector3Int.left,
+                centerPos + Vector3Int.right, centerPos + new Vector3Int(1, 1, 0), centerPos + new Vector3Int(1, -1, 0),
+                centerPos + new Vector3Int(-1, -1, 0), centerPos + new Vector3Int(-1, 1, 0)
+            };
 
             // 이웃 타일들을 순회하며 포탈 타일이 있는지 확인합니다.
             foreach (Vector3Int neighbor in neighbors)
@@ -140,16 +129,13 @@ namespace Nytherion.GamePlay.Dungeon
             // DungeonManager에는 포탈의 중심 타일만 등록되어 있을 수 있으므로,
             // 현재 타일과 상하좌우 타일을 모두 확인하여 등록된 포탈 링크가 있는지 찾아봅니다.
             Vector3Int[] positionsToCheck = {
-            position, position + Vector3Int.left, position + Vector3Int.right,
-            position + Vector3Int.up, position + Vector3Int.down
-        };
+                position, position + Vector3Int.left, position + Vector3Int.right,
+                position + Vector3Int.up, position + Vector3Int.down
+            };
 
             foreach (Vector3Int pos in positionsToCheck)
             {
-                // DungeonManager가 없으면 포탈 기능을 사용할 수 없음
                 if (_dungeonManager == null) continue;
-                
-                // DungeonManager에게 해당 위치가 등록된 포탈인지, 그렇다면 목적지가 어디인지 물어봅니다.
                 if (_dungeonManager.TryGetDestination(pos, out Vector3Int destinationPos))
                 {
                     Debug.Log($"<color=green>[포탈 디버그] 성공! 목적지 {destinationPos}로 텔레포트합니다.</color>");
@@ -160,7 +146,6 @@ namespace Nytherion.GamePlay.Dungeon
                 }
             }
             Debug.LogError($"[포탈 디버그] 실패: DungeonManager에 목적지가 등록된 포탈을 찾지 못했습니다. (검색 위치: {position})");
-
         }
 
         /// <summary>

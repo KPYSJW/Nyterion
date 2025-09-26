@@ -18,31 +18,31 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
         private Action<ItemData, int> onItemUsed;
         private IUseableItem useableItem;
-        private InventoryManager inventoryManager;
+        private InventoryDataManager inventoryDataManager;
         private QuickSlotManager quickSlotManager;
         private ItemUsageManager itemUsageManager;
 
         [Inject]
         public void Construct(
-            InventoryManager inventoryManager,
+            InventoryDataManager inventoryDataManager,
             QuickSlotManager quickSlotManager,
             ItemUsageManager itemUsageManager)
         {
-            this.inventoryManager = inventoryManager;
+            this.inventoryDataManager = inventoryDataManager;
             this.quickSlotManager = quickSlotManager;
             this.itemUsageManager = itemUsageManager;
         }
 
         private void Start()
         {
-            if (inventoryManager == null || quickSlotManager == null || itemUsageManager == null)
+            if (inventoryDataManager == null || quickSlotManager == null || itemUsageManager == null)
             {
                 var lifetimeScope = LifetimeScope.Find<GameSceneLifetimeScope>();
                 if (lifetimeScope != null)
                 {
-                    if (inventoryManager == null && lifetimeScope.Container.TryResolve<InventoryManager>(out var invManager))
+                    if (inventoryDataManager == null && lifetimeScope.Container.TryResolve<InventoryDataManager>(out var invManager))
                     {
-                        inventoryManager = invManager;
+                        inventoryDataManager = invManager;
                     }
 
                     if (quickSlotManager == null && lifetimeScope.Container.TryResolve<QuickSlotManager>(out var quickManager))
@@ -90,11 +90,11 @@ namespace Nytherion.UI.Inventory
                 {
                     var (itemToMove, countToMove) = inventorySourceSlot.GetItemInfo();
 
-                    if (inventoryManager.RemoveItemFromSlot(inventorySourceSlot.SlotIndex, countToMove))
+                    if (inventoryDataManager.RemoveItemFromSlot(inventorySourceSlot.SlotIndex, countToMove))
                     {
                         if (!IsEmpty)
                         {
-                            inventoryManager.AddItem(CurrentItem, CurrentCount);
+                            inventoryDataManager.AddItem(CurrentItem, CurrentCount);
                         }
 
                         SetItem(itemToMove, countToMove);

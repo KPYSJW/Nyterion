@@ -40,7 +40,6 @@ namespace Nytherion.GamePlay.Characters.Items
                 return;
             }
 
-            Debug.Log("무기 장착 시도: " + weapon.name);
             _playerManager.PlayerCombat.EquipWeapon(weapon);
         }
     }

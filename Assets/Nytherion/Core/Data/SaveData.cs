@@ -20,10 +20,9 @@ namespace Nytherion.Core.Data
         public List<ItemEntry> inventoryData = new List<ItemEntry>();
         public EngravingGridState engravingData;
         public List<ShopStockState> shopStockData = new List<ShopStockState>();
-        public List<string> quickSlotItemIDs = new List<string>();
-        public List<int> quickSlotItemCounts = new List<int>();
         public List<QuickSlotEntry> quickSlotData = new List<QuickSlotEntry>();
         public List<EquippedItemEntry> equippedItemsData = new List<EquippedItemEntry>();
+        // public Dictionary<string, PuzzleAttemptData> puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(); // 나중에 사용 예정
 
         public SaveData()
         {
@@ -32,10 +31,9 @@ namespace Nytherion.Core.Data
             inventoryData = new List<ItemEntry>();
             engravingData = new EngravingGridState();
             shopStockData = new List<ShopStockState>();
-            quickSlotItemIDs = new List<string>();
-            quickSlotItemCounts = new List<int>();
             quickSlotData = new List<QuickSlotEntry>();
             equippedItemsData = new List<EquippedItemEntry>();
+            // puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(); // 나중에 사용 예정
         }
     }
 

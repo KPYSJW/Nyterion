@@ -11,13 +11,24 @@ namespace Nytherion.Core.Managers
     {
         [Header("Base Manager Settings")]
         [SerializeField] protected bool autoInitializeOnAwake = false;
-        
-        
+
         public event Action OnInitialized;
         
-        public bool IsInitialized { get; private set; }
-        
-        public bool IsActive { get; private set; } = true;
+        [System.NonSerialized]
+        private bool isInitialized;
+        public bool IsInitialized
+        {
+            get => isInitialized;
+            private set => isInitialized = value;
+        }
+
+        [System.NonSerialized]
+        private bool isActive = true;
+        public bool IsActive
+        {
+            get => isActive;
+            private set => isActive = value;
+        }
 
         protected virtual void Awake()
         {
@@ -31,7 +42,6 @@ namespace Nytherion.Core.Managers
         {
             if (IsInitialized)
             {
-                Debug.LogWarning($"[{GetType().Name}] Already initialized. Skipping duplicate initialization.");
                 return;
             }
 
@@ -62,7 +72,6 @@ namespace Nytherion.Core.Managers
             OnActiveStateChanged(active);
         }
 
-        /// <param name="active">새로운 활성화 상태</param>
         protected virtual void OnActiveStateChanged(bool active)
         {
             // 하위 클래스에서 필요에 따라 오버라이드
@@ -70,8 +79,6 @@ namespace Nytherion.Core.Managers
         
         public abstract void PopulateSaveData(SaveData saveData);
 
-        
-        /// <param name="saveData">불러올 데이터 객체</param>
         public abstract void LoadFromSaveData(SaveData saveData);
 
         protected virtual void OnDestroy()
@@ -83,14 +90,5 @@ namespace Nytherion.Core.Managers
         {
             return $"[{GetType().Name}] Initialized: {IsInitialized}, Active: {IsActive}";
         }
-
-#if UNITY_EDITOR
-        
-        [ContextMenu("Show Status Info")]
-        private void ShowStatusInfo()
-        {
-            Debug.Log(GetStatusInfo());
-        }
-#endif
     }
 }
