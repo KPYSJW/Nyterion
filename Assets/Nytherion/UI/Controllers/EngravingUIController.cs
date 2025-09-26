@@ -22,7 +22,6 @@ namespace Nytherion.UI.Controllers
             EngravingGridUI engravingGridUI
             )
         {
-            Debug.Log("[EngravingUIController] Construct 호출됨");
             this.gameSceneUIRefs = gameSceneUIRefs;
             this.eventManager = eventManager;
             this.inputManager = inputManager;

@@ -1,5 +1,6 @@
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Systems;
 using Nytherion.GamePlay;
 using Nytherion.GamePlay.Characters.NPC;
 using Nytherion.GamePlay.Characters.Player;
@@ -12,6 +13,8 @@ using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Presenters;
 using Nytherion.UI.Shop;
+using Nytherion.Core.Test;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -22,7 +25,7 @@ public class GameSceneLifetimeScope : LifetimeScope
 {
     [Header("UI References From Scene")]
     [SerializeField] private GameSceneUIRefs gameSceneUIRefs;
-    
+
     [Header("GameScene Only Managers")]
     [SerializeField] private GachaManager gachaManagerPrefab;
     [SerializeField] private GachaUIController gachaUIControllerPrefab;
@@ -32,24 +35,21 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
     [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
 
-
-    [Header("Data Managers - SaveLoadManager와 함께 관리")]
-    [SerializeField] private SaveLoadManager saveLoadManagerPrefab;
-    [SerializeField] private CurrencyManager currencyManagerPrefab;
-    [SerializeField] private InventoryManager inventoryManagerPrefab;
-    [SerializeField] private EngravingManager engravingManagerPrefab;
-    [SerializeField] private EquipmentDataManager equipmentDataManagerPrefab;
-    [SerializeField] private ShopManager shopManagerPrefab;
-
     [Header("GameScene Only UI")]
     [SerializeField] private InventoryUI inventoryUIPrefab;
     [SerializeField] private ShopUI shopUIPrefab;
     [SerializeField] private EngravingUIController engravingUIControllerPrefab;
 
+    [Header("UI Controllers - 데이터와 UI 분리")]
+    [SerializeField] private InventoryUIController inventoryUIControllerPrefab;
+    [SerializeField] private CurrencyUIController currencyUIControllerPrefab;
+
     [Header("GameScene Only Systems")]
     [SerializeField] private PlayerManager playerManagerPrefab;
     [SerializeField] private MenuManager menuManagerPrefab;
     [SerializeField] private ItemUsageManager itemUsageManagerPrefab;
+    [SerializeField] private InventoryManager inventoryManagerPrefab;
+    [SerializeField] private CurrencyManager currencyManagerPrefab;
 
     [Header("Debug Systems")]
     [SerializeField] private EngravingSystemDebugger engravingSystemDebuggerPrefab;
@@ -61,7 +61,22 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private InventoryPresenter inventoryPresenterPrefab;
     [SerializeField] private GameSceneUIManager gameSceneUIManager;
 
-    
+    // DataLifetimeScope 대기를 위한 상태 변수
+    protected DataLifetimeScope dataLifetimeScope;
+    protected bool isDataManagersReady = false;
+    protected bool waitForDataManagers = true;
+    protected float maxWaitTime = 10f;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if (waitForDataManagers)
+        {
+            StartCoroutine(WaitForDataManagers());
+        }
+    }
+
     protected override void Configure(IContainerBuilder builder)
     {
         // 부모 scope의 의존성들을 현재 scope에서 사용할 수 있도록 등록
@@ -78,33 +93,102 @@ public class GameSceneLifetimeScope : LifetimeScope
         InstallGameSceneOnlySystems(builder);
 
         builder.RegisterEntryPoint<GameSceneInitializer>();
-        //InstallUIFromHierarchy(builder);
+    }
+
+    /// <summary>
+    /// 데이터 매니저들이 준비될 때까지 대기
+    /// </summary>
+    private IEnumerator WaitForDataManagers()
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < maxWaitTime)
+        {
+            dataLifetimeScope = DataLifetimeScope.Instance;
+
+            if (dataLifetimeScope != null && dataLifetimeScope.IsDataManagersReady())
+            {
+                isDataManagersReady = true;
+                OnDataManagersReady();
+                yield break;
+            }
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// 데이터 매니저들이 준비되었을 때 호출되는 콜백
+    /// </summary>
+    protected virtual void OnDataManagersReady()
+    {
+        // GameScene UI 초기화
+        InitializeGameSceneUI();
     }
 
     private void RegisterParentScopeDependencies(IContainerBuilder builder)
     {
-        // 부모 scope에서 InputManager 가져와서 현재 scope에 등록
-        if (Parent != null && Parent.Container.TryResolve<InputManager>(out var inputManager))
+        // RootLifetimeScope에서 기본 매니저들 가져오기
+        if (Parent != null)
         {
-            builder.RegisterInstance(inputManager);
+            // InputManager
+            if (Parent.Container.TryResolve<InputManager>(out var inputManager))
+            {
+                builder.RegisterInstance(inputManager);
+            }
+
+            // EventManager
+            if (Parent.Container.TryResolve<EventManager>(out var eventManager))
+            {
+                builder.RegisterInstance(eventManager);
+            }
+
+            // AudioManager
+            if (Parent.Container.TryResolve<AudioManager>(out var audioManager))
+            {
+                builder.RegisterInstance(audioManager);
+            }
+
+            // SceneTransitionManager
+            if (Parent.Container.TryResolve<SceneTransitionManager>(out var sceneTransitionManager))
+            {
+                builder.RegisterInstance(sceneTransitionManager);
+            }
         }
-        else
+
+        // DataLifetimeScope에서 데이터 매니저들 가져오기
+        dataLifetimeScope = DataLifetimeScope.Instance;
+        if (dataLifetimeScope != null && dataLifetimeScope.Container != null && dataLifetimeScope.IsDataManagersReady())
         {
-            Debug.LogError("[GameSceneLifetimeScope] 부모 scope에서 InputManager를 찾을 수 없습니다!");
+            // SaveLoadManager를 GameSceneLifetimeScope에서도 접근 가능하도록 등록
+            RegisterDataManagerIfExists<SaveLoadManager>(builder);
+            RegisterDataManagerIfExists<CurrencyDataManager>(builder);
+            RegisterDataManagerIfExists<InventoryDataManager>(builder);
+            RegisterDataManagerIfExists<EngravingManager>(builder);
+            RegisterDataManagerIfExists<EquipmentDataManager>(builder);
+            RegisterDataManagerIfExists<ShopManager>(builder);
+
+            // RegisterDataManagerIfExists<PuzzleManager>(builder); // 나중에 사용 예정
+            // PlayerManager는 GameScene에서만 필요하므로 여기서 직접 관리
         }
-        
-        // EventManager도 부모에서 가져오기
-        if (Parent != null && Parent.Container.TryResolve<EventManager>(out var eventManager))
-        {
-            builder.RegisterInstance(eventManager);
-        }
-        else
-        {
-            Debug.LogError("[GameSceneLifetimeScope] 부모 scope에서 EventManager를 찾을 수 없습니다!");
-        }
-        
-        // SaveLoadManager는 이제 현재 scope에서 직접 관리됨
     }
+
+    /// <summary>
+    /// 데이터 매니저가 존재하면 현재 컨테이너에 등록
+    /// </summary>
+    private void RegisterDataManagerIfExists<T>(IContainerBuilder builder) where T : class
+    {
+        if (dataLifetimeScope.Container.TryResolve<T>(out var manager))
+        {
+            builder.RegisterInstance(manager);
+        }
+        else
+        {
+            Debug.LogWarning($"[GameSceneLifetimeScope] {typeof(T).Name}를 찾을 수 없습니다");
+        }
+    }
+
 
     private void RegisterUIReferences(IContainerBuilder builder)
     {
@@ -141,15 +225,13 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        
         builder.RegisterComponentInHierarchy<WorldmapController>();
         builder.RegisterComponentInHierarchy<MinimapTileGenerator>();
         builder.RegisterComponentInHierarchy<PortalTileController>();
 
         builder.RegisterComponentInNewPrefab(dungeonManagerPrefab, Lifetime.Singleton)
-       .AsImplementedInterfaces()
-       .AsSelf();
-       
+                .AsImplementedInterfaces()
+                .AsSelf();
 
         var tilemaps = FindObjectsOfType<Tilemap>(includeInactive: true);
         builder.RegisterInstance<IReadOnlyList<Tilemap>>(tilemaps);
@@ -158,20 +240,10 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // SaveLoadManager 등록 (데이터 매니저들과 같은 scope에서 관리)
-        if (saveLoadManagerPrefab != null)
-        {
-            builder.RegisterComponentInNewPrefab(saveLoadManagerPrefab, Lifetime.Singleton)
-                    .AsImplementedInterfaces()
-                    .AsSelf();
-        }
-        else
-        {
-            Debug.LogError("[GameSceneLifetimeScope] SaveLoadManager 프리팹이 할당되지 않았습니다!");
-        }
+        // SaveLoadManager는 DataLifetimeScope에서 관리됨
 
-        // 데이터 매니저들 등록
-        InstallDataManagers(builder);
+        // UI 컨트롤러들 등록 (데이터와 UI 분리)
+        InstallUIControllers(builder);
 
         // ISaveable 인터페이스들을 추가 등록하여 SaveLoadManager가 찾을 수 있도록 함
         RegisterISaveableEntities(builder);
@@ -183,11 +255,9 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-
         builder.RegisterComponentInNewPrefab(inventoryUIPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
                 .AsSelf();
-
 
         if (inventoryPresenterPrefab != null)
         {
@@ -322,7 +392,7 @@ public class GameSceneLifetimeScope : LifetimeScope
             builder.RegisterComponentInNewPrefab(settingsManagerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()
                     .AsSelf();
-            }
+        }
 
         if (menuManagerPrefab != null)
         {
@@ -337,211 +407,39 @@ public class GameSceneLifetimeScope : LifetimeScope
                     .AsImplementedInterfaces()
                     .AsSelf();
         }
-    }
-
-    // private void InstallUIFromHierarchy(IContainerBuilder builder)
-    // { 
-    //      if (inventoryCanvasGroup != null)
-    //         {
-    //             builder.RegisterInstance(inventoryCanvasGroup);
-    //         }
-            
-    //         if (equipmentPanel != null)
-    //             builder.RegisterInstance(equipmentPanel);
-
-    //         if (statsPanel != null)
-    //             builder.RegisterInstance(statsPanel);
-
-    //         if (inventorySlotParent != null)
-    //         {
-    //             if (shopPlayerInventoryParent == null)
-    //             {
-    //                 shopPlayerInventoryParent = inventorySlotParent;
-    //             }
-    //             builder.RegisterInstance(inventorySlotParent);
-    //         }
-
-    //         if (inventoryCloseButton != null)
-    //             builder.RegisterInstance(inventoryCloseButton);
-
-    //         if (engravingGridUI != null)
-    //             builder.RegisterInstance(engravingGridUI);
-
-    //         if (engravingTooltip != null)
-    //             builder.RegisterInstance(engravingTooltip);
-
-
-    //         if (gachaCanvasGroup != null)
-    //             builder.RegisterInstance(gachaCanvasGroup);
-
-    //         if (gachaMainPanel != null)
-    //             builder.RegisterInstance(gachaMainPanel);
-
-    //         if (gachaResultPanel != null)
-    //             builder.RegisterInstance(gachaResultPanel);
-
-    //         if (tokenCountText != null)
-    //             builder.RegisterInstance(tokenCountText);
-
-    //         if (drawWeaponOnceButton != null)
-    //             builder.RegisterInstance(drawWeaponOnceButton);
-
-    //         if (drawWeaponTenTimesButton != null)
-    //             builder.RegisterInstance(drawWeaponTenTimesButton);
-
-    //         if (drawEngravingOnceButton != null)
-    //             builder.RegisterInstance(drawEngravingOnceButton);
-
-    //         if (drawEngravingTenTimesButton != null)
-    //             builder.RegisterInstance(drawEngravingTenTimesButton);
-
-    //         if (gachaCloseButton != null)
-    //             builder.RegisterInstance(gachaCloseButton);
-
-    //         if (resultCloseButton != null)
-    //             builder.RegisterInstance(resultCloseButton);
-
-    //         if (resultSlotParent != null)
-    //             builder.RegisterInstance(resultSlotParent);
-
-    //         if (resultSlotPrefab != null)
-    //             builder.RegisterInstance(resultSlotPrefab);
-                
-
-    //         if (masterSlider != null)
-    //             builder.RegisterInstance(masterSlider).WithId("MasterSlider");
-
-    //         if (bgmSlider != null)
-    //             builder.RegisterInstance(bgmSlider).WithId("BgmSlider");
-
-    //         if (sfxSlider != null)
-    //             builder.RegisterInstance(sfxSlider).WithId("SfxSlider");
-
-    //         if (fullscreenToggle != null)
-    //             builder.RegisterInstance(fullscreenToggle).WithId("FullscreenToggle");
-
-    //         if (resolutionDropdown != null)
-    //             builder.RegisterInstance(resolutionDropdown).WithId("ResolutionDropdown");
-                
-
-
-    //         if (shopCanvasGroup != null)
-    //         builder.RegisterInstance(shopCanvasGroup);
-
-    //         if (shopSlotParent != null)
-    //             builder.RegisterInstance(shopSlotParent);
-
-    //         if (shopSlotPrefab != null)
-    //             builder.RegisterInstance(shopSlotPrefab);
-
-    //         if (shopCloseButton != null)
-    //             builder.RegisterInstance(shopCloseButton);
-
-    //         if (shopPlayerGoldText != null)
-    //             builder.RegisterInstance(shopPlayerGoldText);
-
-    //         if (shopPlayerInventoryParent != null)
-    //             builder.RegisterInstance(shopPlayerInventoryParent);
-
-
-    //         if (menuCanvasGroup != null)
-    //             builder.RegisterInstance(menuCanvasGroup);
-
-    //         if (menuMainPanel != null)
-    //             builder.RegisterInstance(menuMainPanel);
-
-    //         if (menuResumeButton != null)
-    //             builder.RegisterInstance(menuResumeButton);
-
-    //         if (menuSettingsButton != null)
-    //             builder.RegisterInstance(menuSettingsButton);
-
-    //         if (menuSettingsPanel != null)
-    //             builder.RegisterInstance(menuSettingsPanel);
-
-    //         if (menuControlButton != null)
-    //             builder.RegisterInstance(menuControlButton);
-
-    //         if (menuControlsPanel != null)
-    //             builder.RegisterInstance(menuControlsPanel);
-
-    //         if (menuMainMenuButton != null)
-    //             builder.RegisterInstance(menuMainMenuButton);
-
-    //         if (engravingCanvasGroup != null)
-    //             builder.RegisterInstance(engravingCanvasGroup);
-
-    //         if (engravingUIControllerPrefab != null)
-    //         {
-    //             builder.RegisterComponentInNewPrefab(engravingUIControllerPrefab, Lifetime.Singleton);
-    //         }
-    // }
-
-    private void InstallDataManagers(IContainerBuilder builder)
-    {
-        if (currencyManagerPrefab != null)
-        {
-            builder.RegisterComponentInNewPrefab(currencyManagerPrefab, Lifetime.Singleton)
-                .UnderTransform(this.transform)
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .As<ISaveable>();
-        }
-        else
-        {
-            Debug.LogError("[GameSceneLifetimeScope] CurrencyManager 프리팹이 할당되지 않았습니다!");
-        }
 
         if (inventoryManagerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(inventoryManagerPrefab, Lifetime.Singleton)
-                .UnderTransform(this.transform)
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .As<ISaveable>();
-        }
-        else
-        {
-            Debug.LogError("[GameSceneLifetimeScope] InventoryManager 프리팹이 할당되지 않았습니다!");
+                    .AsImplementedInterfaces()
+                    .AsSelf();
         }
 
-        if (engravingManagerPrefab != null)
+        if (currencyManagerPrefab != null)
         {
-            builder.RegisterComponentInNewPrefab(engravingManagerPrefab, Lifetime.Singleton)
-                .UnderTransform(this.transform)
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .As<ISaveable>();
+            builder.RegisterComponentInNewPrefab(currencyManagerPrefab, Lifetime.Singleton)
+                    .AsImplementedInterfaces()
+                    .AsSelf();
         }
-        else
+    }
+
+
+    private void InstallUIControllers(IContainerBuilder builder)
+    {
+        // InventoryUIController 등록
+        if (inventoryUIControllerPrefab != null)
         {
-            Debug.LogError("[GameSceneLifetimeScope] EngravingManager 프리팹이 할당되지 않았습니다!");
+            builder.RegisterComponentInNewPrefab(inventoryUIControllerPrefab, Lifetime.Singleton)
+                    .AsImplementedInterfaces()
+                    .AsSelf();
         }
 
-        if (equipmentDataManagerPrefab != null)
+        // CurrencyUIController 등록
+        if (currencyUIControllerPrefab != null)
         {
-            builder.RegisterComponentInNewPrefab(equipmentDataManagerPrefab, Lifetime.Singleton)
-                .UnderTransform(this.transform)
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .As<ISaveable>();
-        }
-        else
-        {
-            Debug.LogError("[GameSceneLifetimeScope] EquipmentDataManager 프리팹이 할당되지 않았습니다!");
-        }
-
-        if (shopManagerPrefab != null)
-        {
-            builder.RegisterComponentInNewPrefab(shopManagerPrefab, Lifetime.Singleton)
-                .UnderTransform(this.transform)
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .As<ISaveable>();
-        }
-        else
-        {
-            Debug.LogError("[GameSceneLifetimeScope] ShopManager 프리팹이 할당되지 않았습니다!");
+            builder.RegisterComponentInNewPrefab(currencyUIControllerPrefab, Lifetime.Singleton)
+                    .AsImplementedInterfaces()
+                    .AsSelf();
         }
     }
 
@@ -557,7 +455,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     private void RegisterEngravingSystemDebugger(IContainerBuilder builder)
     {
         // 씬에서 먼저 찾아보기
-        var existingDebugger = FindObjectOfType<Nytherion.GamePlay.Engravings.EngravingSystemDebugger>();
+        var existingDebugger = FindObjectOfType<EngravingSystemDebugger>();
         if (existingDebugger != null)
         {
             builder.RegisterComponent(existingDebugger)
@@ -577,41 +475,25 @@ public class GameSceneLifetimeScope : LifetimeScope
         }
     }
 
-   /* private void Start()
-     {
-         // 이 로직은 GameScene에서만 실행되어야 합니다.
-         // Title 씬 등 다른 씬에서 NullReferenceException을 유발하는 것을 방지합니다.
-         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "GameScene")
-         {
-             return;
-         }
+    private void InitializeGameSceneUI()
+    {
+        // 아키텍처 검증 헬퍼 등록 (디버그 빌드에서만)
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        RegisterArchitectureValidationHelper();
+        #endif
+    }
 
-         StartCoroutine(LinkManagersAfterBuild());
-     }
+    #if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void RegisterArchitectureValidationHelper()
+    {
+        // 씬에서 ArchitectureValidationHelper 찾기
+        var validationHelper = FindObjectOfType<ArchitectureValidationHelper>();
+        if (validationHelper != null)
+        {
+            // VContainer에 등록하여 의존성 주입이 가능하도록 함
+            Container.Inject(validationHelper);
+        }
+    }
+    #endif
 
-         private System.Collections.IEnumerator LinkManagersAfterBuild()
-         {
-             yield return new UnityEngine.WaitForEndOfFrame();
-
-             try
-             {
-                 var container = Container;
-                 if (container != null && 
-                     container.TryResolve<StageManager>(out var stageManager) && 
-                     container.TryResolve<DungeonManager>(out var dungeonManager))
-                 {
-                    dungeonManager.SetStageManager(stageManager);
-                    stageManager.SetDungeonManager(dungeonManager);
-                    dungeonManager.StartDungeonGeneration();
-                 }
-                 else
-                 {
-                     Debug.LogWarning("[GameSceneLifetimeScope] Could not resolve StageManager or DungeonManager");
-                 }
-             }
-             catch (System.Exception e)
-             {
-                 Debug.LogError($"[GameInstaller] Failed to link StageManager and DungeonManager: {e.Message}");
-             }
-         }*/
 }

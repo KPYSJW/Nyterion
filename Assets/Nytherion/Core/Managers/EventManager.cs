@@ -4,13 +4,14 @@ using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.Core.Data;
 using System;
 using UnityEngine;
 using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
-    public class EventManager : MonoBehaviour, IInitializable
+    public class EventManager : BaseManager
     {
         public event Action<EnemyBase> OnEnemyDied;
         public event Action<StageData> OnBossClearedEvent;
@@ -62,8 +63,19 @@ namespace Nytherion.Core.Managers
             OnSynergyEvaluated?.Invoke(weapon, engraving, synergy);
         }
 
-        public void Initialize()
+        public void TriggerEvent(string eventName, object eventData = null)
         {
+            // TODO: Implement generic event system if needed
+        }
+
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            // EventManager는 저장할 데이터가 없음
+        }
+
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            // EventManager는 로드할 데이터가 없음
         }
     }
 }

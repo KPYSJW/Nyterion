@@ -9,6 +9,7 @@ using TMPro;
 using Nytherion.Core.Enums;
 using Nytherion.UI.Shop;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.Core.Interfaces;
 using VContainer;
 using VContainer.Unity;
 
@@ -29,8 +30,8 @@ namespace Nytherion.UI.Controllers
 
         private ShopData currentShopData;
         private const float SELL_PRICE_RATIO = 0.7f;
-        private InventoryManager inventoryManager;
-        private CurrencyManager currencyManager;
+        private InventoryDataManager inventoryDataManager;
+        private CurrencyDataManager currencyDataManager;
         private EventManager eventManager;
         private ShopManager shopManager;
         private SellSlotUI sellSlotUI;
@@ -41,13 +42,13 @@ namespace Nytherion.UI.Controllers
         public void Construct(IObjectResolver container,
             GameSceneUIRefs gameSceneuiRefs,
             ShopManager shopManagerPrefab,
-            CurrencyManager currencyManagerPrefab,
+            CurrencyDataManager currencyDataManagerPrefab,
             EventManager eventManagerPrefab)
         {
             this.container = container;
             this.gameSceneuiRefs = gameSceneuiRefs;
             this.shopManager = shopManagerPrefab;
-            this.currencyManager = currencyManagerPrefab;
+            this.currencyDataManager = currencyDataManagerPrefab;
             this.eventManager = eventManagerPrefab;
             this.sellSlotUI = gameSceneuiRefs.SellSlotUI;
             this.closeButton = gameSceneuiRefs.ShopCloseButton;
@@ -58,38 +59,38 @@ namespace Nytherion.UI.Controllers
             this.controlledCanvasGroup = gameSceneuiRefs.ShopCanvasGroup;
         }
 
-        private InventoryManager GetInventoryManager()
+        private InventoryDataManager GetInventoryDataManager()
         {
-            if (inventoryManager == null && container != null)
+            if (inventoryDataManager == null && container != null)
             {
                 try
                 {
-                    inventoryManager = container.Resolve<InventoryManager>();
+                    inventoryDataManager = container.Resolve<InventoryDataManager>();
                 }
                 catch (VContainerException e)
                 {
-                    Debug.LogError($"[ShopUI] Failed to resolve InventoryManager: {e.Message}");
+                    Debug.LogError($"[ShopUI] Failed to resolve InventoryDataManager: {e.Message}");
                     return null;
                 }
             }
-            return inventoryManager;
+            return inventoryDataManager;
         }
 
-        private CurrencyManager GetCurrencyManager()
+        private CurrencyDataManager GetCurrencyDataManager()
         {
-            if (currencyManager == null && container != null)
+            if (currencyDataManager == null && container != null)
             {
                 try
                 {
-                    currencyManager = container.Resolve<CurrencyManager>();
+                    currencyDataManager = container.Resolve<CurrencyDataManager>();
                 }
                 catch (VContainerException e)
                 {
-                    Debug.LogError($"[ShopUI] Failed to resolve CurrencyManager: {e.Message}");
+                    Debug.LogError($"[ShopUI] Failed to resolve CurrencyDataManager: {e.Message}");
                     return null;
                 }
             }
-            return currencyManager;
+            return currencyDataManager;
         }
 
         private EventManager GetEventManager()
@@ -141,7 +142,6 @@ namespace Nytherion.UI.Controllers
             // SellSlotUI는 GameSceneUIRefs에서 이미 설정됨
             if (sellSlotUI != null)
             {
-                Debug.Log($"[ShopUI] SellSlotUI from GameSceneUIRefs: {sellSlotUI.name}, Instance ID: {sellSlotUI.GetInstanceID()}");
             }
             else
             {
@@ -167,12 +167,7 @@ namespace Nytherion.UI.Controllers
             // SellSlotUI 이벤트 구독 처리
             if (sellSlotUI != null)
             {
-                Debug.Log($"[ShopUI] Subscribing to SellSlotUI.OnItemSold event, Instance ID: {sellSlotUI.GetInstanceID()}");
-
-                // 기존 구독 해제 (중복 구독 방지)
                 sellSlotUI.OnItemSold -= HandleSellItem;
-
-                // 새로 구독
                 sellSlotUI.OnItemSold += HandleSellItem;
             }
             else
@@ -181,16 +176,16 @@ namespace Nytherion.UI.Controllers
             }
 
             // Lazy resolution으로 매니저들 가져오기
-            CurrencyManager currencyMgr = GetCurrencyManager();
+            CurrencyDataManager currencyMgr = GetCurrencyDataManager();
             if (currencyMgr != null)
             {
-                currencyMgr.onCurrencyChanged += UpdateCurrencyUI;
+                currencyMgr.OnDataChanged += OnCurrencyDataChanged;
             }
 
-            InventoryManager inventoryMgr = GetInventoryManager();
+            InventoryDataManager inventoryMgr = GetInventoryDataManager();
             if (inventoryMgr != null)
             {
-                inventoryMgr.OnInventoryUpdated += RefreshPlayerInventoryUI;
+                inventoryMgr.OnDataChanged += OnInventoryDataChanged;
             }
 
             EventManager eventMgr = GetEventManager();
@@ -261,7 +256,7 @@ namespace Nytherion.UI.Controllers
                 eventMgr.TriggerOpenInventoryForShop();
             }
 
-            CurrencyManager currencyMgr = GetCurrencyManager();
+            CurrencyDataManager currencyMgr = GetCurrencyDataManager();
             if (currencyMgr != null)
             {
                 UpdateCurrencyUI(CurrencyType.Gold, currencyMgr.GetCurrency(CurrencyType.Gold));
@@ -314,8 +309,8 @@ namespace Nytherion.UI.Controllers
             slot.SetInteractable(false);
 
             int amountToBuy = (shopItem.item is EquipmentData) ? 1 : 1;
-            CurrencyManager currencyMgr = GetCurrencyManager();
-            InventoryManager inventoryMgr = GetInventoryManager();
+            CurrencyDataManager currencyMgr = GetCurrencyDataManager();
+            InventoryDataManager inventoryMgr = GetInventoryDataManager();
 
             if (currencyMgr == null || inventoryMgr == null)
             {
@@ -325,18 +320,22 @@ namespace Nytherion.UI.Controllers
             }
 
             // 재고 및 가격 재확인
-            if (!currencyMgr.HasEnoughCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
+            if (!currencyMgr.HasCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
             {
                 Debug.Log($"[ShopUI] 골드 부족: 필요 {shopItem.price * amountToBuy}, 보유 {currencyMgr.GetCurrency(CurrencyType.Gold)}");
                 slot.SetInteractable(true);
                 return;
             }
 
+            Debug.Log($"[ShopUI] 구매 시도: {shopItem.item.itemName}, 가격: {shopItem.price * amountToBuy}, 보유 골드: {currencyMgr.GetCurrency(CurrencyType.Gold)}");
+
             if (currencyMgr.SpendCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
             {
+                Debug.Log($"[ShopUI] 재화 차감 성공, 인벤토리에 아이템 추가 시도: {shopItem.item.itemName}");
+
                 if (inventoryMgr.AddItem(shopItem.item, amountToBuy))
                 {
-                    Debug.Log($"[ShopUI] '{shopItem.item.itemName}' 구매 완료. (ID: {shopItem.shopItemId})");
+                    Debug.Log($"[ShopUI] '{shopItem.item.itemName}' 구매 완료! 인벤토리 추가 성공 (ID: {shopItem.shopItemId})");
 
                     // 재고 감소 처리
                     if (!shopItem.isUnlimited)
@@ -362,7 +361,7 @@ namespace Nytherion.UI.Controllers
                         var equipmentSlot = FindObjectOfType<EquipmentSlotUI>();
                         if (equipmentSlot != null && equipmentSlot.IsEmpty)
                         {
-                            if (inventoryMgr.RemoveItem(shopItem.item, 1))
+                            if (inventoryMgr.RemoveItem(shopItem.item.ID, 1))
                             {
                                 equipmentSlot.SetItem(shopItem.item, 1);
                             }
@@ -388,8 +387,8 @@ namespace Nytherion.UI.Controllers
         {
             Debug.Log($"[ShopUI] HandleSellItem called: {item?.itemName} x{amount}, ID: {item?.ID}");
 
-            InventoryManager inventoryMgr = GetInventoryManager();
-            CurrencyManager currencyMgr = GetCurrencyManager();
+            InventoryDataManager inventoryMgr = GetInventoryDataManager();
+            CurrencyDataManager currencyMgr = GetCurrencyDataManager();
 
             if (inventoryMgr == null || currencyMgr == null)
             {
@@ -398,7 +397,7 @@ namespace Nytherion.UI.Controllers
             }
 
             // 현재 인벤토리에서 해당 아이템의 개수 확인
-            int currentCount = inventoryMgr.GetItemCount(item);
+            int currentCount = inventoryMgr.GetItemCount(item.ID);
             Debug.Log($"[ShopUI] 인벤토리에 있는 '{item.itemName}' 개수: {currentCount}");
 
             if (currentCount < amount)
@@ -407,14 +406,11 @@ namespace Nytherion.UI.Controllers
                 return;
             }
 
-            if (inventoryMgr.RemoveItem(item, amount))
+            if (inventoryMgr.RemoveItem(item.ID, amount))
             {
                 int totalPrice = Mathf.RoundToInt(item.baseValue * SELL_PRICE_RATIO) * amount;
                 currencyMgr.AddCurrency(CurrencyType.Gold, totalPrice);
                 Debug.Log($"[ShopUI] '{item.itemName}' {amount}개 판매 완료. 획득 골드: {totalPrice}");
-
-                // 인벤토리 업데이트 강제 실행
-                inventoryMgr.TriggerInventoryUpdate();
             }
             else
             {
@@ -447,7 +443,7 @@ namespace Nytherion.UI.Controllers
         {
             if (!IsOpen || inventorySlots == null) return;
 
-            InventoryManager inventoryMgr = GetInventoryManager();
+            InventoryDataManager inventoryMgr = GetInventoryDataManager();
             if (inventoryMgr == null) return;
 
             var items = inventoryMgr.GetAllItems();
@@ -455,10 +451,9 @@ namespace Nytherion.UI.Controllers
             foreach (var itemEntry in items)
             {
                 if (i >= inventorySlots.Count) break;
-                if (inventorySlots[i] != null && itemEntry.Key != null)
+                if (inventorySlots[i] != null && itemEntry.item != null)
                 {
-
-                    inventorySlots[i].SetItem(itemEntry.Key, itemEntry.Value);
+                    inventorySlots[i].SetItem(itemEntry.item, itemEntry.count);
                 }
                 i++;
             }
@@ -473,6 +468,38 @@ namespace Nytherion.UI.Controllers
             if (type == CurrencyType.Gold && goldText != null)
             {
                 goldText.text = $"{amount} G";
+            }
+        }
+
+        // 새로운 DataManager 이벤트 핸들러들
+        private void OnCurrencyDataChanged(CurrencyChangeData changeData)
+        {
+            UpdateCurrencyUI(changeData.currencyType, changeData.newAmount);
+        }
+
+        private void OnInventoryDataChanged(InventoryChangeData changeData)
+        {
+            RefreshPlayerInventoryUI();
+        }
+
+        private void OnDestroy()
+        {
+            // 이벤트 구독 해제
+            CurrencyDataManager currencyMgr = GetCurrencyDataManager();
+            if (currencyMgr != null)
+            {
+                currencyMgr.OnDataChanged -= OnCurrencyDataChanged;
+            }
+
+            InventoryDataManager inventoryMgr = GetInventoryDataManager();
+            if (inventoryMgr != null)
+            {
+                inventoryMgr.OnDataChanged -= OnInventoryDataChanged;
+            }
+
+            if (sellSlotUI != null)
+            {
+                sellSlotUI.OnItemSold -= HandleSellItem;
             }
         }
 

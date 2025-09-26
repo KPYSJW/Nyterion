@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Interfaces;
 using Nytherion.UI.Components;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Presenters;
@@ -27,7 +28,7 @@ namespace Nytherion.UI.Controllers
         public event Action<bool> OnInventoryToggled;
 
         [Header("Managers")]
-        private InventoryManager inventoryManager;
+        private InventoryDataManager inventoryDataManager;
         private EventManager eventManager;
         private ShopManager shopManager;
         private GameObject equipmentPanel;
@@ -50,21 +51,21 @@ namespace Nytherion.UI.Controllers
             this.controlledCanvasGroup = gameSceneuiRefs.InventoryCanvasGroup;
         }
 
-        private InventoryManager GetInventoryManager()
+        private InventoryDataManager GetInventoryDataManager()
         {
-            if (inventoryManager == null && container != null)
+            if (inventoryDataManager == null && container != null)
             {
                 try
                 {
-                    inventoryManager = container.Resolve<InventoryManager>();
+                    inventoryDataManager = container.Resolve<InventoryDataManager>();
                 }
                 catch (VContainerException e)
                 {
-                    Debug.LogError($"[InventoryUI] Failed to resolve InventoryManager: {e.Message}");
+                    Debug.LogError($"[InventoryUI] Failed to resolve InventoryDataManager: {e.Message}");
                     return null;
                 }
             }
-            return inventoryManager;
+            return inventoryDataManager;
         }
 
         private EventManager GetEventManager()
@@ -123,14 +124,14 @@ namespace Nytherion.UI.Controllers
                 Debug.LogWarning("[InventoryUI] closeButton이 null입니다.");
             }
 
-            InventoryManager inventoryMgr = GetInventoryManager();
-            if (inventoryMgr != null)
+            InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
+            if (inventoryDataMgr != null)
             {
-                inventoryMgr.OnInventoryUpdated += RefreshUI;
+                inventoryDataMgr.OnDataChanged += OnInventoryDataChanged;
             }
             else
             {
-                Debug.LogError("[InventoryUI] InventoryManager를 찾을 수 없습니다!");
+                Debug.LogError("[InventoryUI] InventoryDataManager를 찾을 수 없습니다!");
             }
 
             if (toggleInventoryAction != null && toggleInventoryAction.action != null)
@@ -203,10 +204,15 @@ namespace Nytherion.UI.Controllers
             isSlotPoolInitialized = true;
         }
 
+        private void OnInventoryDataChanged(InventoryChangeData changeData)
+        {
+            RefreshUI();
+        }
+
         private void CreateSlotsFromPrefab()
         {
-            InventoryManager inventoryMgr = GetInventoryManager();
-            int slotCount = inventoryMgr?.MaxSlotCount ?? 24;
+            InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
+            int slotCount = inventoryDataMgr?.MaxSlotCount ?? 24;
             
             GameObject prefab = gameSceneuiRefs.InventorySlotPrefab;
 
@@ -307,7 +313,6 @@ namespace Nytherion.UI.Controllers
 
         public void OpenForShop()
         {
-            Debug.Log("[InventoryUI] 상점 열기 이벤트 수신!");
             if (equipmentPanel != null) equipmentPanel.SetActive(false);
             if (statsPanel != null) statsPanel.SetActive(false);
             Open();
@@ -315,14 +320,18 @@ namespace Nytherion.UI.Controllers
 
         public void RefreshUI()
         {
-            InventoryManager inventoryMgr = GetInventoryManager();
-            if (slotPool == null || inventoryMgr == null) return;
+            InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
+            if (slotPool == null || inventoryDataMgr == null)
+            {
+                Debug.LogWarning($"[InventoryUI] RefreshUI 실패 - slotPool: {slotPool?.Count ?? 0}, inventoryDataMgr: {inventoryDataMgr?.GetType().Name ?? "null"}");
+                return;
+            }
 
             for (int i = 0; i < slotPool.Count; i++)
             {
-                if (i < inventoryMgr.MaxSlotCount)
+                if (i < inventoryDataMgr.MaxSlotCount)
                 {
-                    var (item, count) = inventoryMgr.GetItemAt(i);
+                    var (item, count) = inventoryDataMgr.GetSlot(i);
                     slotPool[i].SetItem(item, count);
                 }
                 else
@@ -336,10 +345,10 @@ namespace Nytherion.UI.Controllers
         private void OnDestroy()
         {
             // 이벤트 구독 해제
-            InventoryManager inventoryMgr = GetInventoryManager();
-            if (inventoryMgr != null)
+            InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
+            if (inventoryDataMgr != null)
             {
-                inventoryMgr.OnInventoryUpdated -= RefreshUI;
+                inventoryDataMgr.OnDataChanged -= OnInventoryDataChanged;
             }
 
             EventManager eventMgr = GetEventManager();

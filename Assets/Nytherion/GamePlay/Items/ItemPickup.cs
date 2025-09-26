@@ -9,19 +9,19 @@ namespace Nytherion.GamePlay.Items
     public class ItemPickup : MonoBehaviour
     {
         public ItemData itemData;
-        private InventoryManager inventoryManager;
+        private InventoryDataManager inventoryDataManager;
 
         [Inject]
-        public void Construct(InventoryManager inventoryManager)
+        public void Construct(InventoryDataManager inventoryDataManager)
         {
-            this.inventoryManager = inventoryManager;
+            this.inventoryDataManager = inventoryDataManager;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag(Tags.Player))
             {
-                if (inventoryManager.AddItem(itemData))
+                if (inventoryDataManager.AddItem(itemData, 1))
                 {
                     Destroy(gameObject);
                 }

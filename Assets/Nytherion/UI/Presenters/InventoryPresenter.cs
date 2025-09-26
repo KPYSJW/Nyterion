@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Interfaces;
 using Nytherion.UI.Inventory;
 using VContainer;
 
@@ -14,7 +15,7 @@ namespace Nytherion.UI.Presenters
         [SerializeField] private GameObject slotPrefab;
 
         private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
-        private InventoryManager inventoryManager;
+        private InventoryDataManager inventoryDataManager;
         private bool isInitialized = false;
         private IObjectResolver container;
         private GameSceneUIRefs gameSceneuiRefs;
@@ -26,27 +27,27 @@ namespace Nytherion.UI.Presenters
             this.gameSceneuiRefs = gameSceneuiRefs;
         }
 
-        private InventoryManager GetInventoryManager()
+        private InventoryDataManager GetInventoryDataManager()
         {
-            if (inventoryManager == null && container != null)
+            if (inventoryDataManager == null && container != null)
             {
                 try
                 {
-                    inventoryManager = container.Resolve<InventoryManager>();
-                    Debug.Log("[InventoryPresenter] Successfully resolved InventoryManager");
+                    inventoryDataManager = container.Resolve<InventoryDataManager>();
+                    Debug.Log("[InventoryPresenter] Successfully resolved InventoryDataManager");
                 }
                 catch (VContainerException e)
                 {
-                    Debug.LogError($"[InventoryPresenter] Failed to resolve InventoryManager: {e.Message}");
+                    Debug.LogError($"[InventoryPresenter] Failed to resolve InventoryDataManager: {e.Message}");
                     return null;
                 }
             }
-            return inventoryManager;
+            return inventoryDataManager;
         }
 
         public void Initialize()
         {
-            InventoryManager manager = GetInventoryManager();
+            InventoryDataManager manager = GetInventoryDataManager();
             if (manager == null || isInitialized) return;
 
             // Clear any existing slots
@@ -71,39 +72,56 @@ namespace Nytherion.UI.Presenters
                 }
             }
 
-            manager.OnInventoryUpdated += UpdateSlotsUI;
+            manager.OnDataChanged += OnInventoryDataChanged;
             UpdateSlotsUI();
             isInitialized = true;
         }
 
         private void OnDestroy()
         {
-            InventoryManager manager = GetInventoryManager();
+            InventoryDataManager manager = GetInventoryDataManager();
             if (manager != null)
             {
-                manager.OnInventoryUpdated -= UpdateSlotsUI;
+                manager.OnDataChanged -= OnInventoryDataChanged;
             }
         }
 
         // Cleanup method to be called when the inventory is closed or destroyed
         public void Cleanup()
         {
-            InventoryManager manager = GetInventoryManager();
+            InventoryDataManager manager = GetInventoryDataManager();
             if (manager != null)
             {
-                manager.OnInventoryUpdated -= UpdateSlotsUI;
+                manager.OnDataChanged -= OnInventoryDataChanged;
             }
             isInitialized = false;
         }
 
+        private void OnInventoryDataChanged(InventoryChangeData changeData)
+        {
+            Debug.Log($"[InventoryPresenter] 인벤토리 데이터 변경 이벤트 수신: {changeData.changeType}, 아이템: {changeData.itemId}");
+            UpdateSlotsUI();
+        }
+
         private void UpdateSlotsUI()
         {
-            InventoryManager manager = GetInventoryManager();
-            if (manager == null || slotPool == null) return;
+            Debug.Log("[InventoryPresenter] UpdateSlotsUI 호출");
+            InventoryDataManager manager = GetInventoryDataManager();
+            if (manager == null || slotPool == null)
+            {
+                Debug.LogWarning($"[InventoryPresenter] UpdateSlotsUI 실패 - manager: {manager?.GetType().Name ?? "null"}, slotPool: {slotPool?.Count ?? 0}");
+                return;
+            }
+
+            Debug.Log($"[InventoryPresenter] 슬롯 업데이트 시작 - 슬롯 수: {slotPool.Count}");
 
             for (int i = 0; i < slotPool.Count; i++)
             {
-                var (item, count) = manager.GetItemAt(i);
+                var (item, count) = manager.GetSlot(i);
+                if (item != null)
+                {
+                    Debug.Log($"[InventoryPresenter] 슬롯 {i}: {item.name} x{count}");
+                }
                 slotPool[i].SetItem(item, count);
             }
         }

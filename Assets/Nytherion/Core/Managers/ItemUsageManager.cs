@@ -10,15 +10,15 @@ namespace Nytherion.Core.Managers
     public class ItemUsageManager : BaseManager
     {
 
-        private InventoryManager inventoryManager;
+        private InventoryDataManager inventoryDataManager;
         private PlayerHealth playerHealth;
 
         [Inject]
         public void Construct(
-            InventoryManager inventoryManager,
+            InventoryDataManager inventoryDataManager,
             PlayerHealth playerHealth)
         {
-            this.inventoryManager = inventoryManager;
+            this.inventoryDataManager = inventoryDataManager;
             this.playerHealth = playerHealth;
         }
 
@@ -33,7 +33,7 @@ namespace Nytherion.Core.Managers
                 return;
             }
 
-            if (inventoryManager.RemoveItem(consumable, 1))
+            if (inventoryDataManager.RemoveItem(consumable.ID, 1))
             {
                 ApplyItemEffect(consumable);
             }

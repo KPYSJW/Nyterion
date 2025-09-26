@@ -15,25 +15,25 @@ namespace Nytherion.UI.Inventory
         public EquipmentSlotType SlotType => slotType;
 
         private EquipmentDataManager equipmentDataManager;
-        private InventoryManager inventoryManager;
+        private InventoryDataManager inventoryDataManager;
 
         [Inject]
-        public void Construct(EquipmentDataManager equipmentDataManager, InventoryManager inventoryManager)
+        public void Construct(EquipmentDataManager equipmentDataManager, InventoryDataManager inventoryDataManager)
         {
             this.equipmentDataManager = equipmentDataManager;
-            this.inventoryManager = inventoryManager;
+            this.inventoryDataManager = inventoryDataManager;
         }
 
         private void Start()
         {
-            if (inventoryManager == null || equipmentDataManager == null)
+            if (inventoryDataManager == null || equipmentDataManager == null)
             {
                 var gameSceneScope = LifetimeScope.Find<GameSceneLifetimeScope>();
                 if (gameSceneScope != null)
                 {
-                    if (inventoryManager == null && gameSceneScope.Container.TryResolve<InventoryManager>(out var invManager))
+                    if (inventoryDataManager == null && gameSceneScope.Container.TryResolve<InventoryDataManager>(out var invManager))
                     {
-                        inventoryManager = invManager;
+                        inventoryDataManager = invManager;
                     }
 
                     if (equipmentDataManager == null && gameSceneScope.Container.TryResolve<EquipmentDataManager>(out var equipManager))
@@ -136,11 +136,11 @@ namespace Nytherion.UI.Inventory
                 var (itemToEquip, count) = sourceSlot.GetItemInfo();
                 if (itemToEquip == null) return;
 
-                if (inventoryManager.RemoveItemFromSlot(sourceSlot.SlotIndex, 1))
+                if (inventoryDataManager.RemoveItemFromSlot(sourceSlot.SlotIndex, 1))
                 {
                     if (!IsEmpty)
                     {
-                        inventoryManager.AddItem(CurrentItem, 1);
+                        inventoryDataManager.AddItem(CurrentItem, 1);
                     }
                     SetItem(itemToEquip, 1);
                 }
@@ -206,7 +206,7 @@ namespace Nytherion.UI.Inventory
         {
             if (IsEmpty) return;
 
-            if (inventoryManager.AddItem(CurrentItem, 1))
+            if (inventoryDataManager.AddItem(CurrentItem, 1))
             {
                 ClearSlot();
             }

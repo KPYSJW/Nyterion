@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Core.Interfaces
 {

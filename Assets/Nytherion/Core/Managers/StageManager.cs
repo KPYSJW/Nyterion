@@ -3,15 +3,15 @@ using Nytherion.GamePlay.Dungeon;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.Core.Data;
 
 namespace Nytherion.Core.Managers
 {
-    public class StageManager : MonoBehaviour
+    public class StageManager : BaseManager
     {
         [Header("스테이지 설정")]
         [Tooltip("게임 시작 시 로드할 가장 첫 번째 스테이지 데이터입니다.")]
         [SerializeField] private StageData startingStage;
-
 
         public StageData CurrentStage { get; private set; }
 
@@ -29,8 +29,9 @@ namespace Nytherion.Core.Managers
             this.dungeonManager = dungeonManager;
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
             CurrentStage = startingStage;
@@ -77,6 +78,16 @@ namespace Nytherion.Core.Managers
             {
                 dungeonManager?.RegenerateDungeon();
             }
+        }
+
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            // TODO: CurrentStage 정보 저장 구현
+        }
+
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            // TODO: CurrentStage 정보 로드 구현
         }
     }
 }
