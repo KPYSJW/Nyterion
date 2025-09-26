@@ -2,46 +2,175 @@ using UnityEngine;
 using Nytherion.Services;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
+using Nytherion.Core.Enums;
 using System.Collections;
 using Nytherion.UI.Inventory;
 using System.Collections.Generic;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.Core.Systems;
 
 namespace Nytherion.Core.Managers
 {
-    public class SaveLoadManager : MonoBehaviour, IInitializable
+    public class SaveLoadManager : BaseManager
     {
         private JsonSaveService saveService;
         private SaveData saveData;
         private bool isLoadingData = false;
         private bool hasLoadedData = false;
 
-        private IReadOnlyList<ISaveable> saveableEntities;
+        private bool isInitializationComplete = false;
 
-        [Inject]
-        public void Construct(
-            IReadOnlyList<ISaveable> saveableEntities)
+        private List<ISaveable> saveableEntities = new List<ISaveable>();
+
+        // 자동 저장 관련
+        private float autoSaveInterval = 30f; // 30초마다 자동 저장
+        private float lastSaveTime = 0f;
+
+        private bool preventAutoSave = false;
+        private const float SAVE_COOLDOWN = 1f; // 저장 간 최소 간격
+
+        private void CollectSaveableEntities()
         {
-            this.saveableEntities = saveableEntities;
+            saveableEntities.Clear();
+
+            // DataLifetimeScope에서 ISaveable 매니저들을 직접 찾기
+            if (DataLifetimeScope.Instance != null && DataLifetimeScope.Instance.Container != null)
+            {
+                var container = DataLifetimeScope.Instance.Container;
+
+                if (container.TryResolve<CurrencyDataManager>(out var currencyManager))
+                {
+                    saveableEntities.Add(currencyManager);
+                }
+
+                if (container.TryResolve<InventoryDataManager>(out var inventoryManager))
+                {
+                    saveableEntities.Add(inventoryManager);
+                }
+
+                if (container.TryResolve<EngravingManager>(out var engravingManager))
+                {
+                    saveableEntities.Add(engravingManager);
+                }
+
+                if (container.TryResolve<EquipmentDataManager>(out var equipmentManager))
+                {
+                    saveableEntities.Add(equipmentManager);
+                }
+
+                if (container.TryResolve<ShopManager>(out var shopManager))
+                {
+                    saveableEntities.Add(shopManager);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[SaveLoadManager] DataLifetimeScope.Instance 또는 Container가 null입니다.");
+            }
+
+            string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+            if (currentSceneName == "GameScene")
+            {
+                // GameScene에서만 GameSceneLifetimeScope 찾기 시도
+                var gameSceneScope = FindObjectOfType<GameSceneLifetimeScope>();
+                if (gameSceneScope != null && gameSceneScope.Container != null)
+                {
+                    var gameContainer = gameSceneScope.Container;
+
+                    if (gameContainer.TryResolve<QuickSlotManager>(out var quickSlotManager))
+                    {
+                        saveableEntities.Add(quickSlotManager);
+                    }
+                    else
+                    {
+                        var quickSlotManagerInScene = FindObjectOfType<QuickSlotManager>();
+                        if (quickSlotManagerInScene != null)
+                        {
+                            saveableEntities.Add(quickSlotManagerInScene);
+                        }
+                    }
+                }
+                else
+                {
+                    if (GameManager.IsVerboseLogging()) Debug.Log("[SaveLoadManager] GameScene에서 GameSceneLifetimeScope를 찾을 수 없어 QuickSlotManager를 직접 찾습니다.");
+                    var quickSlotManagerInScene = FindObjectOfType<QuickSlotManager>();
+                    if (quickSlotManagerInScene != null)
+                    {
+                        saveableEntities.Add(quickSlotManagerInScene);
+                    }
+                }
+            }
+            else
+            {
+                // GameScene이 아닌 경우 QuickSlotManager를 직접 찾기 시도 (있다면)
+                var quickSlotManagerInScene = FindObjectOfType<QuickSlotManager>();
+                if (quickSlotManagerInScene != null)
+                {
+                    saveableEntities.Add(quickSlotManagerInScene);
+                    if (GameManager.IsVerboseLogging()) Debug.Log($"[SaveLoadManager] {currentSceneName}에서 QuickSlotManager를 찾아 추가했습니다.");
+                }
+            }
+
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             saveService = new JsonSaveService();
         }
 
-        public void Initialize()
+        protected override void OnInitializeInternal()
         {
+            preventAutoSave = true;
+
+            CollectSaveableEntities();
             StartCoroutine(DelayedLoadCoroutine());
+            lastSaveTime = Time.time;
+        }
+
+        private void Update()
+        {
+            if (!isInitializationComplete || preventAutoSave) return;
+
+            // 자동 저장 체크
+            if (hasLoadedData && !isLoadingData && Time.time - lastSaveTime >= autoSaveInterval)
+            {
+                SaveGame();
+                lastSaveTime = Time.time;
+            }
         }
 
         private System.Collections.IEnumerator DelayedLoadCoroutine()
         {
             yield return null;
-            yield return new UnityEngine.WaitForSeconds(0.1f);
+
+            string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+            if (currentSceneName == "GameScene")
+            {
+                // GameScene에서만 GameSceneLifetimeScope 찾기 시도
+                var gameSceneScope = FindObjectOfType<GameSceneLifetimeScope>();
+                if (gameSceneScope != null && gameSceneScope.Container != null)
+                {
+                    if (GameManager.IsVerboseLogging()) Debug.Log("[SaveLoadManager] GameSceneLifetimeScope 초기화 확인됨, 로드 시작");
+                }
+                else
+                {
+                    if (GameManager.IsVerboseLogging()) Debug.Log("[SaveLoadManager] GameSceneLifetimeScope가 아직 준비되지 않았지만 로드 진행");
+                }
+            }
+            else
+            {
+                if (GameManager.IsVerboseLogging()) Debug.Log($"[SaveLoadManager] 현재 씬({currentSceneName})에서는 GameSceneLifetimeScope를 찾지 않고 바로 로드 진행");
+            }
 
             LoadGame();
+
+            yield return new WaitForSeconds(2f);
+            isInitializationComplete = true;
+            preventAutoSave = false;
         }
 
         public void LoadGameIfNeeded()
@@ -54,15 +183,61 @@ namespace Nytherion.Core.Managers
 
         public void SaveGame()
         {
-            if (isLoadingData) return;
+            if (isLoadingData)
+            {
+                return;
+            }
+
+            if (preventAutoSave)
+            {
+                return;
+            }
+
+            if (Time.time - lastSaveTime < SAVE_COOLDOWN)
+            {
+                return;
+            }
+
+            if (Application.isEditor && !Application.isPlaying)
+            {
+                return;
+            }
+
+            CollectSaveableEntities();
+
+            if (saveableEntities == null || saveableEntities.Count == 0)
+            {
+                return;
+            }
+
             if (saveData == null) saveData = new SaveData();
 
-
+            int successCount = 0;
             foreach (var entity in saveableEntities)
             {
-                entity.PopulateSaveData(saveData);
+                if (entity != null)
+                {
+                    try
+                    {
+                        entity.PopulateSaveData(saveData);
+                        successCount++;
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError($"[SaveLoadManager] {entity.GetType().Name} 저장 중 오류: {e.Message}");
+                    }
+                }
             }
-            saveService.Save(saveData);
+
+            try
+            {
+                saveService.Save(saveData);
+                lastSaveTime = Time.time;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[SaveLoadManager] SaveService.Save() 실패: {e.Message}");
+            }
         }
        
         public void LoadGame()
@@ -72,18 +247,57 @@ namespace Nytherion.Core.Managers
                 return;
             }
 
-            isLoadingData = true;
+            LoadGameInternal();
+        }
 
+        public void ForceLoadGame()
+        {
+            LoadGameInternal();
+        }
 
-            saveData = saveService.Load() ?? new SaveData();
-            foreach (var entity in saveableEntities)
+        private void LoadGameInternal()
+        {
+            CollectSaveableEntities();
+
+            if (saveableEntities == null || saveableEntities.Count == 0)
             {
-                entity.LoadFromSaveData(saveData);
+                Debug.LogWarning("[SaveLoadManager] LoadGame 실패 - ISaveable 엔티티가 없음");
+                return;
             }
 
-            isLoadingData = false;
-            hasLoadedData = true;
+            isLoadingData = true;
+            preventAutoSave = true;
 
+            try
+            {
+                saveData = saveService.Load();
+
+                if (saveData == null)
+                {
+                    if (GameManager.IsVerboseLogging()) Debug.Log("[SaveLoadManager] 저장 파일이 없어 새 게임으로 시작합니다");
+                    saveData = new SaveData();
+                    LoadNewGameData();
+                }
+                else
+                {
+                    if (GameManager.IsVerboseLogging()) Debug.Log("[SaveLoadManager] 기존 저장 파일을 로드합니다");
+                    LoadExistingGameData();
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[SaveLoadManager] LoadGame 중 예외 발생: {e.Message}");
+                if (saveData == null)
+                {
+                    saveData = new SaveData();
+                    LoadNewGameData();
+                }
+            }
+            finally
+            {
+                isLoadingData = false;
+                hasLoadedData = true;
+            }
 
             StartCoroutine(NotifyUIAfterLoad());
         }
@@ -99,9 +313,47 @@ namespace Nytherion.Core.Managers
             }
         }
 
+        private void LoadNewGameData()
+        {
+            foreach (var entity in saveableEntities)
+            {
+                if (entity != null)
+                {
+                    try
+                    {
+                        entity.LoadFromSaveData(null);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError($"[SaveLoadManager] {entity.GetType().Name} 새 게임 초기화 중 오류: {e.Message}");
+                    }
+                }
+            }
+        }
+
+        private void LoadExistingGameData()
+        {
+            int successCount = 0;
+            foreach (var entity in saveableEntities)
+            {
+                if (entity != null)
+                {
+                    try
+                    {
+                        entity.LoadFromSaveData(saveData);
+                        successCount++;
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError($"[SaveLoadManager] {entity.GetType().Name} 로드 중 오류: {e.Message}");
+                    }
+                }
+            }
+        }
+
         private void OnApplicationQuit()
         {
-            if (!isLoadingData)
+            if (!isLoadingData && hasLoadedData)
             {
                 SaveGame();
             }
@@ -109,7 +361,7 @@ namespace Nytherion.Core.Managers
 
         private void OnApplicationPause(bool pauseStatus)
         {
-            if (pauseStatus && !isLoadingData)
+            if (pauseStatus && !isLoadingData && hasLoadedData)
             {
                 SaveGame();
             }
@@ -117,11 +369,29 @@ namespace Nytherion.Core.Managers
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            if (!hasFocus && !isLoadingData)
+            if (!hasFocus && !isLoadingData && hasLoadedData)
             {
                 SaveGame();
             }
         }
 
+        protected override void OnDestroy()
+        {
+            if (!isLoadingData && hasLoadedData)
+            {
+                SaveGame();
+            }
+            base.OnDestroy();
+        }
+
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            // SaveLoadManager 자체는 저장할 데이터가 없음 (다른 매니저들의 저장을 관리)
+        }
+
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            // SaveLoadManager 자체는 로드할 데이터가 없음 (다른 매니저들의 로드를 관리)
+        }
     }
 }

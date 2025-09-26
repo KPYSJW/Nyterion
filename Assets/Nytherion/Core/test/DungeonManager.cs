@@ -113,8 +113,7 @@ namespace Nytherion.GamePlay.Dungeon
             {
                 portalCollider = portalTilemap.GetComponent<TilemapCollider2D>();
             }
-            roomFirstDungeonGenerator=GetComponentInChildren<RoomFirstDungeonGenerator>();
-          //  roomFirstDungeonGenerator.SetControllers(_worldmapController, _minimapGenerator);
+            roomFirstDungeonGenerator = GetComponentInChildren<RoomFirstDungeonGenerator>();
         }
 
         private void Start()
@@ -161,7 +160,6 @@ namespace Nytherion.GamePlay.Dungeon
         {
             if (_stageManager != null && _stageManager.CurrentStage != null)
             {
-               
                 roomFirstDungeonGenerator.dungeonData = _stageManager.CurrentStage.dungeonData;
                 roomFirstDungeonGenerator.DungeonStart();
             }
@@ -214,22 +212,15 @@ namespace Nytherion.GamePlay.Dungeon
 
         public void RegisterPortalPair(Vector3Int portalA, Vector3Int portalB)
         {
-            Debug.Log($"<color=cyan>[포탈 등록]</color> A: {portalA} <-> B: {portalB}");
-
             portalLinks[portalA] = portalB;
             portalLinks[portalB] = portalA;
         }
 
         public bool TryGetDestination(Vector3Int currentPortalPos, out Vector3Int destinationPos)
         {
-            Debug.Log($"[포탈 확인] 플레이어가 밟은 타일: {currentPortalPos}. 등록된 포탈 목록과 비교합니다.");
             if (portalLinks.Count == 0)
             {
                 Debug.LogError("[포탈 확인] DungeonManager에 등록된 포탈이 하나도 없습니다!");
-            }
-            foreach (var portal in portalLinks)
-            {
-                Debug.Log($"- 등록된 포탈: {portal.Key} -> {portal.Value}");
             }
             return portalLinks.TryGetValue(currentPortalPos, out destinationPos);
 

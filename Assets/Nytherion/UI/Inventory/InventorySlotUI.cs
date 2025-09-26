@@ -18,20 +18,23 @@ namespace Nytherion.UI.Inventory
 
         private EquipmentDataManager equipmentDataManager;
         private ItemUsageManager itemUsageManager;
-        private InventoryManager inventoryManager;
+        private InventoryDataManager inventoryDataManager;
         private ShopUI shopUI;
+        private QuickSlotManager quickSlotManager;
 
         [Inject]
         public void Construct(
             EquipmentDataManager equipmentDataManager,
             ItemUsageManager itemUsageManager,
-            InventoryManager inventoryManager,
-            ShopUI shopUI)
+            InventoryDataManager inventoryDataManager,
+            ShopUI shopUI,
+            QuickSlotManager quickSlotManager)
         {
             this.equipmentDataManager = equipmentDataManager;
             this.itemUsageManager = itemUsageManager;
-            this.inventoryManager = inventoryManager;
+            this.inventoryDataManager = inventoryDataManager;
             this.shopUI = shopUI;
+            this.quickSlotManager = quickSlotManager;
         }
         protected override void Awake()
         {
@@ -43,14 +46,14 @@ namespace Nytherion.UI.Inventory
 
         private void Start()
         {
-            if (inventoryManager == null || equipmentDataManager == null || itemUsageManager == null || shopUI == null)
+            if (inventoryDataManager == null || equipmentDataManager == null || itemUsageManager == null || shopUI == null || quickSlotManager == null)
             {
                 var gameSceneScope = LifetimeScope.Find<GameSceneLifetimeScope>();
                 if (gameSceneScope != null)
                 {
-                    if (inventoryManager == null && gameSceneScope.Container.TryResolve<InventoryManager>(out var invManager))
+                    if (inventoryDataManager == null && gameSceneScope.Container.TryResolve<InventoryDataManager>(out var invManager))
                     {
-                        inventoryManager = invManager;
+                        inventoryDataManager = invManager;
                     }
 
                     if (equipmentDataManager == null && gameSceneScope.Container.TryResolve<EquipmentDataManager>(out var equipManager))
@@ -66,6 +69,11 @@ namespace Nytherion.UI.Inventory
                     if (shopUI == null && gameSceneScope.Container.TryResolve<ShopUI>(out var shop))
                     {
                         shopUI = shop;
+                    }
+
+                    if (quickSlotManager == null && gameSceneScope.Container.TryResolve<QuickSlotManager>(out var quickManager))
+                    {
+                        quickSlotManager = quickManager;
                     }
                 }
             }
@@ -99,12 +107,12 @@ namespace Nytherion.UI.Inventory
                 return;
             }
             
-            if (inventoryManager == null)
+            if (inventoryDataManager == null)
             {
-                inventoryManager = FindObjectOfType<InventoryManager>();
-                if (inventoryManager == null)
+                inventoryDataManager = FindObjectOfType<InventoryDataManager>();
+                if (inventoryDataManager == null)
                 {
-                    Debug.LogError("[InventorySlotUI] InventoryManager not found. Cannot perform drop operation.");
+                    Debug.LogError("[InventorySlotUI] InventoryDataManager not found. Cannot perform drop operation.");
                     return;
                 }
             }
@@ -120,7 +128,7 @@ namespace Nytherion.UI.Inventory
 
             if (sourceSlot is InventorySlotUI inventorySourceSlot)
             {
-                inventoryManager.SwapItems(inventorySourceSlot.SlotIndex, this.SlotIndex);
+                inventoryDataManager.SwapItems(inventorySourceSlot.SlotIndex, this.SlotIndex);
             }
             else if (sourceSlot is EquipmentSlotUI equipmentSourceSlot)
             {
@@ -142,9 +150,9 @@ namespace Nytherion.UI.Inventory
 
                     equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, null);
 
-                    if (inventoryManager != null && inventoryManager.InventoryModel != null)
+                    if (inventoryDataManager != null && inventoryDataManager.InventoryModel != null)
                     {
-                        bool addSuccess = inventoryManager.InventoryModel.AddItemToSlot(itemToUnequip, 1, this.SlotIndex, true);
+                        bool addSuccess = inventoryDataManager.InventoryModel.AddItemToSlot(itemToUnequip, 1, this.SlotIndex, true);
                         
                         if (addSuccess && itemInThisSlot != null && 
                             equipmentSourceSlot.CanReceiveItem(itemInThisSlot as EquipmentData))
@@ -167,9 +175,17 @@ namespace Nytherion.UI.Inventory
 
                 if (this.IsEmpty)
                 {
+                    // 퀵슬롯에서 아이템 제거
                     quickSourceSlot.ClearSlot();
 
-                    inventoryManager.InventoryModel.AddItemToSlot(itemToMove, countToMove, this.SlotIndex);
+                    // QuickSlotManager에 변경사항 알림
+                    if (quickSlotManager != null)
+                    {
+                        quickSlotManager.UpdateSlotDataExternal(quickSourceSlot.SlotIndex, null, 0);
+                    }
+
+                    // 인벤토리에 아이템 추가
+                    inventoryDataManager.AddItemToSlot(itemToMove, countToMove, this.SlotIndex, true);
                 }
                 else
                 {
@@ -177,9 +193,17 @@ namespace Nytherion.UI.Inventory
 
                     if (quickSourceSlot.CanReceiveItem(itemInThisSlot))
                     {
+                        // 퀵슬롯에 현재 인벤토리 아이템 설정
                         quickSourceSlot.SetItem(itemInThisSlot, countInThisSlot);
 
-                        inventoryManager.InventoryModel.AddItemToSlot(itemToMove, countToMove, this.SlotIndex);
+                        // QuickSlotManager에 변경사항 알림
+                        if (quickSlotManager != null)
+                        {
+                            quickSlotManager.UpdateSlotDataExternal(quickSourceSlot.SlotIndex, itemInThisSlot, countInThisSlot);
+                        }
+
+                        // 인벤토리에 퀵슬롯 아이템 추가
+                        inventoryDataManager.AddItemToSlot(itemToMove, countToMove, this.SlotIndex, true);
                     }
                 }
 
@@ -219,7 +243,7 @@ namespace Nytherion.UI.Inventory
                     return;
                 }
 
-                if (inventoryManager.RemoveItemFromSlot(SlotIndex, 1))
+                if (inventoryDataManager.RemoveItemFromSlot(SlotIndex, 1))
                 {
                     EquipmentData previouslyEquipped = equipmentDataManager.GetEquipment(targetSlotType);
 
@@ -232,7 +256,7 @@ namespace Nytherion.UI.Inventory
 
                     if (previouslyEquipped != null)
                     {
-                        inventoryManager.AddItem(previouslyEquipped, 1);
+                        inventoryDataManager.AddItem(previouslyEquipped, 1);
                     }
                 }
             }

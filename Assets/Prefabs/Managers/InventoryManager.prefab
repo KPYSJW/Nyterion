@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7205fd6fe0aa96243905b9ec3a7f1419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSlotCount: 30
+  autoInitializeOnAwake: 0
+  maxSlotCount: 24

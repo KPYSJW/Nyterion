@@ -2,10 +2,11 @@ using UnityEngine;
 using System;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.Core.Data;
 
 namespace Nytherion.Core.Managers
 {
-    public class InputManager : MonoBehaviour, IInitializable
+    public class InputManager : BaseManager
     {
         public static InputManager Instance { get; private set; }
         private PlayerAction playerActions;
@@ -34,8 +35,10 @@ namespace Nytherion.Core.Managers
 
         public event Action onEngravingRotate;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -46,7 +49,7 @@ namespace Nytherion.Core.Managers
 
             playerActions = new PlayerAction();
         }
-        public void Initialize()
+        protected override void OnInitializeInternal()
         {
             playerActions.Player.Enable();
             playerActions.UI.Enable();
@@ -54,11 +57,11 @@ namespace Nytherion.Core.Managers
             {
                 OnPausePressed?.Invoke();
             };
-            playerActions.Player.Move.performed += ctx => 
+            playerActions.Player.Move.performed += ctx =>
             {
                 MoveInput = ctx.ReadValue<Vector2>();
             };
-            playerActions.Player.Move.canceled += ctx => 
+            playerActions.Player.Move.canceled += ctx =>
             {
                 MoveInput = Vector2.zero;
             };
@@ -88,7 +91,16 @@ namespace Nytherion.Core.Managers
             playerActions.Player.WorldMap.started += ctx => onMap?.Invoke();
 
             playerActions.EngravingUI.Rotate.performed += _ => onEngravingRotate?.Invoke();
+        }
 
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            // InputManager는 저장할 데이터가 없음
+        }
+
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            // InputManager는 로드할 데이터가 없음
         }
         private void OnEnable()
         {

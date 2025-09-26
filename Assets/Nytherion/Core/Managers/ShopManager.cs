@@ -47,7 +47,6 @@ namespace Nytherion.Core.Managers
                             continue;
                         }
 
-
                         var runtimeItems = shopDataAsset.itemsForSale?.Select(originalItem => {
                             return new ShopItemData
                             {
@@ -80,7 +79,6 @@ namespace Nytherion.Core.Managers
 
         public void RecordPurchase(string shopName, string shopItemId)
         {
-
             if (runtimeShopInventories.TryGetValue(shopName, out var items))
             {
                 var shopItem = items.FirstOrDefault(i => i.shopItemId == shopItemId);
@@ -172,14 +170,6 @@ namespace Nytherion.Core.Managers
 
                 if (!found)
                 {
-
-                    // 혹시 아이템 이름으로라도 찾아보기 (마지막 시도)
-                    foreach (var shopInventoryPair in runtimeShopInventories)
-                    {
-                        foreach (var targetItem in shopInventoryPair.Value)
-                        {
-                        }
-                    }
                 }
             }
 
@@ -196,7 +186,6 @@ namespace Nytherion.Core.Managers
                 (data, stocks) => data.shopStockData = stocks,
                 nameof(ShopManager)
             );
-
         }
 
         public override void LoadFromSaveData(SaveData saveData)

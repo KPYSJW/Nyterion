@@ -133,7 +133,11 @@ namespace Nytherion.UI.Inventory
 
         public void PopulateSaveData(SaveData saveData)
         {
-            if (saveData == null) return;
+            if (saveData == null)
+            {
+                Debug.LogWarning("[QuickSlotManager] PopulateSaveData: saveData가 null");
+                return;
+            }
 
             if (quickSlotItems == null || quickSlotItems.Length != slots.Length)
             {
@@ -141,11 +145,13 @@ namespace Nytherion.UI.Inventory
                 quickSlotItemCounts = new int[slots.Length];
             }
 
+            int itemCount = 0;
             for (int i = 0; i < slots.Length; i++)
             {
                 var (uiItem, uiCount) = slots[i].GetItemInfo();
                 quickSlotItems[i] = uiItem;
                 quickSlotItemCounts[i] = uiCount;
+                if (uiItem != null && uiCount > 0) itemCount++;
             }
 
             saveData.quickSlotData.Clear();
@@ -202,7 +208,14 @@ namespace Nytherion.UI.Inventory
         }
         public void LoadFromSaveData(SaveData saveData)
         {
-            if (saveData == null) return;
+            if (saveData == null)
+            {
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    slots[i].ClearSlot();
+                }
+                return;
+            }
 
             for (int i = 0; i < slots.Length; i++)
             {
@@ -236,9 +249,11 @@ namespace Nytherion.UI.Inventory
 
                 saveData.quickSlotData = entries;
             }
+           
 
             if (entries == null) return;
 
+            int loadedCount = 0;
             foreach (var entry in entries)
             {
                 if (entry.slotIndex < 0 || entry.slotIndex >= slots.Length) continue;
@@ -264,6 +279,7 @@ namespace Nytherion.UI.Inventory
                 }
 
                 slots[entry.slotIndex].SetItem(itemToPlace, entry.count);
+                loadedCount++;
             }
         }
     }

@@ -10,8 +10,8 @@ namespace Nytherion.Core.Managers
 {
     public class PuzzleManager : BaseManager, ISaveable
     {
-        private Dictionary<string, PuzzleAttemptData> _puzzleAttempts;
-        private EventManager _eventManager;
+        private Dictionary<string, PuzzleAttemptData> puzzleAttempts;
+        private EventManager eventManager;
 
         // 이벤트 정의
         public event Action<string, int> OnAttemptUsed; // puzzleId, remainingAttempts
@@ -22,13 +22,13 @@ namespace Nytherion.Core.Managers
         [Inject]
         public void Construct(EventManager eventManager)
         {
-            _eventManager = eventManager;
+            this.eventManager = eventManager;
         }
 
         public override void Initialize()
         {
             base.Initialize();
-            _puzzleAttempts = new Dictionary<string, PuzzleAttemptData>();
+            puzzleAttempts = new Dictionary<string, PuzzleAttemptData>();
             Debug.Log("<color=cyan>[PuzzleManager] 퍼즐 매니저 초기화 완료</color>");
         }
 
@@ -37,14 +37,14 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public void RegisterPuzzle(string puzzleId, PuzzleType puzzleType, int maxAttempts = 3)
         {
-            if (_puzzleAttempts.ContainsKey(puzzleId))
+            if (puzzleAttempts.ContainsKey(puzzleId))
             {
                 Debug.LogWarning($"[PuzzleManager] 이미 등록된 퍼즐입니다: {puzzleId}");
                 return;
             }
 
             PuzzleAttemptData puzzleData = new PuzzleAttemptData(puzzleId, puzzleType, maxAttempts);
-            _puzzleAttempts[puzzleId] = puzzleData;
+            puzzleAttempts[puzzleId] = puzzleData;
             Debug.Log($"<color=cyan>[PuzzleManager] 퍼즐 등록: {puzzleId} (최대 시도 횟수: {maxAttempts})</color>");
         }
 
@@ -53,13 +53,13 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public bool CanAttemptPuzzle(string puzzleId)
         {
-            if (!_puzzleAttempts.ContainsKey(puzzleId))
+            if (!puzzleAttempts.ContainsKey(puzzleId))
             {
                 Debug.LogError($"[PuzzleManager] 등록되지 않은 퍼즐: {puzzleId}");
                 return false;
             }
 
-            return _puzzleAttempts[puzzleId].CanAttempt();
+            return puzzleAttempts[puzzleId].CanAttempt();
         }
 
         /// <summary>
@@ -67,13 +67,13 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public bool UseAttempt(string puzzleId)
         {
-            if (!_puzzleAttempts.ContainsKey(puzzleId))
+            if (!puzzleAttempts.ContainsKey(puzzleId))
             {
                 Debug.LogError($"[PuzzleManager] 등록되지 않은 퍼즐: {puzzleId}");
                 return false;
             }
 
-            PuzzleAttemptData puzzleData = _puzzleAttempts[puzzleId];
+            PuzzleAttemptData puzzleData = puzzleAttempts[puzzleId];
             if (!puzzleData.CanAttempt())
             {
                 Debug.LogWarning($"[PuzzleManager] 퍼즐 시도 불가능: {puzzleId} (시도 횟수 소진)");
@@ -97,13 +97,13 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public void CompletePuzzle(string puzzleId)
         {
-            if (!_puzzleAttempts.ContainsKey(puzzleId))
+            if (!puzzleAttempts.ContainsKey(puzzleId))
             {
                 Debug.LogError($"[PuzzleManager] 등록되지 않은 퍼즐: {puzzleId}");
                 return;
             }
 
-            PuzzleAttemptData puzzleData = _puzzleAttempts[puzzleId];
+            PuzzleAttemptData puzzleData = puzzleAttempts[puzzleId];
             puzzleData.CompleteSuccess();
             OnPuzzleCompleted?.Invoke(puzzleId);
             Debug.Log($"<color=green>[PuzzleManager] 퍼즐 성공: {puzzleId}</color>");
@@ -114,13 +114,13 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public PuzzleAttemptData GetPuzzleData(string puzzleId)
         {
-            if (!_puzzleAttempts.ContainsKey(puzzleId))
+            if (!puzzleAttempts.ContainsKey(puzzleId))
             {
                 Debug.LogError($"[PuzzleManager] 등록되지 않은 퍼즐: {puzzleId}");
                 return null;
             }
 
-            return _puzzleAttempts[puzzleId];
+            return puzzleAttempts[puzzleId];
         }
 
         /// <summary>
@@ -128,13 +128,13 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public void ResetPuzzle(string puzzleId)
         {
-            if (!_puzzleAttempts.ContainsKey(puzzleId))
+            if (!puzzleAttempts.ContainsKey(puzzleId))
             {
                 Debug.LogError($"[PuzzleManager] 등록되지 않은 퍼즐: {puzzleId}");
                 return;
             }
 
-            _puzzleAttempts[puzzleId].Reset();
+            puzzleAttempts[puzzleId].Reset();
             OnPuzzleReset?.Invoke(puzzleId);
             Debug.Log($"<color=yellow>[PuzzleManager] 퍼즐 리셋: {puzzleId}</color>");
         }
@@ -144,13 +144,13 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public int GetRemainingAttempts(string puzzleId)
         {
-            if (!_puzzleAttempts.ContainsKey(puzzleId))
+            if (!puzzleAttempts.ContainsKey(puzzleId))
             {
                 Debug.LogError($"[PuzzleManager] 등록되지 않은 퍼즐: {puzzleId}");
                 return 0;
             }
 
-            return _puzzleAttempts[puzzleId].remainingAttempts;
+            return puzzleAttempts[puzzleId].remainingAttempts;
         }
 
         /// <summary>
@@ -158,12 +158,12 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public bool IsPuzzleCompleted(string puzzleId)
         {
-            if (!_puzzleAttempts.ContainsKey(puzzleId))
+            if (!puzzleAttempts.ContainsKey(puzzleId))
             {
                 return false;
             }
 
-            return _puzzleAttempts[puzzleId].isCompleted;
+            return puzzleAttempts[puzzleId].isCompleted;
         }
 
         /// <summary>
@@ -171,42 +171,45 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public bool IsPuzzleFailed(string puzzleId)
         {
-            if (!_puzzleAttempts.ContainsKey(puzzleId))
+            if (!puzzleAttempts.ContainsKey(puzzleId))
             {
                 return false;
             }
 
-            return _puzzleAttempts[puzzleId].isFailed;
+            return puzzleAttempts[puzzleId].isFailed;
         }
 
-        // ISaveable 구현
+        // ISaveable 구현 - 나중에 사용 예정으로 주석 처리
         public override void PopulateSaveData(SaveData saveData)
         {
-            Dictionary<string, PuzzleAttemptData> puzzleSaveData = new Dictionary<string, PuzzleAttemptData>();
+            // 퍼즐 시스템 비활성화로 인해 주석 처리
+            /*
+            saveData.puzzleAttempts = new Dictionary<string, PuzzleAttemptData>();
 
-            foreach (var kvp in _puzzleAttempts)
+            foreach (var kvp in puzzleAttempts)
             {
-                puzzleSaveData[kvp.Key] = kvp.Value;
+                saveData.puzzleAttempts[kvp.Key] = kvp.Value;
             }
 
-            // SaveData에 퍼즐 데이터 저장 (SaveData 클래스에 필드 추가 필요)
-            // saveData.puzzleAttempts = puzzleSaveData;
-            Debug.Log($"[PuzzleManager] 퍼즐 데이터 저장: {puzzleSaveData.Count}개 퍼즐");
+            Debug.Log($"[PuzzleManager] 퍼즐 데이터 저장: {saveData.puzzleAttempts.Count}개 퍼즐");
+            */
         }
 
         public override void LoadFromSaveData(SaveData saveData)
         {
-            // SaveData에서 퍼즐 데이터 로드 (SaveData 클래스에 필드 추가 필요)
-            // if (saveData.puzzleAttempts != null)
-            // {
-            //     _puzzleAttempts = saveData.puzzleAttempts;
-            //     Debug.Log($"[PuzzleManager] 퍼즐 데이터 로드: {_puzzleAttempts.Count}개 퍼즐");
-            // }
-            // else
-            // {
-            //     _puzzleAttempts = new Dictionary<string, PuzzleAttemptData>();
-            //     Debug.Log("[PuzzleManager] 새로운 퍼즐 데이터 시작");
-            // }
+            // 퍼즐 시스템 비활성화로 인해 주석 처리
+            /*
+            if (saveData.puzzleAttempts != null)
+            {
+                puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(saveData.puzzleAttempts);
+                Debug.Log($"[PuzzleManager] 퍼즐 데이터 로드: {puzzleAttempts.Count}개 퍼즐");
+            }
+            else
+            {
+                puzzleAttempts = new Dictionary<string, PuzzleAttemptData>();
+                Debug.Log("[PuzzleManager] 새로운 퍼즐 데이터 시작");
+            }
+            */
         }
 
         protected override void OnDestroy()

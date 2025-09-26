@@ -40,10 +40,6 @@ namespace Nytherion.UI.Map
             {
                 Debug.LogWarning("[WorldmapController] DungeonManager가 주입되지 않았습니다. 던전 관련 기능이 작동하지 않습니다.");
             }
-            else
-            {
-                Debug.Log("[WorldmapController] DungeonManager가 성공적으로 주입되었습니다.");
-            }
         }
         private void Awake()
         {
@@ -171,16 +167,12 @@ namespace Nytherion.UI.Map
         /// </summary>
         private void UpdatePlayerIconPosition()
         {
-        
             if (dungeonManager == null) return;
 
-          
             RoomFirstDungeonGenerator.Room currentPlayerRoom = dungeonManager.CurrentPlayerRoom;
 
-          
             if (currentPlayerRoom != null && roomIconMap.TryGetValue(currentPlayerRoom.gridPos, out RectTransform roomIcon))
             {
-            
                 playerIcon.anchoredPosition = roomIcon.anchoredPosition;
             }
         }

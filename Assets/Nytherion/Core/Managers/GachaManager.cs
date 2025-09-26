@@ -5,6 +5,7 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Data;
+using Nytherion.Core.Enums;
 using VContainer;
 using VContainer.Unity;
 
@@ -24,15 +25,15 @@ namespace Nytherion.Core.Managers
         [Header("각인 뽑기 테이블")]
         [SerializeField] private GachaTableSO engravingGachaTable;
 
-        private CurrencyManager currencyManager;
-        private InventoryManager inventoryManager;
+        private CurrencyDataManager currencyDataManager;
+        private InventoryDataManager inventoryDataManager;
         private EngravingManager engravingManager;
 
        [Inject]
-        public void Construct(CurrencyManager currencyManager, InventoryManager inventoryManager, EngravingManager engravingManager)
+        public void Construct(CurrencyDataManager currencyDataManager, InventoryDataManager inventoryDataManager, EngravingManager engravingManager)
         {
-            this.currencyManager = currencyManager;
-            this.inventoryManager = inventoryManager;
+            this.currencyDataManager = currencyDataManager;
+            this.inventoryDataManager = inventoryDataManager;
             this.engravingManager = engravingManager;
         }
         public override void Initialize()
@@ -53,19 +54,19 @@ namespace Nytherion.Core.Managers
         public List<ScriptableObject> TryDrawItems(GachaType type, int count)
         {
 
-            if (currencyManager.GetCurrency(CurrencyType.Token) < count)
+            if (currencyDataManager.GetCurrency(CurrencyType.Token) < count)
             {
-                Debug.LogError($"[GachaManager] 토큰 부족. 현재 토큰: {currencyManager.GetCurrency(CurrencyType.Token)}, 필요 토큰: {count}");
+                Debug.LogError($"[GachaManager] 토큰 부족. 현재 토큰: {currencyDataManager.GetCurrency(CurrencyType.Token)}, 필요 토큰: {count}");
                 return null;
             }
 
-            if (type == GachaType.Weapon && count > 1 && inventoryManager.IsFull)
+            if (type == GachaType.Weapon && count > 1 && inventoryDataManager.IsFull())
             {
                 Debug.LogError("[GachaManager] 인벤토리가 가득 찼습니다.");
                 return null;
             }
 
-            currencyManager.SpendCurrency(CurrencyType.Token, count);
+            currencyDataManager.SpendCurrency(CurrencyType.Token, count);
 
             GachaTableSO currentTable = (type == GachaType.Weapon) ? weaponGachaTable : engravingGachaTable;
 
@@ -99,7 +100,7 @@ namespace Nytherion.Core.Managers
         {
             if (item is WeaponData weapon)
             {
-                inventoryManager.AddItem(weapon);
+                inventoryDataManager.AddItem(weapon);
             }
             else if (item is EngravingData engraving)
             {

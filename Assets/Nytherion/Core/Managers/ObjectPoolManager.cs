@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.Core.Data;
 
 namespace Nytherion.Core.Managers
 {
-    public class ObjectPoolManager : MonoBehaviour
+    public class ObjectPoolManager : BaseManager
     {
         public static ObjectPoolManager Instance { get; private set; }
 
@@ -27,17 +28,22 @@ namespace Nytherion.Core.Managers
             this.container = container;
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+        }
 
+        protected override void OnInitializeInternal()
+        {
             poolDictionary = new Dictionary<string, Queue<GameObject>>();
             foreach (Pool pool in pools)
             {
                 if (pool.prefab == null)
                 {
-                    continue; 
+                    continue;
                 }
                 Queue<GameObject> objectPool = new Queue<GameObject>();
                 for (int i = 0; i < pool.size; i++)
@@ -88,6 +94,16 @@ namespace Nytherion.Core.Managers
 
             objectToReturn.SetActive(false);
             poolDictionary[tag].Enqueue(objectToReturn);
+        }
+
+        public override void PopulateSaveData(SaveData saveData)
+        {
+            // ObjectPoolManager는 저장할 데이터가 없음 (런타임 풀 관리)
+        }
+
+        public override void LoadFromSaveData(SaveData saveData)
+        {
+            // ObjectPoolManager는 로드할 데이터가 없음 (런타임 풀 관리)
         }
     }
 }

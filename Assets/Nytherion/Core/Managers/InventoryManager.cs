@@ -11,7 +11,6 @@ namespace Nytherion.Core.Managers
 {
     public class InventoryManager : BaseManager
     {
-
         [Header("Inventory Settings")]
         [SerializeField] private int maxSlotCount = 24;
 

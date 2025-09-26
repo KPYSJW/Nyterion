@@ -308,7 +308,6 @@ namespace Nytherion.GamePlay.Dungeon
             HashSet<Vector2Int> portalPositions = new HashSet<Vector2Int>();
             List<Tuple<Room, Room>> connections = new List<Tuple<Room, Room>>();
             HashSet<Tuple<Vector2Int, Vector2Int>> connectionsMade = new HashSet<Tuple<Vector2Int, Vector2Int>>();
-            Debug.Log($"[포탈 생성 시작] 총 {roomGrid.Count}개의 방을 연결 시도합니다.");
             foreach (Room roomA in roomGrid.Values)
             {
                 foreach (Vector2Int direction in WallGenerator.Direction2D.cardinalDirectionsList)
@@ -330,7 +329,6 @@ namespace Nytherion.GamePlay.Dungeon
                         {
                             Vector3Int centerA = (Vector3Int)portalTilesA[portalTilesA.Count / 2];
                             Vector3Int centerB = (Vector3Int)portalTilesB[portalTilesB.Count / 2];
-                            Debug.Log($"<color=yellow>[이웃 발견!]</color> {roomA.gridPos}의 이웃으로 {neighborGridPos}를 찾았습니다.");
                             _dungeonManager?.RegisterPortalPair(centerA, centerB);
                             connections.Add(Tuple.Create(roomA, roomB));
                         }
@@ -467,16 +465,12 @@ namespace Nytherion.GamePlay.Dungeon
  
                 if (PruneConnectionsToCreateDeadEnds(candidatePositions, requiredDeadEnds))
                 {
-  
-                    Debug.Log($"[던전 생성] {i + 1}번의 시도 끝에 성공적인 던전 구조를 찾았습니다.");
                     return candidatePositions;
                 }
        
             }
 
          
-            Debug.LogError($"[던전 생성] {maxAttempts}번 시도했지만 필요한 막다른 길({requiredDeadEnds}개)을 가진 구조 생성에 실패했습니다. 마지막 시도 결과를 사용합니다.");
-           
             finalPositions = SelectConnectedGridPositions(gridSize);
             PruneConnectionsToCreateDeadEnds(finalPositions, requiredDeadEnds); // 최선의 노력
             return finalPositions;

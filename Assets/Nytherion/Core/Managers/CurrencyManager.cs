@@ -4,13 +4,13 @@ using System;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Utils;
+using Nytherion.Core.Enums;
 using VContainer;
 using VContainer.Unity;
 using TMPro;
 
 namespace Nytherion.Core.Managers
 {
-    public enum CurrencyType { Gold = 0, Token = 1 }
     public class CurrencyManager : BaseManager
     {
         private Dictionary<CurrencyType, int> currencies = new();

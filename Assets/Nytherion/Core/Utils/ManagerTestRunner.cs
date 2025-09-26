@@ -1,6 +1,7 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Data;
+using Nytherion.Core.Enums;
 using System.Collections.Generic;
 
 namespace Nytherion.Core.Utils
