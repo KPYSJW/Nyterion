@@ -304,58 +304,15 @@ namespace Nytherion.GamePlay.Dungeon
         }
 
 
-
-        /*private (HashSet<Vector2Int>, List<Tuple<Room, Room>>) ConnectRoomsAndCreatePortals(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> allFloorPositions)
-        {
-            HashSet<Vector2Int> portalPositions = new HashSet<Vector2Int>();
-            List<Tuple<Room, Room>> connections = new List<Tuple<Room, Room>>();
-            HashSet<Tuple<Vector2Int, Vector2Int>> connectionsMade = new HashSet<Tuple<Vector2Int, Vector2Int>>();
-            foreach (Room roomA in roomGrid.Values)
-            {
-                foreach (Vector2Int direction in WallGenerator.Direction2D.cardinalDirectionsList)
-                {
-                    Vector2Int neighborGridPos = roomA.gridPos + direction;
-                    if (roomGrid.TryGetValue(neighborGridPos, out Room roomB))
-                    {
-
-
-                        Tuple<Vector2Int, Vector2Int> connectionTuple = (roomA.gridPos.x < roomB.gridPos.x || (roomA.gridPos.x == roomB.gridPos.x && roomA.gridPos.y < roomB.gridPos.y))
-            ? Tuple.Create(roomA.gridPos, roomB.gridPos) : Tuple.Create(roomB.gridPos, roomA.gridPos);
-
-                        if (connectionsMade.Contains(connectionTuple)) continue;
-
-                        List<Vector2Int> portalTilesA = FindBestPortalTiles(roomFloorData[roomA], direction, allFloorPositions);
-                        List<Vector2Int> portalTilesB = FindBestPortalTiles(roomFloorData[roomB], -direction, allFloorPositions);
-
-                        if (portalTilesA.Count > 0 && portalTilesB.Count > 0)
-                        {
-                            Vector3Int centerA = (Vector3Int)portalTilesA[portalTilesA.Count / 2];
-                            Vector3Int centerB = (Vector3Int)portalTilesB[portalTilesB.Count / 2];
-                            _dungeonManager?.RegisterPortalPair(centerA, centerB);
-                            connections.Add(Tuple.Create(roomA, roomB));
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"[던전 생성] 포탈 연결 실패: {roomA.gridPos}와 {roomB.gridPos} 사이의 적절한 포탈 위치를 찾지 못했습니다.");
-                        }
-
-
-                        portalPositions.UnionWith(portalTilesA);
-                        portalPositions.UnionWith(portalTilesB);
-                        connectionsMade.Add(connectionTuple);
-                    }
-                }
-            }
-            return (portalPositions, connections);
-        }*/
-
         private (HashSet<Vector2Int>, List<Tuple<Room, Room>>) ConnectRoomsAndCreatePortals(Dictionary<Vector2Int, Room> roomGrid, Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> allFloorPositions)
         {
             var portalPositions = new HashSet<Vector2Int>();
             var finalConnections = new List<Tuple<Room, Room>>();
             var connectionsMade = new HashSet<Tuple<Vector2Int, Vector2Int>>();
 
-            // 1. 모든 방을 순회하며 '초기 설계도'상의 이웃을 찾는다 (이래야 모든 방이 연결됨)
+            const int portalWidth = 3;
+            const int requiredSpace = portalWidth + 2; // 포탈(3) + 양옆 여유(1+1) = 5
+
             foreach (Room roomA in roomGrid.Values)
             {
                 foreach (Vector2Int direction in WallGenerator.Direction2D.cardinalDirectionsList)
@@ -365,53 +322,65 @@ namespace Nytherion.GamePlay.Dungeon
                     {
                         var connectionTuple = (roomA.gridPos.x < roomB.gridPos.x || (roomA.gridPos.x == roomB.gridPos.x && roomA.gridPos.y < roomB.gridPos.y))
                             ? Tuple.Create(roomA.gridPos, roomB.gridPos) : Tuple.Create(roomB.gridPos, roomA.gridPos);
+
                         if (connectionsMade.Contains(connectionTuple)) continue;
 
-                        // --- 여기가 핵심! 두 방의 '가장 가까운 벽'을 직접 찾는다 ---
-                        HashSet<Vector2Int> floorA = roomFloorData[roomA];
-                        HashSet<Vector2Int> floorB = roomFloorData[roomB];
+                       
 
-                        // A방의 벽 타일 후보들 (A방 바닥 타일 바로 옆 칸들)
-                        var wallCandidatesA = floorA.Select(p => p + direction).Where(p => !floorA.Contains(p));
-                        // B방의 벽 타일 후보들
-                        var wallCandidatesB = floorB.Select(p => p - direction).Where(p => !floorB.Contains(p));
+                        // 1. 각 방의 경계 벽들을 찾습니다.
+                        HashSet<Vector2Int> wallsA = new HashSet<Vector2Int>();
+                        foreach (var pos in roomFloorData[roomA]) if (!roomFloorData[roomA].Contains(pos + direction)) wallsA.Add(pos + direction);
 
-                        Vector2Int portalPointA = Vector2Int.zero;
-                        Vector2Int portalPointB = Vector2Int.zero;
-                        float minSqrDistance = float.MaxValue;
+                        HashSet<Vector2Int> wallsB = new HashSet<Vector2Int>();
+                        foreach (var pos in roomFloorData[roomB]) if (!roomFloorData[roomB].Contains(pos - direction)) wallsB.Add(pos - direction);
 
-                        // 모든 벽 후보들을 비교해서, 서로 가장 가까운 벽 타일 한 쌍을 찾는다.
-                        foreach (var wallA in wallCandidatesA)
+                        Vector2Int perpendicularDir = (direction.x == 0) ? Vector2Int.right : Vector2Int.up;
+
+                        // 2. 각 방에서 포탈을 놓을 수 있는 '좋은 위치' 후보들을 모두 찾습니다.
+                        List<Vector2Int> candidatesA = FindPortalCandidates(wallsA, perpendicularDir, requiredSpace);
+                        List<Vector2Int> candidatesB = FindPortalCandidates(wallsB, perpendicularDir, requiredSpace);
+
+                        Vector2Int centerA, centerB;
+
+                        // 3. 양쪽 방 모두 '좋은 위치'를 찾았을 경우, 각자 최적의 위치를 선택합니다.
+                        if (candidatesA.Count > 0 && candidatesB.Count > 0)
                         {
-                            foreach (var wallB in wallCandidatesB)
+                            centerA = FindClosestCandidate(candidatesA, roomB.center);
+                            centerB = FindClosestCandidate(candidatesB, roomA.center);
+                        }
+                        // 4. '좋은 위치'를 찾지 못했다면, 안전장치(가장 가까운 두 점)를 가동합니다.
+                        else
+                        {
+                            float minSqrDist = float.MaxValue;
+                            Vector2Int closestA = Vector2Int.zero, closestB = Vector2Int.zero;
+                            foreach (var wallA in wallsA)
                             {
-                                float sqrDist = (wallB - wallA).sqrMagnitude;
-                                if (sqrDist < minSqrDistance)
+                                foreach (var wallB in wallsB)
                                 {
-                                    minSqrDistance = sqrDist;
-                                    portalPointA = wallA;
-                                    portalPointB = wallB;
+                                    float sqrDist = (wallA - wallB).sqrMagnitude;
+                                    if (sqrDist < minSqrDist)
+                                    {
+                                        minSqrDist = sqrDist;
+                                        closestA = wallA;
+                                        closestB = wallB;
+                                    }
                                 }
                             }
+                            centerA = closestA;
+                            centerB = closestB;
                         }
 
-                        // 가장 가까운 벽 한 쌍을 찾았으면 포탈을 생성하고 등록한다.
-                        if (minSqrDistance != float.MaxValue)
+                        // 5. 최종 위치에 포탈을 생성합니다.
+                        if (centerA != Vector2Int.zero && centerB != Vector2Int.zero)
                         {
-                            _dungeonManager?.RegisterPortalPair((Vector3Int)portalPointA, (Vector3Int)portalPointB);
+                            _dungeonManager?.RegisterPortalPair((Vector3Int)centerA, (Vector3Int)centerB);
 
-                            // A방 포탈 그리기
-                            Vector2Int spanDirA = (direction.x == 0) ? Vector2Int.right : Vector2Int.up;
-                            portalPositions.Add(portalPointA);
-                            portalPositions.Add(portalPointA - spanDirA);
-                            portalPositions.Add(portalPointA + spanDirA);
-
-                            // B방 포탈 그리기
-                            Vector2Int spanDirB = (direction.x == 0) ? Vector2Int.right : Vector2Int.up;
-                            portalPositions.Add(portalPointB);
-                            portalPositions.Add(portalPointB - spanDirB);
-                            portalPositions.Add(portalPointB + spanDirB);
-
+                            Vector2Int spanDir = (direction.x == 0) ? Vector2Int.right : Vector2Int.up;
+                            for (int i = -(portalWidth - 1) / 2; i <= (portalWidth - 1) / 2; i++)
+                            {
+                                portalPositions.Add(centerA + spanDir * i);
+                                portalPositions.Add(centerB + spanDir * i);
+                            }
                             finalConnections.Add(Tuple.Create(roomA, roomB));
                         }
 
@@ -420,6 +389,50 @@ namespace Nytherion.GamePlay.Dungeon
                 }
             }
             return (portalPositions, finalConnections);
+        }
+
+        
+        /// 벽 후보들 중에서 포탈을 놓기에 충분한 공간(예: 5칸)이 확보되는 모든 중앙 지점을 찾아 리스트로 반환합니다.
+        private List<Vector2Int> FindPortalCandidates(HashSet<Vector2Int> walls, Vector2Int perpendicularDir, int requiredLength)
+        {
+            var candidates = new List<Vector2Int>();
+            int margin = (requiredLength - 1) / 2;
+
+            foreach (var wall in walls)
+            {
+                bool hasSpace = true;
+                for (int i = 1; i <= margin; i++)
+                {
+                    if (!walls.Contains(wall + perpendicularDir * i) || !walls.Contains(wall - perpendicularDir * i))
+                    {
+                        hasSpace = false;
+                        break;
+                    }
+                }
+                if (hasSpace)
+                {
+                    candidates.Add(wall);
+                }
+            }
+            return candidates;
+        }
+
+        /// 후보 위치 리스트 중에서 특정 목표 지점과 가장 가까운 위치를 찾아 반환합니다.
+        private Vector2Int FindClosestCandidate(List<Vector2Int> candidates, Vector2 targetPosition)
+        {
+            Vector2Int closest = Vector2Int.zero;
+            float minSqrDist = float.MaxValue;
+
+            foreach (var candidate in candidates)
+            {
+                float sqrDist = ((Vector2)candidate - targetPosition).sqrMagnitude;
+                if (sqrDist < minSqrDist)
+                {
+                    minSqrDist = sqrDist;
+                    closest = candidate;
+                }
+            }
+            return closest;
         }
 
         private List<PlacedObstacleData> PlaceObstacles(Dictionary<Room, HashSet<Vector2Int>> roomFloorData, HashSet<Vector2Int> portalPositions, HashSet<Vector2Int> allFloorTiles)
