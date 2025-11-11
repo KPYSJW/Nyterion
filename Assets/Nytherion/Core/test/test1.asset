@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742e9e1339086c94b85fd539b07b2450, type: 3}
   m_Name: test1
   m_EditorClassIdentifier: 
-  desiredNumberOfRooms: 6
+  desiredNumberOfRooms: 5
   minRoomSize: {x: 20, y: 20}
-  maxRoomSize: {x: 40, y: 40}
+  maxRoomSize: {x: 20, y: 20}
   compoundRoomChance: 1
   numberOfShopRooms: 1
   numberOfItemRooms: 1

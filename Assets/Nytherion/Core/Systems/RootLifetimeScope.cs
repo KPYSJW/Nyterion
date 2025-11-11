@@ -10,6 +10,7 @@ using Nytherion.Core.Interfaces;
 using VContainer;
 using VContainer.Unity;
 
+
 public class RootLifetimeScope : LifetimeScope
 {
     public static RootLifetimeScope Instance { get; private set; }
@@ -51,10 +52,11 @@ public class RootLifetimeScope : LifetimeScope
     {
         if (scene.name == "Boot")
         {
+            var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
             // DataLifetimeScope 생성
             CreateDataLifetimeScope();
 
-            var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
+            
             sceneTransitionManager.LoadTargetScene("Title");
         }
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -71,7 +73,8 @@ public class RootLifetimeScope : LifetimeScope
 
         if (dataLifetimeScopePrefab != null && DataLifetimeScope.Instance == null)
         {
-            var dataScope = Instantiate(dataLifetimeScopePrefab);
+            //var dataScope = Instantiate(dataLifetimeScopePrefab);
+            var dataScope = Instantiate(dataLifetimeScopePrefab, this.transform);
         }
         else if (dataLifetimeScopePrefab == null)
         {

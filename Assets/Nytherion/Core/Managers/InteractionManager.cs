@@ -27,7 +27,7 @@ namespace Nytherion.Core.Managers
             InputManager inputManager,
             EventManager eventManager,
             ShopUI shopUI,
-            GachaUIController gachaUIController,
+          GachaUIController gachaUIController,
             EngravingUIController engravingUIController,
             PlayerController playerController)
         {
@@ -37,6 +37,7 @@ namespace Nytherion.Core.Managers
             this.gachaUIController = gachaUIController;
             this.engravingUIController = engravingUIController;
             playerTransform = playerController.transform;
+
         }
 
         protected override void OnInitializeInternal()

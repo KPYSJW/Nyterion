@@ -30,7 +30,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private GachaManager gachaManagerPrefab;
     [SerializeField] private GachaUIController gachaUIControllerPrefab;
     [SerializeField] private InteractionManager interactionManagerPrefab;
-    [SerializeField] private StageManager stageManagerPrefab;
+    //[SerializeField] private StageManager stageManagerPrefab;
     [SerializeField] private DungeonManager dungeonManagerPrefab;
     [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
     [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
@@ -168,6 +168,7 @@ public class GameSceneLifetimeScope : LifetimeScope
             RegisterDataManagerIfExists<EngravingManager>(builder);
             RegisterDataManagerIfExists<EquipmentDataManager>(builder);
             RegisterDataManagerIfExists<ShopManager>(builder);
+            RegisterDataManagerIfExists<StageManager>(builder);
 
             // RegisterDataManagerIfExists<PuzzleManager>(builder); // 나중에 사용 예정
             // PlayerManager는 GameScene에서만 필요하므로 여기서 직접 관리
@@ -221,9 +222,9 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInNewPrefab(stageManagerPrefab, Lifetime.Singleton)
+        /*builder.RegisterComponentInNewPrefab(stageManagerPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
-                .AsSelf();
+                .AsSelf();*/
 
         builder.RegisterComponentInHierarchy<WorldmapController>();
         builder.RegisterComponentInHierarchy<MinimapTileGenerator>();

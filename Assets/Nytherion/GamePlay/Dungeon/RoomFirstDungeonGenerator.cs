@@ -610,7 +610,7 @@ namespace Nytherion.GamePlay.Dungeon
 
                 if (!connectionPruned)
                 {
-                    Debug.LogWarning("가지치기 중단: 더 이상 안전하게 제거할 수 있는 방 연결이 없습니다.");
+                   // Debug.LogWarning("가지치기 중단: 더 이상 안전하게 제거할 수 있는 방 연결이 없습니다.");
                     return false;
                 }
             }
