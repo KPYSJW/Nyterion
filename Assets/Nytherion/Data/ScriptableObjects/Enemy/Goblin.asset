@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Goblin
   m_EditorClassIdentifier: 
   enemyName: Goblin
-  maxHealth: 10
-  moveSpeed: 0
-  damageAmount: 0
-  dropChance: 0
-  goldDropAmount: 0
   enemyPrefab: {fileID: 6406644339438500767, guid: 17fde502d382da64a805f35f8d770687, type: 3}
+  maxHealth: 30
+  moveSpeed: 2.2
+  damageAmount: 8
+  detectRange: 6
+  combatType: 0
+  hybridSwitchDistance: 2.5
+  dropChance: 0.3
+  goldDropAmount: 5

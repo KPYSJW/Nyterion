@@ -1,3 +1,6 @@
+using Nytherion.Core.Interfaces;
+using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.GamePlay.Characters.Player;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat.Behaviors
@@ -10,10 +13,17 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         
         [Tooltip("공격 쿨다운 시간(초)")]
         [SerializeField] private float attackCoolDown = 1f;
-        
+        [SerializeField] private float fallbackDamage=10;
         private float lastAttackTime = -999f;
+        private EnemyBase enemyBase;
 
         public float AttackCoolDown => Mathf.Clamp01((Time.time - lastAttackTime) / attackCoolDown);
+
+        private void Awake() 
+        {
+            enemyBase=GetComponent<EnemyBase>();    
+        }
+
         public bool IsInAttackRange(Transform target)
         {
             if (target == null) return false;
@@ -27,14 +37,40 @@ namespace Nytherion.GamePlay.Combat.Behaviors
             
             bool canAttack = Time.time - lastAttackTime >= attackCoolDown && IsInAttackRange(target);
             
-            if (canAttack)
-            {
-                lastAttackTime = Time.time;
-                
-                // TODO: 실제 공격 로직 구현 (데미지 처리 등)
-            }
+            if (!canAttack)return false;
+            
+            lastAttackTime = Time.time;
+            ApplyDamage(target);    
+            
             
             return canAttack;
+        }
+
+        private void ApplyDamage(Transform target)
+        {
+            float damage=GetDamageValue();
+
+            if(target.TryGetComponent<IDamageable>(out var damageable))
+            {
+                damageable.TakeDamage(damage);
+                return;
+            }
+
+            if(target.TryGetComponent<PlayerHealth>(out var playerHealth))
+            {
+                playerHealth.TakeDamage(damage);
+                return;
+            }
+        }
+
+        private float GetDamageValue()
+        {
+            if(enemyBase != null && enemyBase.enemyData!=null)
+            {
+                return enemyBase.enemyData.damageAmount;
+            }
+
+            return fallbackDamage;
         }
     }
 }

@@ -28,6 +28,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
             currentHealth = data.maxHealth;
             isDead = false;
             gameObject.SetActive(true);
+
+             EnemyAIController aiController = GetComponent<EnemyAIController>();
+            if (aiController != null)
+            {
+                aiController.ApplyEnemyData(data);
+            }
         }
 
         public void TakeDamage(float damageAmount)
@@ -50,6 +56,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void DropItems()
         {
+            if(enemyData==null) return;
+            
             if (Random.value < enemyData.dropChance)
             {
                 Debug.Log($"골드 드랍: {enemyData.goldDropAmount}G ");

@@ -2,6 +2,9 @@ using UnityEngine;
 using Nytherion.Core.Systems;
 using Nytherion.GamePlay.Combat;
 using Nytherion.GamePlay.Characters.Enemy.States;
+using System.Collections.Generic;
+using Nytherion.Data.ScriptableObjects.Enemy;
+using System.Linq;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
@@ -12,7 +15,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public Transform player; 
         public Rigidbody2D rb; 
-        public IAttackBehavior attackBehavior; 
+        private List<IAttackBehavior> attackBehaviors=new List<IAttackBehavior>(); 
+        private IAttackSelector attackSelector;
 
         private EnemyBaseState currentState;
         public EnemyIdleState idleState;
@@ -30,7 +34,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             
             player = playerInstance.transform;
             rb = GetComponent<Rigidbody2D>();
-            attackBehavior = GetComponent<IAttackBehavior>();
+            
 
             if (rb == null)
             {
@@ -38,8 +42,16 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 return;
             }
 
-            if (attackBehavior == null)
+            InitializeAttackSystems();
+            if (attackBehaviors.Count == 0)
             {
+                enabled = false;
+                return;
+            }
+
+            if(attackBehaviors.Count>1 && attackSelector==null)
+            {
+                Debug.LogError($"[{name}] attackBehavior가 여러 개인데 IAttackSelector가 없습니다.");
                 enabled = false;
                 return;
             }
@@ -48,17 +60,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             chaseState = new EnemyChaseState(this);
             attackState = new EnemyAttackState(this);
 
-            if (rb == null)
-            {
-                enabled = false;
-                return;
-            }
-
-            if (attackBehavior == null)
-            {
-                enabled = false;
-                return;
-            }
+            
             
             currentState = idleState;
             currentState.EnterState(this);
@@ -83,6 +85,58 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             Vector2 direction = (player.position - transform.position).normalized;
             rb.velocity = direction * moveSpeed;
+        }
+
+        public void StopMovement()
+        {
+            rb.velocity=Vector2.zero;
+        }
+
+        public bool CanAttackPlayer()
+        {
+            if(player==null)return false;
+            IAttackBehavior selected=SelectAttackBehavior();
+            return selected != null && selected.IsInAttackRange(player);
+        }
+
+        public bool TryAttackPlayer()
+        {
+            if(player==null)return false;
+            IAttackBehavior selected = SelectAttackBehavior();
+            return selected != null && selected.TryAttack(player);
+        }
+
+        public void ApplyEnemyData(EnemyData data)
+        {
+            if(data==null)return;
+
+            moveSpeed=data.moveSpeed;
+            detectRange=data.detectRange;
+
+            if(attackSelector is HybridAttackSelector hybridAttackSelector)
+            {
+                hybridAttackSelector.SetSwitchDistance(data.hybridSwitchDistance);
+            }
+        }
+
+        private void InitializeAttackSystems()
+        {
+            attackBehaviors=GetComponents<MonoBehaviour>()
+            .OfType<IAttackBehavior>()
+            .ToList();
+
+            attackSelector=GetComponents<MonoBehaviour>()
+            .OfType<IAttackSelector>()
+            .FirstOrDefault();
+        }
+
+        private IAttackBehavior SelectAttackBehavior()
+        {
+            if (attackBehaviors == null || attackBehaviors.Count == 0) return null;
+            if (attackBehaviors.Count == 1) return attackBehaviors[0];
+            if (attackSelector == null) return null;
+
+            return attackSelector.SelectAttackBehavior(transform, player, attackBehaviors);
         }
     }
 }
