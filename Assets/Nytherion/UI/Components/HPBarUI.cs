@@ -11,20 +11,34 @@ namespace Nytherion.UI.Components
         [SerializeField] private Slider hpSlider;
         [SerializeField] private TextMeshProUGUI hpText;
 
-        private PlayerHealth _playerHealth;
+        private PlayerHealth playerHealth;
 
         [Inject]
         public void Construct(PlayerHealth playerHealth)
         {
-            _playerHealth = playerHealth;
+            this.playerHealth = playerHealth;
+            if (playerHealth != null)
+            {
+                UpdateHP(playerHealth.CurrentHealth, playerHealth.MaxHealth);
+            }
         }
-
+        private void Start()
+        {
+            if (playerHealth == null)
+            {
+                playerHealth = FindObjectOfType<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    UpdateHP(playerHealth.CurrentHealth, playerHealth.MaxHealth);
+                }
+            }
+        }
         private void OnEnable()
         {
-            if (_playerHealth != null)
+            PlayerHealth.OnHealthChanged += UpdateHP;
+            if (playerHealth != null)
             {
-                PlayerHealth.OnHealthChanged += UpdateHP;
-                UpdateHP(_playerHealth.CurrentHealth, _playerHealth.MaxHealth);
+                UpdateHP(playerHealth.CurrentHealth, playerHealth.MaxHealth);
             }
         }
 

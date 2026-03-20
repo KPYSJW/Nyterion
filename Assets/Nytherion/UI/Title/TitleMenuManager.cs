@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Nytherion.Core.Managers;
 using VContainer;
 using VContainer.Unity;
+using UnityEngine.SceneManagement;
 
 namespace Nytherion.UI.Title
 {
@@ -14,12 +15,14 @@ namespace Nytherion.UI.Title
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button quitButton;
 
+        Scene scene;
         private SceneTransitionManager sceneTransitionManager;
 
         [Inject]
         public void Construct(SceneTransitionManager sceneTransitionManager)
         {
             this.sceneTransitionManager = sceneTransitionManager;
+            scene = SceneManager.GetActiveScene();
         }
 
         private void Awake()
@@ -103,7 +106,14 @@ namespace Nytherion.UI.Title
                 return;
             }
 
-            sceneTransitionManager.LoadScene("GameScene");
+            if(scene.name == "Title")
+            {
+                sceneTransitionManager.LoadScene("GameScene");
+            }
+            else if(scene.name == "TitleTest")
+            {
+                sceneTransitionManager.LoadScene("GameSceneTest");
+            }
         }
 
         public void OnSettings()

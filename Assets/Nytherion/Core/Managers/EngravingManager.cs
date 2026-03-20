@@ -8,6 +8,7 @@ using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.GamePlay.Characters.Player;
 
 namespace Nytherion.Core.Managers
 {
@@ -32,6 +33,8 @@ namespace Nytherion.Core.Managers
         private EngravingBlock currentlyDraggedBlock;
         private bool isDraggingFromGrid;
         private Vector2Int dragStartPosition;
+
+        public event Action<EngravingData, bool> OnEngravingEquippedStateChanged;
 
         protected override void Awake()
         {
@@ -59,6 +62,11 @@ namespace Nytherion.Core.Managers
             logicGrid.ClearBlockAt(gridPosition.y, gridPosition.x);
             placedBlockPositions.Remove(block.BlockId);
             logicGrid.RecalculateAllInfluences();
+
+            if (block.SourceData != null)
+            {
+                OnEngravingEquippedStateChanged?.Invoke(block.SourceData, false);
+            }
             OnEngravingStateChanged?.Invoke();
         }
 
@@ -108,6 +116,11 @@ namespace Nytherion.Core.Managers
         {
             logicGrid.PlaceBlock(block, position.y, position.x);
             placedBlockPositions.Add(block.BlockId, position);
+
+            if (block.SourceData != null)
+            {
+                OnEngravingEquippedStateChanged?.Invoke(block.SourceData, true);
+            }
         }
 
         private void ReturnDraggedBlockToOrigin()

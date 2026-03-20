@@ -4,7 +4,6 @@ using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Data;
-using Nytherion.Core.Interfaces;
 using Nytherion.Core.Utils;
 
 namespace Nytherion.Core.Managers

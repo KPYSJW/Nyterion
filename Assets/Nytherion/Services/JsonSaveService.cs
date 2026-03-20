@@ -1,6 +1,7 @@
 using UnityEngine;
 using Nytherion.Core.Data;
 using System.IO;
+using UnityEditor;
 
 namespace Nytherion.Services
 {
@@ -19,9 +20,6 @@ namespace Nytherion.Services
             string json = JsonUtility.ToJson(data, true);
             string path = Path.Combine(Application.persistentDataPath, saveFileName);
 
-            Debug.Log($"[JsonSaveService] 저장 시도: {path}");
-            Debug.Log($"[JsonSaveService] 저장할 데이터 크기: {json.Length} 문자");
-
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
@@ -31,12 +29,8 @@ namespace Nytherion.Services
                 if (File.Exists(path))
                 {
                     long fileSize = new FileInfo(path).Length;
-                    Debug.Log($"[JsonSaveService] 저장 성공! 파일 크기: {fileSize} bytes");
                 }
-                else
-                {
-                    Debug.LogError("[JsonSaveService] 저장 후 파일이 존재하지 않습니다!");
-                }
+                
             }
             catch (System.Exception e)
             {
@@ -92,5 +86,29 @@ namespace Nytherion.Services
                 return null;
             }
         }
+
+        public void DeleteSaveData()
+        {
+            string path = Path.Combine(Application.persistentDataPath, saveFileName);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                Debug.Log($"[JsonSaveService] 세이브 데이터를 성공적으로 삭제했습니다: {path}");
+            }
+            else
+            {
+                Debug.Log($"[JsonSaveService] 삭제할 세이브 데이터가 존재하지 않습니다.");
+            }
+        }
+
+#if UNITY_EDITOR
+        // 유니티 상단 메뉴에 [Tools -> Delete Save Data] 버튼을 생성합니다.
+        [MenuItem("Tools/Delete Save Data")]
+        public static void ClearSaveDataMenuItem()
+        {
+            JsonSaveService service = new JsonSaveService();
+            service.DeleteSaveData();
+        }
+#endif
     }
 }

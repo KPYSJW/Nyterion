@@ -52,6 +52,7 @@ namespace Nytherion.GamePlay.Dungeon
         private Tilemap wallTilemap;
         private Tilemap portalTilemapInstance;
 
+        private CompositeCollider2D floorCollider;
         #endregion
 
         #region 의존성 주입
@@ -79,7 +80,11 @@ namespace Nytherion.GamePlay.Dungeon
             GameObject wallTilemapObj = GameObject.Find("WallTilemap");
             GameObject portalTilemapObj = GameObject.Find("PortalTilemap");
 
-            if (floorTilemapObj != null) this.floorTilemap = floorTilemapObj.GetComponent<Tilemap>();
+            if (floorTilemapObj != null)
+            {
+                this.floorTilemap = floorTilemapObj.GetComponent<Tilemap>();
+                this.floorCollider = floorTilemapObj.GetComponent<CompositeCollider2D>();
+            }
             if (wallTilemapObj != null) this.wallTilemap = wallTilemapObj.GetComponent<Tilemap>();
             if (portalTilemapObj != null)
             {
@@ -176,9 +181,6 @@ namespace Nytherion.GamePlay.Dungeon
         }
 
         #endregion
-
-        // ... (이 아래로 기존 DungeonManager.cs의 나머지 코드를 그대로 붙여넣으면 돼) ...
-        // (SetAllRooms, SetRoomLookup, RegisterPortalPair, FindCurrentPlayerRoom 등 모든 메서드 포함)
 
         #region Public 데이터 설정 메서드
 
@@ -283,8 +285,23 @@ namespace Nytherion.GamePlay.Dungeon
             {
                 playerObject.transform.position = startRoom.center;
             }
+            UpdateCameraBounds();
         }
-
+        private void UpdateCameraBounds()
+        {
+            if (floorCollider != null)
+            {
+                var cameraManager = FindObjectOfType<Nytherion.GamePlay.CameraManager>();
+                if (cameraManager != null)
+                {
+                    cameraManager.SetCameraBounds(floorCollider);
+                }
+                else
+                {
+                    Debug.LogWarning("⚠️ CameraManager를 찾을 수 없어 카메라 경계를 설정하지 못했습니다.");
+                }
+            }
+        }
         private void HandleEnemyDeath(EnemyBase deadEnemy)
         {
             RoomFirstDungeonGenerator.Room room = deadEnemy.homeRoom;

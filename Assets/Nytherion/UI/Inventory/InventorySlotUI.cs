@@ -129,6 +129,7 @@ namespace Nytherion.UI.Inventory
             if (sourceSlot is InventorySlotUI inventorySourceSlot)
             {
                 inventoryDataManager.SwapItems(inventorySourceSlot.SlotIndex, this.SlotIndex);
+                DragDropUIHandler.dropHandled = true;
             }
             else if (sourceSlot is EquipmentSlotUI equipmentSourceSlot)
             {
@@ -148,18 +149,24 @@ namespace Nytherion.UI.Inventory
                     ItemData itemInThisSlot = CurrentItem;
                     int countInThisSlot = CurrentCount;
 
-                    equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, null);
+                    equipmentSourceSlot.ClearSlot();
 
-                    if (inventoryDataManager != null && inventoryDataManager.InventoryModel != null)
+                    if (inventoryDataManager != null)
                     {
-                        bool addSuccess = inventoryDataManager.InventoryModel.AddItemToSlot(itemToUnequip, 1, this.SlotIndex, true);
-                        
-                        if (addSuccess && itemInThisSlot != null && 
-                            equipmentSourceSlot.CanReceiveItem(itemInThisSlot as EquipmentData))
+                        bool addSuccess = inventoryDataManager.AddItemToSlot(itemToUnequip, 1, this.SlotIndex, true);
+
+                        if (addSuccess)
                         {
-                            equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, itemInThisSlot as EquipmentData);
+                            this.SetItem(itemToUnequip, 1);
+
+                            if (itemInThisSlot != null &&
+                                equipmentSourceSlot.CanReceiveItem(itemInThisSlot as EquipmentData))
+                            {
+                                equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, itemInThisSlot as EquipmentData);
+                            }
                         }
                     }
+                    DragDropUIHandler.dropHandled = true;
                 }
                 catch (Exception e)
                 {
