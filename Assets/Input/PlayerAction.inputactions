@@ -42,33 +42,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Skill_W",
-                    "type": "Button",
-                    "id": "8ea41efe-918d-4ab4-9701-9f944f4ef148",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Skill_E",
-                    "type": "Button",
-                    "id": "4718b358-9331-4a94-9e85-bbd421887779",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Skill_R",
-                    "type": "Button",
-                    "id": "352c1049-8dfe-4ed5-ba94-d9303d61ce95",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "QuickSlot_1",
                     "type": "Button",
                     "id": "8c64bb19-fd55-4395-953f-6ae90564e70f",
@@ -156,7 +129,7 @@
                 {
                     "name": "up",
                     "id": "0786a205-f487-4bf0-9409-c4a969afda14",
-                    "path": "<Keyboard>/upArrow",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
@@ -167,7 +140,7 @@
                 {
                     "name": "down",
                     "id": "d17cef74-3829-4a4e-9ecd-0633a02e1f67",
-                    "path": "<Keyboard>/downArrow",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
@@ -178,7 +151,7 @@
                 {
                     "name": "left",
                     "id": "67c3893b-47f7-4591-b4ba-ec5abc228cb5",
-                    "path": "<Keyboard>/leftArrow",
+                    "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
@@ -189,7 +162,7 @@
                 {
                     "name": "right",
                     "id": "407af32b-0d1c-4509-9844-058a100279ec",
-                    "path": "<Keyboard>/rightArrow",
+                    "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
@@ -227,39 +200,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Skill_Q",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a14b2bf3-eb0b-48b9-a610-4c86096bf1af",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Skill_W",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "24a6a2af-d11a-488e-a84f-4f6ab4b1ffa1",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Skill_E",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5a5b03cb-4633-46e7-bf51-f7425536cf50",
-                    "path": "<Keyboard>/r",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Skill_R",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

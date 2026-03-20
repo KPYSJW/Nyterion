@@ -13,11 +13,18 @@ MonoBehaviour:
   m_Name: TestEngraving(Epic)
   m_EditorClassIdentifier: 
   engravingName: Epic
-  description: 
+  description: 'Max Health +10
+
+    Defense +20'
   Image: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
   rarity: 3
   isCursed: 0
   level: 1
+  statModifiers:
+  - stat: 1
+    value: 20
+  - stat: 0
+    value: 10
   shape:
   - {x: 0, y: 0}
   influenceZones:

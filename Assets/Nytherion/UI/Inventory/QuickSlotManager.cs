@@ -4,7 +4,6 @@ using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Systems;
 using System;
-using System.Collections.Generic;
 using VContainer;
 
 namespace Nytherion.UI.Inventory
@@ -82,6 +81,7 @@ namespace Nytherion.UI.Inventory
             }
         }
 
+
         private void Update()
         {
             for (int i = 0; i < keys.Length && i < slots.Length; i++)
@@ -95,8 +95,19 @@ namespace Nytherion.UI.Inventory
 
         public void UpdateSlotDataExternal(int index, ItemData item, int count)
         {
-            // 더 이상 내부 배열을 업데이트하지 않고 이벤트만 발생
+            //Debug.Log($"[QuickSlotManager] UpdateSlotDataExternal 호출 - 슬롯: {index}, 아이템: {item?.ID ?? "null"}, 개수: {count}");
+
+            if (index < 0 || index >= slots.Length)
+            {
+                Debug.LogWarning($"[QuickSlotManager] 잘못된 슬롯 인덱스: {index}");
+                return;
+            }
+
+            // QuickSlotUI가 이미 업데이트했으므로, 여기서는 이벤트만 발생
+            // (실제 데이터는 slots[index].GetItemInfo()로 가져올 수 있음)
             OnQuickSlotUpdated?.Invoke();
+
+            //Debug.Log($"[QuickSlotManager] 슬롯 {index} 업데이트 이벤트 발생 완료");
         }
 
         public void UseSlot(int index)
@@ -126,6 +137,7 @@ namespace Nytherion.UI.Inventory
             }
 
             saveData.quickSlotData.Clear();
+            //Debug.Log($"[QuickSlotManager] PopulateSaveData 시작 - slots 개수: {slots?.Length ?? 0}");
 
             for (int i = 0; i < slots.Length; i++)
             {
@@ -133,6 +145,7 @@ namespace Nytherion.UI.Inventory
 
                 if (uiItem != null && uiCount > 0)
                 {
+                    //Debug.Log($"[QuickSlotManager] 슬롯 {i} 저장: {uiItem.ID}, 개수: {uiCount}");
                     saveData.quickSlotData.Add(new QuickSlotEntry
                     {
                         slotIndex = i,
@@ -141,7 +154,12 @@ namespace Nytherion.UI.Inventory
                         instanceId = uiItem.isStackable ? null : uiItem.instanceId
                     });
                 }
+                else
+                {
+                    //Debug.Log($"[QuickSlotManager] 슬롯 {i} 비어있음");
+                }
             }
+            //Debug.Log($"[QuickSlotManager] PopulateSaveData 완료 - 저장된 항목 수: {saveData.quickSlotData.Count}");
         }
         public bool ConsumeItemInQuickSlot(int slotIndex, int count = 1)
         {
@@ -166,6 +184,8 @@ namespace Nytherion.UI.Inventory
         }
         public void LoadFromSaveData(SaveData saveData)
         {
+            Debug.Log("[QuickSlotManager] LoadFromSaveData 시작");
+
             // 모든 슬롯 초기화
             for (int i = 0; i < slots.Length; i++)
             {
@@ -174,17 +194,34 @@ namespace Nytherion.UI.Inventory
 
             if (saveData?.quickSlotData == null || saveData.quickSlotData.Count == 0)
             {
+                Debug.Log("[QuickSlotManager] 저장된 퀵슬롯 데이터가 없음");
                 return;
             }
 
+            Debug.Log($"[QuickSlotManager] 로드할 퀵슬롯 항목 수: {saveData.quickSlotData.Count}");
+
             foreach (var entry in saveData.quickSlotData)
             {
-                if (entry.slotIndex < 0 || entry.slotIndex >= slots.Length) continue;
+                Debug.Log($"[QuickSlotManager] 로드 시도 - 슬롯: {entry.slotIndex}, 아이템ID: {entry.itemId}, 개수: {entry.count}");
+
+                if (entry.slotIndex < 0 || entry.slotIndex >= slots.Length)
+                {
+                    Debug.LogWarning($"[QuickSlotManager] 잘못된 슬롯 인덱스: {entry.slotIndex}");
+                    continue;
+                }
 
                 ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
-                if (itemAsset == null) continue;
+                if (itemAsset == null)
+                {
+                    Debug.LogWarning($"[QuickSlotManager] 아이템을 찾을 수 없음: {entry.itemId}");
+                    continue;
+                }
 
-                if (!(itemAsset is ConsumableData)) continue;
+                if (!(itemAsset is ConsumableData))
+                {
+                    Debug.LogWarning($"[QuickSlotManager] ConsumableData가 아님: {entry.itemId}, 타입: {itemAsset.GetType()}");
+                    continue;
+                }
 
                 ItemData itemToPlace = itemAsset;
                 if (!itemToPlace.isStackable)
@@ -196,7 +233,10 @@ namespace Nytherion.UI.Inventory
                 }
 
                 slots[entry.slotIndex].SetItem(itemToPlace, entry.count);
+                Debug.Log($"[QuickSlotManager] 슬롯 {entry.slotIndex}에 {entry.itemId} 로드 완료");
             }
+
+            Debug.Log("[QuickSlotManager] LoadFromSaveData 완료");
         }
     }
 }

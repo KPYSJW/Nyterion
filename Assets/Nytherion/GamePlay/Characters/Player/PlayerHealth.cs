@@ -7,19 +7,19 @@ namespace Nytherion.GamePlay.Characters.Player
     {
         public static event Action<float, float> OnHealthChanged;
 
-        [SerializeField] private float maxHealth = 100f;
-        public float MaxHealth { get { return maxHealth; } }
+        public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
 
-        private void Awake()
+        public void InitializeHealth(float health)
         {
-            CurrentHealth = maxHealth;
+            MaxHealth = health;
+            CurrentHealth = MaxHealth;
+            OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
-
         public void TakeDamage(float amount)
         {
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
-            OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
+            OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
 
             if (CurrentHealth <= 0)
             {
@@ -29,14 +29,14 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void Heal(float amount)
         {
-            CurrentHealth = Mathf.Min(CurrentHealth + amount, maxHealth);
-            OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
+            CurrentHealth = Mathf.Min(CurrentHealth + amount, MaxHealth);
+            OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
         public void UpdateMaxHealth(float newMaxHealth)
         {
-            maxHealth = newMaxHealth;
-            CurrentHealth = Mathf.Min(CurrentHealth, maxHealth);
-            OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
+            MaxHealth = newMaxHealth;
+            CurrentHealth = Mathf.Min(CurrentHealth, MaxHealth);
+            OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
 
         private void Die()

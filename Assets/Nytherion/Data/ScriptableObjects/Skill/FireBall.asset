@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}
-  m_Name: Skill_Test1
+  m_Name: FireBall
   m_EditorClassIdentifier: 
-  skillName: "\uD790"
+  skillID: 
+  skillType: 0
+  skillName: FireBall
   coolDown: 1
-  icon: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
+  icon: {fileID: 0}
   skillPrefab: {fileID: 0}

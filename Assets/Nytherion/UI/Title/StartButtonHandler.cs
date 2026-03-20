@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Nytherion.Core.Managers;
 using VContainer;
+using UnityEngine.SceneManagement;
 
 namespace Nytherion.UI.Title
 {
@@ -11,11 +12,13 @@ namespace Nytherion.UI.Title
         [SerializeField] private Button startButton;
 
         private SceneTransitionManager sceneTransitionManager;
+        Scene scene;
 
         [Inject]
         public void Construct(SceneTransitionManager sceneTransitionManager)
         {
             this.sceneTransitionManager = sceneTransitionManager;
+            scene = SceneManager.GetActiveScene();
             Debug.Log($"[StartButtonHandler] SceneTransitionManager injected: {sceneTransitionManager != null}");
         }
 
@@ -31,7 +34,6 @@ namespace Nytherion.UI.Title
             if (startButton != null)
             {
                 startButton.onClick.AddListener(OnStartButtonClicked);
-                Debug.Log("[StartButtonHandler] Start button OnClick event connected");
             }
             else
             {
@@ -50,18 +52,23 @@ namespace Nytherion.UI.Title
 
         public void OnStartButtonClicked()
         {
-            Debug.Log("[StartButtonHandler] Start button clicked!");
 
             if (sceneTransitionManager != null)
             {
-                Debug.Log("[StartButtonHandler] Loading GameScene...");
-                sceneTransitionManager.LoadScene("GameScene");
+                if(scene.name == "Title")
+                {
+                    sceneTransitionManager.LoadScene("GameScene");
+                }
+                else if(scene.name == "TitleTest")
+                {
+                    sceneTransitionManager.LoadScene("GameSceneTest");
+                }
             }
             else
             {
                 Debug.LogError("[StartButtonHandler] SceneTransitionManager is null! Fallback to direct scene load.");
                 // Fallback: 직접 씬 로드
-                UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+                SceneManager.LoadScene("GameScene");
             }
         }
     }

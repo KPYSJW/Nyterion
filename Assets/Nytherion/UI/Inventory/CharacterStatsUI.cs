@@ -40,6 +40,7 @@ namespace Nytherion.UI.Inventory
             {
                 playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
                 playerManager.OnPlayerStatsChanged += RefreshStatsUI;
+                RefreshStatsUI();
             }
         }
 
