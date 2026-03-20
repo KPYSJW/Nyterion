@@ -44,6 +44,11 @@ namespace Nytherion.Core.Managers
             playerEngravingManager = GetComponent<PlayerEngravingManager>();
             playerController = GetComponent<PlayerController>();
 
+            if (playerEngravingManager != null)
+            {
+                playerEngravingManager.OnEngravingsChanged += RecalculateStats;
+            }
+
             if (basePlayerData == null)
             {
                 return;
@@ -51,7 +56,11 @@ namespace Nytherion.Core.Managers
 
             currentPlayerData = Instantiate(basePlayerData);
 
-            // PlayerControllerì— ìˆ˜ë™ìœ¼ë¡œ ì˜ì¡´ì„± ì£¼ì…
+            if (playerHealth != null)
+            {
+                playerHealth.InitializeHealth(currentPlayerData.maxHealth);
+            }
+
             if (playerController != null && inputManager != null)
             {
                 playerController.Construct(inputManager, this);
@@ -73,6 +82,10 @@ namespace Nytherion.Core.Managers
             if (equipmentDataManager != null)
             {
                 equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
+            }
+            if (playerEngravingManager != null)
+            {
+                playerEngravingManager.OnEngravingsChanged -= RecalculateStats;
             }
         }
 
@@ -114,17 +127,21 @@ namespace Nytherion.Core.Managers
             if (playerEngravingManager != null)
             {
                 var currentEngravings = playerEngravingManager.GetCurrentEngravings();
+                Debug.Log($"[µğ¹ö±×] ÇöÀç ÀåÂøµÈ °¢ÀÎ °³¼ö: {currentEngravings.Count}"); 
                 foreach (var engraving in currentEngravings)
                 {
                     if (engraving != null)
                     {
-                        //ApplyStatModifiers(engraving.statModifiers);
+                        Debug.Log($"[µğ¹ö±×] '{engraving.engravingName}' °¢ÀÎÀÇ ´É·ÂÄ¡ °³¼ö: {engraving.statModifiers.Count}"); 
+                        ApplyStatModifiers(engraving.statModifiers);
                     }
                 }
             }
 
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
             OnPlayerStatsChanged?.Invoke();
+
+            Debug.Log($"[µğ¹ö±×] ÃÖÁ¾ °è»ê ¿Ï·á! Ã¼·Â: {currentPlayerData.maxHealth}");
 
         }
 

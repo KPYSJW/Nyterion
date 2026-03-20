@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbeb0c70719f0ea43bfa26c29886649e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingStage: {fileID: 11400000, guid: 8b20188bffbc7f640be4ed861ac7bf02, type: 2}
+  autoInitializeOnAwake: 0
+  startingStage: {fileID: 11400000, guid: cab0721464693eb498d35c1ee19dbd6f, type: 2}

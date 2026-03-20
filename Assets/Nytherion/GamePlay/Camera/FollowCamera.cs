@@ -9,8 +9,12 @@ namespace Nytherion.GamePlay
     public class FollowCamera : MonoBehaviour
     {
         private Transform target;
-        private bool isPlayerReady = false;
+        /*private bool isPlayerReady = false;
         private Vector3 lastPlayerPosition = Vector3.zero;
+        [Header("Initialization")]
+        [Tooltip("플레이어 준비 감지를 위한 시간 (초)")]
+        public float playerReadyCheckTime = 1f;
+        private float timeSinceLastPositionChange = 0f;*/
 
         [Header("Follow Settings")]
         [Tooltip("카메라가 타겟을 따라가는 속도 (높을수록 빠르게 따라감)")]
@@ -31,12 +35,10 @@ namespace Nytherion.GamePlay
         [Tooltip("즉시 이동 모드 (테스트용)")]
         public bool useSmoothMovement = true;
 
-        [Header("Initialization")]
-        [Tooltip("플레이어 준비 감지를 위한 시간 (초)")]
-        public float playerReadyCheckTime = 1f;
+      
 
         private Vector3 velocity = Vector3.zero;
-        private float timeSinceLastPositionChange = 0f; 
+    //   private float timeSinceLastPositionChange = 0f; 
         private bool debugLogging = false;
         [Inject]
         public void Construct(PlayerController playerController)
@@ -58,9 +60,10 @@ namespace Nytherion.GamePlay
 
             if (target != null)
             {
-                Vector3 playerPos = target.position;
+                /*Vector3 playerPos = target.position;
                 playerPos.z = 0f;
-                target.position = playerPos;
+                target.position = playerPos;*/
+                TeleportToPlayer();
             }
             else
             {
@@ -135,10 +138,23 @@ namespace Nytherion.GamePlay
 
         private void LateUpdate()
         {
-            if (target == null) return;
+          /*  if (target == null) return;
 
             CheckPlayerReadyState();
-            if (!isPlayerReady) return;
+            if (!isPlayerReady) return;*/
+            if (target == null)
+            {
+                TryFindPlayerController();
+
+                
+                if (target == null)
+                {
+                    return;
+                }
+
+              
+                TeleportToPlayer();
+            }
 
             Vector3 targetPosition = new Vector3(
                 target.position.x + offset.x,
@@ -164,7 +180,7 @@ namespace Nytherion.GamePlay
         /// <summary>
         /// 플레이어가 최종 위치에 안정적으로 자리잡았는지 확인합니다.
         /// </summary>
-        private void CheckPlayerReadyState()
+       /* private void CheckPlayerReadyState()
         {
             if (isPlayerReady) return;
 
@@ -198,7 +214,7 @@ namespace Nytherion.GamePlay
                     transform.position = immediatePosition;
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// 포탈 이동 시 카메라를 즉시 플레이어 위치로 이동시킵니다.

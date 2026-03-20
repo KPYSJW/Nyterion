@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Core.Interfaces;    
 using VContainer;
 using VContainer.Unity;
+using Nytherion.Scenes;
+
 
 public class RootLifetimeScope : LifetimeScope
 {
@@ -51,11 +49,19 @@ public class RootLifetimeScope : LifetimeScope
     {
         if (scene.name == "Boot")
         {
+            var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
             // DataLifetimeScope 생성
             CreateDataLifetimeScope();
 
-            var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
+            
             sceneTransitionManager.LoadTargetScene("Title");
+        }
+        else if(scene.name == "BootTest")
+        {
+            CreateDataLifetimeScope();
+
+            var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
+            sceneTransitionManager.LoadTargetScene("TitleTest");
         }
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
@@ -71,7 +77,8 @@ public class RootLifetimeScope : LifetimeScope
 
         if (dataLifetimeScopePrefab != null && DataLifetimeScope.Instance == null)
         {
-            var dataScope = Instantiate(dataLifetimeScopePrefab);
+            //var dataScope = Instantiate(dataLifetimeScopePrefab);
+            var dataScope = Instantiate(dataLifetimeScopePrefab, this.transform);
         }
         else if (dataLifetimeScopePrefab == null)
         {

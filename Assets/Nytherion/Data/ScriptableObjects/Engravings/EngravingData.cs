@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Enums;
-using Nytherion.GamePlay.Engravings; 
+using Nytherion.GamePlay.Engravings;
+using Nytherion.Core.Data;
 
 namespace Nytherion.Data.ScriptableObjects.Engravings
 {
@@ -26,6 +27,9 @@ namespace Nytherion.Data.ScriptableObjects.Engravings
 
         [Header("레벨 정보")]
         public int level = 1;
+
+        [Header("능력치 증가")]
+        public List<StatModifier> statModifiers = new List<StatModifier>();
 
         [Header("각인 모양 (1x1 고정)")]
         public List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };

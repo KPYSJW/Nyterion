@@ -6,13 +6,14 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public override void EnterState(EnemyAIController enemy)
         {
+            enemy.StopMovement();
         }
 
         public override void UpdateState(EnemyAIController enemy)
         {
-            enemy.attackBehavior.TryAttack(enemy.player);
+            enemy.TryAttackPlayer();
 
-            if (!enemy.attackBehavior.IsInAttackRange(enemy.player))
+            if (!enemy.CanAttackPlayer())
             {
                 enemy.TransitionToState(enemy.chaseState);
             }

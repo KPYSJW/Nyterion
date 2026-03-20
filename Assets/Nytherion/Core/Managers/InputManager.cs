@@ -73,10 +73,7 @@ namespace Nytherion.Core.Managers
             playerActions.Player.Dash.canceled += ctx => Dash = false;
 
             playerActions.Player.Skill_Q.started += ctx => onSkillInput?.Invoke(0);
-            playerActions.Player.Skill_W.started += ctx => onSkillInput?.Invoke(1);
-            playerActions.Player.Skill_E.started += ctx => onSkillInput?.Invoke(2);
-            playerActions.Player.Skill_R.started += ctx => onSkillInput?.Invoke(3);
-
+       
             playerActions.Player.QuickSlot_1.started += ctx => onQuickSlotInput?.Invoke(1);
             playerActions.Player.QuickSlot_2.started += ctx => onQuickSlotInput?.Invoke(2);
             playerActions.Player.QuickSlot_3.started += ctx => onQuickSlotInput?.Invoke(3);

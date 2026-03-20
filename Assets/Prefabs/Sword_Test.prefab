@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0891b6c46ff51964cbbd0b0c67ee7535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponData: {fileID: 11400000, guid: b3198689e49ba1e4c8846e6a266df129, type: 2}
+  weaponData: {fileID: 11400000, guid: e975f9ccd1cca63428958880db494d1d, type: 2}
   col: {fileID: -3319199942530663431}
   sprite: {fileID: 8590790990860606378}
 --- !u!114 &6208765460595893722

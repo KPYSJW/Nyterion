@@ -30,7 +30,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private GachaManager gachaManagerPrefab;
     [SerializeField] private GachaUIController gachaUIControllerPrefab;
     [SerializeField] private InteractionManager interactionManagerPrefab;
-    [SerializeField] private StageManager stageManagerPrefab;
+    //[SerializeField] private StageManager stageManagerPrefab;
     [SerializeField] private DungeonManager dungeonManagerPrefab;
     [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
     [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
@@ -168,6 +168,7 @@ public class GameSceneLifetimeScope : LifetimeScope
             RegisterDataManagerIfExists<EngravingManager>(builder);
             RegisterDataManagerIfExists<EquipmentDataManager>(builder);
             RegisterDataManagerIfExists<ShopManager>(builder);
+            RegisterDataManagerIfExists<StageManager>(builder);
 
             // RegisterDataManagerIfExists<PuzzleManager>(builder); // 나중에 사용 예정
             // PlayerManager는 GameScene에서만 필요하므로 여기서 직접 관리
@@ -221,9 +222,9 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInNewPrefab(stageManagerPrefab, Lifetime.Singleton)
+        /*builder.RegisterComponentInNewPrefab(stageManagerPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
-                .AsSelf();
+                .AsSelf();*/
 
         builder.RegisterComponentInHierarchy<WorldmapController>();
         builder.RegisterComponentInHierarchy<MinimapTileGenerator>();
@@ -353,17 +354,26 @@ public class GameSceneLifetimeScope : LifetimeScope
 
     private void InstallGameSceneOnlySystems(IContainerBuilder builder)
     {
-        // Player 시스템
-        if (playerManagerPrefab != null)
+        var playerManagerInScene = FindObjectOfType<PlayerManager>();
+
+        if (playerManagerInScene != null)
+        {
+            // 1. 씬에 배치된 PlayerManager를 그대로 등록
+            builder.RegisterComponent(playerManagerInScene)
+                    .AsImplementedInterfaces()
+                    .AsSelf();
+
+            RegisterPlayerSubSystems(builder);
+            Debug.Log("[GameSceneLifetimeScope] 하이라키에 배치된 Player를 사용합니다.");
+        }
+        else if (playerManagerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(playerManagerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()
                     .AsSelf();
 
-            builder.Register<PlayerHealth>(resolver => resolver.Resolve<PlayerManager>().playerHealth, Lifetime.Singleton);
-            builder.Register<PlayerCombat>(resolver => resolver.Resolve<PlayerManager>().PlayerCombat, Lifetime.Singleton);
-            builder.Register<PlayerSkillManager>(resolver => resolver.Resolve<PlayerManager>().GetComponent<PlayerSkillManager>(), Lifetime.Singleton);
-            builder.Register<PlayerController>(resolver => resolver.Resolve<PlayerManager>().GetComponent<PlayerController>(), Lifetime.Singleton);
+            RegisterPlayerSubSystems(builder);
+            Debug.Log("[GameSceneLifetimeScope] 씬에 Player가 없어 프리팹을 생성합니다.");
         }
 
         // Gameplay 시스템들
@@ -475,6 +485,13 @@ public class GameSceneLifetimeScope : LifetimeScope
         }
     }
 
+    private void RegisterPlayerSubSystems(IContainerBuilder builder)
+    {
+        builder.Register<PlayerHealth>(resolver => resolver.Resolve<PlayerManager>().playerHealth, Lifetime.Singleton);
+        builder.Register<PlayerCombat>(resolver => resolver.Resolve<PlayerManager>().PlayerCombat, Lifetime.Singleton);
+        builder.Register<PlayerSkillManager>(resolver => resolver.Resolve<PlayerManager>().GetComponent<PlayerSkillManager>(), Lifetime.Singleton);
+        builder.Register<PlayerController>(resolver => resolver.Resolve<PlayerManager>().GetComponent<PlayerController>(), Lifetime.Singleton);
+    }
     private void InitializeGameSceneUI()
     {
         // 아키텍처 검증 헬퍼 등록 (디버그 빌드에서만)

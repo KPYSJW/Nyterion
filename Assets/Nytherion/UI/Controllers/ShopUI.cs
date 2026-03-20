@@ -327,16 +327,12 @@ namespace Nytherion.UI.Controllers
                 return;
             }
 
-            Debug.Log($"[ShopUI] 구매 시도: {shopItem.item.itemName}, 가격: {shopItem.price * amountToBuy}, 보유 골드: {currencyMgr.GetCurrency(CurrencyType.Gold)}");
 
             if (currencyMgr.SpendCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
             {
-                Debug.Log($"[ShopUI] 재화 차감 성공, 인벤토리에 아이템 추가 시도: {shopItem.item.itemName}");
 
                 if (inventoryMgr.AddItem(shopItem.item, amountToBuy))
                 {
-                    Debug.Log($"[ShopUI] '{shopItem.item.itemName}' 구매 완료! 인벤토리 추가 성공 (ID: {shopItem.shopItemId})");
-
                     // 재고 감소 처리
                     if (!shopItem.isUnlimited)
                     {
@@ -385,7 +381,6 @@ namespace Nytherion.UI.Controllers
 
         private void HandleSellItem(ItemData item, int amount)
         {
-            Debug.Log($"[ShopUI] HandleSellItem called: {item?.itemName} x{amount}, ID: {item?.ID}");
 
             InventoryDataManager inventoryMgr = GetInventoryDataManager();
             CurrencyDataManager currencyMgr = GetCurrencyDataManager();
@@ -398,7 +393,6 @@ namespace Nytherion.UI.Controllers
 
             // 현재 인벤토리에서 해당 아이템의 개수 확인
             int currentCount = inventoryMgr.GetItemCount(item.ID);
-            Debug.Log($"[ShopUI] 인벤토리에 있는 '{item.itemName}' 개수: {currentCount}");
 
             if (currentCount < amount)
             {
@@ -410,7 +404,6 @@ namespace Nytherion.UI.Controllers
             {
                 int totalPrice = Mathf.RoundToInt(item.baseValue * SELL_PRICE_RATIO) * amount;
                 currencyMgr.AddCurrency(CurrencyType.Gold, totalPrice);
-                Debug.Log($"[ShopUI] '{item.itemName}' {amount}개 판매 완료. 획득 골드: {totalPrice}");
             }
             else
             {

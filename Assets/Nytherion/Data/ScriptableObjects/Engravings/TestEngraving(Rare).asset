@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: TestEngraving(Rare)
   m_EditorClassIdentifier: 
   engravingName: Rare
-  description: 
+  description: Defense +20
   Image: {fileID: 21300000, guid: 274cc5d353702d54381995dc012cb66f, type: 3}
   rarity: 2
   isCursed: 0
   level: 1
+  statModifiers:
+  - stat: 1
+    value: 20
   shape:
   - {x: 0, y: 0}
   influenceZones:

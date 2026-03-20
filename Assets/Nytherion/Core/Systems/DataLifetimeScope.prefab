@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6193929265535200412
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2245450835313758109}
+  - component: {fileID: 4107130175783290221}
+  m_Layer: 0
+  m_Name: DataLifetimeScope
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2245450835313758109
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6193929265535200412}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4107130175783290221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6193929265535200412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81651d2b6b7bd404d85ff44996b4ce3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentReference:
+    TypeName: 
+  autoRun: 1
+  autoInjectGameObjects: []
+  saveLoadManagerPrefab: {fileID: 1223338905626847151, guid: d1dc8b91acef336499702f2dedaf5330, type: 3}
+  currencyDataManagerPrefab: {fileID: 12968184307239983, guid: 7aa775313b8755a45a697a048871ad8a, type: 3}
+  inventoryDataManagerPrefab: {fileID: 253356879623177231, guid: 03aed3edd07b9874c807251adef4da87, type: 3}
+  engravingManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
+  equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
+  shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
+  stageManagerPrefab: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}

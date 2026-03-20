@@ -10,7 +10,7 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public override void UpdateState(EnemyAIController enemy)
         {
-            if (enemy.attackBehavior.IsInAttackRange(enemy.player))
+            if (enemy.CanAttackPlayer())
             {
                 enemy.TransitionToState(enemy.attackState);
             }
@@ -22,6 +22,7 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public override void ExitState(EnemyAIController enemy)
         {
+            enemy.StopMovement();
         }
     }
 }
