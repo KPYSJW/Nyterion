@@ -22,6 +22,7 @@ namespace Nytherion.Core.Systems
         [SerializeField] private EngravingManager engravingManagerPrefab;
         [SerializeField] private EquipmentDataManager equipmentDataManagerPrefab;
         [SerializeField] private ShopManager shopManagerPrefab;
+        [SerializeField] private StageManager stageManagerPrefab;
         // [SerializeField] private PuzzleManager puzzleManagerPrefab; // 나중에 사용 예정
 
         protected override void Awake()
@@ -34,7 +35,7 @@ namespace Nytherion.Core.Systems
             }
 
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
 
             base.Awake();
         }
@@ -48,7 +49,7 @@ namespace Nytherion.Core.Systems
                 Debug.LogWarning($"[DataLifetimeScope] Configure가 이미 호출되었습니다. 중복 호출을 건너뜁니다.");
                 return;
             }
-
+           
             InstallDataManagers(builder);
             RegisterISaveableEntities(builder);
 
@@ -114,6 +115,15 @@ namespace Nytherion.Core.Systems
             if (shopManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(shopManagerPrefab, Lifetime.Singleton)
+                    .UnderTransform(this.transform)
+                    .AsImplementedInterfaces()
+                    .AsSelf()
+                    .As<ISaveable>();
+            }
+
+            if (stageManagerPrefab != null)
+            {
+                builder.RegisterComponentInNewPrefab(stageManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
                     .AsSelf()

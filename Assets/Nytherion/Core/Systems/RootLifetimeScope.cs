@@ -7,6 +7,7 @@ using VContainer;
 using VContainer.Unity;
 using Nytherion.Scenes;
 
+
 public class RootLifetimeScope : LifetimeScope
 {
     public static RootLifetimeScope Instance { get; private set; }
@@ -48,10 +49,11 @@ public class RootLifetimeScope : LifetimeScope
     {
         if (scene.name == "Boot")
         {
+            var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
             // DataLifetimeScope 생성
             CreateDataLifetimeScope();
 
-            var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
+            
             sceneTransitionManager.LoadTargetScene("Title");
         }
         else if(scene.name == "BootTest")
@@ -75,7 +77,8 @@ public class RootLifetimeScope : LifetimeScope
 
         if (dataLifetimeScopePrefab != null && DataLifetimeScope.Instance == null)
         {
-            var dataScope = Instantiate(dataLifetimeScopePrefab);
+            //var dataScope = Instantiate(dataLifetimeScopePrefab);
+            var dataScope = Instantiate(dataLifetimeScopePrefab, this.transform);
         }
         else if (dataLifetimeScopePrefab == null)
         {

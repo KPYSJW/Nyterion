@@ -4,6 +4,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using Nytherion.Core.Data;
+using UnityEngine.SceneManagement;
 
 namespace Nytherion.Core.Managers
 {
@@ -18,12 +19,13 @@ namespace Nytherion.Core.Managers
         private SceneTransitionManager sceneTransitionManager;
         private DungeonManager dungeonManager;
 
-        [Inject]
+       
+        /*[Inject]
         public void Construct(SceneTransitionManager sceneTransitionManager)
         {
             this.sceneTransitionManager = sceneTransitionManager;
-        }
-        
+        }*/
+
         public void SetDungeonManager(DungeonManager dungeonManager)
         {
             this.dungeonManager = dungeonManager;
@@ -32,9 +34,10 @@ namespace Nytherion.Core.Managers
         protected override void Awake()
         {
             base.Awake();
-            transform.SetParent(null);
-            DontDestroyOnLoad(gameObject);
+           // transform.SetParent(null);
+            //DontDestroyOnLoad(gameObject);
             CurrentStage = startingStage;
+            sceneTransitionManager = FindObjectOfType<SceneTransitionManager>();
         }
 
         /// <summary>
@@ -58,7 +61,7 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public void AdvanceToNextStage()
         {
-            if (CurrentStage == null || CurrentStage.nextStageData == null)
+            if (CurrentStage.nextStageData == null)
             {
                 Debug.Log("마지막 스테이지 클리어!");
                 return;
@@ -69,9 +72,9 @@ namespace Nytherion.Core.Managers
 
             Debug.Log($"다음 스테이지 '{CurrentStage.stageName}'(으)로 진행합니다.");
 
-            if (sceneToLoad == "Village")
+            if (sceneToLoad!=SceneManager.GetActiveScene().name)
             {
-                Debug.Log($"마을로 이동");
+                Debug.Log($"씬 이동");
                 sceneTransitionManager.LoadScene(sceneToLoad);
             }
             else
