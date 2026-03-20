@@ -13,17 +13,17 @@ namespace Nytherion.GamePlay.Characters.Player
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Animator animator;
 
-        public Vector2 MoveInput 
-        { 
-            get 
-            { 
+        public Vector2 MoveInput
+        {
+            get
+            {
                 if (inputManager == null)
                 {
                     Debug.LogWarning("[PlayerController] MoveInput - inputManager is null!");
                     return Vector2.zero;
                 }
-                return inputManager.MoveInput; 
-            } 
+                return inputManager.MoveInput;
+            }
         }
         public bool IsDashPressed => inputManager?.Dash ?? false;
         public PlayerData PlayerData => playerManager?.currentPlayerData;
@@ -42,33 +42,33 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             this.inputManager = inputManager;
             this.playerManager = playerManager;
-            
+
         }
-        
+
         private void Start()
         {
             StartCoroutine(InitializeWhenReady());
         }
-        
+
         private IEnumerator InitializeWhenReady()
         {
-            
+
             int waitCount = 0;
             while (inputManager == null || playerManager == null)
             {
                 waitCount++;
-                
+
                 yield return null;
             }
-            
+
             waitCount = 0;
             while (playerManager.currentPlayerData == null)
             {
                 waitCount++;
-                
+
                 yield return null;
             }
-            
+
             if (rb == null)
             {
                 rb = GetComponent<Rigidbody2D>();
@@ -77,18 +77,18 @@ namespace Nytherion.GamePlay.Characters.Player
                     yield break;
                 }
             }
-            
+
             if (spriteRenderer == null)
             {
                 spriteRenderer = GetComponent<SpriteRenderer>();
             }
-            
+
             if (animator == null)
             {
                 animator = GetComponent<Animator>();
             }
-            
-            
+
+
             ChangeState(new IdleState());
             isInitialized = true;
         }
@@ -98,7 +98,7 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 return;
             }
-            
+
             if (inputManager == null || playerManager == null || currentState == null)
             {
                 return;
@@ -116,34 +116,34 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 return;
             }
-            
+
             if (inputManager == null)
             {
                 return;
             }
-            
+
             HandleMovement();
         }
 
         public void HandleMovement()
         {
-            if (IsDashing) 
+            if (IsDashing)
             {
                 return;
             }
-            
+
             if (rb == null)
             {
                 return;
             }
-            
+
             Vector2 moveInput = MoveInput;
             if (moveInput.magnitude > 0.1f) // 입력이 있을 때만 로그
             {
                 Vector2 finalVelocity = moveInput * PlayerData.moveSpeed;
-                
+
                 rb.velocity = finalVelocity;
-                
+
             }
             else
             {
@@ -183,6 +183,11 @@ namespace Nytherion.GamePlay.Characters.Player
         public void PlayAnimation(string animationName)
         {
             animator.Play(animationName);
+        }
+
+        public void HandleSkillInput(int index)
+        {
+            
         }
 
     }

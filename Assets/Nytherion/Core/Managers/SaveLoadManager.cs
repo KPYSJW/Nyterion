@@ -7,7 +7,6 @@ using System.Collections;
 using Nytherion.UI.Inventory;
 using System.Collections.Generic;
 using VContainer;
-using VContainer.Unity;
 using Nytherion.Core.Systems;
 
 namespace Nytherion.Core.Managers
@@ -34,7 +33,6 @@ namespace Nytherion.Core.Managers
         {
             saveableEntities.Clear();
 
-            // DataLifetimeScope에서 ISaveable 매니저들을 직접 찾기
             if (DataLifetimeScope.Instance != null && DataLifetimeScope.Instance.Container != null)
             {
                 var container = DataLifetimeScope.Instance.Container;
@@ -69,50 +67,51 @@ namespace Nytherion.Core.Managers
                 Debug.LogWarning("[SaveLoadManager] DataLifetimeScope.Instance 또는 Container가 null입니다.");
             }
 
+            CollectGameSceneISaveableEntities();
+
+        }
+
+        private void CollectGameSceneISaveableEntities()
+        {
             string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
-            if (currentSceneName == "GameScene")
+            var gameSceneScope = FindObjectOfType<GameSceneLifetimeScope>();
+            if (gameSceneScope != null && gameSceneScope.Container != null)
             {
-                // GameScene에서만 GameSceneLifetimeScope 찾기 시도
-                var gameSceneScope = FindObjectOfType<GameSceneLifetimeScope>();
-                if (gameSceneScope != null && gameSceneScope.Container != null)
-                {
-                    var gameContainer = gameSceneScope.Container;
+                var gameContainer = gameSceneScope.Container;
 
+                try
+                {
                     if (gameContainer.TryResolve<QuickSlotManager>(out var quickSlotManager))
                     {
-                        saveableEntities.Add(quickSlotManager);
+                        if (!saveableEntities.Contains(quickSlotManager))
+                        {
+                            saveableEntities.Add(quickSlotManager);
+                        }
                     }
                     else
                     {
-                        var quickSlotManagerInScene = FindObjectOfType<QuickSlotManager>();
-                        if (quickSlotManagerInScene != null)
-                        {
-                            saveableEntities.Add(quickSlotManagerInScene);
-                        }
+                        Debug.LogWarning("[SaveLoadManager] GameSceneLifetimeScope에서 QuickSlotManager를 찾지 못했습니다");
                     }
+
                 }
-                else
+                catch (System.Exception e)
                 {
-                    if (GameManager.IsVerboseLogging()) Debug.Log("[SaveLoadManager] GameScene에서 GameSceneLifetimeScope를 찾을 수 없어 QuickSlotManager를 직접 찾습니다.");
-                    var quickSlotManagerInScene = FindObjectOfType<QuickSlotManager>();
-                    if (quickSlotManagerInScene != null)
-                    {
-                        saveableEntities.Add(quickSlotManagerInScene);
-                    }
+                    Debug.LogError($"[SaveLoadManager] GameScene ISaveable 수집 중 오류: {e.Message}");
                 }
             }
-            else
+            else if (currentSceneName == "GameScene")
             {
-                // GameScene이 아닌 경우 QuickSlotManager를 직접 찾기 시도 (있다면)
                 var quickSlotManagerInScene = FindObjectOfType<QuickSlotManager>();
                 if (quickSlotManagerInScene != null)
                 {
-                    saveableEntities.Add(quickSlotManagerInScene);
-                    if (GameManager.IsVerboseLogging()) Debug.Log($"[SaveLoadManager] {currentSceneName}에서 QuickSlotManager를 찾아 추가했습니다.");
+                    if (!saveableEntities.Contains(quickSlotManagerInScene))
+                    {
+                        saveableEntities.Add(quickSlotManagerInScene);
+                        Debug.Log("[SaveLoadManager] 직접 탐색으로 QuickSlotManager를 찾아 추가했습니다");
+                    }
                 }
             }
-
         }
 
         protected override void Awake()
@@ -142,7 +141,7 @@ namespace Nytherion.Core.Managers
             }
         }
 
-        private System.Collections.IEnumerator DelayedLoadCoroutine()
+        private IEnumerator DelayedLoadCoroutine()
         {
             yield return null;
 
@@ -274,13 +273,11 @@ namespace Nytherion.Core.Managers
 
                 if (saveData == null)
                 {
-                    if (GameManager.IsVerboseLogging()) Debug.Log("[SaveLoadManager] 저장 파일이 없어 새 게임으로 시작합니다");
                     saveData = new SaveData();
                     LoadNewGameData();
                 }
                 else
                 {
-                    if (GameManager.IsVerboseLogging()) Debug.Log("[SaveLoadManager] 기존 저장 파일을 로드합니다");
                     LoadExistingGameData();
                 }
             }
@@ -302,7 +299,7 @@ namespace Nytherion.Core.Managers
             StartCoroutine(NotifyUIAfterLoad());
         }
 
-        private System.Collections.IEnumerator NotifyUIAfterLoad()
+        private IEnumerator NotifyUIAfterLoad()
         {
             yield return null;
 

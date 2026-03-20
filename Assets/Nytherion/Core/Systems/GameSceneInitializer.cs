@@ -1,6 +1,7 @@
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Dungeon;
 using Nytherion.UI.Map;
+using Nytherion.UI.Inventory;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
@@ -8,37 +9,58 @@ using VContainer.Unity;
 
 public class GameSceneInitializer : IStartable
 {
-    private readonly StageManager _stageManager;
-    private readonly DungeonManager _dungeonManager;
-    private readonly WorldmapController _worldmapController;
-    private readonly MinimapTileGenerator _minimapGenerator;
-   
-    public GameSceneInitializer(StageManager stageManager, DungeonManager dungeonManager, WorldmapController worldmapController, MinimapTileGenerator minimapGenerator)
+    private readonly StageManager stageManager;
+    private readonly DungeonManager dungeonManager;
+    private readonly WorldmapController worldmapController;
+    private readonly MinimapTileGenerator minimapGenerator;
+    private readonly QuickSlotManager quickSlotManager;
+    private readonly SaveLoadManager saveLoadManager;
+
+    public GameSceneInitializer(
+        StageManager stageManager,
+        DungeonManager dungeonManager,
+        WorldmapController worldmapController,
+        MinimapTileGenerator minimapGenerator,
+        QuickSlotManager quickSlotManager,
+        SaveLoadManager saveLoadManager)
     {
-        _stageManager = stageManager;
-        _dungeonManager = dungeonManager;
-        _worldmapController = worldmapController;
-        _minimapGenerator = minimapGenerator;
+        this.stageManager = stageManager;
+        this.dungeonManager = dungeonManager;
+        this.worldmapController = worldmapController;
+        this.minimapGenerator = minimapGenerator;
+        this.quickSlotManager = quickSlotManager;
+        this.saveLoadManager = saveLoadManager;
     }
 
-    // ¸ğµç ÁØºñ°¡ ³¡³ª¸é ÀÌ ¸Ş¼­µå°¡ µü ÇÑ ¹ø ½ÇÇàµÅ.
     public void Start()
     {
         if (SceneManager.GetActiveScene().name != "GameScene") return;
 
-      
-        _stageManager.SetDungeonManager(_dungeonManager);
-        _dungeonManager.SetStageManager(_stageManager);
+        stageManager.SetDungeonManager(dungeonManager);
+        dungeonManager.SetStageManager(stageManager);
 
-      
-        if (_dungeonManager != null && _dungeonManager.roomFirstDungeonGenerator != null)
+        if (dungeonManager != null && dungeonManager.roomFirstDungeonGenerator != null)
         {
-           
-            _dungeonManager.SetControllers(_worldmapController, _minimapGenerator);
-            _dungeonManager.roomFirstDungeonGenerator.SetControllers(_worldmapController, _minimapGenerator);
+            dungeonManager.SetControllers(worldmapController, minimapGenerator);
+            dungeonManager.roomFirstDungeonGenerator.SetControllers(worldmapController, minimapGenerator);
         }
-       
-      
-        _dungeonManager.StartDungeonGeneration();
+
+        dungeonManager.StartDungeonGeneration();
+
+        // SaveLoadManagerë¥¼ í†µí•œ ì •ìƒì ì¸ ë¡œë“œ (ê°•ì œë¡œë“œê°€ ì•„ë‹˜)
+        InitializeGameData();
+    }
+
+    private void InitializeGameData()
+    {
+
+        if (saveLoadManager != null)
+        {
+            saveLoadManager.LoadGameIfNeeded();
+        }
+        else
+        {
+            Debug.LogError("[GameSceneInitializer] SaveLoadManagerê°€ nullì…ë‹ˆë‹¤");
+        }
     }
 }

@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: TestEngraving(Common)
   m_EditorClassIdentifier: 
   engravingName: Common
-  description: 
+  description: Max Health +10
   Image: {fileID: 21300000, guid: 10c68a2449febdd418c26ba918d11d74, type: 3}
   rarity: 0
   isCursed: 0
   level: 1
+  statModifiers:
+  - stat: 0
+    value: 10
   shape:
   - {x: 0, y: 0}
   influenceZones:

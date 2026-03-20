@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Core.Interfaces;    
 using VContainer;
 using VContainer.Unity;
+using Nytherion.Scenes;
 
 public class RootLifetimeScope : LifetimeScope
 {
@@ -56,6 +53,13 @@ public class RootLifetimeScope : LifetimeScope
 
             var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
             sceneTransitionManager.LoadTargetScene("Title");
+        }
+        else if(scene.name == "BootTest")
+        {
+            CreateDataLifetimeScope();
+
+            var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
+            sceneTransitionManager.LoadTargetScene("TitleTest");
         }
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }

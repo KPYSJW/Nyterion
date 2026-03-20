@@ -26,12 +26,12 @@ namespace Nytherion.UI.Shop
         private int maxAmount = 1;
         public event System.Action<ItemData, int> OnItemSold;
         public const float SELL_PRICE_RATIO = 0.7f;
-        private InventoryManager inventoryManager;
+        private InventoryDataManager inventoryDataManager;
 
         [Inject]
-        public void Construct(InventoryManager inventoryManager)
+        public void Construct(InventoryDataManager inventoryDataManager)
         {
-            this.inventoryManager = inventoryManager;
+            this.inventoryDataManager = inventoryDataManager;
         }
 
         private void Awake()
@@ -47,21 +47,21 @@ namespace Nytherion.UI.Shop
 
         private void Start()
         {
-            if (inventoryManager == null)
+            if (inventoryDataManager == null)
             {
                 var gameSceneScope = LifetimeScope.Find<GameSceneLifetimeScope>();
                 if (gameSceneScope != null)
                 {
-                    if (gameSceneScope.Container.TryResolve<InventoryManager>(out var invManager))
+                    if (gameSceneScope.Container.TryResolve<InventoryDataManager>(out var invManager))
                     {
-                        inventoryManager = invManager;
+                        inventoryDataManager = invManager;
                     }
                 }
 
-                if (inventoryManager == null)
+                if (inventoryDataManager == null)
                 {
-                    inventoryManager = FindObjectOfType<InventoryManager>();
-                    if (inventoryManager == null)
+                    inventoryDataManager = FindObjectOfType<InventoryDataManager>();
+                    if (inventoryDataManager == null)
                     {
                         Debug.LogError("[SellSlotUI] InventoryManager not found. SellSlot operations will be disabled.");
                     }
@@ -77,15 +77,17 @@ namespace Nytherion.UI.Shop
                 return;
             }
 
-            if (inventoryManager == null)
+            if (inventoryDataManager == null)
             {
                 Debug.LogError("[SellSlotUI] InventoryManager is null. Cannot set item.");
                 return;
             }
 
             currentItem = item;
-            currentAmount = Mathf.Clamp(amount, 1, inventoryManager.GetItemCount(item));
-            maxAmount = inventoryManager.GetItemCount(item);
+            int itemTotalCount = inventoryDataManager.GetItemCount(item.ID);
+
+            currentAmount = Mathf.Clamp(amount, 1, itemTotalCount);
+            maxAmount = itemTotalCount;
             sellPrice = CalculateSellPrice(item);
 
             itemIcon.sprite = item.icon;
@@ -101,7 +103,7 @@ namespace Nytherion.UI.Shop
         {
             if (currentItem == null) return;
 
-            maxAmount = inventoryManager.GetItemCount(currentItem);
+            maxAmount = inventoryDataManager.GetItemCount(currentItem.ID);
 
             currentAmount = Mathf.Clamp(newAmount, 1, maxAmount);
 
@@ -130,7 +132,7 @@ namespace Nytherion.UI.Shop
                 parsed = 1;
             }
 
-            int maxAmount = inventoryManager.GetItemCount(currentItem);
+            int maxAmount = inventoryDataManager.GetItemCount(currentItem.ID);
             parsed = Mathf.Clamp(parsed, 1, maxAmount);
 
             currentAmount = parsed;
@@ -203,7 +205,7 @@ namespace Nytherion.UI.Shop
 
             if (droppedSlot != null && !droppedSlot.IsEmpty)
             {
-                if (inventoryManager == null)
+                if (inventoryDataManager == null)
                 {
                     Debug.LogError("[SellSlotUI] InventoryManager is null in OnDrop. Cannot process drop operation.");
                     return;

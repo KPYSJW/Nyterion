@@ -8,9 +8,9 @@ namespace Nytherion.GamePlay.Characters.Player
     public class PlayerSkillManager : MonoBehaviour
     {
         public SkillBase[] equippedSkills = new SkillBase[4];
-        
+
         private InputManager _inputManager;
-        
+
         [Inject]
         public void Construct(InputManager inputManager)
         {
@@ -25,7 +25,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 _inputManager.onSkillInput += SkillInput;
             }
         }
-        
+
         private void OnDestroy()
         {
             if (_inputManager != null)
@@ -44,6 +44,11 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 Debug.Log($"Equipped skill is null at index {i}");
             }
+        }
+        
+        void UseSkill(int i)
+        {
+            
         }
     }
 }
