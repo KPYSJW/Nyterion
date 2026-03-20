@@ -54,6 +54,7 @@ MonoBehaviour:
   engravingManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
   equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
   shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
+  stageManagerPrefab: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}
 --- !u!1 &2687055192734629042
 GameObject:
   m_ObjectHideFlags: 0
