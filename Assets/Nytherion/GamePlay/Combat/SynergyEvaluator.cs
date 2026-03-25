@@ -14,22 +14,18 @@ namespace Nytherion.GamePlay.Combat
         private readonly List<WeaponEngravingSynergyData> synergyTable;
         private EventManager eventManager;
 
-        [Inject]
-        public void Construct(EventManager eventManager)
+        public SynergyEvaluator(List<WeaponEngravingSynergyData> synergyDataList, EventManager eventManager)
         {
+            this.synergyTable = synergyDataList;
             this.eventManager = eventManager;
-        }
-
-        public SynergyEvaluator(List<WeaponEngravingSynergyData> synergyDataList)
-        {
-            synergyTable = synergyDataList;
         }
 
         public WeaponEngravingSynergyData EvaluateSynergy(
             WeaponData weapon,
             List<EngravingData> engravings)
         {
-            
+            if(weapon == null || engravings == null) return null;
+
             foreach (var engraving in engravings)
             {
                 var match = synergyTable.FirstOrDefault(entry =>
@@ -38,18 +34,12 @@ namespace Nytherion.GamePlay.Combat
 
                 if (match != null)
                 {
-                    if (eventManager != null)
-                    {
-                        eventManager.TriggerSynergyEvaluated(weapon, engraving, match);
-                    }
+                    eventManager?.TriggerSynergyEvaluated(weapon, engraving, match);
                     return match;
                 }
             }
 
-            if (eventManager != null)
-            {
-                eventManager.TriggerSynergyEvaluated(weapon, null, null);
-            }
+            eventManager?.TriggerSynergyEvaluated(weapon, null, null);
             return null;
         }
     }

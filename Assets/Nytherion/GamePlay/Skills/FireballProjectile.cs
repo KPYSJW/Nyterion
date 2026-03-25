@@ -8,6 +8,7 @@ public class FireballProjectile : MonoBehaviour
     private float range;
     private string poolTag;
     private Vector3 startPosition;
+    private bool isInitialized = false;
 
     public void Initialize(float damage, float speed, float range, string poolTag)
     {
@@ -16,25 +17,33 @@ public class FireballProjectile : MonoBehaviour
         this.range = range;
         this.poolTag = poolTag;
         startPosition = transform.position;
+        isInitialized = true; 
     }
 
     void Update()
     {
-        transform.Translate(Vector3.forward * (speed * Time.deltaTime));
+        if (!isInitialized) return;
+
+        transform.Translate(Vector3.right * (speed * Time.deltaTime));
 
         if (Vector3.Distance(startPosition, transform.position) >= range)
         {
-            Destroy(gameObject);
+            ReturnToPool();
         }
     }
     private void OnTriggerEnter(Collider other)
     {
-        
-        ReturnToPool(); 
+        if (other.CompareTag("Player"))
+        {
+            return;
+        }
+        Debug.Log($"파이어볼이 [{other.name}] 오브젝트와 부딪혀서 사라짐!");
+        ReturnToPool();
     }
     private void ReturnToPool()
     {
-        if (ObjectPoolManager.Instance != null)
+        isInitialized = false;
+        if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
         {
             ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
         }
@@ -43,5 +52,5 @@ public class FireballProjectile : MonoBehaviour
             Destroy(gameObject); 
         }
     }
-    
+
 }

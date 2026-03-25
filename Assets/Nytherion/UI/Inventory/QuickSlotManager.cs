@@ -184,7 +184,6 @@ namespace Nytherion.UI.Inventory
         }
         public void LoadFromSaveData(SaveData saveData)
         {
-            Debug.Log("[QuickSlotManager] LoadFromSaveData 시작");
 
             // 모든 슬롯 초기화
             for (int i = 0; i < slots.Length; i++)
@@ -194,7 +193,6 @@ namespace Nytherion.UI.Inventory
 
             if (saveData?.quickSlotData == null || saveData.quickSlotData.Count == 0)
             {
-                Debug.Log("[QuickSlotManager] 저장된 퀵슬롯 데이터가 없음");
                 return;
             }
 

@@ -1,0 +1,45 @@
+{
+    "name": "ShopAction",
+    "maps": [
+        {
+            "name": "Sell",
+            "id": "995ff6c7-98fb-4c4d-a645-394522fb6e92",
+            "actions": [
+                {
+                    "name": "SellectAll",
+                    "type": "Value",
+                    "id": "e457000e-6e37-44c9-9ed2-8a8c8a2782ab",
+                    "expectedControlType": "Digital",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "26338376-6121-4d36-9176-82f5add09e10",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SellectAll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "36fd1504-fff0-41fd-ae70-f9d1e441962b",
+                    "path": "<Keyboard>/rightShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SellectAll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

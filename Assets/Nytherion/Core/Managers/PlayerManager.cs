@@ -8,7 +8,6 @@ using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using System;
 using VContainer;
-using VContainer.Unity;
 using System.Collections.Generic;
 
 
@@ -131,12 +130,10 @@ namespace Nytherion.Core.Managers
             if (playerEngravingManager != null)
             {
                 var currentEngravings = playerEngravingManager.GetCurrentEngravings();
-                Debug.Log($"[�����] ���� ������ ���� ����: {currentEngravings.Count}"); 
                 foreach (var engraving in currentEngravings)
                 {
                     if (engraving != null)
                     {
-                        Debug.Log($"[�����] '{engraving.engravingName}' ������ �ɷ�ġ ����: {engraving.statModifiers.Count}"); 
                         ApplyStatModifiers(engraving.statModifiers);
                     }
                 }
@@ -144,9 +141,6 @@ namespace Nytherion.Core.Managers
 
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
             OnPlayerStatsChanged?.Invoke();
-
-            Debug.Log($"[�����] ���� ��� �Ϸ�! ü��: {currentPlayerData.maxHealth}");
-
         }
 
         private void ApplyStatModifiers(IEnumerable<StatModifier> modifiers)

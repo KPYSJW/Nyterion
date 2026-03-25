@@ -15,7 +15,6 @@ namespace Nytherion.Core.Systems
             if (bootPrefab != null)
             {
                 Object.Instantiate(bootPrefab);
-                Debug.Log("[Bootstrapper] 씬 우회 감지! 필수 시스템(BootSystem)을 자동으로 소환했습니다.");
             }
             else
             {

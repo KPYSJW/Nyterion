@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Managers;
 using System;
+using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -16,21 +17,25 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private PlayerManager playerManager;
         private EngravingManager engravingManager;
+        private EventManager eventManager;
 
         public event Action OnEngravingsChanged;
 
-        private EventManager eventManager;
+        [Inject]
+        public void Construct(EventManager eventManager)
+        {
+            this.eventManager = eventManager;
+        }
 
         private void Awake()
         {
-            eventManager = FindObjectOfType<EventManager>();
-            synergyEvaluator = new SynergyEvaluator(synergyTable);
-             synergyEvaluator.Construct(eventManager);
             playerManager = GetComponent<PlayerManager>();
         }
 
         private void Start()
         {
+            synergyEvaluator = new SynergyEvaluator(synergyTable, eventManager);
+
             if (playerManager == null) playerManager = GetComponent<PlayerManager>();
             if (engravingManager == null) engravingManager = FindObjectOfType<EngravingManager>();
 
@@ -39,13 +44,12 @@ namespace Nytherion.GamePlay.Characters.Player
                 engravingManager.OnEngravingEquippedStateChanged -= HandleEngravingStateFromGrid;
                 engravingManager.OnEngravingEquippedStateChanged += HandleEngravingStateFromGrid;
 
-                Debug.Log("🟢 [디버그] PlayerEngravingManager가 EngravingManager 이벤트 구독에 성공했습니다!");
 
                 SyncWithGrid();
             }
             else
             {
-                Debug.LogError("🔴 [디버그] EngravingManager를 찾을 수 없어 이벤트 구독에 실패했습니다.");
+                Debug.LogError(" [디버그] EngravingManager를 찾을 수 없어 이벤트 구독에 실패했습니다.");
             }
         }
 
