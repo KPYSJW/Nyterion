@@ -10,8 +10,10 @@ namespace Nytherion.GamePlay.Combat.Weapon
 
         public override void Attack(Vector2 direction)
         {
+        
             if (!CanAttack())
             {
+               
                 return;
             }
            

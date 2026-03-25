@@ -64,6 +64,10 @@ namespace Nytherion.Core.Managers
             {
                 playerController.Construct(inputManager, this);
             }
+            if (PlayerCombat != null && inputManager != null)
+            {
+                PlayerCombat.Construct(inputManager);
+            }
 
             RecalculateStats();
         }

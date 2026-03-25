@@ -5,6 +5,7 @@ using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Core.Managers;
 using VContainer;
+using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat
 {

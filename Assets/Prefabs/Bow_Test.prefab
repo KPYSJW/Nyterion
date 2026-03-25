@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8604274073206334278}
   - component: {fileID: 8590790990860606378}
-  - component: {fileID: 1165017061689628586}
   - component: {fileID: 6208765460595893722}
+  - component: {fileID: -2573258896366265541}
   m_Layer: 0
   m_Name: Bow_Test
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.45, y: 0.45, z: 0.45}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4288061520210801657}
@@ -87,21 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1165017061689628586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2204877618560446080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 798b948bfd1b2eb4097a86102b3de45f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponData: {fileID: 11400000, guid: 8a354b971afa74f4c9b9353ab1966805, type: 2}
-  firePoint: {fileID: 8604274073206334278}
-  sprite: {fileID: 8590790990860606378}
 --- !u!114 &6208765460595893722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,7 +99,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d35c5d514f90dc248963a7df2b987599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 1165017061689628586}
+  weapon: {fileID: 0}
+--- !u!114 &-2573258896366265541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2204877618560446080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 798b948bfd1b2eb4097a86102b3de45f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponData: {fileID: 11400000, guid: c19efd2c24895944f90973cb5732048e, type: 2}
+  firePoint: {fileID: 4288061520210801657}
 --- !u!1 &4964738641561314771
 GameObject:
   m_ObjectHideFlags: 0

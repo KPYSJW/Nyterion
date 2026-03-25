@@ -3,6 +3,9 @@ using Nytherion.Core.Managers;
 using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.GamePlay.Dungeon;
+using Nytherion.GamePlay.Items;
+
+
 using UnityEngine;
 using VContainer;
 
@@ -10,6 +13,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 {
     public class EnemyBase : MonoBehaviour, IDamageable
     {
+        
         public EnemyData enemyData;
         private float currentHealth;
         public bool isDead { get; private set; } = false;
@@ -56,17 +60,27 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void DropItems()
         {
-            if(enemyData==null) return;
             
-            if (Random.value < enemyData.dropChance)
+            if (Random.value <= enemyData.dropChance)
             {
                 Debug.Log($"골드 드랍: {enemyData.goldDropAmount}G ");
+                
             }
 
         }
-        private void OnCollisionEnter2D(Collision2D collision)
+       /* private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.CompareTag(Tags.Player))
+            Debug.Log(collision.gameObject.tag);
+            if (collision.gameObject.CompareTag(Tags.Player)||collision.gameObject.CompareTag(Tags.Weapon))
+            {
+                Debug.Log($"{enemyData.enemyName}이(가) 플레이어와 충돌하여 즉시 사망합니다.");
+                Die();
+            }
+        }*/
+
+        private void OnTriggerEnter2D(Collider2D other) {
+            Debug.Log(other.gameObject.tag);
+            if (other.gameObject.CompareTag(Tags.Player)||other.gameObject.CompareTag(Tags.Weapon))
             {
                 Debug.Log($"{enemyData.enemyName}이(가) 플레이어와 충돌하여 즉시 사망합니다.");
                 Die();
