@@ -149,7 +149,6 @@ namespace Nytherion.Core.Managers
 
             if (currentSceneName == "GameScene")
             {
-                // GameScene에서만 GameSceneLifetimeScope 찾기 시도
                 var gameSceneScope = FindObjectOfType<GameSceneLifetimeScope>();
                 if (gameSceneScope != null && gameSceneScope.Container != null)
                 {
@@ -318,7 +317,7 @@ namespace Nytherion.Core.Managers
                 {
                     try
                     {
-                        entity.LoadFromSaveData(null);
+                        entity.LoadFromSaveData(saveData);
                     }
                     catch (System.Exception e)
                     {

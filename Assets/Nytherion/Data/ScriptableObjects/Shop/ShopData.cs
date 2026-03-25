@@ -12,11 +12,24 @@ namespace Nytherion.Data.ScriptableObjects.Shop
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            if (itemsForSale == null) return;
+
+            HashSet<string> useIds = new HashSet<string>();
+            bool isDirty = false;
+
             foreach (var shopItem in itemsForSale)
             {
-                shopItem.EnsureId();
+                if (string.IsNullOrEmpty(shopItem.shopItemId) || useIds.Contains(shopItem.shopItemId))
+                {
+                    shopItem.shopItemId = System.Guid.NewGuid().ToString();
+                    isDirty = true;
+                }
+                useIds.Add(shopItem.shopItemId);
             }
-            UnityEditor.EditorUtility.SetDirty(this);
+            if (isDirty)
+            {
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
         }
 #endif
     }

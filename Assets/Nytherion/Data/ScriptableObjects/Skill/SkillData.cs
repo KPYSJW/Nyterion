@@ -14,12 +14,14 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         [Header("Skill Info")]
         public string skillName;
         public float coolDown;
+        public float damage;
+        public float range;
 
-        
         [Header("Skill Icon")]
         public Sprite icon;
 
         [Header("Skill Prefab")]
         public GameObject skillPrefab;
+
     }
 }

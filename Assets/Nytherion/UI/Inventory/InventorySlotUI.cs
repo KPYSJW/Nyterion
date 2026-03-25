@@ -1,11 +1,11 @@
+using Nytherion.Core.Enums;
+using Nytherion.Core.Managers;
+using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.UI.Controllers;
+using Nytherion.UI.Inventory.Utils;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Nytherion.Core.Managers;
-using System;
-using Nytherion.UI.Inventory.Utils;
-using Nytherion.UI.Controllers;
-using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Core.Enums;
 using VContainer;
 using VContainer.Unity;
 
@@ -15,6 +15,7 @@ namespace Nytherion.UI.Inventory
     {
         public int SlotIndex { get; private set; }
         public event Action<BaseSlotUI> OnSellItemAction;
+        private ShopAction input;
 
         private EquipmentDataManager equipmentDataManager;
         private ItemUsageManager itemUsageManager;
@@ -39,11 +40,13 @@ namespace Nytherion.UI.Inventory
         protected override void Awake()
         {
             base.Awake();
+            input = new ShopAction();
             OnBeginDragEvent += (s, e) => DragDropUIHandler.HandleBeginDragShared(s);
             OnEndDragEvent += (s, e) => DragDropUIHandler.HandleEndDragShared(s, e);
             OnPointerClickEvent += HandlePointerClick;
         }
-
+        void OnEnable() => input?.Enable(); 
+        void OnDisable() => input?.Disable();
         private void Start()
         {
             if (inventoryDataManager == null || equipmentDataManager == null || itemUsageManager == null || shopUI == null || quickSlotManager == null)
@@ -86,27 +89,27 @@ namespace Nytherion.UI.Inventory
 
         public void OnDrop(PointerEventData eventData)
         {
-            if (eventData.pointerDrag == null) 
+            if (eventData.pointerDrag == null)
             {
                 return;
             }
-            
+
             BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
-            if (sourceSlot == null) 
+            if (sourceSlot == null)
             {
                 return;
             }
-            
-            if (sourceSlot.IsEmpty) 
+
+            if (sourceSlot.IsEmpty)
             {
                 return;
             }
-            
-            if (sourceSlot == this) 
+
+            if (sourceSlot == this)
             {
                 return;
             }
-            
+
             if (inventoryDataManager == null)
             {
                 inventoryDataManager = FindObjectOfType<InventoryDataManager>();
@@ -134,13 +137,13 @@ namespace Nytherion.UI.Inventory
             else if (sourceSlot is EquipmentSlotUI equipmentSourceSlot)
             {
                 if (equipmentSourceSlot == null || equipmentSourceSlot.IsEmpty) return;
-                
+
                 if (equipmentDataManager == null)
                 {
                     Debug.LogError("[InventorySlotUI] EquipmentDataManager is still null. Cannot perform equipment drop operation.");
                     return;
                 }
-                
+
                 try
                 {
                     var (itemToUnequip, _) = equipmentSourceSlot.GetItemInfo();
@@ -224,7 +227,18 @@ namespace Nytherion.UI.Inventory
 
             if (shopUI != null && shopUI.IsOpen)
             {
-                OnSellItemAction?.Invoke(this);
+                bool isHighTier = false;
+                if (isHighTier)
+                {
+                    shopUI.OpenSellPopup(CurrentItem, CurrentCount);
+                }
+                else
+                {
+                    bool isShiftPressed = input.Sell.SellectAll.IsPressed();
+                    int amoutToSell = isShiftPressed ? CurrentCount : 1;
+                    shopUI.QuickSellItem(CurrentItem, amoutToSell);
+                }
+                return;
             }
             else if (CurrentItem is EquipmentData equipment)
             {

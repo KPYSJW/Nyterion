@@ -9,6 +9,9 @@ namespace Nytherion.GamePlay.Characters.Skill
     public abstract class SkillBase : MonoBehaviour
     {
         public SkillData skillData;
+        [System.NonSerialized] public Transform caster;
+        [System.NonSerialized] public Transform firePoint;
+
         [System.NonSerialized] private float lastUseTime= -Mathf.Infinity;
 
  

@@ -36,6 +36,12 @@ namespace Nytherion.UI.Controllers
         private ShopManager shopManager;
         private SellSlotUI sellSlotUI;
 
+        [Header("Buyback UI")]
+        private GameObject emptyStateUI;
+        [SerializeField] private Button buyTabButton;      
+        [SerializeField] private Button buybackTabButton;  
+        private bool isBuybackMode = false;
+
         private IObjectResolver container;
 
         [Inject]
@@ -57,6 +63,9 @@ namespace Nytherion.UI.Controllers
             this.shopSlotPrefab = gameSceneuiRefs.ShopSlotPrefab;
             this.inventorySlotParent = gameSceneuiRefs.InventorySlotParent;
             this.controlledCanvasGroup = gameSceneuiRefs.ShopCanvasGroup;
+            this.buyTabButton = gameSceneuiRefs.ShopBuyTabButton;
+            this.buybackTabButton = gameSceneuiRefs.ShopBuybackTabButton;
+            this.emptyStateUI = gameSceneuiRefs.ShopEmptyStateUI;
         }
 
         private InventoryDataManager GetInventoryDataManager()
@@ -164,6 +173,9 @@ namespace Nytherion.UI.Controllers
                 closeButton.onClick.AddListener(Close);
             }
 
+            if (buyTabButton != null) buyTabButton.onClick.AddListener(() => ChangeTab(false));
+            if (buybackTabButton != null) buybackTabButton.onClick.AddListener(() => ChangeTab(true));
+
             // SellSlotUI 이벤트 구독 처리
             if (sellSlotUI != null)
             {
@@ -198,7 +210,21 @@ namespace Nytherion.UI.Controllers
                 inventorySlots = new List<InventorySlotUI>(inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true));
             }
 
+            ShopManager shopMgr = GetShopManager();
+            if (shopMgr != null)
+            {
+                shopMgr.OnBuybackChanged += RefreshShopUI;
+            }
             Close();
+        }
+        private void ChangeTab(bool toBuyback)
+        {
+            isBuybackMode = toBuyback;
+
+            if (buyTabButton != null) buyTabButton.interactable = toBuyback;
+            if (buybackTabButton != null) buybackTabButton.interactable = !toBuyback;
+
+            RefreshShopUI();
         }
         // private void Start()
         // {
@@ -247,9 +273,10 @@ namespace Nytherion.UI.Controllers
 
         public void OpenShop(ShopData data)
         {
+            isBuybackMode = false;
             currentShopData = data;
             PopulateShop();
-
+            ChangeTab(false);
             EventManager eventMgr = GetEventManager();
             if (eventMgr != null)
             {
@@ -308,7 +335,7 @@ namespace Nytherion.UI.Controllers
             // 구매 중복 방지를 위해 즉시 버튼 비활성화
             slot.SetInteractable(false);
 
-            int amountToBuy = (shopItem.item is EquipmentData) ? 1 : 1;
+            int amountToBuy = 1;
             CurrencyDataManager currencyMgr = GetCurrencyDataManager();
             InventoryDataManager inventoryMgr = GetInventoryDataManager();
 
@@ -339,18 +366,21 @@ namespace Nytherion.UI.Controllers
                         ShopManager shopMgr = GetShopManager();
                         if (shopMgr != null)
                         {
-                            shopMgr.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
+                            if (isBuybackMode)
+                            {
+                                shopMgr.RecordBuybackPurchase(shopItem.shopItemId, amountToBuy);
+                            }
+                            else if (!shopItem.isUnlimited)
+                            {
+                                shopMgr.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
+                            }
                         }
-
-                        // 즉시 UI 업데이트
-                        slot.UpdateStockUI();
                     }
-                    else
+                   
+                    if (shopItem.isUnlimited)
                     {
-                        // 무제한 아이템도 버튼 다시 활성화
                         slot.SetInteractable(true);
                     }
-
                     // 무기 자동 장착 로직
                     if (shopItem.item is WeaponData weaponData)
                     {
@@ -379,11 +409,12 @@ namespace Nytherion.UI.Controllers
             }
         }
 
-        private void HandleSellItem(ItemData item, int amount)
+        public void HandleSellItem(ItemData item, int amount)
         {
 
             InventoryDataManager inventoryMgr = GetInventoryDataManager();
             CurrencyDataManager currencyMgr = GetCurrencyDataManager();
+            ShopManager shopMgr = GetShopManager();
 
             if (inventoryMgr == null || currencyMgr == null)
             {
@@ -402,25 +433,72 @@ namespace Nytherion.UI.Controllers
 
             if (inventoryMgr.RemoveItem(item.ID, amount))
             {
-                int totalPrice = Mathf.RoundToInt(item.baseValue * SELL_PRICE_RATIO) * amount;
+                int unitSellPrice = Mathf.RoundToInt(item.baseValue * SELL_PRICE_RATIO);
+                int totalPrice = unitSellPrice * amount;
+
                 currencyMgr.AddCurrency(CurrencyType.Gold, totalPrice);
+
+                if (shopMgr != null)
+                {
+                    shopMgr.AddToBuyback(item, amount, unitSellPrice);
+                }
             }
             else
             {
                 Debug.LogWarning($"[ShopUI] '{item.itemName}' 판매 실패: 인벤토리에서 아이템 제거 실패");
             }
         }
-
+        public void QuickSellItem(ItemData item, int amount)
+        {
+            HandleSellItem(item, amount);
+        }
+        public void OpenSellPopup(ItemData item, int maxAmount)
+        {
+            if (sellSlotUI != null)
+            {
+                sellSlotUI.gameObject.SetActive(true);
+                sellSlotUI.SetItem(item, maxAmount);
+            }
+            else
+            {
+                Debug.LogWarning("SellslotUI가 할당되지 않았다");
+            }
+        }
         private void PopulateShop()
         {
-            if (currentShopData == null) return;
-            foreach (Transform child in shopSlotParent) Destroy(child.gameObject);
+            if (currentShopData == null || shopSlotParent == null) return;
+
+            foreach (Transform child in shopSlotParent)
+            {
+                if (child != null) Destroy(child.gameObject);
+            }
 
             ShopManager shopMgr = GetShopManager();
             if (shopMgr == null) return;
 
-            var itemsToDisplay = shopMgr.GetShopItems(currentShopData.shopName);
-            if (itemsToDisplay == null) return;
+            List<ShopItemData> itemsToDisplay;
+            if (isBuybackMode)
+            {
+                itemsToDisplay = shopMgr.GetBuybackItems();
+            }
+            else
+            {
+                itemsToDisplay = shopMgr.GetShopItems(currentShopData.shopName);
+            }
+
+            bool isEmpty = (itemsToDisplay == null || itemsToDisplay.Count == 0);
+            if (emptyStateUI != null)
+            {
+                emptyStateUI.SetActive(isEmpty);
+
+                var textUI = emptyStateUI.GetComponent<TMPro.TextMeshProUGUI>();
+                if (textUI != null)
+                {
+                    textUI.text = isBuybackMode ? "재구매할 수 있는 아이템이 없습니다." : "판매 중인 아이템이 없습니다.";
+                }
+            }
+
+            if (isEmpty) return; // 보여줄 아이템이 없으면 여기서 종료
 
             foreach (ShopItemData shopItem in itemsToDisplay)
             {
@@ -477,7 +555,6 @@ namespace Nytherion.UI.Controllers
 
         private void OnDestroy()
         {
-            // 이벤트 구독 해제
             CurrencyDataManager currencyMgr = GetCurrencyDataManager();
             if (currencyMgr != null)
             {
@@ -490,12 +567,18 @@ namespace Nytherion.UI.Controllers
                 inventoryMgr.OnDataChanged -= OnInventoryDataChanged;
             }
 
+            // ★ 이 부분이 에러를 해결하는 핵심입니다! (이벤트 구독 해제)
+            ShopManager shopMgr = GetShopManager();
+            if (shopMgr != null)
+            {
+                shopMgr.OnBuybackChanged -= RefreshShopUI;
+            }
+
             if (sellSlotUI != null)
             {
                 sellSlotUI.OnItemSold -= HandleSellItem;
             }
         }
-
         private void RefreshShopUI()
         {
             PopulateShop();

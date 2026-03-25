@@ -1,5 +1,6 @@
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Characters.Skill;
+using Nytherion.Data.ScriptableObjects.Skill;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,17 +16,17 @@ namespace Nytherion.UI.Skill
             public Image icon;
             public Image cooldownOverlay;
             public TMP_Text cooldownText;
-            public SkillBase SkillBase;
+            public SkillBase skillBase;
         }
 
         public SkillSlotUI[] skillSlots= new SkillSlotUI[4];
         
-        private PlayerSkillManager _playerSkillManager;
+        private PlayerSkillManager playerSkillManager;
         
         [Inject]
         public void Construct(PlayerSkillManager playerSkillManager)
         {
-            _playerSkillManager = playerSkillManager;
+            this.playerSkillManager = playerSkillManager;
         }
 
         private void Update()
@@ -35,31 +36,47 @@ namespace Nytherion.UI.Skill
         }
         void UpdateSkill()
         {
-            if (_playerSkillManager == null) return;
-            
-            for(int i=0;i<skillSlots.Length; i++)
+            if (playerSkillManager == null) return;
+
+            for (int i = 0; i < skillSlots.Length; i++)
             {
-                if(_playerSkillManager.equippedSkills[i]==null) skillSlots[i].icon.gameObject.SetActive(false);
+                SkillBase equippedSkill = playerSkillManager.equippedSkills[i];
+
+                if (equippedSkill == null || equippedSkill.skillData == null)
+                {
+                    skillSlots[i].icon.gameObject.SetActive(false);
+                    skillSlots[i].skillBase = null;
+                }
                 else
                 {
-                    skillSlots[i].icon.sprite = _playerSkillManager.equippedSkills[i].skillData.icon;
-                    skillSlots[i].SkillBase = _playerSkillManager.equippedSkills[i];
+                    skillSlots[i].icon.gameObject.SetActive(true);
+                    skillSlots[i].icon.sprite = equippedSkill.skillData.icon; 
+                    skillSlots[i].skillBase = equippedSkill;
                 }
-               
             }
         }
 
-       void CooltimeCheck()
+        void CooltimeCheck()
         {
+            if (playerSkillManager == null) return;
+
             for (int i = 0; i < skillSlots.Length; i++)
             {
-                if (skillSlots[i].SkillBase == null) continue;
-                float total = skillSlots[i].SkillBase.GetCooldownTime();
-                float remain = skillSlots[i].SkillBase.GetRemainingCooldown();
+                SkillBase skill = skillSlots[i].skillBase;
 
-                if(remain>0f)
+                if (skill == null || skill.skillData == null)
                 {
-                    skillSlots[i].cooldownOverlay.fillAmount= remain/total;
+                    skillSlots[i].cooldownOverlay.fillAmount = 0f;
+                    skillSlots[i].cooldownText.text = "";
+                    continue;
+                }
+
+                float total = skill.GetCooldownTime();
+                float remain = skill.GetRemainingCooldown();
+
+                if (remain > 0f)
+                {
+                    skillSlots[i].cooldownOverlay.fillAmount = remain / total;
                     skillSlots[i].cooldownText.text = Mathf.CeilToInt(remain).ToString();
                 }
                 else
