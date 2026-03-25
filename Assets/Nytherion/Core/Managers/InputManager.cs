@@ -66,7 +66,9 @@ namespace Nytherion.Core.Managers
                 MoveInput = Vector2.zero;
             };
 
-            playerActions.Player.Attack.performed += ctx => onAttackDown?.Invoke();
+            playerActions.Player.Attack.performed += ctx => 
+            {
+                onAttackDown?.Invoke();};
             playerActions.Player.Attack.canceled += ctx => onAttackUp?.Invoke();
 
             playerActions.Player.Dash.started += ctx => Dash = true;

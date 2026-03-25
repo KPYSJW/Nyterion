@@ -259,7 +259,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""5bce7d7a-b1e9-442c-b5b0-92830e4024b3"",
-                    ""path"": ""<Keyboard>/a"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PC"",

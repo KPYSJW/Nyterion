@@ -65,6 +65,10 @@ namespace Nytherion.Core.Managers
             {
                 playerController.Construct(inputManager, this);
             }
+            if (PlayerCombat != null && inputManager != null)
+            {
+                PlayerCombat.Construct(inputManager);
+            }
 
             RecalculateStats();
         }
@@ -127,12 +131,12 @@ namespace Nytherion.Core.Managers
             if (playerEngravingManager != null)
             {
                 var currentEngravings = playerEngravingManager.GetCurrentEngravings();
-                Debug.Log($"[µð¹ö±×] ÇöÀç ÀåÂøµÈ °¢ÀÎ °³¼ö: {currentEngravings.Count}"); 
+                Debug.Log($"[ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {currentEngravings.Count}"); 
                 foreach (var engraving in currentEngravings)
                 {
                     if (engraving != null)
                     {
-                        Debug.Log($"[µð¹ö±×] '{engraving.engravingName}' °¢ÀÎÀÇ ´É·ÂÄ¡ °³¼ö: {engraving.statModifiers.Count}"); 
+                        Debug.Log($"[ï¿½ï¿½ï¿½ï¿½ï¿½] '{engraving.engravingName}' ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½: {engraving.statModifiers.Count}"); 
                         ApplyStatModifiers(engraving.statModifiers);
                     }
                 }
@@ -141,7 +145,7 @@ namespace Nytherion.Core.Managers
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
             OnPlayerStatsChanged?.Invoke();
 
-            Debug.Log($"[µð¹ö±×] ÃÖÁ¾ °è»ê ¿Ï·á! Ã¼·Â: {currentPlayerData.maxHealth}");
+            Debug.Log($"[ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½! Ã¼ï¿½ï¿½: {currentPlayerData.maxHealth}");
 
         }
 

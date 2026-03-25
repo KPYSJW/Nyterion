@@ -19,9 +19,13 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public event Action OnEngravingsChanged;
 
+        private EventManager eventManager;
+
         private void Awake()
         {
+            eventManager = FindObjectOfType<EventManager>();
             synergyEvaluator = new SynergyEvaluator(synergyTable);
+             synergyEvaluator.Construct(eventManager);
             playerManager = GetComponent<PlayerManager>();
         }
 

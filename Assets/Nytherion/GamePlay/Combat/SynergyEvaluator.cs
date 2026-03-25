@@ -5,6 +5,7 @@ using Nytherion.Data.ScriptableObjects.Engravings;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Core.Managers;
 using VContainer;
+using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -28,6 +29,7 @@ namespace Nytherion.GamePlay.Combat
             WeaponData weapon,
             List<EngravingData> engravings)
         {
+            
             foreach (var engraving in engravings)
             {
                 var match = synergyTable.FirstOrDefault(entry =>
@@ -36,12 +38,18 @@ namespace Nytherion.GamePlay.Combat
 
                 if (match != null)
                 {
-                    eventManager.TriggerSynergyEvaluated(weapon, engraving, match);
+                    if (eventManager != null)
+                    {
+                        eventManager.TriggerSynergyEvaluated(weapon, engraving, match);
+                    }
                     return match;
                 }
             }
 
-            eventManager.TriggerSynergyEvaluated(weapon, null, null);
+            if (eventManager != null)
+            {
+                eventManager.TriggerSynergyEvaluated(weapon, null, null);
+            }
             return null;
         }
     }
