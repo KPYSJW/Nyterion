@@ -74,7 +74,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void Attack()
         {
-            
+            if(currentWeapon != null) 
             {
                 currentWeapon.Attack(Vector2.right);
 
