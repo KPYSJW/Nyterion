@@ -20,5 +20,5 @@ MonoBehaviour:
   detectRange: 6
   combatType: 0
   hybridSwitchDistance: 2.5
-  dropChance: 0.3
+  dropChance: 1
   goldDropAmount: 5

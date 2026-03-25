@@ -364,7 +364,6 @@ public class GameSceneLifetimeScope : LifetimeScope
                     .AsSelf();
 
             RegisterPlayerSubSystems(builder);
-            Debug.Log("[GameSceneLifetimeScope] 하이라키에 배치된 Player를 사용합니다.");
         }
         else if (playerManagerPrefab != null)
         {

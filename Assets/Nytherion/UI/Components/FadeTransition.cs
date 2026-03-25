@@ -8,7 +8,6 @@ namespace Nytherion.UI.Components
     {
         [Header("Fade Settings")]
         [SerializeField] private Image fadeImage;
-        [SerializeField] private float fadeSpeed = 2f;
 
         private static FadeTransition instance;
         public static FadeTransition Instance

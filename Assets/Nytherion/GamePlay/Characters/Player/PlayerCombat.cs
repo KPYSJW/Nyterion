@@ -21,6 +21,7 @@ namespace Nytherion.GamePlay.Characters.Player
         public void Construct(InputManager inputManager)
         {
             _inputManager = inputManager;
+             
         }
 
         private void Awake()
@@ -34,11 +35,16 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void Start()
         {
+            
+
             if (_inputManager != null)
             {
                 _inputManager.onAttackDown += Attack;
                 _inputManager.onAttackUp += AttackEnd;
+               
             }
+
+            
         }
         public void EquipWeapon(WeaponBase weapon)
         {
@@ -68,7 +74,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void Attack()
         {
-            if (currentWeapon != null)
+            
             {
                 currentWeapon.Attack(Vector2.right);
 

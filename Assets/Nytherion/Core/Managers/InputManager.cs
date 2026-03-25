@@ -1,8 +1,7 @@
 using UnityEngine;
 using System;
-using VContainer;
-using VContainer.Unity;
 using Nytherion.Core.Data;
+using UnityEngine.InputSystem;
 
 namespace Nytherion.Core.Managers
 {
@@ -12,10 +11,7 @@ namespace Nytherion.Core.Managers
         private PlayerAction playerActions;
 
         public Vector2 MoveInput { get; private set; }
-
         public bool Dash { get; private set; }
-
-
         public bool IsControlPressed { get; private set; }
         public bool IsShiftPressed { get; private set; }
 
@@ -35,6 +31,7 @@ namespace Nytherion.Core.Managers
 
         public event Action onEngravingRotate;
 
+     
         protected override void Awake()
         {
             base.Awake();
@@ -66,14 +63,16 @@ namespace Nytherion.Core.Managers
                 MoveInput = Vector2.zero;
             };
 
-            playerActions.Player.Attack.performed += ctx => onAttackDown?.Invoke();
+            playerActions.Player.Attack.performed += ctx => 
+            {
+                onAttackDown?.Invoke();};
             playerActions.Player.Attack.canceled += ctx => onAttackUp?.Invoke();
 
             playerActions.Player.Dash.started += ctx => Dash = true;
             playerActions.Player.Dash.canceled += ctx => Dash = false;
 
             playerActions.Player.Skill_Q.started += ctx => onSkillInput?.Invoke(0);
-       
+
             playerActions.Player.QuickSlot_1.started += ctx => onQuickSlotInput?.Invoke(1);
             playerActions.Player.QuickSlot_2.started += ctx => onQuickSlotInput?.Invoke(2);
             playerActions.Player.QuickSlot_3.started += ctx => onQuickSlotInput?.Invoke(3);
@@ -125,7 +124,10 @@ namespace Nytherion.Core.Managers
             playerActions.Player.Dash.Enable();
             playerActions.Player.Attack.Enable();
         }
-
+        public void OnFireSkill(InputAction.CallbackContext context)
+        {
+            onSkillInput?.Invoke(0);
+        }
         public void EnablePlayerControls() => playerActions.Player.Enable();
         public void DisablePlayerControls() => playerActions.Player.Disable();
     }

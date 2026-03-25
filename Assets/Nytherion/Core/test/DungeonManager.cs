@@ -285,22 +285,6 @@ namespace Nytherion.GamePlay.Dungeon
             {
                 playerObject.transform.position = startRoom.center;
             }
-            UpdateCameraBounds();
-        }
-        private void UpdateCameraBounds()
-        {
-            if (floorCollider != null)
-            {
-                var cameraManager = FindObjectOfType<Nytherion.GamePlay.CameraManager>();
-                if (cameraManager != null)
-                {
-                    cameraManager.SetCameraBounds(floorCollider);
-                }
-                else
-                {
-                    Debug.LogWarning("⚠️ CameraManager를 찾을 수 없어 카메라 경계를 설정하지 못했습니다.");
-                }
-            }
         }
         private void HandleEnemyDeath(EnemyBase deadEnemy)
         {

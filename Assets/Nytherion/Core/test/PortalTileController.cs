@@ -45,7 +45,6 @@ namespace Nytherion.GamePlay.Dungeon
 
             if (!other.CompareTag("Player"))
             {
-                Debug.LogWarning($"[포탈 디버그] 플레이어가 아닌 객체와 충돌하여 무시합니다.");
                 return;
             }
 

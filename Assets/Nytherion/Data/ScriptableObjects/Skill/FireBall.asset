@@ -16,5 +16,7 @@ MonoBehaviour:
   skillType: 0
   skillName: FireBall
   coolDown: 1
+  damage: 1
+  range: 20
   icon: {fileID: 0}
-  skillPrefab: {fileID: 0}
+  skillPrefab: {fileID: 8870546469580780684, guid: f7b5ab6c13d185b48b5618e5733e2014, type: 3}

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7861176952871977674
+--- !u!1 &8870546469580780684
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,47 +8,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2974295790033403088}
-  - component: {fileID: 2073554065287845231}
+  - component: {fileID: 3994443106443864114}
+  - component: {fileID: 3221650392834087352}
   m_Layer: 0
-  m_Name: ObjectPoolManager
+  m_Name: FireBallSkill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2974295790033403088
+--- !u!4 &3994443106443864114
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7861176952871977674}
+  m_GameObject: {fileID: 8870546469580780684}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2073554065287845231
+--- !u!114 &3221650392834087352
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7861176952871977674}
+  m_GameObject: {fileID: 8870546469580780684}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2c33c68d52ff6341b859349ae0bc6d2, type: 3}
+  m_Script: {fileID: 11500000, guid: 784ba4c6709baa140a3fb35a0abef341, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoInitializeOnAwake: 0
-  pools:
-  - tag: Goblin
-    prefab: {fileID: 6406644339438500767, guid: 17fde502d382da64a805f35f8d770687, type: 3}
-    size: 50
-  - tag: FireBall
-    prefab: {fileID: 4893586122137001029, guid: 2f39ca2c520200b4bb325ed4c3c87f7c, type: 3}
-    size: 5
+  skillData: {fileID: 11400000, guid: 6539e447c211ffe43bced76a52c64e04, type: 2}
+  speed: 2
+  poolTag: FireBall

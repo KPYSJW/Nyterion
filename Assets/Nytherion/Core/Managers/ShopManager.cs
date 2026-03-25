@@ -1,12 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
-using Nytherion.Data.ScriptableObjects.Shop;
-using UnityEngine;
-using Nytherion.Core.Interfaces;
 using Nytherion.Core.Data;
 using Nytherion.Core.Utils;
-using VContainer;
-using VContainer.Unity;
+using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Shop;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace Nytherion.Core.Managers
 {
@@ -19,6 +17,11 @@ namespace Nytherion.Core.Managers
         private Dictionary<string, List<ShopItemData>> runtimeShopInventories = new();
         private bool hasLoadedSaveData = false;
 
+        [Header("Buyback Settings")]
+        [SerializeField] private int maxBuybackItems = 15; 
+        private List<ShopItemData> buybackInventory = new List<ShopItemData>();
+
+        public event System.Action OnBuybackChanged;
         public event System.Action OnStockChanged;
 
         protected override void OnInitializeInternal()
@@ -47,7 +50,8 @@ namespace Nytherion.Core.Managers
                             continue;
                         }
 
-                        var runtimeItems = shopDataAsset.itemsForSale?.Select(originalItem => {
+                        var runtimeItems = shopDataAsset.itemsForSale?.Select(originalItem =>
+                        {
                             return new ShopItemData
                             {
                                 shopItemId = originalItem.shopItemId,
@@ -77,6 +81,79 @@ namespace Nytherion.Core.Managers
             return null;
         }
 
+        /// <summary>
+        /// 판매한 아이템을 재구매 목록에 추가
+        /// </summary>
+        public void AddToBuyback(ItemData item, int amount, int soldPricePerItem)
+        {
+            // 동일한 아이템이 같은 가격으로 존재하는지 확인
+            var existingItem = buybackInventory.FirstOrDefault(i => i.item.ID == item.ID && i.price == soldPricePerItem);
+
+            if (existingItem != null)
+            {
+                existingItem.stock += amount;
+            }
+            else
+            {
+                // 새 항목 생성 
+                ShopItemData newBuybackItem = new ShopItemData
+                {
+                    shopItemId = System.Guid.NewGuid().ToString(), // 재구매용 고유 ID 발급
+                    item = item,
+                    price = soldPricePerItem, // 팔았던 가격을 그대로 구매가로 설정
+                    stock = amount,
+                    isUnlimited = false
+                };
+
+                // 최신 항목이 맨 위에 오도록 삽입
+                buybackInventory.Insert(0, newBuybackItem);
+            }
+
+            // 최대 개수 초과 시 가장 오래된 항목 삭제
+            if (buybackInventory.Count > maxBuybackItems)
+            {
+                buybackInventory.RemoveAt(buybackInventory.Count - 1);
+            }
+
+            OnBuybackChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// 현재 재구매 가능한 아이템 목록을 반환합니다.
+        /// </summary>
+        public List<ShopItemData> GetBuybackItems()
+        {
+            return buybackInventory;
+        }
+
+        /// <summary>
+        /// 유저가 재구매를 완료했을 때 목록에서 수량을 차감하거나 완전히 제거합니다.
+        /// </summary>
+        public void RecordBuybackPurchase(string shopItemId, int amountToBuy = 1)
+        {
+            var item = buybackInventory.FirstOrDefault(i => i.shopItemId == shopItemId);
+            if (item != null)
+            {
+                item.stock -= amountToBuy;
+                if (item.stock <= 0)
+                {
+                    buybackInventory.Remove(item);
+                }
+                OnBuybackChanged?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// 상점을 닫거나 씬 이동 시 재구매 목록을 비우고 싶을 때 호출
+        /// </summary>
+        public void ClearBuyback()
+        {
+            if (buybackInventory.Count > 0)
+            {
+                buybackInventory.Clear();
+                OnBuybackChanged?.Invoke();
+            }
+        }
         public void RecordPurchase(string shopName, string shopItemId)
         {
             if (runtimeShopInventories.TryGetValue(shopName, out var items))

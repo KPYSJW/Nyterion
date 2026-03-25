@@ -94,6 +94,12 @@ public class GameSceneUIRefs : MonoBehaviour
     public Transform ShopPlayerInventoryParent => shopPlayerInventoryParent;
     [SerializeField] private SellSlotUI sellSlotUI;
     public SellSlotUI SellSlotUI => sellSlotUI;
+    [SerializeField] private Button shopBuyTabButton;    
+    public Button ShopBuyTabButton => shopBuyTabButton;
+    [SerializeField] private Button shopBuybackTabButton;
+    public Button ShopBuybackTabButton => shopBuybackTabButton;
+    [SerializeField] private GameObject shopEmptyStateUI;
+    public GameObject ShopEmptyStateUI => shopEmptyStateUI;
 
 
     [Header("Menu UI")]

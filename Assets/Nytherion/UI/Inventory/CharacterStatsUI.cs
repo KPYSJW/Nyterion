@@ -83,7 +83,10 @@ namespace Nytherion.UI.Inventory
 
             ClearStatsUI();
             CreateStatCells();
-            StartCoroutine(ResetScrollPosition());
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(ResetScrollPosition());
+            }
         }
 
         private void CreateStatCells()
