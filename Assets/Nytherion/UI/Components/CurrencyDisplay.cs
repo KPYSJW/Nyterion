@@ -5,6 +5,7 @@ using Nytherion.Core.Enums;
 using VContainer;
 using VContainer.Unity;
 using System.Collections;
+using Nytherion.Core.Interfaces;
 
 public class CurrencyDisplay : MonoBehaviour, IInitializable
 {
@@ -18,12 +19,12 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
     [SerializeField] private string prefix = "";
     [SerializeField] private string suffix = "";
     [SerializeField] private bool useThousandsSeparator = false;
-    private CurrencyManager currencyManager;
+    private CurrencyDataManager currencyDataManager;
     
     [Inject]
-    public void Construct(CurrencyManager currencyManager)
+    public void Construct(CurrencyDataManager currencyManager)
     {
-        this.currencyManager = currencyManager;
+        this.currencyDataManager = currencyManager;
         if (currencyManager == null)
         {
             Debug.LogError($"[CurrencyDisplay] {gameObject.name} - CurrencyManager 주입 실패!");
@@ -33,11 +34,11 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
     public void Initialize()
     {
 
-        if (currencyManager != null)
+        if (currencyDataManager != null)
         {
-            currencyManager.onCurrencyChanged += OnCurrencyChanged;
+            currencyDataManager.OnDataChanged += OnCurrencyDataChanged;
 
-            int currentAmount = currencyManager.GetCurrency(type);
+            int currentAmount = currencyDataManager.GetCurrency(type);
 
             UpdateUI(currentAmount);
             if (currentAmount == 0)
@@ -56,26 +57,26 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
         yield return null;
         yield return new WaitForSeconds(0.1f);
 
-        if (currencyManager != null)
+        if (currencyDataManager != null)
         {
-            int currentAmount = currencyManager.GetCurrency(type);
+            int currentAmount = currencyDataManager.GetCurrency(type);
             UpdateUI(currentAmount);
         }
     }
 
     private void OnDestroy()
     {
-        if (currencyManager != null)
+        if (currencyDataManager != null)
         {
-            currencyManager.onCurrencyChanged -= OnCurrencyChanged;
+            currencyDataManager.OnDataChanged -= OnCurrencyDataChanged;
         }
     }
 
-    private void OnCurrencyChanged(CurrencyType changedType, int newAmount)
+    private void OnCurrencyDataChanged(CurrencyChangeData data)
     {
-        if (changedType == type)
+        if (data.currencyType == this.type)
         {
-            UpdateUI(newAmount);
+            UpdateUI(data.newAmount);
         }
     }
 
@@ -118,26 +119,26 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
 
     public int GetDisplayedAmount()
     {
-        if (currencyManager != null)
+        if (currencyDataManager != null)
         {
-            return currencyManager.GetCurrency(type);
+            return currencyDataManager.GetCurrency(type);
         }
         return 0;
     }
 
     public void SetDisplayType(CurrencyType newType)
     {
-        if (currencyManager != null)
+        if (currencyDataManager != null)
         {
-            currencyManager.onCurrencyChanged -= OnCurrencyChanged;
+            currencyDataManager.OnDataChanged -= OnCurrencyDataChanged;
         }
 
         type = newType;
 
-        if (currencyManager != null)
+        if (currencyDataManager != null)
         {
-            currencyManager.onCurrencyChanged += OnCurrencyChanged;
-            UpdateUI(currencyManager.GetCurrency(type));
+            currencyDataManager.OnDataChanged += OnCurrencyDataChanged;
+            UpdateUI(currencyDataManager.GetCurrency(type));
         }
     }
 }

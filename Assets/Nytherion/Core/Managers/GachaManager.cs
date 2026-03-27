@@ -60,7 +60,7 @@ namespace Nytherion.Core.Managers
                 return null;
             }
 
-            if (type == GachaType.Weapon && count > 1 && inventoryDataManager.IsFull())
+            if (type == GachaType.Weapon && inventoryDataManager.GetEmptySlotCount() < count)
             {
                 Debug.LogError("[GachaManager] 인벤토리가 가득 찼습니다.");
                 return null;

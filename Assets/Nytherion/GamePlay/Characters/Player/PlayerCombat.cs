@@ -14,20 +14,19 @@ namespace Nytherion.GamePlay.Characters.Player
         [Tooltip("현재 플레이어가 장착한 무기")]
         public WeaponBase currentWeapon;
         
-        private InputManager _inputManager;
-        private PlayerManager _playerManager;
+        private InputManager inputManager;
+        private PlayerManager playerManager;
         
         [Inject]
         public void Construct(InputManager inputManager)
         {
-            _inputManager = inputManager;
-             
+            this.inputManager = inputManager;
         }
 
         private void Awake()
         {
-            _playerManager = GetComponent<PlayerManager>();
-            if (_playerManager == null)
+            playerManager = GetComponent<PlayerManager>();
+            if (playerManager == null)
             {
                 Debug.LogError("PlayerManager 컴포넌트를 찾을 수 없습니다!");
             }
@@ -35,16 +34,11 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void Start()
         {
-            
-
-            if (_inputManager != null)
+            if (inputManager != null)
             {
-                _inputManager.onAttackDown += Attack;
-                _inputManager.onAttackUp += AttackEnd;
-               
+                inputManager.onAttackDown += Attack;
+                inputManager.onAttackUp += AttackEnd;
             }
-
-            
         }
         public void EquipWeapon(WeaponBase weapon)
         {
@@ -60,15 +54,27 @@ namespace Nytherion.GamePlay.Characters.Player
                 return;
             }
 
-            WeaponEngravingSynergyData synergy = _playerManager.playerEngravingManager.synergyEvaluator.EvaluateSynergy(weapon.weaponData, _playerManager.playerEngravingManager.GetCurrentEngravings());
-            if (synergy != null)
+            if (playerManager != null &&
+                playerManager.playerEngravingManager != null &&
+                playerManager.playerEngravingManager.synergyEvaluator != null &&
+                weapon.weaponData != null)
             {
-                Debug.Log($"시너지 발동: {synergy.weaponName} + {synergy.engravingName}");
+                WeaponEngravingSynergyData synergy = playerManager.playerEngravingManager.synergyEvaluator.EvaluateSynergy(weapon.weaponData, playerManager.playerEngravingManager.GetCurrentEngravings());
+
+                if (synergy != null)
+                {
+                    Debug.Log($"시너지 발동: {synergy.weaponName} + {synergy.engravingName}");
+                }
+                else
+                {
+                    Debug.Log("시너지 없음.");
+                }
             }
             else
             {
-                Debug.Log("시너지 없음.");
+                Debug.Log("[PlayerCombat] 로딩 중이거나 시너지 평가기가 준비되지 않아 시너지 계산을 건너뜁니다.");
             }
+
             currentWeapon = Instantiate(weapon, weaponPoint.position, Quaternion.identity, weaponPoint);
         }
 
@@ -77,7 +83,6 @@ namespace Nytherion.GamePlay.Characters.Player
             if(currentWeapon != null) 
             {
                 currentWeapon.Attack(Vector2.right);
-
             }
         }
 
@@ -90,10 +95,10 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void OnDisable()
         {
-            if (_inputManager != null)
+            if (inputManager != null)
             {
-                _inputManager.onAttackDown -= Attack;
-                _inputManager.onAttackUp -= AttackEnd;
+                inputManager.onAttackDown -= Attack;
+                inputManager.onAttackUp -= AttackEnd;
             }
         }
     }

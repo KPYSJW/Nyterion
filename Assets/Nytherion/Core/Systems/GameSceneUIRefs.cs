@@ -42,8 +42,7 @@ public class GameSceneUIRefs : MonoBehaviour
     public GameObject GachaMainPanel => gachaMainPanel;
     [SerializeField] private GameObject gachaResultPanel;
     public GameObject GachaResultPanel => gachaResultPanel;
-    [SerializeField] private TextMeshProUGUI tokenCountText;
-    public TextMeshProUGUI TokenCountText => tokenCountText;
+    
 
     [Header("Gacha UI Buttons")]
     [SerializeField] private Button drawWeaponOnceButton;
@@ -101,6 +100,13 @@ public class GameSceneUIRefs : MonoBehaviour
     [SerializeField] private GameObject shopEmptyStateUI;
     public GameObject ShopEmptyStateUI => shopEmptyStateUI;
 
+    [Header("Shop Buy Popup")]
+    [SerializeField] private BuyPopupUI shopBuyPopupUI;
+    public BuyPopupUI ShopBuyPopupUI => shopBuyPopupUI;
+
+    [Header("Shop Sell Popup")]
+    [SerializeField] private SellPopupUI shopSellPopupUI;
+    public SellPopupUI ShopSellPopupUI => shopSellPopupUI;
 
     [Header("Menu UI")]
     [SerializeField] private CanvasGroup menuCanvasGroup;

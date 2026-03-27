@@ -42,7 +42,6 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             this.inputManager = inputManager;
             this.playerManager = playerManager;
-
         }
 
         private void Start()

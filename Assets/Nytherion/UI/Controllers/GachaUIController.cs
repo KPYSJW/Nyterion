@@ -11,6 +11,7 @@ using Nytherion.GamePlay.Engravings;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Enums;
 using VContainer;
+using Nytherion.Core.Interfaces;
 
 namespace Nytherion.UI.Controllers
 {
@@ -29,24 +30,23 @@ namespace Nytherion.UI.Controllers
         [SerializeField] private Button resultCloseButton;
         [SerializeField] private Transform resultSlotParent;
         [SerializeField] private GameObject resultSlotPrefab;
-        [SerializeField] private TextMeshProUGUI tokenCountText;
 
         private PlayerAction playerAction;
         private InventoryManager inventoryManager;
-        private CurrencyManager currencyManager;
+        private CurrencyDataManager currencyDataManager;
         private GachaManager gachaManager;
         private EventManager eventManager;
 
         [Inject]
         public void Construct(
             InventoryManager inventoryManager,
-            CurrencyManager currencyManager,
+            CurrencyDataManager currencyDataManager,
             GachaManager gachaManager,
             EventManager eventManager,
             GameSceneUIRefs gameSceneuiRefs)
         {
             this.inventoryManager = inventoryManager;
-            this.currencyManager = currencyManager;
+            this.currencyDataManager = currencyDataManager;
             this.gachaManager = gachaManager;
             this.eventManager = eventManager;
             this.gameSceneuiRefs = gameSceneuiRefs;
@@ -60,7 +60,6 @@ namespace Nytherion.UI.Controllers
             this.drawEngravingTenTimesButton = gameSceneuiRefs.DrawEngravingTenTimesButton;
             this.resultSlotParent = gameSceneuiRefs.ResultSlotParent;
             this.resultSlotPrefab = gameSceneuiRefs.ResultSlotPrefab;
-            this.tokenCountText = gameSceneuiRefs.TokenCountText;
             this.controlledCanvasGroup = gameSceneuiRefs.GachaCanvasGroup;
         }
 
@@ -101,8 +100,8 @@ namespace Nytherion.UI.Controllers
 
         private void OnEnable()
         {
-            if (currencyManager != null)
-                currencyManager.onCurrencyChanged += UpdateTokenUI;
+            if (currencyDataManager != null)
+                currencyDataManager.OnDataChanged += UpdateTokenUI;
 
             playerAction = new PlayerAction();
             playerAction.GachaUI.Enable();
@@ -116,8 +115,8 @@ namespace Nytherion.UI.Controllers
 
         private void OnDisable()
         {
-            if (currencyManager != null)
-                currencyManager.onCurrencyChanged -= UpdateTokenUI;
+            if (currencyDataManager != null)
+                currencyDataManager.OnDataChanged -= UpdateTokenUI;
 
             if (playerAction != null)
             {
@@ -156,9 +155,13 @@ namespace Nytherion.UI.Controllers
 
         protected override void OnPanelStateChanged(bool isOpen)
         {
-            if (isOpen && currencyManager != null)
+            if (isOpen && currencyDataManager != null)
             {
-                UpdateTokenUI(CurrencyType.Token, currencyManager.GetCurrency(CurrencyType.Token));
+                UpdateTokenUI(new CurrencyChangeData
+                {
+                    currencyType = CurrencyType.Token,
+                    newAmount = currencyDataManager.GetCurrency(CurrencyType.Token)
+                });
             }
 
             if (isOpen)
@@ -201,14 +204,19 @@ namespace Nytherion.UI.Controllers
                     continue;
                 }
 
+                GachaResultSlot resultSlot = slotGO.GetComponent<GachaResultSlot>();
+
                 if (item is ItemData itemData)
                 {
                     itemIcon.sprite = itemData.icon;
+                    if (resultSlot != null)
+                    {
+                        resultSlot.Setup(itemData);
+                    }
                 }
                 else if (item is EngravingData engravingData)
                 {
                     itemIcon.sprite = engravingData.Image;
-                    GachaResultSlot resultSlot = slotGO.GetComponent<GachaResultSlot>();
                     if (resultSlot != null)
                     {
                         var tempEngravingBlock = new EngravingBlock(engravingData);
@@ -223,11 +231,10 @@ namespace Nytherion.UI.Controllers
         {
             resultPanel.SetActive(false);
         }
-        private void UpdateTokenUI(CurrencyType type, int amount)
+        private void UpdateTokenUI(CurrencyChangeData data)
         {
-            if (type == CurrencyType.Token)
+            if (data.currencyType == CurrencyType.Token)
             {
-                tokenCountText.text = amount.ToString();
             }
         }
     }
