@@ -19,12 +19,14 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public bool isDead { get; private set; } = false;
 
         public RoomFirstDungeonGenerator.Room homeRoom { get; set; }
+        public CurrencyDataManager currencyDataManager;
 
         private EventManager eventManager;
         [Inject]
-        public void Construct(EventManager eventManager)
+        public void Construct(EventManager eventManager,CurrencyDataManager currencyDataManager)
         {
             this.eventManager = eventManager;
+            this.currencyDataManager=currencyDataManager;
         }
         public void Initialize(EnemyData data)
         {
@@ -64,6 +66,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (Random.value <= enemyData.dropChance)
             {
                 Debug.Log($"골드 드랍: {enemyData.goldDropAmount}G ");
+                currencyDataManager.AddCurrency(Core.Enums.CurrencyType.Gold,10);//드랍아이템 스크립트로 옮겨야함.
                 
             }
 
