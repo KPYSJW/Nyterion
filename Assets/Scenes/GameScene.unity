@@ -12802,6 +12802,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6852058077325633452, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
+      propertyPath: orbitRadius
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6852058077325633452, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
+      propertyPath: centerOffset.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19766,7 +19774,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1721288127}
   m_HandleRect: {fileID: 1721288126}
   m_Direction: 2
-  m_Value: 0.5
+  m_Value: 0.49999973
   m_Size: 0.6333333
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -19939,7 +19947,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451803222681576171, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
       propertyPath: orthographic size
-      value: 4.415
+      value: 4.41
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23928,7 +23936,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.50000006
+  m_Size: 0.24999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

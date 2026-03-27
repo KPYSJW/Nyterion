@@ -16,7 +16,11 @@ namespace Nytherion.GamePlay.Combat
             GameObject projectile = Instantiate(weaponData.projectilePrefab, firePoint.position, Quaternion.identity);
             if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
             {
+                Vector2 normalizedDir = direction.normalized;
                 rb.velocity = direction.normalized * DefaultProjectileSpeed;
+
+                float angle = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
+                projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
             }
         }
