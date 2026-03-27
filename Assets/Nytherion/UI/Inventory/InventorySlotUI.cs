@@ -227,17 +227,17 @@ namespace Nytherion.UI.Inventory
 
             if (shopUI != null && shopUI.IsOpen)
             {
-                bool isHighTier = false;
-                if (isHighTier)
+                bool isShiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
+                if (isShiftPressed && CurrentCount > 1)
                 {
                     shopUI.OpenSellPopup(CurrentItem, CurrentCount);
                 }
                 else
                 {
-                    bool isShiftPressed = input.Sell.SellectAll.IsPressed();
-                    int amoutToSell = isShiftPressed ? CurrentCount : 1;
-                    shopUI.QuickSellItem(CurrentItem, amoutToSell);
+                    shopUI.QuickSellItem(CurrentItem, 1);
                 }
+
                 return;
             }
             else if (CurrentItem is EquipmentData equipment)

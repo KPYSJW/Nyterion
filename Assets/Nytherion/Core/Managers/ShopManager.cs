@@ -154,7 +154,7 @@ namespace Nytherion.Core.Managers
                 OnBuybackChanged?.Invoke();
             }
         }
-        public void RecordPurchase(string shopName, string shopItemId)
+        public void RecordPurchase(string shopName, string shopItemId,int amountToBuy = 1)
         {
             if (runtimeShopInventories.TryGetValue(shopName, out var items))
             {

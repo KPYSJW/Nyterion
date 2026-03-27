@@ -5,15 +5,17 @@ using Nytherion.Data.ScriptableObjects.Shop;
 using Nytherion.UI.Controllers;
 using Nytherion.Core.Managers;
 using VContainer;
+using UnityEngine.EventSystems;
+using Nytherion.UI.Components;
 
 namespace Nytherion.UI.Shop
 {
-    public class ShopSlotUI : MonoBehaviour
+    public class ShopSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private Image iconImage;
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI priceText;
-        [SerializeField] private TextMeshProUGUI descriptionText;
+        //[SerializeField] private TextMeshProUGUI descriptionText;
         [SerializeField] private TextMeshProUGUI stockText;
         [SerializeField] private Button buyButton;
         [SerializeField] private CanvasGroup canvasGroup;
@@ -38,7 +40,7 @@ namespace Nytherion.UI.Shop
                 iconImage.sprite = CurrentItem.item.icon;
                 nameText.text = CurrentItem.item.itemName;
                 priceText.text = $"{CurrentItem.price} Gold";
-                descriptionText.text = CurrentItem.item.description;
+                
                 stockText.text = CurrentItem.isUnlimited ? "" : $"X {CurrentItem.stock}";
 
                 buyButton.onClick.RemoveAllListeners();
@@ -140,6 +142,31 @@ namespace Nytherion.UI.Shop
                 canvasGroup.alpha = 1f;
                 canvasGroup.interactable = true;
                 canvasGroup.blocksRaycasts = true;
+            }
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if(CurrentItem != null && CurrentItem.item != null)
+            {
+                if(TooltipPanel.Instance != null)
+                {
+                    TooltipPanel.Instance.ShowTooltip(CurrentItem.item);
+                }
+            }
+        }
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if(TooltipPanel.Instance != null)
+            {
+                TooltipPanel.Instance.HideTooltip();
+            }
+        }
+        private void OnDisable()
+        {
+            if(TooltipPanel.Instance != null && TooltipPanel.Instance.gameObject.activeSelf)
+            {
+                TooltipPanel.Instance.HideTooltip();
             }
         }
     }

@@ -34,7 +34,7 @@ namespace Nytherion.UI.Controllers
         private CurrencyDataManager currencyDataManager;
         private EventManager eventManager;
         private ShopManager shopManager;
-        private SellSlotUI sellSlotUI;
+        //private SellSlotUI sellSlotUI;
 
         [Header("Buyback UI")]
         private GameObject emptyStateUI;
@@ -43,6 +43,9 @@ namespace Nytherion.UI.Controllers
         private bool isBuybackMode = false;
 
         private IObjectResolver container;
+
+        private BuyPopupUI buyPopupUI;
+        private SellPopupUI sellPopupUI;
 
         [Inject]
         public void Construct(IObjectResolver container,
@@ -56,7 +59,7 @@ namespace Nytherion.UI.Controllers
             this.shopManager = shopManagerPrefab;
             this.currencyDataManager = currencyDataManagerPrefab;
             this.eventManager = eventManagerPrefab;
-            this.sellSlotUI = gameSceneuiRefs.SellSlotUI;
+            //this.sellSlotUI = gameSceneuiRefs.SellSlotUI;
             this.closeButton = gameSceneuiRefs.ShopCloseButton;
             this.goldText = gameSceneuiRefs.ShopPlayerGoldText;
             this.shopSlotParent = gameSceneuiRefs.ShopSlotParent;
@@ -66,6 +69,8 @@ namespace Nytherion.UI.Controllers
             this.buyTabButton = gameSceneuiRefs.ShopBuyTabButton;
             this.buybackTabButton = gameSceneuiRefs.ShopBuybackTabButton;
             this.emptyStateUI = gameSceneuiRefs.ShopEmptyStateUI;
+            this.buyPopupUI = gameSceneuiRefs.ShopBuyPopupUI;
+            this.sellPopupUI = gameSceneuiRefs.ShopSellPopupUI;
         }
 
         private InventoryDataManager GetInventoryDataManager()
@@ -148,14 +153,6 @@ namespace Nytherion.UI.Controllers
             if (goldText == null)
                 goldText = GetComponentInChildren<TextMeshProUGUI>();
 
-            // SellSlotUI는 GameSceneUIRefs에서 이미 설정됨
-            if (sellSlotUI != null)
-            {
-            }
-            else
-            {
-                Debug.LogError("[ShopUI] SellSlotUI is null from GameSceneUIRefs!");
-            }
         }
 
         protected override void Awake()
@@ -177,17 +174,16 @@ namespace Nytherion.UI.Controllers
             if (buybackTabButton != null) buybackTabButton.onClick.AddListener(() => ChangeTab(true));
 
             // SellSlotUI 이벤트 구독 처리
-            if (sellSlotUI != null)
-            {
-                sellSlotUI.OnItemSold -= HandleSellItem;
-                sellSlotUI.OnItemSold += HandleSellItem;
-            }
-            else
-            {
-                Debug.LogError("[ShopUI] SellSlotUI is null, cannot subscribe to OnItemSold event");
-            }
+            //if (sellSlotUI != null)
+            //{
+            //    sellSlotUI.OnItemSold -= HandleSellItem;
+            //    sellSlotUI.OnItemSold += HandleSellItem;
+            //}
+            //else
+            //{
+            //    Debug.LogError("[ShopUI] SellSlotUI is null, cannot subscribe to OnItemSold event");
+            //}
 
-            // Lazy resolution으로 매니저들 가져오기
             CurrencyDataManager currencyMgr = GetCurrencyDataManager();
             if (currencyMgr != null)
             {
@@ -291,6 +287,19 @@ namespace Nytherion.UI.Controllers
 
             Open();
         }
+        public void OpenSellPopup(ItemData item, int maxAmount)
+        {
+            int unitSellPrice = Mathf.RoundToInt(item.baseValue * SELL_PRICE_RATIO);
+
+            if (sellPopupUI != null)
+            {
+                sellPopupUI.Setup(this, item, maxAmount, unitSellPrice);
+            }
+            else
+            {
+                QuickSellItem(item, maxAmount);
+            }
+        }
 
         public override void Open()
         {
@@ -320,95 +329,83 @@ namespace Nytherion.UI.Controllers
                 eventMgr.TriggerCloseInventoryForShop();
             }
 
-            if (sellSlotUI != null) sellSlotUI.ClearSlot();
+            //if (sellSlotUI != null) sellSlotUI.ClearSlot();
         }
 
         public void BuyItem(ShopSlotUI slot)
         {
             var shopItem = slot.CurrentItem;
-            if (shopItem == null || (!shopItem.isUnlimited && shopItem.stock <= 0))
-            {
-                Debug.Log($"[ShopUI] 구매 불가: 아이템이 없거나 재고가 부족합니다.");
-                return;
-            }
+            if (shopItem == null || (!shopItem.isUnlimited && shopItem.stock <= 0)) return;
 
-            // 구매 중복 방지를 위해 즉시 버튼 비활성화
-            slot.SetInteractable(false);
-
-            int amountToBuy = 1;
             CurrencyDataManager currencyMgr = GetCurrencyDataManager();
-            InventoryDataManager inventoryMgr = GetInventoryDataManager();
+            if (currencyMgr == null) return;
 
-            if (currencyMgr == null || inventoryMgr == null)
+            int playerGold = currencyMgr.GetCurrency(CurrencyType.Gold);
+            int maxAffordable = shopItem.price > 0 ? playerGold / shopItem.price : 99;
+
+            if (maxAffordable <= 0)
             {
-                Debug.LogError("[ShopUI] 필수 매니저가 없습니다.");
-                slot.SetInteractable(true);
+                Debug.Log("[ShopUI] 골드가 부족하여 1개도 살 수 없습니다.");
                 return;
             }
 
-            // 재고 및 가격 재확인
-            if (!currencyMgr.HasCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
+            
+            if (shopItem.item is Data.ScriptableObjects.Items.EquipmentData)
             {
-                Debug.Log($"[ShopUI] 골드 부족: 필요 {shopItem.price * amountToBuy}, 보유 {currencyMgr.GetCurrency(CurrencyType.Gold)}");
-                slot.SetInteractable(true);
-                return;
-            }
-
-
-            if (currencyMgr.SpendCurrency(CurrencyType.Gold, shopItem.price * amountToBuy))
-            {
-
-                if (inventoryMgr.AddItem(shopItem.item, amountToBuy))
-                {
-                    // 재고 감소 처리
-                    if (!shopItem.isUnlimited)
-                    {
-                        ShopManager shopMgr = GetShopManager();
-                        if (shopMgr != null)
-                        {
-                            if (isBuybackMode)
-                            {
-                                shopMgr.RecordBuybackPurchase(shopItem.shopItemId, amountToBuy);
-                            }
-                            else if (!shopItem.isUnlimited)
-                            {
-                                shopMgr.RecordPurchase(currentShopData.shopName, shopItem.shopItemId);
-                            }
-                        }
-                    }
-                   
-                    if (shopItem.isUnlimited)
-                    {
-                        slot.SetInteractable(true);
-                    }
-                    // 무기 자동 장착 로직
-                    if (shopItem.item is WeaponData weaponData)
-                    {
-                        var equipmentSlot = FindObjectOfType<EquipmentSlotUI>();
-                        if (equipmentSlot != null && equipmentSlot.IsEmpty)
-                        {
-                            if (inventoryMgr.RemoveItem(shopItem.item.ID, 1))
-                            {
-                                equipmentSlot.SetItem(shopItem.item, 1);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // 인벤토리 추가 실패 시 환불
-                    currencyMgr.AddCurrency(CurrencyType.Gold, shopItem.price * amountToBuy);
-                    Debug.LogWarning("[ShopUI] 인벤토리가 가득참. 구매가 취소되었습니다.");
-                    slot.SetInteractable(true);
-                }
+                ConfirmPurchase(slot, 1);
             }
             else
             {
-                Debug.LogWarning("[ShopUI] 골드 지출 실패.");
-                slot.SetInteractable(true);
+                if (buyPopupUI != null)
+                {
+                    buyPopupUI.Setup(this, slot, maxAffordable);
+                }
+                else
+                {
+                    ConfirmPurchase(slot, 1); 
+                }
             }
         }
 
+        public void ConfirmPurchase(ShopSlotUI slot, int amountToBuy)
+        {
+            var shopItem = slot.CurrentItem;
+            CurrencyDataManager currencyMgr = GetCurrencyDataManager();
+            InventoryDataManager inventoryMgr = GetInventoryDataManager();
+
+            int totalPrice = shopItem.price * amountToBuy; 
+
+            if (!currencyMgr.HasCurrency(CurrencyType.Gold, totalPrice)) return;
+
+            if (currencyMgr.SpendCurrency(CurrencyType.Gold, totalPrice))
+            {
+                if (inventoryMgr.AddItem(shopItem.item, amountToBuy)) 
+                {
+                    ShopManager shopMgr = GetShopManager();
+                    if (shopMgr != null)
+                    {
+                        if (isBuybackMode)
+                        {
+                            shopMgr.RecordBuybackPurchase(shopItem.shopItemId, amountToBuy);
+                        }
+                        else if (!shopItem.isUnlimited)
+                        {
+                            shopMgr.RecordPurchase(currentShopData.shopName, shopItem.shopItemId, amountToBuy);
+                        }
+                    }
+
+                    if (shopItem.isUnlimited) slot.SetInteractable(true);
+
+                }
+                else
+                {
+                    currencyMgr.AddCurrency(CurrencyType.Gold, totalPrice);
+                    slot.SetInteractable(true);
+                }
+            }
+
+            slot.UpdateStockUI(); // 재고 UI 갱신 (선택 사항: RefreshShopUI()를 호출해도 좋습니다)
+        }
         public void HandleSellItem(ItemData item, int amount)
         {
 
@@ -452,18 +449,18 @@ namespace Nytherion.UI.Controllers
         {
             HandleSellItem(item, amount);
         }
-        public void OpenSellPopup(ItemData item, int maxAmount)
-        {
-            if (sellSlotUI != null)
-            {
-                sellSlotUI.gameObject.SetActive(true);
-                sellSlotUI.SetItem(item, maxAmount);
-            }
-            else
-            {
-                Debug.LogWarning("SellslotUI가 할당되지 않았다");
-            }
-        }
+        //public void OpenSellPopup(ItemData item, int maxAmount)
+        //{
+        //    if (sellSlotUI != null)
+        //    {
+        //        sellSlotUI.gameObject.SetActive(true);
+        //        sellSlotUI.SetItem(item, maxAmount);
+        //    }
+        //    else
+        //    {
+        //        Debug.LogWarning("SellslotUI가 할당되지 않았다");
+        //    }
+        //}
         private void PopulateShop()
         {
             if (currentShopData == null || shopSlotParent == null) return;
@@ -494,7 +491,7 @@ namespace Nytherion.UI.Controllers
                 var textUI = emptyStateUI.GetComponent<TMPro.TextMeshProUGUI>();
                 if (textUI != null)
                 {
-                    textUI.text = isBuybackMode ? "재구매할 수 있는 아이템이 없습니다." : "판매 중인 아이템이 없습니다.";
+                    textUI.text = isBuybackMode ? "No items available for repurchase" : "No items on sale.";
                 }
             }
 
@@ -574,10 +571,10 @@ namespace Nytherion.UI.Controllers
                 shopMgr.OnBuybackChanged -= RefreshShopUI;
             }
 
-            if (sellSlotUI != null)
-            {
-                sellSlotUI.OnItemSold -= HandleSellItem;
-            }
+            //if (sellSlotUI != null)
+            //{
+            //    sellSlotUI.OnItemSold -= HandleSellItem;
+            //}
         }
         private void RefreshShopUI()
         {

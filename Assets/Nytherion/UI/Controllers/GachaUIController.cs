@@ -29,7 +29,6 @@ namespace Nytherion.UI.Controllers
         [SerializeField] private Button resultCloseButton;
         [SerializeField] private Transform resultSlotParent;
         [SerializeField] private GameObject resultSlotPrefab;
-        [SerializeField] private TextMeshProUGUI tokenCountText;
 
         private PlayerAction playerAction;
         private InventoryManager inventoryManager;
@@ -60,7 +59,6 @@ namespace Nytherion.UI.Controllers
             this.drawEngravingTenTimesButton = gameSceneuiRefs.DrawEngravingTenTimesButton;
             this.resultSlotParent = gameSceneuiRefs.ResultSlotParent;
             this.resultSlotPrefab = gameSceneuiRefs.ResultSlotPrefab;
-            this.tokenCountText = gameSceneuiRefs.TokenCountText;
             this.controlledCanvasGroup = gameSceneuiRefs.GachaCanvasGroup;
         }
 
@@ -201,14 +199,19 @@ namespace Nytherion.UI.Controllers
                     continue;
                 }
 
+                GachaResultSlot resultSlot = slotGO.GetComponent<GachaResultSlot>();
+
                 if (item is ItemData itemData)
                 {
                     itemIcon.sprite = itemData.icon;
+                    if (resultSlot != null)
+                    {
+                        resultSlot.Setup(itemData);
+                    }
                 }
                 else if (item is EngravingData engravingData)
                 {
                     itemIcon.sprite = engravingData.Image;
-                    GachaResultSlot resultSlot = slotGO.GetComponent<GachaResultSlot>();
                     if (resultSlot != null)
                     {
                         var tempEngravingBlock = new EngravingBlock(engravingData);
@@ -227,7 +230,6 @@ namespace Nytherion.UI.Controllers
         {
             if (type == CurrencyType.Token)
             {
-                tokenCountText.text = amount.ToString();
             }
         }
     }

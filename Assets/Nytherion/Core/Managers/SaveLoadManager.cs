@@ -342,6 +342,7 @@ namespace Nytherion.Core.Managers
                     catch (System.Exception e)
                     {
                         Debug.LogError($"[SaveLoadManager] {entity.GetType().Name} 로드 중 오류: {e.Message}");
+                        Debug.LogException(e);
                     }
                 }
             }
