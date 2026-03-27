@@ -11,6 +11,7 @@ using Nytherion.GamePlay.Engravings;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Enums;
 using VContainer;
+using Nytherion.Core.Interfaces;
 
 namespace Nytherion.UI.Controllers
 {
@@ -32,20 +33,20 @@ namespace Nytherion.UI.Controllers
 
         private PlayerAction playerAction;
         private InventoryManager inventoryManager;
-        private CurrencyManager currencyManager;
+        private CurrencyDataManager currencyDataManager;
         private GachaManager gachaManager;
         private EventManager eventManager;
 
         [Inject]
         public void Construct(
             InventoryManager inventoryManager,
-            CurrencyManager currencyManager,
+            CurrencyDataManager currencyDataManager,
             GachaManager gachaManager,
             EventManager eventManager,
             GameSceneUIRefs gameSceneuiRefs)
         {
             this.inventoryManager = inventoryManager;
-            this.currencyManager = currencyManager;
+            this.currencyDataManager = currencyDataManager;
             this.gachaManager = gachaManager;
             this.eventManager = eventManager;
             this.gameSceneuiRefs = gameSceneuiRefs;
@@ -99,8 +100,8 @@ namespace Nytherion.UI.Controllers
 
         private void OnEnable()
         {
-            if (currencyManager != null)
-                currencyManager.onCurrencyChanged += UpdateTokenUI;
+            if (currencyDataManager != null)
+                currencyDataManager.OnDataChanged += UpdateTokenUI;
 
             playerAction = new PlayerAction();
             playerAction.GachaUI.Enable();
@@ -114,8 +115,8 @@ namespace Nytherion.UI.Controllers
 
         private void OnDisable()
         {
-            if (currencyManager != null)
-                currencyManager.onCurrencyChanged -= UpdateTokenUI;
+            if (currencyDataManager != null)
+                currencyDataManager.OnDataChanged -= UpdateTokenUI;
 
             if (playerAction != null)
             {
@@ -154,9 +155,13 @@ namespace Nytherion.UI.Controllers
 
         protected override void OnPanelStateChanged(bool isOpen)
         {
-            if (isOpen && currencyManager != null)
+            if (isOpen && currencyDataManager != null)
             {
-                UpdateTokenUI(CurrencyType.Token, currencyManager.GetCurrency(CurrencyType.Token));
+                UpdateTokenUI(new CurrencyChangeData
+                {
+                    currencyType = CurrencyType.Token,
+                    newAmount = currencyDataManager.GetCurrency(CurrencyType.Token)
+                });
             }
 
             if (isOpen)
@@ -226,9 +231,9 @@ namespace Nytherion.UI.Controllers
         {
             resultPanel.SetActive(false);
         }
-        private void UpdateTokenUI(CurrencyType type, int amount)
+        private void UpdateTokenUI(CurrencyChangeData data)
         {
-            if (type == CurrencyType.Token)
+            if (data.currencyType == CurrencyType.Token)
             {
             }
         }

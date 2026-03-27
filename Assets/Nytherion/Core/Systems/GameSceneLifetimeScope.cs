@@ -49,7 +49,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private MenuManager menuManagerPrefab;
     [SerializeField] private ItemUsageManager itemUsageManagerPrefab;
     [SerializeField] private InventoryManager inventoryManagerPrefab;
-    [SerializeField] private CurrencyManager currencyManagerPrefab;
+    [SerializeField] private CurrencyDataManager currencyManagerPrefab;
 
     [Header("Debug Systems")]
     [SerializeField] private EngravingSystemDebugger engravingSystemDebuggerPrefab;

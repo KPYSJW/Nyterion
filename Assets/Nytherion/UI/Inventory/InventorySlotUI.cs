@@ -14,7 +14,7 @@ namespace Nytherion.UI.Inventory
     public class InventorySlotUI : BaseSlotUI, IDropHandler
     {
         public int SlotIndex { get; private set; }
-        public event Action<BaseSlotUI> OnSellItemAction;
+        //public event Action<BaseSlotUI> OnSellItemAction;
         private ShopAction input;
 
         private EquipmentDataManager equipmentDataManager;

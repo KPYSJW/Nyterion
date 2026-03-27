@@ -77,9 +77,15 @@ namespace Nytherion.Core.Managers
             // 하위 클래스에서 필요에 따라 오버라이드
         }
         
-        public abstract void PopulateSaveData(SaveData saveData);
+        public virtual void PopulateSaveData(SaveData saveData)
+        {
 
-        public abstract void LoadFromSaveData(SaveData saveData);
+        }
+
+        public virtual void LoadFromSaveData(SaveData saveData)
+        {
+
+        }
 
         protected virtual void OnDestroy()
         {
