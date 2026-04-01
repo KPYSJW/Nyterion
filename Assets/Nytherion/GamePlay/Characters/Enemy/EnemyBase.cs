@@ -19,7 +19,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public bool isDead { get; private set; } = false;
 
         public RoomFirstDungeonGenerator.Room homeRoom { get; set; }
-        public CurrencyDataManager currencyDataManager;
+        private CurrencyDataManager currencyDataManager;
 
         private EventManager eventManager;
         [Inject]
