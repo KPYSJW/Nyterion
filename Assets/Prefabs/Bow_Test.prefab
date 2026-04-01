@@ -114,6 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponData: {fileID: 11400000, guid: c19efd2c24895944f90973cb5732048e, type: 2}
   firePoint: {fileID: 4288061520210801657}
+  projectilePoolTag: Arrow
 --- !u!1 &4964738641561314771
 GameObject:
   m_ObjectHideFlags: 0

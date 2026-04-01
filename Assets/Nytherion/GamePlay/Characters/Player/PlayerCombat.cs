@@ -11,12 +11,24 @@ namespace Nytherion.GamePlay.Characters.Player
         [Tooltip("무기가 생성될 위치를 지정하는 트랜스폼")]
         [SerializeField] private Transform weaponPoint;
 
-        [Tooltip("현재 플레이어가 장착한 무기")]
+        [Tooltip("플레이어를 중심으로 무기가 공전할 반경(거리)")]
+        [SerializeField] private float orbitRadius = 1.0f;
+
+        [Tooltip("떨림 방지용 데드존 반경 (이 거리 안에서는 목표 방향이 갱신되지 않음)")]
+        [SerializeField] private float deadZoneRadius = 0.5f;
+
+        [Tooltip("무기가 궤도를 따라 이동하는 속도 (높을수록 마우스를 빨리 따라감)")]
+        [SerializeField] private float orbitSpeed = 15f;
+
+        [SerializeField] private Vector3 centerOffset = new Vector3(0, 0.5f, 0);
+
         public WeaponBase currentWeapon;
-        
+
         private InputManager inputManager;
         private PlayerManager playerManager;
-        
+
+        private float currentAngle = 0f;
+
         [Inject]
         public void Construct(InputManager inputManager)
         {
@@ -26,10 +38,6 @@ namespace Nytherion.GamePlay.Characters.Player
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
-            if (playerManager == null)
-            {
-                Debug.LogError("PlayerManager 컴포넌트를 찾을 수 없습니다!");
-            }
         }
 
         private void Start()
@@ -40,49 +48,72 @@ namespace Nytherion.GamePlay.Characters.Player
                 inputManager.onAttackUp += AttackEnd;
             }
         }
-        public void EquipWeapon(WeaponBase weapon)
+
+        public void EquipWeapon(WeaponBase newWeapon)
         {
             if (currentWeapon != null)
             {
                 Destroy(currentWeapon.gameObject);
-                currentWeapon = null;
             }
 
-            if (weapon == null)
+            if (newWeapon != null && weaponPoint != null)
             {
-                Debug.Log("무기 장착 해제됨.");
-                return;
+                currentWeapon = Instantiate(newWeapon, weaponPoint.position, Quaternion.identity);
+                currentWeapon.transform.SetParent(weaponPoint);
             }
+        }
 
-            if (playerManager != null &&
-                playerManager.playerEngravingManager != null &&
-                playerManager.playerEngravingManager.synergyEvaluator != null &&
-                weapon.weaponData != null)
+        private void Update()
+        {
+            RotateWeaponToMouse();
+        }
+
+        private void RotateWeaponToMouse()
+        {
+            if (inputManager == null || weaponPoint == null) return;
+
+            Vector2 mouseScreenPos = inputManager.MousePosition;
+
+            if (Camera.main != null)
             {
-                WeaponEngravingSynergyData synergy = playerManager.playerEngravingManager.synergyEvaluator.EvaluateSynergy(weapon.weaponData, playerManager.playerEngravingManager.GetCurrentEngravings());
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
+                mouseWorldPos.z = 0f;
 
-                if (synergy != null)
+                Vector3 playerCenter = transform.position + centerOffset;
+                Vector2 mouseVector = mouseWorldPos - playerCenter;
+
+                float targetAngle = currentAngle; 
+                if (mouseVector.magnitude >= deadZoneRadius)
                 {
-                    Debug.Log($"시너지 발동: {synergy.weaponName} + {synergy.engravingName}");
+                    targetAngle = Mathf.Atan2(mouseVector.y, mouseVector.x) * Mathf.Rad2Deg;
+                }
+
+                currentAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * orbitSpeed);
+
+                Vector2 currentDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
+
+                weaponPoint.position = playerCenter + (Vector3)(currentDirection * orbitRadius);
+                weaponPoint.rotation = Quaternion.Euler(0, 0, currentAngle);
+
+                float normalizedAngle = Mathf.DeltaAngle(0, currentAngle);
+                if (Mathf.Abs(normalizedAngle) > 90f)
+                {
+                    weaponPoint.localScale = new Vector3(1f, -1f, 1f);
                 }
                 else
                 {
-                    Debug.Log("시너지 없음.");
+                    weaponPoint.localScale = new Vector3(1f, 1f, 1f);
                 }
             }
-            else
-            {
-                Debug.Log("[PlayerCombat] 로딩 중이거나 시너지 평가기가 준비되지 않아 시너지 계산을 건너뜁니다.");
-            }
-
-            currentWeapon = Instantiate(weapon, weaponPoint.position, Quaternion.identity, weaponPoint);
         }
 
         public void Attack()
         {
-            if(currentWeapon != null) 
+            if (currentWeapon != null)
             {
-                currentWeapon.Attack(Vector2.right);
+                Vector2 fireDirection = weaponPoint.right;
+
+                currentWeapon.Attack(fireDirection);
             }
         }
 
@@ -90,6 +121,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (currentWeapon != null)
             {
+                currentWeapon.AttackEnd();
             }
         }
 

@@ -1,6 +1,6 @@
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Skill;
-using Nytherion.GamePlay.Characters.Skill;
+using Nytherion.GamePlay.Skills;
 using System;
 using UnityEngine;
 using VContainer;

@@ -1,0 +1,45 @@
+using UnityEngine;
+
+namespace Nytherion.GamePlay.Skills
+{
+    [RequireComponent(typeof(Rigidbody2D))]
+    public class SineWaveProjectile : MonoBehaviour
+    {
+        public float forwardSpeed = 8f;
+        public float waveFrequency = 5f; // ²Ü··°Å¸®´Â¤¤ ¼Óµµ 
+        public float waveMagnitude = 3f; // ²Ü··°Å¸®´Â Æø 
+
+        private Rigidbody2D rb;
+        private Vector2 startDirection;
+        private Vector2 perpendicularDirection;
+        private float spawnTime;
+
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
+
+        private void Start()
+        {
+            spawnTime = Time.time;
+
+            startDirection = rb.velocity.normalized;
+            if (startDirection == Vector2.zero) startDirection = transform.right;
+
+            perpendicularDirection = new Vector2(-startDirection.y, startDirection.x);
+        }
+
+        private void FixedUpdate()
+        {
+            Vector2 forwardVelocity = startDirection * forwardSpeed;
+
+            float sineWave = Mathf.Sin((Time.time - spawnTime) * waveFrequency) * waveMagnitude;
+            Vector2 waveVelocity = perpendicularDirection * sineWave;
+
+            rb.velocity = forwardVelocity + waveVelocity;
+
+            float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+    }
+}

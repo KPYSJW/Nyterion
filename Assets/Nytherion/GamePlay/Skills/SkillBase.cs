@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Nytherion.GamePlay.Characters.Skill
+namespace Nytherion.GamePlay.Skills
 {
     public abstract class SkillBase : MonoBehaviour
     {

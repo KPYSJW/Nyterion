@@ -128,6 +128,18 @@ namespace Nytherion.Core.Managers
         {
             onSkillInput?.Invoke(0);
         }
+
+        public Vector2 MousePosition
+        {
+            get
+            {
+                if (Mouse.current != null)
+                {
+                    return Mouse.current.position.ReadValue();
+                }
+                return Vector2.zero;
+            }
+        }
         public void EnablePlayerControls() => playerActions.Player.Enable();
         public void DisablePlayerControls() => playerActions.Player.Disable();
     }

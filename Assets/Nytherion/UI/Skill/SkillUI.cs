@@ -1,5 +1,5 @@
 using Nytherion.GamePlay.Characters.Player;
-using Nytherion.GamePlay.Characters.Skill;
+using Nytherion.GamePlay.Skills;
 using Nytherion.Data.ScriptableObjects.Skill;
 using TMPro;
 using UnityEngine;

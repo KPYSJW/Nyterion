@@ -1,7 +1,7 @@
 ﻿using Nytherion.Core.Managers;
 using UnityEngine;
 
-namespace Nytherion.GamePlay.Characters.Skill
+namespace Nytherion.GamePlay.Skills
 {
     public class FireBallSkill : SkillBase
     {

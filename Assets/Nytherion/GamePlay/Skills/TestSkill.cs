@@ -1,4 +1,4 @@
-using Nytherion.GamePlay.Characters.Skill;
+using Nytherion.GamePlay.Skills;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
