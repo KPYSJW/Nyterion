@@ -30,12 +30,16 @@ namespace Nytherion.GamePlay.Combat.Weapon
                 float currentDamageMultiplier = Mathf.Lerp(1.0f, maxDamageMultiplier, chargePercent);
                 collisionObj.damage = weaponData.damage * currentDamageMultiplier;
 
-                // 차징 비율이 임계치를 넘으면 관통 효과를 활성화
+                if (!projObj.TryGetComponent<PiercingEffect>(out var piercingEffect))
+                {
+                    piercingEffect = projObj.AddComponent<PiercingEffect>();
+                }
+
                 if (chargePercent >= pierceThreshold)
                 {
-                    collisionObj.isPiercing = true;
+                    // 관통 효과 켜기
+                    piercingEffect.enabled = true;
 
-                    // 시각적 피드백: 풀 차징 관통 투사체는 크기를 1.5배 키우고 빨간색으로 변경
                     projObj.transform.localScale *= 1.5f;
                     if (projObj.TryGetComponent<SpriteRenderer>(out var sr))
                     {
@@ -44,7 +48,8 @@ namespace Nytherion.GamePlay.Combat.Weapon
                 }
                 else
                 {
-                    collisionObj.isPiercing = false;
+                    // 관통 효과 끄기
+                    piercingEffect.enabled = false;
                 }
             }
             transform.localScale = originalScale;

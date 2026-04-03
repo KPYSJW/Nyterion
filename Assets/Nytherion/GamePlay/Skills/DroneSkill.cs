@@ -141,12 +141,9 @@ namespace Nytherion.GamePlay.Characters.Skill
                     rb.velocity = direction * projectileSpeed;
                 }
 
-                // 투사체 데미지 적용 (CollisionObject 스크립트가 붙어있다고 가정)
-                if (projectile.TryGetComponent<Combat.CollisionObject>(out var collisionObj))
+                if (projectile.TryGetComponent<Combat.PiercingEffect>(out var pierce))
                 {
-                    // SkillData에 정의된 데미지(damage)를 할당합니다.
-                    collisionObj.damage = skillData.damage;
-                    collisionObj.isPiercing = false;
+                    pierce.enabled = false;
                 }
             }
         }
