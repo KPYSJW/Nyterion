@@ -2147,7 +2147,7 @@ GameObject:
   - component: {fileID: 231422555}
   m_Layer: 0
   m_Name: WallTilemap
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3980,7 +3980,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100.00003}
+  m_AnchoredPosition: {x: 0, y: -99.999985}
   m_SizeDelta: {x: 680, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &349391062
@@ -8027,7 +8027,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1676113805}
   m_HandleRect: {fileID: 1676113804}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -12757,7 +12757,7 @@ PrefabInstance:
     - target: {fileID: 2180091910043822190, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: startingSkills.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 16be1c0e405f174488f5be1093f8c9e2, type: 2}
+      objectReference: {fileID: 11400000, guid: 1920441c325ffa048a78fe428dad929b, type: 2}
     - target: {fileID: 5097942217742227509, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: m_Name
       value: Player
@@ -19947,7 +19947,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451803222681576171, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
       propertyPath: orthographic size
-      value: 4.41
+      value: 4.16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23936,7 +23936,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.25000003
+  m_Size: 0.24999996
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

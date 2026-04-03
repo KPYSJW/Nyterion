@@ -114,7 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponData: {fileID: 11400000, guid: 7caccffd938aa0f439e4d7ffe377d20e, type: 2}
   firePoint: {fileID: 4288061520210801657}
-  projectilePoolTag: Arrow
+  projectilePoolTag: Explosion
   maxChargeTime: 1.5
   maxProjectileCount: 5
   spreadAngle: 45
