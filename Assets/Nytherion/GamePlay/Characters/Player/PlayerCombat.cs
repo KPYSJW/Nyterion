@@ -58,8 +58,10 @@ namespace Nytherion.GamePlay.Characters.Player
 
             if (newWeapon != null && weaponPoint != null)
             {
-                currentWeapon = Instantiate(newWeapon, weaponPoint.position, Quaternion.identity);
-                currentWeapon.transform.SetParent(weaponPoint);
+                currentWeapon = Instantiate(newWeapon, weaponPoint);
+
+                currentWeapon.transform.localPosition = Vector3.zero;
+                currentWeapon.transform.localRotation = Quaternion.identity;
             }
         }
 
