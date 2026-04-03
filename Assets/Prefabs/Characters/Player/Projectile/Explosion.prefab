@@ -10,17 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1603858930815133127}
   - component: {fileID: 8600985885010453097}
-  - component: {fileID: 7513588345215833829}
   - component: {fileID: -2181029471759260168}
   - component: {fileID: -1744505625959751428}
-  - component: {fileID: 1386451705245399571}
-  - component: {fileID: -4615857682908140904}
-  - component: {fileID: -1807106368831915327}
-  - component: {fileID: 9199892507041277439}
-  - component: {fileID: -6907674560897187839}
-  - component: {fileID: 3982643622941967133}
+  - component: {fileID: 7071642044145582588}
+  - component: {fileID: 992287467230111458}
   m_Layer: 0
-  m_Name: Arrow
+  m_Name: Explosion
   m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2e2297262ba7c044299db5b72833e1dd, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Color: {r: 1, g: 0.5170796, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -93,41 +88,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!70 &7513588345215833829
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3778041586713616541}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 4.59, y: 0.99}
-  m_Direction: 1
 --- !u!114 &-2181029471759260168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,84 +129,42 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &1386451705245399571
-MonoBehaviour:
+--- !u!58 &7071642044145582588
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3778041586713616541}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34e8c705fc0abf14e9fb991ffdbc567d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxSpeed: 12
-  acceleration: 15
-  rotateSpeed: 800
-  trackingRadius: 5
-  enemyLayer:
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 8
---- !u!114 &-4615857682908140904
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3778041586713616541}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e90c7123003539349b80bbf351f1650d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  forwardSpeed: 2
-  waveFrequency: 5
-  waveMagnitude: 3
---- !u!114 &-1807106368831915327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3778041586713616541}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03bc3bdd212137447a9c9f77cb844c53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxBounces: 3
-  bounceRadius: 5
---- !u!114 &9199892507041277439
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3778041586713616541}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b160982b02494024ea2b4c9815fa4ac9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &-6907674560897187839
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3778041586713616541}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7a8f3b1cd0d8aa42a07507be34a2d95, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  splitCount: 3
-  splitAngle: 60
-  splitSpeedMultiplier: 1
-  splitDamageMultiplier: 0.5
-  splitProjectileTag: Arrow
---- !u!114 &3982643622941967133
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
+--- !u!114 &992287467230111458
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -255,11 +173,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3778041586713616541}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a75cd73071f8dde438185b488944a088, type: 3}
+  m_Script: {fileID: 11500000, guid: bfc0e398c3d27ef479155868cc51ee66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  subProjectileTag: Arrow
-  fireInterval: 0.2
-  subProjectileSpeed: 6
-  subDamageMultiplier: 0.3
-  fireSides: 0
+  explosionRadius: 10
+  explosionDamageMultiplier: 100
+  explosionVisualPoolTag: 

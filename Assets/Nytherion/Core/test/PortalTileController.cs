@@ -67,12 +67,10 @@ namespace Nytherion.GamePlay.Dungeon
             // 월드 좌표를 타일맵의 셀 좌표로 변환합니다.
             Vector3Int initialContactCell = portalTilemap.WorldToCell(contactPoint);
 
-            Debug.Log($"[포탈 디버그] 충돌 지점 {initialContactCell} 근처에서 포탈 타일 검색 시작...");
 
             // 플레이어의 충돌 지점 및 그 주변에서 포탈 타일을 찾습니다.
             if (TryFindNearbyPortalTile(initialContactCell, out Vector3Int portalCellPos))
             {
-                Debug.Log($"[포탈 디버그] 포탈 타일 발견: {portalCellPos}! 텔레포트 시도...");
 
                 // 찾은 포탈 타일을 사용하여 텔레포트를 시도합니다.
                 TryToFindAndUsePortal(portalCellPos, other);
@@ -137,7 +135,6 @@ namespace Nytherion.GamePlay.Dungeon
                 if (_dungeonManager == null) continue;
                 if (_dungeonManager.TryGetDestination(pos, out Vector3Int destinationPos))
                 {
-                    Debug.Log($"<color=green>[포탈 디버그] 성공! 목적지 {destinationPos}로 텔레포트합니다.</color>");
 
                     // 목적지를 찾았다면 플레이어를 텔레포트시키고 함수를 종료합니다.
                     TeleportPlayer(player, destinationPos);
