@@ -6,6 +6,7 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public override void EnterState(EnemyAIController enemy)
         {
+            enemy.PlayAnimation("Attack");
             enemy.StopMovement();
         }
 

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using UnityEngine;
 namespace Nytherion.GamePlay.Characters.Enemy.States
 {
     public class EnemyChaseState : EnemyBaseState
@@ -6,6 +8,8 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public override void EnterState(EnemyAIController enemy)
         {
+            UnityEngine.Debug.Log("awd");
+            enemy.PlayAnimation("Run");
         }
 
         public override void UpdateState(EnemyAIController enemy)
