@@ -12757,7 +12757,7 @@ PrefabInstance:
     - target: {fileID: 2180091910043822190, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: startingSkills.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 16be1c0e405f174488f5be1093f8c9e2, type: 2}
+      objectReference: {fileID: 11400000, guid: 1920441c325ffa048a78fe428dad929b, type: 2}
     - target: {fileID: 5097942217742227509, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: m_Name
       value: Player
@@ -23935,8 +23935,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 113935554}
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
-  m_Value: 0.9999998
-  m_Size: 0.2499998
+  m_Value: 0.9999997
+  m_Size: 0.50000006
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

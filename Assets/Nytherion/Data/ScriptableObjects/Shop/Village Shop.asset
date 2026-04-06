@@ -74,3 +74,13 @@ MonoBehaviour:
     price: 100
     stock: 1
     isUnlimited: 0
+  - shopItemId: b00a0193-4644-49b5-b92d-8b0b95603b4f
+    item: {fileID: 11400000, guid: 19fbf3c0c1964b34ca7f0e53382c523c, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: 459f346b-f82d-45fe-b860-27ea08bb608a
+    item: {fileID: 11400000, guid: 3dad2946ed94b234b80b04d7535c786d, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0

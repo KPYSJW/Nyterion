@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 8604274073206334278}
   - component: {fileID: 8590790990860606378}
   - component: {fileID: 6208765460595893722}
-  - component: {fileID: 5577653623118475701}
+  - component: {fileID: -562947462724574447}
   m_Layer: 0
-  m_Name: ChargingSpreadWeapon
+  m_Name: SlowMultiHitWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
---- !u!114 &5577653623118475701
+--- !u!114 &-562947462724574447
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,15 +109,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2204877618560446080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eeac85dac23c8bd4f9bc8b13ce3d4ec5, type: 3}
+  m_Script: {fileID: 11500000, guid: c09ca25d5e76c424bb319b18c986b9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponData: {fileID: 11400000, guid: 7caccffd938aa0f439e4d7ffe377d20e, type: 2}
+  weaponData: {fileID: 11400000, guid: 3dad2946ed94b234b80b04d7535c786d, type: 2}
   firePoint: {fileID: 4288061520210801657}
-  projectilePoolTag: Explosion
-  maxChargeTime: 1.5
-  maxProjectileCount: 5
-  spreadAngle: 45
+  projectilePoolTag: SlowMultiHit
+  projectileCount: 3
+  spreadAngle: 30
 --- !u!1 &4964738641561314771
 GameObject:
   m_ObjectHideFlags: 0
