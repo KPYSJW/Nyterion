@@ -22,6 +22,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public EnemyIdleState idleState;
         public EnemyChaseState chaseState;
         public EnemyAttackState attackState;
+        public Animator animator;
+        public SpriteRenderer spriteRenderer;
 
         private void Awake()
         {
@@ -85,6 +87,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             Vector2 direction = (player.position - transform.position).normalized;
             rb.velocity = direction * moveSpeed;
+            spriteRenderer.flipX=direction.x>0;//그림보고 방향 설정
         }
 
         public void StopMovement()
@@ -137,6 +140,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (attackSelector == null) return null;
 
             return attackSelector.SelectAttackBehavior(transform, player, attackBehaviors);
+        }
+
+        public void PlayAnimation(string stateName)
+        {
+            animator.Play(stateName);
         }
     }
 }
