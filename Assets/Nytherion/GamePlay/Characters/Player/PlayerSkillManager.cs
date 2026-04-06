@@ -81,6 +81,7 @@ namespace Nytherion.GamePlay.Characters.Player
                     skillBase.firePoint = weaponPoint;
 
                     equippedSkills[slotIndex] = skillBase;
+                    Debug.Log($"[{slotIndex}¹ø ½½·Ô] {newSkillData.skillName} ÀåÂø ¿Ï·á!");
                 }
                 else
                 {

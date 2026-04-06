@@ -24,13 +24,7 @@ namespace Nytherion.GamePlay.Combat
                 float angle = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
                 projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             }
-            if (projectile.TryGetComponent<CollisionObject>(out var collisionObj))
-            {
-                if (weaponData != null)
-                {
-                    collisionObj.damage = weaponData.damage;
-                }
-            }
+
             return projectile; 
         }
     }
