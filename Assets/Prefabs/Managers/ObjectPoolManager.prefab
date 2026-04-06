@@ -61,3 +61,6 @@ MonoBehaviour:
   - tag: Explosion
     prefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
     size: 15
+  - tag: SlowMultiHit
+    prefab: {fileID: 3514501862146727550, guid: 5cea63a4e7f60a84996c1b5d3acdb4ac, type: 3}
+    size: 15
