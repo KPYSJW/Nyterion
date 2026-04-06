@@ -59,9 +59,9 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        //private void OnBecameInvisible()
-        //{
-        //    ReturnToPool();
-        //}
+        private void OnBecameInvisible()
+        {
+            ReturnToPool();
+        }
     }
 }

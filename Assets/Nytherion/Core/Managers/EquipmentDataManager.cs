@@ -67,14 +67,20 @@ namespace Nytherion.Core.Managers
         {
             equippedItems.TryGetValue(slotType, out var oldEquipment);
 
+            Debug.Log($"SetEquipment 호출됨. 대상 슬롯: {slotType}, 새 장비: {(equipment == null ? "null" : equipment.ID)}, updateInventory 값: {updateInventory}");
+            Debug.Log($"현재 착용 중이던 장비(oldEquipment): {(oldEquipment == null ? "없음" : oldEquipment.ID)}");
+
             // 기존 장착된 아이템이 있으면 인벤토리로 복귀
             if (oldEquipment != null && inventoryDataManager != null && updateInventory)
             {
+                Debug.LogWarning($" updateInventory가 true라서 oldEquipment를 인벤토리에 다시 추가 시도합니다!");
                 bool added = inventoryDataManager.AddItem(oldEquipment, 1);
+                Debug.Log($"oldEquipment 인벤토리 추가 결과: {added}");
             }
 
             if (equipment == null)
             {
+                Debug.Log($"장착 데이터에서 {slotType} 슬롯을 제거(해제)합니다.");
                 equippedItems.Remove(slotType);
             }
             else
@@ -82,12 +88,14 @@ namespace Nytherion.Core.Managers
                 // 새 아이템 장착 시 인벤토리에서 제거 
                 if (inventoryDataManager != null && updateInventory)
                 {
+                    Debug.Log($"새 장비 장착을 위해 인벤토리에서 {equipment.ID} 제거 시도.");
                     inventoryDataManager.RemoveItem(equipment.ID, 1);
                 }
 
                 equippedItems[slotType] = equipment;
             }
 
+            Debug.Log($"OnEquipmentChanged 이벤트 발생시킵니다.");
             OnEquipmentChanged?.Invoke(slotType, equipment, oldEquipment);
         }
         /// <summary>

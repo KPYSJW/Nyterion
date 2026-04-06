@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1664801acb44ac448afc61b306d91e2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillData: {fileID: 11400000, guid: 16be1c0e405f174488f5be1093f8c9e2, type: 2}
+  skillData: {fileID: 0}
   droneVisual: {fileID: 6317914483464233677}
   activeDuration: 10
   attackInterval: 1

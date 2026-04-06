@@ -82,8 +82,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
         }*/
 
         private void OnTriggerEnter2D(Collider2D other) {
+            Debug.Log(other.gameObject.tag);
             if (other.gameObject.CompareTag(Tags.Player)||other.gameObject.CompareTag(Tags.Weapon))
             {
+                Debug.Log($"{enemyData.enemyName}이(가) 플레이어와 충돌하여 즉시 사망합니다.");
                 Die();
             }
         }
