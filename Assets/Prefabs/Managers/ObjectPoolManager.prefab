@@ -64,3 +64,9 @@ MonoBehaviour:
   - tag: SlowMultiHit
     prefab: {fileID: 3514501862146727550, guid: 5cea63a4e7f60a84996c1b5d3acdb4ac, type: 3}
     size: 15
+  - tag: ExplosionVFX
+    prefab: {fileID: 2802172147523158979, guid: 84b5ead5d3a10aa47aa871b8d0611224, type: 3}
+    size: 15
+  - tag: Meteor
+    prefab: {fileID: 8688154318546131989, guid: fc19d7a074b077f44a50ab601d98af1d, type: 3}
+    size: 15

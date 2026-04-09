@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uniqueID: 10343cd3-1969-4c66-b752-cf18adf76015
   itemName: Armor
-  icon: {fileID: 21300000, guid: 751dffcceacbb7544a15cd96ae1d19bf, type: 3}
+  icon: {fileID: 21300000, guid: 0475741958e54954597db3905ceba24f, type: 3}
   description: 
   isStackable: 0
   maxStack: 1

@@ -8,7 +8,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
         [Header("Melee Settings")]
         public SpriteRenderer sprite;
 
-        public override void Attack(Vector2 direction)
+        public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
         
             if (!CanAttack())
