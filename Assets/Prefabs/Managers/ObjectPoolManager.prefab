@@ -46,9 +46,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoInitializeOnAwake: 0
   pools:
-  - tag: Goblin
-    prefab: {fileID: 6406644339438500767, guid: 17fde502d382da64a805f35f8d770687, type: 3}
+  - tag: Melee
+    prefab: {fileID: 6406644339438500767, guid: 8d651861435092749ba2c150c8722f4b, type: 3}
     size: 50
+  - tag: Ranged
+    prefab: {fileID: 6406644339438500767, guid: 0907f81b069c20d43b5465734854ee52, type: 3}
+    size: 15
+  - tag: Hybrid
+    prefab: {fileID: 6406644339438500767, guid: 3215275927a03af4a837360f213af70e, type: 3}
+    size: 15
   - tag: FireBall
     prefab: {fileID: 4893586122137001029, guid: 2f39ca2c520200b4bb325ed4c3c87f7c, type: 3}
     size: 5

@@ -13,12 +13,13 @@ GameObject:
   - component: {fileID: 4648011277888427336}
   - component: {fileID: 2651230883262642692}
   - component: {fileID: 5678708647950428457}
-  - component: {fileID: 6679662606424163912}
   - component: {fileID: 9174351705613226578}
-  - component: {fileID: -6143210738921888884}
   - component: {fileID: 7552015339997264470}
+  - component: {fileID: 6679662606424163912}
+  - component: {fileID: -1978024364095913853}
+  - component: {fileID: -1090900795760404051}
   m_Layer: 3
-  m_Name: Enemy
+  m_Name: Enemy_hybrid
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +81,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: c174bd167acbfd44b9b59b7148e10172, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7ecffa1c4c6cdd549ac2158dabe9e7c4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -171,6 +172,40 @@ MonoBehaviour:
   rb: {fileID: 4648011277888427336}
   animator: {fileID: 7552015339997264470}
   spriteRenderer: {fileID: 343775048486467025}
+--- !u!114 &9174351705613226578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6406644339438500767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bed15e8c7e6b1e419c8b20f7651afcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyData: {fileID: 11400000, guid: e5273af0d4464934aaf9ef32cb889fd5, type: 2}
+--- !u!95 &7552015339997264470
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6406644339438500767}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 23efc1145eecef148a729d8230b3e4c0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &6679662606424163912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,7 +221,7 @@ MonoBehaviour:
   attackRange: 1.5
   attackCoolDown: 1
   fallbackDamage: 10
---- !u!114 &9174351705613226578
+--- !u!114 &-1978024364095913853
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -195,11 +230,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 6406644339438500767}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bed15e8c7e6b1e419c8b20f7651afcb, type: 3}
+  m_Script: {fileID: 11500000, guid: 32c4c5edfac376e45a7cf92b007795b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyData: {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
---- !u!114 &-6143210738921888884
+  attackRange: 5
+  attackCoolDown: 2
+  fallbackDamage: 8
+  useProjectileVisual: 1
+  projectilePrefab: {fileID: 0}
+  firePoint: {fileID: 0}
+--- !u!114 &-1090900795760404051
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -208,27 +248,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6406644339438500767}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bbce712a5e40244fb880690f41b8b3a, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b11f2e0b24a8a94bb94c9ae4fb30434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!95 &7552015339997264470
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6406644339438500767}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5d7243ed4a25e3c4fb08b490b4335df2, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  meleePriorityDistance: 2.5
