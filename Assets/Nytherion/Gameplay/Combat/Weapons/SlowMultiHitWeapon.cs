@@ -5,7 +5,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 {
     public class SlowMultiHitWeapon : RangedWeapon
     {
-        public override void Attack(Vector2 direction)
+        public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
             if (!CanAttack()) return;
 

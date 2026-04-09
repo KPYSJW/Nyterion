@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86eb6d6bf36610744a559b82bdcf58b5, type: 3}
-  m_Name: Goblin
+  m_Name: Hybrid
   m_EditorClassIdentifier: 
-  enemyName: Goblin
-  enemyPrefab: {fileID: 6406644339438500767, guid: 17fde502d382da64a805f35f8d770687, type: 3}
+  enemyName: Hybrid
+  enemyPrefab: {fileID: 6406644339438500767, guid: 3215275927a03af4a837360f213af70e, type: 3}
   maxHealth: 30
   moveSpeed: 2.2
   damageAmount: 8
   detectRange: 6
-  combatType: 0
+  combatType: 1
   hybridSwitchDistance: 2.5
   dropChance: 1
   goldDropAmount: 5
