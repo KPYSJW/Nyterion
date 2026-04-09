@@ -22,7 +22,9 @@ namespace Nytherion.GamePlay.Combat
         {
             return Time.time - lastAttackTime >= weaponData.cooldown;
         }
-        public abstract void Attack(Vector2 direction);
+        public virtual void Attack(Vector2 direction, Vector3 targetPosition = default)
+        {
+        }
         public abstract void AttackEnd();
     }
 }

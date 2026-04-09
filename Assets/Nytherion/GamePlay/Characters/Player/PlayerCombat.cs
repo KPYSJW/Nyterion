@@ -114,8 +114,10 @@ namespace Nytherion.GamePlay.Characters.Player
             if (currentWeapon != null)
             {
                 Vector2 fireDirection = weaponPoint.right;
-
-                currentWeapon.Attack(fireDirection);
+                Vector2 mouseScreenPos = inputManager.MousePosition;
+                Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
+                targetWorldPos.z = 0f;
+                currentWeapon.Attack(fireDirection, targetWorldPos);
             }
         }
 

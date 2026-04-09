@@ -24,7 +24,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
             }
         }
 
-        public override void Attack(Vector2 direction)
+        public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
             if (!CanAttack()) return;
 
