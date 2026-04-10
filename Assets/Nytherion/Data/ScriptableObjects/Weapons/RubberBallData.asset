@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
-  m_Name: MeteorWeapon
+  m_Name: RubberBallData
   m_EditorClassIdentifier: 
-  uniqueID: ed23b19e-2061-4ddd-9d25-cd18c4e30f0a
-  itemName: Meteor
+  uniqueID: b6085a31-31ec-44a7-a2f9-aadc5e5b3398
+  itemName: RubberBall
   icon: {fileID: 0}
   description: 
   isStackable: 0
@@ -23,9 +23,9 @@ MonoBehaviour:
   rarity: 0
   isCursed: 0
   statModifiers: []
-  weaponName: Meteor
+  weaponName: RubberBall
   damage: 10
-  range: 2
+  range: 5
   cooldown: 1
-  projectilePrefab: {fileID: 8688154318546131989, guid: fc19d7a074b077f44a50ab601d98af1d, type: 3}
-  weaponPrefab: {fileID: 5899116789798688944, guid: 0e51ad0329ef961409e1b556fda9fb0a, type: 3}
+  projectilePrefab: {fileID: 2256088866125702370, guid: 030bc669879d30d4ca0c6be6a3bb8f31, type: 3}
+  weaponPrefab: {fileID: 691757425106379463, guid: d52055d5fae35ea44bff7a8ed0d93f1e, type: 3}

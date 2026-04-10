@@ -20,10 +20,16 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.CompareTag("Enemy"))
+            bool isEnemy = collision.CompareTag("Enemy");
+            bool isWall = collision.CompareTag("Wall");
+
+            if (isEnemy || isWall)
             {
-                var target = collision.GetComponent<IDamageable>();
-                target?.TakeDamage(damage);
+                if (isEnemy)
+                {
+                    var target = collision.GetComponent<IDamageable>();
+                    target?.TakeDamage(damage);
+                }
 
                 bool shouldSurvive = false;
                 foreach (var effect in effects)
@@ -41,10 +47,6 @@ namespace Nytherion.GamePlay.Combat
                     ReturnToPool();
                 }
             }
-            else if (collision.CompareTag("Wall"))
-            {
-                ReturnToPool();
-            }
         }
 
         public void ReturnToPool()
@@ -58,10 +60,5 @@ namespace Nytherion.GamePlay.Combat
                 gameObject.SetActive(false);
             }
         }
-
-        //private void OnBecameInvisible()
-        //{
-        //    ReturnToPool();
-        //}
     }
 }
