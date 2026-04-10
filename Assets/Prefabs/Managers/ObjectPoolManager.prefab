@@ -76,3 +76,6 @@ MonoBehaviour:
   - tag: Meteor
     prefab: {fileID: 8688154318546131989, guid: fc19d7a074b077f44a50ab601d98af1d, type: 3}
     size: 15
+  - tag: RubberBall
+    prefab: {fileID: 2256088866125702370, guid: 030bc669879d30d4ca0c6be6a3bb8f31, type: 3}
+    size: 15

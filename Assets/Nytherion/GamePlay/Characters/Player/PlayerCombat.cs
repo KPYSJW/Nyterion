@@ -8,16 +8,12 @@ namespace Nytherion.GamePlay.Characters.Player
 {
     public class PlayerCombat : MonoBehaviour
     {
-        [Tooltip("무기가 생성될 위치를 지정하는 트랜스폼")]
         [SerializeField] private Transform weaponPoint;
 
-        [Tooltip("플레이어를 중심으로 무기가 공전할 반경(거리)")]
         [SerializeField] private float orbitRadius = 1.0f;
 
-        [Tooltip("떨림 방지용 데드존 반경 (이 거리 안에서는 목표 방향이 갱신되지 않음)")]
         [SerializeField] private float deadZoneRadius = 0.5f;
 
-        [Tooltip("무기가 궤도를 따라 이동하는 속도 (높을수록 마우스를 빨리 따라감)")]
         [SerializeField] private float orbitSpeed = 15f;
 
         [SerializeField] private Vector3 centerOffset = new Vector3(0, 0.5f, 0);
@@ -28,7 +24,6 @@ namespace Nytherion.GamePlay.Characters.Player
         private PlayerManager playerManager;
 
         private float currentAngle = 0f;
-
         [Inject]
         public void Construct(InputManager inputManager)
         {
