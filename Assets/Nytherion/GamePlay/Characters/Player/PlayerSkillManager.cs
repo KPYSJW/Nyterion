@@ -46,12 +46,10 @@ namespace Nytherion.GamePlay.Characters.Player
 
         void SkillInput(int index)
         {
-            Debug.Log($"[PlayerSkillManager] {index}번 스킬 키 입력 감지됨!");
 
             if (index >= 0 && index < equippedSkills.Length && equippedSkills[index] != null)
             {
                 equippedSkills[index].TryUse();
-                Debug.Log($"[PlayerSkillManager] {index}번 슬롯의 스킬 TryUse() 호출됨!");
             }
             else
             {
