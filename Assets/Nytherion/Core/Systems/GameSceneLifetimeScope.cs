@@ -12,7 +12,6 @@ using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Presenters;
-using Nytherion.UI.Shop;
 using Nytherion.Core.Test;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,6 +19,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.UI.Skill;
 
 public class GameSceneLifetimeScope : LifetimeScope
 {
@@ -93,6 +93,7 @@ public class GameSceneLifetimeScope : LifetimeScope
         InstallGameSceneOnlySystems(builder);
 
         builder.RegisterEntryPoint<GameSceneInitializer>();
+        
     }
 
     /// <summary>
@@ -169,7 +170,7 @@ public class GameSceneLifetimeScope : LifetimeScope
             RegisterDataManagerIfExists<EquipmentDataManager>(builder);
             RegisterDataManagerIfExists<ShopManager>(builder);
             RegisterDataManagerIfExists<StageManager>(builder);
-
+            RegisterDataManagerIfExists<SkillDataManager>(builder);
             // RegisterDataManagerIfExists<PuzzleManager>(builder); // 나중에 사용 예정
             // PlayerManager는 GameScene에서만 필요하므로 여기서 직접 관리
         }
@@ -288,13 +289,17 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
+        builder.RegisterComponentInHierarchy<SkillUIController>()
+            .AsImplementedInterfaces()
+            .AsSelf();
+
         // EngravingGridUI를 IInitializable로 등록하여 자동 초기화
         builder.RegisterComponentInHierarchy<EngravingGridUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
         // EngravingTooltip을 싱글톤으로 등록
-        builder.RegisterComponentInHierarchy<Nytherion.UI.EngravingBoard.EngravingTooltip>()
+        builder.RegisterComponentInHierarchy<EngravingTooltip>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
@@ -327,7 +332,7 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsSelf();
 
         // EngravingAltar를 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<Nytherion.GamePlay.Characters.NPC.EngravingAltar>()
+        builder.RegisterComponentInHierarchy<EngravingAltar>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
@@ -337,15 +342,15 @@ public class GameSceneLifetimeScope : LifetimeScope
     private void RegisterInventoryUIComponents(IContainerBuilder builder)
     {
         // 인벤토리 UI 슬롯 컴포넌트들을 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<Nytherion.UI.Inventory.InventorySlotUI>()
+        builder.RegisterComponentInHierarchy<InventorySlotUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInHierarchy<Nytherion.UI.Inventory.EquipmentSlotUI>()
+        builder.RegisterComponentInHierarchy<EquipmentSlotUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInHierarchy<Nytherion.UI.Inventory.QuickSlotUI>()
+        builder.RegisterComponentInHierarchy<QuickSlotUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
