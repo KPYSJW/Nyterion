@@ -1,7 +1,7 @@
-using UnityEngine;
 using Nytherion.Core.Interfaces;
-using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.GamePlay.Characters.Player;
+using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat.Behaviors
 {

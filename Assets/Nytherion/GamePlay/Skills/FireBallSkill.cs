@@ -1,5 +1,6 @@
 ﻿using Nytherion.Core.Managers;
 using UnityEngine;
+using VContainer;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -8,13 +9,20 @@ namespace Nytherion.GamePlay.Skills
         [SerializeField] private float speed = 20f;
         [SerializeField] private string poolTag = "FireBall";
 
+        private ObjectPoolManager poolManager;
+
+        [Inject]
+        public void Construct(ObjectPoolManager poolManager)
+        {
+            this.poolManager = poolManager;
+        }
         protected override void Activate()
         {
             if (skillData != null)
             {
                 Vector3 spawnPosition = firePoint != null ? firePoint.position : caster.position;
 
-                GameObject fireballInstance = ObjectPoolManager.Instance.SpawnFromPool(poolTag, spawnPosition, caster.rotation);
+                GameObject fireballInstance = poolManager.SpawnFromPool(poolTag, spawnPosition, caster.rotation);
 
                 if (fireballInstance != null && fireballInstance.TryGetComponent(out FireballProjectile projectile))
                 {

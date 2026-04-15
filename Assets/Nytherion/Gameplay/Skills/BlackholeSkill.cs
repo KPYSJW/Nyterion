@@ -1,6 +1,8 @@
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Skill;
+using UnityEditor.EditorTools;
 using UnityEngine;
+using VContainer;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -8,13 +10,20 @@ namespace Nytherion.GamePlay.Skills
     {
         [SerializeField] private string poolTag = "Blackhole";
 
+        private ObjectPoolManager poolManager;
+
+        [Inject]
+        public void Construct(ObjectPoolManager poolManager)
+        {
+            this.poolManager = poolManager;
+        }
         protected override void Activate()
         {
             if (skillData != null)
             {
                 Vector3 spawnPosition = GetTargetPosition();
 
-                GameObject blackholeInstance = ObjectPoolManager.Instance.SpawnFromPool(poolTag, spawnPosition, Quaternion.identity);
+                GameObject blackholeInstance = poolManager.SpawnFromPool(poolTag, spawnPosition, Quaternion.identity);
 
                 if (blackholeInstance != null && blackholeInstance.TryGetComponent(out BlackholeProjectile projectile))
                 {

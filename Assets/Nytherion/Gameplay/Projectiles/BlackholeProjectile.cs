@@ -1,6 +1,7 @@
 using Nytherion.Core.Managers;
 using UnityEngine;
-using Nytherion.Core.Interfaces; 
+using Nytherion.Core.Interfaces;
+using VContainer;
 
 public class BlackholeProjectile : MonoBehaviour
 {
@@ -24,6 +25,14 @@ public class BlackholeProjectile : MonoBehaviour
     [Header("시각적 이펙트 (선택사항)")]
     [SerializeField] private Transform rangeVisual;  
     [SerializeField] private Transform centerVisual;
+
+    private ObjectPoolManager poolManager;
+
+    [Inject]
+    public void Construct(ObjectPoolManager poolManager)
+    {
+        this.poolManager = poolManager;
+    }
     public void Initialize(float damage, float range, float pullForce, float duration, float tickRate, LayerMask enemyLayer, string poolTag)
     {
         this.damage = damage;
@@ -119,9 +128,9 @@ public class BlackholeProjectile : MonoBehaviour
     private void ReturnToPool()
     {
         isInitialized = false;
-        if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
+        if (poolManager != null && !string.IsNullOrEmpty(poolTag))
         {
-            ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
+            poolManager.ReturnToPool(poolTag, gameObject);
         }
         else
         {

@@ -1,5 +1,6 @@
 using Nytherion.Core.Managers;
 using UnityEngine;
+using VContainer;
 
 public class FireballProjectile : MonoBehaviour
 {
@@ -10,6 +11,13 @@ public class FireballProjectile : MonoBehaviour
     private Vector3 startPosition;
     private bool isInitialized = false;
 
+    private ObjectPoolManager poolManager;
+
+    [Inject]
+    public void Construct(ObjectPoolManager poolManager)
+    {
+        this.poolManager = poolManager;
+    }
     public void Initialize(float damage, float speed, float range, string poolTag)
     {
         this.damage = damage;
@@ -43,9 +51,9 @@ public class FireballProjectile : MonoBehaviour
     private void ReturnToPool()
     {
         isInitialized = false;
-        if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
+        if (poolManager != null && !string.IsNullOrEmpty(poolTag))
         {
-            ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
+            poolManager.ReturnToPool(poolTag, gameObject);
         }
         else
         {
