@@ -18,7 +18,7 @@ MonoBehaviour:
   coolDown: 2
   damage: 2
   range: 2
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: eec041ec2caeadf49896734136349182, type: 3}
   skillPrefab: {fileID: 1905671610036031688, guid: a0468e62e7915fe40bacc62f0d32380a, type: 3}
   pullForce: 20
   duration: 4

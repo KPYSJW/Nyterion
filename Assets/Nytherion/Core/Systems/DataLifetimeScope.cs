@@ -3,7 +3,6 @@ using VContainer;
 using VContainer.Unity;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Interfaces;
-using System.Collections.Generic;
 
 namespace Nytherion.Core.Systems
 {
@@ -15,7 +14,6 @@ namespace Nytherion.Core.Systems
     {
         public static DataLifetimeScope Instance { get; private set; }
 
-        [Header("Data Managers - 씬 간 지속 (순수 데이터)")]
         [SerializeField] private SaveLoadManager saveLoadManagerPrefab;
         [SerializeField] private CurrencyDataManager currencyDataManagerPrefab;
         [SerializeField] private InventoryDataManager inventoryDataManagerPrefab;
@@ -23,11 +21,10 @@ namespace Nytherion.Core.Systems
         [SerializeField] private EquipmentDataManager equipmentDataManagerPrefab;
         [SerializeField] private ShopManager shopManagerPrefab;
         [SerializeField] private StageManager stageManagerPrefab;
-        // [SerializeField] private PuzzleManager puzzleManagerPrefab; // 나중에 사용 예정
+        [SerializeField] private SkillDataManager skillDataManagerPrefab;
 
         protected override void Awake()
         {
-            // 싱글톤 패턴으로 중복 생성 방지
             if (Instance != null)
             {
                 Destroy(gameObject);
@@ -52,13 +49,11 @@ namespace Nytherion.Core.Systems
            
             InstallDataManagers(builder);
             RegisterISaveableEntities(builder);
-
             hasConfigured = true;
         }
 
         private void InstallDataManagers(IContainerBuilder builder)
         {
-            // SaveLoadManager - 가장 먼저 등록
             if (saveLoadManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(saveLoadManagerPrefab, Lifetime.Singleton)
@@ -67,7 +62,6 @@ namespace Nytherion.Core.Systems
                     .AsSelf();
             }
 
-            // CurrencyDataManager (순수 데이터)
             if (currencyDataManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(currencyDataManagerPrefab, Lifetime.Singleton)
@@ -79,7 +73,6 @@ namespace Nytherion.Core.Systems
                     .As<ICurrencyDataNotifier>();
             }
 
-            // InventoryDataManager (순수 데이터)
             if (inventoryDataManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(inventoryDataManagerPrefab, Lifetime.Singleton)
@@ -91,7 +84,6 @@ namespace Nytherion.Core.Systems
                     .As<IInventoryDataNotifier>();
             }
 
-            // EngravingManager
             if (engravingManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(engravingManagerPrefab, Lifetime.Singleton)
@@ -101,7 +93,6 @@ namespace Nytherion.Core.Systems
                     .As<ISaveable>();
             }
 
-            // EquipmentDataManager
             if (equipmentDataManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(equipmentDataManagerPrefab, Lifetime.Singleton)
@@ -111,7 +102,6 @@ namespace Nytherion.Core.Systems
                     .As<ISaveable>();
             }
 
-            // ShopManager
             if (shopManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(shopManagerPrefab, Lifetime.Singleton)
@@ -130,20 +120,14 @@ namespace Nytherion.Core.Systems
                     .As<ISaveable>();
             }
 
-            // PuzzleManager - 나중에 사용 예정으로 주석 처리
-            /*
-            if (puzzleManagerPrefab != null)
+            if(skillDataManagerPrefab != null)
             {
-                builder.RegisterComponentInNewPrefab(puzzleManagerPrefab, Lifetime.Singleton)
+                builder.RegisterComponentInNewPrefab(skillDataManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .As<ISaveable>();
-                Debug.Log("[DataLifetimeScope] PuzzleManager 등록 완료");
             }
-            */
-
-            // PlayerManager는 GameScene에서만 필요하므로 GameSceneLifetimeScope에서 관리
         }
 
         private bool hasRegisteredISaveableCollection = false;
@@ -157,7 +141,6 @@ namespace Nytherion.Core.Systems
             }
 
             hasRegisteredISaveableCollection = true;
-            // SaveLoadManager에서 직접 DataLifetimeScope에서 ISaveable 엔티티들을 찾도록 구현됨
         }
 
         /// <summary>
@@ -170,7 +153,6 @@ namespace Nytherion.Core.Systems
 
             try
             {
-                // 핵심 매니저들이 모두 등록되었는지 확인
                 return container.TryResolve<SaveLoadManager>(out _) &&
                        container.TryResolve<CurrencyDataManager>(out _) &&
                        container.TryResolve<InventoryDataManager>(out _);

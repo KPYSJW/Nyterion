@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
-
+using Nytherion.Data.ScriptableObjects.Skill;
 
 namespace Nytherion.UI.Components
 {
@@ -106,7 +106,31 @@ namespace Nytherion.UI.Components
             
             panel.SetActive(true);
         }
+        public void ShowTooltip(SkillData skill)
+        {
+            if (skill == null)
+                return;
 
+            string skillStats = $"데미지: {skill.damage}\n쿨타임: {skill.coolDown}초\n사거리: {skill.range}\n\n{skill.description}";
+
+            SetContent(skill.skillName, skillStats);
+
+            if (itemImage != null)
+            {
+                if (skill.icon != null)
+                {
+                    itemImage.sprite = skill.icon;
+                    itemImage.preserveAspect = true;
+                    itemImage.gameObject.SetActive(true);
+                }
+                else
+                {
+                    itemImage.gameObject.SetActive(false);
+                }
+            }
+
+            panel.SetActive(true);
+        }
         public void HideTooltip()
         {
             panel.SetActive(false);

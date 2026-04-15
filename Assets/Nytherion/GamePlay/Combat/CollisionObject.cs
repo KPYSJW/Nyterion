@@ -1,6 +1,7 @@
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using UnityEngine;
+using VContainer;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -12,6 +13,14 @@ namespace Nytherion.GamePlay.Combat
         public string poolTag = "PlayerProjectile";
 
         private IProjectileEffect[] effects;
+
+        private ObjectPoolManager poolManager;
+
+        [Inject]
+        public void Construct(ObjectPoolManager poolManager)
+        {
+            this.poolManager = poolManager;
+        }
 
         private void Awake()
         {
@@ -51,9 +60,9 @@ namespace Nytherion.GamePlay.Combat
 
         public void ReturnToPool()
         {
-            if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
+            if (poolManager!= null && !string.IsNullOrEmpty(poolTag))
             {
-                ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
+                poolManager.ReturnToPool(poolTag, gameObject);
             }
             else
             {

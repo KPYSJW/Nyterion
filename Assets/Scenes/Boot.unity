@@ -138,6 +138,10 @@ PrefabInstance:
       propertyPath: stageManagerPrefab
       value: 
       objectReference: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}
+    - target: {fileID: 3299846007111062224, guid: dcdf1dd2d4438114e812ff6ac7485445, type: 3}
+      propertyPath: skillDataManagerPrefab
+      value: 
+      objectReference: {fileID: 4210730933447014893, guid: fdfb76384d7269e49995c51f9e9e2d7e, type: 3}
     - target: {fileID: 4421516590008903491, guid: dcdf1dd2d4438114e812ff6ac7485445, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

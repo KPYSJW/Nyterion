@@ -2,6 +2,7 @@ using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Skills;
 using UnityEngine;
+using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Skill
 {
@@ -31,6 +32,13 @@ namespace Nytherion.GamePlay.Characters.Skill
         private float autoAttackTimer = 0f;
         private float currentOrbitAngle = 0f;
 
+        private ObjectPoolManager poolManager;
+
+        [Inject]
+        public void Construct(ObjectPoolManager poolManager)
+        {
+            this.poolManager = poolManager;
+        }
         private void Start()
         {
             if (droneVisual != null) droneVisual.SetActive(false);
@@ -58,7 +66,6 @@ namespace Nytherion.GamePlay.Characters.Skill
         {
             if (!isActive || caster == null) return;
 
-            // 소환 유지 시간 체크
             currentDurationTimer += Time.deltaTime;
             if (currentDurationTimer >= activeDuration)
             {
@@ -100,7 +107,6 @@ namespace Nytherion.GamePlay.Characters.Skill
 
         private Transform FindClosestEnemy()
         {
-            // SkillData에 정의된 사거리(range)를 탐지 반경으로 사용합니다.
             float range = skillData.range;
 
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, range);
@@ -126,16 +132,13 @@ namespace Nytherion.GamePlay.Characters.Skill
         {
             Vector2 direction = (target.position - transform.position).normalized;
 
-            // 오브젝트 풀링을 사용해 투사체 발사
-            GameObject projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, transform.position, Quaternion.identity);
+            GameObject projectile = poolManager.SpawnFromPool(projectilePoolTag, transform.position, Quaternion.identity);
 
             if (projectile != null)
             {
-                // 방향에 맞게 투사체 회전
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
-                // 투사체 속도 적용
                 if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
                 {
                     rb.velocity = direction * projectileSpeed;

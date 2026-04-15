@@ -119,9 +119,36 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Skill"",
+                    ""type"": ""Button"",
+                    ""id"": ""fdbdd3d4-d6a1-4a31-966c-9971f7fbc47e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Skill_Q"",
                     ""type"": ""Button"",
                     ""id"": ""12e7e606-6787-4f63-bff2-17e0b1e193ac"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skill_E"",
+                    ""type"": ""Button"",
+                    ""id"": ""58764baf-102d-4f81-9e2d-5fee1f3f5315"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skill_R"",
+                    ""type"": ""Button"",
+                    ""id"": ""a25cbb2f-2e04-4181-b001-8df2fafef8be"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -280,12 +307,45 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""43541316-7dd8-46d0-9011-178390548a46"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC"",
+                    ""action"": ""Skill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""3e75c885-8275-45b9-8313-361a6e1b5134"",
                     ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Skill_Q"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1c4c61a9-cc5f-4891-a3d5-b037ed4f5a2a"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skill_E"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c983bd92-98da-419d-a6bb-2ffc755d0200"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skill_R"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -503,7 +563,10 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
+        m_Player_Skill = m_Player.FindAction("Skill", throwIfNotFound: true);
         m_Player_Skill_Q = m_Player.FindAction("Skill_Q", throwIfNotFound: true);
+        m_Player_Skill_E = m_Player.FindAction("Skill_E", throwIfNotFound: true);
+        m_Player_Skill_R = m_Player.FindAction("Skill_R", throwIfNotFound: true);
         m_Player_QuickSlot_1 = m_Player.FindAction("QuickSlot_1", throwIfNotFound: true);
         m_Player_QuickSlot_2 = m_Player.FindAction("QuickSlot_2", throwIfNotFound: true);
         m_Player_QuickSlot_3 = m_Player.FindAction("QuickSlot_3", throwIfNotFound: true);
@@ -608,7 +671,10 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Dash;
+    private readonly InputAction m_Player_Skill;
     private readonly InputAction m_Player_Skill_Q;
+    private readonly InputAction m_Player_Skill_E;
+    private readonly InputAction m_Player_Skill_R;
     private readonly InputAction m_Player_QuickSlot_1;
     private readonly InputAction m_Player_QuickSlot_2;
     private readonly InputAction m_Player_QuickSlot_3;
@@ -641,9 +707,21 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
         /// <summary>
+        /// Provides access to the underlying input action "Player/Skill".
+        /// </summary>
+        public InputAction @Skill => m_Wrapper.m_Player_Skill;
+        /// <summary>
         /// Provides access to the underlying input action "Player/Skill_Q".
         /// </summary>
         public InputAction @Skill_Q => m_Wrapper.m_Player_Skill_Q;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Skill_E".
+        /// </summary>
+        public InputAction @Skill_E => m_Wrapper.m_Player_Skill_E;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Skill_R".
+        /// </summary>
+        public InputAction @Skill_R => m_Wrapper.m_Player_Skill_R;
         /// <summary>
         /// Provides access to the underlying input action "Player/QuickSlot_1".
         /// </summary>
@@ -711,9 +789,18 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @Dash.started += instance.OnDash;
             @Dash.performed += instance.OnDash;
             @Dash.canceled += instance.OnDash;
+            @Skill.started += instance.OnSkill;
+            @Skill.performed += instance.OnSkill;
+            @Skill.canceled += instance.OnSkill;
             @Skill_Q.started += instance.OnSkill_Q;
             @Skill_Q.performed += instance.OnSkill_Q;
             @Skill_Q.canceled += instance.OnSkill_Q;
+            @Skill_E.started += instance.OnSkill_E;
+            @Skill_E.performed += instance.OnSkill_E;
+            @Skill_E.canceled += instance.OnSkill_E;
+            @Skill_R.started += instance.OnSkill_R;
+            @Skill_R.performed += instance.OnSkill_R;
+            @Skill_R.canceled += instance.OnSkill_R;
             @QuickSlot_1.started += instance.OnQuickSlot_1;
             @QuickSlot_1.performed += instance.OnQuickSlot_1;
             @QuickSlot_1.canceled += instance.OnQuickSlot_1;
@@ -758,9 +845,18 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @Dash.started -= instance.OnDash;
             @Dash.performed -= instance.OnDash;
             @Dash.canceled -= instance.OnDash;
+            @Skill.started -= instance.OnSkill;
+            @Skill.performed -= instance.OnSkill;
+            @Skill.canceled -= instance.OnSkill;
             @Skill_Q.started -= instance.OnSkill_Q;
             @Skill_Q.performed -= instance.OnSkill_Q;
             @Skill_Q.canceled -= instance.OnSkill_Q;
+            @Skill_E.started -= instance.OnSkill_E;
+            @Skill_E.performed -= instance.OnSkill_E;
+            @Skill_E.canceled -= instance.OnSkill_E;
+            @Skill_R.started -= instance.OnSkill_R;
+            @Skill_R.performed -= instance.OnSkill_R;
+            @Skill_R.canceled -= instance.OnSkill_R;
             @QuickSlot_1.started -= instance.OnQuickSlot_1;
             @QuickSlot_1.performed -= instance.OnQuickSlot_1;
             @QuickSlot_1.canceled -= instance.OnQuickSlot_1;
@@ -1159,12 +1255,33 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDash(InputAction.CallbackContext context);
         /// <summary>
+        /// Method invoked when associated input action "Skill" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkill(InputAction.CallbackContext context);
+        /// <summary>
         /// Method invoked when associated input action "Skill_Q" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSkill_Q(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Skill_E" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkill_E(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Skill_R" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkill_R(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "QuickSlot_1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

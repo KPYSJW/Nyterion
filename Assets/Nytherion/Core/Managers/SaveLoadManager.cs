@@ -61,6 +61,10 @@ namespace Nytherion.Core.Managers
                 {
                     saveableEntities.Add(shopManager);
                 }
+                if (container.TryResolve<SkillDataManager>(out var skillDataManager))
+                {
+                    saveableEntities.Add(skillDataManager);
+                }
             }
             else
             {
