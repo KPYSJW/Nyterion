@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
-using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
+using VContainer;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -13,6 +12,13 @@ namespace Nytherion.GamePlay.Combat
 
         private CollisionObject col;
 
+        private ObjectPoolManager poolManager;
+
+        [Inject]
+        public void Construct(ObjectPoolManager poolManager)
+        {
+            this.poolManager = poolManager;
+        }
         private void Awake()
         {
             col = GetComponent<CollisionObject>();
@@ -23,11 +29,11 @@ namespace Nytherion.GamePlay.Combat
             float baseDamage = (col != null && col.damage > 0) ? col.damage : 10f;
             float finalExplosionDamage = baseDamage * explosionDamageMultiplier;
 
-            if (!string.IsNullOrEmpty(explosionVisualPoolTag) && ObjectPoolManager.Instance != null)
+            if (!string.IsNullOrEmpty(explosionVisualPoolTag) && poolManager != null)
             {
-                GameObject explosionVisual = ObjectPoolManager.Instance.SpawnFromPool(explosionVisualPoolTag, transform.position, Quaternion.identity);
+                GameObject explosionVisual = poolManager.SpawnFromPool(explosionVisualPoolTag, transform.position, Quaternion.identity);
 
-                if (explosionVisual.TryGetComponent<Nytherion.GamePlay.Combat.Effects.ExplosionDamage>(out var expDamage))
+                if (explosionVisual.TryGetComponent<Effects.ExplosionDamage>(out var expDamage))
                 {
                     expDamage.Initialize(finalExplosionDamage);
                 }

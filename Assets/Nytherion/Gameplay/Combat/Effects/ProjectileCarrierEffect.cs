@@ -1,5 +1,7 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
+using VContainer;
+using UnityEditor.EditorTools;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -7,7 +9,7 @@ namespace Nytherion.GamePlay.Combat
     {
         [Header("Sub-Projectile Settings")]
         public string subProjectileTag = "Arrow";
-        [Tooltip("파편 발사 간격 (초)")]
+        [Tooltip("파편 발사 간격")]
         public float fireInterval = 0.2f;
         [Tooltip("파편의 속도")]
         public float subProjectileSpeed = 6f;
@@ -20,6 +22,14 @@ namespace Nytherion.GamePlay.Combat
         private float fireTimer = 0f;
         private CollisionObject myCol;
         private Rigidbody2D myRb;
+
+        private ObjectPoolManager poolManager;
+
+        [Inject]
+        public void Construct(ObjectPoolManager poolManager)
+        {
+            this.poolManager = poolManager;
+        }
 
         private void Awake()
         {
@@ -74,7 +84,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void SpawnSubProjectile(Vector2 direction)
         {
-            GameObject subProj = ObjectPoolManager.Instance.SpawnFromPool(subProjectileTag, transform.position, Quaternion.identity);
+            GameObject subProj = poolManager.SpawnFromPool(subProjectileTag, transform.position, Quaternion.identity);
 
             if (subProj != null)
             {

@@ -1,6 +1,7 @@
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using UnityEngine;
+using VContainer;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -13,6 +14,14 @@ namespace Nytherion.GamePlay.Combat
 
         private IProjectileEffect[] effects;
 
+        private ObjectPoolManager poolManager;
+
+        [Inject]
+        public void Construct(ObjectPoolManager poolManager)
+        {
+            this.poolManager = poolManager;
+        }
+
         private void Awake()
         {
             effects = GetComponents<IProjectileEffect>();
@@ -20,10 +29,16 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.CompareTag("Enemy"))
+            bool isEnemy = collision.CompareTag("Enemy");
+            bool isWall = collision.CompareTag("Wall");
+
+            if (isEnemy || isWall)
             {
-                var target = collision.GetComponent<IDamageable>();
-                target?.TakeDamage(damage);
+                if (isEnemy)
+                {
+                    var target = collision.GetComponent<IDamageable>();
+                    target?.TakeDamage(damage);
+                }
 
                 bool shouldSurvive = false;
                 foreach (var effect in effects)
@@ -41,27 +56,18 @@ namespace Nytherion.GamePlay.Combat
                     ReturnToPool();
                 }
             }
-            else if (collision.CompareTag("Wall"))
-            {
-                ReturnToPool();
-            }
         }
 
         public void ReturnToPool()
         {
-            if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
+            if (poolManager!= null && !string.IsNullOrEmpty(poolTag))
             {
-                ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
+                poolManager.ReturnToPool(poolTag, gameObject);
             }
             else
             {
                 gameObject.SetActive(false);
             }
         }
-
-        //private void OnBecameInvisible()
-        //{
-        //    ReturnToPool();
-        //}
     }
 }

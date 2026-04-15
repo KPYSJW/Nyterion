@@ -22,7 +22,8 @@ namespace Nytherion.Core.Data
         public List<ShopStockState> shopStockData = new List<ShopStockState>();
         public List<QuickSlotEntry> quickSlotData = new List<QuickSlotEntry>();
         public List<EquippedItemEntry> equippedItemsData = new List<EquippedItemEntry>();
-        // public Dictionary<string, PuzzleAttemptData> puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(); // 나중에 사용 예정
+        public List<string> ownedSkillIds = new List<string>();
+        public List<string> equippedSkillIds = new List<string>();
 
         public SaveData()
         {
@@ -33,6 +34,8 @@ namespace Nytherion.Core.Data
             shopStockData = new List<ShopStockState>();
             quickSlotData = new List<QuickSlotEntry>();
             equippedItemsData = new List<EquippedItemEntry>();
+            ownedSkillIds = new List<string>();
+            equippedSkillIds = new List<string>();
             // puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(); // 나중에 사용 예정
         }
     }

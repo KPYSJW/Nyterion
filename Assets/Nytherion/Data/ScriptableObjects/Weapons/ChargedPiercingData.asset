@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
-  m_Name: SpreadWeapon
+  m_Name: ChargedPiercingData
   m_EditorClassIdentifier: 
-  uniqueID: 2337ae29-bf15-4da8-96ed-aebecb9cdae6
-  itemName: spread
+  uniqueID: 9457e81f-95f4-48e9-9539-1ff03a36a339
+  itemName: ChargedPiercing
   icon: {fileID: 21300000, guid: 78aac96169c97544ab51668fe388158c, type: 3}
   description: 
   isStackable: 0
@@ -23,9 +23,9 @@ MonoBehaviour:
   rarity: 0
   isCursed: 0
   statModifiers: []
-  weaponName: 
+  weaponName: ChargedPiercing
   damage: 10
   range: 0
   cooldown: 0
   projectilePrefab: {fileID: 3778041586713616541, guid: 56250e60bad76b54ba94b508d2f08cf5, type: 3}
-  weaponPrefab: {fileID: -562947462724574447, guid: 65beb60a331a6744c91183bab9b47615, type: 3}
+  weaponPrefab: {fileID: 910948594157303948, guid: 04d5ea97d076f3c4d83ca157520ebd42, type: 3}

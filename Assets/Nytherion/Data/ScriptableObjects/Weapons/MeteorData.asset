@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
-  m_Name: ChargedPiercingWeapon
+  m_Name: MeteorData
   m_EditorClassIdentifier: 
-  uniqueID: 9457e81f-95f4-48e9-9539-1ff03a36a339
-  itemName: ChargedPiercing
-  icon: {fileID: 21300000, guid: 78aac96169c97544ab51668fe388158c, type: 3}
+  uniqueID: ed23b19e-2061-4ddd-9d25-cd18c4e30f0a
+  itemName: Meteor
+  icon: {fileID: -178110585, guid: 79cf6998d61c5f248a9bfd845f369dda, type: 3}
   description: 
   isStackable: 0
   maxStack: 1
@@ -23,9 +23,9 @@ MonoBehaviour:
   rarity: 0
   isCursed: 0
   statModifiers: []
-  weaponName: ChargedPiercing
+  weaponName: Meteor
   damage: 10
-  range: 0
-  cooldown: 0
-  projectilePrefab: {fileID: 3778041586713616541, guid: 56250e60bad76b54ba94b508d2f08cf5, type: 3}
-  weaponPrefab: {fileID: 910948594157303948, guid: 04d5ea97d076f3c4d83ca157520ebd42, type: 3}
+  range: 2
+  cooldown: 1
+  projectilePrefab: {fileID: 8688154318546131989, guid: fc19d7a074b077f44a50ab601d98af1d, type: 3}
+  weaponPrefab: {fileID: 5899116789798688944, guid: 0e51ad0329ef961409e1b556fda9fb0a, type: 3}

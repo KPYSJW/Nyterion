@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uniqueID: 22b2d2b3-bebc-4e36-8ef9-0339e07dd40f
   itemName: Explosion
-  icon: {fileID: 21300000, guid: 78aac96169c97544ab51668fe388158c, type: 3}
+  icon: {fileID: 1506884830, guid: 1b68ab5560ae1834c8c7ffa7bc7ccadf, type: 3}
   description: 
   isStackable: 0
   maxStack: 1

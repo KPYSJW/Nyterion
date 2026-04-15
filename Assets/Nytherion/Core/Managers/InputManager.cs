@@ -22,6 +22,7 @@ namespace Nytherion.Core.Managers
         public event Action<int> onQuickSlotInput;
 
         public event Action<int> onSkillInput;
+        public event Action onToggleSkillUI;
 
         public event Action OnPausePressed;
 
@@ -71,7 +72,11 @@ namespace Nytherion.Core.Managers
             playerActions.Player.Dash.started += ctx => Dash = true;
             playerActions.Player.Dash.canceled += ctx => Dash = false;
 
-            playerActions.Player.Skill_Q.started += ctx => onSkillInput?.Invoke(0);
+            playerActions.Player.Skill.performed += ctx => onToggleSkillUI?.Invoke();
+
+            playerActions.Player.Skill_Q.performed += ctx => TriggerSkillInput(0);
+            playerActions.Player.Skill_E.performed += ctx => TriggerSkillInput(1);
+            playerActions.Player.Skill_R.performed += ctx => TriggerSkillInput(2);
 
             playerActions.Player.QuickSlot_1.started += ctx => onQuickSlotInput?.Invoke(1);
             playerActions.Player.QuickSlot_2.started += ctx => onQuickSlotInput?.Invoke(2);
@@ -109,6 +114,10 @@ namespace Nytherion.Core.Managers
             playerActions?.Disable();
             playerActions.Player.Control.Disable();
             playerActions.Player.Shift.Disable();
+            playerActions.Player.Skill.performed -= ctx => onToggleSkillUI?.Invoke();
+            playerActions.Player.Skill_Q.performed -= ctx => TriggerSkillInput(0);
+            playerActions.Player.Skill_E.performed -= ctx => TriggerSkillInput(1);
+            playerActions.Player.Skill_R.performed -= ctx => TriggerSkillInput(2);
         }
 
         public void DisableMovement()
@@ -139,6 +148,10 @@ namespace Nytherion.Core.Managers
                 }
                 return Vector2.zero;
             }
+        }
+        private void TriggerSkillInput(int skillIndex)
+        {
+            onSkillInput?.Invoke(skillIndex);
         }
         public void EnablePlayerControls() => playerActions.Player.Enable();
         public void DisablePlayerControls() => playerActions.Player.Disable();

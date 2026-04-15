@@ -1,6 +1,8 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Combat;
+using VContainer;
+using UnityEditor.EditorTools;
 
 namespace Nytherion.GamePlay.Combat.Weapons
 {
@@ -11,6 +13,13 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         public float dropHeight = 5f;
 
+        private ObjectPoolManager poolManager;
+
+        [Inject]
+        public void Construct(ObjectPoolManager poolManager)
+        {
+            this.poolManager = poolManager;
+        }
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
             if (!CanAttack()) return;
@@ -19,7 +28,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
             Vector3 spawnPos = targetPosition + (Vector3.up * dropHeight);
 
-            GameObject meteor = ObjectPoolManager.Instance.SpawnFromPool(meteorPoolTag, spawnPos, Quaternion.identity);
+            GameObject meteor = poolManager.SpawnFromPool(meteorPoolTag, spawnPos, Quaternion.identity);
 
             if (meteor.TryGetComponent<MeteorProjectile>(out var proj))
             {

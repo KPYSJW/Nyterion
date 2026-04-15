@@ -18,5 +18,5 @@ MonoBehaviour:
   coolDown: 1
   damage: 10
   range: 5
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 59c3a398a748c9948b73d0c814cf0edb, type: 3}
   skillPrefab: {fileID: 4812313363314114940, guid: e138f7f50a65d334490f7e769cfb4f4e, type: 3}

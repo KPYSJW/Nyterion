@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}
-  m_Name: Spiral
+  m_Name: FireBallData
   m_EditorClassIdentifier: 
   skillID: 
   skillType: 0
-  skillName: Spiral
+  skillName: FireBall
   coolDown: 1
   damage: 1
-  range: 1
-  icon: {fileID: 0}
-  skillPrefab: {fileID: 7263652350845657341, guid: cf1e5270067f8ee469acd38778ec710d, type: 3}
+  range: 20
+  icon: {fileID: 21300000, guid: 783a2cec6c880b44a838fb8d6784ad88, type: 3}
+  skillPrefab: {fileID: 8870546469580780684, guid: f7b5ab6c13d185b48b5618e5733e2014, type: 3}

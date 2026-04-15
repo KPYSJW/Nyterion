@@ -37,6 +37,7 @@ public class RootLifetimeScope : LifetimeScope
     [SerializeField] private SceneTransitionManager sceneTransitionManagerPrefab;
     [SerializeField] private InputManager inputManagerPrefab;
 
+    [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
     protected override void Configure(IContainerBuilder builder)
     {
         InstallCoreInfrastructure(builder);
@@ -131,6 +132,11 @@ public class RootLifetimeScope : LifetimeScope
             .AsSelf();
 
         builder.RegisterComponentInNewPrefab(inputManagerPrefab, Lifetime.Singleton)
+            .UnderTransform(this.transform)
+            .AsImplementedInterfaces()
+            .AsSelf();
+
+        builder.RegisterComponentInNewPrefab(objectPoolManagerPrefab, Lifetime.Singleton)
             .UnderTransform(this.transform)
             .AsImplementedInterfaces()
             .AsSelf();
