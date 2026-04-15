@@ -24,7 +24,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public EnemyAttackState attackState;
         public Animator animator;
         public SpriteRenderer spriteRenderer;
+        public EnemyCombatType CurrentCombatType;
 
+        public EnemyData enemyData;
+        public float HybridSwitchDistance;
+        public float TooCloseDistance => 2f;
         private void Awake()
         {
             var playerInstance = GameObject.FindWithTag(Tags.Player);
@@ -112,7 +116,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public void ApplyEnemyData(EnemyData data)
         {
             if(data==null)return;
-
+            enemyData=data;
+            CurrentCombatType = data.combatType;
+            HybridSwitchDistance = data.hybridSwitchDistance;
             moveSpeed=data.moveSpeed;
             detectRange=data.detectRange;
 
@@ -145,6 +151,17 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public void PlayAnimation(string stateName)
         {
             animator.Play(stateName);
+        }
+        public float GetDistanceToPlayer()
+        {
+            if (player == null) return Mathf.Infinity;
+            return Vector2.Distance(transform.position, player.position);
+        }
+
+        public void MoveAwayFromPlayer()
+        {
+            Vector2 direction = (transform.position - player.position).normalized;
+            rb.velocity = direction * moveSpeed;
         }
     }
 }
