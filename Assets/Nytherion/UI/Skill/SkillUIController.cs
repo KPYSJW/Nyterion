@@ -3,7 +3,7 @@ using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
 using VContainer;
-using System.Collections.Generic;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.Skill
 {
@@ -22,6 +22,8 @@ namespace Nytherion.UI.Skill
         private SkillDataManager skillDataManager;
         private PlayerSkillManager playerSkillManager;
         private SaveLoadManager saveLoadManager;
+        private IProgressionManager progressionManager;
+
         private SkillSlotUI[] storageSlots;
 
         [SerializeField] private SkillStorageArea storageDropArea;
@@ -31,12 +33,15 @@ namespace Nytherion.UI.Skill
             SkillDataManager skillDataManager,
             PlayerSkillManager playerSkillManager,
             SaveLoadManager saveLoadManager, 
-            InputManager inputManager)
+            InputManager inputManager,
+            IProgressionManager progressionManager
+            )
         {
             this.skillDataManager = skillDataManager;
             this.playerSkillManager = playerSkillManager;
             this.saveLoadManager = saveLoadManager;
             this.inputManager = inputManager; 
+            this.progressionManager = progressionManager;
         }
 
         private void Start()
@@ -56,19 +61,19 @@ namespace Nytherion.UI.Skill
                 skillDataManager.OnSkillDataChanged += SyncUIFromData;
                 SyncUIFromData();
             }
-            if (storageDropArea != null)
-            {
-                storageDropArea.OnDropToStorage += HandleDropToStorageBackground;
-            }
-            if (inputManager != null)
-            {
-                inputManager.onToggleSkillUI += ToggleUI;
-            }
+
+            if (storageDropArea != null) storageDropArea.OnDropToStorage += HandleDropToStorageBackground;
+
+            if (inputManager != null) inputManager.onToggleSkillUI += ToggleUI;
+
+            if (progressionManager != null) progressionManager.OnSkillUnlocked += HandleSkillUnlocked;
+
         }
         private void OnDestroy()
         {
             if (skillDataManager != null) skillDataManager.OnSkillDataChanged -= SyncUIFromData;
             if (inputManager != null) inputManager.onToggleSkillUI -= ToggleUI;
+            if (progressionManager != null) progressionManager.OnSkillUnlocked -= HandleSkillUnlocked;
         }
         public void ToggleUI()
         {
@@ -230,7 +235,39 @@ namespace Nytherion.UI.Skill
             }
             return null;
         }
+        private void HandleSkillUnlocked(SkillType skillType)
+        {
+            Debug.Log($"[UI] 스킬 해금 이벤트 수신! 보관함에 {skillType} 추가를 시도합니다.");
 
+            SkillData newSkillData = GetSkillDataByType(skillType);
+
+            if (newSkillData != null)
+            {
+                if (skillDataManager != null)
+                {
+                    skillDataManager.AcquireSkill(newSkillData);
+
+                    if (saveLoadManager != null)
+                    {
+                        saveLoadManager.SaveGame();
+                    }
+                    Debug.Log($"[UI] {skillType} 스킬이 보관함에 성공적으로 추가되었습니다.");
+                }
+            }
+            else
+            {
+                Debug.LogError($"[UI] {skillType}에 해당하는 SkillData를 찾지 못했습니다.");
+            }
+        }
+        private SkillData GetSkillDataByType(SkillType skillType)
+        {
+            if (skillDataManager != null && skillDataManager.skillDatabase != null)
+            {
+                return skillDataManager.skillDatabase.GetSkillByType(skillType);
+            }
+
+            return null;
+        }
         private void UpdatePlayerSkills()
         {
             SkillData[] currentEquipped = new SkillData[equipSlots.Length];

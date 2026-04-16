@@ -56,3 +56,4 @@ MonoBehaviour:
   shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
   stageManagerPrefab: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}
   skillDataManagerPrefab: {fileID: 4210730933447014893, guid: fdfb76384d7269e49995c51f9e9e2d7e, type: 3}
+  progressionManagerPrefab: {fileID: 849814480713348591, guid: c54d9ca75918d854a919eeb1e1deb1be, type: 3}

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: BlackholeData
   m_EditorClassIdentifier: 
   skillID: 
-  skillType: 0
+  skillType: 2
   skillName: Blackhole
+  description: 
   coolDown: 2
   damage: 2
   range: 2

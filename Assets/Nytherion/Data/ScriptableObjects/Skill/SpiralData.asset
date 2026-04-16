@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: SpiralData
   m_EditorClassIdentifier: 
   skillID: 
-  skillType: 0
+  skillType: 4
   skillName: Spiral
+  description: 
   coolDown: 1
   damage: 1
   range: 1

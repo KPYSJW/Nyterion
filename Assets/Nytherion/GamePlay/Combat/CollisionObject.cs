@@ -14,14 +14,6 @@ namespace Nytherion.GamePlay.Combat
 
         private IProjectileEffect[] effects;
 
-        private ObjectPoolManager poolManager;
-
-        [Inject]
-        public void Construct(ObjectPoolManager poolManager)
-        {
-            this.poolManager = poolManager;
-        }
-
         private void Awake()
         {
             effects = GetComponents<IProjectileEffect>();
@@ -60,9 +52,9 @@ namespace Nytherion.GamePlay.Combat
 
         public void ReturnToPool()
         {
-            if (poolManager!= null && !string.IsNullOrEmpty(poolTag))
+            if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
             {
-                poolManager.ReturnToPool(poolTag, gameObject);
+                ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
             }
             else
             {

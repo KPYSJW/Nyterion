@@ -1,4 +1,5 @@
 using UnityEngine;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Data.ScriptableObjects.Skill
 {

@@ -1,7 +1,5 @@
-using UnityEngine;
 using Nytherion.Core.Managers;
-using VContainer;
-using UnityEditor.EditorTools;
+using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -22,14 +20,6 @@ namespace Nytherion.GamePlay.Combat
         private float fireTimer = 0f;
         private CollisionObject myCol;
         private Rigidbody2D myRb;
-
-        private ObjectPoolManager poolManager;
-
-        [Inject]
-        public void Construct(ObjectPoolManager poolManager)
-        {
-            this.poolManager = poolManager;
-        }
 
         private void Awake()
         {
@@ -84,7 +74,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void SpawnSubProjectile(Vector2 direction)
         {
-            GameObject subProj = poolManager.SpawnFromPool(subProjectileTag, transform.position, Quaternion.identity);
+            GameObject subProj = ObjectPoolManager.Instance.SpawnFromPool(subProjectileTag, transform.position, Quaternion.identity);
 
             if (subProj != null)
             {

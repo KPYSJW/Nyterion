@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: DroneSkillData
   m_EditorClassIdentifier: 
   skillID: 
-  skillType: 0
+  skillType: 3
   skillName: Drone
+  description: 
   coolDown: 1
   damage: 10
   range: 5

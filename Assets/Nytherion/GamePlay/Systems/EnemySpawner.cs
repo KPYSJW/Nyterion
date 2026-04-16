@@ -14,7 +14,6 @@ namespace Nytherion.GamePlay.Systems
         public StageData currentStageData;
         
         private Transform player;
-        private ObjectPoolManager poolManager;
         
         [Header("Spawn Radius")]
         [Tooltip("적이 스폰될 최소 반지름")]
@@ -23,10 +22,9 @@ namespace Nytherion.GamePlay.Systems
         [SerializeField] private float maxSpawnRadius = 15f;
 
         [Inject]
-        public void Construct(PlayerController playerController, ObjectPoolManager objectPoolManager)
+        public void Construct(PlayerController playerController)
         {
             player = playerController.transform;
-            poolManager = objectPoolManager;
         }
 
         public void SpawnEnemies()
@@ -95,9 +93,9 @@ namespace Nytherion.GamePlay.Systems
         private void SpawnSingleEnemy(EnemyData enemyData, Vector3 spawnPosition)
         {
             if (enemyData == null) return;
-            if (poolManager == null) return;
+            if (ObjectPoolManager.Instance == null) return;
 
-            GameObject enemyObj = poolManager.SpawnFromPool(
+            GameObject enemyObj = ObjectPoolManager.Instance.SpawnFromPool(
                 enemyData.enemyName,
                 spawnPosition,
                 Quaternion.identity);
@@ -114,7 +112,7 @@ namespace Nytherion.GamePlay.Systems
             }
             else
             {
-                poolManager.ReturnToPool(enemyData.enemyName, enemyObj);
+                ObjectPoolManager.Instance.ReturnToPool(enemyData.enemyName, enemyObj);
             }
         }
 

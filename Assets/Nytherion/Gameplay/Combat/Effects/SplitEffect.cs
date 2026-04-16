@@ -1,7 +1,5 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
-using VContainer;
-using UnityEditor.EditorTools;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -13,13 +11,6 @@ namespace Nytherion.GamePlay.Combat
         public float splitDamageMultiplier = 0.5f;
         public string splitProjectileTag = "";
 
-        private ObjectPoolManager poolManager;
-
-        [Inject]
-        public void Construct(ObjectPoolManager poolManager)
-        {
-            this.poolManager = poolManager;
-        }
         private void Start() { }
         public bool OnHit(Collider2D target)
         {
@@ -48,7 +39,7 @@ namespace Nytherion.GamePlay.Combat
                     Mathf.Sin(currentA * Mathf.Deg2Rad)
                 );
 
-                GameObject fragment = poolManager.SpawnFromPool(targetPoolTag, transform.position, Quaternion.identity);
+                GameObject fragment = ObjectPoolManager.Instance.SpawnFromPool(targetPoolTag, transform.position, Quaternion.identity);
 
                 if (fragment != null)
                 {

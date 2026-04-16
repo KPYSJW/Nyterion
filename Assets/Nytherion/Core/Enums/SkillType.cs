@@ -1,9 +1,12 @@
-public enum SkillType
+namespace Nytherion.Core.Enums
 {
-    Attack,
-    Buff,
-    Defensive,
-    Heal,
-    Support,
-    Utility
+    public enum SkillType
+    {
+        None,
+        FireBall,
+        Blackhole,
+        Drone,
+        Spiral,
+        TestSkill
+    }
 }

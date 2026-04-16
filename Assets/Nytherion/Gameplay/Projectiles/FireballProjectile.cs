@@ -11,13 +11,6 @@ public class FireballProjectile : MonoBehaviour
     private Vector3 startPosition;
     private bool isInitialized = false;
 
-    private ObjectPoolManager poolManager;
-
-    [Inject]
-    public void Construct(ObjectPoolManager poolManager)
-    {
-        this.poolManager = poolManager;
-    }
     public void Initialize(float damage, float speed, float range, string poolTag)
     {
         this.damage = damage;
@@ -51,9 +44,9 @@ public class FireballProjectile : MonoBehaviour
     private void ReturnToPool()
     {
         isInitialized = false;
-        if (poolManager != null && !string.IsNullOrEmpty(poolTag))
+        if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
         {
-            poolManager.ReturnToPool(poolTag, gameObject);
+            ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
         }
         else
         {

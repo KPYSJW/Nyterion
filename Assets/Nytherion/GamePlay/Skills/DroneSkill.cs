@@ -32,13 +32,6 @@ namespace Nytherion.GamePlay.Characters.Skill
         private float autoAttackTimer = 0f;
         private float currentOrbitAngle = 0f;
 
-        private ObjectPoolManager poolManager;
-
-        [Inject]
-        public void Construct(ObjectPoolManager poolManager)
-        {
-            this.poolManager = poolManager;
-        }
         private void Start()
         {
             if (droneVisual != null) droneVisual.SetActive(false);
@@ -132,7 +125,7 @@ namespace Nytherion.GamePlay.Characters.Skill
         {
             Vector2 direction = (target.position - transform.position).normalized;
 
-            GameObject projectile = poolManager.SpawnFromPool(projectilePoolTag, transform.position, Quaternion.identity);
+            GameObject projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, transform.position, Quaternion.identity);
 
             if (projectile != null)
             {

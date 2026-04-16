@@ -12,14 +12,6 @@ namespace Nytherion.GamePlay.Characters.Skill
         public string projectilePoolTag = "SpiralProjectile";
 
         public int projectileCount = 3;
-
-        private ObjectPoolManager poolManager;
-
-        [Inject]
-        public void Construct(ObjectPoolManager poolManager)
-        {
-            this.poolManager = poolManager;
-        }
         protected override void Activate()
         {
             if (caster == null) return;
@@ -28,7 +20,7 @@ namespace Nytherion.GamePlay.Characters.Skill
 
             for (int i = 0; i < projectileCount; i++)
             {
-                GameObject proj = poolManager.SpawnFromPool(projectilePoolTag, caster.position, Quaternion.identity);
+                GameObject proj = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, caster.position, Quaternion.identity);
 
                 if (proj != null)
                 {
