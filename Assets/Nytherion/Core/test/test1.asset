@@ -38,8 +38,6 @@ MonoBehaviour:
     color: {r: 1, g: 1, b: 1, a: 1}
   dungeonMonsters:
   - {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
-  - {fileID: 11400000, guid: e5273af0d4464934aaf9ef32cb889fd5, type: 2}
-  - {fileID: 11400000, guid: de09b130b5d303b4d81fb5c12611f470, type: 2}
   wallThickness: 5
   roomSpacingMultiplier: 2
   placementIterations: 50
