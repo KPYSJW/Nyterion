@@ -1,6 +1,7 @@
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Systems;
+using Nytherion.Core.Test;
 using Nytherion.GamePlay;
 using Nytherion.GamePlay.Characters.NPC;
 using Nytherion.GamePlay.Characters.Player;
@@ -12,14 +13,14 @@ using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Presenters;
-using Nytherion.Core.Test;
+using Nytherion.UI.Skill;
+using Nytherion.UI.Test;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using VContainer;
 using VContainer.Unity;
-using Nytherion.UI.Skill;
 
 public class GameSceneLifetimeScope : LifetimeScope
 {
@@ -30,7 +31,6 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private GachaManager gachaManagerPrefab;
     [SerializeField] private GachaUIController gachaUIControllerPrefab;
     [SerializeField] private InteractionManager interactionManagerPrefab;
-    //[SerializeField] private StageManager stageManagerPrefab;
     [SerializeField] private DungeonManager dungeonManagerPrefab;
     [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
     [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
@@ -61,7 +61,9 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private InventoryPresenter inventoryPresenterPrefab;
     [SerializeField] private GameSceneUIManager gameSceneUIManager;
 
-    // DataLifetimeScope 대기를 위한 상태 변수
+    [Header("Test Progression")]
+    [SerializeField] private ProgressionDebugUI progressionDebugUI;
+
     protected DataLifetimeScope dataLifetimeScope;
     protected bool isDataManagersReady = false;
     protected bool waitForDataManagers = true;
@@ -93,7 +95,11 @@ public class GameSceneLifetimeScope : LifetimeScope
         InstallGameSceneOnlySystems(builder);
 
         builder.RegisterEntryPoint<GameSceneInitializer>();
-        
+
+        if (progressionDebugUI != null)
+        {
+            builder.RegisterComponent(progressionDebugUI);
+        }
     }
 
     /// <summary>
@@ -171,8 +177,7 @@ public class GameSceneLifetimeScope : LifetimeScope
             RegisterDataManagerIfExists<ShopManager>(builder);
             RegisterDataManagerIfExists<StageManager>(builder);
             RegisterDataManagerIfExists<SkillDataManager>(builder);
-            // RegisterDataManagerIfExists<PuzzleManager>(builder); // 나중에 사용 예정
-            // PlayerManager는 GameScene에서만 필요하므로 여기서 직접 관리
+            RegisterDataManagerIfExists<ProgressionManager>(builder);
         }
     }
 
@@ -183,7 +188,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     {
         if (dataLifetimeScope.Container.TryResolve<T>(out var manager))
         {
-            builder.RegisterInstance(manager);
+            builder.RegisterInstance(manager).AsImplementedInterfaces().AsSelf();
         }
         else
         {
@@ -194,12 +199,10 @@ public class GameSceneLifetimeScope : LifetimeScope
 
     private void RegisterUIReferences(IContainerBuilder builder)
     {
-        // GameSceneUIRefs 등록
         builder.RegisterComponentInHierarchy<GameSceneUIRefs>()
                .AsSelf()
                .AsImplementedInterfaces();
 
-        // QuickSlotManager 등록 (GameSceneUIRefs 이후에 등록되어야 함)
         if (quickSlotManagerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(quickSlotManagerPrefab, Lifetime.Singleton)
@@ -213,11 +216,11 @@ public class GameSceneLifetimeScope : LifetimeScope
         }
     }
 
-     private void InstallGameSceneOnlyManagers(IContainerBuilder builder)
-     {
+    private void InstallGameSceneOnlyManagers(IContainerBuilder builder)
+    {
         builder.RegisterComponentInNewPrefab(gachaManagerPrefab, Lifetime.Singleton)
-                .AsImplementedInterfaces() // 인터페이스를 통해 접근 가능
-                .AsSelf(); // 자기 자신을 통해 접근 가능
+                .AsImplementedInterfaces()
+                .AsSelf();
 
         builder.RegisterComponentInNewPrefab(interactionManagerPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
@@ -244,10 +247,8 @@ public class GameSceneLifetimeScope : LifetimeScope
 
         // SaveLoadManager는 DataLifetimeScope에서 관리됨
 
-        // UI 컨트롤러들 등록 (데이터와 UI 분리)
         InstallUIControllers(builder);
 
-        // ISaveable 인터페이스들을 추가 등록하여 SaveLoadManager가 찾을 수 있도록 함
         RegisterISaveableEntities(builder);
     }
 
@@ -265,7 +266,7 @@ public class GameSceneLifetimeScope : LifetimeScope
         {
             builder.RegisterComponentInNewPrefab(inventoryPresenterPrefab, Lifetime.Singleton);
         }
-            
+
         if (shopUIPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(shopUIPrefab, Lifetime.Singleton)
@@ -354,7 +355,6 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // QuickSlotManager는 이미 RegisterUIReferences에서 등록됨
     }
 
     private void InstallGameSceneOnlySystems(IContainerBuilder builder)
@@ -363,7 +363,6 @@ public class GameSceneLifetimeScope : LifetimeScope
 
         if (playerManagerInScene != null)
         {
-            // 1. 씬에 배치된 PlayerManager를 그대로 등록
             builder.RegisterComponent(playerManagerInScene)
                     .AsImplementedInterfaces()
                     .AsSelf();
@@ -380,13 +379,11 @@ public class GameSceneLifetimeScope : LifetimeScope
             Debug.Log("[GameSceneLifetimeScope] 씬에 Player가 없어 프리팹을 생성합니다.");
         }
 
-        // Gameplay 시스템들
         if (enemySpawnerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(enemySpawnerPrefab, Lifetime.Singleton);
         }
 
-        // 씬에 있는 FollowCamera 등록 (Main Camera에 붙어있는 경우)
         var existingFollowCamera = FindObjectOfType<FollowCamera>();
         if (existingFollowCamera != null)
         {
@@ -435,6 +432,7 @@ public class GameSceneLifetimeScope : LifetimeScope
                     .AsImplementedInterfaces()
                     .AsSelf();
         }
+
     }
 
 
@@ -499,12 +497,12 @@ public class GameSceneLifetimeScope : LifetimeScope
     private void InitializeGameSceneUI()
     {
         // 아키텍처 검증 헬퍼 등록 (디버그 빌드에서만)
-        #if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         RegisterArchitectureValidationHelper();
-        #endif
+#endif
     }
 
-    #if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
     private void RegisterArchitectureValidationHelper()
     {
         // 씬에서 ArchitectureValidationHelper 찾기
@@ -515,6 +513,6 @@ public class GameSceneLifetimeScope : LifetimeScope
             Container.Inject(validationHelper);
         }
     }
-    #endif
+#endif
 
 }

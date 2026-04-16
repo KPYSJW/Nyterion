@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: FireBallData
   m_EditorClassIdentifier: 
   skillID: 
-  skillType: 0
+  skillType: 1
   skillName: FireBall
+  description: 
   coolDown: 1
   damage: 1
   range: 20

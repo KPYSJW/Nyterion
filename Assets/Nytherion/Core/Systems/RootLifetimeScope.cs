@@ -5,13 +5,10 @@ using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Items;
 using VContainer;
 using VContainer.Unity;
-using Nytherion.Scenes;
-
-
 public class RootLifetimeScope : LifetimeScope
 {
     public static RootLifetimeScope Instance { get; private set; }
-    
+
     protected override void Awake()
     {
         if (Instance != null)
@@ -21,10 +18,10 @@ public class RootLifetimeScope : LifetimeScope
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
-        
+        DontDestroyOnLoad(transform.root.gameObject);
+
         base.Awake();
-        
+
     }
 
     [Header("Core Infrastructure")]
@@ -37,7 +34,7 @@ public class RootLifetimeScope : LifetimeScope
     [SerializeField] private SceneTransitionManager sceneTransitionManagerPrefab;
     [SerializeField] private InputManager inputManagerPrefab;
 
-    [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
+
     protected override void Configure(IContainerBuilder builder)
     {
         InstallCoreInfrastructure(builder);
@@ -51,13 +48,11 @@ public class RootLifetimeScope : LifetimeScope
         if (scene.name == "Boot")
         {
             var sceneTransitionManager = Container.Resolve<SceneTransitionManager>();
-            // DataLifetimeScope 생성
             CreateDataLifetimeScope();
 
-            
             sceneTransitionManager.LoadTargetScene("Title");
         }
-        else if(scene.name == "BootTest")
+        else if (scene.name == "BootTest")
         {
             CreateDataLifetimeScope();
 
@@ -69,7 +64,6 @@ public class RootLifetimeScope : LifetimeScope
 
     private void CreateDataLifetimeScope()
     {
-        // 이미 씬에 DataLifetimeScope가 존재하는지 확인
         var existingDataScope = FindObjectOfType<DataLifetimeScope>();
         if (existingDataScope != null)
         {
@@ -78,7 +72,6 @@ public class RootLifetimeScope : LifetimeScope
 
         if (dataLifetimeScopePrefab != null && DataLifetimeScope.Instance == null)
         {
-            //var dataScope = Instantiate(dataLifetimeScopePrefab);
             var dataScope = Instantiate(dataLifetimeScopePrefab, this.transform);
         }
         else if (dataLifetimeScopePrefab == null)
@@ -89,8 +82,6 @@ public class RootLifetimeScope : LifetimeScope
 
     private void InstallCoreInfrastructure(IContainerBuilder builder)
     {
-        
-        // EventManager 프리팹 등록
         if (eventManagerPrefab == null)
         {
             Debug.LogError("[RootLifetimeScope] eventManagerPrefab이 할당되지 않았습니다!");
@@ -103,7 +94,6 @@ public class RootLifetimeScope : LifetimeScope
                 .AsSelf();
         }
 
-        // ItemDatabase 등록
         if (itemDatabase == null)
         {
             Debug.LogError("[RootLifetimeScope] itemDatabase가 할당되지 않았습니다!");
@@ -113,11 +103,7 @@ public class RootLifetimeScope : LifetimeScope
             builder.RegisterInstance(itemDatabase);
             ItemDatabase.Initialize(itemDatabase);
         }
-
-        // SaveLoadManager는 DataLifetimeScope로 이동됨
-        
     }
-
 
     private void InstallSystemManagers(IContainerBuilder builder)
     {
@@ -132,11 +118,6 @@ public class RootLifetimeScope : LifetimeScope
             .AsSelf();
 
         builder.RegisterComponentInNewPrefab(inputManagerPrefab, Lifetime.Singleton)
-            .UnderTransform(this.transform)
-            .AsImplementedInterfaces()
-            .AsSelf();
-
-        builder.RegisterComponentInNewPrefab(objectPoolManagerPrefab, Lifetime.Singleton)
             .UnderTransform(this.transform)
             .AsImplementedInterfaces()
             .AsSelf();

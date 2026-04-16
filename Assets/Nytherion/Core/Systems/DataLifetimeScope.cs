@@ -22,6 +22,7 @@ namespace Nytherion.Core.Systems
         [SerializeField] private ShopManager shopManagerPrefab;
         [SerializeField] private StageManager stageManagerPrefab;
         [SerializeField] private SkillDataManager skillDataManagerPrefab;
+        [SerializeField] private ProgressionManager progressionManagerPrefab;
 
         protected override void Awake()
         {
@@ -123,6 +124,15 @@ namespace Nytherion.Core.Systems
             if(skillDataManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(skillDataManagerPrefab, Lifetime.Singleton)
+                    .UnderTransform(this.transform)
+                    .AsImplementedInterfaces()
+                    .AsSelf()
+                    .As<ISaveable>();
+            }
+
+            if (progressionManagerPrefab != null)
+            {
+                builder.RegisterComponentInNewPrefab(progressionManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
                     .AsSelf()

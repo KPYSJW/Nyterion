@@ -1,6 +1,5 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
-using VContainer;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -9,18 +8,11 @@ namespace Nytherion.GamePlay.Combat
         [Header("Pool Settings")]
         public string poolTag = "ExplosionVFX";
 
-        private ObjectPoolManager poolManager;
-
-        [Inject]
-        public void Construct(ObjectPoolManager poolManager)
-        {
-            this.poolManager = poolManager;
-        }
         public void AnimationFinished()
         {
-            if (poolManager != null)
+            if (ObjectPoolManager.Instance != null)
             {
-                poolManager.ReturnToPool(poolTag, gameObject);
+                ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
             }
         }
     }

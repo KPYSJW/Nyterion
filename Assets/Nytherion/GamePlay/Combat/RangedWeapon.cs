@@ -1,7 +1,5 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
-using UnityEditor.EditorTools;
-using VContainer;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -14,17 +12,9 @@ namespace Nytherion.GamePlay.Combat
 
         private const float DefaultProjectileSpeed = 8f;
 
-        private ObjectPoolManager poolManager;
-
-        [Inject]
-        public void Construct(ObjectPoolManager poolManager)
-        {
-            this.poolManager = poolManager;
-        }
-
         public GameObject Projectile(Vector2 direction)
         {
-            GameObject projectile = poolManager.SpawnFromPool(projectilePoolTag, firePoint.position, Quaternion.identity);
+            GameObject projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, firePoint.position, Quaternion.identity);
 
             if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
             {

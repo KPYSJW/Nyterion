@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Nytherion.Core.Managers;
 using Nytherion.Core.Enums;
 
 namespace Nytherion.Core.Data
@@ -25,6 +24,8 @@ namespace Nytherion.Core.Data
         public List<string> ownedSkillIds = new List<string>();
         public List<string> equippedSkillIds = new List<string>();
 
+        public ProgressionState progressionState;
+
         public SaveData()
         {
             currencyTypes = new List<CurrencyType>();
@@ -36,6 +37,7 @@ namespace Nytherion.Core.Data
             equippedItemsData = new List<EquippedItemEntry>();
             ownedSkillIds = new List<string>();
             equippedSkillIds = new List<string>();
+            progressionState = new ProgressionState();
             // puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(); // 나중에 사용 예정
         }
     }
