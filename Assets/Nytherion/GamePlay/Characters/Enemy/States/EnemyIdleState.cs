@@ -8,7 +8,6 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public override void EnterState(EnemyAIController enemy)
         {
-            UnityEngine.Debug.Log("기본상태");
             enemy.PlayAnimation("Idle");
         }
 

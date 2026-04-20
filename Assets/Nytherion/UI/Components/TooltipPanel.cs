@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Skill;
+using Nytherion.Data.ScriptableObjects.Progression;
 
 namespace Nytherion.UI.Components
 {
@@ -106,12 +107,16 @@ namespace Nytherion.UI.Components
             
             panel.SetActive(true);
         }
-        public void ShowTooltip(SkillData skill)
+        public void ShowTooltip(SkillData skill, int level = 1, int currentExp = 0, int requiredExp = 1)
         {
             if (skill == null)
                 return;
 
-            string skillStats = $"데미지: {skill.damage}\n쿨타임: {skill.coolDown}초\n사거리: {skill.range}\n\n{skill.description}";
+            string skillStats = $"[Lv.{level}] 경험치: {currentExp} / {requiredExp}\n\n" +
+                                $"데미지: {skill.damage}\n" +
+                                $"쿨타임: {skill.coolDown}초\n" +
+                                $"사거리: {skill.range}\n\n" +
+                                $"{skill.description}";
 
             SetContent(skill.skillName, skillStats);
 
@@ -120,6 +125,38 @@ namespace Nytherion.UI.Components
                 if (skill.icon != null)
                 {
                     itemImage.sprite = skill.icon;
+                    itemImage.preserveAspect = true;
+                    itemImage.gameObject.SetActive(true);
+                }
+                else
+                {
+                    itemImage.gameObject.SetActive(false);
+                }
+            }
+
+            panel.SetActive(true);
+        }
+
+        public void ShowTooltip(MilestoneData milestone, bool isCompleted, int currentVal, int targetVal)
+        {
+            if (milestone == null) return;
+
+            string statusText = isCompleted ? "<color=#00FF00>달성 완료</color>" : $"<color=#FFB400>진행 중 ({currentVal} / {targetVal})</color>";
+
+            string content = $"{milestone.description}\n\n상태: {statusText}";
+
+            if (milestone.rewardSkill != Nytherion.Core.Enums.SkillType.None)
+            {
+                content += $"\n보상: {milestone.rewardSkill} 스킬 해금";
+            }
+
+            SetContent(milestone.title, content);
+
+            if (itemImage != null)
+            {
+                if (milestone.icon != null)
+                {
+                    itemImage.sprite = milestone.icon;
                     itemImage.preserveAspect = true;
                     itemImage.gameObject.SetActive(true);
                 }

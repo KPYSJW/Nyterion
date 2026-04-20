@@ -21,7 +21,7 @@ namespace Nytherion.Core.Data
         public List<ShopStockState> shopStockData = new List<ShopStockState>();
         public List<QuickSlotEntry> quickSlotData = new List<QuickSlotEntry>();
         public List<EquippedItemEntry> equippedItemsData = new List<EquippedItemEntry>();
-        public List<string> ownedSkillIds = new List<string>();
+        public List<SkillEntry> ownedSkills = new List<SkillEntry>();
         public List<string> equippedSkillIds = new List<string>();
 
         public ProgressionState progressionState;
@@ -35,7 +35,7 @@ namespace Nytherion.Core.Data
             shopStockData = new List<ShopStockState>();
             quickSlotData = new List<QuickSlotEntry>();
             equippedItemsData = new List<EquippedItemEntry>();
-            ownedSkillIds = new List<string>();
+            ownedSkills = new List<SkillEntry>();
             equippedSkillIds = new List<string>();
             progressionState = new ProgressionState();
             // puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(); // 나중에 사용 예정
@@ -66,5 +66,13 @@ namespace Nytherion.Core.Data
         public string itemId;
         public int count;
         public string instanceId;
+    }
+
+    [Serializable]
+    public class SkillEntry
+    {
+        public string skillId;
+        public int level;
+        public int exp;
     }
 }

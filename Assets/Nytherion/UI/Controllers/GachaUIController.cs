@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Managers;
-using Nytherion.UI.Inventory;
 using Nytherion.UI.Gacha;
 using UnityEngine.UI;
-using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.GamePlay.Engravings;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Enums;
@@ -18,14 +17,30 @@ namespace Nytherion.UI.Controllers
     public class GachaUIController : UIPanelBase
     {
         private GameSceneUIRefs gameSceneuiRefs;
-        
-        [Header("UI References")]
+
+        [Header("Main Panels")]
         [SerializeField] private GameObject mainPanel;
         [SerializeField] private GameObject resultPanel;
-        [SerializeField] private Button drawWeaponOnceButton;
-        [SerializeField] private Button drawWeaponTenTimesButton;
-        [SerializeField] private Button drawEngravingOnceButton;
-        [SerializeField] private Button drawEngravingTenTimesButton;
+        //[SerializeField] private Button drawWeaponOnceButton;
+        //[SerializeField] private Button drawWeaponTenTimesButton;
+        //[SerializeField] private Button drawEngravingOnceButton;
+        //[SerializeField] private Button drawEngravingTenTimesButton;
+
+        [Header("Gacha Sub Panels")]
+        [SerializeField] private GameObject weaponSubPanel;
+        [SerializeField] private GameObject engravingSubPanel;
+        [SerializeField] private GameObject skillSubPanel;
+
+        [Header("Tab Buttons")]
+        [SerializeField] private Button weaponTabButton;
+        [SerializeField] private Button engravingTabButton;
+        [SerializeField] private Button skillTabButton;
+
+        [Header("Action Buttons")]
+        [SerializeField] private Button drawOnceBtton;
+        [SerializeField] private Button drawTenBtton;
+
+        [Header("Other UI")]
         [SerializeField] private Button closeButton;
         [SerializeField] private Button resultCloseButton;
         [SerializeField] private Transform resultSlotParent;
@@ -36,6 +51,8 @@ namespace Nytherion.UI.Controllers
         private CurrencyDataManager currencyDataManager;
         private GachaManager gachaManager;
         private EventManager eventManager;
+
+        private GachaType currentSelectedType = GachaType.Weapon;
 
         [Inject]
         public void Construct(
@@ -50,14 +67,21 @@ namespace Nytherion.UI.Controllers
             this.gachaManager = gachaManager;
             this.eventManager = eventManager;
             this.gameSceneuiRefs = gameSceneuiRefs;
+
             this.resultPanel = gameSceneuiRefs.GachaResultPanel;
             this.mainPanel = gameSceneuiRefs.GachaMainPanel;
+            this.weaponSubPanel = gameSceneuiRefs.WeaponSubPanel;
+            this.engravingSubPanel = gameSceneuiRefs.EngravingSubPanel;
+            this.skillSubPanel = gameSceneuiRefs.SkillSubPanel;
+
             this.resultCloseButton = gameSceneuiRefs.ResultCloseButton;
+            this.drawOnceBtton = gameSceneuiRefs.DrawOnceButton;
+            this.drawTenBtton = gameSceneuiRefs.DrawTenButton;
             this.closeButton = gameSceneuiRefs.GachaCloseButton;
-            this.drawWeaponOnceButton = gameSceneuiRefs.DrawWeaponOnceButton;
-            this.drawWeaponTenTimesButton = gameSceneuiRefs.DrawWeaponTenTimesButton;
-            this.drawEngravingOnceButton = gameSceneuiRefs.DrawEngravingOnceButton;
-            this.drawEngravingTenTimesButton = gameSceneuiRefs.DrawEngravingTenTimesButton;
+            this.weaponTabButton = gameSceneuiRefs.WeaponTabButton;
+            this.engravingTabButton = gameSceneuiRefs.EngravingTabButton;
+            this.skillTabButton = gameSceneuiRefs.SkillTabButton;
+
             this.resultSlotParent = gameSceneuiRefs.ResultSlotParent;
             this.resultSlotPrefab = gameSceneuiRefs.ResultSlotPrefab;
             this.controlledCanvasGroup = gameSceneuiRefs.GachaCanvasGroup;
@@ -70,17 +94,15 @@ namespace Nytherion.UI.Controllers
 
         private void Start()
         {
-            if (drawWeaponOnceButton != null)
-                drawWeaponOnceButton.onClick.AddListener(() => Draw(GachaType.Weapon, 1));
+            if (weaponTabButton != null) weaponTabButton.onClick.AddListener(() => SwitchTab(GachaType.Weapon));
+            if (engravingTabButton != null) engravingTabButton.onClick.AddListener(() => SwitchTab(GachaType.Engraving));
+            if (skillTabButton != null) skillTabButton.onClick.AddListener(() => SwitchTab(GachaType.Skill));
 
-            if (drawWeaponTenTimesButton != null)
-                drawWeaponTenTimesButton.onClick.AddListener(() => Draw(GachaType.Weapon, 10));
+            if (drawOnceBtton != null)
+                drawOnceBtton.onClick.AddListener(() => Draw(currentSelectedType, 1));
 
-            if (drawEngravingOnceButton != null)
-                drawEngravingOnceButton.onClick.AddListener(() => Draw(GachaType.Engraving, 1));
-
-            if (drawEngravingTenTimesButton != null)
-                drawEngravingTenTimesButton.onClick.AddListener(() => Draw(GachaType.Engraving, 10));
+            if (drawTenBtton != null)
+                drawTenBtton.onClick.AddListener(() => Draw(currentSelectedType, 10));
 
             if (closeButton != null)
                 closeButton.onClick.AddListener(Close);
@@ -89,59 +111,62 @@ namespace Nytherion.UI.Controllers
                 resultCloseButton.onClick.AddListener(CloseResultPanel);
 
             if (resultPanel != null)
-            {
                 resultPanel.SetActive(false);
-            }
             else
-            {
                 Debug.LogError("'resultPanel'이 GachaUIController에 할당되지 않았습니다.", this);
-            }
-        }
 
+            SwitchTab(GachaType.Weapon);
+        }
+        public void SwitchTab(GachaType type)
+        {
+            currentSelectedType = type;
+
+            if (weaponSubPanel != null) weaponSubPanel.SetActive(type == GachaType.Weapon);
+            if (engravingSubPanel != null) engravingSubPanel.SetActive(type == GachaType.Engraving);
+            if (skillSubPanel != null) skillSubPanel.SetActive(type == GachaType.Skill);
+
+            SetButtonAlpha(weaponTabButton, type == GachaType.Weapon ? 1f : 0.5f);
+            SetButtonAlpha(engravingTabButton, type == GachaType.Engraving ? 1f : 0.5f);
+            SetButtonAlpha(skillTabButton, type == GachaType.Skill ? 1f : 0.5f);
+        }
+        private void SetButtonAlpha(Button btn, float alpha)
+        {
+            if (btn == null) return;
+            var colors = btn.colors;
+            var normalColor = colors.normalColor;
+            normalColor.a = alpha;
+            colors.normalColor = normalColor;
+            btn.colors = colors;
+        }
         private void OnEnable()
         {
-            if (currencyDataManager != null)
-                currencyDataManager.OnDataChanged += UpdateTokenUI;
+            if (currencyDataManager != null) currencyDataManager.OnDataChanged += UpdateTokenUI;
 
             playerAction = new PlayerAction();
             playerAction.GachaUI.Enable();
             playerAction.GachaUI.Close.performed += OnCloseInput;
 
-            if (eventManager != null)
-            {
-                eventManager.OnInteraction += HandleInteraction;
-            }
+            if (eventManager != null) eventManager.OnInteraction += HandleInteraction;
         }
-
         private void OnDisable()
         {
-            if (currencyDataManager != null)
-                currencyDataManager.OnDataChanged -= UpdateTokenUI;
+            if (currencyDataManager != null) currencyDataManager.OnDataChanged -= UpdateTokenUI;
 
             if (playerAction != null)
             {
                 playerAction.GachaUI.Close.performed -= OnCloseInput;
                 playerAction.GachaUI.Disable();
             }
-            if (eventManager != null)
-            {
-                eventManager.OnInteraction -= HandleInteraction;
-            }
+            if (eventManager != null) eventManager.OnInteraction -= HandleInteraction;
         }
 
         private void OnCloseInput(InputAction.CallbackContext context)
         {
-            if (IsOpen)
-            {
-                Close();
-            }
+            if (IsOpen) Close();
         }
         private void HandleInteraction(InteractableType type)
         {
-            if (IsOpen && type != InteractableType.GachaNPC)
-            {
-                Close();
-            }
+            if (IsOpen && type != InteractableType.GachaNPC) Close();
         }
         public override void Close()
         {
@@ -151,8 +176,6 @@ namespace Nytherion.UI.Controllers
             }
             base.Close();
         }
-
-
         protected override void OnPanelStateChanged(bool isOpen)
         {
             if (isOpen && currencyDataManager != null)
@@ -182,8 +205,9 @@ namespace Nytherion.UI.Controllers
 
         private void ShowResultPanel(List<ScriptableObject> drawnItems)
         {
-
+            if (mainPanel != null) mainPanel.SetActive(false);
             resultPanel.SetActive(true);
+
             foreach (Transform child in resultSlotParent) Destroy(child.gameObject);
 
             foreach (ScriptableObject item in drawnItems)
@@ -191,28 +215,17 @@ namespace Nytherion.UI.Controllers
                 GameObject slotGO = Instantiate(resultSlotPrefab, resultSlotParent);
 
                 Transform iconTransform = slotGO.transform.Find("Icon");
-                if (iconTransform == null)
-                {
-                    Debug.LogError("ResultSlotPrefab의 자식에서 'Icon' 오브젝트를 찾을 수 없습니다.");
-                    continue;
-                }
+                if (iconTransform == null) continue;
 
                 Image itemIcon = iconTransform.GetComponent<Image>();
-                if (itemIcon == null)
-                {
-                    Debug.LogError("'Icon' 오브젝트에서 Image 컴포넌트를 찾을 수 없습니다.");
-                    continue;
-                }
+                if (itemIcon == null) continue;
 
                 GachaResultSlot resultSlot = slotGO.GetComponent<GachaResultSlot>();
 
                 if (item is ItemData itemData)
                 {
                     itemIcon.sprite = itemData.icon;
-                    if (resultSlot != null)
-                    {
-                        resultSlot.Setup(itemData);
-                    }
+                    if (resultSlot != null) resultSlot.Setup(itemData);
                 }
                 else if (item is EngravingData engravingData)
                 {
@@ -223,6 +236,10 @@ namespace Nytherion.UI.Controllers
                         resultSlot.Setup(tempEngravingBlock);
                     }
                 }
+                else if (item is SkillData skillData)
+                {
+                    itemIcon.sprite = skillData.icon;
+                }
 
                 iconTransform.SetAsLastSibling();
             }
@@ -230,11 +247,14 @@ namespace Nytherion.UI.Controllers
         private void CloseResultPanel()
         {
             resultPanel.SetActive(false);
+            if (mainPanel != null) mainPanel.SetActive(true);
         }
+
         private void UpdateTokenUI(CurrencyChangeData data)
         {
             if (data.currencyType == CurrencyType.Token)
             {
+                // UI 갱신 로직
             }
         }
     }

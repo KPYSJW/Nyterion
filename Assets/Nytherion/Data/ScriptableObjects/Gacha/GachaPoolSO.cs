@@ -17,25 +17,35 @@ namespace Nytherion.Data.ScriptableObjects.Gacha
         [Tooltip("이 풀에 포함된 아이템 목록과 각 아이템의 등장 확률 가중치")]
         public List<GachaItemRate> items;
 
-        public ScriptableObject GetRandomItem()
+        public bool HasValidItems(System.Func<ScriptableObject, bool> isValid = null)
         {
-            if(items == null || items.Count == 0)
+            if (items == null || items.Count == 0) return false;
+            if (isValid == null) return true;
+
+            return items.Any(rate => isValid(rate.item));
+        }
+
+        public ScriptableObject GetRandomItem(System.Func<ScriptableObject, bool> isValid = null)
+        {
+            var validItems = isValid != null ? items.Where(rate => isValid(rate.item)).ToList() : items;
+
+            if (validItems == null || validItems.Count == 0)
             {
                 return null;
             }
-            float totalWeight = items.Sum(itemRate => itemRate.weight);
+
+            float totalWeight = validItems.Sum(itemRate => itemRate.weight);
             float randomPoint = Random.Range(0f, totalWeight);
 
-            foreach (GachaItemRate itemRate in items)
+            foreach (GachaItemRate itemRate in validItems)
             {
-                if(randomPoint < itemRate.weight)
+                if (randomPoint < itemRate.weight)
                 {
                     return itemRate.item;
                 }
                 randomPoint -= itemRate.weight;
             }
-            return items.Last().item;
+            return validItems.Last().item;
         }
-
     }
 }

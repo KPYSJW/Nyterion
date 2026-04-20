@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}
   m_Name: DroneSkillData
   m_EditorClassIdentifier: 
-  skillID: 
+  skillID: skill_drone
   skillType: 3
   skillName: Drone
   description: 
+  skillLEvel: 0
+  exp: 0
   coolDown: 1
   damage: 10
   range: 5

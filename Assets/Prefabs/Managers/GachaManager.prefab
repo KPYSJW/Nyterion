@@ -44,5 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01ea2368f5cb6b84c9b04116666de6f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
   weaponGachaTable: {fileID: 11400000, guid: 9c3f2f93501fc444d8541a67f5ed9ef6, type: 2}
   engravingGachaTable: {fileID: 11400000, guid: 99bebee1759357f4d91283a45ab79543, type: 2}
+  skillGachaTable: {fileID: 11400000, guid: 52a2282a04c5a864caef47a4dc60eaf1, type: 2}

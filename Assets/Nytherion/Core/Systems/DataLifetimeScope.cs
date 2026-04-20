@@ -1,8 +1,8 @@
+using Nytherion.Core.Interfaces;
+using Nytherion.Core.Managers;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using Nytherion.Core.Managers;
-using Nytherion.Core.Interfaces;
 
 namespace Nytherion.Core.Systems
 {
@@ -47,7 +47,7 @@ namespace Nytherion.Core.Systems
                 Debug.LogWarning($"[DataLifetimeScope] Configure가 이미 호출되었습니다. 중복 호출을 건너뜁니다.");
                 return;
             }
-           
+
             InstallDataManagers(builder);
             RegisterISaveableEntities(builder);
             hasConfigured = true;
@@ -121,7 +121,7 @@ namespace Nytherion.Core.Systems
                     .As<ISaveable>();
             }
 
-            if(skillDataManagerPrefab != null)
+            if (skillDataManagerPrefab != null)
             {
                 builder.RegisterComponentInNewPrefab(skillDataManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
@@ -165,7 +165,8 @@ namespace Nytherion.Core.Systems
             {
                 return container.TryResolve<SaveLoadManager>(out _) &&
                        container.TryResolve<CurrencyDataManager>(out _) &&
-                       container.TryResolve<InventoryDataManager>(out _);
+                       container.TryResolve<InventoryDataManager>(out _) &&
+                       container.TryResolve<ProgressionManager>(out _);
             }
             catch
             {
