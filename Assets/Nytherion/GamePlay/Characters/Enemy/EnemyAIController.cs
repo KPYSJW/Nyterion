@@ -94,6 +94,149 @@ namespace Nytherion.GamePlay.Characters.Enemy
             spriteRenderer.flipX=direction.x>0;//그림보고 방향 설정
         }
 
+        public void MoveToTarget(Vector2 targetPosition)
+        {
+            Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
+            rb.velocity = direction * moveSpeed;
+        }
+
+        public float GetDistanceToPlayer()
+        {
+            if (player == null) return Mathf.Infinity;
+            return Vector2.Distance(transform.position, player.position);
+        }
+
+        public void MoveInDirection(Vector2 direction)
+        {
+            if (direction.sqrMagnitude < 0.001f)
+            {
+                StopMovement();
+                return;
+            }
+
+            direction.Normalize();
+            rb.velocity = direction * moveSpeed;
+        }
+
+        
+        public Vector2 GetMeleeChaseDirection(float sideBiasWeight = 0.15f)
+        {
+            if (player == null) return Vector2.zero;
+
+            Vector2 toPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
+            Vector2 tangent = new Vector2(-toPlayer.y, toPlayer.x);
+
+            float sideSign = (GetInstanceID() % 2 == 0) ? 1f : -1f;
+
+            Vector2 finalDirection = (toPlayer + tangent * sideBiasWeight * sideSign).normalized;
+            return finalDirection;
+        }
+
+        public Vector2 GetMeleeSlotTarget(float forwardOffset = 1.2f, float sideOffset = 0.8f)
+        {
+            if (player == null) return transform.position;
+
+            Vector2 toPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
+            Vector2 side = new Vector2(-toPlayer.y, toPlayer.x);
+
+            float sideSign = (GetInstanceID() % 2 == 0) ? 1f : -1f;
+
+            return (Vector2)player.position - toPlayer * forwardOffset + side * sideOffset * sideSign;
+        }
+
+        public bool IsFrontBlocked(float checkRadius = 0.6f, float forwardDistance = 0.8f)
+        {
+            if (player == null) return false;
+
+            Vector2 toPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
+            Vector2 checkCenter = (Vector2)transform.position + toPlayer * forwardDistance;
+
+            Collider2D[] hits = Physics2D.OverlapCircleAll(checkCenter, checkRadius);
+
+            foreach (var hit in hits)
+            {
+                if (hit.gameObject == gameObject) continue;
+                if (!hit.CompareTag(Tags.Enemy)) continue;
+
+                float myDistance = GetDistanceToPlayer();
+                float otherDistance = Vector2.Distance(hit.transform.position, player.position);
+
+                if (otherDistance < myDistance)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public Vector2 GetBlockedFlowDirection(float sideWeight = 0.8f)
+        {
+            if (player == null) return Vector2.zero;
+
+            Vector2 toPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
+            Vector2 side = new Vector2(-toPlayer.y, toPlayer.x);
+            float sideSign = (GetInstanceID() % 2 == 0) ? 1f : -1f;
+
+            return (toPlayer * 0.2f + side * sideWeight * sideSign).normalized;
+        }
+        public Vector2 GetSeparationDirection(float separationRadius)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, separationRadius);
+
+            Vector2 separation = Vector2.zero;
+
+            foreach (var hit in hits)
+            {
+                if (hit.gameObject == gameObject) continue;
+                if (!hit.CompareTag("Enemy")) continue;
+
+                Vector2 away = (Vector2)(transform.position - hit.transform.position);
+                float distance = away.magnitude;
+
+                if (distance > 0.001f)
+                {
+                    separation += away.normalized / distance;
+                }
+            }
+
+            return separation.normalized;
+        }
+
+        public Vector2 GetCloseFlowDirection(float flowWeight = 0.35f)
+        {
+            if (player == null) return Vector2.zero;
+
+            Vector2 toPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
+            Vector2 tangent = new Vector2(-toPlayer.y, toPlayer.x);
+
+            float sideSign = (GetInstanceID() % 2 == 0) ? 1f : -1f;
+
+            Vector2 flowDirection = (toPlayer * (1f - flowWeight) + tangent * flowWeight * sideSign).normalized;
+            return flowDirection;
+        }
+
+        /*public Vector2 GetSurroundPosition(float radius, float sideOffset)
+        {
+            if (player == null) return transform.position;
+
+            Vector2 toEnemy = ((Vector2)transform.position - (Vector2)player.position).normalized;
+
+            if (toEnemy == Vector2.zero)
+                toEnemy = Vector2.right;
+
+            Vector2 tangent = new Vector2(-toEnemy.y, toEnemy.x);
+
+            float sideSign = (GetInstanceID() % 2 == 0) ? 1f : -1f;//랜덤방향
+
+            Vector2 target =
+                (Vector2)player.position +
+                toEnemy * radius +
+                tangent * sideOffset * sideSign;
+
+            return target;
+        }*/
+
         public void StopMovement()
         {
             rb.velocity=Vector2.zero;
@@ -152,11 +295,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             animator.Play(stateName);
         }
-        public float GetDistanceToPlayer()
-        {
-            if (player == null) return Mathf.Infinity;
-            return Vector2.Distance(transform.position, player.position);
-        }
+        
 
         public void MoveAwayFromPlayer()
         {
