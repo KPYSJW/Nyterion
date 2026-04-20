@@ -1,30 +1,36 @@
-using UnityEngine;
 using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Presenters;
 using Nytherion.Core.Data;
 using VContainer;
-using VContainer.Unity;
+using Nytherion.UI.Progression;
+using Nytherion.UI.Skill;
 
 namespace Nytherion.Core.Managers
 {
     public class GameSceneUIManager : BaseManager
     {
-        private readonly GameSceneUIRefs gameSceneUIRefs;
-        private readonly InventoryPresenter inventoryPresenter;
-        private readonly InventoryUI inventoryUI;
+        private GameSceneUIRefs gameSceneUIRefs;
+        private InventoryPresenter inventoryPresenter;
+        private InventoryUI inventoryUI;
         private EngravingGridUI engravingGridUI;
+        private MilestoneUIController milestoneUI;
+        private SkillUIController skillUI;
 
         [Inject]
-        public GameSceneUIManager(GameSceneUIRefs gameSceneUIRefs,
+        public void Construct(GameSceneUIRefs gameSceneUIRefs,
             InventoryPresenter inventoryPresenter,
             InventoryUI inventoryUI,
-            EngravingGridUI engravingGridUI)
+            EngravingGridUI engravingGridUI,
+            MilestoneUIController milestoneUI,
+            SkillUIController skillUI)
         {
             this.gameSceneUIRefs = gameSceneUIRefs;
             this.inventoryPresenter = inventoryPresenter;
             this.inventoryUI = inventoryUI;
             this.engravingGridUI = engravingGridUI;
+            this.milestoneUI = milestoneUI;
+            this.skillUI = skillUI;
         }
 
         public override void Initialize()

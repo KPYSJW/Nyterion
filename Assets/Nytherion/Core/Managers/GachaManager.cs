@@ -3,6 +3,7 @@ using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Gacha;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Data;
 using Nytherion.Core.Enums;
@@ -14,7 +15,8 @@ namespace Nytherion.Core.Managers
     public enum GachaType
     {
         Weapon,
-        Engraving
+        Engraving,
+        Skill
     }
     public class GachaManager : BaseManager, IInitializable, ISaveable
     {
@@ -25,50 +27,60 @@ namespace Nytherion.Core.Managers
         [Header("각인 뽑기 테이블")]
         [SerializeField] private GachaTableSO engravingGachaTable;
 
+        [Header("스킬 뽑기 테이블")] 
+        [SerializeField] private GachaTableSO skillGachaTable;
+
         private CurrencyDataManager currencyDataManager;
         private InventoryDataManager inventoryDataManager;
         private EngravingManager engravingManager;
 
-       [Inject]
-        public void Construct(CurrencyDataManager currencyDataManager, InventoryDataManager inventoryDataManager, EngravingManager engravingManager)
+        private IProgressionManager progressionManager;
+        private SkillDataManager skillDataManager;
+
+        [Inject]
+        public void Construct(
+            CurrencyDataManager currencyDataManager,
+            InventoryDataManager inventoryDataManager,
+            EngravingManager engravingManager,
+            IProgressionManager progressionManager,
+            SkillDataManager skillDataManager)
         {
             this.currencyDataManager = currencyDataManager;
             this.inventoryDataManager = inventoryDataManager;
             this.engravingManager = engravingManager;
+            this.progressionManager = progressionManager;
+            this.skillDataManager = skillDataManager;
         }
         public override void Initialize()
         {
-            if (weaponGachaTable == null || engravingGachaTable == null)
+            if (weaponGachaTable == null || engravingGachaTable == null || skillGachaTable == null)
             {
-                Debug.LogError("[GachaManager] GachaTables이 할당되지 않았습니다.");
+                Debug.LogError("[GachaManager] GachaTables이 완전히 할당되지 않았습니다.");
             }
         }
-        public override void PopulateSaveData(SaveData saveData)
-        {
-            // 저장할 데이터 설정
-        }
-        public override void LoadFromSaveData(SaveData saveData)
-        {
-            // 저장된 데이터 로드
-        }
+        public override void PopulateSaveData(SaveData saveData) { }
+        public override void LoadFromSaveData(SaveData saveData) { }
         public List<ScriptableObject> TryDrawItems(GachaType type, int count)
         {
-
             if (currencyDataManager.GetCurrency(CurrencyType.Token) < count)
             {
-                Debug.LogError($"[GachaManager] 토큰 부족. 현재 토큰: {currencyDataManager.GetCurrency(CurrencyType.Token)}, 필요 토큰: {count}");
+                Debug.LogWarning($"[GachaManager] 토큰 부족. 현재 토큰: {currencyDataManager.GetCurrency(CurrencyType.Token)}, 필요 토큰: {count}");
                 return null;
             }
 
             if (type == GachaType.Weapon && inventoryDataManager.GetEmptySlotCount() < count)
             {
-                Debug.LogError("[GachaManager] 인벤토리가 가득 찼습니다.");
+                Debug.LogWarning("[GachaManager] 인벤토리가 가득 찼습니다.");
                 return null;
             }
 
-            currencyDataManager.SpendCurrency(CurrencyType.Token, count);
-
-            GachaTableSO currentTable = (type == GachaType.Weapon) ? weaponGachaTable : engravingGachaTable;
+            GachaTableSO currentTable = null;
+            switch (type)
+            {
+                case GachaType.Weapon: currentTable = weaponGachaTable; break;
+                case GachaType.Engraving: currentTable = engravingGachaTable; break;
+                case GachaType.Skill: currentTable = skillGachaTable; break;
+            }
 
             if (currentTable == null)
             {
@@ -76,26 +88,39 @@ namespace Nytherion.Core.Managers
                 return null;
             }
 
+            System.Func<ScriptableObject, bool> validationCheck = (item) =>
+            {
+                if (item is SkillData skillData)
+                {
+                    return progressionManager != null && progressionManager.IsSkillUnlocked(skillData.skillType);
+                }
+                return true;
+            };
+
+            if (currentTable.DrawItem(validationCheck) == null)
+            {
+                Debug.LogWarning($"[GachaManager] {type} 풀에 해금된 아이템이 없어 뽑기를 진행할 수 없습니다. (토큰 미차감)");
+                return null;
+            }
+
+            currencyDataManager.SpendCurrency(CurrencyType.Token, count);
+
             List<ScriptableObject> drawnItems = new List<ScriptableObject>();
 
             for (int i = 0; i < count; i++)
             {
-                ScriptableObject item = currentTable.DrawItem();
+                ScriptableObject item = currentTable.DrawItem(validationCheck);
 
                 if (item != null)
                 {
                     drawnItems.Add(item);
                     ProcessDrawnItem(item);
                 }
-                else
-                {
-                    Debug.LogError("[GachaManager] DrawItem()에서 null을 반환했습니다. GachaTableSO 설정을 확인하세요.");
-                }
             }
 
             return drawnItems;
         }
-        
+
         private void ProcessDrawnItem(ScriptableObject item)
         {
             if (item is WeaponData weapon)
@@ -105,6 +130,10 @@ namespace Nytherion.Core.Managers
             else if (item is EngravingData engraving)
             {
                 engravingManager.AddNewEngravingToStorage(engraving);
+            }
+            else if (item is SkillData skill)
+            {
+                skillDataManager.AcquireSkill(skill);
             }
         }
     }

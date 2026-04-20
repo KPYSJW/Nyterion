@@ -16,6 +16,8 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         public string skillName;
         [TextArea(3, 5)] 
         public string description;
+        public int skillLEvel;
+        public int exp;
         public float coolDown;
         public float damage;
         public float range;

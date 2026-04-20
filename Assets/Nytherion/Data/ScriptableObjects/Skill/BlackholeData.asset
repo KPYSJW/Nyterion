@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fc1f073052290e42bbbc3eeed3fc166, type: 3}
   m_Name: BlackholeData
   m_EditorClassIdentifier: 
-  skillID: 
+  skillID: skill_blackhole
   skillType: 2
   skillName: Blackhole
   description: 
+  skillLEvel: 0
+  exp: 0
   coolDown: 2
   damage: 2
   range: 2

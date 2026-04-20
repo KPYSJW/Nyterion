@@ -2,6 +2,7 @@ using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Shop;
+using Nytherion.UI.Skill;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,25 +39,38 @@ public class GameSceneUIRefs : MonoBehaviour
     [Header("Gacha UI References")]
     [SerializeField] private CanvasGroup gachaCanvasGroup;
     public CanvasGroup GachaCanvasGroup => gachaCanvasGroup;
+
+    [Header("Gacha Panels")]
     [SerializeField] private GameObject gachaMainPanel;
     public GameObject GachaMainPanel => gachaMainPanel;
     [SerializeField] private GameObject gachaResultPanel;
     public GameObject GachaResultPanel => gachaResultPanel;
-    
+    [SerializeField] private GameObject weaponSubPanel;
+    public GameObject WeaponSubPanel => weaponSubPanel;
+    [SerializeField] private GameObject engravingSubPanel;
+    public GameObject EngravingSubPanel => engravingSubPanel;
+    [SerializeField] private GameObject skillSubPanel;
+    public GameObject SkillSubPanel => skillSubPanel;
+
 
     [Header("Gacha UI Buttons")]
-    [SerializeField] private Button drawWeaponOnceButton;
-    public Button DrawWeaponOnceButton => drawWeaponOnceButton;
-    [SerializeField] private Button drawWeaponTenTimesButton;
-    public Button DrawWeaponTenTimesButton => drawWeaponTenTimesButton;
-    [SerializeField] private Button drawEngravingOnceButton;
-    public Button DrawEngravingOnceButton => drawEngravingOnceButton;
-    [SerializeField] private Button drawEngravingTenTimesButton;
-    public Button DrawEngravingTenTimesButton => drawEngravingTenTimesButton;
+    [SerializeField] private Button drawOnceBtton;
+    public Button DrawOnceButton => drawOnceBtton;
+
+    [SerializeField] private Button drawTenBtton;
+    public Button DrawTenButton => drawTenBtton;
+    
     [SerializeField] private Button gachaCloseButton;
     public Button GachaCloseButton => gachaCloseButton;
     [SerializeField] private Button resultCloseButton;
     public Button ResultCloseButton => resultCloseButton;
+
+    [SerializeField] private Button weaponTabButton;
+    public Button WeaponTabButton => weaponTabButton;
+    [SerializeField] private Button engravingTabButton;
+    public Button EngravingTabButton => engravingTabButton; 
+    [SerializeField] private Button skillTabButton;
+    public Button SkillTabButton => skillTabButton;
 
     [Header("Gacha Result Panel")]
     [SerializeField] private Transform resultSlotParent;
@@ -140,6 +154,16 @@ public class GameSceneUIRefs : MonoBehaviour
     [SerializeField] private CurrencyDisplay[] currencyDisplays;
     public CurrencyDisplay[] CurrencyDisplays => currencyDisplays;
 
+    [Header("Progression UI")]
+    public GameObject ProgressionMainPanel; 
+    public TMP_Text ProgressionTitleText;   
+    public Transform ProgressionSlotParent;
+
+    [Header("Skill UI")]
+    public GameObject SkillMainPanel;
+    public Transform storageContent;
+    public SkillStorageArea storageDropArea;
+    public SkillSlotUI[] equipSlots;
     private void Awake()
     {
         if (shopPlayerInventoryParent == null && inventorySlotParent != null)

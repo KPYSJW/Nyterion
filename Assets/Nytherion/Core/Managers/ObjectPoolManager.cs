@@ -20,6 +20,8 @@ namespace Nytherion.Core.Managers
         public List<Pool> pools;
         public Dictionary<string, Queue<GameObject>> poolDictionary;
 
+        private Dictionary<string, Transform> poolRoots;
+
         private IObjectResolver container;
 
         [Inject]
@@ -39,16 +41,26 @@ namespace Nytherion.Core.Managers
         protected override void OnInitializeInternal()
         {
             poolDictionary = new Dictionary<string, Queue<GameObject>>();
+            poolRoots = new Dictionary<string, Transform>();
+
             foreach (Pool pool in pools)
             {
                 if (pool.prefab == null)
                 {
                     continue;
                 }
+
+                GameObject rootObj = new GameObject($"[Pool] {pool.tag}");
+                rootObj.transform.SetParent(this.transform);
+                poolRoots.Add(pool.tag, rootObj.transform);
+
                 Queue<GameObject> objectPool = new Queue<GameObject>();
                 for (int i = 0; i < pool.size; i++)
                 {
                     GameObject obj = container.Instantiate(pool.prefab);
+                    
+                    obj.transform.SetParent(rootObj.transform);
+                    
                     obj.SetActive(false);
                     objectPool.Enqueue(obj);
                 }
@@ -69,6 +81,12 @@ namespace Nytherion.Core.Managers
                 if (pool != null && pool.prefab != null)
                 {
                     GameObject newObj = container.Instantiate(pool.prefab);
+                    
+                    if (poolRoots.TryGetValue(tag, out Transform root))
+                    {
+                        newObj.transform.SetParent(root);
+                    }
+                    
                     newObj.transform.position = position;
                     newObj.transform.rotation = rotation;
                     newObj.SetActive(true);

@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using System;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.UI.Components;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.UI.Skill
 {
@@ -15,15 +16,17 @@ namespace Nytherion.UI.Skill
         [SerializeField] private Image skillIcon; 
 
         private SkillData currentSkill;
+        private SkillDataManager skillDataManager;
 
         public event Action<SkillSlotUI> OnDoubleClick;
         public event Action<SkillSlotUI, SkillSlotUI> OnDropSkill;
 
         private Transform iconOriginalParent;
 
-        public void Setup(SkillData skill)
+        public void Setup(SkillData skill, SkillDataManager manager = null)
         {
             currentSkill = skill;
+            skillDataManager = manager;
 
             if (skillIcon == null) return;
 
@@ -42,7 +45,18 @@ namespace Nytherion.UI.Skill
         {
             if (currentSkill != null && TooltipPanel.Instance != null)
             {
-                TooltipPanel.Instance.ShowTooltip(currentSkill);
+                int level = 1;
+                int exp = 0;
+                int reqExp = 1;
+
+                if (skillDataManager != null && skillDataManager.skillStates.TryGetValue(currentSkill.skillID, out var state))
+                {
+                    level = state.level;
+                    exp = state.exp;
+                    reqExp = state.GetRequiredExp(level);
+                }
+
+                TooltipPanel.Instance.ShowTooltip(currentSkill, level, exp, reqExp);
             }
         }
 

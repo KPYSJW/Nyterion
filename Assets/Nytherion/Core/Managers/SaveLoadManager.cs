@@ -65,6 +65,13 @@ namespace Nytherion.Core.Managers
                 {
                     saveableEntities.Add(skillDataManager);
                 }
+                if (container.TryResolve<IProgressionManager>(out var progressionManager))
+                {
+                    if (progressionManager is ISaveable saveableProgression)
+                    {
+                        saveableEntities.Add(saveableProgression);
+                    }
+                }
             }
             else
             {

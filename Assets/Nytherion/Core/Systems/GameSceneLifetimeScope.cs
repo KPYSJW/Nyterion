@@ -13,6 +13,7 @@ using Nytherion.UI.EngravingBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Presenters;
+using Nytherion.UI.Progression;
 using Nytherion.UI.Skill;
 using Nytherion.UI.Test;
 using System.Collections;
@@ -27,7 +28,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [Header("UI References From Scene")]
     [SerializeField] private GameSceneUIRefs gameSceneUIRefs;
 
-    [Header("GameScene Only Managers")]
+    [Header("GameScene Managers")]
     [SerializeField] private GachaManager gachaManagerPrefab;
     [SerializeField] private GachaUIController gachaUIControllerPrefab;
     [SerializeField] private InteractionManager interactionManagerPrefab;
@@ -35,16 +36,18 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
     [SerializeField] private ObjectPoolManager objectPoolManagerPrefab;
 
-    [Header("GameScene Only UI")]
+    [Header("GameScene UI")]
     [SerializeField] private InventoryUI inventoryUIPrefab;
     [SerializeField] private ShopUI shopUIPrefab;
     [SerializeField] private EngravingUIController engravingUIControllerPrefab;
 
-    [Header("UI Controllers - 데이터와 UI 분리")]
+    [Header("UI Controllers")]
     [SerializeField] private InventoryUIController inventoryUIControllerPrefab;
     [SerializeField] private CurrencyUIController currencyUIControllerPrefab;
+    [SerializeField] private MilestoneUIController milestoneUIControllerPrefab;
+    [SerializeField] private SkillUIController skillUIControllerPrefab;
 
-    [Header("GameScene Only Systems")]
+    [Header("GameScene Systems")]
     [SerializeField] private PlayerManager playerManagerPrefab;
     [SerializeField] private MenuManager menuManagerPrefab;
     [SerializeField] private ItemUsageManager itemUsageManagerPrefab;
@@ -54,7 +57,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [Header("Debug Systems")]
     [SerializeField] private EngravingSystemDebugger engravingSystemDebuggerPrefab;
 
-    [Header("GameScene Only Gameplay")]
+    [Header("GameScene Gameplay")]
     [SerializeField] private EnemySpawner enemySpawnerPrefab;
     [SerializeField] private FollowCamera followCameraPrefab;
     [SerializeField] private SettingsManager settingsManagerPrefab;
@@ -88,11 +91,11 @@ public class GameSceneLifetimeScope : LifetimeScope
         RegisterUIReferences(builder);
 
         // UI 컨트롤러들을 먼저 설치 (NPC들이 의존성을 주입받기 전에)
-        InstallGameSceneOnlyUI(builder);
+        InstallGameSceneUI(builder);
 
-        InstallGameSceneOnlyManagers(builder);
+        InstallGameSceneManagers(builder);
 
-        InstallGameSceneOnlySystems(builder);
+        InstallGameSceneSystems(builder);
 
         builder.RegisterEntryPoint<GameSceneInitializer>();
 
@@ -216,7 +219,7 @@ public class GameSceneLifetimeScope : LifetimeScope
         }
     }
 
-    private void InstallGameSceneOnlyManagers(IContainerBuilder builder)
+    private void InstallGameSceneManagers(IContainerBuilder builder)
     {
         builder.RegisterComponentInNewPrefab(gachaManagerPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
@@ -252,7 +255,7 @@ public class GameSceneLifetimeScope : LifetimeScope
         RegisterISaveableEntities(builder);
     }
 
-    private void InstallGameSceneOnlyUI(IContainerBuilder builder)
+    private void InstallGameSceneUI(IContainerBuilder builder)
     {
         builder.RegisterComponentInNewPrefab(gachaUIControllerPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
@@ -290,27 +293,23 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInHierarchy<SkillUIController>()
-            .AsImplementedInterfaces()
-            .AsSelf();
+        if(skillUIControllerPrefab != null)
+            builder.RegisterComponentInNewPrefab(skillUIControllerPrefab, Lifetime.Singleton)
+                .AsImplementedInterfaces()
+                .AsSelf();
 
-        // EngravingGridUI를 IInitializable로 등록하여 자동 초기화
         builder.RegisterComponentInHierarchy<EngravingGridUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // EngravingTooltip을 싱글톤으로 등록
         builder.RegisterComponentInHierarchy<EngravingTooltip>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // 각인 시스템 디버거 등록
         RegisterEngravingSystemDebugger(builder);
 
-        // 인벤토리 UI 슬롯들을 등록 (의존성 주입을 위해)
-        RegisterInventoryUIComponents(builder);
+        RegisterUIComponents(builder);
 
-        // UI 컨트롤러들이 등록된 후에 NPC들을 등록 (의존성 주입 순서 보장)
         RegisterNPCComponents(builder);
 
     }
@@ -340,7 +339,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     }
 
 
-    private void RegisterInventoryUIComponents(IContainerBuilder builder)
+    private void RegisterUIComponents(IContainerBuilder builder)
     {
         // 인벤토리 UI 슬롯 컴포넌트들을 씬에서 찾아서 등록
         builder.RegisterComponentInHierarchy<InventorySlotUI>()
@@ -354,10 +353,9 @@ public class GameSceneLifetimeScope : LifetimeScope
         builder.RegisterComponentInHierarchy<QuickSlotUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
-
     }
 
-    private void InstallGameSceneOnlySystems(IContainerBuilder builder)
+    private void InstallGameSceneSystems(IContainerBuilder builder)
     {
         var playerManagerInScene = FindObjectOfType<PlayerManager>();
 
@@ -453,6 +451,14 @@ public class GameSceneLifetimeScope : LifetimeScope
                     .AsImplementedInterfaces()
                     .AsSelf();
         }
+
+        if (milestoneUIControllerPrefab != null)
+        {
+            builder.RegisterComponentInNewPrefab(milestoneUIControllerPrefab, Lifetime.Singleton)
+            .AsImplementedInterfaces()
+            .AsSelf();
+        }
+
     }
 
     private void RegisterISaveableEntities(IContainerBuilder builder)

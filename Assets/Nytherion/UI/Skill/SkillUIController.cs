@@ -3,7 +3,9 @@ using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 using Nytherion.Core.Enums;
+using Nytherion.UI.Components;
 
 namespace Nytherion.UI.Skill
 {
@@ -34,7 +36,8 @@ namespace Nytherion.UI.Skill
             PlayerSkillManager playerSkillManager,
             SaveLoadManager saveLoadManager, 
             InputManager inputManager,
-            IProgressionManager progressionManager
+            IProgressionManager progressionManager,
+            GameSceneUIRefs uiRefs
             )
         {
             this.skillDataManager = skillDataManager;
@@ -42,6 +45,10 @@ namespace Nytherion.UI.Skill
             this.saveLoadManager = saveLoadManager;
             this.inputManager = inputManager; 
             this.progressionManager = progressionManager;
+            this.uiPanel = uiRefs.SkillMainPanel;
+            this.storageDropArea = uiRefs.storageDropArea;
+            this.storageContent = uiRefs.storageContent;
+            this.equipSlots = uiRefs.equipSlots;
         }
 
         private void Start()
@@ -79,7 +86,18 @@ namespace Nytherion.UI.Skill
         {
             bool isActive = !uiPanel.activeSelf;
             uiPanel.SetActive(isActive);
-            if (isActive) SyncUIFromData();
+
+            if (isActive)
+            {
+                SyncUIFromData();
+            }
+            else
+            {
+                if (TooltipPanel.Instance != null)
+                {
+                    TooltipPanel.Instance.HideTooltip();
+                }
+            }
         }
         private void InitializeStorageSlots()
         {
@@ -91,7 +109,8 @@ namespace Nytherion.UI.Skill
 
                 newSlot.slotType = SkillSlotType.Storage;
                 newSlot.slotIndex = i;
-                newSlot.Setup(null);
+
+                newSlot.Setup(null, skillDataManager);
 
                 newSlot.OnDoubleClick += HandleDoubleClick;
                 newSlot.OnDropSkill += HandleDrop;
@@ -105,13 +124,13 @@ namespace Nytherion.UI.Skill
 
             for (int i = 0; i < equipSlots.Length; i++)
             {
-                equipSlots[i].Setup(skillDataManager.equippedSkills[i]);
+                equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager);
             }
 
             for (int i = 0; i < storageSlots.Length; i++)
             {
                 if (i < skillDataManager.storageSkills.Length)
-                    storageSlots[i].Setup(skillDataManager.storageSkills[i]);
+                    storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager);
             }
 
             if (playerSkillManager != null)
@@ -210,11 +229,10 @@ namespace Nytherion.UI.Skill
 
             SkillData skillA = slotA.GetSkill();
             SkillData skillB = slotB.GetSkill();
+            slotA.Setup(skillB, skillDataManager);
+            slotB.Setup(skillA, skillDataManager);
 
-            slotA.Setup(skillB);
-            slotB.Setup(skillA);
-
-            UpdatePlayerSkills(); 
+            UpdatePlayerSkills();
             SyncUIFromData();
         }
 
@@ -237,8 +255,6 @@ namespace Nytherion.UI.Skill
         }
         private void HandleSkillUnlocked(SkillType skillType)
         {
-            Debug.Log($"[UI] 스킬 해금 이벤트 수신! 보관함에 {skillType} 추가를 시도합니다.");
-
             SkillData newSkillData = GetSkillDataByType(skillType);
 
             if (newSkillData != null)
@@ -251,7 +267,6 @@ namespace Nytherion.UI.Skill
                     {
                         saveLoadManager.SaveGame();
                     }
-                    Debug.Log($"[UI] {skillType} 스킬이 보관함에 성공적으로 추가되었습니다.");
                 }
             }
             else
