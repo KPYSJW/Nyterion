@@ -15,7 +15,7 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         [Header("Projectile Visual")]
         [SerializeField] private bool useProjectileVisual = true;
         [SerializeField] private GameObject projectilePrefab;
-        [SerializeField] private Transform firePoint;
+        [SerializeField] public Transform firePoint;
 
         private float lastAttackTime = -999f;
         private const float ProjectileSpeed = 8f;

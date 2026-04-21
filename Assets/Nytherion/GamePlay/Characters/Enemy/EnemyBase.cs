@@ -20,7 +20,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public RoomFirstDungeonGenerator.Room homeRoom { get; set; }
         private CurrencyDataManager currencyDataManager;
-
+        public EnemyAIController aiController;
         private EventManager eventManager;
         [Inject]
         public void Construct(EventManager eventManager,CurrencyDataManager currencyDataManager)
@@ -35,7 +35,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             isDead = false;
             gameObject.SetActive(true);
 
-             EnemyAIController aiController = GetComponent<EnemyAIController>();
+            aiController = GetComponent<EnemyAIController>();
             if (aiController != null)
             {
                 aiController.ApplyEnemyData(data);
@@ -45,6 +45,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public void TakeDamage(float damageAmount)
         {
             if (isDead) return;
+
+            if (eventManager != null)
+            {
+                eventManager.TriggerEnemyDamagedByPlayer(damageAmount);
+            }
 
             currentHealth -= damageAmount;
             if (currentHealth <= 0) Die();
@@ -56,6 +61,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             isDead = true;
             DropItems();
+            aiController.agent.enabled=false;
             eventManager.TriggerEnemyDeathEvent(this);
             gameObject.SetActive(false);
         }
@@ -66,7 +72,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (Random.value <= enemyData.dropChance)
             {
                 Debug.Log($"골드 드랍: {enemyData.goldDropAmount}G ");
-                currencyDataManager.AddCurrency(Core.Enums.CurrencyType.Gold,10);//드랍아이템 스크립트로 옮겨야함.
+                currencyDataManager.AddCurrency(Core.Enums.CurrencyType.Gold,10);
                 
             }
 

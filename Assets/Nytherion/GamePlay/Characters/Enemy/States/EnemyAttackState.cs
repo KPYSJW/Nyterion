@@ -1,3 +1,6 @@
+
+using System;
+using Nytherion.Data.ScriptableObjects.Enemy;
 namespace Nytherion.GamePlay.Characters.Enemy.States
 {
     public class EnemyAttackState : EnemyBaseState
@@ -17,7 +20,30 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public override void UpdateState(EnemyAIController enemy)
         {
-            enemy.StopMovement();
+            switch (enemy.CurrentCombatType)
+            {
+                case EnemyCombatType.Melee:
+                    HandleMeleeAttack(enemy);
+                    break;
+
+                case EnemyCombatType.Ranged:
+                    HandleRangedAttack(enemy);
+                    break;
+
+                case EnemyCombatType.Hybrid:
+                    HandleHybridAttack(enemy);
+                    break;
+            }
+        }
+
+    private void HandleHybridAttack(EnemyAIController enemy)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void HandleRangedAttack(EnemyAIController enemy)
+    {
+        enemy.StopMovement();
 
             if (UnityEngine.Time.time < attackCommitUntil)
             {
@@ -26,6 +52,8 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
             if (!enemy.CanAttackPlayer())
             {
+                //enemyAIController.Obstacle.enabled=false;
+                //enemyAIController.agent.enabled=true;
                 enemy.TransitionToState(enemy.chaseState);
                 return;
             }
@@ -39,12 +67,51 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
             if (attacked)
             {
+                //enemyAIController.agent.enabled=false;
+                //enemyAIController.Obstacle.enabled=true;
                 enemy.PlayAnimation("Attack");
 
                 attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
                 nextActionTime = UnityEngine.Time.time + postAttackDelay;
             }
-        }
+    }
+
+    private void HandleMeleeAttack(EnemyAIController enemy)
+    {
+        enemy.StopMovement();
+
+            if (UnityEngine.Time.time < attackCommitUntil)
+            {
+                return;
+            }
+
+            if (!enemy.CanAttackPlayer())
+            {
+                //enemyAIController.Obstacle.enabled=false;
+                //enemyAIController.agent.enabled=true;
+                enemy.TransitionToState(enemy.chaseState);
+                return;
+            }
+
+            if (UnityEngine.Time.time < nextActionTime)
+            {
+                return;
+            }
+
+            bool attacked = enemy.TryAttackPlayer();
+
+            if (attacked)
+            {
+                //enemyAIController.agent.enabled=false;
+                //enemyAIController.Obstacle.enabled=true;
+                enemy.PlayAnimation("Attack");
+
+                attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
+                nextActionTime = UnityEngine.Time.time + postAttackDelay;
+            }
+    }
+
+    
 
         public override void ExitState(EnemyAIController enemy)
         {

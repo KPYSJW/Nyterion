@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using Nytherion.Core.Systems;
 using Nytherion.GamePlay.Combat;
 using Nytherion.GamePlay.Characters.Enemy.States;
@@ -13,7 +14,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public float detectRange = 8f;
         public float moveSpeed = 2f;
 
-        public Transform player; 
+        public Transform player;
+        public NavMeshAgent agent; 
+       // public NavMeshObstacle Obstacle;
         public Rigidbody2D rb; 
         private List<IAttackBehavior> attackBehaviors=new List<IAttackBehavior>(); 
         private IAttackSelector attackSelector;
@@ -28,7 +31,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public EnemyData enemyData;
         public float HybridSwitchDistance;
-        public float TooCloseDistance => 2f;
+        public float TooCloseDistance => 4f;
         private void Awake()
         {
             var playerInstance = GameObject.FindWithTag(Tags.Player);
@@ -40,13 +43,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
             
             player = playerInstance.transform;
             rb = GetComponent<Rigidbody2D>();
-            
-
-            if (rb == null)
+            agent = GetComponent<NavMeshAgent>();
+            //Obstacle=GetComponent<NavMeshObstacle>();
+            if (rb == null||agent==null)
             {
                 enabled = false;
                 return;
             }
+             agent.updateRotation = false;
+             agent.updateUpAxis = false;
 
             InitializeAttackSystems();
             if (attackBehaviors.Count == 0)
@@ -75,6 +80,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private void Update()
         {
             currentState.UpdateState(this);
+            UpdateSpriteDirection();
         }
 
         public void TransitionToState(EnemyBaseState newState)
@@ -87,17 +93,36 @@ namespace Nytherion.GamePlay.Characters.Enemy
             currentState.EnterState(this);
         }
 
+        private void UpdateSpriteDirection()
+        {
+            if (spriteRenderer == null || agent == null) return;
+
+            Vector3 velocity = agent.desiredVelocity;
+            if (velocity.sqrMagnitude > 0.01f)
+            {
+                spriteRenderer.flipX = velocity.x > 0f;
+            }
+        }
+
         public void MoveTowardsPlayer()
         {
-            Vector2 direction = (player.position - transform.position).normalized;
-            rb.velocity = direction * moveSpeed;
-            spriteRenderer.flipX=direction.x>0;//그림보고 방향 설정
+            if (player == null || !agent.isOnNavMesh) return;
+
+            agent.isStopped = false;
+            agent.SetDestination(player.position);
+
+            UpdateSpriteDirection();
+            
         }
 
         public void MoveToTarget(Vector2 targetPosition)
         {
-            Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-            rb.velocity = direction * moveSpeed;
+            if (!agent.isOnNavMesh) return;
+
+            agent.isStopped = false;
+            agent.SetDestination(targetPosition);
+
+            UpdateSpriteDirection();
         }
 
         public float GetDistanceToPlayer()
@@ -106,8 +131,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
             return Vector2.Distance(transform.position, player.position);
         }
 
-        public void MoveInDirection(Vector2 direction)
+        public void MoveInDirection(Vector2 direction, float distance = 1.5f)
         {
+            if (!agent.isOnNavMesh) return;
+
             if (direction.sqrMagnitude < 0.001f)
             {
                 StopMovement();
@@ -115,11 +142,16 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             direction.Normalize();
-            rb.velocity = direction * moveSpeed;
+            Vector2 target = (Vector2)transform.position + direction * distance;
+
+            agent.isStopped = false;
+            agent.SetDestination(target);
+
+            UpdateSpriteDirection();
         }
 
         
-        public Vector2 GetMeleeChaseDirection(float sideBiasWeight = 0.15f)
+       /* public Vector2 GetMeleeChaseDirection(float sideBiasWeight = 0.15f)
         {
             if (player == null) return Vector2.zero;
 
@@ -216,7 +248,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             return flowDirection;
         }
 
-        /*public Vector2 GetSurroundPosition(float radius, float sideOffset)
+        public Vector2 GetSurroundPosition(float radius, float sideOffset)
         {
             if (player == null) return transform.position;
 
@@ -239,12 +271,27 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void StopMovement()
         {
-            rb.velocity=Vector2.zero;
+            if (agent == null) return;
+
+            agent.isStopped = true;
+            agent.ResetPath();
+
+            if (rb != null)
+            {
+                rb.velocity = Vector2.zero;
+            }
         }
 
         public bool CanAttackPlayer()
         {
             if(player==null)return false;
+           /* if(enemyData.combatType==EnemyCombatType.Ranged)
+            {
+                if(GetDistanceToPlayer()<TooCloseDistance)
+                {
+                    return false;
+                }
+            }*/
             IAttackBehavior selected=SelectAttackBehavior();
             return selected != null && selected.IsInAttackRange(player);
         }
@@ -264,7 +311,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
             HybridSwitchDistance = data.hybridSwitchDistance;
             moveSpeed=data.moveSpeed;
             detectRange=data.detectRange;
-
+             if (agent != null)
+            {
+                agent.speed = data.moveSpeed;
+            }
             if(attackSelector is HybridAttackSelector hybridAttackSelector)
             {
                 hybridAttackSelector.SetSwitchDistance(data.hybridSwitchDistance);
@@ -297,10 +347,17 @@ namespace Nytherion.GamePlay.Characters.Enemy
         }
         
 
-        public void MoveAwayFromPlayer()
+        public void MoveAwayFromPlayer(float retreatDistance = 4f)
         {
-            Vector2 direction = (transform.position - player.position).normalized;
-            rb.velocity = direction * moveSpeed;
+            if (player == null || !agent.isOnNavMesh) return;
+
+            Vector2 direction = ((Vector2)transform.position - (Vector2)player.position).normalized;
+            Vector2 target = (Vector2)transform.position + direction * retreatDistance;
+
+            agent.isStopped = false;
+            agent.SetDestination(target);
+
+            UpdateSpriteDirection();
         }
     }
 }

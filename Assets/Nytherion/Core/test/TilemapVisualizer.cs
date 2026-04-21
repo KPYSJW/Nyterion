@@ -92,6 +92,7 @@ namespace Nytherion.GamePlay.Dungeon
         public void PaintWallsWithRuleTile(IEnumerable<Vector2Int> wallPositions)
         {
             PaintTiles(wallPositions, wallTilemap, wallRuleTile);
+            Debug.Log("타일완성");
         }
 
         /// <summary>
