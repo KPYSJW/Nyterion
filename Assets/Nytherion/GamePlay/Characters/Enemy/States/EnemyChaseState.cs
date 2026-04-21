@@ -43,46 +43,38 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
                 enemy.TransitionToState(enemy.attackState);
                 return;
             }
+            enemy.MoveTowardsPlayer();
 
-            float distance = enemy.GetDistanceToPlayer();
+            /*float distance = enemy.GetDistanceToPlayer();
 
             if (distance > 3.0f)
             {
                 enemy.MoveTowardsPlayer();
-            }
-             if (enemy.IsFrontBlocked(0.7f, 0.9f))
-            {
-                Vector2 separation = enemy.GetSeparationDirection(0.5f);
-                Vector2 flow = enemy.GetBlockedFlowDirection(0.8f);
-                Vector2 finalDirection = (flow + separation * 0.8f).normalized;
-                enemy.MoveInDirection(finalDirection);
                 return;
             }
 
             Vector2 slotTarget = enemy.GetMeleeSlotTarget(1.2f, 0.8f);
-            Vector2 toSlot = (slotTarget - (Vector2)enemy.transform.position).normalized;
-            Vector2 separationDirection = enemy.GetSeparationDirection(0.5f);
-            Vector2 moveDirection = (toSlot + separationDirection * 0.4f).normalized;
-
-            enemy.MoveInDirection(moveDirection);
+            enemy.MoveToTarget(slotTarget);*/
         }
         
         private void HandleRangedChase(EnemyAIController enemy)
         {
-            float distance = enemy.GetDistanceToPlayer();
+           /* float distance = enemy.GetDistanceToPlayer();
 
             if (distance <= enemy.TooCloseDistance)
             {
                 enemy.MoveAwayFromPlayer();
-            }
-            else if (enemy.CanAttackPlayer())
+                return;
+            }*/ //원거리 몬스터에 근접하면 거리 벌리기 추후에 조정
+
+            if (enemy.CanAttackPlayer())
             {
                 enemy.TransitionToState(enemy.attackState);
+                return;
             }
-            else
-            {
-                enemy.MoveTowardsPlayer();
-            }
+
+            enemy.MoveTowardsPlayer();
+            
         }
 
         private void HandleHybridChase(EnemyAIController enemy)

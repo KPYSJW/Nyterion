@@ -20,7 +20,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public RoomFirstDungeonGenerator.Room homeRoom { get; set; }
         private CurrencyDataManager currencyDataManager;
-
+        public EnemyAIController aiController;
         private EventManager eventManager;
         [Inject]
         public void Construct(EventManager eventManager,CurrencyDataManager currencyDataManager)
@@ -35,7 +35,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             isDead = false;
             gameObject.SetActive(true);
 
-             EnemyAIController aiController = GetComponent<EnemyAIController>();
+            aiController = GetComponent<EnemyAIController>();
             if (aiController != null)
             {
                 aiController.ApplyEnemyData(data);
@@ -61,6 +61,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             isDead = true;
             DropItems();
+            aiController.agent.enabled=false;
             eventManager.TriggerEnemyDeathEvent(this);
             gameObject.SetActive(false);
         }

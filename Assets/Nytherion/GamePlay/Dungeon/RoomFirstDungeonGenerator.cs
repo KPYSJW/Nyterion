@@ -49,6 +49,7 @@ namespace Nytherion.GamePlay.Dungeon
                 {
                     if (enemy != null && !enemy.isDead)
                     {
+                        enemy.aiController.agent.enabled=true;
                         enemy.gameObject.SetActive(true);
                     }
                 }
@@ -80,6 +81,7 @@ namespace Nytherion.GamePlay.Dungeon
         private DungeonManager _dungeonManager;
         public WorldmapController _worldmapController;
         public MinimapTileGenerator _minimapGenerator;
+        [SerializeField] private DungeonNavMeshBuilder dungeonNavMeshBuilder;
 
         #endregion
 
@@ -102,6 +104,12 @@ namespace Nytherion.GamePlay.Dungeon
             {
                 Debug.LogError("치명적 오류: RoomFirstDungeonGenerator가 부모인 DungeonManager를 찾지 못했습니다!");
             }
+            dungeonNavMeshBuilder = FindObjectOfType<DungeonNavMeshBuilder>();
+            if (dungeonNavMeshBuilder == null)
+            {
+                Debug.LogError("dungeonNavMeshBuilder를 찾지 못했습니다!");
+            }
+
         }
 
         public void SetControllers(WorldmapController worldmapController, MinimapTileGenerator minimapGenerator)
@@ -155,7 +163,14 @@ namespace Nytherion.GamePlay.Dungeon
             yield return null;
 
             VisualizeDungeon(totalFloorPositions, roomFloorData, portalPositions, roomConnections, obstaclesToPlace, roomGrid.Values.ToList(),startRoom);
-
+            if (dungeonNavMeshBuilder != null)
+            {
+                yield return StartCoroutine(dungeonNavMeshBuilder.RebuildNavMeshCoroutine());
+            }
+            else
+            {
+                Debug.LogWarning("[RoomFirstDungeonGenerator] DungeonNavMeshBuilder reference is missing.");
+            }
             FinalizeDungeonData(roomGrid, roomFloorData);
             OnDungeonGenerated?.Invoke(startRoom);
         }
