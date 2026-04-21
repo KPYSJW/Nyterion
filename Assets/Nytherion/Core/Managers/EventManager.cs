@@ -14,6 +14,7 @@ namespace Nytherion.Core.Managers
     public class EventManager : BaseManager
     {
         public event Action<EnemyBase> OnEnemyDied;
+        public event Action<float> OnEnemyDamagedByPlayer;
         public event Action<StageData> OnBossClearedEvent;
         public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;
 
@@ -24,6 +25,10 @@ namespace Nytherion.Core.Managers
         public void TriggerInteractionEvent(InteractableType type)
         {
             OnInteraction?.Invoke(type);
+        }
+        public void TriggerEnemyDamagedByPlayer(float damageAmount)
+        {
+            OnEnemyDamagedByPlayer?.Invoke(damageAmount);
         }
         public void TriggerOpenInventoryForShop()
         {

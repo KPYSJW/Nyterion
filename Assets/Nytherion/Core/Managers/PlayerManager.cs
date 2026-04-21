@@ -106,6 +106,20 @@ namespace Nytherion.Core.Managers
             }
         }
 
+        private List<StatModifier> temporaryModifiers = new List<StatModifier>();
+
+        public void AddTemporaryStatModifier(StatModifier modifier)
+        {
+            temporaryModifiers.Add(modifier);
+            RecalculateStats();
+        }
+
+        public void RemoveTemporaryStatModifier(StatModifier modifier)
+        {
+            temporaryModifiers.Remove(modifier);
+            RecalculateStats();
+        }
+
         private void RecalculateStats()
         {
             if (currentPlayerData == null)
@@ -117,13 +131,15 @@ namespace Nytherion.Core.Managers
                 JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(basePlayerData), currentPlayerData);
             }
 
+            List<StatModifier> allModifiers = new List<StatModifier>();
+
             if (equipmentDataManager != null)
             {
                 foreach (var equippedItem in equipmentDataManager.EquippedItems.Values)
                 {
-                    if (equippedItem != null)
+                    if (equippedItem != null && equippedItem.statModifiers != null)
                     {
-                        ApplyStatModifiers(equippedItem.statModifiers);
+                        allModifiers.AddRange(equippedItem.statModifiers);
                     }
                 }
             }
@@ -132,59 +148,91 @@ namespace Nytherion.Core.Managers
                 var currentEngravings = playerEngravingManager.GetCurrentEngravings();
                 foreach (var engraving in currentEngravings)
                 {
-                    if (engraving != null)
+                    if (engraving != null && engraving.statModifiers != null)
                     {
-                        ApplyStatModifiers(engraving.statModifiers);
+                        allModifiers.AddRange(engraving.statModifiers);
                     }
                 }
+            }
+
+            if (temporaryModifiers != null)
+            {
+                allModifiers.AddRange(temporaryModifiers);
+            }
+
+            // 1. 플랫(고정 수치) 증가치 먼저 적용
+            foreach (var mod in allModifiers)
+            {
+                if (!mod.isPercentage)
+                {
+                    ApplyModifierToPlayer(mod.stat, mod.value, false);
+                }
+            }
+
+            // 2. 퍼센트(비율) 증가치 합산 후 적용
+            Dictionary<StatType, float> percentageSums = new Dictionary<StatType, float>();
+            foreach (var mod in allModifiers)
+            {
+                if (mod.isPercentage)
+                {
+                    if (!percentageSums.ContainsKey(mod.stat))
+                        percentageSums[mod.stat] = 0f;
+                    percentageSums[mod.stat] += mod.value;
+                }
+            }
+
+            foreach (var kvp in percentageSums)
+            {
+                ApplyModifierToPlayer(kvp.Key, kvp.Value, true);
             }
 
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
             OnPlayerStatsChanged?.Invoke();
         }
 
-        private void ApplyStatModifiers(IEnumerable<StatModifier> modifiers)
-        {
-            if (modifiers == null) return;
-            foreach (StatModifier modifier in modifiers)
-            {
-                ApplyModifierToPlayer(modifier.stat, modifier.value);
-            }
-        }
-
-        private void ApplyModifierToPlayer(StatType stat, float value)
+        private void ApplyModifierToPlayer(StatType stat, float value, bool isPercentage)
         {
             switch (stat)
             {
                 case StatType.MaxHealth:
-                    currentPlayerData.maxHealth += value;
+                    if (isPercentage) currentPlayerData.maxHealth *= (1 + value);
+                    else currentPlayerData.maxHealth += value;
                     break;
                 case StatType.Defense:
-                    currentPlayerData.defense += value;
+                    if (isPercentage) currentPlayerData.defense *= (1 + value);
+                    else currentPlayerData.defense += value;
                     break;
                 case StatType.MoveSpeed:
-                    currentPlayerData.moveSpeed += value;
+                    if (isPercentage) currentPlayerData.moveSpeed *= (1 + value);
+                    else currentPlayerData.moveSpeed += value;
                     break;
                 case StatType.MeleeDamage:
-                    currentPlayerData.meleeDamage += value;
+                    if (isPercentage) currentPlayerData.meleeDamage *= (1 + value);
+                    else currentPlayerData.meleeDamage += value;
                     break;
                 case StatType.RangedDamage:
-                    currentPlayerData.rangedDamage += value;
+                    if (isPercentage) currentPlayerData.rangedDamage *= (1 + value);
+                    else currentPlayerData.rangedDamage += value;
                     break;
                 case StatType.MeleeSpeed:
-                    currentPlayerData.meleeSpeed += value;
+                    if (isPercentage) currentPlayerData.meleeSpeed *= (1 + value);
+                    else currentPlayerData.meleeSpeed += value;
                     break;
                 case StatType.RangedSpeed:
-                    currentPlayerData.rangedSpeed += value;
+                    if (isPercentage) currentPlayerData.rangedSpeed *= (1 + value);
+                    else currentPlayerData.rangedSpeed += value;
                     break;
                 case StatType.DashSpeed:
-                    currentPlayerData.dashSpeed += value;
+                    if (isPercentage) currentPlayerData.dashSpeed *= (1 + value);
+                    else currentPlayerData.dashSpeed += value;
                     break;
                 case StatType.DashDuration:
-                    currentPlayerData.dashDuration += value;
+                    if (isPercentage) currentPlayerData.dashDuration *= (1 + value);
+                    else currentPlayerData.dashDuration += value;
                     break;
                 case StatType.DashCooldown:
-                    currentPlayerData.dashCooldown += value;
+                    if (isPercentage) currentPlayerData.dashCooldown *= (1 + value);
+                    else currentPlayerData.dashCooldown += value;
                     break;
                 default:
                     Debug.LogError($"[PlayerManager] Invalid stat type: {stat}");

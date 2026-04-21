@@ -94,9 +94,6 @@ namespace Nytherion.Core.Managers
 
             if (closestInteractable != null)
             {
-                // InteractionManager는 이벤트를 직접 발생시키지 않고,
-                // 각 Interactable 객체가 자신의 Interact() 메서드에서 책임을 지도록 위임합니다.
-                Debug.Log($"[InteractionManager] {closestInteractable.GetType().Name}.Interact() 호출");
                 closestInteractable.Interact();
             }
             else

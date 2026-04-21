@@ -46,6 +46,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (isDead) return;
 
+            if (eventManager != null)
+            {
+                eventManager.TriggerEnemyDamagedByPlayer(damageAmount);
+            }
+
             currentHealth -= damageAmount;
             if (currentHealth <= 0) Die();
         }
@@ -66,7 +71,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (Random.value <= enemyData.dropChance)
             {
                 Debug.Log($"골드 드랍: {enemyData.goldDropAmount}G ");
-                currencyDataManager.AddCurrency(Core.Enums.CurrencyType.Gold,10);//드랍아이템 스크립트로 옮겨야함.
+                currencyDataManager.AddCurrency(Core.Enums.CurrencyType.Gold,10);
                 
             }
 

@@ -1835,6 +1835,7 @@ MonoBehaviour:
   testMilestones:
   - {fileID: 11400000, guid: e4ffc2194ba9f9142be912643d7f61d1, type: 2}
   - {fileID: 11400000, guid: bdc878da52e1bc8459c731b459b84b58, type: 2}
+  - {fileID: 11400000, guid: 355f2033a7927224882711025d4525d6, type: 2}
 --- !u!1 &175113038
 GameObject:
   m_ObjectHideFlags: 0
@@ -4334,7 +4335,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100.000015}
+  m_AnchoredPosition: {x: 0, y: -100.00003}
   m_SizeDelta: {x: 680, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &349391062
@@ -8108,6 +8109,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Test2
       m_Image: {fileID: 0}
+    - m_Text: Test3
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8254,7 +8257,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1676113805}
   m_HandleRect: {fileID: 1676113804}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -19877,7 +19880,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451803222681576171, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
       propertyPath: orthographic size
-      value: 3.305
+      value: 2.605
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -24402,8 +24405,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 113935554}
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
-  m_Value: 0.9999998
-  m_Size: 0.2500001
+  m_Value: 1
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
