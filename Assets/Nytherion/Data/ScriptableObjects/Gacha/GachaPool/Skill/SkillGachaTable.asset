@@ -13,6 +13,4 @@ MonoBehaviour:
   m_Name: SkillGachaTable
   m_EditorClassIdentifier: 
   gachaPools:
-  - {fileID: 11400000, guid: 9af28ad3e4ec8494cbaeec513738b4fe, type: 2}
-  - {fileID: 11400000, guid: 6bdf770338552a24aa4a7e7e2fa174c5, type: 2}
-  - {fileID: 11400000, guid: 190300fdba2236644a19a3214d51327b, type: 2}
+  - {fileID: 11400000, guid: 4d6af560f89190d4bb648d5d1b7e9de1, type: 2}

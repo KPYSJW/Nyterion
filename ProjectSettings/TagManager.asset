@@ -15,12 +15,12 @@ TagManager:
   - Enemy
   - Water
   - UI
-  - 
+  - map
   - Minimap
   - Interactable
-  - 
-  - 
-  - 
+  - Obstacle
+  - Floor
+  - Wall
   - 
   - 
   - 

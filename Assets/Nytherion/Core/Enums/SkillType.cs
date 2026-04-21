@@ -7,6 +7,8 @@ namespace Nytherion.Core.Enums
         Blackhole,
         Drone,
         Spiral,
-        TestSkill
+        TestSkill,
+        LifestealBuff,
+        StatBuff
     }
 }
