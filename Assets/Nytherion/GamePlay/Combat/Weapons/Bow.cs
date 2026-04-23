@@ -14,11 +14,12 @@ namespace Nytherion.GamePlay.Combat.Weapon
 
             try
             {
-                Projectile(direction);
+                FireProjectiles(direction, 1, 15f);
                 lastAttackTime = Time.time;
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
+                Debug.LogException(e);
             }
         }
 

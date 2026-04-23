@@ -9,11 +9,8 @@ namespace Nytherion.GamePlay.Combat
     [RequireComponent(typeof(Rigidbody2D))]
     public class SlowMultiHitEffect : MonoBehaviour, IProjectileEffect
     {
-        [Header("다단히트 및 속도 설정")]
         public float slowSpeed = 2f;
-        [Tooltip("다단히트 간격")]
         public float tickRate = 0.5f;
-        [Tooltip("발사 후 투사체가 유지되는 시간")]
         public float lifeTime = 5f;
 
         private Rigidbody2D rb;

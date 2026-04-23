@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  poolTag: Arrow
+  poolTag: Explosion
 --- !u!50 &-1744505625959751428
 Rigidbody2D:
   serializedVersion: 4
@@ -230,6 +230,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfc0e398c3d27ef479155868cc51ee66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionRadius: 0.8
   explosionDamageMultiplier: 100
   explosionVisualPoolTag: ExplosionVFX

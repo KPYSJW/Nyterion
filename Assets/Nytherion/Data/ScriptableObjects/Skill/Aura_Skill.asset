@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e02224abf4fb1bb438f95f2118259a0e, type: 3}
+  m_Name: Aura_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_aura
+  skillType: 8
+  skillName: Aura
+  description: 
+  skillLevel: 0
+  exp: 0
+  coolDown: 10
+  damage: 0
+  range: 0
+  icon: {fileID: 0}
+  skillPrefab: {fileID: 6545964228721109059, guid: c501cd31e3a31ba43a5a929765f22b36, type: 3}
+  auraDuration: 5
+  auraRadius: 3
+  dealDamage: 1
+  damagePerTick: 10
+  damagePerLevel: 2
+  tickRate: 0.5
+  destroyEnemyProjectiles: 1

@@ -11,6 +11,7 @@ namespace Nytherion.Core.Enums
         RangedSpeed,
         DashSpeed,
         DashDuration,
-        DashCooldown
+        DashCooldown,
+        ExtraProjectiles
     }
 }

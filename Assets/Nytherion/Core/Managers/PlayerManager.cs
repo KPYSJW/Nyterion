@@ -234,6 +234,10 @@ namespace Nytherion.Core.Managers
                     if (isPercentage) currentPlayerData.dashCooldown *= (1 + value);
                     else currentPlayerData.dashCooldown += value;
                     break;
+                case StatType.ExtraProjectiles:
+                    if (isPercentage) currentPlayerData.extraProjectiles *= (1 + value);
+                    else currentPlayerData.extraProjectiles += value;
+                    break;
                 default:
                     Debug.LogError($"[PlayerManager] Invalid stat type: {stat}");
                     break;

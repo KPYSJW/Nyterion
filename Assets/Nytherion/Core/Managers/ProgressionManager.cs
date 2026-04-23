@@ -4,13 +4,15 @@ using Nytherion.Core.Data;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Progression;
+using Nytherion.Data.ScriptableObjects.Skill;
 
 namespace Nytherion.Core.Managers
 {
     public interface IProgressionManager
     {
-        bool IsSkillUnlocked(SkillType skillType);
-        void UnlockSkill(SkillType skillType);
+        bool IsSkillUnlocked(SkillData skillData);
+        bool IsSkillUnlocked(string skillId);
+        void UnlockSkill(SkillData skillData);
         bool IsMilestoneCompleted(string milestoneId);
         void CompleteMilestone(string milestoneId);
         void CompleteMilestone(MilestoneData milestone);
@@ -20,7 +22,7 @@ namespace Nytherion.Core.Managers
         void AddProgress(MilestoneData milestone, int amount = 1);
         event Action<string, int, int> OnMilestoneProgressUpdated;
 
-        event Action<SkillType> OnSkillUnlocked;
+        event Action<SkillData> OnSkillUnlocked;
         event Action<string> OnMilestoneCompleted;
     }
 
@@ -28,24 +30,31 @@ namespace Nytherion.Core.Managers
     {
         private ProgressionState state = new ProgressionState();
 
-        public event Action<SkillType> OnSkillUnlocked;
+        public event Action<SkillData> OnSkillUnlocked;
         public event Action<string> OnMilestoneCompleted;
         public event Action<string, int, int> OnMilestoneProgressUpdated;
         public event Action OnProgressionDataLoaded;
-        public bool IsSkillUnlocked(SkillType skillType)
+        
+        public bool IsSkillUnlocked(SkillData skillData)
         {
-            return state.unlockedSkills.Contains(skillType);
+            return skillData != null && state.unlockedSkills.Contains(skillData.skillID);
         }
 
-        public void UnlockSkill(SkillType skillType)
+        public bool IsSkillUnlocked(string skillId)
         {
-            if (!state.unlockedSkills.Contains(skillType))
-            {
-                state.unlockedSkills.Add(skillType);
+            return !string.IsNullOrEmpty(skillId) && state.unlockedSkills.Contains(skillId);
+        }
 
-                OnSkillUnlocked?.Invoke(skillType);
+        public void UnlockSkill(SkillData skillData)
+        {
+            if (skillData != null && !state.unlockedSkills.Contains(skillData.skillID))
+            {
+                state.unlockedSkills.Add(skillData.skillID);
+
+                OnSkillUnlocked?.Invoke(skillData);
             }
         }
+        
         public bool IsMilestoneCompleted(string milestoneId)
         {
             return state.completedMilestones.Contains(milestoneId);
@@ -56,7 +65,7 @@ namespace Nytherion.Core.Managers
             if (!state.completedMilestones.Contains(milestoneId))
             {
                 state.completedMilestones.Add(milestoneId);
-                Debug.Log($"[Progression] 付老胶沛 崔己: {milestoneId}");
+                Debug.Log($"[Progression] 毵堨澕鞀ろ啢 鞕勲: {milestoneId}");
 
                 OnMilestoneCompleted?.Invoke(milestoneId);
             }
@@ -70,14 +79,21 @@ namespace Nytherion.Core.Managers
             {
                 state.completedMilestones.Add(milestone.milestoneID);
 
-                if (milestone.rewardSkill != SkillType.None)
+                if (milestone.rewards != null)
                 {
-                    UnlockSkill(milestone.rewardSkill);
+                    foreach (var reward in milestone.rewards)
+                    {
+                        if (reward.rewardType == RewardType.Skill && reward.skillData != null)
+                        {
+                            UnlockSkill(reward.skillData);
+                        }
+                    }
                 }
 
                 OnMilestoneCompleted?.Invoke(milestone.milestoneID);
             }
         }
+        
         public bool IsMilestoneAvailable(MilestoneData milestone)
         {
             if (milestone == null) return false;
@@ -131,7 +147,7 @@ namespace Nytherion.Core.Managers
                 state.activeProgresses.Remove(progress);
             }
         }
-        // --- ISaveable 备泅何 ---
+        // --- ISaveable ---
         public override void PopulateSaveData(SaveData saveData)
         {
             saveData.progressionState = this.state;

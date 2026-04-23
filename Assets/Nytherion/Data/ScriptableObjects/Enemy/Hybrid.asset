@@ -18,7 +18,7 @@ MonoBehaviour:
   moveSpeed: 2.2
   damageAmount: 8
   detectRange: 6
-  combatType: 1
+  combatType: 2
   hybridSwitchDistance: 2.5
   dropChance: 1
   goldDropAmount: 5

@@ -10,7 +10,7 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         [Header("Stat Buff Settings")]
         public float buffDuration = 5f;
         
-        [Header("능력치 변경 (예: 공격 속도, 이동 속도 증가)")]
+        [Header("능력치 변경")]
         public List<StatModifier> statModifiers = new List<StatModifier>();
     }
 }

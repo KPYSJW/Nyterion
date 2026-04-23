@@ -34,7 +34,6 @@ namespace Nytherion.GamePlay.Combat.Effects
             float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg - 90f;
             squashRotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
-            // 3. 찌그러짐 상태 돌입 및 애니메이션 재생
             isSquashing = true;
             if (animator != null)
             {

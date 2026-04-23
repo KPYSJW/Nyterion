@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1a6e24bb261ed34aaebcf43056174fd, type: 3}
+  m_Name: Atk_Buff_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_Atk_buff
+  skillType: 7
+  skillName: Attack Buff
+  description: 
+  skillLevel: 0
+  exp: 0
+  coolDown: 30
+  damage: 0
+  range: 0
+  icon: {fileID: 0}
+  skillPrefab: {fileID: 2936339837201625072, guid: 568542e054e9eb246afad1ad7533ab7c, type: 3}
+  buffDuration: 5
+  statModifiers:
+  - stat: 3
+    value: 0.2
+    valuePerLevel: 0.1
+    isPercentage: 1
+  - stat: 4
+    value: 0.2
+    valuePerLevel: 0.1
+    isPercentage: 1

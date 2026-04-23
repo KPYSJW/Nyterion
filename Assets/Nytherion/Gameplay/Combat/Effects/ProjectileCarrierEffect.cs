@@ -7,14 +7,11 @@ namespace Nytherion.GamePlay.Combat
     {
         [Header("Sub-Projectile Settings")]
         public string subProjectileTag = "Arrow";
-        [Tooltip("파편 발사 간격")]
         public float fireInterval = 0.2f;
-        [Tooltip("파편의 속도")]
         public float subProjectileSpeed = 6f;
         public float subDamageMultiplier = 0.3f;
 
         [Header("Firing Mode")]
-        [Tooltip("True: 본체 양옆으로 발사 False: 무작위 방향으로 발사")]
         public bool fireSides = true;
 
         private float fireTimer = 0f;
@@ -54,7 +51,6 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        // 본체 진행 방향 양 옆으로 발사
         private void FireToSides()
         {
             Vector2 currentDir = myRb.velocity.normalized;
@@ -65,7 +61,6 @@ namespace Nytherion.GamePlay.Combat
             SpawnSubProjectile(sideDir2);
         }
 
-        // 완전히 무작위 방향으로 발사
         private void FireRandomly()
         {
             Vector2 randomDir = Random.insideUnitCircle.normalized;
