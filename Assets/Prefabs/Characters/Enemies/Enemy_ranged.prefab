@@ -117,7 +117,7 @@ MonoBehaviour:
   rb: {fileID: 4648011277888427336}
   animator: {fileID: 4768760079748412350}
   spriteRenderer: {fileID: 6594904688280076281}
-  CurrentCombatType: 0
+  CurrentCombatType: 1
   enemyData: {fileID: 0}
   HybridSwitchDistance: 0
 --- !u!114 &9174351705613226578
