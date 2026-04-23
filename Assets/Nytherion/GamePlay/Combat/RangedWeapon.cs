@@ -14,7 +14,8 @@ namespace Nytherion.GamePlay.Combat
 
         public GameObject Projectile(Vector2 direction)
         {
-            GameObject projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, firePoint.position, Quaternion.identity);
+            Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f);
+            GameObject projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, spawnPos, Quaternion.identity);
 
             if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
             {
@@ -24,14 +25,71 @@ namespace Nytherion.GamePlay.Combat
                 float angle = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
                 projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             }
+            
             if (projectile.TryGetComponent<CollisionObject>(out var collisionObj))
             {
                 if (weaponData != null)
                 {
-                    collisionObj.damage = weaponData.damage;
+                    collisionObj.damage = weaponData.damage * damageMultiplier;
                 }
             }
+
+            if (projectile.TryGetComponent<SpriteRenderer>(out var projSprite))
+            {
+                if (TryGetComponent<SpriteRenderer>(out var weaponSprite))
+                {
+                    projSprite.sortingLayerID = weaponSprite.sortingLayerID;
+                    projSprite.sortingOrder = weaponSprite.sortingOrder + 1; 
+                }
+                else
+                {
+                    projSprite.sortingOrder = 10; 
+                }
+            }
+
             return projectile; 
+        }
+
+        protected void FireProjectiles(Vector2 direction, int baseCount, float spreadAngle = 15f)
+        {
+            int extra = 0;
+            if (playerManager != null && playerManager.currentPlayerData != null)
+            {
+                extra = Mathf.FloorToInt(playerManager.currentPlayerData.extraProjectiles);
+            }
+            int totalCount = baseCount + extra;
+
+            if (totalCount <= 1)
+            {
+                Projectile(direction);
+            }
+            else
+            {
+                float baseAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                
+                if (totalCount == 2)
+                {
+                    float startAngle = baseAngle - (spreadAngle / 2f);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float currentAngle = startAngle + (spreadAngle * i);
+                        Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
+                        Projectile(spreadDirection);
+                    }
+                }
+                else
+                {
+                    float startAngle = baseAngle - (spreadAngle / 2f);
+                    float angleStep = spreadAngle / (totalCount - 1);
+
+                    for (int i = 0; i < totalCount; i++)
+                    {
+                        float currentAngle = startAngle + (angleStep * i);
+                        Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
+                        Projectile(spreadDirection);
+                    }
+                }
+            }
         }
     }
 }

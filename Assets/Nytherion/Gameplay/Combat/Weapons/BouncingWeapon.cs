@@ -10,7 +10,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
             lastAttackTime = Time.time;
 
-            Projectile(direction);
+            FireProjectiles(direction, 1, 15f);
         }
 
         public override void AttackEnd()

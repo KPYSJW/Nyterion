@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}
-  m_Name: LifestealProgData
+  m_Name: Drone_Milestone
   m_EditorClassIdentifier: 
-  milestoneID: Lifesteal
-  title: Lifesteal
+  milestoneID: Drone
+  title: Drone
   description: 
-  icon: {fileID: 21300000, guid: cc843433c57663d40baa56975df20ca5, type: 3}
+  icon: {fileID: 21300000, guid: 59c3a398a748c9948b73d0c814cf0edb, type: 3}
   requiredMilestones: []
   targetValue: 10
-  rewardSkill: 6
+  rewards:
+  - rewardType: 0
+    amount: 0
+    skillData: {fileID: 11400000, guid: 16be1c0e405f174488f5be1093f8c9e2, type: 2}

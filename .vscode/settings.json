@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Nyterion.sln"
+    "dotnet.defaultSolution": "RoguelikePrototype.sln"
 }

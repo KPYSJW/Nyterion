@@ -1833,9 +1833,16 @@ MonoBehaviour:
   addProgressButton: {fileID: 423117738}
   maxProgressButton: {fileID: 1779654920}
   testMilestones:
-  - {fileID: 11400000, guid: e4ffc2194ba9f9142be912643d7f61d1, type: 2}
-  - {fileID: 11400000, guid: bdc878da52e1bc8459c731b459b84b58, type: 2}
+  - {fileID: 11400000, guid: 05eb717853d2da54baf40e26c990921d, type: 2}
+  - {fileID: 11400000, guid: 983922e0a46685f4883faf5fa40a30fa, type: 2}
   - {fileID: 11400000, guid: 355f2033a7927224882711025d4525d6, type: 2}
+  - {fileID: 11400000, guid: badf06ef59af4b84e8d718941f9857b1, type: 2}
+  - {fileID: 11400000, guid: 2d6700de7f8206c4195b2fd70a7a1378, type: 2}
+  - {fileID: 11400000, guid: e8e82ed6b3639964ead32c38419f5e5a, type: 2}
+  - {fileID: 11400000, guid: a87043c8acd27064da0bcf8d27083a6b, type: 2}
+  - {fileID: 11400000, guid: 4b50598048b6fb744a33282f3c03fabb, type: 2}
+  - {fileID: 11400000, guid: 575e129273143f542860e1cede9ae9b3, type: 2}
+  - {fileID: 11400000, guid: 3894ac288bf2a134db9cf45b2414b04f, type: 2}
 --- !u!1 &175113038
 GameObject:
   m_ObjectHideFlags: 0
@@ -4352,7 +4359,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100.000015}
+  m_AnchoredPosition: {x: 0, y: -100.00003}
   m_SizeDelta: {x: 680, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &349391062
@@ -12470,6 +12477,10 @@ PrefabInstance:
     - target: {fileID: 6852058077325633452, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: centerOffset.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7144026513014664610, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -24439,8 +24450,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 113935554}
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
-  m_Value: 0.9999998
-  m_Size: 0.5
+  m_Value: 1
+  m_Size: 0.25000012
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

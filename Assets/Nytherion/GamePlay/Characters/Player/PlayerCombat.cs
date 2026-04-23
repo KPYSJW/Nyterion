@@ -3,6 +3,7 @@ using Nytherion.Core.Managers;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using VContainer;
+using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -19,6 +20,9 @@ namespace Nytherion.GamePlay.Characters.Player
         [SerializeField] private Vector3 centerOffset = new Vector3(0, 0.5f, 0);
 
         public WeaponBase currentWeapon;
+
+        public event System.Action<Vector2, Vector3> OnPlayerAttack;
+        public event System.Action OnPlayerAttackEnd;
 
         private InputManager inputManager;
         private PlayerManager playerManager;
@@ -79,7 +83,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 Vector3 playerCenter = transform.position + centerOffset;
                 Vector2 mouseVector = mouseWorldPos - playerCenter;
 
-                float targetAngle = currentAngle; 
+                float targetAngle = currentAngle;
                 if (mouseVector.magnitude >= deadZoneRadius)
                 {
                     targetAngle = Mathf.Atan2(mouseVector.y, mouseVector.x) * Mathf.Rad2Deg;
@@ -113,6 +117,8 @@ namespace Nytherion.GamePlay.Characters.Player
                 Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
                 targetWorldPos.z = 0f;
                 currentWeapon.Attack(fireDirection, targetWorldPos);
+
+                OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);
             }
         }
 
@@ -121,6 +127,7 @@ namespace Nytherion.GamePlay.Characters.Player
             if (currentWeapon != null)
             {
                 currentWeapon.AttackEnd();
+                OnPlayerAttackEnd?.Invoke();
             }
         }
 

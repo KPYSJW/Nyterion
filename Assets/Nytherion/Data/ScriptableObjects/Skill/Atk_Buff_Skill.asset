@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1a6e24bb261ed34aaebcf43056174fd, type: 3}
-  m_Name: AttackSpeedSkillData
+  m_Name: Atk_Buff_Skill
   m_EditorClassIdentifier: 
-  skillID: skill_attack_speed
+  skillID: skill_Atk_buff
   skillType: 7
-  skillName: attack speed boost
+  skillName: Attack Buff
   description: 
   skillLevel: 0
   exp: 0
@@ -22,14 +22,14 @@ MonoBehaviour:
   damage: 0
   range: 0
   icon: {fileID: 0}
-  skillPrefab: {fileID: 9003235561191168805, guid: 9943bf6527c395a4e8f0d503d60c53ad, type: 3}
+  skillPrefab: {fileID: 2936339837201625072, guid: 568542e054e9eb246afad1ad7533ab7c, type: 3}
   buffDuration: 5
   statModifiers:
-  - stat: 5
+  - stat: 3
     value: 0.2
     valuePerLevel: 0.1
     isPercentage: 1
-  - stat: 6
+  - stat: 4
     value: 0.2
     valuePerLevel: 0.1
     isPercentage: 1

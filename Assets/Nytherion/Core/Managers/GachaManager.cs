@@ -92,7 +92,7 @@ namespace Nytherion.Core.Managers
             {
                 if (item is SkillData skillData)
                 {
-                    return progressionManager != null && progressionManager.IsSkillUnlocked(skillData.skillType);
+                    return progressionManager != null && progressionManager.IsSkillUnlocked(skillData);
                 }
                 return true;
             };

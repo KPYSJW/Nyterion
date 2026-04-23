@@ -10,26 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1a6e24bb261ed34aaebcf43056174fd, type: 3}
-  m_Name: DamageBuffData
+  m_Name: MultiShot_Skill
   m_EditorClassIdentifier: 
-  skillID: skill_damage_buff
-  skillType: 0
-  skillName: DamageBuff
+  skillID: skill_multishot
+  skillType: 7
+  skillName: Multi Shot
   description: 
   skillLevel: 0
   exp: 0
-  coolDown: 0
+  coolDown: 30
   damage: 0
   range: 0
   icon: {fileID: 0}
   skillPrefab: {fileID: 0}
   buffDuration: 5
   statModifiers:
-  - stat: 3
-    value: 0.2
-    valuePerLevel: 0.1
-    isPercentage: 1
-  - stat: 4
-    value: 0.2
-    valuePerLevel: 0.1
-    isPercentage: 1
+  - stat: 10
+    value: 1
+    valuePerLevel: 0.2
+    isPercentage: 0

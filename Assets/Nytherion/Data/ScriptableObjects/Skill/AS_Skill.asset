@@ -10,22 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1a6e24bb261ed34aaebcf43056174fd, type: 3}
-  m_Name: DashCooldownSkillData
+  m_Name: AS_Skill
   m_EditorClassIdentifier: 
-  skillID: skill_Dash_cooldown
+  skillID: skill_attack_speed
   skillType: 7
-  skillName: Dash Cooldown
+  skillName: attack speed boost
   description: 
   skillLevel: 0
   exp: 0
   coolDown: 30
   damage: 0
   range: 0
-  icon: {fileID: 21300000, guid: e6b92db4815449e479cfdb181c2e5713, type: 3}
-  skillPrefab: {fileID: 27230863975276464, guid: 4add78711b37c6040a072f683ca1eb4a, type: 3}
+  icon: {fileID: 0}
+  skillPrefab: {fileID: 9003235561191168805, guid: 9943bf6527c395a4e8f0d503d60c53ad, type: 3}
   buffDuration: 5
   statModifiers:
-  - stat: 9
+  - stat: 5
+    value: 0.2
+    valuePerLevel: 0.1
+    isPercentage: 1
+  - stat: 6
     value: 0.2
     valuePerLevel: 0.1
     isPercentage: 1

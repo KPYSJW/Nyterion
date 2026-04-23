@@ -9,7 +9,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
         {
             if (!CanAttack()) return;
 
-            GameObject proj = Projectile(direction);
+            FireProjectiles(direction, 1, 15f);
 
             lastAttackTime = Time.time;
         }

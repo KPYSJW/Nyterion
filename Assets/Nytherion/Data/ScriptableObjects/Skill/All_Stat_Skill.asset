@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1a6e24bb261ed34aaebcf43056174fd, type: 3}
-  m_Name: AllStatUpSkillData
+  m_Name: All_Stat_Skill
   m_EditorClassIdentifier: 
   skillID: skill_all_stat_up
   skillType: 7

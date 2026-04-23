@@ -1,5 +1,7 @@
 using UnityEngine;
 using Nytherion.Core.Enums;
+using Nytherion.Core.Data;
+using System.Collections.Generic;
 
 namespace Nytherion.Data.ScriptableObjects.Progression
 {
@@ -21,6 +23,6 @@ namespace Nytherion.Data.ScriptableObjects.Progression
         public int targetValue = 1; 
 
         [Header("Rewards")]
-        public SkillType rewardSkill = SkillType.None;
+        public List<RewardData> rewards = new List<RewardData>();
     }
 }

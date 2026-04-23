@@ -5,6 +5,9 @@ namespace Nytherion.Data.ScriptableObjects.Skill
     [CreateAssetMenu(fileName = "NewAuraData", menuName = "Data/Skill/Aura")]
     public class AuraSkillData : SkillData
     {
+        /// <summary>
+        /// 오라 스킬의 고유 데이터를 저장하는 ScriptableObject
+        /// </summary>
         [Header("Aura Settings")]
         [Tooltip("오라 스킬 지속 시간")]
         public float auraDuration = 5f;
@@ -18,7 +21,7 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         public float damagePerTick = 10f;
         [Tooltip("스킬 레벨업 당 증가하는 타격 데미지")]
         public float damagePerLevel = 2f;
-        [Tooltip("데미지를 주는 간격 (초)")]
+        [Tooltip("데미지를 주는 간격")]
         public float tickRate = 0.5f;
 
         [Header("Utility Settings")]

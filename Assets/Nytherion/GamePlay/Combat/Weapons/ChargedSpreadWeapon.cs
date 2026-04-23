@@ -5,9 +5,9 @@ namespace Nytherion.GamePlay.Combat.Weapon
     public class ChargedSpreadWeapon : ChargeableRangedWeapon
     {
         [Header("Charged Spread Settings")]
-        [Tooltip("ÃÖ´ë Â÷Â¡ ½Ã ¹ß»çµÉ Åõ»çÃ¼ °³¼ö")]
+        [Tooltip("ï¿½Ö´ï¿½ ï¿½ï¿½Â¡ ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½")]
         public int maxProjectileCount = 5;
-        [Tooltip("ºÎÃ¤²Ã ¹ß»ç °¢µµ")]
+        [Tooltip("ï¿½ï¿½Ã¤ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½")]
         public float spreadAngle = 45f;
         private Vector3 originalScale;
 
@@ -19,26 +19,8 @@ namespace Nytherion.GamePlay.Combat.Weapon
         {
             int currentProjectileCount = Mathf.FloorToInt(Mathf.Lerp(1, maxProjectileCount, chargePercent));
 
-            if (currentProjectileCount == 1)
-            {
-                Projectile(direction);
-            }
-            else
-            {
-                float baseAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                float startAngle = baseAngle - (spreadAngle / 2f);
-                float angleStep = spreadAngle / (currentProjectileCount - 1);
+            FireProjectiles(direction, currentProjectileCount, spreadAngle);
 
-                for (int i = 0; i < currentProjectileCount; i++)
-                {
-                    float currentAngle = startAngle + (angleStep * i);
-                    Vector2 spreadDirection = new Vector2(
-                        Mathf.Cos(currentAngle * Mathf.Deg2Rad),
-                        Mathf.Sin(currentAngle * Mathf.Deg2Rad)
-                    );
-                    Projectile(spreadDirection);
-                }
-            }
             transform.localScale = originalScale;
         }
 

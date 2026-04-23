@@ -1,5 +1,6 @@
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -10,6 +11,15 @@ namespace Nytherion.GamePlay.Combat
         
         [Tooltip("마지막 공격 시간 (Time.time 기준)")]
         protected float lastAttackTime;
+
+        public float damageMultiplier = 1.0f;
+
+        protected PlayerManager playerManager;
+
+        protected virtual void Awake()
+        {
+            playerManager = GetComponentInParent<PlayerManager>();
+        }
 
         public virtual void Initialize(WeaponData data)
         {

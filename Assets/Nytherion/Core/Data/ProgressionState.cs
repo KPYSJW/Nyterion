@@ -13,7 +13,7 @@ namespace Nytherion.Core.Data
     [System.Serializable]
     public class ProgressionState
     {
-        public List<SkillType> unlockedSkills = new List<SkillType>();
+        public List<string> unlockedSkills = new List<string>();
 
         public List<string> completedMilestones = new List<string>();
 

@@ -10,6 +10,7 @@ namespace Nytherion.Core.Enums
         TestSkill,
         LifestealBuff,
         StatBuff,
-        Aura
+        Aura,
+        ShadowClone
     }
 }

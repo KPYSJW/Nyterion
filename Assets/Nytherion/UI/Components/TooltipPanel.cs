@@ -4,6 +4,7 @@ using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Data.ScriptableObjects.Progression;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.Components
 {
@@ -112,10 +113,10 @@ namespace Nytherion.UI.Components
             if (skill == null)
                 return;
 
-            string skillStats = $"[Lv.{level}] °æÇèÄ¡: {currentExp} / {requiredExp}\n\n" +
-                                $"µ¥¹ÌÁö: {skill.damage}\n" +
-                                $"ÄğÅ¸ÀÓ: {skill.coolDown}ÃÊ\n" +
-                                $"»ç°Å¸®: {skill.range}\n\n" +
+            string skillStats = $"[Lv.{level}] ê²½í—˜ì¹˜: {currentExp} / {requiredExp}\n\n" +
+                                $"ë°ë¯¸ì§€: {skill.damage}\n" +
+                                $"ì¿¨íƒ€ì„: {skill.coolDown}ì´ˆ\n" +
+                                $"ì‚¬ê±°ë¦¬: {skill.range}\n\n" +
                                 $"{skill.description}";
 
             SetContent(skill.skillName, skillStats);
@@ -141,13 +142,27 @@ namespace Nytherion.UI.Components
         {
             if (milestone == null) return;
 
-            string statusText = isCompleted ? "<color=#00FF00>´Ş¼º ¿Ï·á</color>" : $"<color=#FFB400>ÁøÇà Áß ({currentVal} / {targetVal})</color>";
+            string statusText = isCompleted ? "<color=#00FF00>ë‹¬ì„± ì™„ë£Œ</color>" : $"<color=#FFB400>ì§„í–‰ ì¤‘ ({currentVal} / {targetVal})</color>";
 
-            string content = $"{milestone.description}\n\n»óÅÂ: {statusText}";
+            string content = $"{milestone.description}\n\nìƒíƒœ: {statusText}";
 
-            if (milestone.rewardSkill != Nytherion.Core.Enums.SkillType.None)
+            if (milestone.rewards != null && milestone.rewards.Count > 0)
             {
-                content += $"\nº¸»ó: {milestone.rewardSkill} ½ºÅ³ ÇØ±İ";
+                foreach (var reward in milestone.rewards)
+                {
+                    if (reward.rewardType == RewardType.Skill && reward.skillData != null)
+                    {
+                        content += $"\në³´ìƒ: {reward.skillData.skillName} ìŠ¤í‚¬ íšë“";
+                    }
+                    else if (reward.rewardType == RewardType.Gold)
+                    {
+                        content += $"\në³´ìƒ: ê³¨ë“œ {reward.amount}";
+                    }
+                    else if (reward.rewardType == RewardType.Token)
+                    {
+                        content += $"\në³´ìƒ: í† í° {reward.amount}";
+                    }
+                }
             }
 
             SetContent(milestone.title, content);

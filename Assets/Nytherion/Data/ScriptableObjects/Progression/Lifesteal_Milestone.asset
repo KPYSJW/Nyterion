@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}
-  m_Name: Test2
+  m_Name: Lifesteal_Milestone
   m_EditorClassIdentifier: 
-  milestoneID: Test_1
-  title: TestMilestone
+  milestoneID: Lifesteal
+  title: Lifesteal
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: cc843433c57663d40baa56975df20ca5, type: 3}
   requiredMilestones: []
   targetValue: 10
-  rewardSkill: 1
+  rewards:
+  - rewardType: 0
+    amount: 0
+    skillData: {fileID: 11400000, guid: 69cd9cc6cf24a2a4fb0abf9ca48be53f, type: 2}
