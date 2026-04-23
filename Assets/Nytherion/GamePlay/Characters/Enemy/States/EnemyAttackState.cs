@@ -38,7 +38,37 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
     private void HandleHybridAttack(EnemyAIController enemy)
     {
-        throw new NotImplementedException();
+        enemy.StopMovement();
+
+            if (UnityEngine.Time.time < attackCommitUntil)
+            {
+                return;
+            }
+
+            if (!enemy.CanAttackPlayer())
+            {
+                //enemyAIController.Obstacle.enabled=false;
+                //enemyAIController.agent.enabled=true;
+                enemy.TransitionToState(enemy.chaseState);
+                return;
+            }
+
+            if (UnityEngine.Time.time < nextActionTime)
+            {
+                return;
+            }
+
+            bool attacked = enemy.TryAttackPlayer();
+
+            if (attacked)
+            {
+                //enemyAIController.agent.enabled=false;
+                //enemyAIController.Obstacle.enabled=true;
+                enemy.PlayAnimation("Attack");
+
+                attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
+                nextActionTime = UnityEngine.Time.time + postAttackDelay;
+            }
     }
 
     private void HandleRangedAttack(EnemyAIController enemy)
