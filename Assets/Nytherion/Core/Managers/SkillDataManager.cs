@@ -122,6 +122,10 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public override void PopulateSaveData(SaveData saveData)
         {
+            // SaveDat의 리스트가 null인 경우 초기화
+            if (saveData.ownedSkills == null) saveData.ownedSkills = new List<SkillEntry>();
+            if (saveData.equippedSkillIds == null) saveData.equippedSkillIds = new List<string>();
+
             // 기존 세이브 데이터 정리
             saveData.ownedSkills.Clear();
             saveData.equippedSkillIds.Clear();
@@ -150,10 +154,29 @@ namespace Nytherion.Core.Managers
                 }
             }
 
-            // 장착 중인 스킬의 ID 저장
+            // 장착 중인 스킬의 ID 저장 및 상태를 ownedSkills에 추가 기록
             for (int i = 0; i < equippedSkills.Length; i++)
             {
-                saveData.equippedSkillIds.Add(equippedSkills[i] != null ? equippedSkills[i].skillID : "");
+                if (equippedSkills[i] != null)
+                {
+                    string id = equippedSkills[i].skillID;
+                    saveData.equippedSkillIds.Add(id);
+
+                    if (skillStates.TryGetValue(id, out var state))
+                    {
+                        saveData.ownedSkills.Add(new SkillEntry { skillId = id, level = state.level, exp = state.exp });
+                    }
+                    else
+                    {
+                        saveData.ownedSkills.Add(new SkillEntry { skillId = id, level = 1, exp = 0 });
+                    }
+                }
+                else
+                {
+                    // 장착 중인 슬롯이 빈 슬롯이면 빈 문자열 저장
+                    saveData.equippedSkillIds.Add("");
+                    saveData.ownedSkills.Add(new SkillEntry { skillId = "", level = 1, exp = 0 });
+                }
             }
         }
 
@@ -162,6 +185,17 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public override void LoadFromSaveData(SaveData saveData)
         {
+            // 데이터베이스 참조 누락 시 에러를 띄우도록 변경
+            if (skillDatabase == null) 
+            {
+                Debug.LogError("[SkillDataManager] SkillDatabaseSO가 인스펙터에 할당되지 않았습니다! 로드를 중단합니다.");
+                return;
+            }
+
+            // SaveData의 리스트가 null인 경우 초기화 
+            if (saveData.ownedSkills == null) saveData.ownedSkills = new List<SkillEntry>();
+            if (saveData.equippedSkillIds == null) saveData.equippedSkillIds = new List<string>();
+
             if (skillDatabase == null) return;
 
             // 로드 전 기존 데이터 초기화
@@ -186,16 +220,25 @@ namespace Nytherion.Core.Managers
                 // 보유 스킬 로드 및 상태 복원
                 for (int i = 0; i < saveData.ownedSkills.Count; i++)
                 {
-                    if (i >= storageSkills.Length) break;
-
                     SkillEntry entry = saveData.ownedSkills[i];
                     string id = entry.skillId;
 
-                    if (!string.IsNullOrEmpty(id))
+                    if (i < storageSkills.Length)
                     {
-                        storageSkills[i] = skillDatabase.GetSkillById(id);
+                        if (!string.IsNullOrEmpty(id))
+                        {
+                            storageSkills[i] = skillDatabase.GetSkillById(id);
 
-                        if (storageSkills[i] != null)
+                            if (storageSkills[i] != null)
+                            {
+                                skillStates[id] = new SkillState { level = entry.level, exp = entry.exp };
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // storageSkills 범위를 넘어선 데이터는 장착 스킬의 상태 정보임
+                        if (!string.IsNullOrEmpty(id))
                         {
                             skillStates[id] = new SkillState { level = entry.level, exp = entry.exp };
                         }
@@ -208,6 +251,12 @@ namespace Nytherion.Core.Managers
                     if (i >= equippedSkills.Length) break;
                     string id = saveData.equippedSkillIds[i];
                     equippedSkills[i] = string.IsNullOrEmpty(id) ? null : skillDatabase.GetSkillById(id);
+                    
+                    // 장착 스킬이 있는데 상태가 없다면 기본 상태로 초기화
+                    if (!string.IsNullOrEmpty(id) && !skillStates.ContainsKey(id))
+                    {
+                        skillStates[id] = new SkillState { level = 1, exp = 0 };
+                    }
                 }
             }
 

@@ -1,4 +1,5 @@
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
 using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.GamePlay.Characters.Player
@@ -12,6 +13,7 @@ namespace Nytherion.GamePlay.Characters.Player
         public Transform weaponPoint;          // 분신의 무기가 장착될 트랜스폼
         public SpriteRenderer cloneSprite;     // 분신의 메인 스프라이트
         public Animator cloneAnimator;         // 분신의 애니메이터
+        public float cloneAttackDelay = 0.05f;
 
         private PlayerCombat playerCombat;     // 본체(플레이어)의 전투 컴포넌트
         private Animator playerAnimator;       // 본체의 애니메이터
@@ -199,7 +201,15 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 if (cloneWeapon != null) Destroy(cloneWeapon.gameObject);
 
+                // 기존 로직: 분신의 weaponPoint에 무기 생성 
+                /*
                 cloneWeapon = Instantiate(playerWeapon, weaponPoint);
+                cloneWeapon.transform.localPosition = Vector3.zero;
+                cloneWeapon.transform.localRotation = Quaternion.identity;
+                */
+
+                // 플레이어 무기와 동일한 위치(본체)에 생성하고, 시각적으로 숨김
+                cloneWeapon = Instantiate(playerWeapon, playerCombat.currentWeapon.transform.parent);
                 cloneWeapon.transform.localPosition = Vector3.zero;
                 cloneWeapon.transform.localRotation = Quaternion.identity;
 
@@ -208,11 +218,27 @@ namespace Nytherion.GamePlay.Characters.Player
 
                 cloneWeapon.Initialize(playerWeapon.weaponData);
 
+                // 시각적 요소 숨기기
+                SpriteRenderer[] renderers = cloneWeapon.GetComponentsInChildren<SpriteRenderer>();
+                foreach (var r in renderers)
+                {
+                    r.enabled = false;
+                }
+
                 // 원거리 무기인 경우 발사 지점도 동기화
                 if (cloneWeapon is RangedWeapon rw)
                 {
+                    // 기존 로직: 복제된 무기의 FirePoint 사용
+                    /*
                     Transform clonedFirePoint = cloneWeapon.transform.Find("FirePoint") ?? cloneWeapon.transform;
                     rw.firePoint = clonedFirePoint;
+                    */
+
+                    // 플레이어 본체의 FirePoint 사용
+                    if (playerWeapon is RangedWeapon playerRw)
+                    {
+                        rw.firePoint = playerRw.firePoint;
+                    }
                 }
             }
             // 플레이어가 무기를 해제한 경우 분신 무기도 제거 
@@ -230,6 +256,8 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (cloneWeapon != null)
             {
+                // 기존 로직
+                /*
                 if (!cloneWeapon.gameObject.activeInHierarchy)
                 {
                     cloneWeapon.gameObject.SetActive(true);
@@ -238,10 +266,32 @@ namespace Nytherion.GamePlay.Characters.Player
                 // 무기 공격 실행
                 bool canAttack = cloneWeapon.CanAttack();
                 cloneWeapon.Attack(direction, targetPosition);
+                */
+
+                //  시간차(Echo) 발사를 위해 코루틴 실행
+                StartCoroutine(DelayedAttackRoutine(direction, targetPosition));
             }
             else
             {
                 Debug.LogWarning("[ShadowClone] 분신의 무기(cloneWeapon)가 없습니다.");
+            }
+        }
+
+        private IEnumerator DelayedAttackRoutine(Vector2 direction, Vector3 targetPosition)
+        {
+            // 
+            yield return new WaitForSeconds(0.15f);
+
+            if (cloneWeapon != null)
+            {
+                if (!cloneWeapon.gameObject.activeInHierarchy)
+                {
+                    cloneWeapon.gameObject.SetActive(true);
+                }
+
+                // 처음 조준했던 방향(direction)과 위치(targetPosition)를 그대로 사용하여
+                // 플레이어가 지연 시간 동안 방향을 돌려도 원래 의도한 방향으로 발사되게 함
+                cloneWeapon.Attack(direction, targetPosition);
             }
         }
 
@@ -250,6 +300,28 @@ namespace Nytherion.GamePlay.Characters.Player
         /// </summary>
         private void PerformAttackEnd()
         {
+            if (cloneWeapon != null)
+            {
+                // 기존 로직 (주석 처리)
+                /*
+                if (!cloneWeapon.gameObject.activeInHierarchy)
+                {
+                    cloneWeapon.gameObject.SetActive(true);
+                }
+
+                cloneWeapon.AttackEnd();
+                */
+
+                // 공격 종료(AttackEnd)에도 동일한 딜레이를 주어 싱크를 맞춤
+                StartCoroutine(DelayedAttackEndRoutine());
+            }
+        }
+
+        private IEnumerator DelayedAttackEndRoutine()
+        {
+            // 플레이어 공격 보다 분신 공격은 일정 시간 이후 발사
+            yield return new WaitForSeconds(cloneAttackDelay);
+
             if (cloneWeapon != null)
             {
                 if (!cloneWeapon.gameObject.activeInHierarchy)

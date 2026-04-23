@@ -158,24 +158,32 @@ namespace Nytherion.UI.Skill
         /// <summary>
         /// SkillDataManager가 가지고 있는 데이터를 읽어와서 UI 슬롯에 반영
         /// </summary>
-        private void SyncUIFromData()
+        public void SyncUIFromData()
         {
             if (skillDataManager == null) return;
+            if (storageSlots == null || equipSlots == null) return;
 
             // 장착 슬롯 갱신
+            int equipCount = 0;
             for (int i = 0; i < equipSlots.Length; i++)
             {
                 equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager);
+                if (skillDataManager.equippedSkills[i] != null) equipCount++;
             }
 
             // 보관함 슬롯 갱신
+            int storageCount = 0;
             for (int i = 0; i < storageSlots.Length; i++)
             {
                 if (i < skillDataManager.storageSkills.Length)
+                {
                     storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager);
+                    if (skillDataManager.storageSkills[i] != null) storageCount++;
+                }
             }
 
-            // 플레이어 캐릭터가 실제로 사용하는 스킬 매니저에도 최신 장착 정보 전달
+            Debug.Log($"[SkillUIController] 스킬 UI 동기화 완료! 현재 화면에 장착: {equipCount}개, 보관함: {storageCount}개 그려짐.");
+
             if (playerSkillManager != null)
                 playerSkillManager.SetEquippedSkills(skillDataManager.equippedSkills);
         }
