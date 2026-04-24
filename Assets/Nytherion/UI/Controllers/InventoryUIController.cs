@@ -228,6 +228,7 @@ namespace Nytherion.UI.Controllers
             Dispose();
         }
 
+        /* 
         // 디버그 메서드들
         [ContextMenu("인벤토리 UI 새로고침")]
         public void DebugRefreshUI()
@@ -243,5 +244,6 @@ namespace Nytherion.UI.Controllers
                 SetInventoryUIVisible(!IsInventoryUIVisible());
             }
         }
+        */
     }
 }

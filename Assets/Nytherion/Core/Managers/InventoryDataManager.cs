@@ -84,17 +84,14 @@ namespace Nytherion.Core.Managers
         {
             if (!IsInitialized || itemData == null)
             {
-                Debug.LogError("초기화되지 않았거나 itemData가 null");
+                // Debug.LogError("초기화되지 않았거나 itemData가 null");
                 return false;
             }
-
-            Debug.Log($"AddItem 호출됨. 아이템: {itemData.ID}, 개수: {count}");
-
+            
             bool result = InventoryModel.AddItem(itemData, count);
 
             if (result)
             {
-                Debug.Log($"[디버그 - InventoryDataManager] AddItem 실제 모델 추가 성공.");
                 NotifyDataChanged(new InventoryChangeData
                 {
                     slotIndex = -1, 
@@ -111,7 +108,7 @@ namespace Nytherion.Core.Managers
             }
             else
             {
-                Debug.LogWarning($" AddItem 실패 (인벤토리가 꽉 찼거나 기타 이유)");
+                // Debug.LogWarning($" AddItem 실패 (인벤토리가 꽉 찼거나 기타 이유)");
             }
             return result;
         }

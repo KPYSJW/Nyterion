@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 5
-  attackCoolDown: 2
+  attackCoolDown: 5
   fallbackDamage: 8
   useProjectileVisual: 1
   projectilePrefab: {fileID: 2281237070976107017, guid: bd34183cb4bb7a447985b033cdb6b7c9, type: 3}

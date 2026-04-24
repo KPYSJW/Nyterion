@@ -8,6 +8,7 @@ using Nytherion.UI.Inventory;
 using System.Collections.Generic;
 using VContainer;
 using Nytherion.Core.Systems;
+using Nytherion.UI.Skill;
 
 namespace Nytherion.Core.Managers
 {
@@ -248,7 +249,7 @@ namespace Nytherion.Core.Managers
                 Debug.LogError($"[SaveLoadManager] SaveService.Save() 실패: {e.Message}");
             }
         }
-       
+
         public void LoadGame()
         {
             if (hasLoadedData)
@@ -317,6 +318,12 @@ namespace Nytherion.Core.Managers
             foreach (var slot in equipmentSlots)
             {
                 slot.SendMessage("RefreshFromLoadedData", SendMessageOptions.DontRequireReceiver);
+            }
+
+            var skillUI = FindObjectOfType<SkillUIController>(); // (실제 클래스명으로 변경)
+            if (skillUI != null)
+            {
+                skillUI.SyncUIFromData();
             }
         }
 

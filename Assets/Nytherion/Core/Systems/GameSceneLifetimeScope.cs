@@ -22,7 +22,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using VContainer;
 using VContainer.Unity;
-
+using Nytherion.UI;
 public class GameSceneLifetimeScope : LifetimeScope
 {
     [Header("UI References From Scene")]
@@ -63,6 +63,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private SettingsManager settingsManagerPrefab;
     [SerializeField] private InventoryPresenter inventoryPresenterPrefab;
     [SerializeField] private GameSceneUIManager gameSceneUIManager;
+    [SerializeField] private GlobalUIManager globalUIManagerPrefab;
 
     [Header("Test Progression")]
     [SerializeField] private ProgressionDebugUI progressionDebugUI;
@@ -287,6 +288,11 @@ public class GameSceneLifetimeScope : LifetimeScope
         if (gameSceneUIManager != null)
         {
             builder.RegisterComponent(gameSceneUIManager).AsImplementedInterfaces().AsSelf();
+        }
+
+        if (globalUIManagerPrefab != null)
+        {
+            builder.RegisterComponentInNewPrefab(globalUIManagerPrefab, Lifetime.Singleton).AsSelf();
         }
 
         builder.RegisterComponentInHierarchy<CharacterStatsUI>()

@@ -3,7 +3,6 @@ using Nytherion.Core.Managers;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using VContainer;
-using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.GamePlay.Characters.Player
 {

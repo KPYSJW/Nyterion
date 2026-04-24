@@ -301,9 +301,9 @@ namespace Nytherion.UI.Controllers
             }
         }
 
-        public override void Open()
+        public override void Open(bool closeOthers = true)
         {
-            base.Open();
+            base.Open(closeOthers);
             ShopManager shopMgr = GetShopManager();
             if (shopMgr != null)
             {

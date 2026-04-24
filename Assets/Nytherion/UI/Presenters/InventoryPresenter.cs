@@ -89,7 +89,6 @@ namespace Nytherion.UI.Presenters
             }
         }
 
-        // Cleanup method to be called when the inventory is closed or destroyed
         public void Cleanup()
         {
             InventoryDataManager manager = GetInventoryDataManager();
@@ -117,10 +116,6 @@ namespace Nytherion.UI.Presenters
             for (int i = 0; i < slotPool.Count; i++)
             {
                 var (item, count) = manager.GetSlot(i);
-                if (item != null)
-                {
-                    Debug.Log($"[InventoryPresenter] 슬롯 {i}: {item.name} x{count}");
-                }
                 slotPool[i].SetItem(item, count);
             }
         }

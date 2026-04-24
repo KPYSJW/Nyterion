@@ -7,6 +7,8 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
     {
         public EnemyChaseState(EnemyAIController enemyAIController) : base(enemyAIController) { }
 
+        private const float HybridRangedBuffer=1.5f;
+
         public override void EnterState(EnemyAIController enemy)
         {
             
@@ -65,7 +67,7 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
             {
                 enemy.MoveAwayFromPlayer();
                 return;
-            }*/ //원거리 몬스터에 근접하면 거리 벌리기 추후에 조정
+            }*/ //원거리 몬스터는 근접하면 거리 벌리기 추후에 조정 ai컨트롤러에서도 CanAttackPlayer 조정
 
             if (enemy.CanAttackPlayer())
             {
@@ -80,15 +82,20 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
         private void HandleHybridChase(EnemyAIController enemy)
         {
             float distance = enemy.GetDistanceToPlayer();
+            float rangedDistance=enemy.HybridSwitchDistance+HybridRangedBuffer;
 
-            if (distance <= enemy.HybridSwitchDistance)
+            if(enemy.CanUseMeleeAttack())
             {
-                HandleMeleeChase(enemy);
+                enemy.TransitionToState(enemy.attackState);
+                return;
             }
-            else
+
+            if(enemy.CanUseRangedAttack()&&enemy.IsRangedAttackReady()&& distance>=rangedDistance)
             {
-                HandleRangedChase(enemy);
+                enemy.TransitionToState(enemy.attackState);
+                return;
             }
+            enemy.MoveTowardsPlayer();
         }
     }
 }

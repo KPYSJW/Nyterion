@@ -12,13 +12,14 @@ namespace Nytherion.UI.Skill
     /// <summary>
     /// 스킬 UI 전체를 제어하며, UI 슬롯과 게임 데이터 매니저를 동기화하는 클래스
     /// </summary>
-    public class SkillUIController : MonoBehaviour
+    public class SkillUIController : UIPanelBase
     {
         [Header("Toggle Settings")]
         [Tooltip("스킬 UI 전체를 담고 있는 패널 오브젝트")]
         [SerializeField] private GameObject uiPanel;
 
         [Header("UI References")]
+        // ... (이하 동일) ...
         [Tooltip("장착된 스킬을 표시할 UI 슬롯 배열")]
         [SerializeField] private SkillSlotUI[] equipSlots;
 
@@ -66,6 +67,20 @@ namespace Nytherion.UI.Skill
             this.storageDropArea = uiRefs.storageDropArea;
             this.storageContent = uiRefs.storageContent;
             this.equipSlots = uiRefs.equipSlots;
+
+            // --- UIPanelBase 연동을 위한 설정 추가 ---
+            if (uiPanel != null)
+            {
+                // 자신 또는 부모(SkillRoot)에게서 CanvasGroup을 찾습니다.
+                this.controlledCanvasGroup = uiPanel.GetComponentInParent<CanvasGroup>();
+            }
+            // --------------------------------------
+        }
+
+        protected override void Awake()
+        {
+            // UIPanelBase의 초기화 로직 수행
+            base.Awake();
         }
 
         private void Start()
@@ -80,8 +95,10 @@ namespace Nytherion.UI.Skill
                 slot.OnDropSkill += HandleDrop;
             }
 
-            // 시작 시 UI 패널 숨김 처리
+            // 시작 시 UI 패널 숨김 처리 (UIPanelBase가 이미 처리함)
+            /* 기존 방식 주석 처리
             if (uiPanel != null) uiPanel.SetActive(false);
+            */
 
             // 데이터 변경 시 UI 동기화하도록 이벤트 구독
             if (skillDataManager != null)
@@ -113,6 +130,7 @@ namespace Nytherion.UI.Skill
         /// </summary>
         public void ToggleUI()
         {
+            /* 기존 방식 주석 처리
             bool isActive = !uiPanel.activeSelf;
             uiPanel.SetActive(isActive);
 
@@ -128,6 +146,27 @@ namespace Nytherion.UI.Skill
                 {
                     TooltipPanel.Instance.HideTooltip();
                 }
+            }
+            */
+
+            // UIPanelBase의 Toggle 시스템 사용
+            Toggle();
+        }
+
+        public override void Open(bool closeOthers = true)
+        {
+            base.Open(closeOthers);
+            // UI가 열릴 때 최신 데이터로 동기화
+            SyncUIFromData();
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            // UI가 닫힐 때 켜져있을 수 있는 툴팁 강제로 숨김
+            if (TooltipPanel.Instance != null)
+            {
+                TooltipPanel.Instance.HideTooltip();
             }
         }
 
@@ -158,24 +197,30 @@ namespace Nytherion.UI.Skill
         /// <summary>
         /// SkillDataManager가 가지고 있는 데이터를 읽어와서 UI 슬롯에 반영
         /// </summary>
-        private void SyncUIFromData()
+        public void SyncUIFromData()
         {
             if (skillDataManager == null) return;
+            if (storageSlots == null || equipSlots == null) return;
 
             // 장착 슬롯 갱신
+            int equipCount = 0;
             for (int i = 0; i < equipSlots.Length; i++)
             {
                 equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager);
+                if (skillDataManager.equippedSkills[i] != null) equipCount++;
             }
 
             // 보관함 슬롯 갱신
+            int storageCount = 0;
             for (int i = 0; i < storageSlots.Length; i++)
             {
                 if (i < skillDataManager.storageSkills.Length)
+                {
                     storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager);
+                    if (skillDataManager.storageSkills[i] != null) storageCount++;
+                }
             }
 
-            // 플레이어 캐릭터가 실제로 사용하는 스킬 매니저에도 최신 장착 정보 전달
             if (playerSkillManager != null)
                 playerSkillManager.SetEquippedSkills(skillDataManager.equippedSkills);
         }

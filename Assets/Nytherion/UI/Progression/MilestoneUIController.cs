@@ -10,7 +10,7 @@ using Nytherion.UI.Components;
 
 namespace Nytherion.UI.Progression
 {
-    public class MilestoneUIController : MonoBehaviour
+    public class MilestoneUIController : UIPanelBase
     {
         [Header("Data & Prefabs")]
         [Tooltip("복사할 MilestoneSlotUI 프리팹")]
@@ -26,7 +26,7 @@ namespace Nytherion.UI.Progression
 
         private IObjectResolver container;
         private IProgressionManager progressionManager;
-        private bool isPanelActive = false;
+        // private bool isPanelActive = false; // IsOpen으로 대체
 
         private List<MilestoneSlotUI> spawnedSlots = new List<MilestoneSlotUI>();
         [Inject]
@@ -42,6 +42,23 @@ namespace Nytherion.UI.Progression
             this.mainPanel = uiRefs.ProgressionMainPanel;
             this.titleText = uiRefs.ProgressionTitleText;
             this.slotParent = uiRefs.ProgressionSlotParent;
+
+            // --- UIPanelBase 연동을 위한 설정 추가 ---
+            if (mainPanel != null)
+            {
+                // 자신 또는 부모에게서 CanvasGroup을 찾습니다.
+                this.controlledCanvasGroup = mainPanel.GetComponent<CanvasGroup>();
+                if (this.controlledCanvasGroup == null)
+                {
+                    this.controlledCanvasGroup = mainPanel.GetComponentInParent<CanvasGroup>();
+                }
+            }
+            // --------------------------------------
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
         }
 
         private void Start()
@@ -68,7 +85,8 @@ namespace Nytherion.UI.Progression
                 }
             }
 
-            if (mainPanel != null) mainPanel.SetActive(isPanelActive);
+            // 시작 시 UI 패널 숨김 처리 (에디터에서 꺼져있을 수 있으므로 강제 동기화)
+            if (mainPanel != null) mainPanel.SetActive(false);
 
             if (InputManager.Instance != null) InputManager.Instance.onToggleProgressionUI += TogglePanel;
 
@@ -91,6 +109,16 @@ namespace Nytherion.UI.Progression
 
         private void TogglePanel()
         {
+            // --- 런타임 null 체크 보강 ---
+            if (controlledCanvasGroup == null && mainPanel != null)
+            {
+                this.controlledCanvasGroup = mainPanel.GetComponent<CanvasGroup>();
+                if (this.controlledCanvasGroup == null)
+                    this.controlledCanvasGroup = mainPanel.GetComponentInParent<CanvasGroup>();
+            }
+            // ----------------------------
+
+            /* 기존 방식 주석 처리
             if (mainPanel == null) return;
 
             isPanelActive = !isPanelActive;
@@ -107,7 +135,35 @@ namespace Nytherion.UI.Progression
                     TooltipPanel.Instance.HideTooltip();
                 }
             }
+            */
+
+            // UIPanelBase 시스템 사용
+            Toggle();
         }
+
+        public override void Open(bool closeOthers = true)
+        {
+            base.Open(closeOthers);
+            RefreshUI();
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            if (TooltipPanel.Instance != null)
+            {
+                TooltipPanel.Instance.HideTooltip();
+            }
+        }
+
+        protected override void OnPanelStateChanged(bool isOpen)
+        {
+            if (mainPanel != null)
+            {
+                mainPanel.SetActive(isOpen);
+            }
+        }
+
         private void RefreshUI()
         {
             if (progressionManager == null) return;
