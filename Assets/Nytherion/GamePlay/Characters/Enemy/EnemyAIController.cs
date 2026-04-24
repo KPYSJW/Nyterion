@@ -5,6 +5,7 @@ using Nytherion.GamePlay.Combat;
 using Nytherion.GamePlay.Characters.Enemy.States;
 using System.Collections.Generic;
 using Nytherion.Data.ScriptableObjects.Enemy;
+using Nytherion.GamePlay.Combat.Behaviors;
 using System.Linq;
 
 namespace Nytherion.GamePlay.Characters.Enemy
@@ -18,8 +19,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public NavMeshAgent agent; 
        // public NavMeshObstacle Obstacle;
         public Rigidbody2D rb; 
-        private List<IAttackBehavior> attackBehaviors=new List<IAttackBehavior>(); 
-        private IAttackSelector attackSelector;
+        private MeleeAttackBehavior meleeAttack;
+
+        private RangedAttackBehavior rangedAttack;
+
+        public bool HasMeleeAttack=>meleeAttack!=null;
+        public bool HasRangedAttack=>rangedAttack!=null;
 
         private EnemyBaseState currentState;
         public EnemyIdleState idleState;
@@ -54,18 +59,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
              agent.updateUpAxis = false;
 
             InitializeAttackSystems();
-            if (attackBehaviors.Count == 0)
+            if (!HasMeleeAttack && !HasRangedAttack)
             {
                 enabled = false;
                 return;
             }
 
-            if(attackBehaviors.Count>1 && attackSelector==null)
-            {
-                Debug.LogError($"[{name}] attackBehavior가 여러 개인데 IAttackSelector가 없습니다.");
-                enabled = false;
-                return;
-            }
+           
 
             idleState = new EnemyIdleState(this);
             chaseState = new EnemyChaseState(this);
@@ -282,27 +282,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
         }
 
-        public bool CanAttackPlayer()
-        {
-            if(player==null)return false;
-           /* if(enemyData.combatType==EnemyCombatType.Ranged)
-            {
-                if(GetDistanceToPlayer()<TooCloseDistance)
-                {
-                    return false;
-                }
-            }*/
-            IAttackBehavior selected=SelectAttackBehavior();
-            return selected != null && selected.IsInAttackRange(player);
-        }
-
-        public bool TryAttackPlayer()
-        {
-            if(player==null)return false;
-            IAttackBehavior selected = SelectAttackBehavior();
-            return selected != null && selected.TryAttack(player);
-        }
-
         public void ApplyEnemyData(EnemyData data)
         {
             if(data==null)return;
@@ -315,31 +294,85 @@ namespace Nytherion.GamePlay.Characters.Enemy
             {
                 agent.speed = data.moveSpeed;
             }
-            if(attackSelector is HybridAttackSelector hybridAttackSelector)
-            {
-                hybridAttackSelector.SetSwitchDistance(data.hybridSwitchDistance);
-            }
         }
 
         private void InitializeAttackSystems()
         {
-            attackBehaviors=GetComponents<MonoBehaviour>()
-            .OfType<IAttackBehavior>()
-            .ToList();
-
-            attackSelector=GetComponents<MonoBehaviour>()
-            .OfType<IAttackSelector>()
-            .FirstOrDefault();
+            meleeAttack=GetComponent<MeleeAttackBehavior>();
+            rangedAttack=GetComponent<RangedAttackBehavior>();
         }
 
-        private IAttackBehavior SelectAttackBehavior()
+        public bool CanUseMeleeAttack()
         {
-            if (attackBehaviors == null || attackBehaviors.Count == 0) return null;
-            if (attackBehaviors.Count == 1) return attackBehaviors[0];
-            if (attackSelector == null) return null;
-
-            return attackSelector.SelectAttackBehavior(transform, player, attackBehaviors);
+            return player!=null && meleeAttack!=null && meleeAttack.IsInAttackRange(player);
         }
+        public bool CanUseRangedAttack()
+        {
+            return player!=null && rangedAttack!=null && rangedAttack.IsInAttackRange(player);
+        }
+
+        public bool IsMeleeAttackReady()
+        {
+            return meleeAttack != null && meleeAttack.AttackCoolDown >= 1f;
+        }
+
+        public bool IsRangedAttackReady()
+        {
+            return rangedAttack != null && rangedAttack.AttackCoolDown >= 1f;
+        }
+
+        public bool TryMeleeAttack()
+        {
+            if (player == null || meleeAttack == null) return false;
+            return meleeAttack.TryAttack(player);
+        }
+
+        public bool TryRangedAttack()
+        {
+            if (player == null || rangedAttack == null) return false;
+            return rangedAttack.TryAttack(player);
+        }
+
+        public bool CanAttackPlayer()
+        {
+            switch (CurrentCombatType)
+            {
+                case EnemyCombatType.Melee:
+                    return CanUseMeleeAttack();
+
+                case EnemyCombatType.Ranged:
+                    return CanUseRangedAttack();
+
+                case EnemyCombatType.Hybrid:
+                    return CanUseMeleeAttack() || CanUseRangedAttack();
+
+                default:
+                    return false;
+            }
+        }
+
+        public bool TryAttackPlayer()
+        {
+            switch (CurrentCombatType)
+            {
+                case EnemyCombatType.Melee:
+                    return TryMeleeAttack();
+
+                case EnemyCombatType.Ranged:
+                    return TryRangedAttack();
+
+                case EnemyCombatType.Hybrid:
+                    if (CanUseMeleeAttack()) return TryMeleeAttack();
+                    if (CanUseRangedAttack()) return TryRangedAttack();
+                    return false;
+
+                default:
+                    return false;
+            }
+        }
+
+
+        
 
         public void PlayAnimation(string stateName)
         {
