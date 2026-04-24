@@ -18,28 +18,34 @@ namespace Nytherion.Utils
         
         public static void Log(string message)
         {
+            /*
             if (CurrentLogLevel >= LogLevel.Info)
             {
                 Debug.Log(LOG_PREFIX + message);
             }
+            */
         }
 
         
         public static void LogWarning(string message)
         {
+            /*
             if (CurrentLogLevel >= LogLevel.Warning)
             {
                 Debug.LogWarning(LOG_PREFIX + message);
             }
+            */
         }
 
         
         public static void LogError(string message)
         {
+            /*
             if (CurrentLogLevel >= LogLevel.Error)
             {
                 Debug.LogError(LOG_PREFIX + message);
             }
+            */
         }
     }
 }

@@ -315,7 +315,7 @@ namespace Nytherion.UI.Controllers
         {
             if (equipmentPanel != null) equipmentPanel.SetActive(false);
             if (statsPanel != null) statsPanel.SetActive(false);
-            Open();
+            Open(false); // 다른 UI(상점)를 닫지 않고 열기
         }
 
         public void RefreshUI()
