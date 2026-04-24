@@ -11,11 +11,17 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
         private float attackCommitUntil = 0f;
         private float nextActionTime = 0f;
 
+        private const float HybridRangedBuffer = 1.5f;
+
+       
+        private bool returnToChaseAfterCommit = false;
+
         public EnemyAttackState(EnemyAIController enemyAIController) : base(enemyAIController) { }
 
         public override void EnterState(EnemyAIController enemy)
         {
             enemy.StopMovement();
+            returnToChaseAfterCommit = false;
         }
 
         public override void UpdateState(EnemyAIController enemy)
@@ -36,75 +42,116 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
             }
         }
 
-    private void HandleHybridAttack(EnemyAIController enemy)
-    {
-        enemy.StopMovement();
+        private void HandleHybridAttack(EnemyAIController enemy)
+        {
+            enemy.StopMovement();
+
+            if (returnToChaseAfterCommit)
+            {
+                if (UnityEngine.Time.time < attackCommitUntil)
+                {
+                    return;
+                }
+
+                returnToChaseAfterCommit = false;
+                enemy.TransitionToState(enemy.chaseState);
+                return;
+            }
 
             if (UnityEngine.Time.time < attackCommitUntil)
             {
                 return;
             }
 
-            if (!enemy.CanAttackPlayer())
+            float distance = enemy.GetDistanceToPlayer();
+            float rangedHarassDistance = enemy.HybridSwitchDistance + HybridRangedBuffer;
+
+            if (enemy.CanUseMeleeAttack())
             {
-                //enemyAIController.Obstacle.enabled=false;
-                //enemyAIController.agent.enabled=true;
-                enemy.TransitionToState(enemy.chaseState);
+                if (UnityEngine.Time.time < nextActionTime)
+                {
+                    return;
+                }
+
+                if (!enemy.IsMeleeAttackReady())
+                {
+                    return;
+                }
+
+                if (enemy.TryMeleeAttack())
+                {
+                    enemy.PlayAnimation("Attack");
+                    attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
+                    nextActionTime = UnityEngine.Time.time + postAttackDelay;
+                }
+
                 return;
             }
 
-            if (UnityEngine.Time.time < nextActionTime)
+            if (enemy.CanUseRangedAttack() && distance >= rangedHarassDistance)
             {
+                if (UnityEngine.Time.time < nextActionTime)
+                {
+                    return;
+                }
+
+                if (!enemy.IsRangedAttackReady())
+                {
+                    enemy.TransitionToState(enemy.chaseState);
+                    return;
+                }
+
+                if (enemy.TryRangedAttack())
+                {
+                    enemy.PlayAnimation("Attack");
+                    attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
+                    nextActionTime = UnityEngine.Time.time + postAttackDelay;
+
+                    // 공격 커밋이 끝날 때까지는 멈춰 있고,
+                    // 끝나면 그때 다시 추격으로 복귀
+                    returnToChaseAfterCommit = true;
+                }
+
                 return;
             }
 
-            bool attacked = enemy.TryAttackPlayer();
+            enemy.TransitionToState(enemy.chaseState);
+        }
 
-            if (attacked)
-            {
-                //enemyAIController.agent.enabled=false;
-                //enemyAIController.Obstacle.enabled=true;
-                enemy.PlayAnimation("Attack");
+        private void HandleRangedAttack(EnemyAIController enemy)
+        {
+            enemy.StopMovement();
 
-                attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
-                nextActionTime = UnityEngine.Time.time + postAttackDelay;
-            }
-    }
+                if (UnityEngine.Time.time < attackCommitUntil)
+                {
+                    return;
+                }
 
-    private void HandleRangedAttack(EnemyAIController enemy)
-    {
-        enemy.StopMovement();
+                if (!enemy.CanAttackPlayer())
+                {
+                    //enemyAIController.Obstacle.enabled=false;
+                    //enemyAIController.agent.enabled=true;
+                    enemy.TransitionToState(enemy.chaseState);
+                    return;
+                }
 
-            if (UnityEngine.Time.time < attackCommitUntil)
-            {
-                return;
-            }
+                if (UnityEngine.Time.time < nextActionTime)
+                {
+                    return;
+                }
 
-            if (!enemy.CanAttackPlayer())
-            {
-                //enemyAIController.Obstacle.enabled=false;
-                //enemyAIController.agent.enabled=true;
-                enemy.TransitionToState(enemy.chaseState);
-                return;
-            }
+                bool attacked = enemy.TryAttackPlayer();
 
-            if (UnityEngine.Time.time < nextActionTime)
-            {
-                return;
-            }
+                if (attacked)
+                {
+                    //enemyAIController.agent.enabled=false;
+                    //enemyAIController.Obstacle.enabled=true;
+                    enemy.PlayAnimation("Attack");
 
-            bool attacked = enemy.TryAttackPlayer();
-
-            if (attacked)
-            {
-                //enemyAIController.agent.enabled=false;
-                //enemyAIController.Obstacle.enabled=true;
-                enemy.PlayAnimation("Attack");
-
-                attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
-                nextActionTime = UnityEngine.Time.time + postAttackDelay;
-            }
-    }
+                    attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
+                    nextActionTime = UnityEngine.Time.time + postAttackDelay;
+                }
+        }
 
     private void HandleMeleeAttack(EnemyAIController enemy)
     {
