@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat.Weapon
@@ -7,6 +8,53 @@ namespace Nytherion.GamePlay.Combat.Weapon
     {
         [Header("Melee Settings")]
         public SpriteRenderer sprite;
+        [SerializeField] private Animation meleeWeaponAnimation;
+        [SerializeField] private string attackClipName  = "PlayerMeleeAnim";
+
+        [Header("Effect Animation")]
+        [SerializeField] private Animator  slashEffectAnimator;
+         [SerializeField] private GameObject slashEffectObject;
+        [SerializeField] private string slashEffectClipName = "Sword_Effect";
+        [SerializeField] private float slashEffectDuration = 0.09f;
+
+
+        private Coroutine slashEffectRoutine;
+        private void Start()
+        {
+            if(meleeWeaponAnimation==null)
+            {
+                meleeWeaponAnimation=GetComponentInParent<Animation>();
+            }
+        }
+
+           private void PlaySlashEffect()
+        {
+            if (slashEffectObject == null || slashEffectAnimator == null)
+            {
+                return;
+            }
+
+            if (slashEffectRoutine != null)
+            {
+                StopCoroutine(slashEffectRoutine);
+            }
+
+            slashEffectRoutine = StartCoroutine(PlaySlashEffectRoutine());
+        }
+
+        private IEnumerator PlaySlashEffectRoutine()
+        {
+            slashEffectObject.SetActive(true);
+
+            slashEffectAnimator.Play(slashEffectClipName, 0, 0f);
+            slashEffectAnimator.Update(0f);
+
+            yield return new WaitForSeconds(slashEffectDuration);
+
+            slashEffectObject.SetActive(false);
+            slashEffectRoutine = null;
+        }
+
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
@@ -17,37 +65,39 @@ namespace Nytherion.GamePlay.Combat.Weapon
                 return;
             }
            
-            StartCoroutine(SwordAttack());
+           if (meleeWeaponAnimation != null)
+            {
+                meleeWeaponAnimation.Stop();
+                meleeWeaponAnimation.Play(attackClipName);
+                
+            }
+            PlaySlashEffect();
 
             lastAttackTime = Time.time;
         }
 
 
-        public override void AttackEnd()
+         public override void AttackEnd()
         {
-            Collider(false);
+            DisableHitbox();
         }
 
-        private IEnumerator SwordAttack()
+        public void EnableHitbox()
         {
-            Collider(true);
-            float duration = 0.3f;
-            float elapsed = 0f;
-            float startAngle = transform.localEulerAngles.z;
-            float EndAngle = startAngle + 180f;
-
-            Quaternion initialRotation=transform.rotation;
-            Quaternion targetRotation = Quaternion.Euler(0, 0, EndAngle);
-
-            while(elapsed < duration)
+            if (col != null)
             {
-                transform.rotation = Quaternion.Slerp(initialRotation, targetRotation, elapsed/duration);
-                elapsed += Time.deltaTime;
-                yield return null;
+                col.enabled = true;
             }
-         
-            AttackEnd();
-            transform.rotation = initialRotation;
         }
+
+        public void DisableHitbox()
+        {
+            if (col != null)
+            {
+                col.enabled = false;
+            }
+        }
+
+       
     }
 }
