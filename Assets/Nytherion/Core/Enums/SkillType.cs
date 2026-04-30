@@ -3,7 +3,7 @@ namespace Nytherion.Core.Enums
     public enum SkillType
     {
         None,
-        FireBall,
+        SoulEater,
         Blackhole,
         Drone,
         Spiral,
@@ -11,6 +11,8 @@ namespace Nytherion.Core.Enums
         LifestealBuff,
         StatBuff,
         Aura,
-        ShadowClone
+        ShadowClone,
+        Turret,
+        Laser
     }
 }

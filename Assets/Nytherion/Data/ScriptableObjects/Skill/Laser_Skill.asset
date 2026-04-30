@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b08909dcb6ae743b760c6f16fb117b, type: 3}
+  m_Name: Laser_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_laser
+  skillType: 11
+  skillName: Laser
+  description: 
+  skillLevel: 0
+  exp: 0
+  coolDown: 2
+  damage: 5
+  range: 3
+  icon: {fileID: 1557350834, guid: 2af3bd9a622f59848a16b41c4dd0dae3, type: 3}
+  skillPrefab: {fileID: 3114327380649433545, guid: e3d43be252ae19d4a801cf9b687877ec, type: 3}
+  fireDuration: 10
+  tickRate: 0.2
