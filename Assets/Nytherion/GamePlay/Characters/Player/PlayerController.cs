@@ -151,13 +151,17 @@ namespace Nytherion.GamePlay.Characters.Player
         }
         private void HandleSpriteFlip()
         {
-            Vector2 moveInput = inputManager.MoveInput;
-            if (moveInput.x > 0 && !IsFacingRight)
+            if (Camera.main == null || inputManager == null) return;
+
+            Vector2 mouseScreenPos = inputManager.MousePosition;
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
+
+            if (mouseWorldPos.x > transform.position.x && !IsFacingRight)
             {
                 IsFacingRight = true;
                 spriteRenderer.flipX = false;
             }
-            else if (moveInput.x < 0 && IsFacingRight)
+            else if (mouseWorldPos.x < transform.position.x && IsFacingRight)
             {
                 IsFacingRight = false;
                 spriteRenderer.flipX = true;

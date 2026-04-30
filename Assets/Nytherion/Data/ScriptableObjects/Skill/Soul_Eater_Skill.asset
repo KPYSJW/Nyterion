@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}
-  m_Name: FireBallData
+  m_Name: Soul_Eater_Skill
   m_EditorClassIdentifier: 
-  skillID: skill_fireball
+  skillID: skill_souleater
   skillType: 1
-  skillName: FireBall
+  skillName: SoulEater
   description: 
-  skillLEvel: 0
+  skillLevel: 0
   exp: 0
   coolDown: 1
-  damage: 1
+  damage: 10
   range: 20
   icon: {fileID: 21300000, guid: 783a2cec6c880b44a838fb8d6784ad88, type: 3}
   skillPrefab: {fileID: 8870546469580780684, guid: f7b5ab6c13d185b48b5618e5733e2014, type: 3}

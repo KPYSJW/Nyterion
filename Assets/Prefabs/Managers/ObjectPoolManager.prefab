@@ -55,7 +55,7 @@ MonoBehaviour:
   - tag: Hybrid
     prefab: {fileID: 6406644339438500767, guid: 3215275927a03af4a837360f213af70e, type: 3}
     size: 15
-  - tag: FireBall
+  - tag: SoulEater
     prefab: {fileID: 4893586122137001029, guid: 2f39ca2c520200b4bb325ed4c3c87f7c, type: 3}
     size: 5
   - tag: Arrow
@@ -81,4 +81,7 @@ MonoBehaviour:
     size: 15
   - tag: Blackhole
     prefab: {fileID: 8075100979062668080, guid: 5138c104c394a2e4c844eac042749dd2, type: 3}
+    size: 15
+  - tag: Laser
+    prefab: {fileID: 3340605813892160815, guid: 93af1da459a4c6246ba862a418847863, type: 3}
     size: 15

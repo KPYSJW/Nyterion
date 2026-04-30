@@ -48,6 +48,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a779483e13ae235418afd7388cf37d1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controlledCanvasGroup: {fileID: 0}
+  OnPanelOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPanelClosed:
+    m_PersistentCalls:
+      m_Calls: []
   slotPrefab: {fileID: 3772548083136990253, guid: f2932e269c5bc224c9f50bea431d85c2, type: 3}
   milestonesToDisplay:
   - {fileID: 11400000, guid: 355f2033a7927224882711025d4525d6, type: 2}
@@ -60,4 +67,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 983922e0a46685f4883faf5fa40a30fa, type: 2}
   - {fileID: 11400000, guid: 05eb717853d2da54baf40e26c990921d, type: 2}
   - {fileID: 11400000, guid: 575e129273143f542860e1cede9ae9b3, type: 2}
+  - {fileID: 11400000, guid: bb62a051b8a48e94ba07f41e3173e7cc, type: 2}
+  - {fileID: 11400000, guid: ce6e9544ec4d8f64db1af243a82ced1b, type: 2}
+  - {fileID: 11400000, guid: b79e5fbd75b1afc4d96059bc108096da, type: 2}
   unifiedTitle: Milestones
