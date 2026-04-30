@@ -3,9 +3,17 @@ using Nytherion.GamePlay.Combat;
 using UnityEngine;
 using Nytherion.Core.Enums;
 
+ public enum WeaponType
+        {
+            Ranged,
+            Melee
+        };
+
 namespace Nytherion.Data.ScriptableObjects.Weapons
 {
     [CreateAssetMenu(fileName = "NewWeaponData", menuName = "Data/Item/Weapon")]
+
+    
     public class WeaponData : EquipmentData
     {
         [Header("Weapon Settings")]
@@ -15,6 +23,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float cooldown;
         public GameObject projectilePrefab;
         public WeaponBase weaponPrefab;
+        public WeaponType weaponType;
+       
 
 #if UNITY_EDITOR
         protected override void OnValidate()

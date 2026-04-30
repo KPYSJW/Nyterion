@@ -25,9 +25,12 @@ MonoBehaviour:
   statModifiers:
   - stat: 0
     value: 0
+    valuePerLevel: 0
+    isPercentage: 0
   weaponName: 
   damage: 0
   range: 0
   cooldown: 0
   projectilePrefab: {fileID: 0}
   weaponPrefab: {fileID: 4068911510461581181, guid: 1aec131cb75b7004892f7b283980aeb1, type: 3}
+  weaponType: 1

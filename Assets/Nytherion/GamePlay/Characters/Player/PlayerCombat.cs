@@ -9,6 +9,7 @@ namespace Nytherion.GamePlay.Characters.Player
     public class PlayerCombat : MonoBehaviour
     {
         [SerializeField] private Transform weaponPoint;
+        [SerializeField] private Transform meleeWeaponPoint;
 
         [SerializeField] private float orbitRadius = 1.0f;
 
@@ -53,13 +54,25 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 Destroy(currentWeapon.gameObject);
             }
-
-            if (newWeapon != null && weaponPoint != null)
+            if(newWeapon.weaponData.weaponType==WeaponType.Melee)
             {
-                currentWeapon = Instantiate(newWeapon, weaponPoint);
+                    if (newWeapon != null && meleeWeaponPoint != null)
+                {
+                    currentWeapon = Instantiate(newWeapon, meleeWeaponPoint);
 
-                currentWeapon.transform.localPosition = Vector3.zero;
-                currentWeapon.transform.localRotation = Quaternion.identity;
+                    currentWeapon.transform.localPosition = Vector3.zero;
+                    currentWeapon.transform.localRotation = Quaternion.identity;
+                }
+            }
+            else
+            {
+                    if (newWeapon != null && weaponPoint != null)
+                {
+                    currentWeapon = Instantiate(newWeapon, weaponPoint);
+
+                    currentWeapon.transform.localPosition = Vector3.zero;
+                    currentWeapon.transform.localRotation = Quaternion.identity;
+                }
             }
         }
 
