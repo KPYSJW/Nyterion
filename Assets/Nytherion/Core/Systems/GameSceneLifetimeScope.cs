@@ -323,7 +323,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     private void RegisterNPCComponents(IContainerBuilder builder)
     {
         // ShopDealer들을 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<ShopDealer>()
+       /* builder.RegisterComponentInHierarchy<ShopDealer>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
@@ -332,13 +332,13 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // GameManager를 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<GameManager>()
-                .AsImplementedInterfaces()
-                .AsSelf();
-
         // EngravingAltar를 씬에서 찾아서 등록
         builder.RegisterComponentInHierarchy<EngravingAltar>()
+                .AsImplementedInterfaces()
+                .AsSelf();*/
+
+        // GameManager를 씬에서 찾아서 등록
+        builder.RegisterComponentInHierarchy<GameManager>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
