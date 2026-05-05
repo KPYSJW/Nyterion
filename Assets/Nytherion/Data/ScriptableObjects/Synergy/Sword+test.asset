@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sword+test
   m_EditorClassIdentifier: 
   weaponName: Sword
-  engravingName: TestEngraving
+  relicName: TestRelic
   overridesCursedPenalty: 0
   bonusAttackMultiplier: 1
   bonusCooldownMultiplier: 1

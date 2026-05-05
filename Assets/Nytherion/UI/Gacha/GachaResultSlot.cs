@@ -1,17 +1,17 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Nytherion.GamePlay.Engravings;
-using Nytherion.UI.EngravingBoard;
+using Nytherion.GamePlay.Relics;
+using Nytherion.UI.RelicBoard;
 using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.UI.Gacha
 {
     public class GachaResultSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        private EngravingBlock associatedBlock;
+        private RelicBlock associatedBlock;
         private ItemData associatedItem;
 
-        public void Setup(EngravingBlock block)
+        public void Setup(RelicBlock block)
         {
             this.associatedBlock = block;
             this.associatedItem = null;
@@ -23,9 +23,9 @@ namespace Nytherion.UI.Gacha
         }
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (associatedBlock != null && EngravingTooltip.Instance != null)
+            if (associatedBlock != null && RelicTooltip.Instance != null)
             {
-                EngravingTooltip.Instance.Show(associatedBlock);
+                RelicTooltip.Instance.Show(associatedBlock);
             }
             else if(associatedItem != null)
             {
@@ -35,9 +35,9 @@ namespace Nytherion.UI.Gacha
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (EngravingTooltip.Instance != null)
+            if (RelicTooltip.Instance != null)
             {
-                EngravingTooltip.Instance.Hide();
+                RelicTooltip.Instance.Hide();
             }
             else if (associatedItem != null)
             { 

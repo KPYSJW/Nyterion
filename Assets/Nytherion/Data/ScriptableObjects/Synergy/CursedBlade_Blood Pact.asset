@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CursedBlade_Blood Pact
   m_EditorClassIdentifier: 
   weaponName: CursedBlade
-  engravingName: Blood Pact
+  relicName: Blood Pact
   overridesCursedPenalty: 1
   bonusAttackMultiplier: 1.5
   bonusCooldownMultiplier: 1.5

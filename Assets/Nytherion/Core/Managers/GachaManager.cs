@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Gacha;
 using Nytherion.Data.ScriptableObjects.Weapons;
-using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Data;
@@ -15,7 +15,7 @@ namespace Nytherion.Core.Managers
     public enum GachaType
     {
         Weapon,
-        Engraving,
+        Relic,
         Skill
     }
     public class GachaManager : BaseManager, IInitializable, ISaveable
@@ -25,14 +25,14 @@ namespace Nytherion.Core.Managers
         [SerializeField] private GachaTableSO weaponGachaTable;
 
         [Header("각인 뽑기 테이블")]
-        [SerializeField] private GachaTableSO engravingGachaTable;
+        [SerializeField] private GachaTableSO relicGachaTable;
 
         [Header("스킬 뽑기 테이블")] 
         [SerializeField] private GachaTableSO skillGachaTable;
 
         private CurrencyDataManager currencyDataManager;
         private InventoryDataManager inventoryDataManager;
-        private EngravingManager engravingManager;
+        private RelicManager relicManager;
 
         private IProgressionManager progressionManager;
         private SkillDataManager skillDataManager;
@@ -41,19 +41,19 @@ namespace Nytherion.Core.Managers
         public void Construct(
             CurrencyDataManager currencyDataManager,
             InventoryDataManager inventoryDataManager,
-            EngravingManager engravingManager,
+            RelicManager relicManager,
             IProgressionManager progressionManager,
             SkillDataManager skillDataManager)
         {
             this.currencyDataManager = currencyDataManager;
             this.inventoryDataManager = inventoryDataManager;
-            this.engravingManager = engravingManager;
+            this.relicManager = relicManager;
             this.progressionManager = progressionManager;
             this.skillDataManager = skillDataManager;
         }
         public override void Initialize()
         {
-            if (weaponGachaTable == null || engravingGachaTable == null || skillGachaTable == null)
+            if (weaponGachaTable == null || relicGachaTable == null || skillGachaTable == null)
             {
                 Debug.LogError("[GachaManager] GachaTables이 완전히 할당되지 않았습니다.");
             }
@@ -78,7 +78,7 @@ namespace Nytherion.Core.Managers
             switch (type)
             {
                 case GachaType.Weapon: currentTable = weaponGachaTable; break;
-                case GachaType.Engraving: currentTable = engravingGachaTable; break;
+                case GachaType.Relic: currentTable = relicGachaTable; break;
                 case GachaType.Skill: currentTable = skillGachaTable; break;
             }
 
@@ -127,9 +127,9 @@ namespace Nytherion.Core.Managers
             {
                 inventoryDataManager.AddItem(weapon);
             }
-            else if (item is EngravingData engraving)
+            else if (item is RelicData relic)
             {
-                engravingManager.AddNewEngravingToStorage(engraving);
+                relicManager.AddNewRelicToStorage(relic);
             }
             else if (item is SkillData skill)
             {

@@ -6,10 +6,10 @@ using Nytherion.GamePlay;
 using Nytherion.GamePlay.Characters.NPC;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Dungeon;
-using Nytherion.GamePlay.Engravings;
+using Nytherion.GamePlay.Relics;
 using Nytherion.GamePlay.Systems;
 using Nytherion.UI.Controllers;
-using Nytherion.UI.EngravingBoard;
+using Nytherion.UI.RelicBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Presenters;
@@ -39,7 +39,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [Header("GameScene UI")]
     [SerializeField] private InventoryUI inventoryUIPrefab;
     [SerializeField] private ShopUI shopUIPrefab;
-    [SerializeField] private EngravingUIController engravingUIControllerPrefab;
+    [SerializeField] private RelicUIController relicUIControllerPrefab;
 
     [Header("UI Controllers")]
     [SerializeField] private InventoryUIController inventoryUIControllerPrefab;
@@ -55,7 +55,7 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private CurrencyDataManager currencyManagerPrefab;
 
     [Header("Debug Systems")]
-    [SerializeField] private EngravingSystemDebugger engravingSystemDebuggerPrefab;
+    [SerializeField] private RelicSystemDebugger relicSystemDebuggerPrefab;
 
     [Header("GameScene Gameplay")]
     [SerializeField] private EnemySpawner enemySpawnerPrefab;
@@ -176,7 +176,7 @@ public class GameSceneLifetimeScope : LifetimeScope
             RegisterDataManagerIfExists<SaveLoadManager>(builder);
             RegisterDataManagerIfExists<CurrencyDataManager>(builder);
             RegisterDataManagerIfExists<InventoryDataManager>(builder);
-            RegisterDataManagerIfExists<EngravingManager>(builder);
+            RegisterDataManagerIfExists<RelicManager>(builder);
             RegisterDataManagerIfExists<EquipmentDataManager>(builder);
             RegisterDataManagerIfExists<ShopManager>(builder);
             RegisterDataManagerIfExists<StageManager>(builder);
@@ -278,9 +278,9 @@ public class GameSceneLifetimeScope : LifetimeScope
                     .AsSelf();
         }
 
-        if (engravingUIControllerPrefab != null)
+        if (relicUIControllerPrefab != null)
         {
-            builder.RegisterComponentInNewPrefab(engravingUIControllerPrefab, Lifetime.Singleton)
+            builder.RegisterComponentInNewPrefab(relicUIControllerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()
                     .AsSelf();
         }
@@ -304,15 +304,15 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInHierarchy<EngravingGridUI>()
+        builder.RegisterComponentInHierarchy<RelicGridUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        builder.RegisterComponentInHierarchy<EngravingTooltip>()
+        builder.RegisterComponentInHierarchy<RelicTooltip>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        RegisterEngravingSystemDebugger(builder);
+        RegisterRelicSystemDebugger(builder);
 
         RegisterUIComponents(builder);
 
@@ -337,8 +337,8 @@ public class GameSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // EngravingAltar를 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<EngravingAltar>()
+        // RelicAltar를 씬에서 찾아서 등록
+        builder.RegisterComponentInHierarchy<RelicAltar>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
@@ -476,10 +476,10 @@ public class GameSceneLifetimeScope : LifetimeScope
         builder.Register<ISaveable>(resolver => resolver.Resolve<QuickSlotManager>(), Lifetime.Singleton);
     }
 
-    private void RegisterEngravingSystemDebugger(IContainerBuilder builder)
+    private void RegisterRelicSystemDebugger(IContainerBuilder builder)
     {
         // 씬에서 먼저 찾아보기
-        var existingDebugger = FindObjectOfType<EngravingSystemDebugger>();
+        var existingDebugger = FindObjectOfType<RelicSystemDebugger>();
         if (existingDebugger != null)
         {
             builder.RegisterComponent(existingDebugger)
@@ -487,15 +487,15 @@ public class GameSceneLifetimeScope : LifetimeScope
                     .AsSelf();
         }
         // 프리팹이 할당되어 있다면 생성
-        else if (engravingSystemDebuggerPrefab != null)
+        else if (relicSystemDebuggerPrefab != null)
         {
-            builder.RegisterComponentInNewPrefab(engravingSystemDebuggerPrefab, Lifetime.Singleton)
+            builder.RegisterComponentInNewPrefab(relicSystemDebuggerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()
                     .AsSelf();
         }
         else
         {
-            Debug.Log("[GameSceneLifetimeScope] EngravingSystemDebugger를 건너뜁니다 (씬에 없고 프리팹도 할당되지 않음).");
+            Debug.Log("[GameSceneLifetimeScope] RelicSystemDebugger를 건너뜁니다 (씬에 없고 프리팹도 할당되지 않음).");
         }
     }
 

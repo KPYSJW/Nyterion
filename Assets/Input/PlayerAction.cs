@@ -516,7 +516,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""EngravingUI"",
+            ""name"": ""RelicUI"",
             ""id"": ""dda232da-9121-4334-95c0-dd30162a45df"",
             ""actions"": [
                 {
@@ -602,10 +602,10 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         // GachaUI
         m_GachaUI = asset.FindActionMap("GachaUI", throwIfNotFound: true);
         m_GachaUI_Close = m_GachaUI.FindAction("Close", throwIfNotFound: true);
-        // EngravingUI
-        m_EngravingUI = asset.FindActionMap("EngravingUI", throwIfNotFound: true);
-        m_EngravingUI_Close = m_EngravingUI.FindAction("Close", throwIfNotFound: true);
-        m_EngravingUI_Rotate = m_EngravingUI.FindAction("Rotate", throwIfNotFound: true);
+        // RelicUI
+        m_RelicUI = asset.FindActionMap("RelicUI", throwIfNotFound: true);
+        m_RelicUI_Close = m_RelicUI.FindAction("Close", throwIfNotFound: true);
+        m_RelicUI_Rotate = m_RelicUI.FindAction("Rotate", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -613,7 +613,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerAction.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerAction.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_GachaUI.enabled, "This will cause a leak and performance issues, PlayerAction.GachaUI.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_EngravingUI.enabled, "This will cause a leak and performance issues, PlayerAction.EngravingUI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_RelicUI.enabled, "This will cause a leak and performance issues, PlayerAction.RelicUI.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1139,34 +1139,34 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     /// </summary>
     public GachaUIActions @GachaUI => new GachaUIActions(this);
 
-    // EngravingUI
-    private readonly InputActionMap m_EngravingUI;
-    private List<IEngravingUIActions> m_EngravingUIActionsCallbackInterfaces = new List<IEngravingUIActions>();
-    private readonly InputAction m_EngravingUI_Close;
-    private readonly InputAction m_EngravingUI_Rotate;
+    // RelicUI
+    private readonly InputActionMap m_RelicUI;
+    private List<IRelicUIActions> m_RelicUIActionsCallbackInterfaces = new List<IRelicUIActions>();
+    private readonly InputAction m_RelicUI_Close;
+    private readonly InputAction m_RelicUI_Rotate;
     /// <summary>
-    /// Provides access to input actions defined in input action map "EngravingUI".
+    /// Provides access to input actions defined in input action map "RelicUI".
     /// </summary>
-    public struct EngravingUIActions
+    public struct RelicUIActions
     {
         private @PlayerAction m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public EngravingUIActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
+        public RelicUIActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "EngravingUI/Close".
+        /// Provides access to the underlying input action "RelicUI/Close".
         /// </summary>
-        public InputAction @Close => m_Wrapper.m_EngravingUI_Close;
+        public InputAction @Close => m_Wrapper.m_RelicUI_Close;
         /// <summary>
-        /// Provides access to the underlying input action "EngravingUI/Rotate".
+        /// Provides access to the underlying input action "RelicUI/Rotate".
         /// </summary>
-        public InputAction @Rotate => m_Wrapper.m_EngravingUI_Rotate;
+        public InputAction @Rotate => m_Wrapper.m_RelicUI_Rotate;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_EngravingUI; }
+        public InputActionMap Get() { return m_Wrapper.m_RelicUI; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -1174,9 +1174,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="EngravingUIActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="RelicUIActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(EngravingUIActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(RelicUIActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -1184,11 +1184,11 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="EngravingUIActions" />
-        public void AddCallbacks(IEngravingUIActions instance)
+        /// <seealso cref="RelicUIActions" />
+        public void AddCallbacks(IRelicUIActions instance)
         {
-            if (instance == null || m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_RelicUIActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_RelicUIActionsCallbackInterfaces.Add(instance);
             @Close.started += instance.OnClose;
             @Close.performed += instance.OnClose;
             @Close.canceled += instance.OnClose;
@@ -1203,8 +1203,8 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="EngravingUIActions" />
-        private void UnregisterCallbacks(IEngravingUIActions instance)
+        /// <seealso cref="RelicUIActions" />
+        private void UnregisterCallbacks(IRelicUIActions instance)
         {
             @Close.started -= instance.OnClose;
             @Close.performed -= instance.OnClose;
@@ -1215,12 +1215,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="EngravingUIActions.UnregisterCallbacks(IEngravingUIActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="RelicUIActions.UnregisterCallbacks(IRelicUIActions)" />.
         /// </summary>
-        /// <seealso cref="EngravingUIActions.UnregisterCallbacks(IEngravingUIActions)" />
-        public void RemoveCallbacks(IEngravingUIActions instance)
+        /// <seealso cref="RelicUIActions.UnregisterCallbacks(IRelicUIActions)" />
+        public void RemoveCallbacks(IRelicUIActions instance)
         {
-            if (m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_RelicUIActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -1230,21 +1230,21 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="EngravingUIActions.AddCallbacks(IEngravingUIActions)" />
-        /// <seealso cref="EngravingUIActions.RemoveCallbacks(IEngravingUIActions)" />
-        /// <seealso cref="EngravingUIActions.UnregisterCallbacks(IEngravingUIActions)" />
-        public void SetCallbacks(IEngravingUIActions instance)
+        /// <seealso cref="RelicUIActions.AddCallbacks(IRelicUIActions)" />
+        /// <seealso cref="RelicUIActions.RemoveCallbacks(IRelicUIActions)" />
+        /// <seealso cref="RelicUIActions.UnregisterCallbacks(IRelicUIActions)" />
+        public void SetCallbacks(IRelicUIActions instance)
         {
-            foreach (var item in m_Wrapper.m_EngravingUIActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_RelicUIActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_EngravingUIActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_RelicUIActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="EngravingUIActions" /> instance referencing this action map.
+    /// Provides a new <see cref="RelicUIActions" /> instance referencing this action map.
     /// </summary>
-    public EngravingUIActions @EngravingUI => new EngravingUIActions(this);
+    public RelicUIActions @RelicUI => new RelicUIActions(this);
     private int m_PCSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1409,11 +1409,11 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         void OnClose(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "EngravingUI" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "RelicUI" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="EngravingUIActions.AddCallbacks(IEngravingUIActions)" />
-    /// <seealso cref="EngravingUIActions.RemoveCallbacks(IEngravingUIActions)" />
-    public interface IEngravingUIActions
+    /// <seealso cref="RelicUIActions.AddCallbacks(IRelicUIActions)" />
+    /// <seealso cref="RelicUIActions.RemoveCallbacks(IRelicUIActions)" />
+    public interface IRelicUIActions
     {
         /// <summary>
         /// Method invoked when associated input action "Close" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.

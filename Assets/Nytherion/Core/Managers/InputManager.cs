@@ -31,7 +31,7 @@ namespace Nytherion.Core.Managers
 
         public event Action onMap;
 
-        public event Action onEngravingRotate;
+        public event Action onRelicRotate;
 
      
         protected override void Awake()
@@ -94,7 +94,7 @@ namespace Nytherion.Core.Managers
 
             playerActions.Player.WorldMap.started += ctx => onMap?.Invoke();
 
-            playerActions.EngravingUI.Rotate.performed += _ => onEngravingRotate?.Invoke();
+            playerActions.RelicUI.Rotate.performed += _ => onRelicRotate?.Invoke();
         }
 
         public override void PopulateSaveData(SaveData saveData)

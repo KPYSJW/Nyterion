@@ -17,7 +17,7 @@ namespace Nytherion.Core.Managers
     {
         public PlayerHealth playerHealth { get; private set; }
         public PlayerCombat PlayerCombat { get; private set; }
-        public PlayerEngravingManager playerEngravingManager { get; private set; }
+        public PlayerRelicManager playerRelicManager { get; private set; }
 
         private EquipmentDataManager equipmentDataManager;
         private InputManager inputManager;
@@ -44,12 +44,12 @@ namespace Nytherion.Core.Managers
             
             playerHealth = GetComponent<PlayerHealth>();
             PlayerCombat = GetComponent<PlayerCombat>();
-            playerEngravingManager = GetComponent<PlayerEngravingManager>();
+            playerRelicManager = GetComponent<PlayerRelicManager>();
             playerController = GetComponent<PlayerController>();
 
-            if (playerEngravingManager != null)
+            if (playerRelicManager != null)
             {
-                playerEngravingManager.OnEngravingsChanged += RecalculateStats;
+                playerRelicManager.OnRelicsChanged += RecalculateStats;
             }
 
             if (basePlayerData == null)
@@ -104,7 +104,7 @@ namespace Nytherion.Core.Managers
         private void HandleEnemyDied(Nytherion.GamePlay.Characters.Enemy.EnemyBase enemy)
         {
             CurrentRunKillCount++;
-            OnPlayerStatsChanged?.Invoke(); // Notify to recalculate growth engravings if needed
+            OnPlayerStatsChanged?.Invoke(); // Notify to recalculate growth relics if needed
         }
 
         private void OnEnable()
@@ -121,9 +121,9 @@ namespace Nytherion.Core.Managers
             {
                 equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
             }
-            if (playerEngravingManager != null)
+            if (playerRelicManager != null)
             {
-                playerEngravingManager.OnEngravingsChanged -= RecalculateStats;
+                playerRelicManager.OnRelicsChanged -= RecalculateStats;
             }
             if (playerHealth != null)
             {

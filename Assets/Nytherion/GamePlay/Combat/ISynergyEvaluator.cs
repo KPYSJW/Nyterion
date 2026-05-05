@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using Nytherion.Data.ScriptableObjects.Weapons;
-using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.Data.ScriptableObjects.Synergy;
 
 namespace Nytherion.GamePlay.Combat
 {
 public interface ISynergyEvaluator
 {
-    WeaponEngravingSynergyData EvaluateSynergy(
+    WeaponRelicSynergyData EvaluateSynergy(
             WeaponData weapon,
-            List<EngravingData> engravings);
+            List<RelicData> relics);
 }
 }

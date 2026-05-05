@@ -17,7 +17,7 @@ namespace Nytherion.Core.Systems
         [SerializeField] private SaveLoadManager saveLoadManagerPrefab;
         [SerializeField] private CurrencyDataManager currencyDataManagerPrefab;
         [SerializeField] private InventoryDataManager inventoryDataManagerPrefab;
-        [SerializeField] private EngravingManager engravingManagerPrefab;
+        [SerializeField] private RelicManager relicManagerPrefab;
         [SerializeField] private EquipmentDataManager equipmentDataManagerPrefab;
         [SerializeField] private ShopManager shopManagerPrefab;
         [SerializeField] private StageManager stageManagerPrefab;
@@ -85,9 +85,9 @@ namespace Nytherion.Core.Systems
                     .As<IInventoryDataNotifier>();
             }
 
-            if (engravingManagerPrefab != null)
+            if (relicManagerPrefab != null)
             {
-                builder.RegisterComponentInNewPrefab(engravingManagerPrefab, Lifetime.Singleton)
+                builder.RegisterComponentInNewPrefab(relicManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
                     .AsSelf()

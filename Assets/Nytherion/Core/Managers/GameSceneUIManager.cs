@@ -1,4 +1,4 @@
-using Nytherion.UI.EngravingBoard;
+using Nytherion.UI.RelicBoard;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Presenters;
 using Nytherion.Core.Data;
@@ -13,7 +13,7 @@ namespace Nytherion.Core.Managers
         private GameSceneUIRefs gameSceneUIRefs;
         private InventoryPresenter inventoryPresenter;
         private InventoryUI inventoryUI;
-        private EngravingGridUI engravingGridUI;
+        private RelicGridUI relicGridUI;
         private MilestoneUIController milestoneUI;
         private SkillUIController skillUI;
 
@@ -21,14 +21,14 @@ namespace Nytherion.Core.Managers
         public void Construct(GameSceneUIRefs gameSceneUIRefs,
             InventoryPresenter inventoryPresenter,
             InventoryUI inventoryUI,
-            EngravingGridUI engravingGridUI,
+            RelicGridUI relicGridUI,
             MilestoneUIController milestoneUI,
             SkillUIController skillUI)
         {
             this.gameSceneUIRefs = gameSceneUIRefs;
             this.inventoryPresenter = inventoryPresenter;
             this.inventoryUI = inventoryUI;
-            this.engravingGridUI = engravingGridUI;
+            this.relicGridUI = relicGridUI;
             this.milestoneUI = milestoneUI;
             this.skillUI = skillUI;
         }
@@ -60,9 +60,9 @@ namespace Nytherion.Core.Managers
                 inventoryUI.Initialize();
             }
 
-            if (engravingGridUI != null)
+            if (relicGridUI != null)
             {
-                engravingGridUI.Initialize();
+                relicGridUI.Initialize();
             }
         }
     }

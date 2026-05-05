@@ -6,10 +6,10 @@ using Nytherion.GamePlay;
 using Nytherion.GamePlay.Characters.NPC;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Dungeon;
-using Nytherion.GamePlay.Engravings;
+using Nytherion.GamePlay.Relics;
 using Nytherion.GamePlay.Systems;
 using Nytherion.UI.Controllers;
-using Nytherion.UI.EngravingBoard;
+using Nytherion.UI.RelicBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Presenters;
@@ -36,9 +36,9 @@ public class VillageSceneLifetimeScope : LifetimeScope
     [Header("GameScene Only UI")]
     [SerializeField] private InventoryUI inventoryUIPrefab;
     [SerializeField] private ShopUI shopUIPrefab;
-    [SerializeField] private EngravingUIController engravingUIControllerPrefab;
+    [SerializeField] private RelicUIController relicUIControllerPrefab;
 
-    [Header("UI Controllers - µ¥ÀÌÅÍ¿Í UI ºÐ¸®")]
+    [Header("UI Controllers - ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ UI ï¿½Ð¸ï¿½")]
     [SerializeField] private InventoryUIController inventoryUIControllerPrefab;
     [SerializeField] private CurrencyUIController currencyUIControllerPrefab;
 
@@ -50,7 +50,7 @@ public class VillageSceneLifetimeScope : LifetimeScope
     [SerializeField] private CurrencyDataManager currencyManagerPrefab;
 
     [Header("Debug Systems")]
-    [SerializeField] private EngravingSystemDebugger engravingSystemDebuggerPrefab;
+    [SerializeField] private RelicSystemDebugger relicSystemDebuggerPrefab;
 
     [Header("GameScene Only Gameplay")]
    // [SerializeField] private EnemySpawner enemySpawnerPrefab;
@@ -59,7 +59,7 @@ public class VillageSceneLifetimeScope : LifetimeScope
     [SerializeField] private InventoryPresenter inventoryPresenterPrefab;
     [SerializeField] private GameSceneUIManager gameSceneUIManager;
 
-    // DataLifetimeScope ´ë±â¸¦ À§ÇÑ »óÅÂ º¯¼ö
+    // DataLifetimeScope ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     protected DataLifetimeScope dataLifetimeScope;
     protected bool isDataManagersReady = false;
     protected bool waitForDataManagers = true;
@@ -77,17 +77,17 @@ public class VillageSceneLifetimeScope : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        // ºÎ¸ð scopeÀÇ ÀÇÁ¸¼ºµéÀ» ÇöÀç scope¿¡¼­ »ç¿ëÇÒ ¼ö ÀÖµµ·Ï µî·Ï
+        // ï¿½Î¸ï¿½ scopeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ scopeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         RegisterParentScopeDependencies(builder);
 
         builder.RegisterComponentInHierarchy<VillagePortal>()
                .AsImplementedInterfaces()
                .AsSelf();
 
-        // GameSceneUIRefs¸¦ ÇÏÀÌ¶óÅ°¿¡¼­ ÀÚµ¿À¸·Î Ã£¾Æ¼­ µî·Ï (UI ÄÁÆ®·Ñ·¯µéÀÌ ÇÊ¿ä·Î ÇÔ)
+        // GameSceneUIRefsï¿½ï¿½ ï¿½ï¿½ï¿½Ì¶ï¿½Å°ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½ (UI ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ ï¿½ï¿½)
         RegisterUIReferences(builder);
 
-        // UI ÄÁÆ®·Ñ·¯µéÀ» ¸ÕÀú ¼³Ä¡ (NPCµéÀÌ ÀÇÁ¸¼ºÀ» ÁÖÀÔ¹Þ±â Àü¿¡)
+        // UI ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ (NPCï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô¹Þ±ï¿½ ï¿½ï¿½ï¿½ï¿½)
         InstallGameSceneOnlyUI(builder);
 
         InstallGameSceneOnlyManagers(builder);
@@ -99,7 +99,7 @@ public class VillageSceneLifetimeScope : LifetimeScope
     }
 
     /// <summary>
-    /// µ¥ÀÌÅÍ ¸Å´ÏÀúµéÀÌ ÁØºñµÉ ¶§±îÁö ´ë±â
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     private IEnumerator WaitForDataManagers()
     {
@@ -122,17 +122,17 @@ public class VillageSceneLifetimeScope : LifetimeScope
     }
 
     /// <summary>
-    /// µ¥ÀÌÅÍ ¸Å´ÏÀúµéÀÌ ÁØºñµÇ¾úÀ» ¶§ È£ÃâµÇ´Â ÄÝ¹é
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½Ç´ï¿½ ï¿½Ý¹ï¿½
     /// </summary>
     protected virtual void OnDataManagersReady()
     {
-        // GameScene UI ÃÊ±âÈ­
+        // GameScene UI ï¿½Ê±ï¿½È­
         InitializeGameSceneUI();
     }
 
     private void RegisterParentScopeDependencies(IContainerBuilder builder)
     {
-        // RootLifetimeScope¿¡¼­ ±âº» ¸Å´ÏÀúµé °¡Á®¿À±â
+        // RootLifetimeScopeï¿½ï¿½ï¿½ï¿½ ï¿½âº» ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (Parent != null)
         {
             // InputManager
@@ -160,26 +160,26 @@ public class VillageSceneLifetimeScope : LifetimeScope
             }
         }
 
-        // DataLifetimeScope¿¡¼­ µ¥ÀÌÅÍ ¸Å´ÏÀúµé °¡Á®¿À±â
+        // DataLifetimeScopeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         dataLifetimeScope = DataLifetimeScope.Instance;
         if (dataLifetimeScope != null && dataLifetimeScope.Container != null && dataLifetimeScope.IsDataManagersReady())
         {
-            // SaveLoadManager¸¦ GameSceneLifetimeScope¿¡¼­µµ Á¢±Ù °¡´ÉÇÏµµ·Ï µî·Ï
+            // SaveLoadManagerï¿½ï¿½ GameSceneLifetimeScopeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             RegisterDataManagerIfExists<SaveLoadManager>(builder);
             RegisterDataManagerIfExists<CurrencyDataManager>(builder);
             RegisterDataManagerIfExists<InventoryDataManager>(builder);
-            RegisterDataManagerIfExists<EngravingManager>(builder);
+            RegisterDataManagerIfExists<RelicManager>(builder);
             RegisterDataManagerIfExists<EquipmentDataManager>(builder);
             RegisterDataManagerIfExists<ShopManager>(builder);
             RegisterDataManagerIfExists<StageManager>(builder);
 
-            // RegisterDataManagerIfExists<PuzzleManager>(builder); // ³ªÁß¿¡ »ç¿ë ¿¹Á¤
-            // PlayerManager´Â GameScene¿¡¼­¸¸ ÇÊ¿äÇÏ¹Ç·Î ¿©±â¼­ Á÷Á¢ °ü¸®
+            // RegisterDataManagerIfExists<PuzzleManager>(builder); // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            // PlayerManagerï¿½ï¿½ GameSceneï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï¹Ç·ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
     }
 
     /// <summary>
-    /// µ¥ÀÌÅÍ ¸Å´ÏÀú°¡ Á¸ÀçÇÏ¸é ÇöÀç ÄÁÅ×ÀÌ³Ê¿¡ µî·Ï
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³Ê¿ï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     private void RegisterDataManagerIfExists<T>(IContainerBuilder builder) where T : class
     {
@@ -189,19 +189,19 @@ public class VillageSceneLifetimeScope : LifetimeScope
         }
         else
         {
-            Debug.LogWarning($"[GameSceneLifetimeScope] {typeof(T).Name}¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù");
+            Debug.LogWarning($"[GameSceneLifetimeScope] {typeof(T).Name}ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½");
         }
     }
 
 
     private void RegisterUIReferences(IContainerBuilder builder)
     {
-        // GameSceneUIRefs µî·Ï
+        // GameSceneUIRefs ï¿½ï¿½ï¿½
         builder.RegisterComponentInHierarchy<GameSceneUIRefs>()
                .AsSelf()
                .AsImplementedInterfaces();
 
-        // QuickSlotManager µî·Ï (GameSceneUIRefs ÀÌÈÄ¿¡ µî·ÏµÇ¾î¾ß ÇÔ)
+        // QuickSlotManager ï¿½ï¿½ï¿½ (GameSceneUIRefs ï¿½ï¿½ï¿½Ä¿ï¿½ ï¿½ï¿½ÏµÇ¾ï¿½ï¿½ ï¿½ï¿½)
         if (quickSlotManagerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(quickSlotManagerPrefab, Lifetime.Singleton)
@@ -211,15 +211,15 @@ public class VillageSceneLifetimeScope : LifetimeScope
         }
         else
         {
-            Debug.LogError("[GameSceneLifetimeScope] QuickSlotManager ÇÁ¸®ÆÕÀÌ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù!");
+            Debug.LogError("[GameSceneLifetimeScope] QuickSlotManager ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½!");
         }
     }
 
     private void InstallGameSceneOnlyManagers(IContainerBuilder builder)
     {
         builder.RegisterComponentInNewPrefab(gachaManagerPrefab, Lifetime.Singleton)
-                .AsImplementedInterfaces() // ÀÎÅÍÆäÀÌ½º¸¦ ÅëÇØ Á¢±Ù °¡´É
-                .AsSelf(); // ÀÚ±â ÀÚ½ÅÀ» ÅëÇØ Á¢±Ù °¡´É
+                .AsImplementedInterfaces() // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+                .AsSelf(); // ï¿½Ú±ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
         builder.RegisterComponentInNewPrefab(interactionManagerPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
@@ -240,12 +240,12 @@ public class VillageSceneLifetimeScope : LifetimeScope
 
     
 
-        // SaveLoadManager´Â DataLifetimeScope¿¡¼­ °ü¸®µÊ
+        // SaveLoadManagerï¿½ï¿½ DataLifetimeScopeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        // UI ÄÁÆ®·Ñ·¯µé µî·Ï (µ¥ÀÌÅÍ¿Í UI ºÐ¸®)
+        // UI ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ UI ï¿½Ð¸ï¿½)
         InstallUIControllers(builder);
 
-        // ISaveable ÀÎÅÍÆäÀÌ½ºµéÀ» Ãß°¡ µî·ÏÇÏ¿© SaveLoadManager°¡ Ã£À» ¼ö ÀÖµµ·Ï ÇÔ
+        // ISaveable ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ SaveLoadManagerï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½
         RegisterISaveableEntities(builder);
     }
 
@@ -271,9 +271,9 @@ public class VillageSceneLifetimeScope : LifetimeScope
                     .AsSelf();
         }
 
-        if (engravingUIControllerPrefab != null)
+        if (relicUIControllerPrefab != null)
         {
-            builder.RegisterComponentInNewPrefab(engravingUIControllerPrefab, Lifetime.Singleton)
+            builder.RegisterComponentInNewPrefab(relicUIControllerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()
                     .AsSelf();
         }
@@ -287,46 +287,46 @@ public class VillageSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // EngravingGridUI¸¦ IInitializable·Î µî·ÏÇÏ¿© ÀÚµ¿ ÃÊ±âÈ­
-        builder.RegisterComponentInHierarchy<EngravingGridUI>()
+        // RelicGridUIï¿½ï¿½ IInitializableï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Úµï¿½ ï¿½Ê±ï¿½È­
+        builder.RegisterComponentInHierarchy<RelicGridUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // EngravingTooltipÀ» ½Ì±ÛÅæÀ¸·Î µî·Ï
-        builder.RegisterComponentInHierarchy<Nytherion.UI.EngravingBoard.EngravingTooltip>()
+        // RelicTooltipï¿½ï¿½ ï¿½Ì±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+        builder.RegisterComponentInHierarchy<Nytherion.UI.RelicBoard.RelicTooltip>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // °¢ÀÎ ½Ã½ºÅÛ µð¹ö°Å µî·Ï
-        RegisterEngravingSystemDebugger(builder);
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+        RegisterRelicSystemDebugger(builder);
 
-        // ÀÎº¥Åä¸® UI ½½·ÔµéÀ» µî·Ï (ÀÇÁ¸¼º ÁÖÀÔÀ» À§ÇØ)
+        // ï¿½Îºï¿½ï¿½ä¸® UI ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         RegisterInventoryUIComponents(builder);
 
-        // UI ÄÁÆ®·Ñ·¯µéÀÌ µî·ÏµÈ ÈÄ¿¡ NPCµéÀ» µî·Ï (ÀÇÁ¸¼º ÁÖÀÔ ¼ø¼­ º¸Àå)
+        // UI ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ïµï¿½ ï¿½Ä¿ï¿½ NPCï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         RegisterNPCComponents(builder);
 
     }
 
     private void RegisterNPCComponents(IContainerBuilder builder)
     {
-        // ShopDealerµéÀ» ¾À¿¡¼­ Ã£¾Æ¼­ µî·Ï
+        // ShopDealerï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½
         builder.RegisterComponentInHierarchy<ShopDealer>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // GachaNPCµéÀ» ¾À¿¡¼­ Ã£¾Æ¼­ µî·Ï
+        // GachaNPCï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½
         builder.RegisterComponentInHierarchy<GachaNPC>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // GameManager¸¦ ¾À¿¡¼­ Ã£¾Æ¼­ µî·Ï
+        // GameManagerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½
         builder.RegisterComponentInHierarchy<GameManager>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // EngravingAltar¸¦ ¾À¿¡¼­ Ã£¾Æ¼­ µî·Ï
-        builder.RegisterComponentInHierarchy<Nytherion.GamePlay.Characters.NPC.EngravingAltar>()
+        // RelicAltarï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½
+        builder.RegisterComponentInHierarchy<Nytherion.GamePlay.Characters.NPC.RelicAltar>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 
@@ -335,7 +335,7 @@ public class VillageSceneLifetimeScope : LifetimeScope
 
     private void RegisterInventoryUIComponents(IContainerBuilder builder)
     {
-        // ÀÎº¥Åä¸® UI ½½·Ô ÄÄÆ÷³ÍÆ®µéÀ» ¾À¿¡¼­ Ã£¾Æ¼­ µî·Ï
+        // ï¿½Îºï¿½ï¿½ä¸® UI ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½
         builder.RegisterComponentInHierarchy<Nytherion.UI.Inventory.InventorySlotUI>()
                 .AsImplementedInterfaces()
                 .AsSelf();
@@ -348,12 +348,12 @@ public class VillageSceneLifetimeScope : LifetimeScope
                 .AsImplementedInterfaces()
                 .AsSelf();
 
-        // QuickSlotManager´Â ÀÌ¹Ì RegisterUIReferences¿¡¼­ µî·ÏµÊ
+        // QuickSlotManagerï¿½ï¿½ ï¿½Ì¹ï¿½ RegisterUIReferencesï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ïµï¿½
     }
 
     private void InstallGameSceneOnlySystems(IContainerBuilder builder)
     {
-        // Player ½Ã½ºÅÛ
+        // Player ï¿½Ã½ï¿½ï¿½ï¿½
         if (playerManagerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(playerManagerPrefab, Lifetime.Singleton)
@@ -368,7 +368,7 @@ public class VillageSceneLifetimeScope : LifetimeScope
 
   
 
-        // ¾À¿¡ ÀÖ´Â FollowCamera µî·Ï (Main Camera¿¡ ºÙ¾îÀÖ´Â °æ¿ì)
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ FollowCamera ï¿½ï¿½ï¿½ (Main Cameraï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½)
         var existingFollowCamera = FindObjectOfType<FollowCamera>();
         if (existingFollowCamera != null)
         {
@@ -380,7 +380,7 @@ public class VillageSceneLifetimeScope : LifetimeScope
         }
         else
         {
-            Debug.LogWarning("[GameSceneLifetimeScope] FollowCamera¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.LogWarning("[GameSceneLifetimeScope] FollowCameraï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½!");
         }
 
         if (settingsManagerPrefab != null)
@@ -422,7 +422,7 @@ public class VillageSceneLifetimeScope : LifetimeScope
 
     private void InstallUIControllers(IContainerBuilder builder)
     {
-        // InventoryUIController µî·Ï
+        // InventoryUIController ï¿½ï¿½ï¿½
         if (inventoryUIControllerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(inventoryUIControllerPrefab, Lifetime.Singleton)
@@ -430,7 +430,7 @@ public class VillageSceneLifetimeScope : LifetimeScope
                     .AsSelf();
         }
 
-        // CurrencyUIController µî·Ï
+        // CurrencyUIController ï¿½ï¿½ï¿½
         if (currencyUIControllerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(currencyUIControllerPrefab, Lifetime.Singleton)
@@ -441,39 +441,39 @@ public class VillageSceneLifetimeScope : LifetimeScope
 
     private void RegisterISaveableEntities(IContainerBuilder builder)
     {
-        // ¸ðµç ISaveable ¿£Æ¼Æ¼µéÀ» °³º°ÀûÀ¸·Î µî·ÏÇÏ¿© SaveLoadManager°¡ Ã£À» ¼ö ÀÖµµ·Ï ÇÔ
-        // µ¥ÀÌÅÍ ¸Å´ÏÀúµéÀº ÀÌ¹Ì .As<ISaveable>()·Î µî·ÏµÇ¾î ÀÖÀ½
+        // ï¿½ï¿½ï¿½ ISaveable ï¿½ï¿½Æ¼Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ SaveLoadManagerï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ .As<ISaveable>()ï¿½ï¿½ ï¿½ï¿½ÏµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        // QuickSlotManagerµµ ISaveable·Î Ãß°¡ µî·Ï
+        // QuickSlotManagerï¿½ï¿½ ISaveableï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½
         builder.Register<ISaveable>(resolver => resolver.Resolve<QuickSlotManager>(), Lifetime.Singleton);
     }
 
-    private void RegisterEngravingSystemDebugger(IContainerBuilder builder)
+    private void RegisterRelicSystemDebugger(IContainerBuilder builder)
     {
-        // ¾À¿¡¼­ ¸ÕÀú Ã£¾Æº¸±â
-        var existingDebugger = FindObjectOfType<EngravingSystemDebugger>();
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æºï¿½ï¿½ï¿½
+        var existingDebugger = FindObjectOfType<RelicSystemDebugger>();
         if (existingDebugger != null)
         {
             builder.RegisterComponent(existingDebugger)
                     .AsImplementedInterfaces()
                     .AsSelf();
         }
-        // ÇÁ¸®ÆÕÀÌ ÇÒ´çµÇ¾î ÀÖ´Ù¸é »ý¼º
-        else if (engravingSystemDebuggerPrefab != null)
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½Ç¾ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+        else if (relicSystemDebuggerPrefab != null)
         {
-            builder.RegisterComponentInNewPrefab(engravingSystemDebuggerPrefab, Lifetime.Singleton)
+            builder.RegisterComponentInNewPrefab(relicSystemDebuggerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()
                     .AsSelf();
         }
         else
         {
-            Debug.Log("[GameSceneLifetimeScope] EngravingSystemDebugger¸¦ °Ç³Ê¶Ý´Ï´Ù (¾À¿¡ ¾ø°í ÇÁ¸®ÆÕµµ ÇÒ´çµÇÁö ¾ÊÀ½).");
+            Debug.Log("[GameSceneLifetimeScope] RelicSystemDebuggerï¿½ï¿½ ï¿½Ç³Ê¶Ý´Ï´ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½).");
         }
     }
 
     private void InitializeGameSceneUI()
     {
-        // ¾ÆÅ°ÅØÃ³ °ËÁõ ÇïÆÛ µî·Ï (µð¹ö±× ºôµå¿¡¼­¸¸)
+        // ï¿½ï¿½Å°ï¿½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ï¿½ï¿½ï¿½ï¿½)
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         RegisterArchitectureValidationHelper();
 #endif
@@ -482,11 +482,11 @@ public class VillageSceneLifetimeScope : LifetimeScope
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     private void RegisterArchitectureValidationHelper()
     {
-        // ¾À¿¡¼­ ArchitectureValidationHelper Ã£±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ArchitectureValidationHelper Ã£ï¿½ï¿½
         var validationHelper = FindObjectOfType<ArchitectureValidationHelper>();
         if (validationHelper != null)
         {
-            // VContainer¿¡ µî·ÏÇÏ¿© ÀÇÁ¸¼º ÁÖÀÔÀÌ °¡´ÉÇÏµµ·Ï ÇÔ
+            // VContainerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½
             Container.Inject(validationHelper);
         }
     }

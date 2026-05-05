@@ -1,0 +1,145 @@
+using Nytherion.Data.ScriptableObjects.Relics;
+using Nytherion.Data.ScriptableObjects.Synergy;
+using Nytherion.GamePlay.Combat;
+using System.Collections.Generic;
+using UnityEngine;
+using Nytherion.Core.Managers;
+using System;
+using VContainer;
+
+namespace Nytherion.GamePlay.Characters.Player
+{
+    public class PlayerRelicManager : MonoBehaviour
+    {
+        [SerializeField] public List<RelicData> equippedRelics = new List<RelicData>();
+        [SerializeField] public List<WeaponRelicSynergyData> synergyTable;
+        public SynergyEvaluator synergyEvaluator;
+
+        private PlayerManager playerManager;
+        private RelicManager relicManager;
+        private EventManager eventManager;
+
+        public event Action OnRelicsChanged;
+
+        [Inject]
+        public void Construct(EventManager eventManager)
+        {
+            this.eventManager = eventManager;
+        }
+
+        private void Awake()
+        {
+            playerManager = GetComponent<PlayerManager>();
+        }
+
+        private void Start()
+        {
+            synergyEvaluator = new SynergyEvaluator(synergyTable, eventManager);
+
+            if (playerManager == null) playerManager = GetComponent<PlayerManager>();
+            if (relicManager == null) relicManager = FindObjectOfType<RelicManager>();
+
+            if (relicManager != null)
+            {
+                relicManager.OnRelicEquippedStateChanged -= HandleRelicStateFromGrid;
+                relicManager.OnRelicEquippedStateChanged += HandleRelicStateFromGrid;
+
+
+                SyncWithGrid();
+            }
+            else
+            {
+                Debug.LogError(" [디버그] RelicManager를 찾을 수 없어 이벤트 구독에 실패했습니다.");
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (relicManager != null)
+            {
+                relicManager.OnRelicEquippedStateChanged -= HandleRelicStateFromGrid;
+            }
+        }
+
+        /// <summary>
+        /// 게임 시작 및 로드 시, 그리드에 장착된 각인과 플레이어의 장착 상태를 일치시킨다.
+        /// </summary>
+        private void SyncWithGrid()
+        {
+            if (relicManager == null) return;
+
+            var placedBlocks = relicManager.GetPlacedBlocks();
+            foreach (var pair in placedBlocks)
+            {
+                var block = relicManager.GetBlockByID(pair.Key);
+                if (block != null && block.SourceData != null)
+                {
+                    if (!equippedRelics.Contains(block.SourceData))
+                    {
+                        AddRelic(block.SourceData);
+                    }
+                }
+            }
+        }
+
+        private void HandleRelicStateFromGrid(RelicData data, bool isEquipped)
+        {
+            Debug.Log($" [디버그] 각인 이벤트 수신 완료 - 대상: {data.relicName}, 장착여부: {isEquipped}");
+
+            if (isEquipped)
+            {
+                // 중복 체크 후 장착
+                if (!equippedRelics.Contains(data))
+                {
+                    AddRelic(data);
+                }
+            }
+            else
+            {
+                // 이름으로 찾아서 해제
+                int indexToRemove = equippedRelics.FindIndex(e => e.relicName == data.relicName);
+                if (indexToRemove != -1)
+                {
+                    RemoveRelic(indexToRemove);
+                }
+            }
+        }
+
+        public void AddRelic(RelicData relic)
+        {
+            if (equippedRelics.Count >= 3)
+            {
+                Debug.LogWarning("각인 가득참");
+                return;
+            }
+
+            equippedRelics.Add(relic);
+            Debug.Log($" [디버그] 각인 플레이어 스탯에 추가됨: {relic.relicName}");
+
+            var currentWeaponData = playerManager?.PlayerCombat?.currentWeapon?.weaponData;
+            if (currentWeaponData != null)
+            {
+                WeaponRelicSynergyData SynergyData = synergyEvaluator.EvaluateSynergy(currentWeaponData, GetCurrentRelics());
+                if (SynergyData != null)
+                {
+                    Debug.Log($" 시너지 발동: {SynergyData.weaponName} + {SynergyData.relicName}");
+                }
+            }
+
+            OnRelicsChanged?.Invoke();
+        }
+
+        public void RemoveRelic(int index)
+        {
+            if (index >= 0 && index < equippedRelics.Count)
+            {
+                Debug.Log($" [디버그] 각인 플레이어 스탯에서 제거됨: {equippedRelics[index].relicName}");
+                equippedRelics.RemoveAt(index);
+
+                OnRelicsChanged?.Invoke();
+            }
+        }
+
+        public List<RelicData> GetCurrentRelics() => equippedRelics;
+    }
+}

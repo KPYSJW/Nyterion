@@ -192,7 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 767942bc8e4d6b847bce31827fabdc48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equippedEngravings: []
+  equippedRelics: []
   synergyTable: []
 --- !u!114 &2180091910043822190
 MonoBehaviour:

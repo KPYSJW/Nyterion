@@ -46,6 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealth: {fileID: 0}
   playerCombat: {fileID: 0}
-  playerEngravingManager: {fileID: 0}
+  playerRelicManager: {fileID: 0}
   basePlayerData: {fileID: 11400000, guid: fb11d3df7e5a27d43bd00264c2d31f60, type: 2}
   currentPlayerData: {fileID: 0}

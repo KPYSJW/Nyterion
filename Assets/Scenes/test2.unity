@@ -559,7 +559,7 @@ GameObject:
   - component: {fileID: 27289535}
   - component: {fileID: 27289534}
   m_Layer: 5
-  m_Name: DrawEngravingOnceButton
+  m_Name: DrawRelicOnceButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6767,7 +6767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0e73f42d5bf6941a96ba49eb682e61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testEngravingToAdd: {fileID: 11400000, guid: 4d85d52af4aa2ea44963ecccab8cbca4, type: 2}
+  testRelicToAdd: {fileID: 11400000, guid: 4d85d52af4aa2ea44963ecccab8cbca4, type: 2}
 --- !u!114 &626354071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6813,8 +6813,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 626354070}
-        m_TargetAssemblyTypeName: EngravingTestHelper, Assembly-CSharp
-        m_MethodName: AddTestEngraving
+        m_TargetAssemblyTypeName: RelicTestHelper, Assembly-CSharp
+        m_MethodName: AddTestRelic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7056,16 +7056,16 @@ MonoBehaviour:
   saveLoadManagerPrefab: {fileID: 1223338905626847151, guid: d1dc8b91acef336499702f2dedaf5330, type: 3}
   currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
   inventoryManagerPrefab: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
-  engravingManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
+  relicManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
   equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
   shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
   inventoryUIPrefab: {fileID: 8904536052482001746, guid: 8d104a9ea69e2db4485f645416c87f95, type: 3}
   shopUIPrefab: {fileID: 8585506431199400136, guid: 64f76ba40056f374d8a12a54fa013056, type: 3}
-  engravingUIControllerPrefab: {fileID: 350585857376641199, guid: 12b4aadbf60eb3f418d9c62526b30c73, type: 3}
+  relicUIControllerPrefab: {fileID: 350585857376641199, guid: 12b4aadbf60eb3f418d9c62526b30c73, type: 3}
   playerManagerPrefab: {fileID: -2891475838477974602, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
   itemUsageManagerPrefab: {fileID: 7984585239593921606, guid: 4d55406ce8a55294dbc5ee1bb0d895af, type: 3}
-  engravingSystemDebuggerPrefab: {fileID: 3331487929666877543, guid: 394d30e042c9e0f4ea5cdbbf3e518f3d, type: 3}
+  relicSystemDebuggerPrefab: {fileID: 3331487929666877543, guid: 394d30e042c9e0f4ea5cdbbf3e518f3d, type: 3}
   enemySpawnerPrefab: {fileID: 3311273739936786302, guid: fab70de81019c214485cbcb07e8c6f08, type: 3}
   followCameraPrefab: {fileID: 1351506084518171216, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
   settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
@@ -8319,7 +8319,7 @@ GameObject:
   - component: {fileID: 793019682}
   - component: {fileID: 793019681}
   m_Layer: 5
-  m_Name: 'DrawEngravingTenTimesButton '
+  m_Name: 'DrawRelicTenTimesButton '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10261,7 +10261,7 @@ GameObject:
   - component: {fileID: 991894736}
   - component: {fileID: 991894735}
   m_Layer: 5
-  m_Name: EngravingCanvas
+  m_Name: RelicCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10353,7 +10353,7 @@ GameObject:
   - component: {fileID: 992420422}
   - component: {fileID: 992420421}
   m_Layer: 5
-  m_Name: EngravingTootipCanvas
+  m_Name: RelicTootipCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10795,7 +10795,7 @@ GameObject:
   - component: {fileID: 1065080944}
   - component: {fileID: 1065080945}
   m_Layer: 5
-  m_Name: 'EngravingGridUI '
+  m_Name: 'RelicGridUI '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12327,8 +12327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77cad31dc85192a4080a4e92cda55e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  engravingGridUI: {fileID: 1065080945}
-  engravingTooltip: {fileID: 1260613764}
+  relicGridUI: {fileID: 1065080945}
+  relicTooltip: {fileID: 1260613764}
   quickSlots:
   - {fileID: 895759551}
   - {fileID: 1553115240}
@@ -12345,8 +12345,8 @@ MonoBehaviour:
   tokenCountText: {fileID: 1894147620}
   drawWeaponOnceButton: {fileID: 1299111487}
   drawWeaponTenTimesButton: {fileID: 1731515538}
-  drawEngravingOnceButton: {fileID: 27289534}
-  drawEngravingTenTimesButton: {fileID: 793019681}
+  drawRelicOnceButton: {fileID: 27289534}
+  drawRelicTenTimesButton: {fileID: 793019681}
   gachaCloseButton: {fileID: 50274784}
   resultCloseButton: {fileID: 613681351}
   resultSlotParent: {fileID: 1961087919}
@@ -12372,7 +12372,7 @@ MonoBehaviour:
   menuControlButton: {fileID: 2139381680}
   menuControlsPanel: {fileID: 1584552901}
   menuMainMenuButton: {fileID: 385159297}
-  engravingCanvasGroup: {fileID: 991894735}
+  relicCanvasGroup: {fileID: 991894735}
   worldmapController: {fileID: 214497320}
   minimapTileGenerator: {fileID: 337788158}
   currencyDisplays:
@@ -12405,7 +12405,7 @@ GameObject:
   - component: {fileID: 1226302746}
   - component: {fileID: 1226302745}
   m_Layer: 5
-  m_Name: EngravingGachaPanel
+  m_Name: RelicGachaPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12925,7 +12925,7 @@ GameObject:
   - component: {fileID: 1260613764}
   - component: {fileID: 1260613763}
   m_Layer: 5
-  m_Name: EngravingTooltipPanel
+  m_Name: RelicTooltipPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14961,7 +14961,7 @@ GameObject:
   - component: {fileID: 1472751127}
   - component: {fileID: 1472751126}
   m_Layer: 5
-  m_Name: EngravingPanel
+  m_Name: RelicPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18627,7 +18627,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Engraving x 10
+  m_text: Relic x 10
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
   m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
@@ -19905,7 +19905,7 @@ GameObject:
   - component: {fileID: 1899701920}
   - component: {fileID: 1899701919}
   m_Layer: 8
-  m_Name: EngravingAltar
+  m_Name: RelicAltar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21785,7 +21785,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Engraving x 1
+  m_text: Relic x 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
   m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}

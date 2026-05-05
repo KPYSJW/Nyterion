@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nytherion.Data.ScriptableObjects.Weapons;
-using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Core.Managers;
 using VContainer;
@@ -11,30 +11,30 @@ namespace Nytherion.GamePlay.Combat
 {
     public class SynergyEvaluator :ISynergyEvaluator
     {
-        private readonly List<WeaponEngravingSynergyData> synergyTable;
+        private readonly List<WeaponRelicSynergyData> synergyTable;
         private EventManager eventManager;
 
-        public SynergyEvaluator(List<WeaponEngravingSynergyData> synergyDataList, EventManager eventManager)
+        public SynergyEvaluator(List<WeaponRelicSynergyData> synergyDataList, EventManager eventManager)
         {
             this.synergyTable = synergyDataList;
             this.eventManager = eventManager;
         }
 
-        public WeaponEngravingSynergyData EvaluateSynergy(
+        public WeaponRelicSynergyData EvaluateSynergy(
             WeaponData weapon,
-            List<EngravingData> engravings)
+            List<RelicData> relics)
         {
-            if(weapon == null || engravings == null) return null;
+            if(weapon == null || relics == null) return null;
 
-            foreach (var engraving in engravings)
+            foreach (var relic in relics)
             {
                 var match = synergyTable.FirstOrDefault(entry =>
                     entry.weaponName == weapon.weaponName &&
-                    entry.engravingName == engraving.engravingName);
+                    entry.relicName == relic.relicName);
 
                 if (match != null)
                 {
-                    eventManager?.TriggerSynergyEvaluated(weapon, engraving, match);
+                    eventManager?.TriggerSynergyEvaluated(weapon, relic, match);
                     return match;
                 }
             }
