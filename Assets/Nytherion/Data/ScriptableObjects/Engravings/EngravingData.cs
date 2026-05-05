@@ -3,13 +3,14 @@ using UnityEngine;
 using Nytherion.Core.Enums;
 using Nytherion.GamePlay.Engravings;
 using Nytherion.Core.Data;
+using Nytherion.Gameplay.Engravings.Modules;
 
 namespace Nytherion.Data.ScriptableObjects.Engravings
 {
     [System.Serializable]
     public class InfluenceZone
     {
-        [Tooltip("중심(0,0)으로부터의 상대 위치. x, y 모두 -1 ~ 1 사이의 값만 유효합니다.")]
+        [Tooltip("중심(0,0)으로부터의 상대 위치. x, y 모두 -1 ~ 1 사이의 값만 유효")]
         public Vector2Int offset;
         [Tooltip("해당 위치에 부여할 효과 종류 (레벨 업/다운)")]
         public InfluenceType type;
@@ -19,7 +20,8 @@ namespace Nytherion.Data.ScriptableObjects.Engravings
     public class EngravingData : ScriptableObject
     {
         [Header("기본정보")]
-        public string engravingName;
+        public string engravingName; // 영어 이름 (또는 ID 용도)
+        public string koreanName;    // 한국어 이름 (UI 출력용)
         [TextArea] public string description;
         public Sprite Image;
         public Rarity rarity;
@@ -28,14 +30,14 @@ namespace Nytherion.Data.ScriptableObjects.Engravings
         [Header("레벨 정보")]
         public int level = 1;
 
-        [Header("능력치 증가")]
-        public List<StatModifier> statModifiers = new List<StatModifier>();
+        [Header("복합 효과 및 조건 모듈")]
+        public List<EngravingEffectModule> effectModules = new List<EngravingEffectModule>();
 
         [Header("각인 모양 (1x1 고정)")]
         public List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };
 
         [Header("영향 범위 설정 (고정)")]
-        [Tooltip("이 각인이 주변에 영향을 미칠 영역의 목록입니다.")]
+        [Tooltip("이 각인이 주변에 영향을 미칠 영역의 목록")]
         public List<InfluenceZone> influenceZones = new List<InfluenceZone>();
 
         private void OnValidate()

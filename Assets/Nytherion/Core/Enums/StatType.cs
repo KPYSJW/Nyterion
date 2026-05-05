@@ -12,6 +12,8 @@ namespace Nytherion.Core.Enums
         DashSpeed,
         DashDuration,
         DashCooldown,
-        ExtraProjectiles
+        ExtraProjectiles,
+        Lifesteal,
+        ChargeTimeReduction
     }
 }

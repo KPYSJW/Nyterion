@@ -64,7 +64,7 @@ namespace Nytherion.UI.EngravingBoard
     {
         if (block == null) return;
 
-        nameText.text = block.SourceData.engravingName;
+        nameText.text = !string.IsNullOrEmpty(block.SourceData.koreanName) ? block.SourceData.koreanName : block.SourceData.engravingName;
         levelText.text = $"Lv. {block.SourceData.level}";
         descriptionText.text = block.SourceData.description;
 

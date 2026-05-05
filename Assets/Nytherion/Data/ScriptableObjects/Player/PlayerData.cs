@@ -18,5 +18,7 @@ namespace Nytherion.Data.ScriptableObjects.Player
         public float dashCooldown;
         public float defense;
         public float extraProjectiles;
+        public float lifesteal;
+        public float chargeTimeReduction;
     }
 }

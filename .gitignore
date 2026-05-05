@@ -26,6 +26,10 @@
 # Unity 추가 파일
 *.unitypackage
 
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+
 /BuildSettings/
 
 *.md

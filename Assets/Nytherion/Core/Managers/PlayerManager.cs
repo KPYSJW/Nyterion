@@ -21,6 +21,7 @@ namespace Nytherion.Core.Managers
 
         private EquipmentDataManager equipmentDataManager;
         private InputManager inputManager;
+        private EventManager eventManager;
         private PlayerController playerController;
 
         [Header("Player Data")]
@@ -28,11 +29,14 @@ namespace Nytherion.Core.Managers
         public PlayerData currentPlayerData;
         public event Action OnPlayerStatsChanged;
 
+        public int CurrentRunKillCount { get; private set; }
+
         [Inject]
-        public void Construct(EquipmentDataManager equipmentDataManager, InputManager inputManager)
+        public void Construct(EquipmentDataManager equipmentDataManager, InputManager inputManager, EventManager eventManager)
         {
             this.equipmentDataManager = equipmentDataManager;
             this.inputManager = inputManager;
+            this.eventManager = eventManager;
         }
 
         protected override void OnInitializeInternal()
@@ -58,6 +62,7 @@ namespace Nytherion.Core.Managers
             if (playerHealth != null)
             {
                 playerHealth.InitializeHealth(currentPlayerData.maxHealth);
+                PlayerHealth.OnPlayerDied += HandlePlayerDied;
             }
 
             if (playerController != null && inputManager != null)
@@ -69,7 +74,37 @@ namespace Nytherion.Core.Managers
                 PlayerCombat.Construct(inputManager);
             }
 
+            if (eventManager != null)
+            {
+                eventManager.OnEnemyDamagedByPlayer += HandleEnemyDamaged;
+                eventManager.OnEnemyDied += HandleEnemyDied;
+            }
+
+            CurrentRunKillCount = 0;
             RecalculateStats();
+        }
+
+        private void HandlePlayerDied()
+        {
+            CurrentRunKillCount = 0;
+        }
+
+        private void HandleEnemyDamaged(float damageAmount)
+        {
+            if (currentPlayerData != null && currentPlayerData.lifesteal > 0 && playerHealth != null)
+            {
+                float healAmount = damageAmount * currentPlayerData.lifesteal;
+                if (healAmount > 0)
+                {
+                    playerHealth.Heal(healAmount);
+                }
+            }
+        }
+
+        private void HandleEnemyDied(Nytherion.GamePlay.Characters.Enemy.EnemyBase enemy)
+        {
+            CurrentRunKillCount++;
+            OnPlayerStatsChanged?.Invoke(); // Notify to recalculate growth engravings if needed
         }
 
         private void OnEnable()
@@ -89,6 +124,15 @@ namespace Nytherion.Core.Managers
             if (playerEngravingManager != null)
             {
                 playerEngravingManager.OnEngravingsChanged -= RecalculateStats;
+            }
+            if (playerHealth != null)
+            {
+                PlayerHealth.OnPlayerDied -= HandlePlayerDied;
+            }
+            if (eventManager != null)
+            {
+                eventManager.OnEnemyDamagedByPlayer -= HandleEnemyDamaged;
+                eventManager.OnEnemyDied -= HandleEnemyDied;
             }
         }
 
@@ -140,17 +184,6 @@ namespace Nytherion.Core.Managers
                     if (equippedItem != null && equippedItem.statModifiers != null)
                     {
                         allModifiers.AddRange(equippedItem.statModifiers);
-                    }
-                }
-            }
-            if (playerEngravingManager != null)
-            {
-                var currentEngravings = playerEngravingManager.GetCurrentEngravings();
-                foreach (var engraving in currentEngravings)
-                {
-                    if (engraving != null && engraving.statModifiers != null)
-                    {
-                        allModifiers.AddRange(engraving.statModifiers);
                     }
                 }
             }
@@ -237,6 +270,14 @@ namespace Nytherion.Core.Managers
                 case StatType.ExtraProjectiles:
                     if (isPercentage) currentPlayerData.extraProjectiles *= (1 + value);
                     else currentPlayerData.extraProjectiles += value;
+                    break;
+                case StatType.ChargeTimeReduction:
+                    if (isPercentage) currentPlayerData.chargeTimeReduction *= (1 + value);
+                    else currentPlayerData.chargeTimeReduction += value;
+                    break;
+                case StatType.Lifesteal:
+                    if (isPercentage) currentPlayerData.lifesteal *= (1 + value);
+                    else currentPlayerData.lifesteal += value;
                     break;
                 default:
                     Debug.LogError($"[PlayerManager] Invalid stat type: {stat}");

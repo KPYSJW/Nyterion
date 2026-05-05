@@ -90,6 +90,14 @@ namespace Nytherion.GamePlay.Combat
                     }
                 }
             }
+
+            // 이벤트 발생 (쉐도우 클론 각인 등에서 사용)
+            var eventManager = GameObject.FindObjectOfType<EventManager>();
+            if (eventManager != null && weaponData != null)
+            {
+                float baseDamage = weaponData.damage * damageMultiplier;
+                eventManager.TriggerPlayerRangedAttack(direction, totalCount, baseDamage, firePoint, projectilePoolTag);
+            }
         }
     }
 }

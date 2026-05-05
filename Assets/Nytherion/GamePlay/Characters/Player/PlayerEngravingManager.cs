@@ -62,7 +62,7 @@ namespace Nytherion.GamePlay.Characters.Player
         }
 
         /// <summary>
-        /// 게임 시작 및 로드 시, 그리드에 장착된 각인과 플레이어의 장착 상태를 일치시킵니다.
+        /// 게임 시작 및 로드 시, 그리드에 장착된 각인과 플레이어의 장착 상태를 일치시킨다.
         /// </summary>
         private void SyncWithGrid()
         {

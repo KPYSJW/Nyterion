@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: BerserkerBlood
+  m_EditorClassIdentifier: 
+  engravingName: Berserker Blood
+  koreanName: "\uAD11\uC804\uC0AC\uC758 \uD608\uC561 "
+  description: "\uCCB4\uB825\uC774 50% \uC774\uD558 \uC77C \uB54C\n\uACF5\uACA9\uC18D\uB3C4
+    \uBC0F \uACF5\uACA9\uB825 \uC99D\uAC00"
+  Image: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
+  rarity: 2
+  isCursed: 0
+  level: 1
+  statModifiers: []
+  effectModules:
+  - condition:
+      rid: 6716071107867705350
+    effects:
+    - rid: 6716071107867705351
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071107867705350
+      type: {class: HealthThresholdCondition, ns: Nytherion.Gameplay.Engravings.Modules, asm: Assembly-CSharp}
+      data:
+        thresholdPercent: 50
+        thresholdType: 0
+    - rid: 6716071107867705351
+      type: {class: StatEngravingEffect, ns: Nytherion.Gameplay.Engravings.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 3
+          value: 6
+          valuePerLevel: 2
+          isPercentage: 0
+        - stat: 4
+          value: 3
+          valuePerLevel: 1
+          isPercentage: 0
+        - stat: 5
+          value: 0.1
+          valuePerLevel: 0.05
+          isPercentage: 1
+        - stat: 6
+          value: 0.1
+          valuePerLevel: 0.05
+          isPercentage: 1

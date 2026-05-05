@@ -18,10 +18,18 @@ namespace Nytherion.Core.Managers
         public event Action<StageData> OnBossClearedEvent;
         public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;
 
+        public event Action<Vector2, int, float, Transform, string> OnPlayerRangedAttack;
+
         public event Action<InteractableType> OnInteraction;
 
         public event Action OnOpenInventoryForShop;
         public event Action OnCloseInventoryForShop;
+
+        public void TriggerPlayerRangedAttack(Vector2 direction, int projectileCount, float baseDamage, Transform firePoint, string poolTag)
+        {
+            OnPlayerRangedAttack?.Invoke(direction, projectileCount, baseDamage, firePoint, poolTag);
+        }
+
         public void TriggerInteractionEvent(InteractableType type)
         {
             OnInteraction?.Invoke(type);

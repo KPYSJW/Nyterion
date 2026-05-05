@@ -10,15 +10,35 @@ namespace Nytherion.GamePlay.Combat.Weapon
         protected float currentChargeTime = 0f;
         protected bool isCharging = false;
 
+        protected float GetAdjustedMaxChargeTime()
+        {
+            if (playerManager == null || playerManager.currentPlayerData == null)
+            {
+                return maxChargeTime;
+            }
+
+            // ì°¨ì§• ì‹œê°„ ê°ì†Œìœ¨ ì ìš© (1.0 = 100% ê°ì†Œ = 0ì´ˆ)
+            float reduction = playerManager.currentPlayerData.chargeTimeReduction;
+            return Mathf.Max(0f, maxChargeTime * (1f - reduction));
+        }
+
         private void Update()
         {
-            // ¸¶¿ì½º¸¦ ´©¸£°í ÀÖ´Â µ¿¾È Â÷Â¡ ½Ã°£ Áõ°¡
             if (isCharging)
             {
-                currentChargeTime += Time.deltaTime;
-                currentChargeTime = Mathf.Clamp(currentChargeTime, 0f, maxChargeTime);
+                float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
 
-                float chargePercent = currentChargeTime / maxChargeTime;
+                if (adjustedMaxChargeTime <= 0f)
+                {
+                    // ì°¨ì§• ì‹œê°„ì´ 0ì´ë©´ ì¦‰ì‹œ ìµœëŒ€ ì°¨ì§•ìœ¼ë¡œ ë°œì‚¬
+                    FireImmediate();
+                    return;
+                }
+
+                currentChargeTime += Time.deltaTime;
+                currentChargeTime = Mathf.Clamp(currentChargeTime, 0f, adjustedMaxChargeTime);
+
+                float chargePercent = currentChargeTime / adjustedMaxChargeTime;
 
                 OnCharging(chargePercent);
             }
@@ -28,8 +48,26 @@ namespace Nytherion.GamePlay.Combat.Weapon
         {
             if (!CanAttack()) return;
 
+            float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
+            if (adjustedMaxChargeTime <= 0f)
+            {
+                FireImmediate();
+                return;
+            }
+
             isCharging = true;
             currentChargeTime = 0f;
+        }
+
+        private void FireImmediate()
+        {
+            isCharging = false;
+            currentChargeTime = 0f;
+
+            Vector2 releaseDirection = transform.right;
+            FireChargedAttack(releaseDirection, 1.0f); // 1.0 = í’€ì°¨ì§•
+
+            lastAttackTime = Time.time;
         }
 
         public override void AttackEnd()
@@ -38,7 +76,8 @@ namespace Nytherion.GamePlay.Combat.Weapon
 
             isCharging = false;
 
-            float finalChargePercent = currentChargeTime / maxChargeTime;
+            float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
+            float finalChargePercent = adjustedMaxChargeTime > 0f ? (currentChargeTime / adjustedMaxChargeTime) : 1.0f;
 
             Vector2 releaseDirection = transform.right;
 

@@ -21,6 +21,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public WeaponBase currentWeapon;
 
+        public event System.Action<WeaponBase> OnWeaponEquipped;
         public event System.Action<Vector2, Vector3> OnPlayerAttack;
         public event System.Action OnPlayerAttackEnd;
 
@@ -74,6 +75,8 @@ namespace Nytherion.GamePlay.Characters.Player
                     currentWeapon.transform.localRotation = Quaternion.identity;
                 }
             }
+            
+            OnWeaponEquipped?.Invoke(currentWeapon);
         }
 
         private void Update()

@@ -6,6 +6,7 @@ namespace Nytherion.GamePlay.Characters.Player
     public class PlayerHealth : MonoBehaviour
     {
         public static event Action<float, float> OnHealthChanged;
+        public static event Action OnPlayerDied;
 
         public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
@@ -42,6 +43,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private void Die()
         {
             Debug.Log("플레이어 사망");
+            OnPlayerDied?.Invoke();
         }
     }
 }
