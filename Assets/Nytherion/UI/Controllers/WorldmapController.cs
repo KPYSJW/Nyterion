@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using Nytherion.GamePlay.Dungeon;
 using VContainer;
 using Nytherion.Data.ScriptableObjects.Dungeon;
+using TMPro;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.UI.Map
 {
@@ -19,6 +21,7 @@ namespace Nytherion.UI.Map
         [SerializeField] private GameObject roomIconPrefab; // 방을 나타내는 아이콘 프리팹
         [SerializeField] private RectTransform playerIcon; // 플레이어 위치를 나타내는 아이콘
         [SerializeField] private Image linePrefab; // 방과 방을 연결하는 선 프리팹
+        [SerializeField] private TextMeshProUGUI StageNumber;
 
         [Header("맵 설정")]
         [SerializeField] private float roomIconSize = 20f; // 방 아이콘의 크기
@@ -31,11 +34,13 @@ namespace Nytherion.UI.Map
 
         // --- 의존성 주입 ---
         private DungeonManager dungeonManager;
+        private StageManager stageManager;
 
         [Inject]
-        public void Construct(DungeonManager dungeonManager )
+        public void Construct(DungeonManager dungeonManager,StageManager stageManager )
         {
             this.dungeonManager = dungeonManager;
+            this.stageManager=stageManager;
             if (dungeonManager == null)
             {
                 Debug.LogWarning("[WorldmapController] DungeonManager가 주입되지 않았습니다. 던전 관련 기능이 작동하지 않습니다.");
@@ -117,6 +122,7 @@ namespace Nytherion.UI.Map
 
             // 생성된 맵이 화면에 잘 보이도록 스케일과 위치를 조절
             FitMapToView();
+            StageNumberChange();
         }
 
         /// <summary>
@@ -247,6 +253,11 @@ namespace Nytherion.UI.Map
                 Destroy(child.gameObject);
             }
             roomIconMap.Clear();
+        }
+
+        private void StageNumberChange()
+        {
+            StageNumber.text=stageManager.CurrentStage.stageName;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using VContainer.Unity;
 
 namespace Nytherion.GamePlay.Dungeon
 {
@@ -22,6 +23,7 @@ namespace Nytherion.GamePlay.Dungeon
         [Header("오브젝트 부모")]
         [Tooltip("생성된 장애물 오브젝트들을 담을 부모 Transform")]
         [SerializeField] private Transform obstacleHolder;
+        [SerializeField] private Transform specialRoomObjectHolder;
 
         [Header("타일 에셋")]
         [SerializeField] private TileBase floorTile;
@@ -78,6 +80,44 @@ namespace Nytherion.GamePlay.Dungeon
             }
         }
 
+        public void InstantiateSpecialRoomObjects(
+            List<RoomFirstDungeonGenerator.Room> specialRooms,
+            DungeonData dungeonData)
+        {
+            //bool hasDedicatedHolder = specialRoomObjectHolder != null;
+           // Transform holder = hasDedicatedHolder ? specialRoomObjectHolder : obstacleHolder;
+            if (/*holder == null ||*/ specialRooms == null || dungeonData == null) return;
+
+            /*if (hasDedicatedHolder)
+            {
+                ClearChildren(holder);
+            }*/
+
+            foreach (RoomFirstDungeonGenerator.Room room in specialRooms)
+            {
+                GameObject roomPrefab = GetRoomPrefab(room.type, dungeonData);
+                if (roomPrefab == null) continue;
+
+                Transform objectsRoot = roomPrefab.transform.Find("Objects");
+                if (objectsRoot == null) continue;
+
+                foreach (Transform child in objectsRoot)
+                {
+                    if (ShouldSkipRoomObject(child)) continue;
+
+                    Vector3 localPosition = roomPrefab.transform.InverseTransformPoint(child.position);
+                    Vector3 worldPosition = (Vector3)room.center + localPosition;
+                   GameObject instance = Instantiate(child.gameObject, worldPosition, child.rotation);
+
+                    var scope = VContainer.Unity.LifetimeScope.Find<GameSceneLifetimeScope>();
+                    if (scope != null)
+                    {
+                        scope.Container.InjectGameObject(instance);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// 일반 바닥 타일을 그립니다.
         /// </summary>
@@ -116,7 +156,15 @@ namespace Nytherion.GamePlay.Dungeon
                 // 보스 방이고, 프리팹이 지정되어 있다면 프리팹을 그립니다.
                 if (room.type == RoomFirstDungeonGenerator.RoomType.Boss && dungeonData.bossRoomPrefab != null)
                 {
-                    PaintPrefab(room.center, dungeonData.bossRoomPrefab.GetComponent<Tilemap>());
+                    PaintPrefab(room.center, dungeonData.bossRoomPrefab.GetComponentInChildren<Tilemap>());
+                }
+                else if (room.type == RoomFirstDungeonGenerator.RoomType.Shop && dungeonData.ShopRoomPrefab != null)
+                {
+                    PaintPrefab(room.center, dungeonData.ShopRoomPrefab.GetComponentInChildren<Tilemap>());
+                }
+                else if (room.type == RoomFirstDungeonGenerator.RoomType.Start && dungeonData.StartRoomPrefab != null)
+                {
+                    PaintPrefab(room.center, dungeonData.StartRoomPrefab.GetComponentInChildren<Tilemap>());
                 }
                 else // 그 외의 특수 방
                 {
@@ -141,18 +189,12 @@ namespace Nytherion.GamePlay.Dungeon
             // 장애물 홀더의 자식 오브젝트들도 모두 삭제합니다.
             if (obstacleHolder != null)
             {
-                for (int i = obstacleHolder.childCount - 1; i >= 0; i--)
-                {
-                    Transform child = obstacleHolder.GetChild(i);
-                    if (Application.isPlaying)
-                    {
-                        Destroy(child.gameObject);
-                    }
-                    else
-                    {
-                        DestroyImmediate(child.gameObject);
-                    }
-                }
+                ClearChildren(obstacleHolder);
+            }
+
+            if (specialRoomObjectHolder != null && specialRoomObjectHolder != obstacleHolder)
+            {
+                ClearChildren(specialRoomObjectHolder);
             }
         }
 
@@ -206,6 +248,46 @@ namespace Nytherion.GamePlay.Dungeon
                     // 프리팹의 로컬 타일 위치를 월드 위치로 변환하여 그립니다.
                     Vector3Int worldPos = Vector3Int.RoundToInt(roomCenter) + tilePos;
                     floorTilemap.SetTile(worldPos, tile);
+                }
+            }
+        }
+
+        private GameObject GetRoomPrefab(RoomFirstDungeonGenerator.RoomType type, DungeonData dungeonData)
+        {
+            switch (type)
+            {
+                case RoomFirstDungeonGenerator.RoomType.Start:
+                    return dungeonData.StartRoomPrefab;
+                case RoomFirstDungeonGenerator.RoomType.Shop:
+                    return dungeonData.ShopRoomPrefab;
+                case RoomFirstDungeonGenerator.RoomType.Item:
+                    return dungeonData.ItemRoomPrefab;
+                case RoomFirstDungeonGenerator.RoomType.Boss:
+                    return dungeonData.bossRoomPrefab;
+                default:
+                    return null;
+            }
+        }
+
+        private bool ShouldSkipRoomObject(Transform target)
+        {
+            return target.GetComponent<Tilemap>() != null
+                || target.GetComponent<Grid>() != null
+                || target.GetComponent<BossSpawnPoint>() != null;
+        }
+
+        private void ClearChildren(Transform holder)
+        {
+            for (int i = holder.childCount - 1; i >= 0; i--)
+            {
+                Transform child = holder.GetChild(i);
+                if (Application.isPlaying)
+                {
+                    Destroy(child.gameObject);
+                }
+                else
+                {
+                    DestroyImmediate(child.gameObject);
                 }
             }
         }

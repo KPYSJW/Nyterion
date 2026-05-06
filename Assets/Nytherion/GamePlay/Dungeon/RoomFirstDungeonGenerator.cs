@@ -241,6 +241,7 @@ namespace Nytherion.GamePlay.Dungeon
             tilemapVisualizer.PaintWallsWithRuleTile(allWallPositions);
 
             tilemapVisualizer.InstantiateObstacles(obstaclesToPlace);
+            tilemapVisualizer.InstantiateSpecialRoomObjects(specialRooms, dungeonData);
 
             if (_worldmapController != null && _minimapGenerator != null)
             {
@@ -919,6 +920,34 @@ namespace Nytherion.GamePlay.Dungeon
                         Debug.LogWarning($"'{dungeonData.bossRoomPrefab.name}' 프리팹에 BossSpawnPoint 컴포넌트가 없어 방의 중심으로 스폰 위치를 설정합니다.");
                     }
                 }
+                else if (room.type == RoomType.Shop && dungeonData.ShopRoomPrefab != null)
+                {
+                    Tilemap prefabTilemap = dungeonData.ShopRoomPrefab.GetComponentInChildren<Tilemap>();
+                    if (prefabTilemap != null)
+                    {
+                        roomFloor = CreateFloorFromPrefab(room, prefabTilemap);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"'{dungeonData.bossRoomPrefab.name}' 프리팹에 Tilemap 컴포넌트가 없어 기본 사각형으로 바닥을 생성합니다.");
+                        roomFloor = CreateRectangularFloor(room.Bounds, offset);
+                    }
+                    //추후 오브젝트 추가
+                }
+                else if (room.type == RoomType.Start && dungeonData.StartRoomPrefab != null)
+                {
+                    Tilemap prefabTilemap = dungeonData.StartRoomPrefab.GetComponentInChildren<Tilemap>();
+                    if (prefabTilemap != null)
+                    {
+                        roomFloor = CreateFloorFromPrefab(room, prefabTilemap);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"'{dungeonData.bossRoomPrefab.name}' 프리팹에 Tilemap 컴포넌트가 없어 기본 사각형으로 바닥을 생성합니다.");
+                        roomFloor = CreateRectangularFloor(room.Bounds, offset);
+                    }
+                    //추후 오브젝트 추가
+                }
                 else
                 {
                     roomFloor = CreateCompoundRoom(room, offset);
@@ -1009,6 +1038,17 @@ namespace Nytherion.GamePlay.Dungeon
             return edgeTiles;
         }
 
+       /* private GameObject GetRoomPrefab(RoomType type)
+        {
+            return type switch
+            {
+                RoomType.Start => dungeonData.StartRoomPrefab,
+                RoomType.Shop => dungeonData.ShopRoomPrefab,
+                RoomType.Item => dungeonData.ItemRoomPrefab,
+                RoomType.Boss => dungeonData.bossRoomPrefab,
+                RoomType.Normal=>null,
+            };
+        }*/
         private HashSet<Vector2Int> CreateRectangularFloor(BoundsInt roomBounds, int offset)
         {
             HashSet<Vector2Int> floor = new HashSet<Vector2Int>();
