@@ -4,9 +4,9 @@ using Nytherion.Core.Managers;
 using Nytherion.UI.Gacha;
 using UnityEngine.UI;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.Data.ScriptableObjects.Skill;
-using Nytherion.GamePlay.Engravings;
+using Nytherion.GamePlay.Relics;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Enums;
 using VContainer;
@@ -23,17 +23,17 @@ namespace Nytherion.UI.Controllers
         [SerializeField] private GameObject resultPanel;
         //[SerializeField] private Button drawWeaponOnceButton;
         //[SerializeField] private Button drawWeaponTenTimesButton;
-        //[SerializeField] private Button drawEngravingOnceButton;
-        //[SerializeField] private Button drawEngravingTenTimesButton;
+        //[SerializeField] private Button drawRelicOnceButton;
+        //[SerializeField] private Button drawRelicTenTimesButton;
 
         [Header("Gacha Sub Panels")]
         [SerializeField] private GameObject weaponSubPanel;
-        [SerializeField] private GameObject engravingSubPanel;
+        [SerializeField] private GameObject relicSubPanel;
         [SerializeField] private GameObject skillSubPanel;
 
         [Header("Tab Buttons")]
         [SerializeField] private Button weaponTabButton;
-        [SerializeField] private Button engravingTabButton;
+        [SerializeField] private Button relicTabButton;
         [SerializeField] private Button skillTabButton;
 
         [Header("Action Buttons")]
@@ -71,7 +71,7 @@ namespace Nytherion.UI.Controllers
             this.resultPanel = gameSceneuiRefs.GachaResultPanel;
             this.mainPanel = gameSceneuiRefs.GachaMainPanel;
             this.weaponSubPanel = gameSceneuiRefs.WeaponSubPanel;
-            this.engravingSubPanel = gameSceneuiRefs.EngravingSubPanel;
+            this.relicSubPanel = gameSceneuiRefs.RelicSubPanel;
             this.skillSubPanel = gameSceneuiRefs.SkillSubPanel;
 
             this.resultCloseButton = gameSceneuiRefs.ResultCloseButton;
@@ -79,7 +79,7 @@ namespace Nytherion.UI.Controllers
             this.drawTenBtton = gameSceneuiRefs.DrawTenButton;
             this.closeButton = gameSceneuiRefs.GachaCloseButton;
             this.weaponTabButton = gameSceneuiRefs.WeaponTabButton;
-            this.engravingTabButton = gameSceneuiRefs.EngravingTabButton;
+            this.relicTabButton = gameSceneuiRefs.RelicTabButton;
             this.skillTabButton = gameSceneuiRefs.SkillTabButton;
 
             this.resultSlotParent = gameSceneuiRefs.ResultSlotParent;
@@ -95,7 +95,7 @@ namespace Nytherion.UI.Controllers
         private void Start()
         {
             if (weaponTabButton != null) weaponTabButton.onClick.AddListener(() => SwitchTab(GachaType.Weapon));
-            if (engravingTabButton != null) engravingTabButton.onClick.AddListener(() => SwitchTab(GachaType.Engraving));
+            if (relicTabButton != null) relicTabButton.onClick.AddListener(() => SwitchTab(GachaType.Relic));
             if (skillTabButton != null) skillTabButton.onClick.AddListener(() => SwitchTab(GachaType.Skill));
 
             if (drawOnceBtton != null)
@@ -122,11 +122,11 @@ namespace Nytherion.UI.Controllers
             currentSelectedType = type;
 
             if (weaponSubPanel != null) weaponSubPanel.SetActive(type == GachaType.Weapon);
-            if (engravingSubPanel != null) engravingSubPanel.SetActive(type == GachaType.Engraving);
+            if (relicSubPanel != null) relicSubPanel.SetActive(type == GachaType.Relic);
             if (skillSubPanel != null) skillSubPanel.SetActive(type == GachaType.Skill);
 
             SetButtonAlpha(weaponTabButton, type == GachaType.Weapon ? 1f : 0.5f);
-            SetButtonAlpha(engravingTabButton, type == GachaType.Engraving ? 1f : 0.5f);
+            SetButtonAlpha(relicTabButton, type == GachaType.Relic ? 1f : 0.5f);
             SetButtonAlpha(skillTabButton, type == GachaType.Skill ? 1f : 0.5f);
         }
         private void SetButtonAlpha(Button btn, float alpha)
@@ -227,13 +227,13 @@ namespace Nytherion.UI.Controllers
                     itemIcon.sprite = itemData.icon;
                     if (resultSlot != null) resultSlot.Setup(itemData);
                 }
-                else if (item is EngravingData engravingData)
+                else if (item is RelicData relicData)
                 {
-                    itemIcon.sprite = engravingData.Image;
+                    itemIcon.sprite = relicData.Image;
                     if (resultSlot != null)
                     {
-                        var tempEngravingBlock = new EngravingBlock(engravingData);
-                        resultSlot.Setup(tempEngravingBlock);
+                        var tempRelicBlock = new RelicBlock(relicData);
+                        resultSlot.Setup(tempRelicBlock);
                     }
                 }
                 else if (item is SkillData skillData)

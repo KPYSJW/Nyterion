@@ -1,8 +1,16 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
+using System.Collections;
 
 namespace Nytherion.GamePlay.Combat
 {
+    public enum ExtraProjectileMode
+    {
+        Spread,
+        Burst,
+        Parallel
+    }
+
     public abstract class RangedWeapon : WeaponBase
     {
         [Header("Ranged Settings")]
@@ -10,17 +18,28 @@ namespace Nytherion.GamePlay.Combat
 
         public string projectilePoolTag = "PlayerProjectile";
 
-        private const float DefaultProjectileSpeed = 8f;
+        [Header("Extra Projectile Settings")]
+        [Tooltip("추가 투사체 발사 방식")]
+        public ExtraProjectileMode extraProjectileMode = ExtraProjectileMode.Spread;
+        
+        [Tooltip("Burst 모드일 때 투사체 간 발사 간격")]
+        public float burstInterval = 0.05f;
+        
+        [Tooltip("Parallel 모드일 때 투사체 간 간격")]
+        public float parallelSpacing = 0.5f;
 
-        public GameObject Projectile(Vector2 direction)
+        [Tooltip("투사체의 날아가는 속도")]
+        public float projectileSpeed = 8f;
+
+        public GameObject Projectile(Vector2 direction, Vector3 spawnOffset = default)
         {
-            Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f);
+            Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f) + spawnOffset;
             GameObject projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, spawnPos, Quaternion.identity);
 
             if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
             {
                 Vector2 normalizedDir = direction.normalized;
-                rb.velocity = normalizedDir * DefaultProjectileSpeed;
+                rb.velocity = normalizedDir * projectileSpeed;
 
                 float angle = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
                 projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
@@ -65,30 +84,74 @@ namespace Nytherion.GamePlay.Combat
             }
             else
             {
-                float baseAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                
-                if (totalCount == 2)
+                if (extraProjectileMode == ExtraProjectileMode.Spread)
                 {
-                    float startAngle = baseAngle - (spreadAngle / 2f);
-                    for (int i = 0; i < 2; i++)
+                    float baseAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    
+                    if (totalCount == 2)
                     {
-                        float currentAngle = startAngle + (spreadAngle * i);
-                        Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
-                        Projectile(spreadDirection);
+                        float startAngle = baseAngle - (spreadAngle / 2f);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            float currentAngle = startAngle + (spreadAngle * i);
+                            Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
+                            Projectile(spreadDirection);
+                        }
                     }
-                }
-                else
-                {
-                    float startAngle = baseAngle - (spreadAngle / 2f);
-                    float angleStep = spreadAngle / (totalCount - 1);
+                    else
+                    {
+                        float startAngle = baseAngle - (spreadAngle / 2f);
+                        float angleStep = spreadAngle / (totalCount - 1);
 
-                    for (int i = 0; i < totalCount; i++)
-                    {
-                        float currentAngle = startAngle + (angleStep * i);
-                        Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
-                        Projectile(spreadDirection);
+                        for (int i = 0; i < totalCount; i++)
+                        {
+                            float currentAngle = startAngle + (angleStep * i);
+                            Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
+                            Projectile(spreadDirection);
+                        }
                     }
                 }
+                else if (extraProjectileMode == ExtraProjectileMode.Burst)
+                {
+                    StartCoroutine(FireBurstRoutine(direction, totalCount));
+                }
+                else if (extraProjectileMode == ExtraProjectileMode.Parallel)
+                {
+                    FireParallel(direction, totalCount);
+                }
+            }
+
+            // 이벤트 발생 (쉐도우 클론 각인 등에서 사용)
+            var eventManager = GameObject.FindObjectOfType<EventManager>();
+            if (eventManager != null && weaponData != null)
+            {
+                float baseDamage = weaponData.damage * damageMultiplier;
+                eventManager.TriggerPlayerRangedAttack(direction, totalCount, baseDamage, firePoint, projectilePoolTag);
+            }
+        }
+
+        private IEnumerator FireBurstRoutine(Vector2 direction, int totalCount)
+        {
+            for (int i = 0; i < totalCount; i++)
+            {
+                Projectile(direction);
+                if (i < totalCount - 1)
+                {
+                    yield return new WaitForSeconds(burstInterval);
+                }
+            }
+        }
+
+        private void FireParallel(Vector2 direction, int totalCount)
+        {
+            Vector2 perp = new Vector2(-direction.y, direction.x).normalized;
+            float startOffset = -((totalCount - 1) * parallelSpacing) / 2f;
+
+            for (int i = 0; i < totalCount; i++)
+            {
+                float currentOffset = startOffset + (i * parallelSpacing);
+                Vector3 spawnOffset = new Vector3(perp.x, perp.y, 0f) * currentOffset;
+                Projectile(direction, spawnOffset);
             }
         }
     }

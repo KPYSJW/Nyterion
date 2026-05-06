@@ -113,8 +113,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponData: {fileID: 11400000, guid: 5ae48d5b5f5b21e46b96d1b6e5b26bf3, type: 2}
+  damageMultiplier: 1
   firePoint: {fileID: 4288061520210801657}
   projectilePoolTag: RubberBall
+  extraProjectileMode: 1
+  burstInterval: 0.05
+  parallelSpacing: 0.5
+  projectileSpeed: 8
 --- !u!1 &4964738641561314771
 GameObject:
   m_ObjectHideFlags: 0

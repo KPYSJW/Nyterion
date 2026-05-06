@@ -229,6 +229,20 @@ namespace Nytherion.Core.Managers
         public int GetGold() => GetCurrency(CurrencyType.Gold);
         public int GetTokens() => GetCurrency(CurrencyType.Token);
 
+        /// <summary>
+        /// 게임 오버(사망) 초기화 시 기본 재화(Gold)를 0으로 초기화
+        /// 영구 재화(Token)는 초기화되지 않는다
+        /// </summary>
+        public void ResetBasicCurrencies()
+        {
+            if (!IsInitialized) return;
+
+            SetCurrency(CurrencyType.Gold, 0);
+
+            if (GameManager.IsVerboseLogging())
+                Debug.Log("[CurrencyDataManager] 사망/재시작으로 인해 기본 재화(Gold)가 0으로 초기화되었습니다.");
+        }
+
         private void NotifyDataChanged(CurrencyChangeData changeData)
         {
             OnDataChanged?.Invoke(changeData);

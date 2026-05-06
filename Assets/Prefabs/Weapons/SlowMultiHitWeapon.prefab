@@ -113,9 +113,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponData: {fileID: 11400000, guid: 3dad2946ed94b234b80b04d7535c786d, type: 2}
+  damageMultiplier: 1
   firePoint: {fileID: 4288061520210801657}
   projectilePoolTag: SlowMultiHit
-  projectileCount: 3
+  extraProjectileMode: 1
+  burstInterval: 0.05
+  parallelSpacing: 0.5
+  projectileSpeed: 8
+  projectileCount: 1
   spreadAngle: 30
 --- !u!1 &4964738641561314771
 GameObject:

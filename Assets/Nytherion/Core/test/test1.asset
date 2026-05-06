@@ -18,6 +18,9 @@ MonoBehaviour:
   compoundRoomChance: 1
   numberOfShopRooms: 1
   numberOfItemRooms: 1
+  ShopRoomPrefab: {fileID: 2311304213159145408, guid: b29247aef2592ae4fa3ff337ae8d4c89, type: 3}
+  StartRoomPrefab: {fileID: 2311304213159145408, guid: 152a1a907c2425348957e6d7fc8372ef, type: 3}
+  ItemRoomPrefab: {fileID: 2311304213159145408, guid: ecf4718509ffaf846be5b10b50f93dca, type: 3}
   bossRoomPrefab: {fileID: 2311304213159145408, guid: 227752a830facb24a806d9acbf79c15e, type: 3}
   bossMonsterData: {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
   obstacles:

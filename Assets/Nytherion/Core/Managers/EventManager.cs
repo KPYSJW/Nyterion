@@ -1,5 +1,5 @@
 using Nytherion.Core.Enums;
-using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.Data.ScriptableObjects.Stage;
 using Nytherion.Data.ScriptableObjects.Synergy;
 using Nytherion.Data.ScriptableObjects.Weapons;
@@ -16,12 +16,20 @@ namespace Nytherion.Core.Managers
         public event Action<EnemyBase> OnEnemyDied;
         public event Action<float> OnEnemyDamagedByPlayer;
         public event Action<StageData> OnBossClearedEvent;
-        public event Action<WeaponData, EngravingData, WeaponEngravingSynergyData> OnSynergyEvaluated;
+        public event Action<WeaponData, RelicData, WeaponRelicSynergyData> OnSynergyEvaluated;
+
+        public event Action<Vector2, int, float, Transform, string> OnPlayerRangedAttack;
 
         public event Action<InteractableType> OnInteraction;
 
         public event Action OnOpenInventoryForShop;
         public event Action OnCloseInventoryForShop;
+
+        public void TriggerPlayerRangedAttack(Vector2 direction, int projectileCount, float baseDamage, Transform firePoint, string poolTag)
+        {
+            OnPlayerRangedAttack?.Invoke(direction, projectileCount, baseDamage, firePoint, poolTag);
+        }
+
         public void TriggerInteractionEvent(InteractableType type)
         {
             OnInteraction?.Invoke(type);
@@ -63,9 +71,9 @@ namespace Nytherion.Core.Managers
         {
             OnBossClearedEvent -= listener;
         }
-        public void TriggerSynergyEvaluated(WeaponData weapon, EngravingData engraving, WeaponEngravingSynergyData synergy)
+        public void TriggerSynergyEvaluated(WeaponData weapon, RelicData relic, WeaponRelicSynergyData synergy)
         {
-            OnSynergyEvaluated?.Invoke(weapon, engraving, synergy);
+            OnSynergyEvaluated?.Invoke(weapon, relic, synergy);
         }
 
         public void TriggerEvent(string eventName, object eventData = null)

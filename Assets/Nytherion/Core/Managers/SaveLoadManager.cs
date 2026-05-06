@@ -48,9 +48,9 @@ namespace Nytherion.Core.Managers
                     saveableEntities.Add(inventoryManager);
                 }
 
-                if (container.TryResolve<EngravingManager>(out var engravingManager))
+                if (container.TryResolve<RelicManager>(out var relicManager))
                 {
-                    saveableEntities.Add(engravingManager);
+                    saveableEntities.Add(relicManager);
                 }
 
                 if (container.TryResolve<EquipmentDataManager>(out var equipmentManager))

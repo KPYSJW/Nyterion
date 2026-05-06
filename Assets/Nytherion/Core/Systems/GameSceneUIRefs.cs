@@ -1,4 +1,4 @@
-using Nytherion.UI.EngravingBoard;
+using Nytherion.UI.RelicBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
 using Nytherion.UI.Shop;
@@ -10,11 +10,11 @@ using UnityEngine.UI;
 public class GameSceneUIRefs : MonoBehaviour
 {
     [Header("Core UI Components")]
-    [SerializeField] private EngravingGridUI engravingGridUI;
-    public EngravingGridUI EngravingGridUI => engravingGridUI;
+    [SerializeField] private RelicGridUI relicGridUI;
+    public RelicGridUI RelicGridUI => relicGridUI;
    
-    [SerializeField] private EngravingTooltip engravingTooltip;
-    public EngravingTooltip EngravingTooltip => engravingTooltip;
+    [SerializeField] private RelicTooltip relicTooltip;
+    public RelicTooltip RelicTooltip => relicTooltip;
 
 
     [Header("Quick Slot References")]
@@ -47,8 +47,8 @@ public class GameSceneUIRefs : MonoBehaviour
     public GameObject GachaResultPanel => gachaResultPanel;
     [SerializeField] private GameObject weaponSubPanel;
     public GameObject WeaponSubPanel => weaponSubPanel;
-    [SerializeField] private GameObject engravingSubPanel;
-    public GameObject EngravingSubPanel => engravingSubPanel;
+    [SerializeField] private GameObject relicSubPanel;
+    public GameObject RelicSubPanel => relicSubPanel;
     [SerializeField] private GameObject skillSubPanel;
     public GameObject SkillSubPanel => skillSubPanel;
 
@@ -67,8 +67,8 @@ public class GameSceneUIRefs : MonoBehaviour
 
     [SerializeField] private Button weaponTabButton;
     public Button WeaponTabButton => weaponTabButton;
-    [SerializeField] private Button engravingTabButton;
-    public Button EngravingTabButton => engravingTabButton; 
+    [SerializeField] private Button relicTabButton;
+    public Button RelicTabButton => relicTabButton; 
     [SerializeField] private Button skillTabButton;
     public Button SkillTabButton => skillTabButton;
 
@@ -140,9 +140,9 @@ public class GameSceneUIRefs : MonoBehaviour
     [SerializeField] private Button menuMainMenuButton;
     public Button MenuMainMenuButton => menuMainMenuButton;
 
-    [Header("Engraving UI")]
-    [SerializeField] private CanvasGroup engravingCanvasGroup;
-    public CanvasGroup EngravingCanvasGroup => engravingCanvasGroup;
+    [Header("Relic UI")]
+    [SerializeField] private CanvasGroup relicCanvasGroup;
+    public CanvasGroup RelicCanvasGroup => relicCanvasGroup;
 
     [Header("Dungeon UI")]
     [SerializeField] private WorldmapController worldmapController;

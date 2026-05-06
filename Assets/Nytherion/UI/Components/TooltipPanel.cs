@@ -90,7 +90,91 @@ namespace Nytherion.UI.Components
             if (item == null) 
                 return;
                 
-            SetContent(item.itemName, item.description);
+            string finalDesc = item.description;
+
+            if (item is Nytherion.Data.ScriptableObjects.Items.EquipmentData equipData)
+            {
+                var playerManager = FindObjectOfType<Nytherion.Core.Managers.PlayerManager>();
+                bool shouldInvert = false;
+                
+                if (playerManager != null && equipData.traits != null)
+                {
+                    foreach (var trait in equipData.traits)
+                    {
+                        if (playerManager.IsTraitInverted(trait))
+                        {
+                            shouldInvert = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (equipData is Nytherion.Data.ScriptableObjects.Weapons.WeaponData weaponData)
+                {
+                    float finalDamage = weaponData.damage;
+                    float finalCooldown = weaponData.cooldown;
+
+                    if (equipData.statModifiers != null)
+                    {
+                        foreach (var mod in equipData.statModifiers)
+                        {
+                            float modValue = mod.value;
+                            if (shouldInvert && modValue < 0)
+                            {
+                                modValue = Mathf.Abs(modValue);
+                            }
+
+                            if (mod.stat == StatType.MeleeDamage || mod.stat == StatType.RangedDamage)
+                            {
+                                if (!mod.isPercentage) finalDamage += modValue;
+                                else finalDamage *= (1 + modValue);
+                            }
+                            else if (mod.stat == StatType.MeleeSpeed || mod.stat == StatType.RangedSpeed)
+                            {
+                                // 쿨타임은 스피드가 오를수록 줄어드는 방식이거나 직접 합산일 수 있으므로 플랫 수치로 계산
+                                if (!mod.isPercentage) finalCooldown -= modValue; // 속도가 플러스면 쿨타임 감소
+                                else finalCooldown *= (1 - modValue);
+                            }
+                        }
+                    }
+
+                    // 0 이하로 떨어지지 않게 보정
+                    finalDamage = Mathf.Max(0, finalDamage);
+                    finalCooldown = Mathf.Max(0.1f, finalCooldown);
+
+                    string weaponStats = $"<color=#FFD700>[공격력: {finalDamage:F1}]</color>\n";
+                    weaponStats += $"<color=#00FFFF>[공격 속도: {finalCooldown:F1}초]</color>\n\n";
+
+                    finalDesc = weaponStats + finalDesc;
+                }
+
+                // 모디파이어 텍스트 생성
+                if (equipData.statModifiers != null && equipData.statModifiers.Count > 0)
+                {
+                    finalDesc += "\n\n<color=#AAAAAA><추가 능력치></color>";
+                    foreach (var mod in equipData.statModifiers)
+                    {
+                        float displayValue = mod.value;
+                        bool inverted = false;
+
+                        if (shouldInvert && displayValue < 0)
+                        {
+                            displayValue = Mathf.Abs(displayValue);
+                            inverted = true;
+                        }
+
+                        string sign = displayValue > 0 ? "+" : "";
+                        string percent = mod.isPercentage ? "%" : "";
+                        string color = displayValue > 0 ? "#00FF00" : "#FF0000";
+                        if (inverted) color = "#FF00FF"; // 반전 시 특별한 색상
+
+                        finalDesc += $"\n<color={color}>{mod.stat} {sign}{displayValue}{percent}</color>";
+                        if (inverted) finalDesc += " <color=#FF00FF>(반전됨!)</color>";
+                    }
+                }
+            }
+            
+            SetContent(item.itemName, finalDesc);
             
             if (itemImage != null)
             {

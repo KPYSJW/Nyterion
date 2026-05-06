@@ -17,7 +17,7 @@ namespace Nytherion.Core.Data
         public List<CurrencyType> currencyTypes = new List<CurrencyType>();
         public List<int> currencyAmounts = new List<int>();
         public List<ItemEntry> inventoryData = new List<ItemEntry>();
-        public EngravingGridState engravingData;
+        public RelicGridState relicData;
         public List<ShopStockState> shopStockData = new List<ShopStockState>();
         public List<QuickSlotEntry> quickSlotData = new List<QuickSlotEntry>();
         public List<EquippedItemEntry> equippedItemsData = new List<EquippedItemEntry>();
@@ -31,7 +31,7 @@ namespace Nytherion.Core.Data
             currencyTypes = new List<CurrencyType>();
             currencyAmounts = new List<int>();
             inventoryData = new List<ItemEntry>();
-            engravingData = new EngravingGridState();
+            relicData = new RelicGridState();
             shopStockData = new List<ShopStockState>();
             quickSlotData = new List<QuickSlotEntry>();
             equippedItemsData = new List<EquippedItemEntry>();

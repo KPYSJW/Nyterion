@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerManager: {fileID: 2907196179973549410, guid: 56e2cc0735cc7774da9ef1c5ca1a7212, type: 3}
   inventoryManager: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
-  engravingManager: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
+  relicManager: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
   shopManager: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
   quickSlotManager: {fileID: 1073868026320572463, guid: d8e41a7f68c20bd46a54a5324c19797f, type: 3}
   currencyManager: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}

@@ -6,6 +6,7 @@ namespace Nytherion.GamePlay.Characters.Player
     public class PlayerHealth : MonoBehaviour
     {
         public static event Action<float, float> OnHealthChanged;
+        public static event Action OnPlayerDied;
 
         public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
@@ -34,6 +35,8 @@ namespace Nytherion.GamePlay.Characters.Player
         }
         public void UpdateMaxHealth(float newMaxHealth)
         {
+            if (Mathf.Approximately(MaxHealth, newMaxHealth)) return; // 무한 루프 방지
+
             MaxHealth = newMaxHealth;
             CurrentHealth = Mathf.Min(CurrentHealth, MaxHealth);
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
@@ -42,6 +45,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private void Die()
         {
             Debug.Log("플레이어 사망");
+            OnPlayerDied?.Invoke();
         }
     }
 }

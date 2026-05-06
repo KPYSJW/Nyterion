@@ -21,11 +21,16 @@ MonoBehaviour:
   baseValue: 10
   equipmentType: 0
   rarity: 0
-  isCursed: 0
-  statModifiers: []
+  traits: 01000000
+  statModifiers:
+  - stat: 4
+    value: -10
+    valuePerLevel: 0
+    isPercentage: 0
   weaponName: Explosion
-  damage: 100
+  damage: 20
   range: 0
-  cooldown: 0
+  cooldown: 1.5
   projectilePrefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
-  weaponPrefab: {fileID: 5577653623118475701, guid: 0d9efd387f20a644e9b0969e51cca472, type: 3}
+  weaponPrefab: {fileID: 910948594157303948, guid: 04d5ea97d076f3c4d83ca157520ebd42, type: 3}
+  weaponType: 0

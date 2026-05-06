@@ -17,10 +17,11 @@ namespace Nytherion.Core.Managers
     {
         public PlayerHealth playerHealth { get; private set; }
         public PlayerCombat PlayerCombat { get; private set; }
-        public PlayerEngravingManager playerEngravingManager { get; private set; }
+        public PlayerRelicManager playerRelicManager { get; private set; }
 
         private EquipmentDataManager equipmentDataManager;
         private InputManager inputManager;
+        private EventManager eventManager;
         private PlayerController playerController;
 
         [Header("Player Data")]
@@ -28,11 +29,14 @@ namespace Nytherion.Core.Managers
         public PlayerData currentPlayerData;
         public event Action OnPlayerStatsChanged;
 
+        public int CurrentRunKillCount { get; private set; }
+
         [Inject]
-        public void Construct(EquipmentDataManager equipmentDataManager, InputManager inputManager)
+        public void Construct(EquipmentDataManager equipmentDataManager, InputManager inputManager, EventManager eventManager)
         {
             this.equipmentDataManager = equipmentDataManager;
             this.inputManager = inputManager;
+            this.eventManager = eventManager;
         }
 
         protected override void OnInitializeInternal()
@@ -40,12 +44,12 @@ namespace Nytherion.Core.Managers
             
             playerHealth = GetComponent<PlayerHealth>();
             PlayerCombat = GetComponent<PlayerCombat>();
-            playerEngravingManager = GetComponent<PlayerEngravingManager>();
+            playerRelicManager = GetComponent<PlayerRelicManager>();
             playerController = GetComponent<PlayerController>();
 
-            if (playerEngravingManager != null)
+            if (playerRelicManager != null)
             {
-                playerEngravingManager.OnEngravingsChanged += RecalculateStats;
+                playerRelicManager.OnRelicsChanged += RecalculateStats;
             }
 
             if (basePlayerData == null)
@@ -58,6 +62,7 @@ namespace Nytherion.Core.Managers
             if (playerHealth != null)
             {
                 playerHealth.InitializeHealth(currentPlayerData.maxHealth);
+                PlayerHealth.OnPlayerDied += HandlePlayerDied;
             }
 
             if (playerController != null && inputManager != null)
@@ -69,7 +74,37 @@ namespace Nytherion.Core.Managers
                 PlayerCombat.Construct(inputManager);
             }
 
+            if (eventManager != null)
+            {
+                eventManager.OnEnemyDamagedByPlayer += HandleEnemyDamaged;
+                eventManager.OnEnemyDied += HandleEnemyDied;
+            }
+
+            CurrentRunKillCount = 0;
             RecalculateStats();
+        }
+
+        private void HandlePlayerDied()
+        {
+            CurrentRunKillCount = 0;
+        }
+
+        private void HandleEnemyDamaged(float damageAmount)
+        {
+            if (currentPlayerData != null && currentPlayerData.lifesteal > 0 && playerHealth != null)
+            {
+                float healAmount = damageAmount * currentPlayerData.lifesteal;
+                if (healAmount > 0)
+                {
+                    playerHealth.Heal(healAmount);
+                }
+            }
+        }
+
+        private void HandleEnemyDied(Nytherion.GamePlay.Characters.Enemy.EnemyBase enemy)
+        {
+            CurrentRunKillCount++;
+            OnPlayerStatsChanged?.Invoke(); // Notify to recalculate growth relics if needed
         }
 
         private void OnEnable()
@@ -86,9 +121,18 @@ namespace Nytherion.Core.Managers
             {
                 equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
             }
-            if (playerEngravingManager != null)
+            if (playerRelicManager != null)
             {
-                playerEngravingManager.OnEngravingsChanged -= RecalculateStats;
+                playerRelicManager.OnRelicsChanged -= RecalculateStats;
+            }
+            if (playerHealth != null)
+            {
+                PlayerHealth.OnPlayerDied -= HandlePlayerDied;
+            }
+            if (eventManager != null)
+            {
+                eventManager.OnEnemyDamagedByPlayer -= HandleEnemyDamaged;
+                eventManager.OnEnemyDied -= HandleEnemyDied;
             }
         }
 
@@ -107,6 +151,28 @@ namespace Nytherion.Core.Managers
         }
 
         private List<StatModifier> temporaryModifiers = new List<StatModifier>();
+        
+        // 반전시켜야 할 장비 태그(Trait) 목록
+        private List<EquipmentTrait> traitsToInvert = new List<EquipmentTrait>();
+
+        public void AddTraitInversion(EquipmentTrait trait)
+        {
+            if (traitsToInvert.Contains(trait)) return;
+            traitsToInvert.Add(trait);
+            RecalculateStats();
+        }
+
+        public void RemoveTraitInversion(EquipmentTrait trait)
+        {
+            if (!traitsToInvert.Contains(trait)) return;
+            traitsToInvert.Remove(trait);
+            RecalculateStats();
+        }
+
+        public bool IsTraitInverted(EquipmentTrait trait)
+        {
+            return traitsToInvert.Contains(trait);
+        }
 
         public void AddTemporaryStatModifier(StatModifier modifier)
         {
@@ -137,20 +203,47 @@ namespace Nytherion.Core.Managers
             {
                 foreach (var equippedItem in equipmentDataManager.EquippedItems.Values)
                 {
-                    if (equippedItem != null && equippedItem.statModifiers != null)
+                    if (equippedItem != null)
                     {
-                        allModifiers.AddRange(equippedItem.statModifiers);
-                    }
-                }
-            }
-            if (playerEngravingManager != null)
-            {
-                var currentEngravings = playerEngravingManager.GetCurrentEngravings();
-                foreach (var engraving in currentEngravings)
-                {
-                    if (engraving != null && engraving.statModifiers != null)
-                    {
-                        allModifiers.AddRange(engraving.statModifiers);
+                        if (equippedItem is WeaponData weaponData)
+                        {
+                            StatType dmgStat = weaponData.weaponType == WeaponType.Melee ? StatType.MeleeDamage : StatType.RangedDamage;
+                            allModifiers.Add(new StatModifier { stat = dmgStat, value = weaponData.damage, isPercentage = false });
+                        }
+
+                        if (equippedItem.statModifiers != null)
+                        {
+                            // 반전 대상 태그를 가지고 있는지 확인
+                            bool shouldInvert = false;
+                            if (equippedItem.traits != null)
+                            {
+                                foreach (var trait in equippedItem.traits)
+                                {
+                                    if (traitsToInvert.Contains(trait))
+                                    {
+                                        shouldInvert = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            foreach (var mod in equippedItem.statModifiers)
+                            {
+                                // 반전 대상 장비이면서, 스탯 값이 마이너스(-)인 경우에만 플러스로 반전
+                                float finalValue = mod.value;
+                                if (shouldInvert && finalValue < 0)
+                                {
+                                    finalValue = Mathf.Abs(finalValue);
+                                }
+
+                                allModifiers.Add(new StatModifier 
+                                { 
+                                    stat = mod.stat, 
+                                    value = finalValue, 
+                                    isPercentage = mod.isPercentage 
+                                });
+                            }
+                        }
                     }
                 }
             }
@@ -165,25 +258,53 @@ namespace Nytherion.Core.Managers
             {
                 if (!mod.isPercentage)
                 {
-                    ApplyModifierToPlayer(mod.stat, mod.value, false);
+                    if (mod.stat == StatType.All)
+                    {
+                        foreach (StatType st in Enum.GetValues(typeof(StatType)))
+                        {
+                            if (st != StatType.All) ApplyModifierToPlayer(st, mod.value, false);
+                        }
+                    }
+                    else
+                    {
+                        ApplyModifierToPlayer(mod.stat, mod.value, false);
+                    }
                 }
             }
 
             // 2. 퍼센트(비율) 증가치 합산 후 적용
             Dictionary<StatType, float> percentageSums = new Dictionary<StatType, float>();
+            float allStatsPercentage = 0f;
+
             foreach (var mod in allModifiers)
             {
                 if (mod.isPercentage)
                 {
-                    if (!percentageSums.ContainsKey(mod.stat))
-                        percentageSums[mod.stat] = 0f;
-                    percentageSums[mod.stat] += mod.value;
+                    if (mod.stat == StatType.All)
+                    {
+                        allStatsPercentage += mod.value;
+                    }
+                    else
+                    {
+                        if (!percentageSums.ContainsKey(mod.stat))
+                            percentageSums[mod.stat] = 0f;
+                        percentageSums[mod.stat] += mod.value;
+                    }
                 }
             }
 
-            foreach (var kvp in percentageSums)
+            // 모든 StatType에 대해 (All 제외) 합산된 퍼센트 적용
+            foreach (StatType st in Enum.GetValues(typeof(StatType)))
             {
-                ApplyModifierToPlayer(kvp.Key, kvp.Value, true);
+                if (st == StatType.All) continue;
+
+                float specificSum = percentageSums.ContainsKey(st) ? percentageSums[st] : 0f;
+                float totalSum = specificSum + allStatsPercentage;
+
+                if (totalSum != 0)
+                {
+                    ApplyModifierToPlayer(st, totalSum, true);
+                }
             }
 
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
@@ -237,6 +358,14 @@ namespace Nytherion.Core.Managers
                 case StatType.ExtraProjectiles:
                     if (isPercentage) currentPlayerData.extraProjectiles *= (1 + value);
                     else currentPlayerData.extraProjectiles += value;
+                    break;
+                case StatType.ChargeTimeReduction:
+                    if (isPercentage) currentPlayerData.chargeTimeReduction *= (1 + value);
+                    else currentPlayerData.chargeTimeReduction += value;
+                    break;
+                case StatType.Lifesteal:
+                    if (isPercentage) currentPlayerData.lifesteal *= (1 + value);
+                    else currentPlayerData.lifesteal += value;
                     break;
                 default:
                     Debug.LogError($"[PlayerManager] Invalid stat type: {stat}");

@@ -20,7 +20,7 @@ namespace Nytherion.Core.Managers
         private EventManager eventManager;
         private ShopUI shopUI;
         private GachaUIController gachaUIController;
-        private EngravingUIController engravingUIController;
+        private RelicUIController relicUIController;
 
         [Inject]
         public void Construct(
@@ -28,14 +28,14 @@ namespace Nytherion.Core.Managers
             EventManager eventManager,
             ShopUI shopUI,
           GachaUIController gachaUIController,
-            EngravingUIController engravingUIController,
+            RelicUIController relicUIController,
             PlayerController playerController)
         {
             this.inputManager = inputManager;
             this.eventManager = eventManager;
             this.shopUI = shopUI;
             this.gachaUIController = gachaUIController;
-            this.engravingUIController = engravingUIController;
+            this.relicUIController = relicUIController;
             playerTransform = playerController.transform;
 
         }
@@ -67,9 +67,9 @@ namespace Nytherion.Core.Managers
                 gachaUIController.Close();
                 return;
             }
-            if (engravingUIController != null && engravingUIController.IsOpen)
+            if (relicUIController != null && relicUIController.IsOpen)
             {
-                engravingUIController.Close();
+                relicUIController.Close();
                 return;
             }
             if (playerTransform == null) return;

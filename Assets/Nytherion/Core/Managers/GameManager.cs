@@ -20,6 +20,32 @@ namespace Nytherion.Core.Managers
             this.currencyDataManager = currencyDataManager;
             this.saveLoadManager = saveLoadManager;
         }
+
+        protected override void OnInitializeInternal()
+        {
+            base.OnInitializeInternal();
+            Nytherion.GamePlay.Characters.Player.PlayerHealth.OnPlayerDied += HandlePlayerDeath;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Nytherion.GamePlay.Characters.Player.PlayerHealth.OnPlayerDied -= HandlePlayerDeath;
+        }
+
+        private void HandlePlayerDeath()
+        {
+            Debug.Log("[GameManager] 플레이어 사망. 기본 재화를 초기화합니다.");
+            if (currencyDataManager != null)
+            {
+                currencyDataManager.ResetBasicCurrencies();
+            }
+            if (saveLoadManager != null)
+            {
+                saveLoadManager.SaveGame();
+            }
+        }
+
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.F1))

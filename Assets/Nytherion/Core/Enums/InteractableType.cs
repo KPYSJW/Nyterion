@@ -4,7 +4,7 @@ namespace Nytherion.Core.Enums
     {
         None,
         GachaNPC,
-        EngravingAltar,
+        RelicAltar,
         ShopDealer,
         BossPortal
     }

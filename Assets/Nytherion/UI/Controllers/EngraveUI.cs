@@ -1,4 +1,4 @@
-using Nytherion.Data.ScriptableObjects.Engravings;
+using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.Core.Managers;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,7 +32,7 @@ namespace Nytherion.UI.Controllers
             {
                 slot.gameObject.SetActive(false);
             }
-            List<EngravingData> engrave = playerManager.playerEngravingManager.GetCurrentEngravings();
+            List<RelicData> engrave = playerManager.playerRelicManager.GetCurrentRelics();
             for (int i=0;i< engrave.Count;++i)
             {
                 engraveSlots[i].gameObject.SetActive(true);
