@@ -151,6 +151,28 @@ namespace Nytherion.Core.Managers
         }
 
         private List<StatModifier> temporaryModifiers = new List<StatModifier>();
+        
+        // 반전시켜야 할 장비 태그(Trait) 목록
+        private List<EquipmentTrait> traitsToInvert = new List<EquipmentTrait>();
+
+        public void AddTraitInversion(EquipmentTrait trait)
+        {
+            if (traitsToInvert.Contains(trait)) return;
+            traitsToInvert.Add(trait);
+            RecalculateStats();
+        }
+
+        public void RemoveTraitInversion(EquipmentTrait trait)
+        {
+            if (!traitsToInvert.Contains(trait)) return;
+            traitsToInvert.Remove(trait);
+            RecalculateStats();
+        }
+
+        public bool IsTraitInverted(EquipmentTrait trait)
+        {
+            return traitsToInvert.Contains(trait);
+        }
 
         public void AddTemporaryStatModifier(StatModifier modifier)
         {
@@ -181,9 +203,47 @@ namespace Nytherion.Core.Managers
             {
                 foreach (var equippedItem in equipmentDataManager.EquippedItems.Values)
                 {
-                    if (equippedItem != null && equippedItem.statModifiers != null)
+                    if (equippedItem != null)
                     {
-                        allModifiers.AddRange(equippedItem.statModifiers);
+                        if (equippedItem is WeaponData weaponData)
+                        {
+                            StatType dmgStat = weaponData.weaponType == WeaponType.Melee ? StatType.MeleeDamage : StatType.RangedDamage;
+                            allModifiers.Add(new StatModifier { stat = dmgStat, value = weaponData.damage, isPercentage = false });
+                        }
+
+                        if (equippedItem.statModifiers != null)
+                        {
+                            // 반전 대상 태그를 가지고 있는지 확인
+                            bool shouldInvert = false;
+                            if (equippedItem.traits != null)
+                            {
+                                foreach (var trait in equippedItem.traits)
+                                {
+                                    if (traitsToInvert.Contains(trait))
+                                    {
+                                        shouldInvert = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            foreach (var mod in equippedItem.statModifiers)
+                            {
+                                // 반전 대상 장비이면서, 스탯 값이 마이너스(-)인 경우에만 플러스로 반전
+                                float finalValue = mod.value;
+                                if (shouldInvert && finalValue < 0)
+                                {
+                                    finalValue = Mathf.Abs(finalValue);
+                                }
+
+                                allModifiers.Add(new StatModifier 
+                                { 
+                                    stat = mod.stat, 
+                                    value = finalValue, 
+                                    isPercentage = mod.isPercentage 
+                                });
+                            }
+                        }
                     }
                 }
             }
@@ -198,25 +258,53 @@ namespace Nytherion.Core.Managers
             {
                 if (!mod.isPercentage)
                 {
-                    ApplyModifierToPlayer(mod.stat, mod.value, false);
+                    if (mod.stat == StatType.All)
+                    {
+                        foreach (StatType st in Enum.GetValues(typeof(StatType)))
+                        {
+                            if (st != StatType.All) ApplyModifierToPlayer(st, mod.value, false);
+                        }
+                    }
+                    else
+                    {
+                        ApplyModifierToPlayer(mod.stat, mod.value, false);
+                    }
                 }
             }
 
             // 2. 퍼센트(비율) 증가치 합산 후 적용
             Dictionary<StatType, float> percentageSums = new Dictionary<StatType, float>();
+            float allStatsPercentage = 0f;
+
             foreach (var mod in allModifiers)
             {
                 if (mod.isPercentage)
                 {
-                    if (!percentageSums.ContainsKey(mod.stat))
-                        percentageSums[mod.stat] = 0f;
-                    percentageSums[mod.stat] += mod.value;
+                    if (mod.stat == StatType.All)
+                    {
+                        allStatsPercentage += mod.value;
+                    }
+                    else
+                    {
+                        if (!percentageSums.ContainsKey(mod.stat))
+                            percentageSums[mod.stat] = 0f;
+                        percentageSums[mod.stat] += mod.value;
+                    }
                 }
             }
 
-            foreach (var kvp in percentageSums)
+            // 모든 StatType에 대해 (All 제외) 합산된 퍼센트 적용
+            foreach (StatType st in Enum.GetValues(typeof(StatType)))
             {
-                ApplyModifierToPlayer(kvp.Key, kvp.Value, true);
+                if (st == StatType.All) continue;
+
+                float specificSum = percentageSums.ContainsKey(st) ? percentageSums[st] : 0f;
+                float totalSum = specificSum + allStatsPercentage;
+
+                if (totalSum != 0)
+                {
+                    ApplyModifierToPlayer(st, totalSum, true);
+                }
             }
 
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);

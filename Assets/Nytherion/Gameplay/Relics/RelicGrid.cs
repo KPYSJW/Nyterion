@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Nytherion.GamePlay.Relics
 {
-    public enum InfluenceType { None, LevelUp, LevelDown }
+    public enum InfluenceType { None, LevelUp, LevelDown, Silence }
 
     public class RelicGrid
     {
@@ -13,6 +13,7 @@ namespace Nytherion.GamePlay.Relics
         public int Columns { get; private set; }
         private readonly RelicBlock[,] grid;
         private readonly InfluenceType[,] influenceGrid;
+        private readonly bool[,] silenceGrid;
 
         public RelicGrid(int rows, int columns)
         {
@@ -20,6 +21,7 @@ namespace Nytherion.GamePlay.Relics
             Columns = columns;
             grid = new RelicBlock[rows, columns];
             influenceGrid = new InfluenceType[rows, columns];
+            silenceGrid = new bool[rows, columns];
         }
 
         public void PlaceBlock(RelicBlock block, int row, int col)
@@ -37,11 +39,14 @@ namespace Nytherion.GamePlay.Relics
         public void RecalculateAllInfluences()
         {
             Array.Clear(influenceGrid, 0, influenceGrid.Length);
+            Array.Clear(silenceGrid, 0, silenceGrid.Length);
+
             foreach (var block in grid)
             {
                 if (block != null)
                 {
                     block.ResetLevel();
+                    block.SetDisabled(false);
                 }
             }
 
@@ -59,7 +64,14 @@ namespace Nytherion.GamePlay.Relics
 
                             if (IsPositionValid(targetRow, targetCol))
                             {
-                                influenceGrid[targetRow, targetCol] = zone.type;
+                                if (zone.type == InfluenceType.Silence)
+                                {
+                                    silenceGrid[targetRow, targetCol] = true;
+                                }
+                                else
+                                {
+                                    influenceGrid[targetRow, targetCol] = zone.type;
+                                }
                             }
                         }
                     }
@@ -73,9 +85,17 @@ namespace Nytherion.GamePlay.Relics
                     RelicBlock targetBlock = grid[y, x];
                     if (targetBlock != null)
                     {
-                        InfluenceType effect = influenceGrid[y, x];
-                        if (effect == InfluenceType.LevelUp) targetBlock.ChangeLevel(1);
-                        else if (effect == InfluenceType.LevelDown) targetBlock.ChangeLevel(-1);
+                        // Silence가 최우선
+                        if (silenceGrid[y, x])
+                        {
+                            targetBlock.SetDisabled(true);
+                        }
+                        else
+                        {
+                            InfluenceType effect = influenceGrid[y, x];
+                            if (effect == InfluenceType.LevelUp) targetBlock.ChangeLevel(1);
+                            else if (effect == InfluenceType.LevelDown) targetBlock.ChangeLevel(-1);
+                        }
                     }
                 }
             }
@@ -83,12 +103,18 @@ namespace Nytherion.GamePlay.Relics
 
         public bool CanPlaceBlock(int row, int col) => IsPositionValid(row, col) && grid[row, col] == null;
         public RelicBlock GetBlockAt(int row, int col) => IsPositionValid(row, col) ? grid[row, col] : null;
-        public InfluenceType GetInfluenceAt(int row, int col) => IsPositionValid(row, col) ? influenceGrid[row, col] : InfluenceType.None;
+        public InfluenceType GetInfluenceAt(int row, int col)
+        {
+            if (!IsPositionValid(row, col)) return InfluenceType.None;
+            if (silenceGrid[row, col]) return InfluenceType.Silence;
+            return influenceGrid[row, col];
+        }
         private bool IsPositionValid(int row, int col) => row >= 0 && row < Rows && col >= 0 && col < Columns;
         public void Clear()
         {
             Array.Clear(grid, 0, grid.Length);
             Array.Clear(influenceGrid, 0, influenceGrid.Length);
+            Array.Clear(silenceGrid, 0, silenceGrid.Length);
         }
     }
 }

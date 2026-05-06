@@ -10,35 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: TwinStone
+  m_Name: CurseEaterHeart
   m_EditorClassIdentifier: 
-  relicName: Twin Stone
-  koreanName: "\uC30D\uB465\uC774 \uB3CC"
-  description: "\uD22C\uC0AC\uCCB4 +1"
-  Image: {fileID: 21300000, guid: 7bf1d030a95f72e4a8c26ba4215a8a40, type: 3}
+  relicName: Curse Eater Heart
+  koreanName: "\uC800\uC8FC\uB97C \uBA39\uB294 \uC790\uC758 \uC2EC\uC7A5"
+  description: "[\uC800\uC8FC] \uC544\uC774\uD15C\uC758 \uC218\uCE58 \uBC18\uC804"
+  Image: {fileID: 0}
   rarity: 0
   level: 1
-  isDisabled: 0
   effectModules:
   - condition:
       rid: -2
     effects:
-    - rid: 6716071107867705349
+    - rid: 6716071130084147204
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: 0, y: 1}
+  - offset: {x: 1, y: 0}
     type: 1
-  - offset: {x: 0, y: -1}
-    type: 2
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 6716071107867705349
-      type: {class: TwinStoneRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+    - rid: 6716071130084147204
+      type: {class: InvertTraitModifierEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        damageRatio: 0.2
-        damageRatioPerLevel: 0.05
-        spreadAngle: 20
+        targetTrait: 1

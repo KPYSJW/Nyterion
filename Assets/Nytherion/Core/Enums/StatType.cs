@@ -14,6 +14,7 @@ namespace Nytherion.Core.Enums
         DashCooldown,
         ExtraProjectiles,
         Lifesteal,
-        ChargeTimeReduction
+        ChargeTimeReduction,
+        All // 모든 능력치 공통 적용용
     }
 }

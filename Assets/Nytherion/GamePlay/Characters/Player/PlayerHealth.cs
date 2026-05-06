@@ -35,6 +35,8 @@ namespace Nytherion.GamePlay.Characters.Player
         }
         public void UpdateMaxHealth(float newMaxHealth)
         {
+            if (Mathf.Approximately(MaxHealth, newMaxHealth)) return; // 무한 루프 방지
+
             MaxHealth = newMaxHealth;
             CurrentHealth = Mathf.Min(CurrentHealth, MaxHealth);
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);

@@ -25,10 +25,10 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [TextArea] public string description;
         public Sprite Image;
         public Rarity rarity;
-        public bool isCursed;
 
         [Header("레벨 정보")]
         public int level = 1;
+        [HideInInspector] public bool isDisabled = false; // 실시간 비활성화 상태 (Silence 영향)
 
         [Header("복합 효과 및 조건 모듈")]
         public List<RelicEffectModule> effectModules = new List<RelicEffectModule>();

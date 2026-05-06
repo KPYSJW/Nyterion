@@ -113,8 +113,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponData: {fileID: 11400000, guid: ac9c9432d401c324faecce0a30c53ed5, type: 2}
+  damageMultiplier: 1
   firePoint: {fileID: 4288061520210801657}
-  projectilePoolTag: Arrow
+  projectilePoolTag: Explosion
+  extraProjectileMode: 2
+  burstInterval: 0.05
+  parallelSpacing: 0.5
   maxChargeTime: 1.5
   maxDamageMultiplier: 2
   pierceThreshold: 0.8

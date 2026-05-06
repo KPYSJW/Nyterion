@@ -34,6 +34,8 @@ namespace Nytherion.UI.RelicBoard
         [SerializeField] private GameObject levelUpGizmoPrefab;
         [Tooltip("레벨 다운 효과를 표시할 프리팹")]
         [SerializeField] private GameObject levelDownGizmoPrefab;
+        [Tooltip("비활성화(Silence) 효과를 표시할 프리팹")]
+        [SerializeField] private GameObject silenceGizmoPrefab;
 
 
         private RelicSlotCell[,] slotCells;
@@ -177,11 +179,17 @@ namespace Nytherion.UI.RelicBoard
                 {
                     InfluenceType influence = relicManager.GetInfluenceAt(y, x);
                     GameObject prefabToUse = null;
+                    bool isSilence = false;
 
                     if (influence == InfluenceType.LevelUp)
                         prefabToUse = levelUpGizmoPrefab;
                     else if (influence == InfluenceType.LevelDown)
                         prefabToUse = levelDownGizmoPrefab;
+                    else if (influence == InfluenceType.Silence)
+                    {
+                        prefabToUse = silenceGizmoPrefab != null ? silenceGizmoPrefab : levelDownGizmoPrefab;
+                        isSilence = true;
+                    }
 
                     if (prefabToUse != null)
                     {
@@ -189,6 +197,12 @@ namespace Nytherion.UI.RelicBoard
                         GameObject gizmo = Instantiate(prefabToUse, placedBlocksContainer);
                         gizmo.GetComponent<RectTransform>().anchoredPosition = cellPosition;
                         influenceGizmos[y, x] = gizmo;
+
+                        if (isSilence && silenceGizmoPrefab == null)
+                        {
+                            Graphic graphic = gizmo.GetComponent<Graphic>();
+                            if (graphic != null) graphic.color = new Color(0.5f, 0, 0.5f, 1f); // 보라색
+                        }
                     }
                 }
             }
@@ -255,8 +269,15 @@ namespace Nytherion.UI.RelicBoard
                 if (targetRow >= 0 && targetRow < rows && targetCol >= 0 && targetCol < columns)
                 {
                     GameObject prefabToUse = null;
+                    bool isSilence = false;
+
                     if (zone.type == InfluenceType.LevelUp) prefabToUse = levelUpGizmoPrefab;
                     else if (zone.type == InfluenceType.LevelDown) prefabToUse = levelDownGizmoPrefab;
+                    else if (zone.type == InfluenceType.Silence)
+                    {
+                        prefabToUse = silenceGizmoPrefab != null ? silenceGizmoPrefab : levelDownGizmoPrefab;
+                        isSilence = true;
+                    }
 
                     if (prefabToUse != null)
                     {
@@ -267,7 +288,7 @@ namespace Nytherion.UI.RelicBoard
                         Graphic graphic = gizmo.GetComponent<Graphic>();
                         if (graphic != null)
                         {
-                            Color color = graphic.color;
+                            Color color = isSilence && silenceGizmoPrefab == null ? new Color(0.5f, 0, 0.5f) : graphic.color;
                             color.a = 0.5f;
                             graphic.color = color;
                         }

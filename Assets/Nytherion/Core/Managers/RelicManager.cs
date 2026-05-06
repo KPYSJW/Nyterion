@@ -61,6 +61,10 @@ namespace Nytherion.Core.Managers
 
             logicGrid.ClearBlockAt(gridPosition.y, gridPosition.x);
             placedBlockPositions.Remove(block.BlockId);
+
+            // 그리드 영향권에서 벗어나는 순간 상태 초기화
+            block.ResetLevel();
+
             logicGrid.RecalculateAllInfluences();
 
             if (block.SourceData != null)
@@ -76,6 +80,10 @@ namespace Nytherion.Core.Managers
             currentlyDraggedBlock = block;
             isDraggingFromGrid = false;
             storageBlocks.RemoveAll(b => b.BlockId == block.BlockId);
+
+            // 혹시 남아있을 수 있는 상태 초기화
+            block.ResetLevel();
+
             OnRelicStateChanged?.Invoke();
         }
 
@@ -221,7 +229,16 @@ namespace Nytherion.Core.Managers
         public void AddNewRelicToStorage(RelicData data)
         {
             if (data == null) return;
-            if (storageBlocks.Any(b => b.BlockId == data.relicName) || placedBlockPositions.ContainsKey(data.relicName)) return;
+
+            // 중복 방지 (선택 사항): 이미 같은 종류의 유물이 보관함이나 그리드에 있는지 확인
+            bool isAlreadyInStorage = storageBlocks.Any(b => b.RelicId == data.relicName);
+            bool isAlreadyOnGrid = placedBlockPositions.Values.Any(pos => 
+            {
+                var block = logicGrid.GetBlockAt(pos.y, pos.x);
+                return block != null && block.RelicId == data.relicName;
+            });
+
+            if (isAlreadyInStorage || isAlreadyOnGrid) return;
 
             var instanceData = Instantiate(data);
             var newBlock = new RelicBlock(instanceData);
@@ -245,7 +262,7 @@ namespace Nytherion.Core.Managers
                 {
                     state.placedBlocks.Add(new RelicGridState.SavedRelicBlock
                     {
-                        relicId = blockOnGrid.BlockId,
+                        relicId = blockOnGrid.RelicId,
                         gridRow = pair.Value.y,
                         gridCol = pair.Value.x,
                         rotationState = blockOnGrid.RotationState
@@ -256,7 +273,7 @@ namespace Nytherion.Core.Managers
             {
                 state.placedBlocks.Add(new RelicGridState.SavedRelicBlock
                 {
-                    relicId = block.BlockId,
+                    relicId = block.RelicId,
                     gridRow = -1,
                     gridCol = -1,
                     rotationState = block.RotationState

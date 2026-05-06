@@ -34,6 +34,7 @@ namespace Nytherion.UI.Inventory
         }
 
         [SerializeField] protected Image iconImage;
+        public Image IconImage => iconImage;
         [SerializeField] protected TextMeshProUGUI countText;
         protected ItemData currentItem;
         protected int currentCount;
@@ -78,6 +79,12 @@ namespace Nytherion.UI.Inventory
             if (hasItem)
             {
                 iconImage.sprite = item.icon;
+                
+                // 알파값을 항상 1로 복구하여 투명화 버그 방지
+                Color color = iconImage.color;
+                color.a = 1f;
+                iconImage.color = color;
+
                 if (countText != null)
                 {
                     countText.text = item.isStackable && count > 1 ? count.ToString() : "";
@@ -142,13 +149,26 @@ namespace Nytherion.UI.Inventory
 
         public virtual void OnDrag(PointerEventData eventData)
         {
-            if (IsEmpty || DragItemIcon.Instance == null) return;
-            DragItemIcon.Instance.transform.position = Input.mousePosition;
+            // 위치 업데이트는 DragItemIcon.Update에서 전담하므로 여기서는 아무것도 하지 않음
         }
 
         public virtual void OnEndDrag(PointerEventData eventData)
         {
             OnEndDragEvent?.Invoke(this, eventData);
+        }
+
+        /// <summary>
+        /// 드래그 도중 원본 슬롯의 아이콘을 투명하게 하거나 원래대로 복구합니다.
+        /// </summary>
+        public void SetDragVisibility(bool isVisible)
+        {
+            if (iconImage != null && currentItem != null)
+            {
+                // 완전히 끄는 대신 알파값만 조절하여 로직 충돌 방지
+                Color color = iconImage.color;
+                color.a = isVisible ? 1f : 0f;
+                iconImage.color = color;
+            }
         }
 
         public virtual void OnPointerEnter(PointerEventData eventData)

@@ -45,7 +45,33 @@ public class DragItemIcon : MonoBehaviour
     {
         if (iconImage != null && iconImage.enabled)
         {
-            transform.position = Input.mousePosition;
+            Vector2 mousePos = Input.mousePosition;
+            
+            // 새로운 Input System 호환
+            if (Nytherion.Core.Managers.InputManager.Instance != null)
+            {
+                mousePos = Nytherion.Core.Managers.InputManager.Instance.MousePosition;
+            }
+
+            Canvas canvas = GetComponentInParent<Canvas>();
+            Camera cam = null;
+
+            if (canvas != null && (canvas.renderMode == RenderMode.ScreenSpaceCamera || canvas.renderMode == RenderMode.WorldSpace))
+            {
+                cam = canvas.worldCamera;
+                if (cam == null) cam = Camera.main;
+            }
+
+            RectTransform rt = transform as RectTransform;
+            if (rt != null && canvas != null)
+            {
+                RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas.transform as RectTransform, mousePos, cam, out Vector3 worldPoint);
+                rt.position = worldPoint;
+            }
+            else
+            {
+                transform.position = mousePos;
+            }
         }
     }
 

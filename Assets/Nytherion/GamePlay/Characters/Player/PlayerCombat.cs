@@ -29,6 +29,8 @@ namespace Nytherion.GamePlay.Characters.Player
         private PlayerManager playerManager;
 
         private float currentAngle = 0f;
+        private bool isAttackHeld = false;
+
         [Inject]
         public void Construct(InputManager inputManager)
         {
@@ -44,9 +46,21 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (inputManager != null)
             {
-                inputManager.onAttackDown += Attack;
-                inputManager.onAttackUp += AttackEnd;
+                inputManager.onAttackDown += HandleAttackDown;
+                inputManager.onAttackUp += HandleAttackUp;
             }
+        }
+
+        private void HandleAttackDown()
+        {
+            isAttackHeld = true;
+            Attack();
+        }
+
+        private void HandleAttackUp()
+        {
+            isAttackHeld = false;
+            AttackEnd();
         }
 
         public void EquipWeapon(WeaponBase newWeapon)
@@ -54,23 +68,29 @@ namespace Nytherion.GamePlay.Characters.Player
             if (currentWeapon != null)
             {
                 Destroy(currentWeapon.gameObject);
+                currentWeapon = null;
             }
+
+            if (newWeapon == null)
+            {
+                OnWeaponEquipped?.Invoke(null);
+                return;
+            }
+
             if(newWeapon.weaponData.weaponType==WeaponType.Melee)
             {
-                    if (newWeapon != null && meleeWeaponPoint != null)
+                if (meleeWeaponPoint != null)
                 {
                     currentWeapon = Instantiate(newWeapon, meleeWeaponPoint);
-
                     currentWeapon.transform.localPosition = Vector3.zero;
                     currentWeapon.transform.localRotation = Quaternion.identity;
                 }
             }
             else
             {
-                    if (newWeapon != null && weaponPoint != null)
+                if (weaponPoint != null)
                 {
                     currentWeapon = Instantiate(newWeapon, weaponPoint);
-
                     currentWeapon.transform.localPosition = Vector3.zero;
                     currentWeapon.transform.localRotation = Quaternion.identity;
                 }
@@ -82,6 +102,18 @@ namespace Nytherion.GamePlay.Characters.Player
         private void Update()
         {
             RotateWeaponToMouse();
+
+            if (isAttackHeld && currentWeapon != null)
+            {
+                // 차징 무기가 아닌 경우 꾹 누르고 있으면 쿨다운에 맞춰 자동 연사 (Auto-fire)
+                if (!(currentWeapon is Nytherion.GamePlay.Combat.Weapon.ChargeableRangedWeapon))
+                {
+                    if (currentWeapon.CanAttack())
+                    {
+                        Attack();
+                    }
+                }
+            }
         }
 
         private void RotateWeaponToMouse()
@@ -150,8 +182,8 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (inputManager != null)
             {
-                inputManager.onAttackDown -= Attack;
-                inputManager.onAttackUp -= AttackEnd;
+                inputManager.onAttackDown -= HandleAttackDown;
+                inputManager.onAttackUp -= HandleAttackUp;
             }
         }
     }

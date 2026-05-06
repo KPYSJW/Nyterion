@@ -12414,30 +12414,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2180091910043822190, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: skillHolder
-      value: 
-      objectReference: {fileID: 2097986900}
-    - target: {fileID: 2180091910043822190, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: equippedSkills.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2180091910043822190, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: equippedSkills.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2180091910043822190, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: startingSkills.Array.data[0]
-      value: 
-      objectReference: {fileID: 11400000, guid: 9db2d15baa8d38845ab987c170946da2, type: 2}
-    - target: {fileID: 3748835273771933819, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.23
-      objectReference: {fileID: 0}
-    - target: {fileID: 3748835273771933819, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -81.548965
-      objectReference: {fileID: 0}
     - target: {fileID: 5097942217742227509, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: m_Name
       value: Player
@@ -12482,25 +12458,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6852058077325633452, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: orbitRadius
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6852058077325633452, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: centerOffset.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6852058077325633452, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: meleeWeaponPoint
-      value: 
-      objectReference: {fileID: 1855653226}
-    - target: {fileID: 7144026513014664610, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-      propertyPath: m_SortingOrder
-      value: 2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 490565609878834376, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
@@ -19115,6 +19074,7 @@ MonoBehaviour:
   storageSlotPrefab: {fileID: 6419789725286957115, guid: e2ba06097f52a4f4993b965cae2f6be0, type: 3}
   levelUpGizmoPrefab: {fileID: 3142902908754315950, guid: 685e10347cd99754bb8dd5043b88cc6f, type: 3}
   levelDownGizmoPrefab: {fileID: 3142902908754315950, guid: c93654ea3214cf34bbbb393124b691ac, type: 3}
+  silenceGizmoPrefab: {fileID: 0}
 --- !u!1 &1610564964
 GameObject:
   m_ObjectHideFlags: 0
@@ -22272,11 +22232,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1853562157}
   m_CullTransparentMesh: 1
---- !u!4 &1855653226 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3748835273771933819, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-  m_PrefabInstance: {fileID: 1032417901}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1860313626
 GameObject:
   m_ObjectHideFlags: 0
@@ -24499,7 +24454,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.5
+  m_Size: 0.25
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -25781,11 +25736,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096469789}
   m_CullTransparentMesh: 1
---- !u!4 &2097986900 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2320826064245988129, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-  m_PrefabInstance: {fileID: 1032417901}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2104926815
 GameObject:
   m_ObjectHideFlags: 0

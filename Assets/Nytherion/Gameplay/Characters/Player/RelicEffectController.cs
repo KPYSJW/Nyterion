@@ -92,35 +92,34 @@ namespace Nytherion.GamePlay.Characters.Player
             if (playerManager == null || relicManager == null) return;
 
             // 현재 장착된 모든 각인의 모든 모듈과 해당 각인의 레벨을 수집
-            Dictionary<RelicEffectModule, int> currentlyEquippedModules = new Dictionary<RelicEffectModule, int>();
+            Dictionary<RelicEffectModule, (RelicData relic, int level)> currentlyEquippedModules = new Dictionary<RelicEffectModule, (RelicData, int)>();
             foreach (var relic in relicManager.GetCurrentRelics())
             {
                 if (relic != null && relic.effectModules != null)
                 {
                     foreach (var module in relic.effectModules)
                     {
-                        // 동일한 모듈이 여러 개 있을 수 있는 경우는 드물지만, 가장 높은 레벨을 덮어쓰도록 처리
-                        currentlyEquippedModules[module] = relic.level;
+                        currentlyEquippedModules[module] = (relic, relic.level);
                     }
                 }
             }
 
-            // 1. 기존에 활성화되었던 모듈 중, 장착 해제되었거나, 레벨이 변했거나, 조건이 불충족된 모듈 비활성화 (Remove)
+            // 1. 기존에 활성화되었던 모듈 중, 장착 해제되었거나, 레벨이 변했거나, 비활성화되었거나, 조건이 불충족된 모듈 비활성화 (Remove)
             List<RelicEffectModule> modulesToRemove = new List<RelicEffectModule>();
             foreach (var kvp in activeModuleLevels)
             {
                 var activeModule = kvp.Key;
                 var oldLevel = kvp.Value;
 
-                bool isStillEquipped = currentlyEquippedModules.TryGetValue(activeModule, out int currentLevel);
-                // 장착 해제된 경우 혹은 레벨이 바뀐 경우에는 일단 비활성화 (레벨이 바뀌었으면 나중에 다시 활성화됨)
-                if (!isStillEquipped || oldLevel != currentLevel)
+                bool isStillEquipped = currentlyEquippedModules.TryGetValue(activeModule, out var data);
+                // 장착 해제, 레벨 변경, 혹은 비활성화 상태가 된 경우 제거 대상으로 지정
+                if (!isStillEquipped || oldLevel != data.level || data.relic.isDisabled)
                 {
                     modulesToRemove.Add(activeModule);
                 }
                 else
                 {
-                    bool isConditionMet = activeModule.condition == null || activeModule.condition.IsConditionMet(playerManager, currentLevel);
+                    bool isConditionMet = activeModule.condition == null || activeModule.condition.IsConditionMet(playerManager, data.level);
                     if (!isConditionMet)
                     {
                         modulesToRemove.Add(activeModule);
@@ -137,9 +136,9 @@ namespace Nytherion.GamePlay.Characters.Player
             foreach (var kvp in currentlyEquippedModules)
             {
                 var module = kvp.Key;
-                var currentLevel = kvp.Value;
+                var (relic, currentLevel) = kvp.Value;
 
-                if (!activeModuleLevels.ContainsKey(module))
+                if (!activeModuleLevels.ContainsKey(module) && !relic.isDisabled)
                 {
                     bool isConditionMet = module.condition == null || module.condition.IsConditionMet(playerManager, currentLevel);
                     if (isConditionMet)
@@ -154,6 +153,15 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (module == null || module.effects == null) return;
 
+            // 방어 코드: 이미 이 레벨로 활성화된 상태라면 무시 (무한 루프 방지)
+            if (activeModuleLevels.TryGetValue(module, out int existingLevel) && existingLevel == level)
+            {
+                return;
+            }
+
+            // 순서 변경: 상태를 먼저 갱신하여, 이펙트 발동 중 발생하는 이벤트가 다시 여기로 돌아왔을 때 중복 실행을 막음
+            activeModuleLevels[module] = level;
+
             foreach (var effect in module.effects)
             {
                 if (effect != null)
@@ -161,7 +169,6 @@ namespace Nytherion.GamePlay.Characters.Player
                     effect.ApplyEffect(playerManager, level);
                 }
             }
-            activeModuleLevels[module] = level;
         }
 
         private void DeactivateModule(RelicEffectModule module, int level)

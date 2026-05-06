@@ -7,15 +7,18 @@ namespace Nytherion.GamePlay.Relics
     public class RelicBlock
     {
         public RelicData SourceData { get; private set; }
-        public string BlockId => SourceData.relicName;
+        public string BlockId { get; private set; }
+        public string RelicId => SourceData.relicName;
         public List<Vector2Int> Shape => SourceData.shape;
         public int Level => SourceData.level;
 
         private int baseLevel;
         public int RotationState { get; private set; }
+
         public RelicBlock(RelicData data)
         {
             SourceData = data;
+            BlockId = System.Guid.NewGuid().ToString();
             baseLevel = data.level;
             RotationState = 0;
         }
@@ -23,6 +26,7 @@ namespace Nytherion.GamePlay.Relics
         public RelicBlock(RelicData data, int level)
         {
             SourceData = data;
+            BlockId = System.Guid.NewGuid().ToString();
             baseLevel = level;
             SourceData.level = level;
             RotationState = 0;
@@ -33,9 +37,15 @@ namespace Nytherion.GamePlay.Relics
             SourceData.level += amount;
         }
 
+        public void SetDisabled(bool disabled)
+        {
+            SourceData.isDisabled = disabled;
+        }
+
         public void ResetLevel()
         {
             SourceData.level = baseLevel;
+            SourceData.isDisabled = false;
         }
         public void Rotate()
         {
