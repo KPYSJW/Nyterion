@@ -27,6 +27,12 @@ MonoBehaviour:
   damage: 2
   range: 4
   cooldown: 0.08
-  projectilePrefab: {fileID: 1453523852295367759, guid: 2ff9b7ec442117043b64f8d68c4c0ed8, type: 3}
-  weaponPrefab: {fileID: -562947462724574447, guid: bbbb29b46625b474e9fa3fb22e51edcf, type: 3}
   weaponType: 0
+  weaponSprite: {fileID: 0}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  projectilePrefab: {fileID: 1453523852295367759, guid: 2ff9b7ec442117043b64f8d68c4c0ed8, type: 3}
+  projectileSpeed: 10
+  extraProjectileMode: 1
+  maxChargeTime: 1
+  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  isArchivable: 1

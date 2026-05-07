@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  poolTag: SlowMultiHit
+  poolTag: Player_SlowMultiHit
 --- !u!114 &3562371343273806626
 MonoBehaviour:
   m_ObjectHideFlags: 0

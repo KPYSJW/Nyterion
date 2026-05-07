@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nytherion.GamePlay.Combat.Weapon
+namespace Nytherion.GamePlay.Combat.Weapons
 {
     public abstract class ChargeableRangedWeapon : RangedWeapon
     {

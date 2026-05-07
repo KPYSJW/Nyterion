@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8604274073206334278}
   - component: {fileID: 8590790990860606378}
-  - component: {fileID: 6208765460595893722}
-  - component: {fileID: 5577653623118475701}
+  - component: {fileID: 6874294087627926598}
   m_Layer: 0
-  m_Name: ChargingSpreadWeapon
+  m_Name: andomArchive_Template
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,7 +86,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6208765460595893722
+--- !u!114 &6874294087627926598
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -96,28 +95,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 2204877618560446080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d35c5d514f90dc248963a7df2b987599, type: 3}
+  m_Script: {fileID: 11500000, guid: c7e524d67b8cbe340a3b416659f29483, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 0}
---- !u!114 &5577653623118475701
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2204877618560446080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eeac85dac23c8bd4f9bc8b13ce3d4ec5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponData: {fileID: 11400000, guid: 7caccffd938aa0f439e4d7ffe377d20e, type: 2}
+  weaponData: {fileID: 0}
+  damageMultiplier: 1
   firePoint: {fileID: 4288061520210801657}
-  projectilePoolTag: Explosion
-  maxChargeTime: 1.5
-  maxProjectileCount: 5
-  spreadAngle: 45
+  projectilePoolTag: Player_Explosion
+  extraProjectileMode: 0
+  burstInterval: 0.05
+  parallelSpacing: 0.5
+  projectileSpeed: 8
+  fallbackProjectilePrefab: {fileID: 0}
+  useTestProjectiles: 1
+  testProjectiles:
+  - {fileID: 3778041586713616541, guid: 2eaf7d6fe073aef4caa6d4099d63f3a9, type: 3}
+  - {fileID: 3514501862146727550, guid: 5cea63a4e7f60a84996c1b5d3acdb4ac, type: 3}
+  - {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
 --- !u!1 &4964738641561314771
 GameObject:
   m_ObjectHideFlags: 0

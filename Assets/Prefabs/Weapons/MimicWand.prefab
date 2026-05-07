@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 8604274073206334278}
   - component: {fileID: 8590790990860606378}
   - component: {fileID: 6208765460595893722}
-  - component: {fileID: 691757425106379463}
+  - component: {fileID: 4695407395874768517}
   m_Layer: 0
-  m_Name: RubberBallWeapon
+  m_Name: MimicWand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
---- !u!114 &691757425106379463
+--- !u!114 &4695407395874768517
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,17 +109,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 2204877618560446080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c45ace6468295f24c8dd6e1656ee30ea, type: 3}
+  m_Script: {fileID: 11500000, guid: c7e524d67b8cbe340a3b416659f29483, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponData: {fileID: 11400000, guid: 5ae48d5b5f5b21e46b96d1b6e5b26bf3, type: 2}
+  weaponData: {fileID: 11400000, guid: a08dd370a0ed3e643b6ff5de3f76b8c3, type: 2}
   damageMultiplier: 1
-  firePoint: {fileID: 4288061520210801657}
-  projectilePoolTag: RubberBall
+  firePoint: {fileID: 0}
+  projectilePoolTag: PlayerProjectile
   extraProjectileMode: 1
   burstInterval: 0.05
   parallelSpacing: 0.5
   projectileSpeed: 8
+  fallbackProjectileTag: Arrow
+  useTestProjectiles: 1
+  testProjectiles:
+  - Arrow
+  - Explosion
+  - RubberBall
 --- !u!1 &4964738641561314771
 GameObject:
   m_ObjectHideFlags: 0

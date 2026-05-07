@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxBounces: 3
-  maxLifetime: 5
+  maxLifetime: 4
 --- !u!114 &8334419257868409299
 MonoBehaviour:
   m_ObjectHideFlags: 0

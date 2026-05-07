@@ -21,6 +21,7 @@ namespace Nytherion.Core.Managers
         public Dictionary<string, Queue<GameObject>> poolDictionary;
 
         private Dictionary<string, Transform> poolRoots;
+        private Dictionary<string, Transform> categoryRoots;
 
         private IObjectResolver container;
 
@@ -42,31 +43,78 @@ namespace Nytherion.Core.Managers
         {
             poolDictionary = new Dictionary<string, Queue<GameObject>>();
             poolRoots = new Dictionary<string, Transform>();
+            categoryRoots = new Dictionary<string, Transform>();
 
             foreach (Pool pool in pools)
             {
-                if (pool.prefab == null)
-                {
-                    continue;
-                }
-
-                GameObject rootObj = new GameObject($"[Pool] {pool.tag}");
-                rootObj.transform.SetParent(this.transform);
-                poolRoots.Add(pool.tag, rootObj.transform);
-
-                Queue<GameObject> objectPool = new Queue<GameObject>();
-                for (int i = 0; i < pool.size; i++)
-                {
-                    GameObject obj = container.Instantiate(pool.prefab);
-                    
-                    obj.transform.SetParent(rootObj.transform);
-                    
-                    obj.SetActive(false);
-                    objectPool.Enqueue(obj);
-                }
-                poolDictionary.Add(pool.tag, objectPool);
+                if (pool.prefab == null) continue;
+                CreateNewPool(pool.tag, pool.prefab, pool.size);
             }
         }
+
+        public GameObject SpawnFromPool(GameObject prefab, Vector3 position, Quaternion rotation)
+        {
+            if (prefab == null) return null;
+
+            string tag = prefab.name;
+
+            if (!poolDictionary.ContainsKey(tag))
+            {
+                CreateNewPool(tag, prefab, 10);
+            }
+
+            return SpawnFromPool(tag, position, rotation);
+        }
+
+        private Transform GetCategoryRoot(string prefabName)
+        {
+            string category = "Etc";
+            
+            if (prefabName.StartsWith("Player_")) category = "Player";
+            else if (prefabName.StartsWith("Enemy_")) category = "Enemy";
+            else if (prefabName.StartsWith("Effect_")) category = "Effect";
+            else if (prefabName.StartsWith("UI_")) category = "UI";
+            else if (prefabName.StartsWith("Item_")) category = "Item";
+
+            if (!categoryRoots.TryGetValue(category, out Transform categoryRoot))
+            {
+                GameObject catObj = new GameObject($"[Category] {category}");
+                catObj.transform.SetParent(this.transform);
+                categoryRoot = catObj.transform;
+                categoryRoots.Add(category, categoryRoot);
+            }
+
+            return categoryRoot;
+        }
+
+        private void CreateNewPool(string tag, GameObject prefab, int size)
+        {
+            if (poolDictionary.ContainsKey(tag)) return;
+
+            Transform categoryRoot = GetCategoryRoot(prefab.name);
+
+            GameObject rootObj = new GameObject($"[Pool] {tag}");
+            rootObj.transform.SetParent(categoryRoot);
+            poolRoots.Add(tag, rootObj.transform);
+
+            Queue<GameObject> objectPool = new Queue<GameObject>();
+            for (int i = 0; i < size; i++)
+            {
+                GameObject obj = container.Instantiate(prefab);
+                obj.transform.SetParent(rootObj.transform);
+                obj.SetActive(false);
+                objectPool.Enqueue(obj);
+            }
+
+            // 중복 추가 방지
+            if (!pools.Exists(p => p.tag == tag))
+            {
+                pools.Add(new Pool { tag = tag, prefab = prefab, size = size });
+            }
+            
+            poolDictionary.Add(tag, objectPool);
+        }
+
         public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
         {
             if (!poolDictionary.ContainsKey(tag))

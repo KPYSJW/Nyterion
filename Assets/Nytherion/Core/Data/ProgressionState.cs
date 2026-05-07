@@ -18,5 +18,7 @@ namespace Nytherion.Core.Data
         public List<string> completedMilestones = new List<string>();
 
         public List<MilestoneProgressEntry> activeProgresses = new List<MilestoneProgressEntry>();
+
+        public List<string> unlockedProjectiles = new List<string>();
     }
 }

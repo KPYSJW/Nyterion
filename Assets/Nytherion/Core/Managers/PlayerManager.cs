@@ -142,7 +142,11 @@ namespace Nytherion.Core.Managers
 
             if (newItem != null && newItem is WeaponData weaponData)
             {
-                PlayerCombat?.EquipWeapon(weaponData.weaponPrefab);
+                if (PlayerCombat != null)
+                {
+                    // 수정된 EquipWeapon을 사용하여 프리팹과 데이터를 함께 전달
+                    PlayerCombat.EquipWeapon(weaponData.weaponPrefab, weaponData);
+                }
             }
             else if (slotType == EquipmentSlotType.Weapon)
             {
@@ -253,7 +257,7 @@ namespace Nytherion.Core.Managers
                 allModifiers.AddRange(temporaryModifiers);
             }
 
-            // 1. 플랫(고정 수치) 증가치 먼저 적용
+            // 고정 수치 먼저 적용
             foreach (var mod in allModifiers)
             {
                 if (!mod.isPercentage)
@@ -272,7 +276,7 @@ namespace Nytherion.Core.Managers
                 }
             }
 
-            // 2. 퍼센트(비율) 증가치 합산 후 적용
+            // 퍼센트 증가치 합산 후 적용
             Dictionary<StatType, float> percentageSums = new Dictionary<StatType, float>();
             float allStatsPercentage = 0f;
 

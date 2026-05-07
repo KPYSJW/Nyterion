@@ -24,11 +24,17 @@ namespace Nytherion.Core.Managers
 
         event Action<SkillData> OnSkillUnlocked;
         event Action<string> OnMilestoneCompleted;
+
+        void RecordProjectile(GameObject projectilePrefab);
+        System.Collections.Generic.List<GameObject> GetUnlockedProjectilePrefabs();
+        void RecordProjectile(string projectileTag);
+        System.Collections.Generic.List<string> GetUnlockedProjectiles();
     }
 
     public class ProgressionManager : BaseManager, IProgressionManager, ISaveable 
     {
         private ProgressionState state = new ProgressionState();
+        private System.Collections.Generic.List<GameObject> unlockedProjectilePrefabs = new System.Collections.Generic.List<GameObject>();
 
         public event Action<SkillData> OnSkillUnlocked;
         public event Action<string> OnMilestoneCompleted;
@@ -54,6 +60,43 @@ namespace Nytherion.Core.Managers
                 OnSkillUnlocked?.Invoke(skillData);
             }
         }
+
+        // --- 투사체 기록 로직 ---
+        public void RecordProjectile(GameObject projectilePrefab)
+        {
+            if (projectilePrefab == null) return;
+
+            string projectileTag = projectilePrefab.name;
+            if (!state.unlockedProjectiles.Contains(projectileTag))
+            {
+                state.unlockedProjectiles.Add(projectileTag);
+                if (!unlockedProjectilePrefabs.Contains(projectilePrefab))
+                {
+                    unlockedProjectilePrefabs.Add(projectilePrefab);
+                }
+                Debug.Log($"[Progression] 새로운 투사체 기록됨: {projectileTag}");
+            }
+        }
+
+        public void RecordProjectile(string projectileTag)
+        {
+            if (!string.IsNullOrEmpty(projectileTag) && !state.unlockedProjectiles.Contains(projectileTag))
+            {
+                state.unlockedProjectiles.Add(projectileTag);
+                Debug.Log($"[Progression] 새로운 투사체 태그 기록됨: {projectileTag}");
+            }
+        }
+
+        public System.Collections.Generic.List<GameObject> GetUnlockedProjectilePrefabs()
+        {
+            return new System.Collections.Generic.List<GameObject>(unlockedProjectilePrefabs);
+        }
+
+        public System.Collections.Generic.List<string> GetUnlockedProjectiles()
+        {
+            return new System.Collections.Generic.List<string>(state.unlockedProjectiles);
+        }
+        // ------------------------------
         
         public bool IsMilestoneCompleted(string milestoneId)
         {

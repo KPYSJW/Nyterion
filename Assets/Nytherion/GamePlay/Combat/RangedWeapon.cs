@@ -1,9 +1,16 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
 using System.Collections;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.Core.Interfaces;
 
 namespace Nytherion.GamePlay.Combat
 {
+    public interface IProjectile
+    {
+        void SetSpeed(float speed);
+    }
+
     public enum ExtraProjectileMode
     {
         Spread,
@@ -16,6 +23,7 @@ namespace Nytherion.GamePlay.Combat
         [Header("Ranged Settings")]
         public Transform firePoint;
 
+        [HideInInspector]
         public string projectilePoolTag = "PlayerProjectile";
 
         [Header("Extra Projectile Settings")]
@@ -31,19 +39,60 @@ namespace Nytherion.GamePlay.Combat
         [Tooltip("투사체의 날아가는 속도")]
         public float projectileSpeed = 8f;
 
+        public override void Initialize(WeaponData data)
+        {
+            base.Initialize(data);
+
+            if (data != null)
+            {
+                projectileSpeed = data.projectileSpeed;
+                extraProjectileMode = data.extraProjectileMode;
+                
+                if (firePoint != null)
+                {
+                    firePoint.localPosition = data.firePointOffset;
+                }
+
+                // 투사체 태그 업데이트 (프리팹 이름을 태그로 사용)
+                if (data.projectilePrefab != null)
+                {
+                    projectilePoolTag = data.projectilePrefab.name;
+                }
+            }
+        }
+
         public GameObject Projectile(Vector2 direction, Vector3 spawnOffset = default)
         {
             Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f) + spawnOffset;
-            GameObject projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, spawnPos, Quaternion.identity);
+            
+            GameObject projectile;
+            if (weaponData != null && weaponData.projectilePrefab != null)
+            {
+                projectile = ObjectPoolManager.Instance.SpawnFromPool(weaponData.projectilePrefab, spawnPos, Quaternion.identity);
+            }
+            else
+            {
+                projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, spawnPos, Quaternion.identity);
+            }
 
+            if (projectile == null) return null;
+
+            Vector2 normalizedDir = direction.normalized;
+            float angle = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
+            projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            //  Rigidbody2D가 있으면 속도 적용
             if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
             {
-                Vector2 normalizedDir = direction.normalized;
                 rb.velocity = normalizedDir * projectileSpeed;
-
-                float angle = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
-                projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             }
+            
+            //  IProjectile 인터페이스를 구현한 별도 이동 스크립트가 있으면 속도 전달
+            if (projectile.TryGetComponent<IProjectile>(out var iProj))
+            {
+                iProj.SetSpeed(projectileSpeed);
+            }
+            
             
             if (projectile.TryGetComponent<CollisionObject>(out var collisionObj))
             {

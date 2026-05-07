@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc1f847f744d2b54b96086af9015a228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolTag: ExplosionVFX
+  poolTag: Player_ExplosionVFX
 --- !u!114 &4079740154845748502
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -25,7 +25,14 @@ namespace Nytherion.GamePlay.Combat
         {
             weaponData = data;
             lastAttackTime = -data.cooldown;
-            lastAttackTime = -data.cooldown;
+
+            if (data.weaponSprite != null)
+            {
+                if (TryGetComponent<SpriteRenderer>(out var sr))
+                {
+                    sr.sprite = data.weaponSprite;
+                }
+            }
         }
 
         public virtual bool CanAttack()

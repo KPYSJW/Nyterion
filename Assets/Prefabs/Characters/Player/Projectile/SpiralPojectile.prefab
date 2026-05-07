@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  poolTag: Sprial
+  poolTag: Player_Sprial
 --- !u!50 &-1744505625959751428
 Rigidbody2D:
   serializedVersion: 4

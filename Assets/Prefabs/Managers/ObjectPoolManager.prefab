@@ -55,33 +55,33 @@ MonoBehaviour:
   - tag: Hybrid
     prefab: {fileID: 6406644339438500767, guid: 3215275927a03af4a837360f213af70e, type: 3}
     size: 15
-  - tag: SoulEater
+  - tag: Player_SoulEater
     prefab: {fileID: 4893586122137001029, guid: 2f39ca2c520200b4bb325ed4c3c87f7c, type: 3}
     size: 5
-  - tag: Arrow
+  - tag: Player_Arrow
     prefab: {fileID: 3778041586713616541, guid: 2eaf7d6fe073aef4caa6d4099d63f3a9, type: 3}
     size: 15
-  - tag: Spiral
+  - tag: Player_Spiral
     prefab: {fileID: 3778041586713616541, guid: bbd39e4bcf80ebf45a37c0077987be40, type: 3}
     size: 15
-  - tag: Explosion
+  - tag: Player_Explosion
     prefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
     size: 15
-  - tag: SlowMultiHit
+  - tag: Player_SlowMultiHit
     prefab: {fileID: 3514501862146727550, guid: 5cea63a4e7f60a84996c1b5d3acdb4ac, type: 3}
     size: 15
-  - tag: ExplosionVFX
+  - tag: Player_ExplosionVFX
     prefab: {fileID: 2802172147523158979, guid: 84b5ead5d3a10aa47aa871b8d0611224, type: 3}
     size: 15
-  - tag: Meteor
+  - tag: Player_Meteor
     prefab: {fileID: 8688154318546131989, guid: fc19d7a074b077f44a50ab601d98af1d, type: 3}
     size: 15
-  - tag: RubberBall
+  - tag: Player_RubberBall
     prefab: {fileID: 2256088866125702370, guid: 030bc669879d30d4ca0c6be6a3bb8f31, type: 3}
     size: 15
-  - tag: Blackhole
+  - tag: Player_Blackhole
     prefab: {fileID: 8075100979062668080, guid: 5138c104c394a2e4c844eac042749dd2, type: 3}
     size: 15
-  - tag: Laser
+  - tag: Player_Laser
     prefab: {fileID: 3340605813892160815, guid: 93af1da459a4c6246ba862a418847863, type: 3}
     size: 15

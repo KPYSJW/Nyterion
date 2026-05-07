@@ -1,13 +1,12 @@
 using UnityEngine;
 
-namespace Nytherion.GamePlay.Combat.Weapon
+namespace Nytherion.GamePlay.Combat.Weapons
 {
     public class ChargedSpreadWeapon : ChargeableRangedWeapon
     {
         [Header("Charged Spread Settings")]
-        [Tooltip("�ִ� ��¡ �� �߻�� ����ü ����")]
+        [Tooltip("최대 투사체 수")]
         public int maxProjectileCount = 5;
-        [Tooltip("��ä�� �߻� ����")]
         public float spreadAngle = 45f;
         private Vector3 originalScale;
 

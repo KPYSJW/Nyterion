@@ -62,7 +62,7 @@ namespace Nytherion.GamePlay.Characters.Player
         }
 
         /// <summary>
-        /// 게임 시작 및 로드 시, 그리드에 장착된 각인과 플레이어의 장착 상태를 일치시킨다.
+        /// 게임 시작 및 로드 시, 그리드에 장착된 각인과 플레이어의 장착 상태를 일치시킨다
         /// </summary>
         private void SyncWithGrid()
         {
@@ -84,7 +84,6 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void HandleRelicStateFromGrid(RelicData data, bool isEquipped)
         {
-            Debug.Log($" [디버그] 각인 이벤트 수신 완료 - 대상: {data.relicName}, 장착여부: {isEquipped}");
 
             if (isEquipped)
             {
@@ -114,7 +113,6 @@ namespace Nytherion.GamePlay.Characters.Player
             }
 
             equippedRelics.Add(relic);
-            Debug.Log($" [디버그] 각인 플레이어 스탯에 추가됨: {relic.relicName}");
 
             var currentWeaponData = playerManager?.PlayerCombat?.currentWeapon?.weaponData;
             if (currentWeaponData != null)
@@ -133,7 +131,6 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (index >= 0 && index < equippedRelics.Count)
             {
-                Debug.Log($" [디버그] 각인 플레이어 스탯에서 제거됨: {equippedRelics[index].relicName}");
                 equippedRelics.RemoveAt(index);
 
                 OnRelicsChanged?.Invoke();
