@@ -23,7 +23,6 @@ namespace Nytherion.GamePlay.Dungeon
         [Header("오브젝트 부모")]
         [Tooltip("생성된 장애물 오브젝트들을 담을 부모 Transform")]
         [SerializeField] private Transform obstacleHolder;
-        [SerializeField] private Transform specialRoomObjectHolder;
 
         [Header("타일 에셋")]
         [SerializeField] private TileBase floorTile;
@@ -35,6 +34,8 @@ namespace Nytherion.GamePlay.Dungeon
         [SerializeField] private TileBase shopRoomTile;
         [SerializeField] private TileBase itemRoomTile;
 
+       
+
         /// <summary>
         /// 외부(주로 Zenject Installer)에서 타일맵 참조를 설정하기 위한 초기화 메서드입니다.
         /// </summary>
@@ -45,29 +46,23 @@ namespace Nytherion.GamePlay.Dungeon
             this.portalTilemap = portal;
         }
 
+        public void CreateObjectHolder()
+        {
+            if(obstacleHolder==null)
+            {
+                GameObject gameObject=new GameObject("ObjectHolder");
+                obstacleHolder=gameObject.transform;
+            }
+        }
+
         /// <summary>
         /// 전달받은 장애물 데이터를 기반으로 실제 게임 오브젝트를 생성합니다.
         /// </summary>
         public void InstantiateObstacles(List<RoomFirstDungeonGenerator.PlacedObstacleData> obstaclesToPlace)
         {
             // 기존에 생성된 장애물이 있다면 모두 삭제합니다.
-            if (obstacleHolder != null)
-            {
-                // 자식 오브젝트를 역순으로 순회하며 삭제해야 안전합니다.
-                for (int i = obstacleHolder.childCount - 1; i >= 0; i--)
-                {
-                    Transform child = obstacleHolder.GetChild(i);
-                    if (Application.isPlaying)
-                    {
-                        Destroy(child.gameObject);
-                    }
-                    else
-                    {
-                        // 에디터 모드에서 실행될 경우를 대비
-                        DestroyImmediate(child.gameObject);
-                    }
-                }
-            }
+            
+           CreateObjectHolder();
 
             if (obstaclesToPlace == null) return;
 
@@ -84,10 +79,11 @@ namespace Nytherion.GamePlay.Dungeon
             List<RoomFirstDungeonGenerator.Room> specialRooms,
             DungeonData dungeonData)
         {
+            CreateObjectHolder();
             //bool hasDedicatedHolder = specialRoomObjectHolder != null;
            // Transform holder = hasDedicatedHolder ? specialRoomObjectHolder : obstacleHolder;
             if (/*holder == null ||*/ specialRooms == null || dungeonData == null) return;
-
+            
             /*if (hasDedicatedHolder)
             {
                 ClearChildren(holder);
@@ -107,7 +103,7 @@ namespace Nytherion.GamePlay.Dungeon
 
                     Vector3 localPosition = roomPrefab.transform.InverseTransformPoint(child.position);
                     Vector3 worldPosition = (Vector3)room.center + localPosition;
-                   GameObject instance = Instantiate(child.gameObject, worldPosition, child.rotation);
+                   GameObject instance = Instantiate(child.gameObject, worldPosition, child.rotation,obstacleHolder);
 
                     var scope = VContainer.Unity.LifetimeScope.Find<GameSceneLifetimeScope>();
                     if (scope != null)
@@ -187,15 +183,13 @@ namespace Nytherion.GamePlay.Dungeon
             portalTilemap?.ClearAllTiles();
 
             // 장애물 홀더의 자식 오브젝트들도 모두 삭제합니다.
+             CreateObjectHolder();
             if (obstacleHolder != null)
             {
                 ClearChildren(obstacleHolder);
             }
 
-            if (specialRoomObjectHolder != null && specialRoomObjectHolder != obstacleHolder)
-            {
-                ClearChildren(specialRoomObjectHolder);
-            }
+            
         }
 
         /// <summary>

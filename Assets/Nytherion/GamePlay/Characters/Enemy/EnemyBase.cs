@@ -1,3 +1,4 @@
+using System.Collections;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Systems;
@@ -22,6 +23,14 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private CurrencyDataManager currencyDataManager;
         public EnemyAIController aiController;
         private EventManager eventManager;
+
+        [Header("Hit Flash")]
+        [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Color hitColor = Color.red;
+        [SerializeField] private float hitFlashDuration = 0.2f;
+        private Color originalColor = Color.white;
+        private Coroutine hitFlashCoroutine;
+
         [Inject]
         public void Construct(EventManager eventManager,CurrencyDataManager currencyDataManager)
         {
@@ -34,7 +43,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             currentHealth = data.maxHealth;
             isDead = false;
             gameObject.SetActive(true);
-
+            originalColor=spriteRenderer.color;
             aiController = GetComponent<EnemyAIController>();
             if (aiController != null)
             {
@@ -45,11 +54,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public void TakeDamage(float damageAmount)
         {
             if (isDead) return;
-
+            PlayHitFlash();
             if (eventManager != null)
             {
                 eventManager.TriggerEnemyDamagedByPlayer(damageAmount);
             }
+
 
             currentHealth -= damageAmount;
             if (currentHealth <= 0) Die();
@@ -65,7 +75,27 @@ namespace Nytherion.GamePlay.Characters.Enemy
             eventManager.TriggerEnemyDeathEvent(this);
             gameObject.SetActive(false);
         }
+        private void PlayHitFlash()
+        {
+            if (spriteRenderer == null) return;
 
+            if (hitFlashCoroutine != null)
+            {
+                StopCoroutine(hitFlashCoroutine);
+            }
+
+            hitFlashCoroutine = StartCoroutine(HitFlashRoutine());
+        }
+
+        private IEnumerator HitFlashRoutine()
+        {
+            spriteRenderer.color = hitColor;
+
+            yield return new WaitForSeconds(hitFlashDuration);
+
+            spriteRenderer.color = originalColor;
+            hitFlashCoroutine = null;
+        }
         private void DropItems()
         {
             
@@ -87,11 +117,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
         }*/
 
-        private void OnTriggerEnter2D(Collider2D other) {
-            if (other.gameObject.CompareTag(Tags.Player)||other.gameObject.CompareTag(Tags.Weapon))
+        /*private void OnTriggerEnter2D(Collider2D other) {
+            if (other.gameObject.CompareTag(Tags.Weapon))
             {
                 Die();
             }
-        }
+        }*/
     }
 }

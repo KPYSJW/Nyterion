@@ -29,7 +29,8 @@ MonoBehaviour:
     value: 0
     valuePerLevel: 0
     isPercentage: 0
-  damage: 0
+  weaponName: Sword
+  damage: 15
   range: 0
   cooldown: 0
   weaponType: 1

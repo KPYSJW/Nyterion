@@ -47,7 +47,8 @@ namespace Nytherion.GamePlay.Dungeon
         private WorldmapController _worldmapController;
         private MinimapTileGenerator _minimapGenerator;
         public StageManager _stageManager;
-
+        private DungeonData currentDungeonData;
+        public DungeonData CurrentDungeonData => currentDungeonData;
         private Tilemap floorTilemap;
         private Tilemap wallTilemap;
         private Tilemap portalTilemapInstance;
@@ -100,6 +101,36 @@ namespace Nytherion.GamePlay.Dungeon
             {
                 tilemapVisualizer.InitializeTilemaps(floorTilemap, wallTilemap, portalTilemapInstance);
             }
+        }
+
+        private bool RefreshDungeonDataFromStage()
+        {
+            if (_stageManager == null)
+            {
+                Debug.LogError("[DungeonManager] StageManager가 없습니다.");
+                return false;
+            }
+
+            if (_stageManager.CurrentStage == null)
+            {
+                Debug.LogError("[DungeonManager] CurrentStage가 없습니다.");
+                return false;
+            }
+
+            if (_stageManager.CurrentStage.dungeonData == null)
+            {
+                Debug.LogError($"[DungeonManager] 현재 스테이지({_stageManager.CurrentStage.stageName})에 DungeonData가 없습니다.");
+                return false;
+            }
+
+            currentDungeonData = _stageManager.CurrentStage.dungeonData;
+
+            if (roomFirstDungeonGenerator != null)
+            {
+                roomFirstDungeonGenerator.dungeonData = currentDungeonData;
+            }
+
+            return true;
         }
 
         public void SetControllers(WorldmapController worldmapController, MinimapTileGenerator minimapGenerator)
@@ -163,15 +194,12 @@ namespace Nytherion.GamePlay.Dungeon
 
         public void StartDungeonGeneration()
         {
-            if (_stageManager != null && _stageManager.CurrentStage != null)
+            if (!RefreshDungeonDataFromStage())
             {
-                roomFirstDungeonGenerator.dungeonData = _stageManager.CurrentStage.dungeonData;
-                roomFirstDungeonGenerator.DungeonStart();
+                return;
             }
-            else
-            {
-                Debug.LogError("StageManager 또는 현재 스테이지 데이터가 없습니다! 던전을 생성할 수 없습니다.");
-            }
+
+            roomFirstDungeonGenerator.DungeonStart();
         }
 
         public void RegenerateDungeon()
@@ -324,7 +352,7 @@ namespace Nytherion.GamePlay.Dungeon
 
         private void SpawnBoss(RoomFirstDungeonGenerator.Room bossRoom)
         {
-            DungeonData dungeonData = roomFirstDungeonGenerator.GetComponent<RoomFirstDungeonGenerator>().dungeonData;
+            DungeonData dungeonData = currentDungeonData;
             if (dungeonData.bossMonsterData == null)
             {
                 Debug.LogWarning("DungeonData에 보스 몬스터 데이터가 할당되지 않았습니다.");
@@ -346,6 +374,7 @@ namespace Nytherion.GamePlay.Dungeon
             if (bossObj != null && bossObj.TryGetComponent<EnemyBase>(out var bossEnemy))
             {
                 bossEnemy.Initialize(dungeonData.bossMonsterData);
+                bossEnemy.aiController.agent.enabled = true;
                 bossEnemy.homeRoom = bossRoom;
                 bossRoom.enemies.Add(bossEnemy);
                 hasBossSpawned = true;

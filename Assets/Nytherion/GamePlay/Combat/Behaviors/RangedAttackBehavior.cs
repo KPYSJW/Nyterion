@@ -16,6 +16,7 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         [SerializeField] private bool useProjectileVisual = true;
         [SerializeField] private GameObject projectilePrefab;
         [SerializeField] public Transform firePoint;
+        [SerializeField] public Transform player=null;
 
         private float lastAttackTime = -999f;
         private const float ProjectileSpeed = 8f;
@@ -37,13 +38,14 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         public bool TryAttack(Transform target)
         {
             if (target == null) return false;
+            player=target;
 
             bool canAttack = Time.time - lastAttackTime >= attackCoolDown && IsInAttackRange(target);
             if (!canAttack) return false;
 
             lastAttackTime = Time.time;
-            ApplyDamage(target);
-            SpawnProjectileVisual(target);
+            //ApplyDamage(target);
+            //SpawnProjectileVisual(target);
 
             return true;
         }
@@ -64,14 +66,17 @@ namespace Nytherion.GamePlay.Combat.Behaviors
             }
         }
 
-        private void SpawnProjectileVisual(Transform target)
+        public void SpawnProjectileVisual()
         {
             if (!useProjectileVisual) return;
             if (projectilePrefab == null || firePoint == null) return;
 
-            Vector2 direction = (target.position - firePoint.position).normalized;
+            Vector2 direction = (player.position - firePoint.position).normalized;
             GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
+            if (projectile.TryGetComponent<EnemyProjectiles>(out var enemyProjectile))
+            {
+                enemyProjectile.Initialize(GetDamageValue());
+            }
             if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
             {
                 rb.velocity = direction * ProjectileSpeed;

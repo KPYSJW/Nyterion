@@ -31,7 +31,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public EnemyChaseState chaseState;
         public EnemyAttackState attackState;
         public Animator animator;
-        public SpriteRenderer spriteRenderer;
+        //public SpriteRenderer spriteRenderer;
+        public Transform Root;
+        public Vector2 RootDefaultScale;
         public EnemyCombatType CurrentCombatType;
 
         public EnemyData enemyData;
@@ -45,7 +47,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 enabled = false;
                 return;
             }
-            
+            RootDefaultScale=Root.localScale;
             player = playerInstance.transform;
             rb = GetComponent<Rigidbody2D>();
             agent = GetComponent<NavMeshAgent>();
@@ -80,7 +82,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private void Update()
         {
             currentState.UpdateState(this);
-            UpdateSpriteDirection();
+            UpdateDirection();
         }
 
         public void TransitionToState(EnemyBaseState newState)
@@ -93,15 +95,25 @@ namespace Nytherion.GamePlay.Characters.Enemy
             currentState.EnterState(this);
         }
 
-        private void UpdateSpriteDirection()
+        private void UpdateDirection()
         {
-            if (spriteRenderer == null || agent == null) return;
+            if (Root == null || agent == null) return;
 
             Vector3 velocity = agent.desiredVelocity;
-            if (velocity.sqrMagnitude > 0.01f)
+            if (velocity.sqrMagnitude <= 0.01f) return;
+
+            Vector3 scale = RootDefaultScale;
+
+            if (velocity.x > 0f)
             {
-                spriteRenderer.flipX = velocity.x > 0f;
+                scale.x = -Mathf.Abs(scale.x);
             }
+            else
+            {
+                scale.x = Mathf.Abs(scale.x);
+            }
+
+            Root.localScale = scale;
         }
 
         public void MoveTowardsPlayer()
@@ -111,7 +123,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             agent.isStopped = false;
             agent.SetDestination(player.position);
 
-            UpdateSpriteDirection();
+            UpdateDirection();
             
         }
 
@@ -122,7 +134,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             agent.isStopped = false;
             agent.SetDestination(targetPosition);
 
-            UpdateSpriteDirection();
+            UpdateDirection();
         }
 
         public float GetDistanceToPlayer()
@@ -147,7 +159,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             agent.isStopped = false;
             agent.SetDestination(target);
 
-            UpdateSpriteDirection();
+            UpdateDirection();
         }
 
         
@@ -390,7 +402,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             agent.isStopped = false;
             agent.SetDestination(target);
 
-            UpdateSpriteDirection();
+            UpdateDirection();
         }
     }
 }

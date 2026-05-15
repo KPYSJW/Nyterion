@@ -14,6 +14,7 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         [Tooltip("공격 쿨다운 시간(초)")]
         [SerializeField] private float attackCoolDown = 1f;
         [SerializeField] private float fallbackDamage = 10;
+        [SerializeField] private MeleeAttackCollider meleeAttackCollider;
         private float lastAttackTime = -999f;
         private EnemyBase enemyBase;
 
@@ -40,7 +41,7 @@ namespace Nytherion.GamePlay.Combat.Behaviors
             if (!canAttack) return false;
 
             lastAttackTime = Time.time;
-            ApplyDamage(target);
+            //ApplyDamage(target);
 
 
             return canAttack;
@@ -71,6 +72,19 @@ namespace Nytherion.GamePlay.Combat.Behaviors
             }
 
             return fallbackDamage;
+        }
+
+        public void ActivateCollider()
+        {
+            if(meleeAttackCollider==null) return;
+            meleeAttackCollider.Initialize(GetDamageValue());
+            meleeAttackCollider.gameObject.SetActive(true);
+        }
+
+        public void DeactivateCollider()
+        {
+            if(meleeAttackCollider==null) return;
+            meleeAttackCollider.gameObject.SetActive(false);
         }
     }
 }
