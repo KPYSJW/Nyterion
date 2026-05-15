@@ -67,6 +67,7 @@ public class GameSceneLifetimeScope : LifetimeScope
 
     [Header("Test Progression")]
     [SerializeField] private ProgressionDebugUI progressionDebugUI;
+    [SerializeField] private Nytherion.UI.Test.DebugPanelUI debugPanelUI;
 
     protected DataLifetimeScope dataLifetimeScope;
     protected bool isDataManagersReady = false;
@@ -318,6 +319,20 @@ public class GameSceneLifetimeScope : LifetimeScope
 
         RegisterNPCComponents(builder);
 
+        if (debugPanelUI != null)
+        {
+            // 하이라키에 이미 배치된 인스턴스를 등록하고 주입함
+            builder.RegisterComponent(debugPanelUI)
+                    .AsImplementedInterfaces()
+                    .AsSelf();
+        }
+        else
+        {
+            // 씬에서 자동으로 찾아서 등록
+            builder.RegisterComponentInHierarchy<Nytherion.UI.Test.DebugPanelUI>()
+                    .AsImplementedInterfaces()
+                    .AsSelf();
+        }
     }
 
     private void RegisterNPCComponents(IContainerBuilder builder)

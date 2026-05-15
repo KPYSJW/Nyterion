@@ -14,6 +14,8 @@ namespace Nytherion.GamePlay.Characters.Player
         public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
 
+        public bool IsInvulnerable { get; private set; }
+
         private IProgressionManager progressionManager;
 
         [Inject]
@@ -26,10 +28,19 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             MaxHealth = health;
             CurrentHealth = MaxHealth;
+            IsInvulnerable = false;
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
+
+        public void SetInvulnerable(bool value)
+        {
+            IsInvulnerable = value;
+        }
+
         public void TakeDamage(float amount)
         {
+            if (IsInvulnerable) return;
+
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
 
