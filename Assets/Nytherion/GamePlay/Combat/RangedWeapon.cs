@@ -39,6 +39,8 @@ namespace Nytherion.GamePlay.Combat
         [Tooltip("투사체의 날아가는 속도")]
         public float projectileSpeed = 8f;
 
+        private WaitForSeconds burstWait;
+
         public override void Initialize(WeaponData data)
         {
             base.Initialize(data);
@@ -59,6 +61,8 @@ namespace Nytherion.GamePlay.Combat
                     projectilePoolTag = data.projectilePrefab.name;
                 }
             }
+            
+            burstWait = new WaitForSeconds(burstInterval);
         }
 
         public GameObject Projectile(Vector2 direction, Vector3 spawnOffset = default)
@@ -186,7 +190,7 @@ namespace Nytherion.GamePlay.Combat
                 Projectile(direction);
                 if (i < totalCount - 1)
                 {
-                    yield return new WaitForSeconds(burstInterval);
+                    yield return burstWait;
                 }
             }
         }

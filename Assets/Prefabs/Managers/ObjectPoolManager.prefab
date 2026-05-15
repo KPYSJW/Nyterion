@@ -85,3 +85,9 @@ MonoBehaviour:
   - tag: Player_Laser
     prefab: {fileID: 3340605813892160815, guid: 93af1da459a4c6246ba862a418847863, type: 3}
     size: 15
+  - tag: GachaResultSlot
+    prefab: {fileID: 1133801556008070876, guid: 55eed6146f7338d44ab6fc5a565a32a0, type: 3}
+    size: 10
+  - tag: InventorySlot
+    prefab: {fileID: 6342647029431398638, guid: 692090581c23e93499fd924cba8e9ce6, type: 3}
+    size: 40

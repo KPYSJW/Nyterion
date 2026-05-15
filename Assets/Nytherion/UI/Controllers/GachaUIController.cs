@@ -208,11 +208,17 @@ namespace Nytherion.UI.Controllers
             if (mainPanel != null) mainPanel.SetActive(false);
             resultPanel.SetActive(true);
 
-            foreach (Transform child in resultSlotParent) Destroy(child.gameObject);
+            // 기존 슬롯들을 풀로 반환
+            foreach (Transform child in resultSlotParent)
+            {
+                ObjectPoolManager.Instance.ReturnToPool(resultSlotPrefab.name, child.gameObject);
+            }
 
             foreach (ScriptableObject item in drawnItems)
             {
-                GameObject slotGO = Instantiate(resultSlotPrefab, resultSlotParent);
+                // 오브젝트 풀에서 슬롯 가져오기
+                GameObject slotGO = ObjectPoolManager.Instance.SpawnFromPool(resultSlotPrefab, Vector3.zero, Quaternion.identity);
+                slotGO.transform.SetParent(resultSlotParent, false);
 
                 Transform iconTransform = slotGO.transform.Find("Icon");
                 if (iconTransform == null) continue;

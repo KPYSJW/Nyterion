@@ -31,7 +31,7 @@ public class SoulEaterProjectile : MonoBehaviour
 
         transform.Translate(Vector3.right * (speed * Time.deltaTime));
 
-        if (Vector3.Distance(startPosition, transform.position) >= range)
+        if ((transform.position - startPosition).sqrMagnitude >= range * range)
         {
             ReturnToPool();
         }

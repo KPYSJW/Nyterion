@@ -19,8 +19,11 @@ namespace Nytherion.GamePlay.Combat.Weapon
 
 
         private Coroutine slashEffectRoutine;
+        private WaitForSeconds slashEffectWait;
+
         private void Start()
         {
+            slashEffectWait = new WaitForSeconds(slashEffectDuration);
             if(meleeWeaponAnimation==null)
             {
                 meleeWeaponAnimation=GetComponentInParent<Animation>();
@@ -49,7 +52,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
             slashEffectAnimator.Play(slashEffectClipName, 0, 0f);
             slashEffectAnimator.Update(0f);
 
-            yield return new WaitForSeconds(slashEffectDuration);
+            yield return slashEffectWait;
 
             slashEffectObject.SetActive(false);
             slashEffectRoutine = null;

@@ -2,6 +2,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.GamePlay.Combat;
 using UnityEngine;
 using Nytherion.Core.Enums;
+using UnityEngine.Serialization;
 
  public enum WeaponType
         {
@@ -16,8 +17,9 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
     
     public class WeaponData : EquipmentData
     {
+        public string weaponName => itemName;
+
         [Header("Weapon Settings")]
-        public string weaponName;
         public float damage;
         public float range;
         public float cooldown;

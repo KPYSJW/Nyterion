@@ -84,10 +84,40 @@ namespace Nytherion.Core.Managers
         {
             if (!IsInitialized || itemData == null)
             {
-                // Debug.LogError("초기화되지 않았거나 itemData가 null");
                 return false;
             }
             
+            // 장비 아이템인 경우 개별 복제본 생성하여 각각 추가
+            if (itemData is EquipmentData equipmentAsset)
+            {
+                bool allSuccess = true;
+                for (int i = 0; i < count; i++)
+                {
+                    EquipmentData clonedEquipment = UnityEngine.Object.Instantiate(equipmentAsset);
+                    clonedEquipment.instanceId = System.Guid.NewGuid().ToString();
+                    
+                    if (!InventoryModel.AddItem(clonedEquipment, 1))
+                    {
+                        allSuccess = false;
+                    }
+                }
+
+                if (allSuccess || count > 0)
+                {
+                    NotifyDataChanged(new InventoryChangeData
+                    {
+                        slotIndex = -1, 
+                        itemId = itemData.ID,
+                        newCount = count,
+                        changeType = InventoryChangeType.ItemAdded
+                    });
+                    if (saveLoadManager != null) saveLoadManager.SaveGame();
+                    return allSuccess;
+                }
+                return false;
+            }
+
+            // 중첩 가능한 일반 아이템 처리
             bool result = InventoryModel.AddItem(itemData, count);
 
             if (result)
@@ -100,15 +130,10 @@ namespace Nytherion.Core.Managers
                     changeType = InventoryChangeType.ItemAdded
                 });
 
-                // 자동 저장 실행
                 if (saveLoadManager != null)
                 {
                     saveLoadManager.SaveGame();
                 }
-            }
-            else
-            {
-                // Debug.LogWarning($" AddItem 실패 (인벤토리가 꽉 찼거나 기타 이유)");
             }
             return result;
         }

@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: ChargingSpread
   m_EditorClassIdentifier: 
   uniqueID: cfdbe5a5-b4e9-445b-a894-8efd7e7db8d9
-  itemName: ChargingSpread
+  itemName_KR: 
+  itemName_EN: ChargingSpread
   icon: {fileID: 21300000, guid: 78aac96169c97544ab51668fe388158c, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
-  rarity: 0
+  rarity: 2
   traits: 
   statModifiers: []
-  weaponName: ChargingSpread
   damage: 10
   range: 4
   cooldown: 1

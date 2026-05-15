@@ -1,5 +1,8 @@
 using UnityEngine;
 using System;
+using VContainer;
+using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -11,6 +14,14 @@ namespace Nytherion.GamePlay.Characters.Player
         public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
 
+        private IProgressionManager progressionManager;
+
+        [Inject]
+        public void Construct(IProgressionManager progressionManager)
+        {
+            this.progressionManager = progressionManager;
+        }
+
         public void InitializeHealth(float health)
         {
             MaxHealth = health;
@@ -21,6 +32,9 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
+
+            // 받은 데미지 진척도 업데이트
+            progressionManager?.ProcessAction(ProgressionType.TakeDamage, (int)amount);
 
             if (CurrentHealth <= 0)
             {

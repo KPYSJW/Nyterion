@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Bow
   m_EditorClassIdentifier: 
   uniqueID: 59224cfd-7372-43bd-8077-b491374912dd
-  itemName: Bow
+  itemName_KR: "\uD65C"
+  itemName_EN: Bow
   icon: {fileID: 21300000, guid: 78aac96169c97544ab51668fe388158c, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
@@ -23,7 +25,6 @@ MonoBehaviour:
   rarity: 0
   traits: 
   statModifiers: []
-  weaponName: 
   damage: 0
   range: 0
   cooldown: 0

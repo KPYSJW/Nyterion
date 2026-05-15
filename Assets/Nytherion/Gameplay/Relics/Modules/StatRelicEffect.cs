@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Nytherion.Core.Data;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Utils;
 using System;
 
 namespace Nytherion.Gameplay.Relics.Modules
@@ -9,7 +10,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// <summary>
     /// 플레이어의 스탯(공격력, 체력, 방어력, 투사체 수 등)을 증감시키는 효과
     /// </summary>
-    [Serializable]
+    [Serializable, RelicDisplayName("스탯 변경 효과")]
     public class StatRelicEffect : RelicEffectBase
     {
         [Tooltip("적용할 스탯 변경자들의 목록 (예: 투사체 증가, 공격력 증가 등)")]

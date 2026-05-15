@@ -5,6 +5,7 @@ namespace Nytherion.Core.Enums
         Skill,
         Gold,
         Token,
-        Item
+        Item,
+        Relic
     }
 }

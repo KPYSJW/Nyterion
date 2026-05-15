@@ -27,7 +27,7 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         public bool IsInAttackRange(Transform target)
         {
             if (target == null) return false;
-            return Vector2.Distance(transform.position, target.position) <= attackRange;
+            return (transform.position - target.position).sqrMagnitude <= attackRange * attackRange;
         }
 
 

@@ -13,16 +13,20 @@ MonoBehaviour:
   m_Name: Boots
   m_EditorClassIdentifier: 
   uniqueID: 41e05108-a4dc-4035-b841-100af4cabac8
-  itemName: Boots
+  itemName_KR: "\uC2E0\uBC1C"
+  itemName_EN: Boots
   icon: {fileID: 21300000, guid: d070518e54a7f104eb92dd5f47e2af5d, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 1
   rarity: 0
-  isCursed: 0
+  traits: 
   statModifiers:
   - stat: 2
     value: 10
+    valuePerLevel: 0
+    isPercentage: 0
   armorType: 2

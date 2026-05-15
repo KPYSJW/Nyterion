@@ -10,29 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
-  m_Name: MachineGunData
+  m_Name: Meteor
   m_EditorClassIdentifier: 
-  uniqueID: 14ca641b-987b-4704-a99a-8b9abc0f05bf
-  itemName: "\uC5F0\uC0AC"
-  icon: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
-  description: 
+  uniqueID: ed23b19e-2061-4ddd-9d25-cd18c4e30f0a
+  itemName_KR: "\uC6B4\uC11D"
+  itemName_EN: Meteor
+  icon: {fileID: -178110585, guid: 79cf6998d61c5f248a9bfd845f369dda, type: 3}
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
-  rarity: 0
+  rarity: 2
   traits: 
   statModifiers: []
-  weaponName: "\uC5F0\uC0AC"
-  damage: 2
-  range: 4
-  cooldown: 0.08
+  damage: 10
+  range: 2
+  cooldown: 1
   weaponType: 0
   weaponSprite: {fileID: 0}
   firePointOffset: {x: 0, y: 0, z: 0}
-  projectilePrefab: {fileID: 1453523852295367759, guid: 2ff9b7ec442117043b64f8d68c4c0ed8, type: 3}
+  projectilePrefab: {fileID: 8688154318546131989, guid: fc19d7a074b077f44a50ab601d98af1d, type: 3}
   projectileSpeed: 10
-  extraProjectileMode: 1
+  extraProjectileMode: 0
   maxChargeTime: 1
-  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
-  isArchivable: 1
+  weaponPrefab: {fileID: 9177589374901164588, guid: 969983ef81ca5014097e4274a1e3db3d, type: 3}
+  isArchivable: 0

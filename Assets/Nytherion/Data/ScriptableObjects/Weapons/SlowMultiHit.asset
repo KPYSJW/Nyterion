@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: SlowMultiHit
   m_EditorClassIdentifier: 
   uniqueID: 9ad74e97-6116-498e-ad2e-ac67c1daa8a4
-  itemName: SlowMultiHit
+  itemName_KR: "\uD1B1"
+  itemName_EN: SlowMultiHit
   icon: {fileID: 0}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
-  rarity: 0
+  rarity: 2
   traits: 
   statModifiers: []
-  weaponName: SlowMultiHit
   damage: 10
   range: 5
   cooldown: 1

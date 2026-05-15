@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: MimicWand
   m_EditorClassIdentifier: 
   uniqueID: be49ed6d-6cce-4fae-92f8-8c17fb61cc1b
-  itemName: Mimic
+  itemName_KR: "\uBCC0\uB355\uC7C1\uC774"
+  itemName_EN: Capricious
   icon: {fileID: 21300000, guid: e6b92db4815449e479cfdb181c2e5713, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
-  rarity: 0
+  rarity: 3
   traits: 
   statModifiers: []
-  weaponName: Mimic
   damage: 10
   range: 4
   cooldown: 1

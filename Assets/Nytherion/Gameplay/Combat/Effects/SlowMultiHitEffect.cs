@@ -21,6 +21,7 @@ namespace Nytherion.GamePlay.Combat
         private bool hasHit = false;
 
         private HashSet<IDamageable> targetsInRange = new HashSet<IDamageable>();
+        private List<IDamageable> removeList = new List<IDamageable>();
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -31,6 +32,7 @@ namespace Nytherion.GamePlay.Combat
         {
             hasHit = false;
             targetsInRange.Clear();
+            removeList.Clear();
             lifeTimer = lifeTime;
         }
 
@@ -56,7 +58,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void DealTickDamage()
         {
-            List<IDamageable> toRemove = new List<IDamageable>();
+            removeList.Clear();
 
             foreach (var target in targetsInRange)
             {
@@ -66,11 +68,11 @@ namespace Nytherion.GamePlay.Combat
                 }
                 else
                 {
-                    toRemove.Add(target);
+                    removeList.Add(target);
                 }
             }
 
-            foreach (var t in toRemove)
+            foreach (var t in removeList)
             {
                 targetsInRange.Remove(t);
             }

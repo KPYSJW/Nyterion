@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1013840218637643486}
   - component: {fileID: 6064440162617591976}
   m_Layer: 5
-  m_Name: ResultSlotPrefab
+  m_Name: GachaResultSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

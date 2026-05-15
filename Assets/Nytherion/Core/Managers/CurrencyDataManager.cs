@@ -65,7 +65,8 @@ namespace Nytherion.Core.Managers
                 currencyType = currencyType,
                 oldAmount = oldAmount,
                 newAmount = newAmount,
-                changeAmount = amount
+                changeAmount = amount,
+                isSilent = isLoadingFromSave
             });
 
             if (saveLoadManager != null && !isLoadingFromSave)
@@ -95,7 +96,8 @@ namespace Nytherion.Core.Managers
                 currencyType = currencyType,
                 oldAmount = oldAmount,
                 newAmount = newAmount,
-                changeAmount = -amount
+                changeAmount = -amount,
+                isSilent = isLoadingFromSave
             });
 
             if (saveLoadManager != null && !isLoadingFromSave)
@@ -117,7 +119,8 @@ namespace Nytherion.Core.Managers
                 currencyType = currencyType,
                 oldAmount = oldAmount,
                 newAmount = amount,
-                changeAmount = amount - oldAmount
+                changeAmount = amount - oldAmount,
+                isSilent = isLoadingFromSave
             });
 
             if (saveLoadManager != null && !isLoadingFromSave)
@@ -209,7 +212,8 @@ namespace Nytherion.Core.Managers
                         currencyType = kvp.Key,
                         oldAmount = 0,
                         newAmount = kvp.Value,
-                        changeAmount = kvp.Value
+                        changeAmount = kvp.Value,
+                        isSilent = true // 로딩 시에는 항상 silent
                     });
                 }
             }

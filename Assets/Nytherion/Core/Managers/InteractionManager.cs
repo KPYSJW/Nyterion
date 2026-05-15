@@ -22,6 +22,8 @@ namespace Nytherion.Core.Managers
         private GachaUIController gachaUIController;
         private RelicUIController relicUIController;
 
+        private static readonly Collider2D[] interactionBuffer = new Collider2D[10];
+
         [Inject]
         public void Construct(
             InputManager inputManager,
@@ -74,17 +76,18 @@ namespace Nytherion.Core.Managers
             }
             if (playerTransform == null) return;
 
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(playerTransform.position, interactionDistance, interactableLayer);
-            if (colliders.Length == 0) return;
+            int hitCount = Physics2D.OverlapCircleNonAlloc(playerTransform.position, interactionDistance, interactionBuffer, interactableLayer);
+            if (hitCount == 0) return;
 
             IInteractable closestInteractable = null;
             float closestDistanceSqr = float.MaxValue;
-            foreach (var collider in colliders)
+            for (int i = 0; i < hitCount; i++)
             {
-                float distanceSqr = (collider.transform.position - playerTransform.position).sqrMagnitude;
+                Collider2D col = interactionBuffer[i];
+                float distanceSqr = (col.transform.position - playerTransform.position).sqrMagnitude;
                 if (distanceSqr < closestDistanceSqr)
                 {
-                    if (collider.TryGetComponent(out IInteractable interactableObject))
+                    if (col.TryGetComponent(out IInteractable interactableObject))
                     {
                         closestDistanceSqr = distanceSqr;
                         closestInteractable = interactableObject;

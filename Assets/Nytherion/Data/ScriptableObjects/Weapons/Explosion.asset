@@ -13,21 +13,22 @@ MonoBehaviour:
   m_Name: Explosion
   m_EditorClassIdentifier: 
   uniqueID: 22b2d2b3-bebc-4e36-8ef9-0339e07dd40f
-  itemName: Explosion
+  itemName_KR: "\uD3ED\uBC1C"
+  itemName_EN: Explosion
   icon: {fileID: 1506884830, guid: 1b68ab5560ae1834c8c7ffa7bc7ccadf, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
-  rarity: 0
+  rarity: 3
   traits: 01000000
   statModifiers:
   - stat: 4
     value: -10
     valuePerLevel: 0
     isPercentage: 0
-  weaponName: Explosion
   damage: 20
   range: 0
   cooldown: 1.5

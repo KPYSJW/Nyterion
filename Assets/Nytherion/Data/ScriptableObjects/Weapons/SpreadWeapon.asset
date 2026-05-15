@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: SpreadWeapon
   m_EditorClassIdentifier: 
   uniqueID: 2337ae29-bf15-4da8-96ed-aebecb9cdae6
-  itemName: spread
+  itemName_KR: "\uD655\uC0B0\uD0C4\uBC1C\uC0AC\uAE30 "
+  itemName_EN: Spread Launcher
   icon: {fileID: 21300000, guid: 78aac96169c97544ab51668fe388158c, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
-  rarity: 0
+  rarity: 2
   traits: 
   statModifiers: []
-  weaponName: Spread
   damage: 10
   range: 5
   cooldown: 1

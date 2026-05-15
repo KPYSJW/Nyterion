@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Lightweight Weight
   koreanName: "\uAC00\uBCBC\uC6B4 \uCD94"
-  description: "\uCC28\uC9D5 \uC2DC\uAC04 \uAC10\uC18C"
+  description_KR: 
+  description_EN: 
   Image: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   rarity: 2
-  isCursed: 1
   level: 3
+  isDisabled: 0
   effectModules:
   - condition:
       rid: 6716071130084147200

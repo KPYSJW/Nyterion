@@ -45,6 +45,11 @@ namespace Nytherion.Core.Managers
             poolRoots = new Dictionary<string, Transform>();
             categoryRoots = new Dictionary<string, Transform>();
 
+            if (pools == null)
+            {
+                pools = new List<Pool>();
+            }
+
             foreach (Pool pool in pools)
             {
                 if (pool.prefab == null) continue;
@@ -55,6 +60,11 @@ namespace Nytherion.Core.Managers
         public GameObject SpawnFromPool(GameObject prefab, Vector3 position, Quaternion rotation)
         {
             if (prefab == null) return null;
+
+            if (poolDictionary == null)
+            {
+                Initialize();
+            }
 
             string tag = prefab.name;
 
@@ -100,7 +110,7 @@ namespace Nytherion.Core.Managers
             Queue<GameObject> objectPool = new Queue<GameObject>();
             for (int i = 0; i < size; i++)
             {
-                GameObject obj = container.Instantiate(prefab);
+                GameObject obj = container != null ? container.Instantiate(prefab) : Instantiate(prefab);
                 obj.transform.SetParent(rootObj.transform);
                 obj.SetActive(false);
                 objectPool.Enqueue(obj);
@@ -128,7 +138,7 @@ namespace Nytherion.Core.Managers
                 Pool pool = pools.Find(p => p.tag == tag);
                 if (pool != null && pool.prefab != null)
                 {
-                    GameObject newObj = container.Instantiate(pool.prefab);
+                    GameObject newObj = container != null ? container.Instantiate(pool.prefab) : Instantiate(pool.prefab);
                     
                     if (poolRoots.TryGetValue(tag, out Transform root))
                     {

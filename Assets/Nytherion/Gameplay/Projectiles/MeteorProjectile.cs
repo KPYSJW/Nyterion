@@ -1,6 +1,6 @@
 using UnityEngine;
 using Nytherion.Core.Interfaces;
-using Nytherion.GamePlay.Combat; // CollisionObject »ç¿ëÀ» À§ÇØ Ãß°¡
+using Nytherion.GamePlay.Combat; // CollisionObject ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 
 namespace Nytherion.GamePlay.Combat.Weapons
 {
@@ -15,6 +15,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         private Animator animator;
         private CollisionObject col;
+        private static readonly Collider2D[] meteorBuffer = new Collider2D[20];
 
         private void Awake()
         {
@@ -34,7 +35,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, fallSpeed * Time.deltaTime);
 
-            if (Vector3.Distance(transform.position, targetPosition) <= 0.1f)
+            if ((transform.position - targetPosition).sqrMagnitude <= 0.01f) // 0.1 * 0.1 = 0.01
             {
                 TriggerExplosion();
             }
@@ -59,10 +60,11 @@ namespace Nytherion.GamePlay.Combat.Weapons
         {
             float finalDamage = col != null ? col.damage : 10f;
 
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
+            int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, explosionRadius, meteorBuffer);
 
-            foreach (var hit in hits)
+            for (int i = 0; i < hitCount; i++)
             {
+                Collider2D hit = meteorBuffer[i];
                 if (hit.CompareTag("Enemy"))
                 {
                     if (hit.TryGetComponent<IDamageable>(out var damageable))

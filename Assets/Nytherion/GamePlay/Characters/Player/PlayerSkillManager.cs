@@ -1,7 +1,9 @@
 using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.GamePlay.Skills;
 using UnityEngine;
+using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -18,6 +20,15 @@ namespace Nytherion.GamePlay.Characters.Player
 
         /// <summary> 생성된 스킬 인스턴스들을 자식으로 담아둘 부모 오브젝트/// </summary>
         public Transform skillHolder;
+
+        private IProgressionManager progressionManager;
+
+        [Inject]
+        public void Construct(IProgressionManager progressionManager)
+        {
+            this.progressionManager = progressionManager;
+        }
+
         void Start()
         {
             // InputManager의 스킬 입력 이벤트에 스킬 사용 메서드를 구독
@@ -41,7 +52,11 @@ namespace Nytherion.GamePlay.Characters.Player
             // 인덱스가 배열 범위를 벗어나지 않고, 해당 슬롯에 장착된 스킬이 있을 때만 실행
             if (index >= 0 && index < equippedSkills.Length && equippedSkills[index] != null)
             {
-                equippedSkills[index].TryUse();
+                if (equippedSkills[index].TryUse())
+                {
+                    // 스킬 사용 진척도 업데이트
+                    progressionManager?.ProcessAction(ProgressionType.UseSkill, 1);
+                }
             }
         }
 

@@ -20,6 +20,7 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
     [SerializeField] private string suffix = "";
     [SerializeField] private bool useThousandsSeparator = false;
     private CurrencyDataManager currencyDataManager;
+    private WaitForSeconds updateWait = new WaitForSeconds(0.1f);
     
     [Inject]
     public void Construct(CurrencyDataManager currencyManager)
@@ -55,7 +56,7 @@ public class CurrencyDisplay : MonoBehaviour, IInitializable
     private IEnumerator DelayedUpdateUI()
     {
         yield return null;
-        yield return new WaitForSeconds(0.1f);
+        yield return updateWait;
 
         if (currencyDataManager != null)
         {

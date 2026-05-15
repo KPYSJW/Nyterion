@@ -10,20 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
-  m_Name: RubberBallData
+  m_Name: RubberBall
   m_EditorClassIdentifier: 
   uniqueID: b6085a31-31ec-44a7-a2f9-aadc5e5b3398
-  itemName: RubberBall
+  itemName_KR: "\uB179\uC0C9 \uAD34\uBB3C\uC758 \uC138\uD3EC"
+  itemName_EN: Bio-Cell Spitter
   icon: {fileID: -1121705899, guid: d15feec802565904c8320318275fbda5, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
-  rarity: 0
+  rarity: 2
   traits: 
   statModifiers: []
-  weaponName: RubberBall
   damage: 10
   range: 5
   cooldown: 1

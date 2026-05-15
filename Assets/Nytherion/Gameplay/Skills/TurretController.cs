@@ -26,6 +26,7 @@ namespace Nytherion.GamePlay.Skills
 
         private float lifetimeTimer;
         private float attackTimer;
+        private static readonly Collider2D[] turretBuffer = new Collider2D[20];
 
         /// <summary>
         /// 터렛 생성 직후 호출되어 스킬 데이터를 기반으로 내부 스탯 초기화
@@ -91,24 +92,25 @@ namespace Nytherion.GamePlay.Skills
         private void PerformAttack()
         {
             // 공격 반경(attackRange) 내에 있는 모든 2D 콜라이더 탐색
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
+            int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, attackRange, turretBuffer);
             
             IDamageable closestEnemy = null;
-            float minDistance = float.MaxValue;
+            float minDistanceSqr = float.MaxValue;
             Transform targetTransform = null;
 
             // 탐색된 콜라이더 중 가장 가까운 "Enemy" 태그를 가진 적 선별
-            foreach (Collider2D hit in hits)
+            for (int i = 0; i < hitCount; i++)
             {
+                Collider2D hit = turretBuffer[i];
                 if (hit.CompareTag("Enemy"))
                 {
                     IDamageable damageable = hit.GetComponent<IDamageable>();
                     if (damageable != null)
                     {
-                        float distance = Vector2.Distance(transform.position, hit.transform.position);
-                        if (distance < minDistance)
+                        float distanceSqr = (transform.position - hit.transform.position).sqrMagnitude;
+                        if (distanceSqr < minDistanceSqr)
                         {
-                            minDistance = distance;
+                            minDistanceSqr = distanceSqr;
                             closestEnemy = damageable;
                             targetTransform = hit.transform;
                         }

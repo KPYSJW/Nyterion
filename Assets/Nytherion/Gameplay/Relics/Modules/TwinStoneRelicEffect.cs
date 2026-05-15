@@ -1,5 +1,6 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Utils;
 using System;
 using Nytherion.GamePlay.Combat;
 
@@ -9,7 +10,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// 플레이어가 원거리 공격(투사체 발사)을 할 때, 
     /// 현재 투사체 수만큼 데미지가 감소된 추가 '트윈스톤' 투사체를 발사하는 특수 효과
     /// </summary>
-    [Serializable]
+    [Serializable, RelicDisplayName("트윈스톤 특수 효과")]
     public class TwinStoneRelicEffect : RelicEffectBase
     {
         [Tooltip("1레벨 기준 추가 투사체의 데미지 배율 (예: 0.5 = 원래 데미지의 50%)")]

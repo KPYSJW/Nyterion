@@ -13,16 +13,20 @@ MonoBehaviour:
   m_Name: Armor
   m_EditorClassIdentifier: 
   uniqueID: 10343cd3-1969-4c66-b752-cf18adf76015
-  itemName: Armor
+  itemName_KR: "\uAC11\uC637"
+  itemName_EN: Armor
   icon: {fileID: 21300000, guid: 0475741958e54954597db3905ceba24f, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 1
   rarity: 0
-  isCursed: 0
+  traits: 
   statModifiers:
   - stat: 1
     value: 50
+    valuePerLevel: 0
+    isPercentage: 0
   armorType: 1

@@ -18,6 +18,7 @@ namespace Nytherion.GamePlay.Skills
         private Rigidbody2D rb;
         private Transform target;
         private float currentSpeed;
+        private static readonly Collider2D[] homingBuffer = new Collider2D[10];
 
         private void Awake()
         {
@@ -34,38 +35,39 @@ namespace Nytherion.GamePlay.Skills
         {
             if (target != null && target.gameObject.activeInHierarchy)
             {
-                // 타겟 방향 계산
+                // 타  
                 Vector2 direction = (Vector2)target.position - rb.position;
                 direction.Normalize();
 
-                // 타겟 방향으로 회전
+                // 타  회
                 float rotateAmount = Vector3.Cross(direction, transform.right).z;
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
             }
             else
             {
-                rb.angularVelocity = 0f; // 타겟이 없으면 직진
+                rb.angularVelocity = 0f; // 타  
             }
 
             currentSpeed = Mathf.MoveTowards(currentSpeed, maxSpeed, acceleration * Time.fixedDeltaTime);
 
-            // 현재 바라보는 방향으로 날리기
+            //  帽鑿릿  
             rb.velocity = transform.right * currentSpeed;
         }
 
         private void FindClosestEnemy()
         {
-            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, trackingRadius, enemyLayer);
-            float closestDistance = Mathf.Infinity;
+            int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, trackingRadius, homingBuffer, enemyLayer);
+            float closestDistanceSqr = Mathf.Infinity;
 
-            foreach (var hit in hitColliders)
+            for (int i = 0; i < hitCount; i++)
             {
+                Collider2D hit = homingBuffer[i];
                 if (hit.GetComponent<IDamageable>() != null)
                 {
-                    float distance = Vector2.Distance(transform.position, hit.transform.position);
-                    if (distance < closestDistance)
+                    float distanceSqr = (transform.position - hit.transform.position).sqrMagnitude;
+                    if (distanceSqr < closestDistanceSqr)
                     {
-                        closestDistance = distance;
+                        closestDistanceSqr = distanceSqr;
                         target = hit.transform;
                     }
                 }

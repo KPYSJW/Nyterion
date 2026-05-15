@@ -1,5 +1,6 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Utils;
 using System;
 
 namespace Nytherion.Gameplay.Relics.Modules
@@ -9,7 +10,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// <summary>
     /// 플레이어의 체력 퍼센트에 따라 발동 여부를 결정
     /// </summary>
-    [Serializable]
+    [Serializable, RelicDisplayName("체력 수치 조건")]
     public class HealthThresholdCondition : RelicConditionBase
     {
         [Tooltip("기준 체력 퍼센트 (예: 50)")]

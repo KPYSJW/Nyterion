@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: ChargedPiercing
   m_EditorClassIdentifier: 
   uniqueID: 9457e81f-95f4-48e9-9539-1ff03a36a339
-  itemName: ChargedPiercing
+  itemName_KR: "\uB3CC\uD48D"
+  itemName_EN: ChargedPiercing
   icon: {fileID: 21300000, guid: 78aac96169c97544ab51668fe388158c, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
-  rarity: 0
+  rarity: 2
   traits: 
   statModifiers: []
-  weaponName: ChargedPiercing
   damage: 10
   range: 4
   cooldown: 1

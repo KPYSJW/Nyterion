@@ -27,7 +27,7 @@ namespace Nytherion.GamePlay.Combat.Effects
         {
             if (!isInitialized) return;
 
-            if (Vector3.Distance(startPosition, transform.position) >= maxDistance)
+            if ((transform.position - startPosition).sqrMagnitude >= maxDistance * maxDistance)
             {
                 isInitialized = false;
                 if (collisionObj != null)
