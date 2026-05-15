@@ -13,24 +13,32 @@ MonoBehaviour:
   m_Name: Sword
   m_EditorClassIdentifier: 
   uniqueID: 6c088387-d137-4b86-b612-9a42b3d7119a
-  itemName: Sword
+  itemName_KR: "\uAC80"
+  itemName_EN: Sword
   icon: {fileID: 21300000, guid: 274cc5d353702d54381995dc012cb66f, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 0
   rarity: 0
-  isCursed: 0
+  traits: 
   statModifiers:
   - stat: 0
     value: 0
     valuePerLevel: 0
     isPercentage: 0
-  weaponName: 
-  damage: 0
+  weaponName: Sword
+  damage: 15
   range: 0
   cooldown: 0
-  projectilePrefab: {fileID: 0}
-  weaponPrefab: {fileID: 4068911510461581181, guid: 1aec131cb75b7004892f7b283980aeb1, type: 3}
   weaponType: 1
+  weaponSprite: {fileID: 0}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 10
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  weaponPrefab: {fileID: 4068911510461581181, guid: 1aec131cb75b7004892f7b283980aeb1, type: 3}
+  isArchivable: 1

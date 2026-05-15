@@ -15,12 +15,13 @@ namespace Nytherion.Data.ScriptableObjects.Progression
         public string description;
         public Sprite icon;
 
+        [Header("Progress Settings")]
+        public ProgressionType progressionType;
+        [Min(1)]
+        public int targetValue = 1;
+
         [Header("Prerequisites")]
         public MilestoneData[] requiredMilestones;
-
-        [Header("Progress Settings")]
-        [Min(1)]
-        public int targetValue = 1; 
 
         [Header("Rewards")]
         public List<RewardData> rewards = new List<RewardData>();

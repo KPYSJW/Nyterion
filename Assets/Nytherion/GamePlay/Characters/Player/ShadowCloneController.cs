@@ -15,6 +15,9 @@ namespace Nytherion.GamePlay.Characters.Player
         public Animator cloneAnimator;         // 분신의 애니메이터
         public float cloneAttackDelay = 0.05f;
 
+        private WaitForSeconds attackDelayWait;
+        private WaitForSeconds fixedDelayWait;
+
         private PlayerCombat playerCombat;     // 본체(플레이어)의 전투 컴포넌트
         private Animator playerAnimator;       // 본체의 애니메이터
         private SpriteRenderer playerSprite;   // 본체의 스프라이트
@@ -25,6 +28,9 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void Awake()
         {
+            attackDelayWait = new WaitForSeconds(cloneAttackDelay);
+            fixedDelayWait = new WaitForSeconds(0.15f);
+
             // 컴포넌트 자동 할당 및 초기 비활성화 상태 설정 
             if (cloneSprite == null) cloneSprite = GetComponentInChildren<SpriteRenderer>();
             if (cloneAnimator == null) cloneAnimator = GetComponentInChildren<Animator>();
@@ -280,7 +286,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private IEnumerator DelayedAttackRoutine(Vector2 direction, Vector3 targetPosition)
         {
             // 
-            yield return new WaitForSeconds(0.15f);
+            yield return fixedDelayWait;
 
             if (cloneWeapon != null)
             {
@@ -320,7 +326,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private IEnumerator DelayedAttackEndRoutine()
         {
             // 플레이어 공격 보다 분신 공격은 일정 시간 이후 발사
-            yield return new WaitForSeconds(cloneAttackDelay);
+            yield return attackDelayWait;
 
             if (cloneWeapon != null)
             {

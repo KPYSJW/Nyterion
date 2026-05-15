@@ -19,12 +19,14 @@ namespace Nytherion.UI.Presenters
         private bool isInitialized = false;
         private IObjectResolver container;
         private GameSceneUIRefs gameSceneuiRefs;
+        private ObjectPoolManager objectPoolManager;
 
         [Inject]
-        public void Construct(IObjectResolver container, GameSceneUIRefs gameSceneuiRefs)
+        public void Construct(IObjectResolver container, GameSceneUIRefs gameSceneuiRefs, ObjectPoolManager objectPoolManager)
         {
             this.container = container;
             this.gameSceneuiRefs = gameSceneuiRefs;
+            this.objectPoolManager = objectPoolManager;
             this.slotParent = gameSceneuiRefs.InventorySlotParent;
             this.slotPrefab = gameSceneuiRefs.InventorySlotPrefab;
         }
@@ -55,9 +57,17 @@ namespace Nytherion.UI.Presenters
                 return;
             }
 
+            // 기존 슬롯들을 풀로 반환
             foreach (Transform child in slotParent)
             {
-                Destroy(child.gameObject);
+                if (slotPrefab != null)
+                {
+                    objectPoolManager.ReturnToPool(slotPrefab.name, child.gameObject);
+                }
+                else
+                {
+                    Destroy(child.gameObject);
+                }
             }
             slotPool.Clear();
 
@@ -65,8 +75,11 @@ namespace Nytherion.UI.Presenters
             {
                 if (slotPrefab != null)
                 {
-                    var slotObj = Instantiate(slotPrefab, slotParent);
+                    // 오브젝트 풀에서 슬롯 가져오기
+                    var slotObj = objectPoolManager.SpawnFromPool(slotPrefab, Vector3.zero, Quaternion.identity);
+                    slotObj.transform.SetParent(slotParent, false);
                     slotObj.SetActive(true);
+
                     if (slotObj.TryGetComponent(out InventorySlotUI slot))
                     {
                         slot.Initialize(i);

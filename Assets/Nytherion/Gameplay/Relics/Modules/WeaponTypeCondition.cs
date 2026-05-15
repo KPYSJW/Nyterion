@@ -1,5 +1,6 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Utils;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using System;
 
@@ -8,7 +9,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// <summary>
     /// 특정 무기(원거리/근거리)를 장착하고 있을 때 발동
     /// </summary>
-    [Serializable]
+    [Serializable, RelicDisplayName("무기 타입 조건")]
     public class WeaponTypeCondition : RelicConditionBase
     {
         [Tooltip("요구하는 무기 타입 (예: Melee, Ranged)")]

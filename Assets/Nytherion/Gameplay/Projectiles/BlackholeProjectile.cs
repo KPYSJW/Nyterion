@@ -18,10 +18,10 @@ public class BlackholeProjectile : MonoBehaviour
 
     private Collider2D[] hitColliders = new Collider2D[20];
 
-    [Header("ºí·¢È¦ ¹üÀ§ ¼³Á¤")]
+    [Header("ï¿½ï¿½ï¿½ï¿½È¦ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private float centerRadius = 0.5f; 
 
-    [Header("½Ã°¢Àû ÀÌÆåÆ® (¼±ÅÃ»çÇ×)")]
+    [Header("ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® (ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½)")]
     [SerializeField] private Transform rangeVisual;  
     [SerializeField] private Transform centerVisual;
 
@@ -76,11 +76,11 @@ public class BlackholeProjectile : MonoBehaviour
             Vector3 enemyPos = col.transform.position;
 
             Vector3 pullDirection = (targetPos - enemyPos).normalized;
-            float distance = Vector2.Distance(targetPos, enemyPos);
+            float distanceSqr = (targetPos - enemyPos).sqrMagnitude;
 
             if (col.TryGetComponent(out Rigidbody2D rb))
             {
-                if (distance < centerRadius)
+                if (distanceSqr < centerRadius * centerRadius)
                 {
                     rb.velocity = Vector2.zero;
                     col.transform.position = Vector3.MoveTowards(enemyPos, targetPos, 2f * Time.fixedDeltaTime);
@@ -92,7 +92,7 @@ public class BlackholeProjectile : MonoBehaviour
             }
             else
             {
-                if (distance > centerRadius)
+                if (distanceSqr > centerRadius * centerRadius)
                 {
                     col.transform.position = Vector3.MoveTowards(enemyPos, targetPos, pullForce * Time.fixedDeltaTime);
                 }

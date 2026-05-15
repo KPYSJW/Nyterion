@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.Gameplay.Relics.Modules
 {
     /// <summary>
     /// 다른 특정 각인들이 보드에 활성화(Equip)되어 있는지 검사
     /// </summary>
-    [Serializable]
+    [Serializable, RelicDisplayName("복합 유물 조건")]
     public class MultiRelicCondition : RelicConditionBase
     {
         [Tooltip("반드시 활성화되어야 하는 각인들의 ID(relicName) 목록입니다.")]

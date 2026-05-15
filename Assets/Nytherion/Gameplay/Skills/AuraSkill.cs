@@ -18,6 +18,7 @@ namespace Nytherion.GamePlay.Skills
 
         // 오라 범위 내에 들어온 적들을 추적하기 위한 컬렉션 
         private HashSet<IDamageable> enemiesInRange = new HashSet<IDamageable>();
+        private List<IDamageable> removeList = new List<IDamageable>();
         private float nextTickTime;
         Rigidbody2D rb;
         private void Awake()
@@ -92,7 +93,7 @@ namespace Nytherion.GamePlay.Skills
         /// </summary>
         private void DealTickDamage(float damage)
         {
-            List<IDamageable> toRemove = new List<IDamageable>();
+            removeList.Clear();
 
             foreach (var enemy in enemiesInRange)
             {
@@ -103,12 +104,12 @@ namespace Nytherion.GamePlay.Skills
                 }
                 else
                 {
-                    toRemove.Add(enemy); // 유효하지 않은 적은 제거 목록에 추가
+                    removeList.Add(enemy); // 유효하지 않은 적은 제거 목록에 추가
                 }
             }
 
             // 파괴되었거나 비활성화된 적들을 추적 목록에서 일괄 제거 
-            foreach (var r in toRemove)
+            foreach (var r in removeList)
             {
                 enemiesInRange.Remove(r);
             }

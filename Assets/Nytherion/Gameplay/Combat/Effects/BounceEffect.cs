@@ -10,6 +10,7 @@ namespace Nytherion.GamePlay.Combat
 
         private int currentBounces;
         private HashSet<Transform> hitTargets = new HashSet<Transform>();
+        private static readonly Collider2D[] bounceBuffer = new Collider2D[10];
 
         private void OnEnable()
         {
@@ -23,18 +24,19 @@ namespace Nytherion.GamePlay.Combat
 
             hitTargets.Add(target.transform);
 
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, bounceRadius);
+            int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, bounceRadius, bounceBuffer);
             Transform nextTarget = null;
-            float closestDist = Mathf.Infinity;
+            float closestDistSqr = Mathf.Infinity;
 
-            foreach (var hit in hits)
+            for (int i = 0; i < hitCount; i++)
             {
+                Collider2D hit = bounceBuffer[i];
                 if (hit.CompareTag("Enemy") && hit.transform != target.transform && !hitTargets.Contains(hit.transform))
                 {
-                    float dist = Vector2.Distance(transform.position, hit.transform.position);
-                    if (dist < closestDist)
+                    float distSqr = (transform.position - hit.transform.position).sqrMagnitude;
+                    if (distSqr < closestDistSqr)
                     {
-                        closestDist = dist;
+                        closestDistSqr = distSqr;
                         nextTarget = hit.transform;
                     }
                 }

@@ -37,6 +37,7 @@ namespace Nytherion.GamePlay.Characters.Skill
         private float currentDurationTimer = 0f;
         private float autoAttackTimer = 0f;
         private float currentOrbitAngle = 0f;
+        private static readonly Collider2D[] droneBuffer = new Collider2D[20];
 
         private void Start()
         {
@@ -127,19 +128,20 @@ namespace Nytherion.GamePlay.Characters.Skill
             float range = skillData.range;
 
             // 지정 반경 내의 모든 2D 콜라이더 검색
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, range);
+            int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, range, droneBuffer);
             Transform closestTarget = null;
-            float closestDistance = Mathf.Infinity;
+            float closestDistanceSqr = Mathf.Infinity;
 
-            foreach (var hit in hits)
+            for (int i = 0; i < hitCount; i++)
             {
+                Collider2D hit = droneBuffer[i];
                 // 적 태그 및 데미지를 받을 수 있는 객체인지 확인
                 if (hit.CompareTag("Enemy") && hit.GetComponent<IDamageable>() != null)
                 {
-                    float distance = Vector2.Distance(transform.position, hit.transform.position);
-                    if (distance < closestDistance)
+                    float distanceSqr = (transform.position - hit.transform.position).sqrMagnitude;
+                    if (distanceSqr < closestDistanceSqr)
                     {
-                        closestDistance = distance;
+                        closestDistanceSqr = distanceSqr;
                         closestTarget = hit.transform;
                     }
                 }

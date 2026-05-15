@@ -64,6 +64,7 @@ namespace Nytherion.Core.Interfaces
         public int oldAmount;
         public int newAmount;
         public int changeAmount;
+        public bool isSilent; // 로딩 등 진척도 처리를 건너뛰어야 할 경우 true
     }
 
     [System.Serializable]

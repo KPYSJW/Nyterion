@@ -22,7 +22,11 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Header("기본정보")]
         public string relicName; // 영어 이름 (또는 ID 용도)
         public string koreanName;    // 한국어 이름 (UI 출력용)
-        [TextArea] public string description;
+        [TextArea] public string description_KR;
+        [TextArea] public string description_EN;
+
+        public string Description => !string.IsNullOrEmpty(description_KR) ? description_KR : description_EN;
+
         public Sprite Image;
         public Rarity rarity;
 
@@ -39,6 +43,10 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Header("영향 범위 설정 (고정)")]
         [Tooltip("이 각인이 주변에 영향을 미칠 영역의 목록")]
         public List<InfluenceZone> influenceZones = new List<InfluenceZone>();
+
+        [Header("해금 설정")]
+        [Tooltip("이 유물을 해금하기 위해 필요한 마일스톤 ID (비어있으면 기본 해금)")]
+        public string unlockMilestoneID;
 
         private void OnValidate()
         {

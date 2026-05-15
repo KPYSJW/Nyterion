@@ -5,6 +5,9 @@ using Nytherion.Core.Enums;
 using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Progression;
 using Nytherion.Data.ScriptableObjects.Skill;
+using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Relics;
+using VContainer;
 
 namespace Nytherion.Core.Managers
 {
@@ -20,15 +23,132 @@ namespace Nytherion.Core.Managers
 
         int GetCurrentProgress(string milestoneId);
         void AddProgress(MilestoneData milestone, int amount = 1);
+        void ProcessAction(ProgressionType type, int amount = 1);
+
         event Action<string, int, int> OnMilestoneProgressUpdated;
 
         event Action<SkillData> OnSkillUnlocked;
         event Action<string> OnMilestoneCompleted;
+
+        void RecordProjectile(GameObject projectilePrefab);
+        System.Collections.Generic.List<GameObject> GetUnlockedProjectilePrefabs();
+        void RecordProjectile(string projectileTag);
+        System.Collections.Generic.List<string> GetUnlockedProjectiles();
     }
 
     public class ProgressionManager : BaseManager, IProgressionManager, ISaveable 
     {
+        [Header("Databases")]
+        [SerializeField] private MilestoneDatabaseSO milestoneDatabase;
+
         private ProgressionState state = new ProgressionState();
+        private System.Collections.Generic.List<GameObject> unlockedProjectilePrefabs = new System.Collections.Generic.List<GameObject>();
+
+        private System.Collections.Generic.Dictionary<string, MilestoneData> milestoneLookup = new System.Collections.Generic.Dictionary<string, MilestoneData>();
+        private System.Collections.Generic.Dictionary<ProgressionType, System.Collections.Generic.List<MilestoneData>> milestonesByType = new System.Collections.Generic.Dictionary<ProgressionType, System.Collections.Generic.List<MilestoneData>>();
+
+        private CurrencyDataManager currencyDataManager;
+        private InventoryDataManager inventoryDataManager;
+        private RelicManager relicManager;
+        private EventManager eventManager;
+        private IObjectResolver container;
+
+        [Inject]
+        public void Construct(IObjectResolver container, RelicManager relicManager)
+        {
+            this.container = container;
+            this.relicManager = relicManager;
+
+            InitializeMilestoneLookup();
+        }
+
+        protected override void OnInitializeInternal()
+        {
+            if (container != null)
+            {
+                currencyDataManager = container.Resolve<CurrencyDataManager>();
+                inventoryDataManager = container.Resolve<InventoryDataManager>();
+            }
+            
+            if (RootLifetimeScope.Instance != null && RootLifetimeScope.Instance.Container != null)
+            {
+                eventManager = RootLifetimeScope.Instance.Container.Resolve<EventManager>();
+            }
+            else
+            {
+                eventManager = FindObjectOfType<EventManager>();
+            }
+
+            SubscribeToEvents();
+        }
+
+        private float playTimeAccumulator = 0f;
+
+        private void Update()
+        {
+            if (!IsInitialized) return;
+
+            playTimeAccumulator += Time.deltaTime;
+            if (playTimeAccumulator >= 1.0f)
+            {
+                int seconds = (int)playTimeAccumulator;
+                ProcessAction(ProgressionType.TotalPlayTime, seconds);
+                playTimeAccumulator -= seconds;
+            }
+        }
+
+        private void SubscribeToEvents()
+        {
+            if (eventManager == null) return;
+
+            eventManager.OnEnemyDied += (enemy) => ProcessAction(ProgressionType.KillEnemy, 1);
+            eventManager.OnEnemyDamagedByPlayer += (damage) => ProcessAction(ProgressionType.DealDamage, (int)damage);
+            eventManager.OnBossClearedEvent += (stage) => ProcessAction(ProgressionType.ClearFloor, 1);
+
+            if (currencyDataManager != null)
+            {
+                currencyDataManager.OnDataChanged += HandleCurrencyChanged;
+            }
+        }
+
+        private void HandleCurrencyChanged(CurrencyChangeData data)
+        {
+            // 로딩 중이거나 지출/설정(변화량 0이하)인 경우는 진척도에 반영하지 않음
+            if (data.isSilent || data.changeAmount <= 0) return;
+
+            if (data.currencyType == CurrencyType.Gold)
+            {
+                ProcessAction(ProgressionType.CollectGold, data.changeAmount);
+            }
+            else if (data.currencyType == CurrencyType.Token)
+            {
+                ProcessAction(ProgressionType.EarnToken, data.changeAmount);
+            }
+        }
+
+        private void InitializeMilestoneLookup()
+        {
+            if (milestoneDatabase == null || milestoneDatabase.allMilestones == null) return;
+
+            milestoneLookup.Clear();
+            milestonesByType.Clear();
+
+            foreach (MilestoneData milestone in milestoneDatabase.allMilestones)
+            {
+                if (milestone == null) continue;
+
+                if (!milestoneLookup.ContainsKey(milestone.milestoneID))
+                {
+                    milestoneLookup.Add(milestone.milestoneID, milestone);
+                }
+
+                if (!milestonesByType.ContainsKey(milestone.progressionType))
+                {
+                    milestonesByType.Add(milestone.progressionType, new System.Collections.Generic.List<MilestoneData>());
+                }
+                milestonesByType[milestone.progressionType].Add(milestone);
+            }
+        }
 
         public event Action<SkillData> OnSkillUnlocked;
         public event Action<string> OnMilestoneCompleted;
@@ -54,6 +174,43 @@ namespace Nytherion.Core.Managers
                 OnSkillUnlocked?.Invoke(skillData);
             }
         }
+
+        // --- 투사체 기록 로직 ---
+        public void RecordProjectile(GameObject projectilePrefab)
+        {
+            if (projectilePrefab == null) return;
+
+            string projectileTag = projectilePrefab.name;
+            if (!state.unlockedProjectiles.Contains(projectileTag))
+            {
+                state.unlockedProjectiles.Add(projectileTag);
+                if (!unlockedProjectilePrefabs.Contains(projectilePrefab))
+                {
+                    unlockedProjectilePrefabs.Add(projectilePrefab);
+                }
+                Debug.Log($"[Progression] 새로운 투사체 기록됨: {projectileTag}");
+            }
+        }
+
+        public void RecordProjectile(string projectileTag)
+        {
+            if (!string.IsNullOrEmpty(projectileTag) && !state.unlockedProjectiles.Contains(projectileTag))
+            {
+                state.unlockedProjectiles.Add(projectileTag);
+                Debug.Log($"[Progression] 새로운 투사체 태그 기록됨: {projectileTag}");
+            }
+        }
+
+        public System.Collections.Generic.List<GameObject> GetUnlockedProjectilePrefabs()
+        {
+            return new System.Collections.Generic.List<GameObject>(unlockedProjectilePrefabs);
+        }
+
+        public System.Collections.Generic.List<string> GetUnlockedProjectiles()
+        {
+            return new System.Collections.Generic.List<string>(state.unlockedProjectiles);
+        }
+        // ------------------------------
         
         public bool IsMilestoneCompleted(string milestoneId)
         {
@@ -83,14 +240,33 @@ namespace Nytherion.Core.Managers
                 {
                     foreach (var reward in milestone.rewards)
                     {
-                        if (reward.rewardType == RewardType.Skill && reward.skillData != null)
-                        {
-                            UnlockSkill(reward.skillData);
-                        }
+                        GiveReward(reward);
                     }
                 }
 
                 OnMilestoneCompleted?.Invoke(milestone.milestoneID);
+            }
+        }
+
+        private void GiveReward(RewardData reward)
+        {
+            switch (reward.rewardType)
+            {
+                case RewardType.Skill:
+                    if (reward.skillData != null) UnlockSkill(reward.skillData);
+                    break;
+                case RewardType.Gold:
+                    if (currencyDataManager != null) currencyDataManager.AddCurrency(CurrencyType.Gold, reward.amount);
+                    break;
+                case RewardType.Token:
+                    if (currencyDataManager != null) currencyDataManager.AddCurrency(CurrencyType.Token, reward.amount);
+                    break;
+                case RewardType.Item:
+                    if (inventoryDataManager != null && reward.itemData != null) inventoryDataManager.AddItem(reward.itemData, reward.amount);
+                    break;
+                case RewardType.Relic:
+                    if (relicManager != null && reward.relicData != null) relicManager.AddNewRelicToStorage(reward.relicData);
+                    break;
             }
         }
         
@@ -145,6 +321,20 @@ namespace Nytherion.Core.Managers
                 CompleteMilestone(milestone); 
 
                 state.activeProgresses.Remove(progress);
+            }
+        }
+
+        public void ProcessAction(ProgressionType type, int amount = 1)
+        {
+            if (!milestonesByType.ContainsKey(type)) return;
+
+            System.Collections.Generic.List<MilestoneData> milestones = milestonesByType[type];
+            foreach (MilestoneData milestone in milestones)
+            {
+                if (IsMilestoneAvailable(milestone))
+                {
+                    AddProgress(milestone, amount);
+                }
             }
         }
         // --- ISaveable ---

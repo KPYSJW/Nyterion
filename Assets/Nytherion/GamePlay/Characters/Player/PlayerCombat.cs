@@ -1,7 +1,8 @@
 using Nytherion.GamePlay.Combat;
 using Nytherion.Core.Managers;
 using UnityEngine;
-using Nytherion.Data.ScriptableObjects.Synergy;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.GamePlay.Combat.Weapons;
 using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Player
@@ -63,7 +64,7 @@ namespace Nytherion.GamePlay.Characters.Player
             AttackEnd();
         }
 
-        public void EquipWeapon(WeaponBase newWeapon)
+        public void EquipWeapon(WeaponBase weaponPrefab, WeaponData data = null)
         {
             if (currentWeapon != null)
             {
@@ -71,28 +72,37 @@ namespace Nytherion.GamePlay.Characters.Player
                 currentWeapon = null;
             }
 
-            if (newWeapon == null)
+            if (weaponPrefab == null)
             {
                 OnWeaponEquipped?.Invoke(null);
                 return;
             }
 
-            if(newWeapon.weaponData.weaponType==WeaponType.Melee)
+            WeaponType type = (data != null) ? data.weaponType : (weaponPrefab.weaponData != null ? weaponPrefab.weaponData.weaponType : WeaponType.Ranged);
+
+            if (type == WeaponType.Melee)
             {
                 if (meleeWeaponPoint != null)
                 {
-                    currentWeapon = Instantiate(newWeapon, meleeWeaponPoint);
-                    currentWeapon.transform.localPosition = Vector3.zero;
-                    currentWeapon.transform.localRotation = Quaternion.identity;
+                    currentWeapon = Instantiate(weaponPrefab, meleeWeaponPoint);
                 }
             }
             else
             {
                 if (weaponPoint != null)
                 {
-                    currentWeapon = Instantiate(newWeapon, weaponPoint);
-                    currentWeapon.transform.localPosition = Vector3.zero;
-                    currentWeapon.transform.localRotation = Quaternion.identity;
+                    currentWeapon = Instantiate(weaponPrefab, weaponPoint);
+                }
+            }
+
+            if (currentWeapon != null)
+            {
+                currentWeapon.transform.localPosition = Vector3.zero;
+                currentWeapon.transform.localRotation = Quaternion.identity;
+
+                if (data != null)
+                {
+                    currentWeapon.Initialize(data);
                 }
             }
             
@@ -106,7 +116,7 @@ namespace Nytherion.GamePlay.Characters.Player
             if (isAttackHeld && currentWeapon != null)
             {
                 // 차징 무기가 아닌 경우 꾹 누르고 있으면 쿨다운에 맞춰 자동 연사 (Auto-fire)
-                if (!(currentWeapon is Nytherion.GamePlay.Combat.Weapon.ChargeableRangedWeapon))
+                if (!(currentWeapon is ChargeableRangedWeapon))
                 {
                     if (currentWeapon.CanAttack())
                     {

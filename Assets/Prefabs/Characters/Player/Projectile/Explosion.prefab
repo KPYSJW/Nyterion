@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  poolTag: Explosion
+  poolTag: Player_Explosion
 --- !u!50 &-1744505625959751428
 Rigidbody2D:
   serializedVersion: 4
@@ -231,4 +231,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionDamageMultiplier: 100
-  explosionVisualPoolTag: ExplosionVFX
+  explosionVisualPoolTag: Player_ExplosionVFX

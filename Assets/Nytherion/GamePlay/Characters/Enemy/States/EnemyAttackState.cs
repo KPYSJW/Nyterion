@@ -103,7 +103,7 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
                 if (enemy.TryRangedAttack())
                 {
-                    enemy.PlayAnimation("Attack");
+                    enemy.PlayAnimation("Attack1");
                     attackCommitUntil = UnityEngine.Time.time + attackCommitTime;
                     nextActionTime = UnityEngine.Time.time + postAttackDelay;
 

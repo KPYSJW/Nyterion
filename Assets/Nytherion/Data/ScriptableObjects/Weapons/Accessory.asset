@@ -13,16 +13,20 @@ MonoBehaviour:
   m_Name: Accessory
   m_EditorClassIdentifier: 
   uniqueID: 5e54065a-f8d4-48a0-97da-60b2dbe95009
-  itemName: Accessory
+  itemName_KR: "\uC545\uC138\uC11C\uB9AC"
+  itemName_EN: Accessory
   icon: {fileID: 21300000, guid: 5e842ea2d69754246a016be03b54e4f8, type: 3}
-  description: 
+  description_KR: 
+  description_EN: 
   isStackable: 0
   maxStack: 1
   baseValue: 10
   equipmentType: 1
   rarity: 0
-  isCursed: 0
+  traits: 
   statModifiers:
   - stat: 3
     value: 10
+    valuePerLevel: 0
+    isPercentage: 0
   armorType: 3

@@ -34,14 +34,17 @@ namespace Nytherion.GamePlay.Skills
         /// <summary>
         /// 실제 스킬의 효과나 로직이 구현되는 메서드
         /// </summary>
-        public void TryUse()
+        /// <returns>스킬 사용 성공 여부</returns>
+        public bool TryUse()
         {
 
             if (CanUse())
             {
                 Activate();
                 lastUseTime = Time.time;
+                return true;
             }
+            return false;
         }
 
         /// <summary>

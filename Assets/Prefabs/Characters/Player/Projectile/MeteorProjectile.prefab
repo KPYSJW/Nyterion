@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  poolTag: Meteor
+  poolTag: Player_Meteor
 --- !u!95 &4657143030660461995
 Animator:
   serializedVersion: 5

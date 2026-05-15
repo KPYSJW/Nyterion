@@ -36,10 +36,13 @@ namespace Nytherion.Core.Managers
         
         private InventoryDataManager inventoryDataManager;
 
+        private ProgressionManager progressionManager;
+
         [Inject]
-        public void Construct(InventoryDataManager inventoryDataManager)
+        public void Construct(InventoryDataManager inventoryDataManager, ProgressionManager progressionManager)
         {
             this.inventoryDataManager = inventoryDataManager;
+            this.progressionManager = progressionManager;
         }
 
         protected override void OnInitializeInternal()
@@ -86,6 +89,18 @@ namespace Nytherion.Core.Managers
                 }
 
                 equippedItems[slotType] = equipment;
+
+                // --- 추가된 로직: 원거리 무기 장착 시 투사체 기록 ---
+                if (progressionManager != null && equipment is Nytherion.Data.ScriptableObjects.Weapons.WeaponData weaponData)
+                {
+                    if (weaponData.weaponType == global::WeaponType.Ranged &&
+                        weaponData.projectilePrefab != null &&
+                        weaponData.isArchivable)
+                    {
+                        progressionManager.RecordProjectile(weaponData.projectilePrefab);
+                    }
+                }
+                // ----------------------------------------------------
             }
 
             OnEquipmentChanged?.Invoke(slotType, equipment, oldEquipment);

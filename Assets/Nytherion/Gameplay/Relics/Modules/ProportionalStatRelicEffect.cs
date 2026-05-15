@@ -2,6 +2,7 @@ using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Data;
+using Nytherion.Core.Utils;
 using System;
 
 namespace Nytherion.Gameplay.Relics.Modules
@@ -9,7 +10,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// <summary>
     /// 특정 스탯(예: 이동속도)에 비례하여 다른 스탯(예: 공격력)을 증감시키는 효과
     /// </summary>
-    [Serializable]
+    [Serializable, RelicDisplayName("스탯 비례 강화 효과")]
     public class ProportionalStatRelicEffect : RelicEffectBase
     {
         [Tooltip("기준이 될 스탯 (예: MoveSpeed)")]

@@ -2,6 +2,7 @@ using UnityEngine;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Data;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Utils;
 using System;
 
 namespace Nytherion.Gameplay.Relics.Modules
@@ -10,7 +11,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// 잡은 몬스터 수(킬 카운트)에 비례해서 특정 스탯(예: 생명력 흡수)이 증가하는 성장형 각인.
     /// 최대 증가치가 정해져 있으며, 각인 레벨이 오를수록 최대 한도(Cap)가 늘어납니다.
     /// </summary>
-    [Serializable]
+    [Serializable, RelicDisplayName("처치 수 비례 성장 효과")]
     public class KillCountGrowthStatRelicEffect : RelicEffectBase
     {
         [Tooltip("증가시킬 대상 스탯 (예: Lifesteal)")]

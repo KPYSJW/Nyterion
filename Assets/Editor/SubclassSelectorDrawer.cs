@@ -23,7 +23,14 @@ namespace Nytherion.Editor
             Type baseType = GetBaseType(property);
             if (baseType != null)
             {
-                string currentTypeName = property.managedReferenceValue != null ? property.managedReferenceValue.GetType().Name : "None";
+                string currentTypeName = "없음";
+                if (property.managedReferenceValue != null)
+                {
+                    Type currentType = property.managedReferenceValue.GetType();
+                    var attr = (RelicDisplayNameAttribute)Attribute.GetCustomAttribute(currentType, typeof(RelicDisplayNameAttribute));
+                    currentTypeName = attr != null ? attr.DisplayName : currentType.Name;
+                }
+                
                 GUIContent buttonLabel = new GUIContent(currentTypeName);
 
                 // 버튼 클릭 시 메뉴 팝업
@@ -32,7 +39,7 @@ namespace Nytherion.Editor
                     GenericMenu menu = new GenericMenu();
                     
                     // None 추가
-                    menu.AddItem(new GUIContent("None"), property.managedReferenceValue == null, () =>
+                    menu.AddItem(new GUIContent("없음"), property.managedReferenceValue == null, () =>
                     {
                         property.managedReferenceValue = null;
                         property.serializedObject.ApplyModifiedProperties();
@@ -45,7 +52,10 @@ namespace Nytherion.Editor
 
                     foreach (var type in types)
                     {
-                        menu.AddItem(new GUIContent(type.Name), property.managedReferenceValue?.GetType() == type, () =>
+                        var attr = (RelicDisplayNameAttribute)Attribute.GetCustomAttribute(type, typeof(RelicDisplayNameAttribute));
+                        string displayName = attr != null ? attr.DisplayName : type.Name;
+
+                        menu.AddItem(new GUIContent(displayName), property.managedReferenceValue?.GetType() == type, () =>
                         {
                             property.managedReferenceValue = Activator.CreateInstance(type);
                             property.isExpanded = true; // 생성 시 자동 확장

@@ -37,13 +37,16 @@ namespace Nytherion.UI.Controllers
         private Button closeButton;
         private InventoryPresenter inventoryPresenter;
         private IObjectResolver container;
+        private ObjectPoolManager objectPoolManager;
 
         [Inject]
         public void Construct(IObjectResolver container,
-            GameSceneUIRefs gameSceneuiRefs)
+            GameSceneUIRefs gameSceneuiRefs,
+            ObjectPoolManager objectPoolManager)
         {
             this.container = container;
             this.gameSceneuiRefs = gameSceneuiRefs;
+            this.objectPoolManager = objectPoolManager;
             this.equipmentPanel = gameSceneuiRefs.EquipmentPanel;
             this.statsPanel = gameSceneuiRefs.StatsPanel;
             this.inventorySlotParent = gameSceneuiRefs.InventorySlotParent;
@@ -106,7 +109,10 @@ namespace Nytherion.UI.Controllers
             base.Awake();
 
             inventoryPresenter?.Initialize();
+        }
 
+        private void Start()
+        {
             InitializeSlotPool();
         }
 
@@ -186,13 +192,13 @@ namespace Nytherion.UI.Controllers
                 return;
             }
 
-            // 기존 슬롯들 먼저 찾기
+            // 기존 슬롯들 먼저 찾기 (Presenter가 생성한 슬롯 포함)
             slotPool = inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true).ToList();
 
-            // 슬롯이 없고 프리팹이 설정되어 있으면 동적 생성
-            if (slotPool.Count == 0 && gameSceneuiRefs?.InventorySlotPrefab != null)
+            if (slotPool.Count == 0)
             {
-                CreateSlotsFromPrefab();
+                // 아직 슬롯이 생성되지 않았을 수 있음
+                return;
             }
 
             // 슬롯 초기화
@@ -211,6 +217,7 @@ namespace Nytherion.UI.Controllers
 
         private void CreateSlotsFromPrefab()
         {
+            /* InventoryPresenter에서 슬롯 생성을 담당하므로 여기서는 생성을 건너뜁니다.
             InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
             int slotCount = inventoryDataMgr?.MaxSlotCount ?? 24;
             
@@ -220,7 +227,9 @@ namespace Nytherion.UI.Controllers
             
             for (int i = 0; i < slotCount; i++)
             {
-                GameObject slotObj = Instantiate(prefab, inventorySlotParent);
+                // 오브젝트 풀에서 슬롯 가져오기
+                GameObject slotObj = objectPoolManager.SpawnFromPool(prefab, Vector3.zero, Quaternion.identity);
+                slotObj.transform.SetParent(inventorySlotParent, false);
                 slotObj.name = $"InventorySlot_{i}";
                 
                 InventorySlotUI slotUI = slotObj.GetComponent<InventorySlotUI>();
@@ -233,49 +242,9 @@ namespace Nytherion.UI.Controllers
                     Debug.LogWarning($"[InventoryUI] 슬롯 {i}에 InventorySlotUI 컴포넌트가 없습니다!");
                 }
             }
+            */
         }
 
-        // private void OnEnable()
-        // {
-        //     if (inventoryManager != null)
-        //     {
-        //         inventoryManager.OnInventoryUpdated += RefreshUI;
-        //     }
-
-        //     if (toggleInventoryAction != null && toggleInventoryAction.action != null)
-        //     {
-        //         toggleInventoryAction.action.performed += OnToggleAction;
-        //         toggleInventoryAction.action.Enable();
-        //     }
-        //     if (eventManager != null)
-        //     {
-        //         eventManager.OnOpenInventoryForShop += OpenForShop;
-        //         eventManager.OnCloseInventoryForShop += Close;
-        //     }
-        // }
-        // private void OnDisable()
-        // {
-        //     if (toggleInventoryAction != null && toggleInventoryAction.action != null)
-        //     {
-        //         toggleInventoryAction.action.performed -= OnToggleAction;
-        //     }
-
-        //     if (inventoryManager != null)
-        //     {
-        //         inventoryManager.OnInventoryUpdated -= RefreshUI;
-        //     }
-
-        //     if (closeButton != null)
-        //     {
-        //         closeButton.onClick.RemoveListener(Close);
-        //     }
-
-        //     if (inventoryPresenter != null)
-        //     {
-        //         var cleanupMethod = inventoryPresenter.GetType().GetMethod("Cleanup");
-        //         cleanupMethod?.Invoke(inventoryPresenter, null);
-        //     }
-        // }
         private void OnToggleAction(InputAction.CallbackContext context)
         {
             ShopManager shopMgr = GetShopManager();

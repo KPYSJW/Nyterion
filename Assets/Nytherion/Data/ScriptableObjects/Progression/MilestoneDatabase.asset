@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 259a913a9c158a74eaba85f98627dbbb, type: 3}
+  m_Name: MilestoneDatabase
+  m_EditorClassIdentifier: 
+  allMilestones:
+  - {fileID: 11400000, guid: 05eb717853d2da54baf40e26c990921d, type: 2}
+  - {fileID: 11400000, guid: 983922e0a46685f4883faf5fa40a30fa, type: 2}
+  - {fileID: 11400000, guid: badf06ef59af4b84e8d718941f9857b1, type: 2}
+  - {fileID: 11400000, guid: 2d6700de7f8206c4195b2fd70a7a1378, type: 2}
+  - {fileID: 11400000, guid: e8e82ed6b3639964ead32c38419f5e5a, type: 2}
+  - {fileID: 11400000, guid: a87043c8acd27064da0bcf8d27083a6b, type: 2}
+  - {fileID: 11400000, guid: 4b50598048b6fb744a33282f3c03fabb, type: 2}
+  - {fileID: 11400000, guid: b79e5fbd75b1afc4d96059bc108096da, type: 2}
+  - {fileID: 11400000, guid: 355f2033a7927224882711025d4525d6, type: 2}
+  - {fileID: 11400000, guid: 575e129273143f542860e1cede9ae9b3, type: 2}
+  - {fileID: 11400000, guid: ce6e9544ec4d8f64db1af243a82ced1b, type: 2}
+  - {fileID: 11400000, guid: 3894ac288bf2a134db9cf45b2414b04f, type: 2}
+  - {fileID: 11400000, guid: bb62a051b8a48e94ba07f41e3173e7cc, type: 2}

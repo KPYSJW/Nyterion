@@ -24,6 +24,7 @@ public class LaserEffect : MonoBehaviour
     private float nextTickTime = 0f;
     
     private HashSet<IDamageable> targetsInRange = new HashSet<IDamageable>();
+    private List<IDamageable> deadTargetsList = new List<IDamageable>();
     
     public void Initialize(Transform caster, Transform firePoint, float damage, float fireDuration, float tickRate, string poolTag)
     {
@@ -35,6 +36,7 @@ public class LaserEffect : MonoBehaviour
         this.poolTag = poolTag;
         
         targetsInRange.Clear();
+        deadTargetsList.Clear();
         hitBox.enabled = false;
         
         ChangeState(LaserState.Charging);
@@ -159,7 +161,7 @@ public class LaserEffect : MonoBehaviour
     
     private void DealTickDamage()
     {
-        List<IDamageable> deadTargets = new List<IDamageable>();
+        deadTargetsList.Clear();
         
         foreach (var target in targetsInRange)
         {
@@ -169,11 +171,11 @@ public class LaserEffect : MonoBehaviour
             }
             else
             {
-                deadTargets.Add(target);
+                deadTargetsList.Add(target);
             }
         }
         
-        foreach (var dead in deadTargets)
+        foreach (var dead in deadTargetsList)
         {
             targetsInRange.Remove(dead);
         }

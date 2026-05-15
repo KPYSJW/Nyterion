@@ -78,7 +78,7 @@ namespace Nytherion.UI.RelicBoard
 
         nameText.text = !string.IsNullOrEmpty(block.SourceData.koreanName) ? block.SourceData.koreanName : block.SourceData.relicName;
         levelText.text = $"Lv. {block.SourceData.level}";
-        descriptionText.text = block.SourceData.description;
+        descriptionText.text = block.SourceData.Description;
 
         UpdateInfluenceGrid(block);
 
