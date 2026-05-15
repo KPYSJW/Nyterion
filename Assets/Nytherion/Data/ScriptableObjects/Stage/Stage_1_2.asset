@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c2145fed0a5294d82373ddbf684387, type: 3}
   m_Name: Stage_1_2
   m_EditorClassIdentifier: 
-  stageName: '"1-2"'
+  stageName: '"1"'
   chapterNumber: 1
   stageNumber: 1
   isBossStage: 0
@@ -22,6 +22,6 @@ MonoBehaviour:
   useRandomSpawn: 1
   enemyCount: 0
   stageBackground: {fileID: 0}
-  dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
+  dungeonData: {fileID: 11400000, guid: 20370d4ef8d155b4cac0a26c6d528a88, type: 2}
   nextStageData: {fileID: 11400000, guid: bf9001959f2375e41b4b091487f61841, type: 2}
-  victorySceneName: Village
+  victorySceneName: GameScene

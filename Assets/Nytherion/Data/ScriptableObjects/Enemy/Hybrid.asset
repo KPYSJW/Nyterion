@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 6406644339438500767, guid: 3215275927a03af4a837360f213af70e, type: 3}
   maxHealth: 30
   moveSpeed: 2.2
-  damageAmount: 8
+  damageAmount: 1
   detectRange: 6
   combatType: 2
   hybridSwitchDistance: 2.5

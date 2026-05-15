@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c2145fed0a5294d82373ddbf684387, type: 3}
   m_Name: Stage_2_2
   m_EditorClassIdentifier: 
-  stageName: '"2-2"'
+  stageName: '"3"'
   chapterNumber: 1
-  stageNumber: 5
+  stageNumber: 1
   isBossStage: 0
   enemyList: []
   fixedSpawnPoints: []

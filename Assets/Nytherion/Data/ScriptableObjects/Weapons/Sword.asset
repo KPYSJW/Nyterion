@@ -21,14 +21,14 @@ MonoBehaviour:
   baseValue: 10
   equipmentType: 0
   rarity: 0
-  isCursed: 0
+  traits: 
   statModifiers:
   - stat: 0
     value: 0
     valuePerLevel: 0
     isPercentage: 0
-  weaponName: 
-  damage: 0
+  weaponName: Sword
+  damage: 15
   range: 0
   cooldown: 0
   projectilePrefab: {fileID: 0}

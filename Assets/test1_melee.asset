@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742e9e1339086c94b85fd539b07b2450, type: 3}
+  m_Name: test1_melee
+  m_EditorClassIdentifier: 
+  desiredNumberOfRooms: 5
+  minRoomSize: {x: 20, y: 20}
+  maxRoomSize: {x: 20, y: 20}
+  compoundRoomChance: 1
+  numberOfShopRooms: 1
+  numberOfItemRooms: 0
+  ShopRoomPrefab: {fileID: 2311304213159145408, guid: b29247aef2592ae4fa3ff337ae8d4c89, type: 3}
+  StartRoomPrefab: {fileID: 2311304213159145408, guid: 152a1a907c2425348957e6d7fc8372ef, type: 3}
+  ItemRoomPrefab: {fileID: 2311304213159145408, guid: ecf4718509ffaf846be5b10b50f93dca, type: 3}
+  bossRoomPrefab: {fileID: 2311304213159145408, guid: 227752a830facb24a806d9acbf79c15e, type: 3}
+  bossMonsterData: {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
+  obstacles:
+  - prefab: {fileID: 5617744718106360532, guid: 2b08b76bb574b344fb055530b354cca9, type: 3}
+    size: {x: 5, y: 5}
+  minObstaclesPerRoom: 1
+  maxObstaclesPerRoom: 3
+  minimapRoomColors:
+  - type: 1
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - type: 2
+    color: {r: 1, g: 0, b: 0, a: 1}
+  - type: 3
+    color: {r: 0, g: 0.15722227, b: 1, a: 1}
+  - type: 4
+    color: {r: 0.16368961, g: 1, b: 0, a: 1}
+  - type: 0
+    color: {r: 1, g: 1, b: 1, a: 1}
+  dungeonMonsters:
+  - {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
+  wallThickness: 5
+  roomSpacingMultiplier: 2
+  placementIterations: 50
+  maxGenerationAttempts: 200
+  victoryPortalPrefab: {fileID: 7692483418629133086, guid: 1c4a0d2897d8c53429317d5f90b902b6, type: 3}

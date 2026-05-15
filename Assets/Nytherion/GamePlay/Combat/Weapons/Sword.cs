@@ -10,6 +10,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
         public SpriteRenderer sprite;
         [SerializeField] private Animation meleeWeaponAnimation;
         [SerializeField] private string attackClipName  = "PlayerMeleeAnim";
+        
 
         [Header("Effect Animation")]
         [SerializeField] private Animator  slashEffectAnimator;
@@ -19,12 +20,14 @@ namespace Nytherion.GamePlay.Combat.Weapon
 
 
         private Coroutine slashEffectRoutine;
-        private void Start()
+        public override void Start()
         {
+            base.Start();
             if(meleeWeaponAnimation==null)
             {
                 meleeWeaponAnimation=GetComponentInParent<Animation>();
             }
+          
         }
 
            private void PlaySlashEffect()
@@ -67,11 +70,11 @@ namespace Nytherion.GamePlay.Combat.Weapon
            
            if (meleeWeaponAnimation != null)
             {
-                meleeWeaponAnimation.Stop();
+                //meleeWeaponAnimation.Stop();
                 meleeWeaponAnimation.Play(attackClipName);
                 
             }
-            PlaySlashEffect();
+            //PlaySlashEffect();
 
             lastAttackTime = Time.time;
         }
@@ -79,24 +82,10 @@ namespace Nytherion.GamePlay.Combat.Weapon
 
          public override void AttackEnd()
         {
-            DisableHitbox();
+            //DisableHitbox();
         }
 
-        public void EnableHitbox()
-        {
-            if (col != null)
-            {
-                col.enabled = true;
-            }
-        }
-
-        public void DisableHitbox()
-        {
-            if (col != null)
-            {
-                col.enabled = false;
-            }
-        }
+        
 
        
     }

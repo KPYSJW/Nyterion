@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 742e9e1339086c94b85fd539b07b2450, type: 3}
-  m_Name: test1
+  m_Name: test1_hy
   m_EditorClassIdentifier: 
-  desiredNumberOfRooms: 5
+  desiredNumberOfRooms: 10
   minRoomSize: {x: 20, y: 20}
   maxRoomSize: {x: 20, y: 20}
   compoundRoomChance: 1
   numberOfShopRooms: 1
-  numberOfItemRooms: 1
+  numberOfItemRooms: 0
   ShopRoomPrefab: {fileID: 2311304213159145408, guid: b29247aef2592ae4fa3ff337ae8d4c89, type: 3}
   StartRoomPrefab: {fileID: 2311304213159145408, guid: 152a1a907c2425348957e6d7fc8372ef, type: 3}
   ItemRoomPrefab: {fileID: 2311304213159145408, guid: ecf4718509ffaf846be5b10b50f93dca, type: 3}

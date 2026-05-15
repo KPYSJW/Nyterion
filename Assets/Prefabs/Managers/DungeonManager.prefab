@@ -46,13 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69a976ddf71a2a04698c1ee69f97ccc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeEnemies:
-  - {fileID: 0}
-  roomFirstDungeonGenerator: {fileID: -2933753644565975262}
-  worldMapUI: {fileID: 0}
-  portalTilemap: {fileID: 0}
-  tilemapVisualizer: {fileID: 1573712204440672803}
   playerObject: {fileID: 0}
+  roomFirstDungeonGenerator: {fileID: -2933753644565975262}
+  tilemapVisualizer: {fileID: 1573712204440672803}
+  _objectPoolManager: {fileID: 0}
+  _stageManager: {fileID: 0}
 --- !u!114 &-2933753644565975262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,9 +65,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilemapVisualizer: {fileID: 0}
   startPosition: {x: 0, y: 0}
-  dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
-  worldmapController: {fileID: 0}
-  minimapGenerator: {fileID: 0}
+  dungeonData: {fileID: 0}
+  _worldmapController: {fileID: 0}
+  _minimapGenerator: {fileID: 0}
+  dungeonNavMeshBuilder: {fileID: 0}
 --- !u!114 &1573712204440672803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,6 +85,7 @@ MonoBehaviour:
   wallTilemap: {fileID: 0}
   portalTilemap: {fileID: 0}
   obstacleHolder: {fileID: 0}
+  specialRoomObjectHolder: {fileID: 0}
   floorTile: {fileID: 11400000, guid: 9e5382f372f0ce4488b5ef0e96eb74e7, type: 2}
   portalTile: {fileID: 11400000, guid: 7548f31a59a6cae4497801b352b88f66, type: 2}
   wallRuleTile: {fileID: 11400000, guid: e715ec13e27404e4cbfb845dc945425f, type: 2}

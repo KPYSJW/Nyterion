@@ -1,5 +1,6 @@
 using UnityEngine;
 using Nytherion.Core.Interfaces;
+using System.Collections.Generic;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -9,12 +10,32 @@ namespace Nytherion.GamePlay.Combat
         [Tooltip("무기의 시각적 표현을 담당하는 스프라이트 렌더러")]
 
         public Collider2D col;
-
+        private readonly HashSet<IDamageable> hitTargets = new();
         public void Collider(bool value)
         {
             col.enabled = value;
         }
+        public void EnableHitbox()
+        {
+            if (col != null)
+            {
+                col.enabled = true;
+            }
+        }
 
+        public void DisableHitbox()
+        {
+            if (col != null)
+            {
+                col.enabled = false;
+            }
+            ResetHitTargets();
+        }
+
+         public void ResetHitTargets()
+        {
+            hitTargets.Clear();
+        }
         public void RayCast()
         {
             RaycastHit2D[] hits = Physics2D.CircleCastAll(
@@ -33,6 +54,23 @@ namespace Nytherion.GamePlay.Combat
                 }
             }
 
+        }
+
+        public virtual void Start()
+        {
+            DisableHitbox();
+            WeaponAniRelay weaponAniRelay=GetComponentInParent<WeaponAniRelay>();
+            if(weaponAniRelay!=null)Debug.Log("가나다라마사바");
+            weaponAniRelay.currentWeapon=this;
+        }
+
+         private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (!collision.CompareTag("Enemy")) return;
+            if (!collision.TryGetComponent<IDamageable>(out var target)) return;
+            if (hitTargets.Contains(target)) return;
+            hitTargets.Add(target);
+            target.TakeDamage(weaponData.damage);
         }
     }
 }

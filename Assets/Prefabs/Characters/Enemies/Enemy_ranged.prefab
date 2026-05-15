@@ -116,7 +116,8 @@ MonoBehaviour:
   agent: {fileID: 0}
   rb: {fileID: 4648011277888427336}
   animator: {fileID: 4768760079748412350}
-  spriteRenderer: {fileID: 6594904688280076281}
+  Root: {fileID: 3924669952241051566}
+  RootDefaultScale: {x: 0, y: 0}
   CurrentCombatType: 1
   enemyData: {fileID: 0}
   HybridSwitchDistance: 0
@@ -134,6 +135,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyData: {fileID: 11400000, guid: de09b130b5d303b4d81fb5c12611f470, type: 2}
   aiController: {fileID: 0}
+  spriteRenderer: {fileID: 6594904688280076281}
+  hitColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashDuration: 0.2
 --- !u!114 &-2876666219040609769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160,10 +164,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: 5
   attackCoolDown: 2
-  fallbackDamage: 8
+  fallbackDamage: 1
   useProjectileVisual: 1
   projectilePrefab: {fileID: 2281237070976107017, guid: bd34183cb4bb7a447985b033cdb6b7c9, type: 3}
   firePoint: {fileID: 3438172278233346338}
+  player: {fileID: 0}
 --- !u!195 &2468121904835799892
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -232,6 +237,7 @@ GameObject:
   - component: {fileID: 2379554245554010920}
   - component: {fileID: 6594904688280076281}
   - component: {fileID: 4768760079748412350}
+  - component: {fileID: 6679932349438826195}
   m_Layer: 3
   m_Name: Sprite
   m_TagString: Untagged
@@ -327,3 +333,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6679932349438826195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7678941447603383567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ae247c549f26945abea9d18093b2b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meleeAttackBehavior: {fileID: 0}
+  rangedAttackBehavior: {fileID: 5856471723554406290}
