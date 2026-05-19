@@ -22,8 +22,9 @@ namespace Nytherion.GamePlay.Combat.Weapon
         private Coroutine slashEffectRoutine;
         private WaitForSeconds slashEffectWait;
 
-        private void Start()
+        public override void Start()
         {
+            base.Start();
             slashEffectWait = new WaitForSeconds(slashEffectDuration);
             if(meleeWeaponAnimation==null)
             {

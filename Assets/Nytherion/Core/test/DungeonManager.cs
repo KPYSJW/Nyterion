@@ -1,3 +1,4 @@
+using Nytherion.Core.Data;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Dungeon;
 using Nytherion.GamePlay.Characters.Enemy;
@@ -33,6 +34,10 @@ namespace Nytherion.GamePlay.Dungeon
         [SerializeField] public RoomFirstDungeonGenerator roomFirstDungeonGenerator;
         [SerializeField] public TilemapVisualizer tilemapVisualizer;
 
+        [Header("Test Options")]
+        [Tooltip("체크하면 저장된 던전 맵을 무시하고 새 던전을 생성합니다.")]
+        [SerializeField] private bool ignoreSavedDungeonMapForTest = false;
+
         private Tilemap portalTilemap;
         private TilemapCollider2D portalCollider;
 
@@ -42,6 +47,7 @@ namespace Nytherion.GamePlay.Dungeon
         private bool hasBossSpawned = false;
 
         private EventManager _eventManager;
+        private SaveLoadManager _saveLoadManager;
         public ObjectPoolManager _objectPoolManager;
         private InputManager _inputManager;
         private WorldmapController _worldmapController;
@@ -63,7 +69,8 @@ namespace Nytherion.GamePlay.Dungeon
            EventManager eventManager,
            ObjectPoolManager objectPoolManager,
            Characters.Player.PlayerController playerController,
-           InputManager inputManager
+           InputManager inputManager,
+           SaveLoadManager saveLoadManager
            /*WorldmapController worldmapController*/) // 월드맵 토글 기능을 위해 주입받습니다.
         {
             _eventManager = eventManager;
@@ -71,7 +78,7 @@ namespace Nytherion.GamePlay.Dungeon
             playerObject = playerController.gameObject;
             _inputManager = inputManager;
             //_worldmapController = worldmapController;
-
+            _saveLoadManager = saveLoadManager;
             FindTilemapReferences();
         }
 
@@ -92,6 +99,22 @@ namespace Nytherion.GamePlay.Dungeon
                 this.portalTilemapInstance = portalTilemapObj.GetComponent<Tilemap>();
                 this.portalTilemap = this.portalTilemapInstance;
             }
+        }
+        public void SetCurrentMapSaveData(DungeonMapSaveData mapData)
+        {
+            if (_saveLoadManager == null) return;
+
+            SaveData saveData = _saveLoadManager.CurrentSaveData;
+            saveData.dungeonMapData = mapData;
+        }
+
+        public void InitializeDungeonCheckpoint(RoomFirstDungeonGenerator.Room startRoom)
+        {
+            DungeonMapSaveData mapData = _saveLoadManager?.CurrentSaveData?.dungeonMapData;
+            if (mapData == null || mapData.hasCheckpoint || startRoom == null)
+                return;
+
+            SaveDungeonCheckpoint(startRoom, startRoom.center, true);
         }
 
         public void SetStageManager(StageManager stageManager)
@@ -195,11 +218,23 @@ namespace Nytherion.GamePlay.Dungeon
         public void StartDungeonGeneration()
         {
             if (!RefreshDungeonDataFromStage())
-            {
                 return;
-            }
 
-            roomFirstDungeonGenerator.DungeonStart();
+            DungeonMapSaveData savedMap = _saveLoadManager?.CurrentSaveData?.dungeonMapData;
+
+            if (!ignoreSavedDungeonMapForTest && savedMap != null && savedMap.hasMap)
+            {
+                roomFirstDungeonGenerator.LoadDungeonFromSave(savedMap);
+            }
+            else
+            {
+                if (ignoreSavedDungeonMapForTest && _saveLoadManager != null)
+                {
+                    _saveLoadManager.CurrentSaveData.dungeonMapData = new DungeonMapSaveData();
+                }
+
+                roomFirstDungeonGenerator.GenerateNewDungeonAndCreateSnapshot();
+            }
         }
 
         public void RegenerateDungeon()
@@ -233,6 +268,8 @@ namespace Nytherion.GamePlay.Dungeon
             AllDungeonRooms?.Clear();
             roomLookup?.Clear();
             roomFloorData?.Clear();
+            currentPlayerRoom = null;
+            previousPlayerRoom = null;
             hasBossSpawned = false;
         }
 
@@ -295,7 +332,93 @@ namespace Nytherion.GamePlay.Dungeon
         public bool IsRoomCleared(RoomFirstDungeonGenerator.Room room)
         {
             if (room == null) return true;
-            return room.enemies.Count == 0 || room.enemies.All(monster => monster.isDead);
+            if (room.cleared) return true;
+
+            if (room.type == RoomFirstDungeonGenerator.RoomType.Start ||
+                room.type == RoomFirstDungeonGenerator.RoomType.Shop ||
+                room.type == RoomFirstDungeonGenerator.RoomType.Item)
+            {
+                return true;
+            }
+
+            return room.enemies.Count > 0 && room.enemies.All(monster => monster.isDead);
+        }
+
+        public void SaveDungeonCheckpoint(RoomFirstDungeonGenerator.Room room, Vector2 playerPosition, bool forceSave)
+        {
+            DungeonMapSaveData mapData = _saveLoadManager?.CurrentSaveData?.dungeonMapData;
+            if (mapData == null || !mapData.hasMap || room == null)
+                return;
+
+            room.visited = true;
+            mapData.hasCheckpoint = true;
+            mapData.currentRoomId = room.id;
+            mapData.lastSafeRoomId = room.id;
+            mapData.lastSafeX = playerPosition.x;
+            mapData.lastSafeY = playerPosition.y;
+            mapData.portalsUnlocked = IsRoomCleared(room);
+            mapData.hasBossSpawned = hasBossSpawned;
+
+            UpdateRoomStatesInSaveData(mapData);
+
+            if (forceSave)
+            {
+                _saveLoadManager?.ForceSaveGame();
+            }
+            else
+            {
+                _saveLoadManager?.SaveGame();
+            }
+        }
+
+        public void SaveCheckpointAtCurrentPlayerPosition(bool forceSave)
+        {
+            RoomFirstDungeonGenerator.Room room = FindCurrentPlayerRoom();
+            if (room == null || playerObject == null)
+                return;
+
+            if (!IsRoomCleared(room))
+            {
+                SaveDungeonRoomStates(forceSave);
+                return;
+            }
+
+            SaveDungeonCheckpoint(room, playerObject.transform.position, forceSave);
+        }
+
+        public void SaveDungeonRoomStates(bool forceSave)
+        {
+            DungeonMapSaveData mapData = _saveLoadManager?.CurrentSaveData?.dungeonMapData;
+            if (mapData == null || !mapData.hasMap)
+                return;
+
+            mapData.hasBossSpawned = hasBossSpawned;
+            UpdateRoomStatesInSaveData(mapData);
+
+            if (forceSave)
+            {
+                _saveLoadManager?.ForceSaveGame();
+            }
+            else
+            {
+                _saveLoadManager?.SaveGame();
+            }
+        }
+
+        private void UpdateRoomStatesInSaveData(DungeonMapSaveData mapData)
+        {
+            if (mapData == null || mapData.rooms == null || AllDungeonRooms == null)
+                return;
+
+            Dictionary<int, DungeonRoomSaveData> savedRoomsById = mapData.rooms.ToDictionary(room => room.id, room => room);
+            foreach (RoomFirstDungeonGenerator.Room room in AllDungeonRooms)
+            {
+                if (savedRoomsById.TryGetValue(room.id, out DungeonRoomSaveData roomData))
+                {
+                    roomData.visited = room.visited;
+                    roomData.cleared = room.cleared;
+                }
+            }
         }
 
         #endregion
@@ -309,16 +432,27 @@ namespace Nytherion.GamePlay.Dungeon
 
         private void SpawnPlayerAtStart(RoomFirstDungeonGenerator.Room startRoom)
         {
-            if (playerObject != null && startRoom != null)
+            if (playerObject == null || startRoom == null)
+                return;
+
+            DungeonMapSaveData mapData = _saveLoadManager?.CurrentSaveData?.dungeonMapData;
+            if (mapData != null && mapData.hasCheckpoint)
             {
-                playerObject.transform.position = startRoom.center;
+                playerObject.transform.position = new Vector2(mapData.lastSafeX, mapData.lastSafeY);
+                hasBossSpawned = mapData.hasBossSpawned;
+                return;
             }
+
+            playerObject.transform.position = startRoom.center;
         }
+
         private void HandleEnemyDeath(EnemyBase deadEnemy)
         {
             RoomFirstDungeonGenerator.Room room = deadEnemy.homeRoom;
             if (room != null && IsRoomCleared(room))
             {
+                room.cleared = true;
+
                 if (room.type == RoomFirstDungeonGenerator.RoomType.Boss)
                 {
                     _stageManager?.SpawnBossPortal(deadEnemy.transform.position);
@@ -327,12 +461,15 @@ namespace Nytherion.GamePlay.Dungeon
                 {
                     UnlockPortals();
                 }
+
+                SaveDungeonCheckpoint(room, playerObject != null ? playerObject.transform.position : room.center, true);
             }
         }
 
         private void OnPlayerEnteredRoom(RoomFirstDungeonGenerator.Room newRoom, RoomFirstDungeonGenerator.Room oldRoom)
         {
             oldRoom?.DeactivateEnemies();
+            newRoom.visited = true;
             newRoom?.ActivateEnemies();
 
             if (newRoom.type == RoomFirstDungeonGenerator.RoomType.Boss && !hasBossSpawned)
@@ -343,10 +480,12 @@ namespace Nytherion.GamePlay.Dungeon
             if (!IsRoomCleared(newRoom))
             {
                 LockPortals();
+                SaveDungeonRoomStates(true);
             }
             else
             {
                 UnlockPortals();
+                SaveDungeonCheckpoint(newRoom, playerObject != null ? playerObject.transform.position : newRoom.center, true);
             }
         }
 

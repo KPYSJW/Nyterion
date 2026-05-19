@@ -60,7 +60,7 @@ namespace Nytherion.GamePlay.Combat
         {
             DisableHitbox();
             WeaponAniRelay weaponAniRelay=GetComponentInParent<WeaponAniRelay>();
-            if(weaponAniRelay!=null)Debug.Log("가나다라마사바");
+            //if(weaponAniRelay!=null)Debug.Log("가나다라마사바");
             weaponAniRelay.currentWeapon=this;
         }
 

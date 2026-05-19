@@ -48,6 +48,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (aiController != null)
             {
                 aiController.ApplyEnemyData(data);
+    
             }
         }
 
