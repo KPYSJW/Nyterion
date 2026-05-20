@@ -8,7 +8,7 @@ using System;
 namespace Nytherion.Gameplay.Relics.Modules
 {
     /// <summary>
-    /// 특정 스탯(예: 이동속도)에 비례하여 다른 스탯(예: 공격력)을 증감시키는 효과
+    /// 특정 스탯에 비례하여 다른 스탯을 증감시키는 효과
     /// </summary>
     [Serializable, RelicDisplayName("스탯 비례 강화 효과")]
     public class ProportionalStatRelicEffect : RelicEffectBase
@@ -68,19 +68,17 @@ namespace Nytherion.Gameplay.Relics.Modules
         {
             if (cachedPlayerManager == null || cachedPlayerManager.currentPlayerData == null) return;
 
-            isUpdating = true; // 무한 루프 방지
+            isUpdating = true;
 
             float sourceValue = GetStatValue(cachedPlayerManager.currentPlayerData, sourceStat);
             float finalRatio = ratio + (ratioPerLevel * Mathf.Max(0, currentLevel - 1));
             float targetValueIncrease = sourceValue * finalRatio;
 
-            // 기존 모디파이어 제거
             if (currentModifier != null)
             {
                 cachedPlayerManager.RemoveTemporaryStatModifier(currentModifier);
             }
 
-            // 새 모디파이어 생성 및 적용
             currentModifier = new StatModifier
             {
                 stat = targetStat,

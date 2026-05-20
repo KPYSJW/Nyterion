@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
 using UnityEngine;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Utils;
-using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.Gameplay.Relics.Modules
 {

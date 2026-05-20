@@ -12,7 +12,6 @@ namespace Nytherion.Editor
         {
             EditorGUI.BeginProperty(position, label, property);
 
-            // Draw foldout
             property.isExpanded = EditorGUI.Foldout(new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight), property.isExpanded, label, true);
             
             if (property.isExpanded)
@@ -20,19 +19,16 @@ namespace Nytherion.Editor
                 EditorGUI.indentLevel++;
                 float yOffset = position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-                // Reward Type
                 SerializedProperty typeProp = property.FindPropertyRelative("rewardType");
                 EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, EditorGUIUtility.singleLineHeight), typeProp);
                 yOffset += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
                 RewardType currentType = (RewardType)typeProp.enumValueIndex;
 
-                // Amount (Always visible for Gold/Token, maybe not for Skill/Item but safe to keep)
                 SerializedProperty amountProp = property.FindPropertyRelative("amount");
                 EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, EditorGUIUtility.singleLineHeight), amountProp);
                 yOffset += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-                // Conditional Fields
                 if (currentType == RewardType.Skill)
                 {
                     SerializedProperty skillProp = property.FindPropertyRelative("skillData");
@@ -59,9 +55,9 @@ namespace Nytherion.Editor
         {
             if (!property.isExpanded) return EditorGUIUtility.singleLineHeight;
 
-            float height = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing; // Foldout
-            height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing; // Type
-            height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing; // Amount
+            float height = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing; 
+            height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing; 
+            height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing; 
 
             SerializedProperty typeProp = property.FindPropertyRelative("rewardType");
             RewardType currentType = (RewardType)typeProp.enumValueIndex;

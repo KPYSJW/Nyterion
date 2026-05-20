@@ -36,6 +36,8 @@ namespace Nytherion.UI.RelicBoard
         [SerializeField] private GameObject levelDownGizmoPrefab;
         [Tooltip("비활성화(Silence) 효과를 표시할 프리팹")]
         [SerializeField] private GameObject silenceGizmoPrefab;
+        [Tooltip("시너지 연결(SynergyLink) 효과를 표시할 프리팹")]
+        [SerializeField] private GameObject synergyLinkGizmoPrefab;
 
 
         private RelicSlotCell[,] slotCells;
@@ -190,6 +192,10 @@ namespace Nytherion.UI.RelicBoard
                         prefabToUse = silenceGizmoPrefab != null ? silenceGizmoPrefab : levelDownGizmoPrefab;
                         isSilence = true;
                     }
+                    else if (influence == InfluenceType.SynergyLink)
+                    {
+                        prefabToUse = synergyLinkGizmoPrefab != null ? synergyLinkGizmoPrefab : levelUpGizmoPrefab;
+                    }
 
                     if (prefabToUse != null)
                     {
@@ -202,6 +208,11 @@ namespace Nytherion.UI.RelicBoard
                         {
                             Graphic graphic = gizmo.GetComponent<Graphic>();
                             if (graphic != null) graphic.color = new Color(0.5f, 0, 0.5f, 1f); // 보라색
+                        }
+                        else if (influence == InfluenceType.SynergyLink && synergyLinkGizmoPrefab == null)
+                        {
+                            Graphic graphic = gizmo.GetComponent<Graphic>();
+                            if (graphic != null) graphic.color = new Color(1f, 0.8f, 0f, 1f); // 노란색/금색
                         }
                     }
                 }
@@ -278,6 +289,10 @@ namespace Nytherion.UI.RelicBoard
                         prefabToUse = silenceGizmoPrefab != null ? silenceGizmoPrefab : levelDownGizmoPrefab;
                         isSilence = true;
                     }
+                    else if (zone.type == InfluenceType.SynergyLink)
+                    {
+                        prefabToUse = synergyLinkGizmoPrefab != null ? synergyLinkGizmoPrefab : levelUpGizmoPrefab;
+                    }
 
                     if (prefabToUse != null)
                     {
@@ -288,7 +303,11 @@ namespace Nytherion.UI.RelicBoard
                         Graphic graphic = gizmo.GetComponent<Graphic>();
                         if (graphic != null)
                         {
-                            Color color = isSilence && silenceGizmoPrefab == null ? new Color(0.5f, 0, 0.5f) : graphic.color;
+                            Color color;
+                            if (isSilence && silenceGizmoPrefab == null) color = new Color(0.5f, 0, 0.5f);
+                            else if (zone.type == InfluenceType.SynergyLink && synergyLinkGizmoPrefab == null) color = new Color(1f, 0.8f, 0f);
+                            else color = graphic.color;
+
                             color.a = 0.5f;
                             graphic.color = color;
                         }

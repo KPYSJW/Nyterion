@@ -6,7 +6,7 @@ namespace Nytherion.Data.ScriptableObjects.Skill
     public class ShadowCloneSkillData : SkillData
     {
         /// <summary>
-        /// 분신 스킬 데이터 저장 ScriptableObject임니다.
+        /// 분신 스킬 데이터 저장 ScriptableObject
         /// </summary>
         [Header("Shadow Clone Settings")]
         [Tooltip("지속 시간")]

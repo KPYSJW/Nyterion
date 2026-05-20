@@ -20,20 +20,17 @@ namespace Nytherion.Editor
         private enum WindowTab { Create, Edit }
         private WindowTab currentTab = WindowTab.Create;
 
-        // Creation Fields
         private SkillData creationData;
         private SerializedObject serializedCreationData;
         private int selectedSkillTypeIndex = 0;
         private List<Type> skillTypes = new List<Type>();
         private string[] skillTypeNames;
 
-        // Milestone Creation Fields
         private bool createMilestone = false;
         private string milestoneTitle = "스킬 해금: ";
         private ProgressionType milestoneType = ProgressionType.KillEnemy;
         private int milestoneTarget = 100;
 
-        // Edit Mode Fields
         private List<SkillData> allSkills = new List<SkillData>();
         private Vector2 scrollPosition;
         private string searchFilter = "";
@@ -69,7 +66,7 @@ namespace Nytherion.Editor
         {
             if (skillTypes.Count > 0)
             {
-                creationData = (SkillData)ScriptableObject.CreateInstance(skillTypes[selectedSkillTypeIndex]);
+                creationData = (SkillData)CreateInstance(skillTypes[selectedSkillTypeIndex]);
                 serializedCreationData = new SerializedObject(creationData);
             }
         }
@@ -357,17 +354,16 @@ namespace Nytherion.Editor
                     return;
             }
 
-            SkillData newData = (SkillData)ScriptableObject.Instantiate(creationData);
+            SkillData newData = Instantiate(creationData);
             
             if (!Directory.Exists(SKILL_DATA_PATH)) Directory.CreateDirectory(SKILL_DATA_PATH);
             
-            // Automated Milestone Creation
             if (createMilestone)
             {
                 string mID = "UNLOCK_SKILL_" + newData.skillID.ToUpper();
                 newData.unlockMilestoneID = mID;
 
-                MilestoneData newMilestone = ScriptableObject.CreateInstance<MilestoneData>();
+                MilestoneData newMilestone = CreateInstance<MilestoneData>();
                 newMilestone.milestoneID = mID;
                 newMilestone.title = milestoneTitle;
                 newMilestone.description = $"{newData.skillName} 스킬을 해금하기 위한 업적입니다.";

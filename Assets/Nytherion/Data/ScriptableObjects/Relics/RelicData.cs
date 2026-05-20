@@ -20,8 +20,8 @@ namespace Nytherion.Data.ScriptableObjects.Relics
     public class RelicData : ScriptableObject
     {
         [Header("기본정보")]
-        public string relicName; // 영어 이름 (또는 ID 용도)
-        public string koreanName;    // 한국어 이름 (UI 출력용)
+        public string relicName; // 영어 이름 
+        public string koreanName;    // 한국어 이름 
         [TextArea] public string description_KR;
         [TextArea] public string description_EN;
 
@@ -32,7 +32,7 @@ namespace Nytherion.Data.ScriptableObjects.Relics
 
         [Header("레벨 정보")]
         public int level = 1;
-        [HideInInspector] public bool isDisabled = false; // 실시간 비활성화 상태 (Silence 영향)
+        [HideInInspector] public bool isDisabled = false; 
 
         [Header("복합 효과 및 조건 모듈")]
         public List<RelicEffectModule> effectModules = new List<RelicEffectModule>();
@@ -43,6 +43,10 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Header("영향 범위 설정 (고정)")]
         [Tooltip("이 각인이 주변에 영향을 미칠 영역의 목록")]
         public List<InfluenceZone> influenceZones = new List<InfluenceZone>();
+
+        [Header("시너지 설정")]
+        [Tooltip("같은 계열의 시너지 부품임을 식별하는 ID (비어있으면 시너지 없음)")]
+        public string synergySeriesId;
 
         [Header("해금 설정")]
         [Tooltip("이 유물을 해금하기 위해 필요한 마일스톤 ID (비어있으면 기본 해금)")]

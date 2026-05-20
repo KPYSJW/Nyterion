@@ -53,36 +53,50 @@ namespace Nytherion.UI.Components
 
         private void LateUpdate()
         {
-            if (!panel.activeSelf) return;
+            if (!panel.activeSelf || canvas == null) return;
 
             Vector2 mousePosition = Input.mousePosition;
+            RectTransform panelRect = panel.GetComponent<RectTransform>();
             
-            Vector2 tooltipSize = rectTransform.sizeDelta;
+            // Layout이 적용된 후의 실제 픽셀 크기를 가져옴
+            float width = panelRect.rect.width * canvas.scaleFactor;
+            float height = panelRect.rect.height * canvas.scaleFactor;
             
             Vector2 pivot = new Vector2(0, 1);
+            Vector2 offset = new Vector2(15, -15); // 커서와 겹치지 않게 여유 공간
             
-            float rightEdge = mousePosition.x + tooltipSize.x * canvas.scaleFactor;
-            float bottomEdge = mousePosition.y - tooltipSize.y * canvas.scaleFactor;
-            
-            if (rightEdge > Screen.width)
+            // 1. 가로 위치 결정 (오른쪽 넘침 시 왼쪽으로)
+            if (mousePosition.x + width + offset.x > Screen.width)
             {
                 pivot.x = 1;
+                offset.x = -15;
             }
             
-            if (bottomEdge < 0)
+            // 2. 세로 위치 결정 (아래쪽 넘침 시 위쪽으로)
+            if (mousePosition.y - height + offset.y < 0)
             {
                 pivot.y = 0;
+                offset.y = 15;
             }
             
-            if (rectTransform.pivot != pivot)
-            {
-                rectTransform.pivot = pivot;
-                rectTransform.position = mousePosition;
-            }
-            else
-            {
-                rectTransform.position = mousePosition;
-            }
+            // 3. 최종 위치 계산 및 화면 안으로 강제 제한 (Clamping)
+            // 피벗이 적용된 상태에서의 최종 월드 좌표를 계산
+            if (panelRect.pivot != pivot) panelRect.pivot = pivot;
+            
+            Vector2 finalPos = mousePosition + (offset * canvas.scaleFactor);
+            
+            // 화면 밖으로 나가지 않도록 최종 보정
+            // x축 제한
+            float minX = pivot.x * width;
+            float maxX = Screen.width - (1 - pivot.x) * width;
+            finalPos.x = Mathf.Clamp(finalPos.x, minX, maxX);
+            
+            // y축 제한
+            float minY = pivot.y * height;
+            float maxY = Screen.height - (1 - pivot.y) * height;
+            finalPos.y = Mathf.Clamp(finalPos.y, minY, maxY);
+            
+            panelRect.position = finalPos;
         }
 
         public void ShowTooltip(ItemData item)

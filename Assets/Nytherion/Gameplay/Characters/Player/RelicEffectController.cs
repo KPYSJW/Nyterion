@@ -18,6 +18,8 @@ namespace Nytherion.GamePlay.Characters.Player
         // 현재 장착된 각인 모듈들 중 활성화(조건 만족)된 모듈과 그 레벨을 추적
         private Dictionary<RelicEffectModule, int> activeModuleLevels = new Dictionary<RelicEffectModule, int>();
 
+        private bool isEvaluating = false;
+
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
@@ -89,63 +91,67 @@ namespace Nytherion.GamePlay.Characters.Player
         /// </summary>
         public void ReevaluateAllConditions()
         {
-            if (playerManager == null || relicManager == null) return;
+            if (playerManager == null || relicManager == null || isEvaluating) return;
 
-            // 현재 장착된 모든 각인의 모든 모듈과 해당 각인의 레벨을 수집
-            Dictionary<RelicEffectModule, (RelicData relic, int level)> currentlyEquippedModules = new Dictionary<RelicEffectModule, (RelicData, int)>();
-            foreach (var relic in relicManager.GetCurrentRelics())
+            try
             {
-                if (relic != null && relic.effectModules != null)
+                isEvaluating = true;
+
+                // 현재 장착된 모든 각인의 모든 모듈과 해당 각인의 레벨을 수집
+                Dictionary<RelicEffectModule, (RelicData relic, int level)> currentlyEquippedModules = new Dictionary<RelicEffectModule, (RelicData, int)>();
+                foreach (var relic in relicManager.GetCurrentRelics())
                 {
-                    foreach (var module in relic.effectModules)
+                    if (relic != null && relic.effectModules != null)
                     {
-                        currentlyEquippedModules[module] = (relic, relic.level);
+                        foreach (var module in relic.effectModules)
+                        {
+                            currentlyEquippedModules[module] = (relic, relic.level);
+                        }
+                    }
+                }
+
+                // 1. 기존에 활성화되었던 모듈 중, 장착 해제되었거나, 레벨이 변했거나, 비활성화되었거나, 조건이 불충족된 모듈 비활성화 (Remove)
+                // Dictionary를 순회하면서 DeactivateModule을 통해 요소를 제거하므로, Key 목록을 복사하여 순회
+                List<RelicEffectModule> activeModules = new List<RelicEffectModule>(activeModuleLevels.Keys);
+                foreach (var activeModule in activeModules)
+                {
+                    int oldLevel = activeModuleLevels[activeModule];
+
+                    bool isStillEquipped = currentlyEquippedModules.TryGetValue(activeModule, out var data);
+                    // 장착 해제, 레벨 변경, 혹은 비활성화 상태가 된 경우 제거 대상으로 지정
+                    if (!isStillEquipped || oldLevel != data.level || data.relic.isDisabled)
+                    {
+                        DeactivateModule(activeModule, oldLevel);
+                    }
+                    else
+                    {
+                        bool isConditionMet = activeModule.condition == null || activeModule.condition.IsConditionMet(playerManager, data.level);
+                        if (!isConditionMet)
+                        {
+                            DeactivateModule(activeModule, oldLevel);
+                        }
+                    }
+                }
+
+                // 2. 현재 장착된 모듈 중, 새롭게 조건이 충족되었거나 레벨이 갱신되어 활성화해야 할 모듈 처리 (Apply)
+                foreach (var kvp in currentlyEquippedModules)
+                {
+                    var module = kvp.Key;
+                    var (relic, currentLevel) = kvp.Value;
+
+                    if (!activeModuleLevels.ContainsKey(module) && !relic.isDisabled)
+                    {
+                        bool isConditionMet = module.condition == null || module.condition.IsConditionMet(playerManager, currentLevel);
+                        if (isConditionMet)
+                        {
+                            ActivateModule(module, currentLevel);
+                        }
                     }
                 }
             }
-
-            // 1. 기존에 활성화되었던 모듈 중, 장착 해제되었거나, 레벨이 변했거나, 비활성화되었거나, 조건이 불충족된 모듈 비활성화 (Remove)
-            List<RelicEffectModule> modulesToRemove = new List<RelicEffectModule>();
-            foreach (var kvp in activeModuleLevels)
+            finally
             {
-                var activeModule = kvp.Key;
-                var oldLevel = kvp.Value;
-
-                bool isStillEquipped = currentlyEquippedModules.TryGetValue(activeModule, out var data);
-                // 장착 해제, 레벨 변경, 혹은 비활성화 상태가 된 경우 제거 대상으로 지정
-                if (!isStillEquipped || oldLevel != data.level || data.relic.isDisabled)
-                {
-                    modulesToRemove.Add(activeModule);
-                }
-                else
-                {
-                    bool isConditionMet = activeModule.condition == null || activeModule.condition.IsConditionMet(playerManager, data.level);
-                    if (!isConditionMet)
-                    {
-                        modulesToRemove.Add(activeModule);
-                    }
-                }
-            }
-
-            foreach (var module in modulesToRemove)
-            {
-                DeactivateModule(module, activeModuleLevels[module]);
-            }
-
-            // 2. 현재 장착된 모듈 중, 새롭게 조건이 충족되었거나 레벨이 갱신되어 활성화해야 할 모듈 처리 (Apply)
-            foreach (var kvp in currentlyEquippedModules)
-            {
-                var module = kvp.Key;
-                var (relic, currentLevel) = kvp.Value;
-
-                if (!activeModuleLevels.ContainsKey(module) && !relic.isDisabled)
-                {
-                    bool isConditionMet = module.condition == null || module.condition.IsConditionMet(playerManager, currentLevel);
-                    if (isConditionMet)
-                    {
-                        ActivateModule(module, currentLevel);
-                    }
-                }
+                isEvaluating = false;
             }
         }
 

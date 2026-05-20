@@ -1,4 +1,3 @@
-using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Utils;
 using System;

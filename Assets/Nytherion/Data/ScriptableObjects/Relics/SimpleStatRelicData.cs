@@ -6,8 +6,8 @@ using Nytherion.Gameplay.Relics.Modules;
 namespace Nytherion.Data.ScriptableObjects.Relics
 {
     /// <summary>
-    /// 기획자가 복잡한 모듈 조합 없이 직관적으로 스탯 증가 유물을 만들 수 있도록 돕는 템플릿 클래스입니다.
-    /// 에디터에서는 스탯 리스트만 보여주며, 게임 실행 시 자동으로 내부 모듈로 변환됩니다.
+    /// 기획자가 복잡한 모듈 조합 없이 직관적으로 스탯 증가 유물을 만들 수 있도록 돕는 템플릿 클래스
+    /// 에디터에서는 스탯 리스트만 보여주며, 게임 실행 시 자동으로 내부 모듈로 변환
     /// </summary>
     [CreateAssetMenu(fileName = "NewSimpleStatRelic", menuName = "Data/Relic (간편 스탯용)")]
     public class SimpleStatRelicData : RelicData
