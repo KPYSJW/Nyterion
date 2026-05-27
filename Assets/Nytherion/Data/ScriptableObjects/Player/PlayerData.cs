@@ -15,6 +15,7 @@ namespace Nytherion.Data.ScriptableObjects.Player
         public float rangedSpeed;
         public float dashSpeed;
         public float dashDuration;
+        public float dashDistance;
         public float dashCooldown;
         public float defense;
         public float extraProjectiles;

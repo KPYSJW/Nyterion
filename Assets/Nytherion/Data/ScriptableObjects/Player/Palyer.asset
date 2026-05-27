@@ -18,10 +18,13 @@ MonoBehaviour:
   rangedDamage: 1
   meleeSpeed: 1
   rangedSpeed: 1
-  dashSpeed: 7
+  dashSpeed: 10
   dashDuration: 0.4
+  dashDistance: 2
   dashCooldown: 1
   defense: 0
   extraProjectiles: 0
   lifesteal: 0
   chargeTimeReduction: 0
+  critChance: 0.1
+  critDamageMultiplier: 1.5

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: CouponPiece
   m_EditorClassIdentifier: 
   relicName: CouponPiece
-  koreanName: 쿠폰 조각
-  description_KR: "상점 상품 가격 15% 할인. *(유효기간이 지난 듯합니다)*"
-  description_EN: "15% discount on shop items. (It seems to have expired)"
+  koreanName: "\uCFE0\uD3F0 \uC870\uAC01"
+  description_KR: "\uC0C1\uC810 \uC0C1\uD488 \uAC00\uACA9 15% \uD560\uC778. *(\uC720\uD6A8\uAE30\uAC04\uC774
+    \uC9C0\uB09C \uB4EF\uD569\uB2C8\uB2E4)*"
+  description_EN: 15% discount on shop items. (It seems to have expired)
   Image: {fileID: 0}
   rarity: 2
   level: 1
@@ -24,6 +25,8 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds: []
