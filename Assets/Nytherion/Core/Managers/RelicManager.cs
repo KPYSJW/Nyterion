@@ -9,6 +9,8 @@ using Nytherion.Core.Interfaces;
 using VContainer;
 using VContainer.Unity;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Core.Systems;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Core.Managers
 {
@@ -129,6 +131,21 @@ namespace Nytherion.Core.Managers
             if (block.SourceData != null)
             {
                 OnRelicEquippedStateChanged?.Invoke(block.SourceData, true);
+            }
+
+            // 중앙의 자갈 (CenterPebble) 정중앙 배치 업적 연동
+            if (block.RelicId == "CenterPebble")
+            {
+                int centerRow = gridRows / 2;
+                int centerCol = gridColumns / 2;
+                if (position.y == centerRow && position.x == centerCol)
+                {
+                    ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                    if (progressionManager != null)
+                    {
+                        progressionManager.ProcessAction(ProgressionType.CenterPebblePlace, 1);
+                    }
+                }
             }
         }
 

@@ -10,6 +10,7 @@ using System;
 using VContainer;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Systems;
 
 
 namespace Nytherion.Core.Managers
@@ -31,6 +32,13 @@ namespace Nytherion.Core.Managers
         public event Action OnPlayerStatsChanged;
 
         public int CurrentRunKillCount { get; private set; }
+
+        private int luckyCloverResetCountInBattle = 0;
+
+        public void ResetLuckyCloverResetCount()
+        {
+            luckyCloverResetCountInBattle = 0;
+        }
 
         [Inject]
         public void Construct(EquipmentDataManager equipmentDataManager, InputManager inputManager, EventManager eventManager)
@@ -118,6 +126,16 @@ namespace Nytherion.Core.Managers
                                 {
                                     playerController.LastDashTime = -999f;
                                     Debug.Log("[PlayerManager] 치명타 적중! 네잎클로버(LuckyClover) 효과 발동! 대쉬 쿨타임 초기화!");
+
+                                    luckyCloverResetCountInBattle++;
+                                    if (luckyCloverResetCountInBattle >= 3)
+                                    {
+                                        ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                                        if (progressionManager != null)
+                                        {
+                                            progressionManager.ProcessAction(ProgressionType.LuckyCloverResetInOneBattle, 1);
+                                        }
+                                    }
                                 }
                             }
                             break;

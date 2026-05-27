@@ -4,6 +4,8 @@ using Nytherion.Core.Managers;
 using Nytherion.Core.Utils;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Systems;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Gameplay.Relics.Modules
 {
@@ -49,6 +51,15 @@ namespace Nytherion.Gameplay.Relics.Modules
                                     {
                                         emptyCount++;
                                     }
+                                }
+                            }
+
+                            if (emptyCount == 4)
+                            {
+                                ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                                if (progressionManager != null)
+                                {
+                                    progressionManager.ProcessAction(ProgressionType.SocialDistancingTrigger, 1);
                                 }
                             }
 

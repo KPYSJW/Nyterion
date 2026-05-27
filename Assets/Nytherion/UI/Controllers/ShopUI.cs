@@ -13,6 +13,7 @@ using Nytherion.Core.Interfaces;
 using VContainer;
 using VContainer.Unity;
 using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Systems;
 
 namespace Nytherion.UI.Controllers
 {
@@ -409,6 +410,30 @@ namespace Nytherion.UI.Controllers
                         else if (!shopItem.isUnlimited)
                         {
                             shopMgr.RecordPurchase(currentShopData.shopName, shopItem.shopItemId, amountToBuy);
+                        }
+                    }
+
+                    // 쿠폰 조각 (CouponPiece) 장착 상태로 상점 아이템 구매 업적 연동
+                    bool hasCoupon = false;
+                    if (relicManager != null)
+                    {
+                        foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                        {
+                            RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                            if (block != null && block.RelicId == "CouponPiece" && !block.SourceData.isDisabled)
+                            {
+                                hasCoupon = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (hasCoupon)
+                    {
+                        ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                        if (progressionManager != null)
+                        {
+                            progressionManager.ProcessAction(ProgressionType.BuyShopItem, amountToBuy);
                         }
                     }
 

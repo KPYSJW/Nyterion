@@ -6,6 +6,7 @@ using Nytherion.Core.Interfaces;
 using Nytherion.Core.Enums;
 using VContainer;
 using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Systems;
 
 namespace Nytherion.Core.Managers
 {
@@ -71,6 +72,12 @@ namespace Nytherion.Core.Managers
                             {
                                 amount *= 2;
                                 Debug.Log("[CurrencyDataManager] 구멍 난 주머니(TornPouch) 효과 발동! 획득 골드 2배!");
+
+                                ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                                if (progressionManager != null)
+                                {
+                                    progressionManager.ProcessAction(ProgressionType.TornPouchTrigger, 1);
+                                }
                             }
                             break;
                         }

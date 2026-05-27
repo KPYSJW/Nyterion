@@ -8,6 +8,8 @@ using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Relics;
 using VContainer;
+using System.Collections.Generic;
+using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.Core.Managers
 {
@@ -103,7 +105,54 @@ namespace Nytherion.Core.Managers
 
             eventManager.OnEnemyDied += (enemy) => ProcessAction(ProgressionType.KillEnemy, 1);
             eventManager.OnEnemyDamagedByPlayer += (damage) => ProcessAction(ProgressionType.DealDamage, (int)damage);
-            eventManager.OnBossClearedEvent += (stage) => ProcessAction(ProgressionType.ClearFloor, 1);
+            eventManager.OnBossClearedEvent += (stage) => {
+                ProcessAction(ProgressionType.ClearFloor, 1);
+
+                // 구석 조약돌 (CornerStone) 가장자리 배치 상태로 보스 클리어 업적 연동
+                if (relicManager != null)
+                {
+                    bool isCornerStoneMet = false;
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "CornerStone" && !block.SourceData.isDisabled)
+                        {
+                            int r = pair.Value.y;
+                            int c = pair.Value.x;
+                            if (r == 0 || r == relicManager.GridRows - 1 || c == 0 || c == relicManager.GridColumns - 1)
+                            {
+                                isCornerStoneMet = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isCornerStoneMet)
+                    {
+                        ProcessAction(ProgressionType.ComfyCornerClear, 1);
+                    }
+                }
+
+                // 유리 병뚜껑 (GlassCap) 장착 상태로 보스 클리어 업적 연동
+                if (relicManager != null)
+                {
+                    bool isGlassCapEquipped = false;
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "GlassCap" && !block.SourceData.isDisabled)
+                        {
+                            isGlassCapEquipped = true;
+                            break;
+                        }
+                    }
+
+                    if (isGlassCapEquipped)
+                    {
+                        ProcessAction(ProgressionType.GlassCapBossClear, 1);
+                    }
+                }
+            };
 
             if (currencyDataManager != null)
             {

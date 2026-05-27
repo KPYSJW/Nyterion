@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}
+  m_Name: ComfyCorner_Milestone
+  m_EditorClassIdentifier: 
+  milestoneID: ComfyCorner
+  title: "아늑한 구석탱이"
+  description: "'구석 조약돌' 가장자리 배치 상태로 스테이지 클리어."
+  icon: {fileID: 0}
+  progressionType: 12
+  requiredMilestones: []
+  targetValue: 1
+  rewards:
+  - rewardType: 4
+    amount: 1
+    skillData: {fileID: 0}
+    itemData: {fileID: 0}
+    relicData: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480001, type: 2}
