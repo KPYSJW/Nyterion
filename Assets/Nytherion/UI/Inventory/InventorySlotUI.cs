@@ -146,11 +146,22 @@ namespace Nytherion.UI.Inventory
 
                 try
                 {
-                    var (itemToUnequip, _) = equipmentSourceSlot.GetItemInfo();
+                    (ItemData itemToUnequip, int itemQuantity) = equipmentSourceSlot.GetItemInfo();
                     if (itemToUnequip == null) return;
 
                     ItemData itemInThisSlot = CurrentItem;
-                    int countInThisSlot = CurrentCount;
+
+                    // 인벤토리 대상 슬롯에 이미 아이템이 있고 스왑할 수 없는 조건인 경우 취소하여 증발 방지
+                    if (itemInThisSlot != null)
+                    {
+                        bool canSwap = itemInThisSlot is EquipmentData &&
+                                       equipmentSourceSlot.CanReceiveItem(itemInThisSlot as EquipmentData);
+                        if (!canSwap)
+                        {
+                            Debug.LogWarning("[InventorySlotUI] Cannot swap: target slot item is not compatible with equipment slot.");
+                            return;
+                        }
+                    }
 
                     equipmentSourceSlot.ClearSlot();
 
@@ -162,10 +173,9 @@ namespace Nytherion.UI.Inventory
                         {
                             this.SetItem(itemToUnequip, 1);
 
-                            if (itemInThisSlot != null &&
-                                equipmentSourceSlot.CanReceiveItem(itemInThisSlot as EquipmentData))
+                            if (itemInThisSlot != null)
                             {
-                                equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, itemInThisSlot as EquipmentData);
+                                equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, itemInThisSlot as EquipmentData, false);
                             }
                         }
                     }

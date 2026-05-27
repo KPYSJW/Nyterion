@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: BerserkerHeart
+  m_EditorClassIdentifier: 
+  relicName: Berserker's Heart
+  koreanName: 광전사의 심장
+  description: "체력 30% 이하 시 공속 +30%, 피흡 +5%. (피 한 방울까지 짜냅니다)"
+  description_KR: "체력 30% 이하 시 공속 +30%, 피흡 +5%. (피 한 방울까지 짜냅니다)"
+  description_EN: "At 30% HP or below, AtkSpeed +30%, Lifesteal +5%. (Squeezes out the last drop)"
+  Image: {fileID: 0}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: 6716071130084147201
+    effects:
+    - rid: 6716071130084147203
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071130084147201
+      type: {class: HealthThresholdCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        thresholdPercent: 30
+        thresholdType: 0
+    - rid: 6716071130084147203
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 5
+          value: 0.3
+          valuePerLevel: 0.1
+          isPercentage: 1
+        - stat: 6
+          value: 0.3
+          valuePerLevel: 0.1
+          isPercentage: 1
+        - stat: 11
+          value: 0.05
+          valuePerLevel: 0.02
+          isPercentage: 1

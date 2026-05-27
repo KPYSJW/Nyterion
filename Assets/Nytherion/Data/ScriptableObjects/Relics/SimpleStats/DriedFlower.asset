@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}
+  m_Name: DriedFlower
+  m_EditorClassIdentifier: 
+  relicName: Dried Flower
+  koreanName: 말라버린 꽃
+  description_KR: 대쉬 쿨타임을 감소시킵니다.
+  description_EN: Reduces dash cooldown.
+  Image: {fileID: 0}
+  rarity: 0
+  level: 1
+  isDisabled: 0
+  effectModules: []
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: -1}
+    type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
+  simpleStatModifiers:
+  - stat: 9
+    value: -0.05
+    valuePerLevel: -0.01
+    isPercentage: 1

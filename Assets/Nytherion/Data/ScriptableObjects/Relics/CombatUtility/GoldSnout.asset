@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: GoldSnout
+  m_EditorClassIdentifier: 
+  relicName: GoldSnout
+  koreanName: 황금 돼지코
+  description_KR: "보유 골드 100당 공격력 +2 (최대 +10). *(돼지가 코를 킁킁거립니다)*"
+  description_EN: "+2 Attack per 100 gold (max +10). (The pig sniffs around)"
+  Image: {fileID: 0}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition: {fileID: 0}
+    effects:
+    - rid: 3000000000000000001
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 3000000000000000001
+      type: {class: GoldProportionalEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        goldUnit: 100
+        damagePerUnit: 2
+        maxDamageIncrease: 10

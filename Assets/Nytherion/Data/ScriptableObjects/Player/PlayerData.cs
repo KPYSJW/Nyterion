@@ -20,5 +20,7 @@ namespace Nytherion.Data.ScriptableObjects.Player
         public float extraProjectiles;
         public float lifesteal;
         public float chargeTimeReduction;
+        public float critChance = 0.1f;
+        public float critDamageMultiplier = 1.5f;
     }
 }

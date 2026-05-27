@@ -3,6 +3,7 @@ using Nytherion.Core.Managers;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Data;
 using Nytherion.Core.Utils;
+using Nytherion.Data.ScriptableObjects.Player;
 using System;
 
 namespace Nytherion.Gameplay.Relics.Modules
@@ -13,13 +14,13 @@ namespace Nytherion.Gameplay.Relics.Modules
     [Serializable, RelicDisplayName("스탯 비례 강화 효과")]
     public class ProportionalStatRelicEffect : RelicEffectBase
     {
-        [Tooltip("기준이 될 스탯 (예: MoveSpeed)")]
+        [Tooltip("기준이 될 스탯 ")]
         public StatType sourceStat = StatType.MoveSpeed;
 
-        [Tooltip("변경할 스탯 (예: MeleeDamage)")]
+        [Tooltip("변경할 스탯 ")]
         public StatType targetStat = StatType.MeleeDamage;
 
-        [Tooltip("기준 스탯의 1당 변경할 스탯의 비율 (예: 이속 1당 공격력 0.5 증가 -> 0.5)")]
+        [Tooltip("기준 스탯의 1당 변경할 스탯의 비율 ")]
         public float ratio = 0.5f;
 
         [Tooltip("레벨업 시 비율 증가량")]
@@ -39,7 +40,6 @@ namespace Nytherion.Gameplay.Relics.Modules
 
             UpdateStatModifier();
 
-            // 스탯이 변할 때마다 비례 수치도 업데이트하기 위해 이벤트 구독
             cachedPlayerManager.OnPlayerStatsChanged -= HandleStatsChanged;
             cachedPlayerManager.OnPlayerStatsChanged += HandleStatsChanged;
         }
@@ -92,7 +92,7 @@ namespace Nytherion.Gameplay.Relics.Modules
             isUpdating = false;
         }
 
-        private float GetStatValue(Nytherion.Data.ScriptableObjects.Player.PlayerData data, StatType stat)
+        private float GetStatValue(PlayerData data, StatType stat)
         {
             switch (stat)
             {

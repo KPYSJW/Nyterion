@@ -9,6 +9,7 @@ using Nytherion.Core.Interfaces;
 using System;
 using VContainer;
 using System.Collections.Generic;
+using Nytherion.GamePlay.Relics;
 
 
 namespace Nytherion.Core.Managers
@@ -76,7 +77,7 @@ namespace Nytherion.Core.Managers
 
             if (eventManager != null)
             {
-                eventManager.OnEnemyDamagedByPlayer += HandleEnemyDamaged;
+                eventManager.OnEnemyDamagedByPlayerWithCrit += HandleEnemyDamagedWithCrit;
                 eventManager.OnEnemyDied += HandleEnemyDied;
             }
 
@@ -89,7 +90,7 @@ namespace Nytherion.Core.Managers
             CurrentRunKillCount = 0;
         }
 
-        private void HandleEnemyDamaged(float damageAmount)
+        private void HandleEnemyDamagedWithCrit(float damageAmount, bool isCritical)
         {
             if (currentPlayerData != null && currentPlayerData.lifesteal > 0 && playerHealth != null)
             {
@@ -97,6 +98,31 @@ namespace Nytherion.Core.Managers
                 if (healAmount > 0)
                 {
                     playerHealth.Heal(healAmount);
+                }
+            }
+
+            // 네잎클로버 (LuckyClover) 유물 효과 적용: 치명타 적중 시 5% 확률로 대쉬 쿨타임 초기화
+            if (isCritical)
+            {
+                RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
+                if (relicManager != null)
+                {
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "LuckyClover" && !block.SourceData.isDisabled)
+                        {
+                            if (UnityEngine.Random.Range(0, 100) < 5)
+                            {
+                                if (playerController != null)
+                                {
+                                    playerController.LastDashTime = -999f;
+                                    Debug.Log("[PlayerManager] 치명타 적중! 네잎클로버(LuckyClover) 효과 발동! 대쉬 쿨타임 초기화!");
+                                }
+                            }
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -131,7 +157,7 @@ namespace Nytherion.Core.Managers
             }
             if (eventManager != null)
             {
-                eventManager.OnEnemyDamagedByPlayer -= HandleEnemyDamaged;
+                eventManager.OnEnemyDamagedByPlayerWithCrit -= HandleEnemyDamagedWithCrit;
                 eventManager.OnEnemyDied -= HandleEnemyDied;
             }
         }
@@ -311,7 +337,27 @@ namespace Nytherion.Core.Managers
                 }
             }
 
+            // 유리 병뚜껑 (GlassCap) 유물 효과 적용: 최대 체력 50 고정
+            RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
+            if (relicManager != null)
+            {
+                foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                {
+                    RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                    if (block != null && block.RelicId == "GlassCap" && !block.SourceData.isDisabled)
+                    {
+                        currentPlayerData.maxHealth = 50f;
+                        break;
+                    }
+                }
+            }
+
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
+
+            // 이동 속도 및 대시 속도 최대치 상한선(Safety Cap) 적용하여 물리 엔진 오작동 방지
+            currentPlayerData.moveSpeed = Mathf.Clamp(currentPlayerData.moveSpeed, 0f, 8.0f);
+            currentPlayerData.dashSpeed = Mathf.Clamp(currentPlayerData.dashSpeed, 0f, 10.0f);
+
             OnPlayerStatsChanged?.Invoke();
         }
 
@@ -366,6 +412,14 @@ namespace Nytherion.Core.Managers
                 case StatType.ChargeTimeReduction:
                     if (isPercentage) currentPlayerData.chargeTimeReduction *= (1 + value);
                     else currentPlayerData.chargeTimeReduction += value;
+                    break;
+                case StatType.CritChance:
+                    if (isPercentage) currentPlayerData.critChance *= (1 + value);
+                    else currentPlayerData.critChance += value;
+                    break;
+                case StatType.CritDamage:
+                    if (isPercentage) currentPlayerData.critDamageMultiplier *= (1 + value);
+                    else currentPlayerData.critDamageMultiplier += value;
                     break;
                 case StatType.Lifesteal:
                     if (isPercentage) currentPlayerData.lifesteal *= (1 + value);

@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: TangledYarn
+  m_EditorClassIdentifier: 
+  relicName: TangledYarn
+  koreanName: 꼬인 실타래
+  description_KR: "활성화된 체인 링크가 3개 이상일 때 공격 속도 +15%. *(실타래가 복잡하게 얽힙니다)*"
+  description_EN: "+15% Attack Speed when 3 or more chain links are active. (Tangled threads)"
+  Image: {fileID: 0}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: 7000000000000000001
+    effects:
+    - rid: 7000000000000000002
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 7000000000000000001
+      type: {class: TotalChainLinksCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredTotalLinks: 3
+    - rid: 7000000000000000002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 5
+          value: 0.15
+          valuePerLevel: 0.05
+          isPercentage: 1
+        - stat: 6
+          value: 0.15
+          valuePerLevel: 0.05
+          isPercentage: 1

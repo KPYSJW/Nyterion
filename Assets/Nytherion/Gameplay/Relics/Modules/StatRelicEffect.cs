@@ -16,7 +16,6 @@ namespace Nytherion.Gameplay.Relics.Modules
         [Tooltip("적용할 스탯 변경자들의 목록 (예: 투사체 증가, 공격력 증가 등)")]
         public List<StatModifier> statModifiers = new List<StatModifier>();
 
-        // 적용했던 임시 스탯들을 저장하여 나중에 정확히 제거하기 위한 용도
         private List<StatModifier> appliedModifiers = new List<StatModifier>();
 
         public override void ApplyEffect(PlayerManager playerManager, int level)
@@ -27,7 +26,6 @@ namespace Nytherion.Gameplay.Relics.Modules
 
             foreach (var modifier in statModifiers)
             {
-                // 레벨에 따른 스케일링 계산: 기본값 + (레벨당 증가량 * (현재레벨 - 1))
                 float scaledValue = modifier.value + (modifier.valuePerLevel * Mathf.Max(0, level - 1));
 
                 var scaledModifier = new StatModifier

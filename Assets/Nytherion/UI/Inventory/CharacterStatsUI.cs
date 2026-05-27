@@ -94,13 +94,26 @@ namespace Nytherion.UI.Inventory
             PlayerData currentPlayerData = playerManager.currentPlayerData;
             if (currentPlayerData == null) return;
 
-            var fields = typeof(PlayerData).GetFields();
-            foreach (var field in fields)
+            System.Reflection.FieldInfo[] fields = typeof(PlayerData).GetFields();
+            foreach (System.Reflection.FieldInfo field in fields)
             {
-                var value = field.GetValue(currentPlayerData);
+                object value = field.GetValue(currentPlayerData);
                 if (value == null) continue;
 
-                var cell = CreateStatCell(field.Name, value.ToString());
+                string displayValue = value.ToString();
+                if (value is float floatValue)
+                {
+                    if (field.Name == "dashDuration" || field.Name == "dashCooldown")
+                    {
+                        displayValue = floatValue.ToString("F2");
+                    }
+                    else
+                    {
+                        displayValue = Mathf.RoundToInt(floatValue).ToString();
+                    }
+                }
+
+                GameObject cell = CreateStatCell(field.Name, displayValue);
                 if (cell != null)
                 {
                     statCells.Add(cell);

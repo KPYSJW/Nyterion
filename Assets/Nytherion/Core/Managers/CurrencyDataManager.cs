@@ -5,6 +5,7 @@ using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Enums;
 using VContainer;
+using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.Core.Managers
 {
@@ -54,6 +55,28 @@ namespace Nytherion.Core.Managers
         public bool AddCurrency(CurrencyType currencyType, int amount)
         {
             if (!IsInitialized || amount <= 0) return false;
+
+            // 구멍 난 주머니 (TornPouch) 유물 효과 적용: 골드 획득 시 10% 확률로 획득량 2배
+            if (currencyType == CurrencyType.Gold && !isLoadingFromSave)
+            {
+                RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
+                if (relicManager != null)
+                {
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "TornPouch" && !block.SourceData.isDisabled)
+                        {
+                            if (UnityEngine.Random.Range(0, 100) < 10)
+                            {
+                                amount *= 2;
+                                Debug.Log("[CurrencyDataManager] 구멍 난 주머니(TornPouch) 효과 발동! 획득 골드 2배!");
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
 
             int oldAmount = GetCurrency(currencyType);
             int newAmount = oldAmount + amount;

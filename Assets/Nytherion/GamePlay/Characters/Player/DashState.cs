@@ -17,12 +17,27 @@ public class DashState : PlayerState
 
     public override void Execute(PlayerController playerController)
     {
-        dashTimer -= Time.deltaTime;
-
-        if (dashTimer <= 0)
+        Animator animator = playerController.GetComponent<Animator>();
+        if (animator != null)
         {
-            playerController.ChangeState(new IdleState());
-            return;
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            
+            // 현재 애니메이션이 "Dash"이고 재생 완료율이 100% (1.0f) 이상이면 상태 종료
+            if (stateInfo.IsName("Dash") && stateInfo.normalizedTime >= 1.0f)
+            {
+                playerController.ChangeState(new IdleState());
+                return;
+            }
+        }
+        else
+        {
+            // 애니메이터가 없는 경우 작동할 안전장치 (타이머 예외 처리)
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0)
+            {
+                playerController.ChangeState(new IdleState());
+                return;
+            }
         }
     }
 

@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: CowardShackle
+  m_EditorClassIdentifier: 
+  relicName: Heavy Shackle
+  koreanName: 무거운 족쇄
+  description: "근공 +5, 원공 -5. (도망치기엔 좀 무겁습니다)"
+  description_KR: "근공 +5, 원공 -5. (도망치기엔 좀 무겁습니다)"
+  description_EN: "Melee Atk +5, Ranged Atk -5. (Too heavy to escape)"
+  Image: {fileID: 0}
+  rarity: 1
+  isCursed: 0
+  level: 1
+  statModifiers: []
+  effectModules:
+  - condition:
+      rid: 6716071107867705356
+    effects:
+    - rid: 6716071107867705357
+  - condition:
+      rid: 6716071107867705356
+    effects:
+    - rid: 6716071107867705358
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071107867705356
+      type: {class: WeaponTypeCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredWeaponType: 0
+    - rid: 6716071107867705357
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 3
+          value: 5
+          valuePerLevel: 1.5
+          isPercentage: 0
+    - rid: 6716071107867705358
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 4
+          value: -5
+          valuePerLevel: -1.5
+          isPercentage: 0
