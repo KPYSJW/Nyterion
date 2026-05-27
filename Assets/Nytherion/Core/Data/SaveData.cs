@@ -26,6 +26,8 @@ namespace Nytherion.Core.Data
 
         public ProgressionState progressionState;
 
+        public DungeonMapSaveData dungeonMapData;
+
         public SaveData()
         {
             currencyTypes = new List<CurrencyType>();
@@ -38,6 +40,7 @@ namespace Nytherion.Core.Data
             ownedSkills = new List<SkillEntry>();
             equippedSkillIds = new List<string>();
             progressionState = new ProgressionState();
+            dungeonMapData = new DungeonMapSaveData();
             // puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(); // 나중에 사용 예정
         }
     }
@@ -74,5 +77,74 @@ namespace Nytherion.Core.Data
         public string skillId;
         public int level;
         public int exp;
+    }
+
+    [Serializable]
+    public class DungeonMapSaveData
+    {
+        public bool hasMap;
+        public bool hasCheckpoint;
+        public int currentRoomId = -1;
+        public int lastSafeRoomId = -1;
+        public float lastSafeX;
+        public float lastSafeY;
+        public bool portalsUnlocked;
+        public bool hasBossSpawned;
+        public List<DungeonRoomSaveData> rooms = new();
+        public List<Vector2IntSaveData> wallTiles = new();
+        public List<Vector2IntSaveData> portalTiles = new();
+        public List<PortalLinkSaveData> portalLinks = new();
+        public List<RoomConnectionSaveData> roomConnections = new();
+        public List<ObstacleSaveData> obstacles = new();
+    }
+
+    [Serializable]
+    public class DungeonRoomSaveData
+    {
+        public int id;
+        public int gridX;
+        public int gridY;
+        public int sizeX;
+        public int sizeY;
+        public float centerX;
+        public float centerY;
+        public string roomType;
+        public bool hasBossSpawnPoint;
+        public float bossSpawnX;
+        public float bossSpawnY;
+        public bool visited;
+        public bool cleared;
+        public List<Vector2IntSaveData> floorTiles = new();
+    }
+
+    [Serializable]
+    public class Vector2IntSaveData
+    {
+        public int x;
+        public int y;
+    }
+
+    [Serializable]
+    public class PortalLinkSaveData
+    {
+        public int fromX;
+        public int fromY;
+        public int toX;
+        public int toY;
+    }
+
+    [Serializable]
+    public class RoomConnectionSaveData
+    {
+        public int fromRoomId;
+        public int toRoomId;
+    }
+
+    [Serializable]
+    public class ObstacleSaveData
+    {
+        public string prefabId;
+        public float x;
+        public float y;
     }
 }

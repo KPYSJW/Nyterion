@@ -44,11 +44,11 @@ public class GameSceneInitializer : IStartable
             dungeonManager.SetControllers(worldmapController, minimapGenerator);
             dungeonManager.roomFirstDungeonGenerator.SetControllers(worldmapController, minimapGenerator);
         }
-
+         InitializeGameData();
         dungeonManager.StartDungeonGeneration();
 
         // SaveLoadManager를 통한 정상적인 로드 (강제로드가 아님)
-        InitializeGameData();
+       
     }
 
     private void InitializeGameData()
