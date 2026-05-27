@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: CrackedOrbs
+  m_EditorClassIdentifier: 
+  relicName: Cracked Orbs
+  koreanName: 깨진 구슬
+  description: "마성 장비 장착 시 근/원공 +6. (검은 빛이 맴도는 유리구슬)"
+  description_KR: "마성 장비 장착 시 근/원공 +6. (검은 빛이 맴도는 유리구슬)"
+  description_EN: "When Demonic equipment is active, melee/ranged Atk +6. (Glass orb with swirling darkness)"
+  Image: {fileID: 0}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: 6716071130084147236
+    effects:
+    - rid: 6716071130084147237
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: -1, y: 0}
+    type: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071130084147236
+      type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredTrait: 7
+    - rid: 6716071130084147237
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 3
+          value: 6
+          valuePerLevel: 2
+          isPercentage: 0
+        - stat: 4
+          value: 6
+          valuePerLevel: 2
+          isPercentage: 0

@@ -290,7 +290,6 @@ namespace Nytherion.Editor
                 }
             }
 
-            // Remove nulls and sort by name
             database.allRelics.RemoveAll(r => r == null);
             database.allRelics = database.allRelics.OrderBy(r => r.koreanName).ToList();
 
@@ -383,7 +382,6 @@ namespace Nytherion.Editor
             selectedRelic.Image = (Sprite)EditorGUILayout.ObjectField("Image", selectedRelic.Image, typeof(Sprite), false);
             EditorGUILayout.EndVertical();
 
-            // Right: Grid Editor
             EditorGUILayout.BeginVertical();
             DrawInfluenceGridEditor(selectedRelic);
             EditorGUILayout.EndVertical();
@@ -413,7 +411,6 @@ namespace Nytherion.Editor
 
             EditorGUILayout.Space(5);
 
-            // Center the grid
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             
@@ -496,13 +493,11 @@ namespace Nytherion.Editor
             newData.rarity = rarity;
             newData.level = level;
 
-            // Copy Effect Modules from temporary creationData
             if (creationData.effectModules != null)
             {
                 newData.effectModules = new List<Nytherion.Gameplay.Relics.Modules.RelicEffectModule>(creationData.effectModules);
             }
 
-            // Convert Grid to InfluenceZones
             newData.influenceZones = new List<InfluenceZone>();
             for (int x = 0; x < 3; x++)
             {
@@ -560,7 +555,6 @@ namespace Nytherion.Editor
             Selection.activeObject = newData;
             Debug.Log($"[RelicManager] Created relic: {fullPath}");
 
-            // Reset Creation Fields
             relicName = "NewRelic";
             koreanName = "새 유물";
             description_KR = "";
@@ -569,7 +563,7 @@ namespace Nytherion.Editor
             createMilestone = false;
             milestoneTitle = "유물 해금: ";
             ResetInfluenceGrid();
-            InitializeCreationData(); // Reset effect modules
+            InitializeCreationData(); 
         }
 
         private void AddMilestoneToDatabase(MilestoneData newMilestone)

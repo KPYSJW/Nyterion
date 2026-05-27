@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Nytherion.Data.ScriptableObjects.Relics;
-using UnityEngine;
 
 namespace Nytherion.GamePlay.Relics
 {
-    public enum InfluenceType { None, LevelUp, LevelDown, Silence }
+    public enum InfluenceType { None, LevelUp, LevelDown, Silence, SynergyLink }
 
     public class RelicGrid
     {
@@ -99,6 +97,78 @@ namespace Nytherion.GamePlay.Relics
                     }
                 }
             }
+
+            // 시너지 체인 계산 후 매니저 업데이트 (매니저는 외부에서 호출)
+        }
+
+        public Dictionary<string, int> EvaluateSynergyChains()
+        {
+            var results = new Dictionary<string, int>();
+            var adjacency = new Dictionary<RelicBlock, List<RelicBlock>>();
+            var allSeriesBlocks = new Dictionary<string, List<RelicBlock>>();
+
+            // 1. 인접 그래프 구성 (SynergyLink 기반)
+            for (int y = 0; y < Rows; y++)
+            {
+                for (int x = 0; x < Columns; x++)
+                {
+                    RelicBlock source = grid[y, x];
+                    if (source == null || string.IsNullOrEmpty(source.SourceData.synergySeriesId)) continue;
+
+                    string seriesId = source.SourceData.synergySeriesId;
+                    if (!allSeriesBlocks.ContainsKey(seriesId)) allSeriesBlocks[seriesId] = new List<RelicBlock>();
+                    allSeriesBlocks[seriesId].Add(source);
+
+                    foreach (var zone in source.GetRotatedInfluenceZones())
+                    {
+                        if (zone.type != InfluenceType.SynergyLink) continue;
+
+                        int targetRow = y - zone.offset.y;
+                        int targetCol = x + zone.offset.x;
+
+                        if (IsPositionValid(targetRow, targetCol))
+                        {
+                            RelicBlock target = grid[targetRow, targetCol];
+                            if (target != null && target.SourceData.synergySeriesId == seriesId)
+                            {
+                                if (!adjacency.ContainsKey(source)) adjacency[source] = new List<RelicBlock>();
+                                adjacency[source].Add(target);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 2. 각 시리즈별 최장 경로 계산
+            foreach (var seriesKvp in allSeriesBlocks)
+            {
+                int maxLen = 0;
+                foreach (var startNode in seriesKvp.Value)
+                {
+                    maxLen = Math.Max(maxLen, GetMaxDepth(startNode, adjacency, new HashSet<RelicBlock>()));
+                }
+                results[seriesKvp.Key] = maxLen;
+            }
+
+            return results;
+        }
+
+        private int GetMaxDepth(RelicBlock current, Dictionary<RelicBlock, List<RelicBlock>> adj, HashSet<RelicBlock> visited)
+        {
+            if (visited.Contains(current)) return 0; // 순환 방지
+            visited.Add(current);
+
+            int depth = 1;
+            if (adj.TryGetValue(current, out var neighbors))
+            {
+                int maxSubDepth = 0;
+                foreach (var neighbor in neighbors)
+                {
+                    maxSubDepth = Math.Max(maxSubDepth, GetMaxDepth(neighbor, adj, new HashSet<RelicBlock>(visited)));
+                }
+                depth += maxSubDepth;
+            }
+            return depth;
         }
 
         public bool CanPlaceBlock(int row, int col) => IsPositionValid(row, col) && grid[row, col] == null;

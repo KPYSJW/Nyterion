@@ -3,23 +3,24 @@ using Nytherion.Core.Managers;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Data;
 using Nytherion.Core.Utils;
+using Nytherion.Data.ScriptableObjects.Player;
 using System;
 
 namespace Nytherion.Gameplay.Relics.Modules
 {
     /// <summary>
-    /// 특정 스탯(예: 이동속도)에 비례하여 다른 스탯(예: 공격력)을 증감시키는 효과
+    /// 특정 스탯에 비례하여 다른 스탯을 증감시키는 효과
     /// </summary>
     [Serializable, RelicDisplayName("스탯 비례 강화 효과")]
     public class ProportionalStatRelicEffect : RelicEffectBase
     {
-        [Tooltip("기준이 될 스탯 (예: MoveSpeed)")]
+        [Tooltip("기준이 될 스탯 ")]
         public StatType sourceStat = StatType.MoveSpeed;
 
-        [Tooltip("변경할 스탯 (예: MeleeDamage)")]
+        [Tooltip("변경할 스탯 ")]
         public StatType targetStat = StatType.MeleeDamage;
 
-        [Tooltip("기준 스탯의 1당 변경할 스탯의 비율 (예: 이속 1당 공격력 0.5 증가 -> 0.5)")]
+        [Tooltip("기준 스탯의 1당 변경할 스탯의 비율 ")]
         public float ratio = 0.5f;
 
         [Tooltip("레벨업 시 비율 증가량")]
@@ -39,7 +40,6 @@ namespace Nytherion.Gameplay.Relics.Modules
 
             UpdateStatModifier();
 
-            // 스탯이 변할 때마다 비례 수치도 업데이트하기 위해 이벤트 구독
             cachedPlayerManager.OnPlayerStatsChanged -= HandleStatsChanged;
             cachedPlayerManager.OnPlayerStatsChanged += HandleStatsChanged;
         }
@@ -68,19 +68,17 @@ namespace Nytherion.Gameplay.Relics.Modules
         {
             if (cachedPlayerManager == null || cachedPlayerManager.currentPlayerData == null) return;
 
-            isUpdating = true; // 무한 루프 방지
+            isUpdating = true;
 
             float sourceValue = GetStatValue(cachedPlayerManager.currentPlayerData, sourceStat);
             float finalRatio = ratio + (ratioPerLevel * Mathf.Max(0, currentLevel - 1));
             float targetValueIncrease = sourceValue * finalRatio;
 
-            // 기존 모디파이어 제거
             if (currentModifier != null)
             {
                 cachedPlayerManager.RemoveTemporaryStatModifier(currentModifier);
             }
 
-            // 새 모디파이어 생성 및 적용
             currentModifier = new StatModifier
             {
                 stat = targetStat,
@@ -94,7 +92,7 @@ namespace Nytherion.Gameplay.Relics.Modules
             isUpdating = false;
         }
 
-        private float GetStatValue(Nytherion.Data.ScriptableObjects.Player.PlayerData data, StatType stat)
+        private float GetStatValue(PlayerData data, StatType stat)
         {
             switch (stat)
             {

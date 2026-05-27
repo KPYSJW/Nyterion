@@ -8,8 +8,8 @@ using System;
 namespace Nytherion.Gameplay.Relics.Modules
 {
     /// <summary>
-    /// 잡은 몬스터 수(킬 카운트)에 비례해서 특정 스탯(예: 생명력 흡수)이 증가하는 성장형 각인.
-    /// 최대 증가치가 정해져 있으며, 각인 레벨이 오를수록 최대 한도(Cap)가 늘어납니다.
+    /// 잡은 몬스터 수(킬 카운트)에 비례해서 특정 스탯(예: 생명력 흡수)이 증가하는 성장형 각인
+    /// 최대 증가치가 정해져 있으며, 각인 레벨이 오를수록 최대 한도(Cap)가 늘어난다
     /// </summary>
     [Serializable, RelicDisplayName("처치 수 비례 성장 효과")]
     public class KillCountGrowthStatRelicEffect : RelicEffectBase
@@ -39,7 +39,6 @@ namespace Nytherion.Gameplay.Relics.Modules
 
             UpdateStatModifier();
 
-            // 몬스터가 죽어서 킬 카운트가 올랐을 때 스탯 재계산을 위해 이벤트 구독
             cachedPlayerManager.OnPlayerStatsChanged -= HandleStatsChanged;
             cachedPlayerManager.OnPlayerStatsChanged += HandleStatsChanged;
             
@@ -77,13 +76,12 @@ namespace Nytherion.Gameplay.Relics.Modules
             // 킬 수에 따른 순수 보너스 계산
             float rawBonus = killCount * valuePerKill;
 
-            // 레벨에 따른 최대치(Cap) 스케일링 계산
+            // 레벨에 따른 최대치 스케일링 계산
             float currentMaxBonus = maxBonusBase + (maxBonusPerLevel * Mathf.Max(0, currentLevel - 1));
 
-            // 최대치 한도(캡) 적용
+            // 최대치 한도 적용
             float finalBonus = Mathf.Min(rawBonus, currentMaxBonus);
 
-            // 기존 모디파이어 제거
             if (currentModifier != null)
             {
                 cachedPlayerManager.RemoveTemporaryStatModifier(currentModifier);

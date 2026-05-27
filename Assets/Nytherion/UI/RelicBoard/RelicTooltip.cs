@@ -11,7 +11,6 @@ namespace Nytherion.UI.RelicBoard
 
     [SerializeField] private GameObject tooltipPanel;
     [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
     [Header("Influence Grid")]
@@ -76,8 +75,8 @@ namespace Nytherion.UI.RelicBoard
     {
         if (block == null) return;
 
-        nameText.text = !string.IsNullOrEmpty(block.SourceData.koreanName) ? block.SourceData.koreanName : block.SourceData.relicName;
-        levelText.text = $"Lv. {block.SourceData.level}";
+        string name = !string.IsNullOrEmpty(block.SourceData.koreanName) ? block.SourceData.koreanName : block.SourceData.relicName;
+        nameText.text = $"{name} <size=80%><color=#AAAAAA>Lv. {block.SourceData.level}</color></size>";
         descriptionText.text = block.SourceData.Description;
 
         UpdateInfluenceGrid(block);

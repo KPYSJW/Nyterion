@@ -106,7 +106,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void AddRelic(RelicData relic)
         {
-            if (equippedRelics.Count >= 3)
+            if (equippedRelics.Count >= 25)
             {
                 Debug.LogWarning("각인 가득참");
                 return;

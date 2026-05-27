@@ -7,6 +7,8 @@ using Nytherion.Core.Managers;
 using VContainer;
 using UnityEngine.EventSystems;
 using Nytherion.UI.Components;
+using System.Collections.Generic;
+using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.UI.Shop
 {
@@ -39,7 +41,25 @@ namespace Nytherion.UI.Shop
             {
                 iconImage.sprite = CurrentItem.item.icon;
                 nameText.text = CurrentItem.item.itemName;
-                priceText.text = $"{CurrentItem.price} Gold";
+
+                int displayPrice = CurrentItem.price;
+
+                // 쿠폰 조각 (CouponPiece) 유물 효과 적용: 상점 상품 가격 15% 할인
+                RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
+                if (relicManager != null)
+                {
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "CouponPiece" && !block.SourceData.isDisabled)
+                        {
+                            displayPrice = Mathf.RoundToInt(displayPrice * 0.85f);
+                            break;
+                        }
+                    }
+                }
+
+                priceText.text = $"{displayPrice} Gold";
                 
                 stockText.text = CurrentItem.isUnlimited ? "" : $"X {CurrentItem.stock}";
 

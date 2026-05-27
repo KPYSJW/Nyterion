@@ -10,7 +10,10 @@ public class DashState : PlayerState
         playerController.PlayAnimation("Dash");
         playerController.IsDashing = true;
         playerController.LastDashTime = Time.time;
-        dashTimer = playerController.PlayerData.dashDuration;
+
+        // 거리를 속도로 나누어 대쉬 지속 시간을 계산합니다.
+        float calculatedDuration = playerController.PlayerData.dashDistance / playerController.PlayerData.dashSpeed;
+        dashTimer = calculatedDuration;
 
         playerController.ApplyDashVelocity();
     }
@@ -18,7 +21,6 @@ public class DashState : PlayerState
     public override void Execute(PlayerController playerController)
     {
         dashTimer -= Time.deltaTime;
-
         if (dashTimer <= 0)
         {
             playerController.ChangeState(new IdleState());

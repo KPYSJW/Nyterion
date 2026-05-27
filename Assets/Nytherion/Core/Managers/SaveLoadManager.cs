@@ -193,6 +193,16 @@ namespace Nytherion.Core.Managers
 
         public void SaveGame()
         {
+            SaveGameInternal(false);
+        }
+
+        public void ForceSaveGame()
+        {
+            SaveGameInternal(true);
+        }
+
+        private void SaveGameInternal(bool ignoreCooldown)
+        {
             if (isLoadingData)
             {
                 return;
@@ -203,7 +213,7 @@ namespace Nytherion.Core.Managers
                 return;
             }
 
-            if (Time.time - lastSaveTime < SAVE_COOLDOWN)
+            if (!ignoreCooldown && Time.time - lastSaveTime < SAVE_COOLDOWN)
             {
                 return;
             }
@@ -407,6 +417,17 @@ namespace Nytherion.Core.Managers
         public override void LoadFromSaveData(SaveData saveData)
         {
             // SaveLoadManager 자체는 로드할 데이터가 없음 (다른 매니저들의 로드를 관리)
+        }
+
+        public SaveData CurrentSaveData
+        {
+            get
+            {
+                if (saveData == null)
+                    saveData = new SaveData();
+
+                return saveData;
+            }
         }
     }
 }

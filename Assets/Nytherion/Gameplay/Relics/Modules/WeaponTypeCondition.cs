@@ -1,7 +1,6 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Utils;
-using Nytherion.Data.ScriptableObjects.Weapons;
 using System;
 
 namespace Nytherion.Gameplay.Relics.Modules

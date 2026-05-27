@@ -15,10 +15,13 @@ namespace Nytherion.Data.ScriptableObjects.Player
         public float rangedSpeed;
         public float dashSpeed;
         public float dashDuration;
+        public float dashDistance;
         public float dashCooldown;
         public float defense;
         public float extraProjectiles;
         public float lifesteal;
         public float chargeTimeReduction;
+        public float critChance = 0.1f;
+        public float critDamageMultiplier = 1.5f;
     }
 }

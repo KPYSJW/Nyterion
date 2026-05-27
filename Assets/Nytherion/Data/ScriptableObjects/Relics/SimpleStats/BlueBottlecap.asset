@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}
+  m_Name: BlueBottlecap
+  m_EditorClassIdentifier: 
+  relicName: Blue Bottlecap
+  koreanName: 푸른 병뚜껑
+  description_KR: 모든 능력치를 증가시킵니다.
+  description_EN: Increases all stats.
+  Image: {fileID: 0}
+  rarity: 4
+  level: 1
+  isDisabled: 0
+  effectModules: []
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+  - offset: {x: -1, y: 0}
+    type: 4
+  - offset: {x: 1, y: 0}
+    type: 4
+  synergySeriesId: 
+  unlockMilestoneID: 
+  simpleStatModifiers:
+  - stat: 17
+    value: 0.05
+    valuePerLevel: 0.015
+    isPercentage: 1

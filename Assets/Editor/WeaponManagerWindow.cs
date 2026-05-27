@@ -26,7 +26,6 @@ namespace Nytherion.Editor
         private enum WindowTab { Create, Edit }
         private WindowTab currentTab = WindowTab.Create;
 
-        // Creation Fields
         private string weaponName_KR = "새 무기";
         private string weaponName_EN = "New Weapon";
         private string description_KR = "";
@@ -55,12 +54,13 @@ namespace Nytherion.Editor
         private static WeaponBase rangedTemplate;
         private static WeaponBase meteorTemplate;
         private static WeaponBase chargeableTemplate;
+        private static WeaponBase chainLightningTemplate;
 
         private const string RANGED_TEMPLATE_PATH = "Assets/Prefabs/Weapons/RangedWeapon_Template.prefab";
         private const string METEOR_TEMPLATE_PATH = "Assets/Prefabs/Weapons/MeteorWeapon_Template.prefab";
         private const string CHARGEABLE_TEMPLATE_PATH = "Assets/Prefabs/Weapons/ChargeableWeapon_Template.prefab";
+        private const string CHAIN_LIGHTNING_TEMPLATE_PATH = "Assets/Prefabs/Weapons/ChainLightningWeapon_Template.prefab";
 
-        // Edit Mode Fields
         private List<WeaponData> allWeapons = new List<WeaponData>();
         private Vector2 scrollPosition;
         private string searchFilter = "";
@@ -84,6 +84,7 @@ namespace Nytherion.Editor
             if (rangedTemplate == null) rangedTemplate = AssetDatabase.LoadAssetAtPath<WeaponBase>(RANGED_TEMPLATE_PATH);
             if (meteorTemplate == null) meteorTemplate = AssetDatabase.LoadAssetAtPath<WeaponBase>(METEOR_TEMPLATE_PATH);
             if (chargeableTemplate == null) chargeableTemplate = AssetDatabase.LoadAssetAtPath<WeaponBase>(CHARGEABLE_TEMPLATE_PATH);
+            if (chainLightningTemplate == null) chainLightningTemplate = AssetDatabase.LoadAssetAtPath<WeaponBase>(CHAIN_LIGHTNING_TEMPLATE_PATH);
         }
 
         private void RefreshWeaponList()
@@ -162,7 +163,6 @@ namespace Nytherion.Editor
             }
             EditorGUILayout.EndVertical();
 
-            // Synergy & Traits Section
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical("box");
             GUILayout.Label("Synergy & Traits", EditorStyles.miniBoldLabel);
@@ -210,21 +210,9 @@ namespace Nytherion.Editor
             }
             EditorGUILayout.EndVertical();
 
-            // Validation and Create Button (Temporarily disabled as requested)
             EditorGUILayout.Space(10);
-            /*
-            string validationMessage = "";
-            bool isValid = ValidateInput(out validationMessage);
-
-            if (!isValid)
-            {
-                EditorGUILayout.HelpBox(validationMessage, MessageType.Warning);
-            }
-
-            EditorGUI.BeginDisabledGroup(!isValid);
-            */
+            
             if (GUILayout.Button("Create Weapon", GUILayout.Height(40))) CreateWeaponData();
-            // EditorGUI.EndDisabledGroup();
 
             EditorGUILayout.EndScrollView();
         }
@@ -255,7 +243,6 @@ namespace Nytherion.Editor
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
 
-            // 상단 리스트 영역
             float listHeight = selectedWeapon == null ? position.height - 100 : position.height * 0.4f;
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(listHeight));
             
@@ -285,11 +272,9 @@ namespace Nytherion.Editor
                 GUILayout.Label(weapon.rarity.ToString(), GUILayout.Width(80));
                 GUILayout.Label(weapon.damage.ToString("F1"), GUILayout.Width(40));
                 
-                // DPS 계산 (Dmg / Cooldown)
                 float dps = weapon.cooldown > 0 ? weapon.damage / weapon.cooldown : 0;
                 GUILayout.Label(dps.ToString("F1"), GUILayout.Width(40));
 
-                // 프리팹 연결 상태
                 bool hasPrefab = weapon.weaponPrefab != null;
                 GUI.color = hasPrefab ? Color.green : Color.red;
                 GUILayout.Label(hasPrefab ? "● OK" : "○ No", GUILayout.Width(50));
@@ -330,7 +315,6 @@ namespace Nytherion.Editor
             detailScroll = EditorGUILayout.BeginScrollView(detailScroll, GUILayout.MaxHeight(400));
 
             EditorGUILayout.BeginHorizontal();
-            // Left Column: Names and Descriptions
             EditorGUILayout.BeginVertical(GUILayout.Width(position.width * 0.5f));
             selectedWeapon.itemName_KR = EditorGUILayout.TextField("Name (KR)", selectedWeapon.itemName_KR);
             selectedWeapon.itemName_EN = EditorGUILayout.TextField("Name (EN)", selectedWeapon.itemName_EN);
@@ -348,7 +332,6 @@ namespace Nytherion.Editor
             selectedWeapon.description_EN = EditorGUILayout.TextArea(selectedWeapon.description_EN, GUILayout.Height(60));
             EditorGUILayout.EndVertical();
 
-            // Right Column: Stats and Visuals
             EditorGUILayout.BeginVertical();
             selectedWeapon.rarity = (Rarity)EditorGUILayout.EnumPopup("Rarity", selectedWeapon.rarity);
             selectedWeapon.baseValue = EditorGUILayout.IntField("Base Price", selectedWeapon.baseValue);
@@ -376,10 +359,11 @@ namespace Nytherion.Editor
             rangedTemplate = (WeaponBase)EditorGUILayout.ObjectField("Ranged Template", rangedTemplate, typeof(WeaponBase), false);
             meteorTemplate = (WeaponBase)EditorGUILayout.ObjectField("Meteor Template", meteorTemplate, typeof(WeaponBase), false);
             chargeableTemplate = (WeaponBase)EditorGUILayout.ObjectField("Chargeable Template", chargeableTemplate, typeof(WeaponBase), false);
+            chainLightningTemplate = (WeaponBase)EditorGUILayout.ObjectField("Chain Lightning Template", chainLightningTemplate, typeof(WeaponBase), false);
             EditorGUILayout.EndVertical();
         }
 
-        private enum LogicType { Standard, Meteor, Chargeable, Custom }
+        private enum LogicType { Standard, Meteor, Chargeable, ChainLightning, Custom }
         private LogicType selectedLogicType = LogicType.Standard;
         private WeaponBase manualTemplate;
 
@@ -387,7 +371,7 @@ namespace Nytherion.Editor
         {
             if (string.IsNullOrEmpty(weaponName_EN)) { EditorUtility.DisplayDialog("Error", "Please enter an English weapon name.", "OK"); return; }
 
-            WeaponData newData = ScriptableObject.CreateInstance<WeaponData>();
+            WeaponData newData = CreateInstance<WeaponData>();
             newData.itemName_KR = weaponName_KR;
             newData.itemName_EN = weaponName_EN;
             newData.description_KR = description_KR;
@@ -405,7 +389,6 @@ namespace Nytherion.Editor
             newData.extraProjectileMode = extraMode;
             newData.maxChargeTime = maxChargeTime;
             
-            // Assign Traits
             newData.traits = new List<EquipmentTrait>(selectedTraits);
 
             WeaponBase template = GetSelectedTemplate();
@@ -420,13 +403,12 @@ namespace Nytherion.Editor
                 GenerateWeaponPrefab(newData, template);
             }
 
-            // Automated Milestone Creation
             if (createMilestone)
             {
                 string mID = "UNLOCK_WEAPON_" + newData.itemName_EN.Replace(" ", "_").ToUpper();
                 newData.unlockMilestoneID = mID;
 
-                MilestoneData newMilestone = ScriptableObject.CreateInstance<MilestoneData>();
+                MilestoneData newMilestone = CreateInstance<MilestoneData>();
                 newMilestone.milestoneID = mID;
                 newMilestone.title = milestoneTitle;
                 newMilestone.description = $"{newData.itemName_KR} 무기를 해금하기 위한 업적입니다.";
@@ -488,6 +470,7 @@ namespace Nytherion.Editor
                 case LogicType.Standard: return rangedTemplate;
                 case LogicType.Meteor: return meteorTemplate;
                 case LogicType.Chargeable: return chargeableTemplate;
+                case LogicType.ChainLightning: return chainLightningTemplate;
                 case LogicType.Custom: return manualTemplate;
                 default: return null;
             }

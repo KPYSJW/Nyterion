@@ -29,6 +29,7 @@ namespace Nytherion.Core.Managers
         private Dictionary<string, RelicData> relicDatabase;
         private List<RelicBlock> storageBlocks;
         private Dictionary<string, Vector2Int> placedBlockPositions;
+        private Dictionary<string, int> maxChainLengthPerSeries = new Dictionary<string, int>();
 
         private RelicBlock currentlyDraggedBlock;
         private bool isDraggingFromGrid;
@@ -65,7 +66,7 @@ namespace Nytherion.Core.Managers
             // 그리드 영향권에서 벗어나는 순간 상태 초기화
             block.ResetLevel();
 
-            logicGrid.RecalculateAllInfluences();
+            RefreshRelicLogic();
 
             if (block.SourceData != null)
             {
@@ -104,7 +105,7 @@ namespace Nytherion.Core.Managers
                 ReturnDraggedBlockToOrigin();
             }
 
-            logicGrid.RecalculateAllInfluences();
+            RefreshRelicLogic();
             currentlyDraggedBlock = null;
             OnRelicStateChanged?.Invoke();
         }
@@ -154,6 +155,21 @@ namespace Nytherion.Core.Managers
         public InfluenceType GetInfluenceAt(int row, int col)
         {
             return logicGrid?.GetInfluenceAt(row, col) ?? InfluenceType.None;
+        }
+
+        public int GetMaxChainLength(string seriesId)
+        {
+            if (string.IsNullOrEmpty(seriesId)) return 0;
+            if (maxChainLengthPerSeries.TryGetValue(seriesId, out int length))
+            {
+                return length;
+            }
+            return 0;
+        }
+
+        public void UpdateSynergyChains(Dictionary<string, int> newChainData)
+        {
+            maxChainLengthPerSeries = newChainData ?? new Dictionary<string, int>();
         }
 
         #endregion
@@ -317,8 +333,15 @@ namespace Nytherion.Core.Managers
                 }
             }
 
-            logicGrid.RecalculateAllInfluences();
+            RefreshRelicLogic();
             OnRelicStateChanged?.Invoke();
+        }
+
+        private void RefreshRelicLogic()
+        {
+            if (logicGrid == null) return;
+            logicGrid.RecalculateAllInfluences();
+            UpdateSynergyChains(logicGrid.EvaluateSynergyChains());
         }
 
         public override void PopulateSaveData(SaveData saveData)

@@ -2,7 +2,6 @@ using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Skills;
 using UnityEngine;
-using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Skill
 {

@@ -138,6 +138,7 @@ namespace Nytherion.GamePlay.Dungeon
 
                     // 목적지를 찾았다면 플레이어를 텔레포트시키고 함수를 종료합니다.
                     TeleportPlayer(player, destinationPos);
+                    _dungeonManager.SaveCheckpointAtCurrentPlayerPosition(true);
                     return;
                 }
             }

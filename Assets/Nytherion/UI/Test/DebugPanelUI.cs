@@ -7,6 +7,8 @@ using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Data;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.UI.Controllers;
+using Nytherion.Data.ScriptableObjects.Shop;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
@@ -24,6 +26,7 @@ namespace Nytherion.UI.Test
         [Header("Test Assets")]
         [SerializeField] private ItemData testWeapon;
         [SerializeField] private ItemData testPotion;
+        [SerializeField] private ShopData testShopData;
 
         // 의존성 주입
         private InventoryDataManager inventoryDataManager;
@@ -31,6 +34,9 @@ namespace Nytherion.UI.Test
         private SaveLoadManager saveLoadManager;
         private PlayerManager playerManager;
         private ShopManager shopManager;
+        private ShopUI shopUI;
+        private GachaUIController gachaUIController;
+        private RelicUIController relicUIController;
 
         [Inject]
         public void Construct(
@@ -38,13 +44,19 @@ namespace Nytherion.UI.Test
             CurrencyDataManager currencyDataManager,
             SaveLoadManager saveLoadManager,
             PlayerManager playerManager,
-            ShopManager shopManager)
+            ShopManager shopManager,
+            ShopUI shopUI,
+            GachaUIController gachaUIController,
+            RelicUIController relicUIController)
         {
             this.inventoryDataManager = inventoryDataManager;
             this.currencyDataManager = currencyDataManager;
             this.saveLoadManager = saveLoadManager;
             this.playerManager = playerManager;
             this.shopManager = shopManager;
+            this.shopUI = shopUI;
+            this.gachaUIController = gachaUIController;
+            this.relicUIController = relicUIController;
             Debug.Log("[DebugPanelUI] Dependencies Injected Successfully.");
         }
 
@@ -70,8 +82,11 @@ namespace Nytherion.UI.Test
                 if (saveLoadManager == null) saveLoadManager = dataScope.GetDataManager<SaveLoadManager>();
                 if (shopManager == null) shopManager = dataScope.GetDataManager<ShopManager>();
                 
-                // PlayerManager는 보통 GameSceneScope에 있으므로 씬에서 직접 찾음
+                // UI 컨트롤러들과 PlayerManager는 보통 GameSceneScope에 있으므로 씬에서 직접 찾음
                 if (playerManager == null) playerManager = FindObjectOfType<PlayerManager>();
+                if (shopUI == null) shopUI = FindObjectOfType<ShopUI>();
+                if (gachaUIController == null) gachaUIController = FindObjectOfType<GachaUIController>();
+                if (relicUIController == null) relicUIController = FindObjectOfType<RelicUIController>();
 
                 if (inventoryDataManager != null) Debug.Log("[DebugPanelUI] Manually Injected Dependencies.");
             }
@@ -105,6 +120,44 @@ namespace Nytherion.UI.Test
             else
             {
                 // Time.timeScale = 1f;
+            }
+        }
+
+        /* ==========================================================
+         * UI Shortcut (UI 단축 실행) 기능
+         * ========================================================== */
+
+        public void OpenTestShop()
+        {
+            if (shopUI != null && testShopData != null)
+            {
+                shopUI.OpenShop(testShopData);
+                Close(); // 디버그 패널은 닫음
+                UpdateStatusText("테스트 상점 열기");
+            }
+            else
+            {
+                UpdateStatusText("상점 UI 또는 데이터가 없습니다.");
+            }
+        }
+
+        public void OpenGachaUI()
+        {
+            if (gachaUIController != null)
+            {
+                gachaUIController.Toggle();
+                Close();
+                UpdateStatusText("가챠 UI 토글");
+            }
+        }
+
+        public void OpenRelicUI()
+        {
+            if (relicUIController != null)
+            {
+                relicUIController.Toggle();
+                Close();
+                UpdateStatusText("유물 UI 토글");
             }
         }
 

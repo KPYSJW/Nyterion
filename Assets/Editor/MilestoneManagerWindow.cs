@@ -15,11 +15,9 @@ namespace Nytherion.Editor
         private enum WindowTab { Create, Edit }
         private WindowTab currentTab = WindowTab.Create;
 
-        // Creation Fields
         private MilestoneData creationData;
         private SerializedObject serializedCreationData;
 
-        // Edit Mode Fields
         private List<MilestoneData> allMilestones = new List<MilestoneData>();
         private Vector2 scrollPosition;
         private string searchFilter = "";

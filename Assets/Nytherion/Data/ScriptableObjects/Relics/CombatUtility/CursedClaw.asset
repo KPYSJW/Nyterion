@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: CursedClaw
+  m_EditorClassIdentifier: 
+  relicName: Cursed Claw
+  koreanName: 저주 손톱
+  description: "저주 장비 장착 시 공속 +25%, 공격력 +10. (사악한 손톱 조각)"
+  description_KR: "저주 장비 장착 시 공속 +25%, 공격력 +10. (사악한 손톱 조각)"
+  description_EN: "When Cursed equipment is active, attack speed +25%, Atk +10. (A piece of evil claw)"
+  Image: {fileID: 0}
+  rarity: 4
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: 6716071130084147238
+    effects:
+    - rid: 6716071130084147239
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+  - offset: {x: -1, y: 0}
+    type: 4
+  - offset: {x: 1, y: 0}
+    type: 4
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071130084147238
+      type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredTrait: 1
+    - rid: 6716071130084147239
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 5
+          value: 0.25
+          valuePerLevel: 0.05
+          isPercentage: 1
+        - stat: 6
+          value: 0.25
+          valuePerLevel: 0.05
+          isPercentage: 1
+        - stat: 3
+          value: 10
+          valuePerLevel: 3
+          isPercentage: 0
+        - stat: 4
+          value: 10
+          valuePerLevel: 3
+          isPercentage: 0

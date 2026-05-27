@@ -16,10 +16,8 @@ namespace Nytherion.Editor
             Rect foldoutRect = new Rect(position.x, position.y, EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
             Rect dropdownRect = new Rect(position.x + EditorGUIUtility.labelWidth, position.y, position.width - EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
 
-            // Foldout 토글
             property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label, true);
             
-            // 다형성 기반 타입 추출
             Type baseType = GetBaseType(property);
             if (baseType != null)
             {
@@ -33,19 +31,16 @@ namespace Nytherion.Editor
                 
                 GUIContent buttonLabel = new GUIContent(currentTypeName);
 
-                // 버튼 클릭 시 메뉴 팝업
                 if (GUI.Button(dropdownRect, buttonLabel, EditorStyles.popup))
                 {
                     GenericMenu menu = new GenericMenu();
                     
-                    // None 추가
                     menu.AddItem(new GUIContent("없음"), property.managedReferenceValue == null, () =>
                     {
                         property.managedReferenceValue = null;
                         property.serializedObject.ApplyModifiedProperties();
                     });
 
-                    // 파생 클래스들 검색
                     var types = AppDomain.CurrentDomain.GetAssemblies()
                         .SelectMany(s => s.GetTypes())
                         .Where(p => baseType.IsAssignableFrom(p) && !p.IsAbstract && !p.IsInterface);
@@ -66,7 +61,6 @@ namespace Nytherion.Editor
                 }
             }
 
-            // 아래에 프로퍼티 내부 필드들 그리기
             if (property.isExpanded && property.managedReferenceValue != null)
             {
                 EditorGUI.indentLevel++;

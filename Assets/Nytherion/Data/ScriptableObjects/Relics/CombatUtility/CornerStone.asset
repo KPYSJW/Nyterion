@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: CornerStone
+  m_EditorClassIdentifier: 
+  relicName: CornerStone
+  koreanName: 구석 조약돌
+  description_KR: "각인 보드의 가장자리(테두리) 슬롯에 배치 시 방어력 +4. *(안전한 구석탱이)*"
+  description_EN: "+4 Defense when placed on the edge slots of the board. (Safe corner)"
+  Image: {fileID: 0}
+  rarity: 0
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: 4000000000000000001
+    effects:
+    - rid: 4000000000000000002
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 4000000000000000001
+      type: {class: CornerStoneCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data: {}
+    - rid: 4000000000000000002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 1
+          value: 4
+          valuePerLevel: 2
+          isPercentage: 0

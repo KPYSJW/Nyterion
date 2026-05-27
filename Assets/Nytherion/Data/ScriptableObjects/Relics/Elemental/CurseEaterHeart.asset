@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: CurseEaterHeart
+  m_EditorClassIdentifier: 
+  relicName: Charred Heart
+  koreanName: 탄화된 심장
+  description: "저주 장비의 마이너스 스탯을 플러스로 반전. (더는 잃을 게 없음)"
+  description_KR: "저주 장비의 마이너스 스탯을 플러스로 반전. (더는 잃을 게 없음)"
+  description_EN: "Inverts negative stats of Cursed equipment. (Nothing left to lose)"
+  Image: {fileID: 0}
+  rarity: 0
+  level: 1
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 6716071130084147204
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 1, y: 0}
+    type: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6716071130084147204
+      type: {class: InvertTraitModifierEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetTrait: 1

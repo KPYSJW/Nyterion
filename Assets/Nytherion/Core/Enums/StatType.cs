@@ -15,6 +15,8 @@ namespace Nytherion.Core.Enums
         ExtraProjectiles,
         Lifesteal,
         ChargeTimeReduction,
+        CritChance,
+        CritDamage,
         All // 모든 능력치 공통 적용용
     }
 }

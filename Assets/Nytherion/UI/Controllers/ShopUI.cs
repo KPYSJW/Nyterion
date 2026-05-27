@@ -12,6 +12,7 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Interfaces;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.UI.Controllers
 {
@@ -369,11 +370,28 @@ namespace Nytherion.UI.Controllers
 
         public void ConfirmPurchase(ShopSlotUI slot, int amountToBuy)
         {
-            var shopItem = slot.CurrentItem;
+            ShopItemData shopItem = slot.CurrentItem;
             CurrencyDataManager currencyMgr = GetCurrencyDataManager();
             InventoryDataManager inventoryMgr = GetInventoryDataManager();
 
-            int totalPrice = shopItem.price * amountToBuy; 
+            int unitPrice = shopItem.price;
+
+            // 쿠폰 조각 (CouponPiece) 유물 효과 적용: 상점 상품 가격 15% 할인
+            RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
+            if (relicManager != null)
+            {
+                foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                {
+                    RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                    if (block != null && block.RelicId == "CouponPiece" && !block.SourceData.isDisabled)
+                    {
+                        unitPrice = Mathf.RoundToInt(unitPrice * 0.85f);
+                        break;
+                    }
+                }
+            }
+
+            int totalPrice = unitPrice * amountToBuy; 
 
             if (!currencyMgr.HasCurrency(CurrencyType.Gold, totalPrice)) return;
 

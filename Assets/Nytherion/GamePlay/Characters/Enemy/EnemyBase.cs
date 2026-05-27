@@ -48,16 +48,32 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (aiController != null)
             {
                 aiController.ApplyEnemyData(data);
+    
             }
         }
 
         public void TakeDamage(float damageAmount)
         {
             if (isDead) return;
+
+            bool isCritical = false;
+            PlayerManager playerManager = UnityEngine.Object.FindObjectOfType<PlayerManager>();
+            if (playerManager != null && playerManager.currentPlayerData != null)
+            {
+                float chance = playerManager.currentPlayerData.critChance;
+                if (UnityEngine.Random.value <= chance)
+                {
+                    isCritical = true;
+                    float multiplier = playerManager.currentPlayerData.critDamageMultiplier;
+                    damageAmount *= multiplier;
+                    Debug.Log($"[Critical Hit] Damage scaled to {damageAmount} (crit chance: {chance})");
+                }
+            }
+
             PlayHitFlash();
             if (eventManager != null)
             {
-                eventManager.TriggerEnemyDamagedByPlayer(damageAmount);
+                eventManager.TriggerEnemyDamagedByPlayerWithCrit(damageAmount, isCritical);
             }
 
 

@@ -15,6 +15,7 @@ namespace Nytherion.Core.Managers
     {
         public event Action<EnemyBase> OnEnemyDied;
         public event Action<float> OnEnemyDamagedByPlayer;
+        public event Action<float, bool> OnEnemyDamagedByPlayerWithCrit;
         public event Action<StageData> OnBossClearedEvent;
         public event Action<WeaponData, RelicData, WeaponRelicSynergyData> OnSynergyEvaluated;
 
@@ -37,6 +38,11 @@ namespace Nytherion.Core.Managers
         public void TriggerEnemyDamagedByPlayer(float damageAmount)
         {
             OnEnemyDamagedByPlayer?.Invoke(damageAmount);
+            OnEnemyDamagedByPlayerWithCrit?.Invoke(damageAmount, false);
+        }
+        public void TriggerEnemyDamagedByPlayerWithCrit(float damageAmount, bool isCritical)
+        {
+            OnEnemyDamagedByPlayerWithCrit?.Invoke(damageAmount, isCritical);
         }
         public void TriggerOpenInventoryForShop()
         {

@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: CharredTwig
+  m_EditorClassIdentifier: 
+  relicName: Charred Twig
+  koreanName: 그을린 가지
+  description: "화염 장비 장착 시 공속 +10%, 대쉬 속도 +10%. (타오르는 나뭇가지)"
+  description_KR: "화염 장비 장착 시 공속 +10%, 대쉬 속도 +10%. (타오르는 나뭇가지)"
+  description_EN: "When Fire equipment is active, attack speed +10%, dash speed +10%. (Burning twig)"
+  Image: {fileID: 0}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: 6716071130084147220
+    effects:
+    - rid: 6716071130084147221
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: -1, y: 0}
+    type: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071130084147220
+      type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredTrait: 3
+    - rid: 6716071130084147221
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 5
+          value: 0.1
+          valuePerLevel: 0.02
+          isPercentage: 1
+        - stat: 7
+          value: 0.1
+          valuePerLevel: 0.02
+          isPercentage: 1
