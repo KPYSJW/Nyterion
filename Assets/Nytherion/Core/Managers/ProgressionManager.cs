@@ -36,6 +36,7 @@ namespace Nytherion.Core.Managers
         System.Collections.Generic.List<GameObject> GetUnlockedProjectilePrefabs();
         void RecordProjectile(string projectileTag);
         System.Collections.Generic.List<string> GetUnlockedProjectiles();
+        System.Collections.Generic.List<MilestoneData> GetAllMilestones();
     }
 
     public class ProgressionManager : BaseManager, IProgressionManager, ISaveable 
@@ -177,7 +178,18 @@ namespace Nytherion.Core.Managers
 
         private void InitializeMilestoneLookup()
         {
-            if (milestoneDatabase == null || milestoneDatabase.allMilestones == null) return;
+            if (milestoneDatabase == null)
+            {
+                Debug.LogError("[ProgressionManager] milestoneDatabase가 Null입니다! 프리팹 또는 인스펙터 바인딩을 확인하세요.");
+                return;
+            }
+            if (milestoneDatabase.allMilestones == null)
+            {
+                Debug.LogError("[ProgressionManager] milestoneDatabase.allMilestones가 Null입니다!");
+                return;
+            }
+
+            Debug.Log($"[ProgressionManager] InitializeMilestoneLookup 성공. 마일스톤 개수: {milestoneDatabase.allMilestones.Count}");
 
             milestoneLookup.Clear();
             milestonesByType.Clear();
@@ -385,6 +397,13 @@ namespace Nytherion.Core.Managers
                     AddProgress(milestone, amount);
                 }
             }
+        }
+
+        public System.Collections.Generic.List<MilestoneData> GetAllMilestones()
+        {
+            return milestoneDatabase != null && milestoneDatabase.allMilestones != null 
+                ? new System.Collections.Generic.List<MilestoneData>(milestoneDatabase.allMilestones) 
+                : new System.Collections.Generic.List<MilestoneData>();
         }
         // --- ISaveable ---
         public override void PopulateSaveData(SaveData saveData)

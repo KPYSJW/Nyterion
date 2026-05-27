@@ -12,24 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
   m_Name: GoldSnout
   m_EditorClassIdentifier: 
-  relicName: GoldSnout
-  koreanName: 황금 돼지코
-  description_KR: "보유 골드 100당 공격력 +2 (최대 +10). *(돼지가 코를 킁킁거립니다)*"
-  description_EN: "+2 Attack per 100 gold (max +10). (The pig sniffs around)"
+  relicName: Gold Snout
+  koreanName: "\uD669\uAE08 \uB3FC\uC9C0\uCF54"
+  description_KR: "\uBCF4\uC720 \uACE8\uB4DC 100\uB2F9 \uACF5\uACA9\uB825 +2 (\uCD5C\uB300
+    +10). "
+  description_EN: +2 Attack per 100 gold (max +10).
   Image: {fileID: 0}
   rarity: 3
   level: 1
   isDisabled: 0
   effectModules:
-  - condition: {fileID: 0}
+  - condition:
+      rid: -2
     effects:
     - rid: 3000000000000000001
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 3000000000000000001
       type: {class: GoldProportionalEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:

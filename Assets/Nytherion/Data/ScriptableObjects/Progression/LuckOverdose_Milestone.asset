@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: LuckOverdose_Milestone
   m_EditorClassIdentifier: 
   milestoneID: LuckOverdose
-  title: "오늘의 행운아"
-  description: "'네잎클로버'로 대쉬 쿨타임 초기화 혜택 한 전투에서 3회 이상 획득."
-  icon: {fileID: 0}
+  title: "\uC624\uB298\uC758 \uD589\uC6B4\uC544"
+  description: "'\uB124\uC78E\uD074\uB85C\uBC84'\uB85C \uB300\uC26C \uCFE8\uD0C0\uC784
+    \uCD08\uAE30\uD654 \uD61C\uD0DD \uD55C \uC804\uD22C\uC5D0\uC11C 3\uD68C \uC774\uC0C1
+    \uD68D\uB4DD."
+  icon: {fileID: 21300000, guid: d8edc57c276626f449084ba691022a1c, type: 3}
   progressionType: 18
-  requiredMilestones: []
   targetValue: 1
+  requiredMilestones: []
   rewards:
   - rewardType: 2
     amount: 10

@@ -15,10 +15,13 @@ MonoBehaviour:
   milestoneID: Lifesteal
   title: Lifesteal
   description: 
-  icon: {fileID: 21300000, guid: cc843433c57663d40baa56975df20ca5, type: 3}
-  requiredMilestones: []
+  icon: {fileID: 21300000, guid: 9b633ceb4f7f6a74db851fcfcb6a6dd8, type: 3}
+  progressionType: 0
   targetValue: 10
+  requiredMilestones: []
   rewards:
   - rewardType: 0
     amount: 0
     skillData: {fileID: 11400000, guid: 69cd9cc6cf24a2a4fb0abf9ca48be53f, type: 2}
+    itemData: {fileID: 0}
+    relicData: {fileID: 0}

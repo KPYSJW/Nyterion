@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: LuckyClover
   m_EditorClassIdentifier: 
   relicName: LuckyClover
-  koreanName: 네잎클로버
-  description_KR: "치명타 적중 시 5% 확률로 대쉬 쿨타임 초기화. *(뜻밖의 행운)*"
-  description_EN: "5% chance to reset dash cooldown on a critical hit. (Unexpected luck)"
-  Image: {fileID: 0}
+  koreanName: "\uB124\uC78E\uD074\uB85C\uBC84"
+  description_KR: "\uCE58\uBA85\uD0C0 \uC801\uC911 \uC2DC 5% \uD655\uB960\uB85C \uB300\uC26C
+    \uCFE8\uD0C0\uC784 \uCD08\uAE30\uD654. *(\uB73B\uBC16\uC758 \uD589\uC6B4)*"
+  description_EN: 5% chance to reset dash cooldown on a critical hit. (Unexpected
+    luck)
+  Image: {fileID: 21300000, guid: d8edc57c276626f449084ba691022a1c, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0
@@ -24,6 +26,8 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds: []

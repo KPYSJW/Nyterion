@@ -10,18 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: BloodstoneFragment
+  m_Name: RedPebble
   m_EditorClassIdentifier: 
   relicName: Red Pebble
-  koreanName: 붉은 조약돌
-  description: "상시 흡혈율 +1.5% 증가. (묘하게 따뜻한 돌멩이)"
-  description_KR: "상시 흡혈율 +1.5% 증가. (묘하게 따뜻한 돌멩이)"
-  description_EN: "Passive lifesteal +1.5%. (A strangely warm stone)"
-  Image: {fileID: 21300000, guid: 274cc5d353702d54381995dc012cb66f, type: 3}
+  koreanName: "\uBD89\uC740 \uC870\uC57D\uB3CC"
+  description_KR: "\uC0C1\uC2DC \uD761\uD608\uC728 +1.5% \uC99D\uAC00. (\uBB18\uD558\uAC8C
+    \uB530\uB73B\uD55C \uB3CC\uBA69\uC774)"
+  description_EN: Passive lifesteal +1.5%. (A strangely warm stone)
+  Image: {fileID: 21300000, guid: 3761ac95c82f0b343937e5c28c23ac05, type: 3}
   rarity: 0
-  isCursed: 0
   level: 1
-  statModifiers: []
+  isDisabled: 0
   effectModules:
   - condition:
       rid: 6716071107867705359
@@ -34,6 +33,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 0, y: 1}
     type: 2
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

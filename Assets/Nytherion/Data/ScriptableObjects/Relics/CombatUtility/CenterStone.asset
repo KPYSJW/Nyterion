@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: CenterPebble
+  m_Name: CenterStone
   m_EditorClassIdentifier: 
-  relicName: CenterPebble
-  koreanName: 중앙의 자갈
-  description_KR: "보드의 정중앙 슬롯에 배치 시 올스탯 +6%. *(무대의 중심)*"
-  description_EN: "+6% to all stats when placed in the exact center slot of the board. (Center of the stage)"
+  relicName: CenterStone
+  koreanName: "\uC911\uC2EC\uC11D"
+  description_KR: "\uBCF4\uB4DC\uC758 \uC815\uC911\uC559 \uC2AC\uB86F\uC5D0 \uBC30\uCE58
+    \uC2DC \uC62C\uC2A4\uD0EF +6%. "
+  description_EN: +6% to all stats when placed in the exact center slot of the board.
   Image: {fileID: 0}
   rarity: 2
   level: 1
@@ -28,12 +29,14 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:
     - rid: 5000000000000000001
       type: {class: CenterPebbleCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data: {}
+      data: 
     - rid: 5000000000000000002
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:

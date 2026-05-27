@@ -81,9 +81,9 @@ namespace Nytherion.UI.Progression
             {
                 finalMilestones.AddRange(milestonesToDisplay);
             }
-            else if (milestoneDatabase != null && milestoneDatabase.allMilestones != null)
+            else if (progressionManager != null)
             {
-                finalMilestones.AddRange(milestoneDatabase.allMilestones);
+                finalMilestones.AddRange(progressionManager.GetAllMilestones());
             }
 
             if (finalMilestones.Count == 0) Debug.LogWarning(" 표시할 마일스톤 데이터가 없습니다!");
