@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: SqueakyGear
   m_EditorClassIdentifier: 
   relicName: SqueakyGear
-  koreanName: 삐걱이는 톱니
-  description_KR: "활성화된 체인 개수가 짝수일 때 충전 속도 +20% 단축. *(아귀가 딱 맞물립니다)*"
-  description_EN: "20% Charge Time Reduction when the number of active chains is even. (Perfect fit)"
+  koreanName: "\uC090\uAC71\uC774\uB294 \uD1B1\uB2C8"
+  description_KR: "\uD65C\uC131\uD654\uB41C \uCCB4\uC778 \uAC1C\uC218\uAC00 \uC9DD\uC218\uC77C
+    \uB54C \uCDA9\uC804 \uC18D\uB3C4 +20% \uB2E8\uCD95. "
+  description_EN: '20% Charge Time Reduction when the number of active chains is
+    even. '
   Image: {fileID: 0}
   rarity: 4
   level: 1
@@ -28,12 +30,14 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:
     - rid: 8000000000000000001
       type: {class: EvenChainCountCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data: {}
+      data: 
     - rid: 8000000000000000002
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:

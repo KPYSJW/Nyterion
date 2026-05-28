@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -16,8 +16,8 @@ MonoBehaviour:
   title: Lifesteal
   description: 
   icon: {fileID: 21300000, guid: 9b633ceb4f7f6a74db851fcfcb6a6dd8, type: 3}
-  progressionType: 0
-  targetValue: 10
+  progressionType: 8
+  targetValue: 200
   requiredMilestones: []
   rewards:
   - rewardType: 0

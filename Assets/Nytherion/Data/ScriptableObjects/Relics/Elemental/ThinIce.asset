@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: ThinIce
   m_EditorClassIdentifier: 
   relicName: Thin Ice
-  koreanName: 살얼음판
-  description: "빙결 장비 장착 시 대쉬 속도 +20%, 대쉬 지속 +15%. (미끄러지듯 나아갑니다)"
-  description_KR: "빙결 장비 장착 시 대쉬 속도 +20%, 대쉬 지속 +15%. (미끄러지듯 나아갑니다)"
-  description_EN: "When Ice equipment is active, dash speed +20%, dash duration +15%. (Glides forward smoothly)"
+  koreanName: "\uC0B4\uC5BC\uC74C\uD310"
+  description_KR: "\uBE59\uACB0 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uB300\uC26C \uC18D\uB3C4
+    +20%, \uB300\uC26C \uC9C0\uC18D +15%. "
+  description_EN: When Ice equipment is active, dash speed +20%, dash duration +15%.
+    (
   Image: {fileID: 0}
   rarity: 3
   level: 1
@@ -35,6 +36,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

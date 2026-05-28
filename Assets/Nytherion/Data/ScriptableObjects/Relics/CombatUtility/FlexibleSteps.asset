@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: FlexibleSteps
   m_EditorClassIdentifier: 
   relicName: Flexible Steps
-  koreanName: 유연한 발걸음
-  description: "대쉬 속도가 이동 속도의 80%만큼 증가. (묶는 법을 까먹었습니다)"
-  description_KR: "대쉬 속도가 이동 속도의 80%만큼 증가. (묶는 법을 까먹었습니다)"
-  description_EN: "Dash speed increases by 80% of move speed. (Forgot how to tie laces)"
+  koreanName: "\uC720\uC5F0\uD55C \uBC1C\uAC78\uC74C"
+  description_KR: "\uB300\uC26C \uC18D\uB3C4\uAC00 \uC774\uB3D9 \uC18D\uB3C4\uC758
+    80%\uB9CC\uD07C \uC99D\uAC00. "
+  description_EN: 'Dash speed increases by 80% of move speed. '
   Image: {fileID: 0}
   rarity: 2
   level: 1
@@ -33,12 +33,14 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:
     - rid: 6716071130084147200
       type: {class: AlwaysTrueCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data: {}
+      data: 
     - rid: 6716071130084147202
       type: {class: ProportionalStatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:

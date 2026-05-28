@@ -1,0 +1,164 @@
+[
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/DullRings.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: DullRings\n  m_EditorClassIdentifier: \n  relicName: Dull Rings\n  koreanName: 빛바랜 반지\n  description_KR: 근접 및 원거리 공격 속도를 소폭 증가시킵니다.\n  description_EN: Slightly increases melee and ranged attack speed.\n  Image: {fileID: 0}\n  rarity: 2\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 0, y: 1}\n    type: 1\n  - offset: {x: 0, y: -1}\n    type: 1\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 5\n    value: 0.08\n    valuePerLevel: 0.02\n    isPercentage: 1\n  - stat: 6\n    value: 0.08\n    valuePerLevel: 0.02\n    isPercentage: 1",
+    "MetaGuid": "a421e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Skill/FrostNova_Skill.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}\n  m_Name: FrostNova_Skill\n  m_EditorClassIdentifier: \n  skillID: skill_frost_nova\n  skillType: 5\n  skillName: Frost Nova\n  description: \"주변의 넓은 영역에 냉기 피해를 입히고 잠시 동안 빙결 상태로 만듭니다.\"\n  skillLevel: 1\n  exp: 0\n  coolDown: 8\n  manaCost: 25\n  damage: 35\n  range: 4\n  icon: {fileID: 0}\n  skillPrefab: {fileID: 0}\n  unlockMilestoneID: ",
+    "MetaGuid": "f290c741e6c38da4c8efef123f11daef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/SkillExpert1_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: SkillExpert1_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_skill_expert_1\n  title: \"스킬 전문가 I\"\n  description: \"던전에서 누적 50회의 스킬을 사용하십시오.\"\n  icon: {fileID: 0}\n  progressionType: 3\n  requiredMilestones: []\n  targetValue: 50\n  rewards:\n  - rewardType: 1\n    amount: 300\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 0}",
+    "MetaGuid": "a39b1f728cde489aab6286fa918cfdef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/IronMace.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}\n  m_Name: IronMace\n  m_EditorClassIdentifier: \n  uniqueID: weapon_iron_mace\n  itemName_KR: \"철퇴\"\n  itemName_EN: Iron Mace\n  icon: {fileID: 0}\n  description_KR: \"육중한 철퇴로 적을 타격하여 높은 피해를 입히고 뒤로 밀쳐냅니다.\"\n  description_EN: \"A heavy iron mace that deals high damage and knocks back enemies.\"\n  isStackable: 0\n  maxStack: 1\n  baseValue: 160\n  equipmentType: 0\n  rarity: 2\n  traits: []\n  statModifiers: []\n  damage: 38\n  range: 2.2\n  cooldown: 1.5\n  weaponType: 1\n  weaponSprite: {fileID: 0}\n  firePointOffset: {x: 0, y: 0, z: 0}\n  projectilePrefab: {fileID: 0}\n  projectileSpeed: 10\n  extraProjectileMode: 0\n  maxChargeTime: 1\n  weaponPrefab: {fileID: 0}\n  isArchivable: 1",
+    "MetaGuid": "d242cb37f689e4726bfcfc928421d01f"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/BronzeRing.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}\n  m_Name: BronzeRing\n  m_EditorClassIdentifier: \n  uniqueID: armor_bronze_ring\n  itemName_KR: \"청동 반지\"\n  itemName_EN: Bronze Ring\n  icon: {fileID: 0}\n  description_KR: \"착용자의 신체 능력을 아주 미세하게 보조해 주는 낡은 청동 반지입니다.\"\n  description_EN: \"An old bronze ring that slightly assists the wearer's physical abilities.\"\n  isStackable: 0\n  maxStack: 1\n  baseValue: 70\n  equipmentType: 1\n  rarity: 0\n  traits: []\n  statModifiers:\n  - stat: 0\n    value: 15\n    valuePerLevel: 0\n    isPercentage: 0\n  - stat: 1\n    value: 2\n    valuePerLevel: 0\n    isPercentage: 0\n  armorType: 3",
+    "MetaGuid": "c902bc33f679e3947bdebc82c163d03f"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/GlassShard.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: GlassShard\n  m_EditorClassIdentifier: \n  relicName: Glass Shard\n  koreanName: 유리 파편\n  description_KR: 공격력이 비약적으로 늘어나지만, 최대 체력이 크게 감소합니다.\n  description_EN: Significantly increases damage, but greatly reduces maximum health.\n  Image: {fileID: 0}\n  rarity: 3\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 1, y: 1}\n    type: 1\n  - offset: {x: -1, y: -1}\n    type: 2\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 3\n    value: 15\n    valuePerLevel: 3\n    isPercentage: 0\n  - stat: 4\n    value: 15\n    valuePerLevel: 3\n    isPercentage: 0\n  - stat: 0\n    value: -30\n    valuePerLevel: -5\n    isPercentage: 0",
+    "MetaGuid": "a521e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Skill/Overdrive_Skill.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}\n  m_Name: Overdrive_Skill\n  m_EditorClassIdentifier: \n  skillID: skill_overdrive\n  skillType: 5\n  skillName: Overdrive\n  description: \"과부하 상태에 진입하여 일정 시간 공격 속도와 대쉬 속도가 극대화됩니다.\"\n  skillLevel: 1\n  exp: 0\n  coolDown: 25\n  manaCost: 40\n  damage: 0\n  range: 0\n  icon: {fileID: 0}\n  skillPrefab: {fileID: 0}\n  unlockMilestoneID: ",
+    "MetaGuid": "f390c741e6c38da4c8efef123f11daef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/GiantSlayer_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}
+  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: GiantSlayer_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_giant_slayer\n  title: \"거인 사냥꾼\"\n  description: \"던전의 보스를 처치하고 3층을 돌파하십시오.\"\n  icon: {fileID: 0}\n  progressionType: 4\n  requiredMilestones: []\n  targetValue: 3\n  rewards:\n  - rewardType: 2\n    amount: 150\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 0}",
+    "MetaGuid": "a40b1f728cde489aab6286fa918cfdef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/AssassinDagger.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}
+  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}\n  m_Name: AssassinDagger\n  m_EditorClassIdentifier: \n  uniqueID: weapon_assassin_dagger\n  itemName_KR: \"암살자 단검\"\n  itemName_EN: Assassin Dagger\n  icon: {fileID: 0}\n  description_KR: \"빠르고 치명적인 기습에 어울리는 날카로운 단검입니다. 치명타 확률이 증가합니다.\"\n  description_EN: \"A sharp dagger suitable for fast and deadly surprise attacks. Increases critical chance.\"\n  isStackable: 0\n  maxStack: 1\n  baseValue: 220\n  equipmentType: 0\n  rarity: 3\n  traits: []\n  statModifiers:\n  - stat: 13\n    value: 0.15\n    valuePerLevel: 0\n    isPercentage: 1\n  damage: 14\n  range: 1.8\n  cooldown: 0.5\n  weaponType: 1\n  weaponSprite: {fileID: 0}\n  firePointOffset: {x: 0, y: 0, z: 0}\n  projectilePrefab: {fileID: 0}\n  projectileSpeed: 10\n  extraProjectileMode: 0\n  maxChargeTime: 1\n  weaponPrefab: {fileID: 0}\n  isArchivable: 1",
+    "MetaGuid": "d342cb37f689e4726bfcfc928421d01f"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/KnightPlateMail.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}\n  m_Name: KnightPlateMail\n  m_EditorClassIdentifier: \n  uniqueID: armor_knight_plate_mail\n  itemName_KR: \"기사의 판금 갑옷\"\n  itemName_EN: Knight's Plate Mail\n  icon: {fileID: 0}\n  description_KR: \"철제 판금으로 제작되어 매우 뛰어난 방어력을 제공하지만, 무게 때문에 속도가 약간 느려집니다.\"\n  description_EN: \"Crafted with steel plates, it provides outstanding defense, but slightly slows you down due to its weight.\"\n  isStackable: 0\n  maxStack: 1\n  baseValue: 250\n  equipmentType: 1\n  rarity: 3\n  traits: []\n  statModifiers:\n  - stat: 0\n    value: 50\n    valuePerLevel: 0\n    isPercentage: 0\n  - stat: 1\n    value: 20\n    valuePerLevel: 0\n    isPercentage: 0\n  - stat: 2\n    value: -0.5\n    valuePerLevel: 0\n    isPercentage: 0\n  armorType: 1",
+    "MetaGuid": "c903bc33f679e3947bdebc82c163d03f"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/PhoenixFeather.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: PhoenixFeather\n  m_EditorClassIdentifier: \n  relicName: Phoenix Feather\n  koreanName: 불사조의 깃털\n  description_KR: 뜨거운 열기를 품은 깃털입니다. 착용자의 생명력을 극대화합니다.\n  description_EN: A feather carrying immense warmth. Significantly boosts the wearer's vitality.\n  Image: {fileID: 0}\n  rarity: 4\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 0, y: 1}\n    type: 1\n  - offset: {x: 1, y: 0}\n    type: 1\n  - offset: {x: 0, y: -1}\n    type: 1\n  - offset: {x: -1, y: 0}\n    type: 1\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 0\n    value: 100\n    valuePerLevel: 25\n    isPercentage: 0",
+    "MetaGuid": "a621e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Skill/MeteorStrike_Skill.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}\n  m_Name: MeteorStrike_Skill\n  m_EditorClassIdentifier: \n  skillID: skill_meteor_strike\n  skillType: 5\n  skillName: Meteor Strike\n  description: \"우주로부터 거대한 운석을 낙하시켜 지정 범위 내의 모든 적에게 폭발적인 파괴를 선사합니다.\"\n  skillLevel: 1\n  exp: 0\n  coolDown: 15\n  manaCost: 60\n  damage: 120\n  range: 10\n  icon: {fileID: 0}\n  skillPrefab: {fileID: 0}\n  unlockMilestoneID: ",
+    "MetaGuid": "f490c741e6c38da4c8efef123f11daef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/Untouchable_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: Untouchable_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_untouchable\n  title: \"무결점 보스 격파\"\n  description: \"누적 5층까지 돌파하며 진정한 생존을 증명하십시오.\"\n  icon: {fileID: 0}\n  progressionType: 4\n  requiredMilestones: []\n  targetValue: 5\n  rewards:\n  - rewardType: 1\n    amount: 1000\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 0}",
+    "MetaGuid": "a41b1f728cde489aab6286fa918cfdef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/Mjolnir.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}\n  m_Name: Mjolnir\n  m_EditorClassIdentifier: \n  uniqueID: weapon_mjolnir\n  itemName_KR: \"묠니르\"\n  itemName_EN: Mjolnir\n  icon: {fileID: 0}\n  description_KR: \"천둥의 힘이 깃든 전설적인 망치입니다. 적을 강타하면 주변의 적들에게 번개가 연쇄적으로 튑니다.\"\n  description_EN: \"A legendary hammer infused with the power of thunder. Striking an enemy chains lightning to nearby foes.\"\n  isStackable: 0\n  maxStack: 1\n  baseValue: 500\n  equipmentType: 0\n  rarity: 4\n  traits: []\n  statModifiers: []\n  damage: 45\n  range: 2.5\n  cooldown: 1.4\n  weaponType: 1\n  weaponSprite: {fileID: 0}\n  firePointOffset: {x: 0, y: 0, z: 0}\n  projectilePrefab: {fileID: 0}\n  projectileSpeed: 10\n  extraProjectileMode: 0\n  maxChargeTime: 1\n  weaponPrefab: {fileID: 0}\n  isArchivable: 1",
+    "MetaGuid": "d442cb37f689e4726bfcfc928421d01f"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/KnightPlateHelmet.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}\n  m_Name: KnightPlateHelmet\n  m_EditorClassIdentifier: \n  uniqueID: armor_knight_plate_helmet\n  itemName_KR: \"기사의 판금 투구\"\n  itemName_EN: Knight's Plate Helmet\n  icon: {fileID: 0}\n  description_KR: \"기사가 주로 장착하는 단단한 철제 투구입니다. 머리를 안전하게 감쌉니다.\"\n  description_EN: \"A heavy steel helmet worn by knights. Safely wraps the head.\"\n  isStackable: 0\n  maxStack: 1\n  baseValue: 180\n  equipmentType: 1\n  rarity: 3\n  traits: []\n  statModifiers:\n  - stat: 0\n    value: 25\n    valuePerLevel: 0\n    isPercentage: 0\n  - stat: 1\n    value: 8\n    valuePerLevel: 0\n    isPercentage: 0\n  armorType: 0",
+    "MetaGuid": "c904bc33f679e3947bdebc82c163d03f"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/LeadenWeight.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: LeadenWeight\n  m_EditorClassIdentifier: \n  relicName: Leaden Weight\n  koreanName: 납덩이 추\n  description_KR: 무거운 납덩이의 무게로 인해 속도가 느려지지만 공격력이 강화됩니다.\n  description_EN: Heavy weight slows you down, but increases your attack power.\n  Image: {fileID: 0}\n  rarity: 0\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 0, y: 1}\n    type: 1\n  - offset: {x: 0, y: -1}\n    type: 2\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 3\n    value: 8\n    valuePerLevel: 2\n    isPercentage: 0\n  - stat: 2\n    value: -0.3\n    valuePerLevel: 0\n    isPercentage: 0",
+    "MetaGuid": "a721e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/SharpTooth.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:
+  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: SharpTooth\n  m_EditorClassIdentifier: \n  relicName: Sharp Tooth\n  koreanName: 날카로운 이빨\n  description_KR: 맹수의 날카로운 이빨입니다. 적을 공격할 때 극소량의 생명력을 흡수합니다.\n  description_EN: The sharp tooth of a beast. Absorbs a very small amount of life when attacking.\n  Image: {fileID: 0}\n  rarity: 2\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 1, y: 0}\n    type: 1\n  - offset: {x: -1, y: 0}\n    type: 1\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 11\n    value: 0.03\n    valuePerLevel: 0.01\n    isPercentage: 1",
+    "MetaGuid": "a821e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/LuckyCoin.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: LuckyCoin\n  m_EditorClassIdentifier: \n  relicName: Lucky Coin\n  koreanName: 행운의 주화\n  description_KR: 주머니에 지니면 사소한 행운이 따릅니다. 약간의 대쉬 쿨다운 감소 효과를 제공합니다.\n  description_EN: Carrying this coin brings small fortunes, slightly reducing dash cooldown.\n  Image: {fileID: 0}\n  rarity: 2\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 1, y: 1}\n    type: 1\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 9\n    value: -0.15\n    valuePerLevel: -0.03\n    isPercentage: 0",
+    "MetaGuid": "a921e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/Speedrunner_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: Speedrunner_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_speedrunner\n  title: \"속도광\"\n  description: \"누적 플레이 타임 300초(5분)를 달성하여 던전 탐험 기초 지식을 습득하십시오.\"\n  icon: {fileID: 0}\n  progressionType: 10\n  requiredMilestones: []\n  targetValue: 300\n  rewards:\n  - rewardType: 2\n    amount: 200\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 0}",
+    "MetaGuid": "a42b1f728cde489aab6286fa918cfdef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/SwiftBoots.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}\n  m_Name: SwiftBoots\n  m_EditorClassIdentifier: \n  uniqueID: armor_swift_boots\n  itemName_KR: \"신속의 장화\"\n  itemName_EN: Swift Boots\n  icon: {fileID: 0}\n  description_KR: \"가볍고 바람의 마법이 약하게 깃든 장화입니다. 이동 속도와 대쉬 속도가 대폭 향상됩니다.\"\n  description_EN: \"Light boots with a trace of wind magic. Greatly improves movement speed and dash speed.\"\n  isStackable: 0\n  maxStack: 1\n  baseValue: 200\n  equipmentType: 1\n  rarity: 3\n  traits: []\n  statModifiers:\n  - stat: 2\n    value: 0.8\n    valuePerLevel: 0\n    isPercentage: 0\n  - stat: 7\n    value: 1.5\n    valuePerLevel: 0\n    isPercentage: 0\n  - stat: 9\n    value: -0.2\n    valuePerLevel: 0\n    isPercentage: 0\n  armorType: 2",
+    "MetaGuid": "c905bc33f679e3947bdebc82c163d03f"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/ShatteredHourglass.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: ShatteredHourglass\n  m_EditorClassIdentifier: \n  relicName: Shattered Hourglass\n  koreanName: 깨진 모래시계\n  description_KR: 시간이 뒤틀린 모래시계 파편입니다. 대쉬 쿨다운과 공격 차지 타임이 줄어듭니다.\n  description_EN: A fragment of an hourglass with warped time, reducing dash cooldown and attack charge time.\n  Image: {fileID: 0}\n  rarity: 3\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 1, y: 0}\n    type: 1\n  - offset: {x: -1, y: 0}\n    type: 1\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 9\n    value: -0.3\n    valuePerLevel: -0.05\n    isPercentage: 0\n  - stat: 16\n    value: 0.15\n    valuePerLevel: 0.03\n    isPercentage: 1",
+    "MetaGuid": "a101e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/VampiricFang.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: VampiricFang\n  m_EditorClassIdentifier: \n  relicName: Vampiric Fang\n  koreanName: 흡혈귀의 송곳니\n  description_KR: 어둠의 피가 맺힌 송곳니입니다. 생명력 흡수율과 최대 체력이 늘어납니다.\n  description_EN: A fang tainted with dark blood, boosting lifesteal rate and maximum health.\n  Image: {fileID: 0}\n  rarity: 3\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 0, y: 1}\n    type: 1\n  - offset: {x: 0, y: -1}\n    type: 1\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 11\n    value: 0.05\n    valuePerLevel: 0.015\n    isPercentage: 1\n  - stat: 0\n    value: 15\n    valuePerLevel: 3\n    isPercentage: 0",
+    "MetaGuid": "a111e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/RichMan_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: RichMan_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_rich_man\n  title: \"재벌 데뷔\"\n  description: \"던전 탐험 중 누적 5,000 골드를 획득하십시오.\"\n  icon: {fileID: 0}\n  progressionType: 2\n  requiredMilestones: []\n  targetValue: 5000\n  rewards:\n  - rewardType: 2\n    amount: 150\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 0}",
+    "MetaGuid": "a43b1f728cde489aab6286fa918cfdef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/RelicCollector_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: RelicCollector_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_relic_collector\n  title: \"던전의 정복자\"\n  description: \"던전의 중간 관문(3층)을 누적 3회 정복하십시오.\"\n  icon: {fileID: 0}\n  progressionType: 4\n  requiredMilestones: []\n  targetValue: 3\n  rewards:\n  - rewardType: 4\n    amount: 1\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 11400000, guid: b242e2760ade8e4cae771239b9c1d0ef, type: 3}",
+    "MetaGuid": "a44b1f728cde489aab6286fa918cfdef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/SilverAmulet.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}\n  m_Name: SilverAmulet\n  m_EditorClassIdentifier: \n  uniqueID: armor_silver_amulet\n  itemName_KR: \"은빛 아뮬렛\"\n  itemName_EN: Silver Amulet\n  icon: {fileID: 0}\n  description_KR: \"빛나는 은빛 목걸이입니다. 착용자의 치명타 확률과 치명타 피해량이 증가합니다.\"\n  description_EN: \"A glowing silver necklace. Increases the wearer''s critical chance and critical damage.\"\n  isStackable: 0\n  maxStack: 1\n  baseValue: 180\n  equipmentType: 1\n  rarity: 2\n  traits: []\n  statModifiers:\n  - stat: 13\n    value: 0.08\n    valuePerLevel: 0\n    isPercentage: 1\n  - stat: 14\n    value: 0.2\n    valuePerLevel: 0\n    isPercentage: 1\n  armorType: 3",
+    "MetaGuid": "c906bc33f679e3947bdebc82c163d03f"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/AuraAmber.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: AuraAmber\n  m_EditorClassIdentifier: \n  relicName: Aura Amber\n  koreanName: 오라 호박석\n  description_KR: 마력 오라가 깃든 호박 보석입니다. 기본 생명력과 방어력을 골고루 돋웁니다.\n  description_EN: An amber gemstone carrying aura energy, steadily boosting basic health and defense.\n  Image: {fileID: 0}\n  rarity: 3\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 1, y: 0}\n    type: 1\n  - offset: {x: -1, y: 0}\n    type: 1\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 0\n    value: 30\n    valuePerLevel: 6\n    isPercentage: 0\n  - stat: 1\n    value: 5\n    valuePerLevel: 1\n    isPercentage: 0",
+    "MetaGuid": "a121e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/VanguardShield.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}\n  m_Name: VanguardShield\n  m_EditorClassIdentifier: \n  relicName: Vanguard Shield\n  koreanName: 선봉장의 방패\n  description_KR: 전선에서 쓰이는 거대한 방패 형상의 각인입니다. 방어력과 생명력을 대폭 부여합니다.\n  description_EN: A heavy battlefield shield engraving, granting immense defense and health.\n  Image: {fileID: 0}\n  rarity: 4\n  level: 1\n  isDisabled: 0\n  effectModules: []\n  shape:\n  - {x: 0, y: 0}\n  influenceZones:\n  - offset: {x: 0, y: 1}\n    type: 1\n  - offset: {x: 1, y: 0}\n    type: 1\n  - offset: {x: 0, y: -1}\n    type: 1\n  - offset: {x: -1, y: 0}\n    type: 1\n  synergySeriesId: \n  unlockMilestoneID: \n  simpleStatModifiers:\n  - stat: 1\n    value: 15\n    valuePerLevel: 3\n    isPercentage: 0\n  - stat: 0\n    value: 60\n    valuePerLevel: 10\n    isPercentage: 0",
+    "MetaGuid": "a131e2760ade8e4cae771239b9c1d0ef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/SkillMaster_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: SkillMaster_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_skill_master\n  title: \"마법 학회 졸업\"\n  description: \"던전 탐험 도중 스킬을 누적 200회 시전하십시오.\"\n  icon: {fileID: 0}\n  progressionType: 3\n  requiredMilestones: []\n  targetValue: 200\n  rewards:\n  - rewardType: 2\n    amount: 300\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 0}",
+    "MetaGuid": "a45b1f728cde489aab6286fa918cfdef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/Survivor_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: Survivor_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_survivor\n  title: \"산전수전\"\n  description: \"적들의 공격을 버텨내어 누적 1,000 데미지 피해를 받으십시오.\"\n  icon: {fileID: 0}\n  progressionType: 13\n  requiredMilestones: []\n  targetValue: 1000\n  rewards:\n  - rewardType: 2\n    amount: 200\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 0}",
+    "MetaGuid": "a46b1f728cde489aab6286fa918cfdef"
+  },
+  {
+    "Path": "Assets/Nytherion/Data/ScriptableObjects/Progression/NytherionConqueror_Milestone.asset",
+    "Content": "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}\n  m_Name: NytherionConqueror_Milestone\n  m_EditorClassIdentifier: \n  milestoneID: milestone_nytherion_conqueror\n  title: \"심연의 정복자\"\n  description: \"마지막 5층의 강력한 수호자를 처치하고 니더리온 심층을 정복하십시오.\"\n  icon: {fileID: 0}\n  progressionType: 4\n  requiredMilestones: []\n  targetValue: 5\n  rewards:\n  - rewardType: 2\n    amount: 500\n    skillData: {fileID: 0}\n    itemData: {fileID: 0}\n    relicData: {fileID: 0}",
+    "MetaGuid": "a47b1f728cde489aab6286fa918cfdef"
+  }
+]

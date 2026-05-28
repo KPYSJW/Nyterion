@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: ChaliceOfSolitude
   m_EditorClassIdentifier: 
   relicName: Dented Cup
-  koreanName: 찌러진 컵
-  description: "인접한 유물이 없으면 올스탯 +5%. (혼자가 편합니다)"
-  description_KR: "인접한 유물이 없으면 올스탯 +5%. (혼자가 편합니다)"
-  description_EN: "If no adjacent relics, all stats +5%. (Prefers solitude)"
+  koreanName: "\uCC0C\uB7EC\uC9C4 \uCEF5"
+  description_KR: "\uC778\uC811\uD55C \uC720\uBB3C\uC774 \uC5C6\uC73C\uBA74 \uC62C\uC2A4\uD0EF
+    +5%. "
+  description_EN: 'If no adjacent relics, all stats +5%. '
   Image: {fileID: 0}
   rarity: 0
   level: 1
@@ -45,6 +45,8 @@ MonoBehaviour:
     type: 3
   - offset: {x: 1, y: 1}
     type: 3
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: ReinforcedWoodenBow
+  m_EditorClassIdentifier: 
+  uniqueID: weapon_reinforced_wooden_bow
+  itemName_KR: "강화 목궁"
+  itemName_EN: Reinforced Wooden Bow
+  icon: {fileID: 0}
+  description_KR: "유연한 목재를 여러 겹 덧대어 사거리와 탄속을 개선한 사냥용 활입니다."
+  description_EN: "A hunting bow reinforced with multiple layers of flexible wood, improving range and projectile speed."
+  isStackable: 0
+  maxStack: 1
+  baseValue: 120
+  equipmentType: 0
+  rarity: 0
+  traits: []
+  statModifiers: []
+  damage: 12
+  range: 7
+  cooldown: 0.8
+  weaponType: 0
+  weaponSprite: {fileID: 0}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 15
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  weaponPrefab: {fileID: 0}
+  isArchivable: 1

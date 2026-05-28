@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}
+  m_Name: KnightPlateMail
+  m_EditorClassIdentifier: 
+  uniqueID: armor_knight_plate_mail
+  itemName_KR: "\uAE30\uC0AC\uC758 \uD310\uAE08 \uAC11\uC637"
+  itemName_EN: Knight's Plate Mail
+  icon: {fileID: 0}
+  description_KR: "\uCCA0\uC81C \uD310\uAE08\uC73C\uB85C \uC81C\uC791\uB418\uC5B4
+    \uB9E4\uC6B0 \uB6F0\uC5B4\uB09C \uBC29\uC5B4\uB825\uC744 \uC81C\uACF5\uD558\uC9C0\uB9CC,
+    \uBB34\uAC8C \uB54C\uBB38\uC5D0 \uC18D\uB3C4\uAC00 \uC57D\uAC04 \uB290\uB824\uC9D1\uB2C8\uB2E4."
+  description_EN: Crafted with steel plates, it provides outstanding defense, but
+    slightly slows you down due to its weight.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 250
+  equipmentType: 1
+  rarity: 3
+  traits: 
+  statModifiers:
+  - stat: 0
+    value: 50
+    valuePerLevel: 0
+    isPercentage: 0
+  - stat: 1
+    value: 20
+    valuePerLevel: 0
+    isPercentage: 0
+  - stat: 2
+    value: -0.5
+    valuePerLevel: 0
+    isPercentage: 0
+  armorType: 1

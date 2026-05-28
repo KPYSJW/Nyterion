@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: RedEmbers
   m_EditorClassIdentifier: 
   relicName: Red Embers
-  koreanName: 붉은 불씨
-  description: "화염 장비 장착 시 근/원거리 공격력 +6. (바람이 불면 활활 타오릅니다)"
-  description_KR: "화염 장비 장착 시 근/원거리 공격력 +6. (바람이 불면 활활 타오릅니다)"
-  description_EN: "When Fire equipment is active, melee/ranged Atk +6. (Flared up by wind)"
+  koreanName: "\uBD89\uC740 \uBD88\uC528"
+  description_KR: "\uD654\uC5FC \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uADFC/\uC6D0\uAC70\uB9AC
+    \uACF5\uACA9\uB825 +6. "
+  description_EN: 'When Fire equipment is active, melee/ranged Atk +6. '
   Image: {fileID: 0}
   rarity: 2
   level: 1
@@ -33,6 +33,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: LightweightWeight
   m_EditorClassIdentifier: 
   relicName: Feather Weight
-  koreanName: 깃털 추
-  description: "충전 속도 +10% 단축. (바람 불면 날아갈 무게)"
-  description_KR: "충전 속도 +10% 단축. (바람 불면 날아갈 무게)"
-  description_EN: "Skill charge speed +10%. (Feather-like weight)"
+  koreanName: "\uAE43\uD138 \uCD94"
+  description_KR: "\uCDA9\uC804 \uC18D\uB3C4 +10% \uB2E8\uCD95. "
+  description_EN: 'Skill charge speed +10%. '
   Image: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   rarity: 2
   level: 3
@@ -33,6 +32,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 1}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

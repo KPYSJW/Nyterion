@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: CrackedOrbs
   m_EditorClassIdentifier: 
   relicName: Cracked Orbs
-  koreanName: 깨진 구슬
-  description: "마성 장비 장착 시 근/원공 +6. (검은 빛이 맴도는 유리구슬)"
-  description_KR: "마성 장비 장착 시 근/원공 +6. (검은 빛이 맴도는 유리구슬)"
-  description_EN: "When Demonic equipment is active, melee/ranged Atk +6. (Glass orb with swirling darkness)"
+  koreanName: "\uAE68\uC9C4 \uAD6C\uC2AC"
+  description_KR: "\uB9C8\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uADFC/\uC6D0\uACF5
+    +6. "
+  description_EN: 'When Demonic equipment is active, melee/ranged Atk +6. '
   Image: {fileID: 0}
   rarity: 2
   level: 1
@@ -33,6 +33,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

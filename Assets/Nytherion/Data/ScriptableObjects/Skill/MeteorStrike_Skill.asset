@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}
+  m_Name: MeteorStrike_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_meteor_strike
+  skillType: 5
+  skillName: Meteor Strike
+  description: "\uC6B0\uC8FC\uB85C\uBD80\uD130 \uAC70\uB300\uD55C \uC6B4\uC11D\uC744
+    \uB099\uD558\uC2DC\uCF1C \uC9C0\uC815 \uBC94\uC704 \uB0B4\uC758 \uBAA8\uB4E0
+    \uC801\uC5D0\uAC8C \uD3ED\uBC1C\uC801\uC778 \uD30C\uAD34\uB97C \uC120\uC0AC\uD569\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 15
+  manaCost: 60
+  damage: 120
+  range: 10
+  icon: {fileID: 0}
+  skillPrefab: {fileID: 0}
+  unlockMilestoneID: milestone_untouchable

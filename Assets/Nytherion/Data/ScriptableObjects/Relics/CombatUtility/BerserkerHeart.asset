@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: BerserkerHeart
   m_EditorClassIdentifier: 
   relicName: Berserker's Heart
-  koreanName: 광전사의 심장
-  description: "체력 30% 이하 시 공속 +30%, 피흡 +5%. (피 한 방울까지 짜냅니다)"
-  description_KR: "체력 30% 이하 시 공속 +30%, 피흡 +5%. (피 한 방울까지 짜냅니다)"
-  description_EN: "At 30% HP or below, AtkSpeed +30%, Lifesteal +5%. (Squeezes out the last drop)"
+  koreanName: "\uAD11\uC804\uC0AC\uC758 \uC2EC\uC7A5"
+  description_KR: "\uCCB4\uB825 30% \uC774\uD558 \uC2DC \uACF5\uC18D +30%, \uD53C\uD761
+    +5%. "
+  description_EN: 'At 30% HP or below, AtkSpeed +30%, Lifesteal +5%. '
   Image: {fileID: 0}
   rarity: 3
   level: 1
@@ -35,6 +35,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

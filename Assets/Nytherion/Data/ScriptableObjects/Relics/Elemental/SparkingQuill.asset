@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: SparkingQuill
   m_EditorClassIdentifier: 
   relicName: Sparking Quill
-  koreanName: 짜릿한 깃
-  description: "전격 장비 장착 시 공격 속도 +15%, 이동 속도 +8%. (끝부분이 파르르 떨립니다)"
-  description_KR: "전격 장비 장착 시 공격 속도 +15%, 이동 속도 +8%. (끝부분이 파르르 떨립니다)"
-  description_EN: "When Lightning equipment is active, attack speed +15%, move speed +8%. (Tips quiver with sparks)"
+  koreanName: "\uC9DC\uB9BF\uD55C \uAE43"
+  description_KR: "\uC804\uACA9 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uACA9 \uC18D\uB3C4
+    +15%, \uC774\uB3D9 \uC18D\uB3C4 +8%. "
+  description_EN: 'When Lightning equipment is active, attack speed +15%, move speed
+    +8%. '
   Image: {fileID: 0}
   rarity: 3
   level: 1
@@ -35,6 +36,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}
+  m_Name: AuraAmber
+  m_EditorClassIdentifier: 
+  relicName: Aura Amber
+  koreanName: "\uC624\uB77C \uD638\uBC15\uC11D"
+  description_KR: "\uB9C8\uB825 \uC624\uB77C\uAC00 \uAE43\uB4E0 \uD638\uBC15 \uBCF4\uC11D\uC785\uB2C8\uB2E4.
+    \uAE30\uBCF8 \uC0DD\uBA85\uB825\uACFC \uBC29\uC5B4\uB825\uC744 \uACE8\uACE0\uB8E8
+    \uB3CB\uC6C1\uB2C8\uB2E4."
+  description_EN: An amber gemstone carrying aura energy, steadily boosting basic
+    health and defense.
+  Image: {fileID: 0}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 6716071652329783300
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 1, y: 0}
+    type: 1
+  - offset: {x: -1, y: 0}
+    type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
+  simpleStatModifiers:
+  - stat: 0
+    value: 30
+    valuePerLevel: 6
+    isPercentage: 0
+  - stat: 1
+    value: 5
+    valuePerLevel: 1
+    isPercentage: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6716071652329783300
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 0
+          value: 30
+          valuePerLevel: 6
+          isPercentage: 0
+        - stat: 1
+          value: 5
+          valuePerLevel: 1
+          isPercentage: 0

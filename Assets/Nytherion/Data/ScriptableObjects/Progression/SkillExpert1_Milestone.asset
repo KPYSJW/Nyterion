@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}
+  m_Name: SkillExpert1_Milestone
+  m_EditorClassIdentifier: 
+  milestoneID: milestone_skill_expert_1
+  title: "\uC2A4\uD0AC \uC804\uBB38\uAC00 I"
+  description: "\uB358\uC804\uC5D0\uC11C \uB204\uC801 50\uD68C\uC758 \uC2A4\uD0AC\uC744
+    \uC0AC\uC6A9\uD558\uC2ED\uC2DC\uC624."
+  icon: {fileID: 0}
+  progressionType: 3
+  targetValue: 50
+  requiredMilestones: []
+  rewards:
+  - rewardType: 0
+    amount: 1
+    skillData: {fileID: 11400000, guid: f290c741e6c38da4c8efef123f11daef, type: 2}
+    itemData: {fileID: 0}
+    relicData: {fileID: 0}

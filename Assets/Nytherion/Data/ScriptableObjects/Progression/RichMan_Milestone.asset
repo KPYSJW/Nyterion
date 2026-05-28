@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}
+  m_Name: RichMan_Milestone
+  m_EditorClassIdentifier: 
+  milestoneID: milestone_rich_man
+  title: "\uC7AC\uBC8C \uB370\uBDD4"
+  description: "\uB358\uC804 \uD0D0\uD5D8 \uC911 \uB204\uC801 5,000 \uACE8\uB4DC\uB97C
+    \uD68D\uB4DD\uD558\uC2ED\uC2DC\uC624."
+  icon: {fileID: 0}
+  progressionType: 2
+  targetValue: 5000
+  requiredMilestones: []
+  rewards:
+  - rewardType: 2
+    amount: 150
+    skillData: {fileID: 0}
+    itemData: {fileID: 0}
+    relicData: {fileID: 0}

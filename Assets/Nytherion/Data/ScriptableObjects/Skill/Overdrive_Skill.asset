@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}
+  m_Name: Overdrive_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_overdrive
+  skillType: 5
+  skillName: Overdrive
+  description: "\uACFC\uBD80\uD558 \uC0C1\uD0DC\uC5D0 \uC9C4\uC785\uD558\uC5EC \uC77C\uC815
+    \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640 \uB300\uC26C \uC18D\uB3C4\uAC00
+    \uADF9\uB300\uD654\uB429\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 25
+  manaCost: 40
+  damage: 0
+  range: 0
+  icon: {fileID: 0}
+  skillPrefab: {fileID: 0}
+  unlockMilestoneID: milestone_giant_slayer

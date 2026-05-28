@@ -13,23 +13,29 @@ MonoBehaviour:
   m_Name: GlassCap
   m_EditorClassIdentifier: 
   relicName: GlassCap
-  koreanName: 유리 병뚜껑
-  description_KR: "최대 체력이 50으로 고정되는 대신, 공격력 +50%. *(깨지기 쉽지만 강력합니다)*"
-  description_EN: "Max HP is locked to 50, but Attack Damage increases by 50%. (Fragile but strong)"
+  koreanName: "\uC720\uB9AC \uBCD1\uB69C\uAED1"
+  description_KR: "\uCD5C\uB300 \uCCB4\uB825\uC774 50\uC73C\uB85C \uACE0\uC815\uB418\uB294
+    \uB300\uC2E0, \uACF5\uACA9\uB825 +50%. "
+  description_EN: 'Max HP is locked to 50, but Attack Damage increases by 50%. '
   Image: {fileID: 0}
   rarity: 4
   level: 1
   isDisabled: 0
   effectModules:
-  - condition: {fileID: 0}
+  - condition:
+      rid: -2
     effects:
     - rid: 9000000000000000002
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 9000000000000000002
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:

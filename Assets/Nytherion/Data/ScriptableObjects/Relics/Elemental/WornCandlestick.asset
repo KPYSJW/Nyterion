@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: WornCandlestick
   m_EditorClassIdentifier: 
   relicName: Worn Candlestick
-  koreanName: 낡은 촛대
-  description: "신성 장비 장착 시 올스탯 +6%, 최대 체력 +20. (희미하게 타오르는 촛불)"
-  description_KR: "신성 장비 장착 시 올스탯 +6%, 최대 체력 +20. (희미하게 타오르는 촛불)"
-  description_EN: "When Holy equipment is active, all stats +6%, max HP +20. (A dimly burning candle)"
+  koreanName: "\uB0A1\uC740 \uCD1B\uB300"
+  description_KR: "\uC2E0\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uC62C\uC2A4\uD0EF
+    +6%, \uCD5C\uB300 \uCCB4\uB825 +20. "
+  description_EN: 'When Holy equipment is active, all stats +6%, max HP +20. '
   Image: {fileID: 0}
   rarity: 4
   level: 1
@@ -37,6 +37,8 @@ MonoBehaviour:
     type: 4
   - offset: {x: 1, y: 0}
     type: 4
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

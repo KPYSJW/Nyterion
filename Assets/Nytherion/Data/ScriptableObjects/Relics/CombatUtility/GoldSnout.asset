@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Gold Snout
   koreanName: "\uD669\uAE08 \uB3FC\uC9C0\uCF54"
-  description_KR: "\uBCF4\uC720 \uACE8\uB4DC 100\uB2F9 \uACF5\uACA9\uB825 +2 (\uCD5C\uB300
-    +10). "
-  description_EN: +2 Attack per 100 gold (max +10).
+  description_KR: "\uBCF4\uC720 \uACE8\uB4DC 100\uB2F9 \uACF5\uACA9\uB825 +2 . "
+  description_EN: '+2 Attack per 100 gold '
   Image: {fileID: 0}
   rarity: 3
   level: 1

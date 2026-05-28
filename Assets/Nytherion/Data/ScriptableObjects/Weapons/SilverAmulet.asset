@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}
+  m_Name: SilverAmulet
+  m_EditorClassIdentifier: 
+  uniqueID: armor_silver_amulet
+  itemName_KR: "\uC740\uBE5B \uC544\uBBAC\uB81B"
+  itemName_EN: Silver Amulet
+  icon: {fileID: 0}
+  description_KR: "\uBE5B\uB098\uB294 \uC740\uBE5B \uBAA9\uAC78\uC774\uC785\uB2C8\uB2E4.
+    \uCC29\uC6A9\uC790\uC758 \uCE58\uBA85\uD0C0 \uD655\uB960\uACFC \uCE58\uBA85\uD0C0
+    \uD53C\uD574\uB7C9\uC774 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  description_EN: A glowing silver necklace. Increases the wearer''s critical chance
+    and critical damage.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 180
+  equipmentType: 1
+  rarity: 2
+  traits: 
+  statModifiers:
+  - stat: 13
+    value: 0.08
+    valuePerLevel: 0
+    isPercentage: 1
+  - stat: 14
+    value: 0.2
+    valuePerLevel: 0
+    isPercentage: 1
+  armorType: 3

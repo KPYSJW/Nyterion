@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -16,8 +16,9 @@ MonoBehaviour:
   title: Blackhole
   description: 
   icon: {fileID: 21300000, guid: eec041ec2caeadf49896734136349182, type: 3}
+  progressionType: 15
   requiredMilestones: []
-  targetValue: 10
+  targetValue: 1
   rewards:
   - rewardType: 0
     amount: 0

@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: FrostyCup
+  m_Name: IceBall
   m_EditorClassIdentifier: 
-  relicName: Frosty Cup
-  koreanName: 서리 컵
-  description: "빙결 장비 장착 시 방어력 +4, 대쉬 쿨타임 -8%. (얼어붙은 잔에 담긴 얼음)"
-  description_KR: "빙결 장비 장착 시 방어력 +4, 대쉬 쿨타임 -8%. (얼어붙은 잔에 담긴 얼음)"
-  description_EN: "When Ice equipment is active, defense +4, dash cooldown -8%. (Ice in a frozen cup)"
-  Image: {fileID: 0}
+  relicName: Ice Ball
+  koreanName: "\uC544\uC774\uC2A4 \uBCFC"
+  description_KR: "\uBE59\uACB0 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uBC29\uC5B4\uB825
+    +4, \uB300\uC26C \uCFE8\uD0C0\uC784 -8%. "
+  description_EN: 'When Ice equipment is active, defense +4, dash cooldown -8%. '
+  Image: {fileID: 21300000, guid: 05bb0a55738c6b449a5b46d62c8b67d8, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0
@@ -33,6 +33,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 0, y: -1}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

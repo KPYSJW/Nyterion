@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: FadedScripture
   m_EditorClassIdentifier: 
   relicName: Faded Scripture
-  koreanName: 바랜 성서
-  description: "신성 장비 장착 시 피흡 +2%, 최대 체력 +15. (낡고 바랜 기도문)"
-  description_KR: "신성 장비 장착 시 피흡 +2%, 최대 체력 +15. (낡고 바랜 기도문)"
-  description_EN: "When Holy equipment is active, lifesteal +2%, max HP +15. (Faded prayer book)"
+  koreanName: "\uBC14\uB79C \uC131\uC11C"
+  description_KR: "\uC2E0\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uD53C\uD761 +2%,
+    \uCD5C\uB300 \uCCB4\uB825 +15. "
+  description_EN: 'When Holy equipment is active, lifesteal +2%, max HP +15. '
   Image: {fileID: 0}
   rarity: 2
   level: 1
@@ -33,6 +33,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

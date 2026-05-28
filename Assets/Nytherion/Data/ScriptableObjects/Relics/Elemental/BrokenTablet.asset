@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: BrokenTablet
   m_EditorClassIdentifier: 
   relicName: Broken Tablet
-  koreanName: 깨진 성패
-  description: "신성 장비 장착 시 올스탯 +4%. (두 동강 난 기도의 돌)"
-  description_KR: "신성 장비 장착 시 올스탯 +4%. (두 동강 난 기도의 돌)"
-  description_EN: "When Holy equipment is active, all stats +4%. (A prayer tablet split in two)"
+  koreanName: "\uAE68\uC9C4 \uC131\uD328"
+  description_KR: "\uC2E0\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uC62C\uC2A4\uD0EF
+    +4%. "
+  description_EN: 'When Holy equipment is active, all stats +4%. '
   Image: {fileID: 0}
   rarity: 3
   level: 1
@@ -35,6 +35,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: TangledYarn
   m_EditorClassIdentifier: 
   relicName: TangledYarn
-  koreanName: 꼬인 실타래
-  description_KR: "활성화된 체인 링크가 3개 이상일 때 공격 속도 +15%. *(실타래가 복잡하게 얽힙니다)*"
-  description_EN: "+15% Attack Speed when 3 or more chain links are active. (Tangled threads)"
+  koreanName: "\uAF2C\uC778 \uC2E4\uD0C0\uB798"
+  description_KR: "\uD65C\uC131\uD654\uB41C \uCCB4\uC778 \uB9C1\uD06C\uAC00 3\uAC1C
+    \uC774\uC0C1\uC77C \uB54C \uACF5\uACA9 \uC18D\uB3C4 +15%. "
+  description_EN: '+15% Attack Speed when 3 or more chain links are active. '
   Image: {fileID: 0}
   rarity: 3
   level: 1
@@ -28,6 +29,8 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

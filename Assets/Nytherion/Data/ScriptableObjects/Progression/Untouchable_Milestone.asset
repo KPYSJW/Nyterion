@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}
+  m_Name: Untouchable_Milestone
+  m_EditorClassIdentifier: 
+  milestoneID: milestone_untouchable
+  title: "\uBB34\uACB0\uC810 \uBCF4\uC2A4 \uACA9\uD30C"
+  description: "\uB204\uC801 5\uCE35\uAE4C\uC9C0 \uB3CC\uD30C\uD558\uBA70 \uC9C4\uC815\uD55C
+    \uC0DD\uC874\uC744 \uC99D\uBA85\uD558\uC2ED\uC2DC\uC624."
+  icon: {fileID: 0}
+  progressionType: 4
+  targetValue: 5
+  requiredMilestones: []
+  rewards:
+  - rewardType: 0
+    amount: 1
+    skillData: {fileID: 11400000, guid: f490c741e6c38da4c8efef123f11daef, type: 2}
+    itemData: {fileID: 0}
+    relicData: {fileID: 0}

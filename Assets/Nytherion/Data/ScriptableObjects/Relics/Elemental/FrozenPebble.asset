@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: FrozenPebble
   m_EditorClassIdentifier: 
   relicName: Frozen Pebble
-  koreanName: 꽁꽁 언 돌
-  description: "빙결 장비 장착 시 방어력 +3, 최대 체력 +10. (차갑게 언 돌멩이)"
-  description_KR: "빙결 장비 장착 시 방어력 +3, 최대 체력 +10. (차갑게 언 돌멩이)"
-  description_EN: "When Ice equipment is active, defense +3, max HP +10. (A frozen cold stone)"
+  koreanName: "\uAF41\uAF41 \uC5B8 \uB3CC"
+  description_KR: "\uBE59\uACB0 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uBC29\uC5B4\uB825
+    +3, \uCD5C\uB300 \uCCB4\uB825 +10. "
+  description_EN: When Ice equipment is active, defense +3, max HP +10.
   Image: {fileID: 0}
   rarity: 0
   level: 1
@@ -31,6 +31,8 @@ MonoBehaviour:
   influenceZones:
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

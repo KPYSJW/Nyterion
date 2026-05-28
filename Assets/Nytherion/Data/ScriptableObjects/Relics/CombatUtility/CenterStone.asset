@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uBCF4\uB4DC\uC758 \uC815\uC911\uC559 \uC2AC\uB86F\uC5D0 \uBC30\uCE58
     \uC2DC \uC62C\uC2A4\uD0EF +6%. "
   description_EN: +6% to all stats when placed in the exact center slot of the board.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: dcb45529dc5a0ef49bc98f07c95d385e, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

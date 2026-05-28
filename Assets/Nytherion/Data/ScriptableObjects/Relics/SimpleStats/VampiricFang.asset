@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}
+  m_Name: VampiricFang
+  m_EditorClassIdentifier: 
+  relicName: Vampiric Fang
+  koreanName: "\uD761\uD608\uADC0\uC758 \uC1A1\uACF3\uB2C8"
+  description_KR: "\uC5B4\uB460\uC758 \uD53C\uAC00 \uB9FA\uD78C \uC1A1\uACF3\uB2C8\uC785\uB2C8\uB2E4.
+    \uC0DD\uBA85\uB825 \uD761\uC218\uC728\uACFC \uCD5C\uB300 \uCCB4\uB825\uC774 \uB298\uC5B4\uB0A9\uB2C8\uB2E4."
+  description_EN: A fang tainted with dark blood, boosting lifesteal rate and maximum
+    health.
+  Image: {fileID: 0}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 6716071652329783304
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
+  simpleStatModifiers:
+  - stat: 11
+    value: 0.05
+    valuePerLevel: 0.015
+    isPercentage: 1
+  - stat: 0
+    value: 15
+    valuePerLevel: 3
+    isPercentage: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6716071652329783304
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 11
+          value: 0.05
+          valuePerLevel: 0.015
+          isPercentage: 1
+        - stat: 0
+          value: 15
+          valuePerLevel: 3
+          isPercentage: 0

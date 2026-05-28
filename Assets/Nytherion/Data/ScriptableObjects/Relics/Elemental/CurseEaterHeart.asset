@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: CurseEaterHeart
   m_EditorClassIdentifier: 
   relicName: Charred Heart
-  koreanName: 탄화된 심장
-  description: "저주 장비의 마이너스 스탯을 플러스로 반전. (더는 잃을 게 없음)"
-  description_KR: "저주 장비의 마이너스 스탯을 플러스로 반전. (더는 잃을 게 없음)"
-  description_EN: "Inverts negative stats of Cursed equipment. (Nothing left to lose)"
+  koreanName: "\uD0C4\uD654\uB41C \uC2EC\uC7A5"
+  description_KR: "\uC800\uC8FC \uC7A5\uBE44\uC758 \uB9C8\uC774\uB108\uC2A4 \uC2A4\uD0EF\uC744
+    \uD50C\uB7EC\uC2A4\uB85C \uBC18\uC804. "
+  description_EN: 'Inverts negative stats of Cursed equipment. '
   Image: {fileID: 0}
   rarity: 0
   level: 1
+  isDisabled: 0
   effectModules:
   - condition:
       rid: -2
@@ -30,6 +31,8 @@ MonoBehaviour:
   influenceZones:
   - offset: {x: 1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

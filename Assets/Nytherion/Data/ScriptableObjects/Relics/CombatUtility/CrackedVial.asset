@@ -13,17 +13,14 @@ MonoBehaviour:
   m_Name: CrackedVial
   m_EditorClassIdentifier: 
   relicName: Cracked Vial
-  koreanName: 금이 간 약병
-  description: "\uCCB4\uB825 50% \uC774\uD558 \uC2DC \uACF5\uACA9\uB825 +5, \uACF5\uC18D
-    +20%. (\uB108\uBB34 \uD754\uB4E4\uC9C0 \uB9C8\uC138\uC694)"
+  koreanName: "\uAE08\uC774 \uAC04 \uC57D\uBCD1"
   description_KR: "\uCCB4\uB825 50% \uC774\uD558 \uC2DC \uACF5\uACA9\uB825 +5, \uACF5\uC18D
-    +20%. (\uB108\uBB34 \uD754\uB4E4\uC9C0 \uB9C8\uC138\uC694)"
-  description_EN: "At 50% HP or below, Atk +5, AtkSpeed +20%. (Do not shake)"
-  Image: {fileID: 21300000, guid: c9348be1980750240b6dd6e46a8604f9, type: 3}
+    +20%. "
+  description_EN: 'At 50% HP or below, Atk +5, AtkSpeed +20%. '
+  Image: {fileID: 21300000, guid: bf2fb19f66f4c3948919a58e95b0f69b, type: 3}
   rarity: 2
-  isCursed: 0
   level: 1
-  statModifiers: []
+  isDisabled: 0
   effectModules:
   - condition:
       rid: 6716071107867705350
@@ -38,6 +35,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: -1, y: 0}
     type: 2
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

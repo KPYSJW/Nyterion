@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: AssassinDagger
+  m_EditorClassIdentifier: 
+  uniqueID: weapon_assassin_dagger
+  itemName_KR: "\uC554\uC0B4\uC790 \uB2E8\uAC80"
+  itemName_EN: Assassin Dagger
+  icon: {fileID: 0}
+  description_KR: "\uBE60\uB974\uACE0 \uCE58\uBA85\uC801\uC778 \uAE30\uC2B5\uC5D0
+    \uC5B4\uC6B8\uB9AC\uB294 \uB0A0\uCE74\uB85C\uC6B4 \uB2E8\uAC80\uC785\uB2C8\uB2E4.
+    \uCE58\uBA85\uD0C0 \uD655\uB960\uC774 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  description_EN: A sharp dagger suitable for fast and deadly surprise attacks. Increases
+    critical chance.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 220
+  equipmentType: 0
+  rarity: 3
+  traits: 
+  statModifiers:
+  - stat: 13
+    value: 0.15
+    valuePerLevel: 0
+    isPercentage: 1
+  damage: 14
+  range: 1.8
+  cooldown: 0.5
+  weaponType: 1
+  weaponSprite: {fileID: 0}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 10
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  weaponPrefab: {fileID: 0}
+  isArchivable: 1

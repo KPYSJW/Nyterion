@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Ancient Purge
   koreanName: "\uACE0\uB300\uC758 \uC815\uD654"
-  description_KR: "\uB9C8\uC131(Demonic) \uC7A5\uBE44\uC758 \uB9C8\uC774\uB108\uC2A4
-    \uC2A4\uD0EF\uC744 \uD50C\uB7EC\uC2A4\uB85C \uBC18\uC804. "
+  description_KR: "\uB9C8\uC131 \uC7A5\uBE44\uC758 \uB9C8\uC774\uB108\uC2A4 \uC2A4\uD0EF\uC744
+    \uD50C\uB7EC\uC2A4\uB85C \uBC18\uC804. "
   description_EN: Inverts negative stats of Demonic equipment.
   Image: {fileID: 0}
   rarity: 4

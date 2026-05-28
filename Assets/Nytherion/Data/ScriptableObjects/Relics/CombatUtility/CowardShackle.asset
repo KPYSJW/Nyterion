@@ -13,15 +13,13 @@ MonoBehaviour:
   m_Name: CowardShackle
   m_EditorClassIdentifier: 
   relicName: Heavy Shackle
-  koreanName: 무거운 족쇄
-  description: "근공 +5, 원공 -5. (도망치기엔 좀 무겁습니다)"
-  description_KR: "근공 +5, 원공 -5. (도망치기엔 좀 무겁습니다)"
-  description_EN: "Melee Atk +5, Ranged Atk -5. (Too heavy to escape)"
+  koreanName: "\uBB34\uAC70\uC6B4 \uC871\uC1C4"
+  description_KR: "\uADFC\uACF5 +5, \uC6D0\uACF5 -5. "
+  description_EN: 'Melee Atk +5, Ranged Atk -5. '
   Image: {fileID: 0}
   rarity: 1
-  isCursed: 0
   level: 1
-  statModifiers: []
+  isDisabled: 0
   effectModules:
   - condition:
       rid: 6716071107867705356
@@ -34,6 +32,8 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:
