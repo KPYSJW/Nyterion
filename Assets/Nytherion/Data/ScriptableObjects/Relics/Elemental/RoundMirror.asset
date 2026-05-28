@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: CurseEaterHeart
+  m_Name: RoundMirror
   m_EditorClassIdentifier: 
-  relicName: Charred Heart
-  koreanName: "\uD0C4\uD654\uB41C \uC2EC\uC7A5"
+  relicName: Round Mirror
+  koreanName: "\uB465\uADFC \uAC70\uC6B8"
   description_KR: "\uC800\uC8FC \uC7A5\uBE44\uC758 \uB9C8\uC774\uB108\uC2A4 \uC2A4\uD0EF\uC744
     \uD50C\uB7EC\uC2A4\uB85C \uBC18\uC804. "
   description_EN: 'Inverts negative stats of Cursed equipment. '
-  Image: {fileID: 0}
-  rarity: 0
+  Image: {fileID: 21300000, guid: f57d77def181d3644b87846a791d6501, type: 3}
+  rarity: 3
   level: 1
   isDisabled: 0
   effectModules:

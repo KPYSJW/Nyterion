@@ -10,47 +10,51 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: FadedScripture
+  m_Name: Candle
   m_EditorClassIdentifier: 
-  relicName: Faded Scripture
-  koreanName: "\uBC14\uB79C \uC131\uC11C"
-  description_KR: "\uC2E0\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uD53C\uD761 +2%,
-    \uCD5C\uB300 \uCCB4\uB825 +15. "
-  description_EN: 'When Holy equipment is active, lifesteal +2%, max HP +15. '
+  relicName: Candle
+  koreanName: "\uC591\uCD08"
+  description_KR: "\uC2E0\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uC62C\uC2A4\uD0EF
+    +6%, \uCD5C\uB300 \uCCB4\uB825 +20. "
+  description_EN: 'When Holy equipment is active, all stats +6%, max HP +20. '
   Image: {fileID: 0}
-  rarity: 2
+  rarity: 4
   level: 1
   isDisabled: 0
   effectModules:
   - condition:
-      rid: 6716071130084147232
+      rid: 6716071130084147216
     effects:
-    - rid: 6716071130084147233
+    - rid: 6716071130084147217
   shape:
   - {x: 0, y: 0}
   influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+  - offset: {x: 0, y: -1}
+    type: 1
   - offset: {x: -1, y: 0}
-    type: 1
+    type: 4
   - offset: {x: 1, y: 0}
-    type: 1
+    type: 4
   synergySeriesId: 
   unlockMilestoneID: 
   references:
     version: 2
     RefIds:
-    - rid: 6716071130084147232
+    - rid: 6716071130084147216
       type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         requiredTrait: 6
-    - rid: 6716071130084147233
+    - rid: 6716071130084147217
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 11
-          value: 0.02
-          valuePerLevel: 0.005
+        - stat: 17
+          value: 0.06
+          valuePerLevel: 0.02
           isPercentage: 1
         - stat: 0
-          value: 15
-          valuePerLevel: 4
+          value: 20
+          valuePerLevel: 5
           isPercentage: 0
