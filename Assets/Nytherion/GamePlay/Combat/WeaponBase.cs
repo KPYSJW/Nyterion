@@ -15,10 +15,24 @@ namespace Nytherion.GamePlay.Combat
         public float damageMultiplier = 1.0f;
 
         protected PlayerManager playerManager;
+        protected Animator animator;
 
         protected virtual void Awake()
         {
             playerManager = GetComponentInParent<PlayerManager>();
+            animator = GetComponent<Animator>();
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
+
+        protected void PlayFireAnimation()
+        {
+            if (animator != null)
+            {
+                animator.SetTrigger("Fire");
+            }
         }
 
         public virtual void Initialize(WeaponData data)
@@ -28,7 +42,13 @@ namespace Nytherion.GamePlay.Combat
 
             if (data.weaponSprite != null)
             {
-                if (TryGetComponent<SpriteRenderer>(out var sr))
+                SpriteRenderer sr = GetComponent<SpriteRenderer>();
+                if (sr == null)
+                {
+                    sr = GetComponentInChildren<SpriteRenderer>();
+                }
+
+                if (sr != null)
                 {
                     sr.sprite = data.weaponSprite;
                 }

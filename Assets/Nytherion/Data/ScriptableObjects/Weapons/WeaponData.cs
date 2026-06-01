@@ -33,6 +33,10 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Tooltip("무기 장착 위치 오프셋 (손잡이 위치 조절용)")]
         public Vector3 visualPositionOffset = Vector3.zero;
 
+        [Header("Animation Settings")]
+        [Tooltip("무기 전용 애니메이터 컨트롤러 (Idle, Fire 애니메이션 연동용)")]
+        public RuntimeAnimatorController animatorController;
+
         [Header("Projectile Settings")]
         public GameObject projectilePrefab;
         public float projectileSpeed = 10f;

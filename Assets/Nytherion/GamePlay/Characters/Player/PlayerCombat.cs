@@ -122,6 +122,30 @@ namespace Nytherion.GamePlay.Characters.Player
                     currentWeapon.transform.localPosition = Vector3.zero;
                 }
 
+                // Animator Controller 런타임 주입 (원거리 무기만 적용)
+                if (type != WeaponType.Melee)
+                {
+                    Animator weaponAnimator = currentWeapon.GetComponent<Animator>();
+                    if (weaponAnimator == null)
+                    {
+                        weaponAnimator = currentWeapon.GetComponentInChildren<Animator>();
+                    }
+
+                    if (weaponAnimator != null)
+                    {
+                        RuntimeAnimatorController controller = null;
+                        if (data != null)
+                        {
+                            controller = data.animatorController;
+                        }
+                        else if (currentWeapon.weaponData != null)
+                        {
+                            controller = currentWeapon.weaponData.animatorController;
+                        }
+                        weaponAnimator.runtimeAnimatorController = controller;
+                    }
+                }
+
                 if (data != null)
                 {
                     currentWeapon.Initialize(data);

@@ -21,6 +21,7 @@ namespace Nytherion.GamePlay.Combat
         {
             if (!CanAttack()) return;
             lastAttackTime = Time.time;
+            PlayFireAnimation();
 
             Transform startTransform = firePoint != null ? firePoint : transform;
             Vector3 startPos = startTransform.position;

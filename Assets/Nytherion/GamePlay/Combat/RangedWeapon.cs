@@ -124,6 +124,8 @@ namespace Nytherion.GamePlay.Combat
 
         protected void FireProjectiles(Vector2 direction, int baseCount, float spreadAngle = 15f)
         {
+            PlayFireAnimation();
+
             int extra = 0;
             if (playerManager != null && playerManager.currentPlayerData != null)
             {

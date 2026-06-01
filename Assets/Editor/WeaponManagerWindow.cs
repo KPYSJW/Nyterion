@@ -43,6 +43,7 @@ namespace Nytherion.Editor
         private float projectileSpeed = 10f;
         private ExtraProjectileMode extraMode = ExtraProjectileMode.Spread;
         private float maxChargeTime = 1.0f;
+        private RuntimeAnimatorController animatorController;
         private bool addToShop = false;
         private bool generatePrefabVariant = true;
         private bool createMilestone = false;
@@ -153,6 +154,7 @@ namespace Nytherion.Editor
             firePointOffset = EditorGUILayout.Vector3Field("Fire Point Offset", firePointOffset);
             projectilePrefab = (GameObject)EditorGUILayout.ObjectField("Projectile Prefab", projectilePrefab, typeof(GameObject), false);
             projectileSpeed = EditorGUILayout.FloatField("Projectile Speed", projectileSpeed);
+            animatorController = (RuntimeAnimatorController)EditorGUILayout.ObjectField("Animator Controller", animatorController, typeof(RuntimeAnimatorController), false);
 
             if (weaponType == WeaponType.Ranged)
             {
@@ -343,6 +345,7 @@ namespace Nytherion.Editor
             selectedWeapon.weaponSprite = (Sprite)EditorGUILayout.ObjectField("Weapon Sprite", selectedWeapon.weaponSprite, typeof(Sprite), false);
             selectedWeapon.weaponPrefab = (WeaponBase)EditorGUILayout.ObjectField("Weapon Prefab", selectedWeapon.weaponPrefab, typeof(WeaponBase), false);
             selectedWeapon.projectilePrefab = (GameObject)EditorGUILayout.ObjectField("Projectile", selectedWeapon.projectilePrefab, typeof(GameObject), false);
+            selectedWeapon.animatorController = (RuntimeAnimatorController)EditorGUILayout.ObjectField("Animator Controller", selectedWeapon.animatorController, typeof(RuntimeAnimatorController), false);
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
 
@@ -388,6 +391,7 @@ namespace Nytherion.Editor
             newData.projectileSpeed = projectileSpeed;
             newData.extraProjectileMode = extraMode;
             newData.maxChargeTime = maxChargeTime;
+            newData.animatorController = animatorController;
             
             newData.traits = new List<EquipmentTrait>(selectedTraits);
 

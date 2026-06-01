@@ -20,6 +20,7 @@ MonoBehaviour:
   description_EN: 
   isStackable: 0
   maxStack: 1
+  unlockMilestoneID: 
   baseValue: 10
   equipmentType: 0
   rarity: 2
@@ -31,6 +32,9 @@ MonoBehaviour:
   weaponType: 0
   weaponSprite: {fileID: 0}
   firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: -45
+  visualPositionOffset: {x: 0, y: 0, z: 0}
+  animatorController: {fileID: 0}
   projectilePrefab: {fileID: 8688154318546131989, guid: fc19d7a074b077f44a50ab601d98af1d, type: 3}
   projectileSpeed: 10
   extraProjectileMode: 0

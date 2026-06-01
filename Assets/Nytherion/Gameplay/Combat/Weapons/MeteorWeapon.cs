@@ -15,6 +15,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             if (!CanAttack() || weaponData == null || weaponData.projectilePrefab == null) return;
 
             lastAttackTime = Time.time;
+            PlayFireAnimation();
 
             // 마우스 클릭 지점(targetPosition) 위쪽에서 생성
             Vector3 spawnPos = targetPosition + (Vector3.up * dropHeight);
