@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uACF5\uACA9\uB825\uC774 \uBE44\uC57D\uC801\uC73C\uB85C \uB298\uC5B4\uB098\uC9C0\uB9CC,
     \uCD5C\uB300 \uCCB4\uB825\uC774 \uD06C\uAC8C \uAC10\uC18C\uD569\uB2C8\uB2E4."
   description_EN: Significantly increases damage, but greatly reduces maximum health.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 1355d7f98d71d4947967fd8242127866, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0

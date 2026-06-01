@@ -28,6 +28,10 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Header("Visual Settings")]
         public Sprite weaponSprite;
         public Vector3 firePointOffset;
+        [Tooltip("무기 이미지의 자체 회전 오프셋 (기본 이미지가 45도 상단을 향하면 -45)")]
+        public float spriteRotationOffset = 0f;
+        [Tooltip("무기 장착 위치 오프셋 (손잡이 위치 조절용)")]
+        public Vector3 visualPositionOffset = Vector3.zero;
 
         [Header("Projectile Settings")]
         public GameObject projectilePrefab;

@@ -19,7 +19,7 @@ MonoBehaviour:
     \uCFE8\uB2E4\uC6B4 \uAC10\uC18C \uD6A8\uACFC\uB97C \uC81C\uACF5\uD569\uB2C8\uB2E4."
   description_EN: Carrying this coin brings small fortunes, slightly reducing dash
     cooldown.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 7899e817078cc864babf440acf33c241, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

@@ -134,14 +134,14 @@ namespace Nytherion.Core.Managers
                     }
                 }
 
-                // 유리 병뚜껑 (GlassCap) 장착 상태로 보스 클리어 업적 연동
+                // 유리 칼 (Glass Sword) 장착 상태로 보스 클리어 업적 연동
                 if (relicManager != null)
                 {
                     bool isGlassCapEquipped = false;
                     foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
                     {
                         RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                        if (block != null && block.RelicId == "GlassCap" && !block.SourceData.isDisabled)
+                        if (block != null && block.RelicId == "Glass Sword" && !block.SourceData.isDisabled)
                         {
                             isGlassCapEquipped = true;
                             break;

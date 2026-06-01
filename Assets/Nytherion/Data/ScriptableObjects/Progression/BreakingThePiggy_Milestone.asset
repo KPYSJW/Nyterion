@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   milestoneID: BreakingThePiggy
   title: "저금통 터는 날"
-  description: "'황금 돼지코' 공격력 버프 최대치(+10) 달성."
+  description: "'황금 동전' 공격력 버프 최대치(+10) 달성."
   icon: {fileID: 0}
   progressionType: 11
   requiredMilestones: []

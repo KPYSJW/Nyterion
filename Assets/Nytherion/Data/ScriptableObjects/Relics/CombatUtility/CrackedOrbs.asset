@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uB9C8\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uADFC/\uC6D0\uACF5
     +6. "
   description_EN: 'When Demonic equipment is active, melee/ranged Atk +6. '
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 53e4299de8861094bb4181568b1111af, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

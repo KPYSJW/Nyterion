@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: CursedClaw
   m_EditorClassIdentifier: 
   relicName: Cursed Claw
-  koreanName: "\uC800\uC8FC \uC190\uD1B1"
+  koreanName: "\uB098\uC05C \uC190"
   description_KR: "\uC800\uC8FC \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uC18D +25%,
     \uACF5\uACA9\uB825 +10. "
   description_EN: 'When Cursed equipment is active, attack speed +25%, Atk +10. '
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: d722518aa797aaa4d86fc8e75bd42e58, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0

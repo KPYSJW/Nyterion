@@ -551,6 +551,7 @@ namespace Nytherion.Editor
             AssetDatabase.SaveAssets();
 
             AddToDatabase(newData);
+            AddToGachaPool(newData);
             RefreshRelicList();
             Selection.activeObject = newData;
             Debug.Log($"[RelicManager] Created relic: {fullPath}");
@@ -601,6 +602,24 @@ namespace Nytherion.Editor
                     EditorUtility.SetDirty(database);
                     AssetDatabase.SaveAssets();
                     Debug.Log($"[RelicManager] Automatically registered new relic to database: {newRelic.koreanName}");
+                }
+            }
+        }
+
+        private void AddToGachaPool(RelicData relic)
+        {
+            string poolPath = $"Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/{relic.rarity}_Relic.asset";
+            Nytherion.Data.ScriptableObjects.Gacha.GachaPoolSO pool = AssetDatabase.LoadAssetAtPath<Nytherion.Data.ScriptableObjects.Gacha.GachaPoolSO>(poolPath);
+            if (pool != null)
+            {
+                if (pool.items == null) pool.items = new List<Nytherion.Data.ScriptableObjects.Gacha.GachaItemRate>();
+                if (!pool.items.Any(i => i.item == relic))
+                {
+                    Undo.RecordObject(pool, "Add Relic to Gacha Pool");
+                    pool.items.Add(new Nytherion.Data.ScriptableObjects.Gacha.GachaItemRate { item = relic, weight = 100 });
+                    EditorUtility.SetDirty(pool);
+                    AssetDatabase.SaveAssets();
+                    Debug.Log($"[RelicManager] Automatically registered new relic to gacha pool: {relic.koreanName}");
                 }
             }
         }
@@ -705,6 +724,9 @@ namespace Nytherion.Editor
                 AssetDatabase.SaveAssets();
                 Debug.Log("[RelicManager] Database automatically updated via AssetPostprocessor.");
             }
+
+            // 가챠 풀 자동 동기화 호출
+            RelicGachaSync.SyncRelicsToGachaPools(false);
         }
 
         private static RelicDatabaseSO GetDatabase()

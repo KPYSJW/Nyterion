@@ -37,6 +37,7 @@ namespace Nytherion.UI.Test
         private ShopUI shopUI;
         private GachaUIController gachaUIController;
         private RelicUIController relicUIController;
+        private RelicManager relicManager;
 
         [Inject]
         public void Construct(
@@ -47,7 +48,8 @@ namespace Nytherion.UI.Test
             ShopManager shopManager,
             ShopUI shopUI,
             GachaUIController gachaUIController,
-            RelicUIController relicUIController)
+            RelicUIController relicUIController,
+            RelicManager relicManager)
         {
             this.inventoryDataManager = inventoryDataManager;
             this.currencyDataManager = currencyDataManager;
@@ -57,6 +59,7 @@ namespace Nytherion.UI.Test
             this.shopUI = shopUI;
             this.gachaUIController = gachaUIController;
             this.relicUIController = relicUIController;
+            this.relicManager = relicManager;
             Debug.Log("[DebugPanelUI] Dependencies Injected Successfully.");
         }
 
@@ -74,13 +77,14 @@ namespace Nytherion.UI.Test
         /// </summary>
         private void TryManualInject()
         {
-            var dataScope = Nytherion.Core.Systems.DataLifetimeScope.Instance;
+            Nytherion.Core.Systems.DataLifetimeScope dataScope = Nytherion.Core.Systems.DataLifetimeScope.Instance;
             if (dataScope != null)
             {
                 if (inventoryDataManager == null) inventoryDataManager = dataScope.GetDataManager<InventoryDataManager>();
                 if (currencyDataManager == null) currencyDataManager = dataScope.GetDataManager<CurrencyDataManager>();
                 if (saveLoadManager == null) saveLoadManager = dataScope.GetDataManager<SaveLoadManager>();
                 if (shopManager == null) shopManager = dataScope.GetDataManager<ShopManager>();
+                if (relicManager == null) relicManager = dataScope.GetDataManager<RelicManager>();
                 
                 // UI 컨트롤러들과 PlayerManager는 보통 GameSceneScope에 있으므로 씬에서 직접 찾음
                 if (playerManager == null) playerManager = FindObjectOfType<PlayerManager>();
@@ -270,6 +274,24 @@ namespace Nytherion.UI.Test
         {
             UpdateStatusText("씬 재시작 중...");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        public void AddAllRelics()
+        {
+            if (relicManager == null)
+            {
+                TryManualInject();
+            }
+
+            if (relicManager != null)
+            {
+                relicManager.AddAllRelicsToStorage();
+                UpdateStatusText("모든 유물 획득 완료");
+            }
+            else
+            {
+                UpdateStatusText("RelicManager를 찾을 수 없습니다.");
+            }
         }
 
         private void UpdateStatusText(string message)

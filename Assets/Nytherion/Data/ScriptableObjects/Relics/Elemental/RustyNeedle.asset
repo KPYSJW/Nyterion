@@ -16,7 +16,7 @@ MonoBehaviour:
   koreanName: "\uB179\uC2A8 \uBC14\uB298"
   description_KR: "\uC804\uACA9 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uC18D +8%. "
   description_EN: 'When Lightning equipment is active, attack speed +8%. '
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: b003c28388c2d7343acadc16381037f6, type: 3}
   rarity: 0
   level: 1
   isDisabled: 0

@@ -355,14 +355,14 @@ namespace Nytherion.Core.Managers
                 }
             }
 
-            // 유리 병뚜껑 (GlassCap) 유물 효과 적용: 최대 체력 50 고정
+            // 유리 칼 (Glass Sword) 유물 효과 적용: 최대 체력 50 고정
             RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
             if (relicManager != null)
             {
                 foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
                 {
                     RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                    if (block != null && block.RelicId == "GlassCap" && !block.SourceData.isDisabled)
+                    if (block != null && block.RelicId == "Glass Sword" && !block.SourceData.isDisabled)
                     {
                         currentPlayerData.maxHealth = 50f;
                         break;

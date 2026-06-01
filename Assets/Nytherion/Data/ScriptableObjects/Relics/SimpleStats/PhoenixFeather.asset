@@ -18,7 +18,7 @@ MonoBehaviour:
     \uCC29\uC6A9\uC790\uC758 \uC0DD\uBA85\uB825\uC744 \uADF9\uB300\uD654\uD569\uB2C8\uB2E4."
   description_EN: A feather carrying immense warmth. Significantly boosts the wearer's
     vitality.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 97023b59e50ca1d4388d40668b67f4a5, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0

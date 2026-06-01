@@ -13,14 +13,18 @@ MonoBehaviour:
   m_Name: LeatherPouch
   m_EditorClassIdentifier: 
   relicName: Leather Pouch
-  koreanName: 가죽 주머니
-  description_KR: 대쉬 속도를 증가시킵니다.
+  koreanName: "\uAC00\uC8FD \uC8FC\uBA38\uB2C8"
+  description_KR: "\uB300\uC26C \uC18D\uB3C4\uB97C \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
   description_EN: Increases dash speed.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 8f43f9d3bfbaee44aa231959466a65a6, type: 3}
   rarity: 1
   level: 1
   isDisabled: 0
-  effectModules: []
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 6716071699098894349
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -35,3 +39,16 @@ MonoBehaviour:
     value: 0.1
     valuePerLevel: 0.02
     isPercentage: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6716071699098894349
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 7
+          value: 0.1
+          valuePerLevel: 0.02
+          isPercentage: 1

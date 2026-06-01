@@ -16,7 +16,7 @@ MonoBehaviour:
   koreanName: "\uCFE0\uD3F0 \uC870\uAC01"
   description_KR: "\uC0C1\uC810 \uC0C1\uD488 \uAC00\uACA9 15% \uD560\uC778. "
   description_EN: '15% discount on shop items. '
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: dc47b380e6ad0df4087d6b086c7ee9b4, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

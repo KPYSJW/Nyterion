@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uD654\uC5FC \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uADFC/\uC6D0\uAC70\uB9AC
     \uACF5\uACA9\uB825 +6. "
   description_EN: 'When Fire equipment is active, melee/ranged Atk +6. '
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 543a2c807c9042e42ad3cc6bd4d7b83f, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

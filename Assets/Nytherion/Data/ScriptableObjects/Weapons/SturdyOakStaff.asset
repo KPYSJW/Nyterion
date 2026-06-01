@@ -31,6 +31,8 @@ MonoBehaviour:
   weaponType: 0
   weaponSprite: {fileID: 0}
   firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: -45
+  visualPositionOffset: {x: 0.4, y: 0, z: 0}
   projectilePrefab: {fileID: 0}
   projectileSpeed: 12
   extraProjectileMode: 0

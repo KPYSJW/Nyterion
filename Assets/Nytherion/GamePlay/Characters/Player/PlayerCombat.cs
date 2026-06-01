@@ -20,6 +20,10 @@ namespace Nytherion.GamePlay.Characters.Player
 
         [SerializeField] private Vector3 centerOffset = new Vector3(0, 0.5f, 0);
 
+        [Header("Aim Settings")]
+        [SerializeField] private bool useAngleLimit = true;
+        [SerializeField] private float aimAngleLimit = 45f; // 중심각 기준 좌우 45도 (합 90도 부채꼴)
+
         public WeaponBase currentWeapon;
 
         public event System.Action<WeaponBase> OnWeaponEquipped;
@@ -28,6 +32,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private InputManager inputManager;
         private PlayerManager playerManager;
+        private PlayerController playerController;
 
         private float currentAngle = 0f;
         private bool isAttackHeld = false;
@@ -41,6 +46,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
+            playerController = GetComponent<PlayerController>();
         }
 
         private void Start()
@@ -97,12 +103,47 @@ namespace Nytherion.GamePlay.Characters.Player
 
             if (currentWeapon != null)
             {
-                currentWeapon.transform.localPosition = Vector3.zero;
-                currentWeapon.transform.localRotation = Quaternion.identity;
+                if (type != WeaponType.Melee)
+                {
+                    Vector3 posOffset = Vector3.zero;
+                    if (data != null)
+                    {
+                        posOffset = data.visualPositionOffset;
+                    }
+                    else if (currentWeapon.weaponData != null)
+                    {
+                        posOffset = currentWeapon.weaponData.visualPositionOffset;
+                    }
+
+                    currentWeapon.transform.localPosition = posOffset;
+                }
+                else
+                {
+                    currentWeapon.transform.localPosition = Vector3.zero;
+                }
 
                 if (data != null)
                 {
                     currentWeapon.Initialize(data);
+                }
+
+                if (type != WeaponType.Melee)
+                {
+                    float rotationOffset = 0f;
+                    if (data != null)
+                    {
+                        rotationOffset = data.spriteRotationOffset;
+                    }
+                    else if (currentWeapon.weaponData != null)
+                    {
+                        rotationOffset = currentWeapon.weaponData.spriteRotationOffset;
+                    }
+
+                    currentWeapon.transform.localRotation = Quaternion.Euler(0f, 0f, rotationOffset);
+                }
+                else
+                {
+                    currentWeapon.transform.localRotation = Quaternion.identity;
                 }
             }
             
@@ -144,6 +185,14 @@ namespace Nytherion.GamePlay.Characters.Player
                 if (mouseVector.magnitude >= deadZoneRadius)
                 {
                     targetAngle = Mathf.Atan2(mouseVector.y, mouseVector.x) * Mathf.Rad2Deg;
+                }
+
+                if (useAngleLimit && playerController != null)
+                {
+                    float centerAngle = playerController.IsFacingRight ? 0f : 180f;
+                    float angleDiff = Mathf.DeltaAngle(centerAngle, targetAngle);
+                    angleDiff = Mathf.Clamp(angleDiff, -aimAngleLimit, aimAngleLimit);
+                    targetAngle = centerAngle + angleDiff;
                 }
 
                 currentAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * orbitSpeed);

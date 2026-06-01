@@ -280,6 +280,19 @@ namespace Nytherion.Core.Managers
             OnRelicStateChanged?.Invoke();
         }
 
+        public void AddAllRelicsToStorage()
+        {
+            if (relicDatabaseSO == null || relicDatabaseSO.allRelics == null) return;
+
+            foreach (RelicData relic in relicDatabaseSO.allRelics)
+            {
+                if (relic != null)
+                {
+                    AddNewRelicToStorage(relic);
+                }
+            }
+        }
+
         private RelicGridState GetRelicsForSave()
         {
             var state = new RelicGridState();

@@ -19,7 +19,7 @@ MonoBehaviour:
     \uC0DD\uBA85\uB825\uC744 \uB300\uD3ED \uBD80\uC5EC\uD569\uB2C8\uB2E4."
   description_EN: A heavy battlefield shield engraving, granting immense defense
     and health.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 134bb7a238023d043a3d6129be61ddcc, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0
