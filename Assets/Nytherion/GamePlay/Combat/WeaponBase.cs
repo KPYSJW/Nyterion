@@ -29,7 +29,7 @@ namespace Nytherion.GamePlay.Combat
 
         protected void PlayFireAnimation()
         {
-            if (animator != null)
+            if (animator != null && animator.runtimeAnimatorController != null)
             {
                 animator.SetTrigger("Fire");
             }

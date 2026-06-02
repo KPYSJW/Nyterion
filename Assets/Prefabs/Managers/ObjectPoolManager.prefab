@@ -60,25 +60,25 @@ MonoBehaviour:
     size: 5
   - tag: Player_Arrow
     prefab: {fileID: 3778041586713616541, guid: 2eaf7d6fe073aef4caa6d4099d63f3a9, type: 3}
-    size: 15
+    size: 30
   - tag: Player_Spiral
     prefab: {fileID: 3778041586713616541, guid: bbd39e4bcf80ebf45a37c0077987be40, type: 3}
-    size: 15
+    size: 10
   - tag: Player_Explosion
     prefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
-    size: 15
+    size: 30
   - tag: Player_SlowMultiHit
     prefab: {fileID: 3514501862146727550, guid: 5cea63a4e7f60a84996c1b5d3acdb4ac, type: 3}
-    size: 15
+    size: 30
   - tag: Player_ExplosionVFX
     prefab: {fileID: 2802172147523158979, guid: 84b5ead5d3a10aa47aa871b8d0611224, type: 3}
-    size: 15
+    size: 30
   - tag: Player_Meteor
     prefab: {fileID: 8688154318546131989, guid: fc19d7a074b077f44a50ab601d98af1d, type: 3}
-    size: 15
+    size: 30
   - tag: Player_RubberBall
     prefab: {fileID: 2256088866125702370, guid: 030bc669879d30d4ca0c6be6a3bb8f31, type: 3}
-    size: 15
+    size: 30
   - tag: Player_Blackhole
     prefab: {fileID: 8075100979062668080, guid: 5138c104c394a2e4c844eac042749dd2, type: 3}
     size: 15
@@ -91,3 +91,12 @@ MonoBehaviour:
   - tag: InventorySlot
     prefab: {fileID: 6342647029431398638, guid: 692090581c23e93499fd924cba8e9ce6, type: 3}
     size: 40
+  - tag: Player_IceShot
+    prefab: {fileID: 1453523852295367759, guid: faa0e1fb9b693594f9f00ae2dff2402f, type: 3}
+    size: 40
+  - tag: Palyer_AcidicLarva
+    prefab: {fileID: 3778041586713616541, guid: daba46b979c3edd449d69086ab4b4663, type: 3}
+    size: 40
+  - tag: Spark
+    prefab: {fileID: 2415647646280282227, guid: da4b3e0153b21e746819be3f591293d7, type: 3}
+    size: 10

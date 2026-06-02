@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Uncommon_Weapon
   m_EditorClassIdentifier: 
   rarity: 1
-  drawWeight: 0
+  drawWeight: 50
   items: []

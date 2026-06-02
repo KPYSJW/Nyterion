@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Legendary_Weapon
   m_EditorClassIdentifier: 
   rarity: 4
-  drawWeight: 0
+  drawWeight: 5
   items: []

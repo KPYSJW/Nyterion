@@ -11,6 +11,8 @@ using Nytherion.UI.Controllers;
 using Nytherion.Data.ScriptableObjects.Shop;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using Nytherion.Data.ScriptableObjects.Enemy;
+using Nytherion.GamePlay.Characters.Enemy;
 
 namespace Nytherion.UI.Test
 {
@@ -27,6 +29,12 @@ namespace Nytherion.UI.Test
         [SerializeField] private ItemData testWeapon;
         [SerializeField] private ItemData testPotion;
         [SerializeField] private ShopData testShopData;
+
+        [Header("Debug Enemy Spawn Config")]
+        [SerializeField] private EnemyData meleeEnemyData;
+        [SerializeField] private EnemyData rangedEnemyData;
+        [SerializeField] private EnemyData hybridEnemyData;
+        [SerializeField] private float spawnOffsetRange = 3f;
 
         // 의존성 주입
         private InventoryDataManager inventoryDataManager;
@@ -70,6 +78,9 @@ namespace Nytherion.UI.Test
             {
                 TryManualInject();
             }
+
+            // 몬스터 소환 버튼들 런타임 동적 생성
+            CreateMonsterSpawnButtons();
         }
 
         /// <summary>
@@ -300,6 +311,127 @@ namespace Nytherion.UI.Test
             {
                 statusText.text = $"[DEBUG] {message}";
                 Debug.Log($"[DebugPanel] {message}");
+            }
+        }
+
+        /* ==========================================================
+         * Monster Spawn (몬스터 소환) 관련 기능
+         * ========================================================== */
+
+        private void CreateMonsterSpawnButtons()
+        {
+            if (contentPanel == null) return;
+
+            // contentPanel 하위에서 Button 컴포넌트를 가진 자식을 템플릿으로 확보
+            Button templateButton = contentPanel.GetComponentInChildren<Button>();
+            if (templateButton == null)
+            {
+                Debug.LogWarning("[DebugPanelUI] 복제 템플릿으로 쓸 버튼을 찾을 수 없습니다.");
+                return;
+            }
+
+            Transform parentTransform = templateButton.transform.parent;
+
+            // 근접 몬스터 소환 버튼 생성
+            CreateSingleSpawnButton(templateButton, parentTransform, "몬스터 (근접)", SpawnEnemyMelee);
+            // 원거리 몬스터 소환 버튼 생성
+            CreateSingleSpawnButton(templateButton, parentTransform, "몬스터 (원거리)", SpawnEnemyRanged);
+            // 하이브리드 몬스터 소환 버튼 생성
+            CreateSingleSpawnButton(templateButton, parentTransform, "몬스터 (하이브리드)", SpawnEnemyHybrid);
+        }
+
+        private void CreateSingleSpawnButton(Button template, Transform parent, string label, UnityEngine.Events.UnityAction action)
+        {
+            Button newButton = Instantiate(template, parent);
+            newButton.name = $"SpawnButton_{label}";
+
+            // 버튼의 텍스트(TMP_Text) 변경
+            TMP_Text buttonText = newButton.GetComponentInChildren<TMP_Text>();
+            if (buttonText != null)
+            {
+                buttonText.text = label;
+            }
+            else
+            {
+                // 일반 Text 컴포넌트인 경우 대응
+                Text legacyText = newButton.GetComponentInChildren<Text>();
+                if (legacyText != null)
+                {
+                    legacyText.text = label;
+                }
+            }
+
+            // 이벤트 재바인딩
+            newButton.onClick.RemoveAllListeners();
+            newButton.onClick.AddListener(action);
+        }
+
+        public void SpawnEnemyMelee()
+        {
+            SpawnEnemy(meleeEnemyData);
+        }
+
+        public void SpawnEnemyRanged()
+        {
+            SpawnEnemy(rangedEnemyData);
+        }
+
+        public void SpawnEnemyHybrid()
+        {
+            SpawnEnemy(hybridEnemyData);
+        }
+
+        private void SpawnEnemy(EnemyData enemyData)
+        {
+            if (enemyData == null)
+            {
+                UpdateStatusText("소환할 몬스터 데이터가 없습니다.");
+                return;
+            }
+
+            if (playerManager == null)
+            {
+                // 수동 재주입 시도
+                playerManager = FindObjectOfType<PlayerManager>();
+                if (playerManager == null)
+                {
+                    UpdateStatusText("플레이어를 찾을 수 없습니다.");
+                    return;
+                }
+            }
+
+            if (ObjectPoolManager.Instance == null)
+            {
+                UpdateStatusText("ObjectPoolManager를 찾을 수 없습니다.");
+                return;
+            }
+
+            // 플레이어 주변 랜덤 위치 계산 (2m ~ spawnOffsetRange 사이)
+            Vector2 randomDirection = Random.insideUnitCircle.normalized * Random.Range(2f, spawnOffsetRange);
+            Vector3 spawnPosition = playerManager.transform.position + new Vector3(randomDirection.x, randomDirection.y, 0f);
+
+            GameObject enemyObj = ObjectPoolManager.Instance.SpawnFromPool(
+                enemyData.enemyName,
+                spawnPosition,
+                Quaternion.identity);
+
+            if (enemyObj != null)
+            {
+                EnemyBase enemy;
+                if (enemyObj.TryGetComponent<EnemyBase>(out enemy))
+                {
+                    enemy.Initialize(enemyData);
+                    UpdateStatusText($"몬스터 소환 성공: {enemyData.enemyName}");
+                }
+                else
+                {
+                    ObjectPoolManager.Instance.ReturnToPool(enemyData.enemyName, enemyObj);
+                    UpdateStatusText("소환된 오브젝트에 EnemyBase가 없습니다.");
+                }
+            }
+            else
+            {
+                UpdateStatusText($"몬스터 풀에서 소환 실패: {enemyData.enemyName}");
             }
         }
     }

@@ -30,7 +30,7 @@ MonoBehaviour:
   range: 2
   cooldown: 1
   weaponType: 0
-  weaponSprite: {fileID: 0}
+  weaponSprite: {fileID: 21300000, guid: a83a109f23b2b8d439d4772bc499e3c6, type: 3}
   firePointOffset: {x: 0, y: 0, z: 0}
   spriteRotationOffset: -45
   visualPositionOffset: {x: 0, y: 0, z: 0}

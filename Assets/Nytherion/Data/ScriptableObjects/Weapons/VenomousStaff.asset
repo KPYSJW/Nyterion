@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: VenomousStaff
+  m_EditorClassIdentifier: 
+  uniqueID: 9e3dcf2a-d76c-4417-9b9f-589f6027904c
+  itemName_KR: "\uB3C5\uC131 \uC9C0\uD321\uC774"
+  itemName_EN: VenomousStaff
+  icon: {fileID: 21300000, guid: 13cfc2cf60112fe4bbac055d88ca6e1f, type: 3}
+  description_KR: 
+  description_EN: 
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 10
+  equipmentType: 0
+  rarity: 3
+  traits: 
+  statModifiers:
+  - stat: 4
+    value: -10
+    valuePerLevel: 0
+    isPercentage: 0
+  damage: 0
+  range: 0
+  cooldown: 1
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: a31eff47717fe424980f3732fc38565c, type: 3}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: -45
+  visualPositionOffset: {x: 0, y: 0, z: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 3778041586713616541, guid: daba46b979c3edd449d69086ab4b4663, type: 3}
+  projectileSpeed: 10
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  isArchivable: 1

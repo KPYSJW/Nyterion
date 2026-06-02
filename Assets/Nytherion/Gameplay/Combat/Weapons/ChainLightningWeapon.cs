@@ -17,16 +17,85 @@ namespace Nytherion.GamePlay.Combat
         [Tooltip("번개 이펙트 프리팹")]
         public ChainLightningEffect lightningEffectPrefab;
 
+        [Header("Continuous Stream Config")]
+        [Tooltip("마우스를 누르는 동안 지속적으로 번개 빔이 나가는 모드를 활성화할지 여부")]
+        public bool isContinuousStream = true;
+
+        [Tooltip("지속 공격 시 데미지를 가할 주기 (초)")]
+        public float tickInterval = 0.2f;
+
+        private ChainLightningEffect activeEffect;
+        private bool isAttacking = false;
+        private float tickTimer = 0f;
+        private List<Transform> activeTargets = new List<Transform>();
+        private List<Vector3> activeStaticPoints = new List<Vector3>();
+
+        public override bool CanAttack()
+        {
+            // 지속 스트림 모드이면서 현재 공격(누르고 있는) 중이면
+            // 매 프레임 마우스 및 조준 방향을 갱신받아야 하므로 쿨다운을 우회하여 true 반환
+            if (isContinuousStream && isAttacking)
+            {
+                return true;
+            }
+            return base.CanAttack();
+        }
+
+        private void Update()
+        {
+            if (!isContinuousStream || !isAttacking) return;
+
+            // 틱 타이머 체크
+            tickTimer -= Time.deltaTime;
+            if (tickTimer <= 0)
+            {
+                ApplyTickDamage();
+                tickTimer = tickInterval;
+            }
+        }
+
+        private void OnDisable()
+        {
+            // 무기가 해제되거나 비활성화될 때 이펙트 정리
+            AttackEnd();
+        }
+
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
-            if (!CanAttack()) return;
-            lastAttackTime = Time.time;
-            PlayFireAnimation();
+            if (isContinuousStream)
+            {
+                // 지속형 번개 스트림 모드 작동
+                if (!isAttacking)
+                {
+                    isAttacking = true;
+                    tickTimer = 0f; // 즉시 첫 피해 적용
+                    
+                    Transform startTransform = firePoint != null ? firePoint : transform;
+                    if (lightningEffectPrefab != null)
+                    {
+                        activeEffect = Instantiate(lightningEffectPrefab, startTransform.position, Quaternion.identity, startTransform);
+                        activeEffect.duration = 99999f; // 강제로 수명 시간을 아주 늘려서 자동 파괴 방지
+                    }
+                }
 
+                // 매 프레임 실시간 번개 연결 상태 갱신
+                UpdateTargetsAndVisuals(direction);
+            }
+            else
+            {
+                // 기존 단발성 체인 라이트닝 모드 작동 -> 이제는 투사체 발사 방식으로 동작
+                if (!CanAttack()) return;
+                lastAttackTime = Time.time;
+                FireProjectiles(direction, 1);
+            }
+        }
+
+        // 매 프레임 타겟 추적 상태와 이펙트 라인 연결을 갱신
+        private void UpdateTargetsAndVisuals(Vector2 direction)
+        {
             Transform startTransform = firePoint != null ? firePoint : transform;
             Vector3 startPos = startTransform.position;
 
-            // 1. 사거리 안의 가장 가까운 첫 번째 적색 타겟 탐색
             Collider2D[] initialHits = Physics2D.OverlapCircleAll(startPos, weaponData.range);
             Transform firstTarget = null;
             float closestDistance = Mathf.Infinity;
@@ -44,19 +113,27 @@ namespace Nytherion.GamePlay.Combat
                 }
             }
 
-            // 첫 적이 없는 경우 허공에 빔 발사 연출 (시작 앵커 연동)
+            // 첫 타겟이 없으면 마우스 방향으로 번개 궤적 유지
             if (firstTarget == null)
             {
+                activeTargets.Clear();
+                activeStaticPoints.Clear();
                 Vector3 airEnd = startPos + (Vector3)direction.normalized * weaponData.range;
-                SpawnLightningStaticVFX(startTransform, airEnd);
+                activeStaticPoints.Add(airEnd);
+
+                if (activeEffect != null)
+                {
+                    activeEffect.Setup(startTransform, null, activeStaticPoints);
+                }
                 return;
             }
 
-            // 2. 연쇄 추적 로직 (가장 가까운 미방문 적 탐색)
-            List<Transform> chainList = new List<Transform>();
+            // 연쇄 적들 추적
+            activeTargets.Clear();
+            activeStaticPoints.Clear();
             HashSet<Transform> visited = new HashSet<Transform>();
 
-            chainList.Add(firstTarget);
+            activeTargets.Add(firstTarget);
             visited.Add(firstTarget);
 
             Transform currentSource = firstTarget;
@@ -82,7 +159,7 @@ namespace Nytherion.GamePlay.Combat
 
                 if (nextTarget != null)
                 {
-                    chainList.Add(nextTarget);
+                    activeTargets.Add(nextTarget);
                     visited.Add(nextTarget);
                     currentSource = nextTarget;
                 }
@@ -92,22 +169,30 @@ namespace Nytherion.GamePlay.Combat
                 }
             }
 
-            // 3. 실제 데미지 프로세싱
+            // 번개 이펙트 실시간 연결 갱신
+            if (activeEffect != null)
+            {
+                activeEffect.Setup(startTransform, activeTargets, null);
+            }
+        }
+
+        // 일정 주기 틱마다 번개에 닿아있는 타겟들에게 일제히 데미지 부여
+        private void ApplyTickDamage()
+        {
             float currentDamage = weaponData.damage * damageMultiplier;
 
-            foreach (Transform target in chainList)
+            foreach (Transform target in activeTargets)
             {
-                IDamageable targetDamageable = target.GetComponent<IDamageable>();
-                if (targetDamageable != null)
+                if (target != null)
                 {
-                    targetDamageable.TakeDamage(currentDamage);
+                    IDamageable targetDamageable = target.GetComponent<IDamageable>();
+                    if (targetDamageable != null)
+                    {
+                        targetDamageable.TakeDamage(currentDamage);
+                    }
                 }
-
-                currentDamage *= 0.8f; 
+                currentDamage *= 0.8f;
             }
-
-            // 4. 실시간 트래킹 이펙트 호출
-            SpawnLightningTrackingVFX(startTransform, chainList);
         }
 
         private void SpawnLightningTrackingVFX(Transform startTransform, List<Transform> targets)
@@ -123,7 +208,6 @@ namespace Nytherion.GamePlay.Combat
         {
             if (lightningEffectPrefab == null) return;
 
-            // 허공 샷도 시작 앵커를 부모로 삼아 생성하고 월드 앵커 정보를 갱신하도록 처리
             ChainLightningEffect effect = Instantiate(lightningEffectPrefab, startTransform.position, Quaternion.identity, startTransform);
             
             List<Vector3> staticPoints = new List<Vector3>();
@@ -135,6 +219,24 @@ namespace Nytherion.GamePlay.Combat
 
         public override void AttackEnd()
         {
+            if (isContinuousStream)
+            {
+                if (isAttacking)
+                {
+                    isAttacking = false;
+                    if (activeEffect != null)
+                    {
+                        Destroy(activeEffect.gameObject);
+                        activeEffect = null;
+                    }
+                    activeTargets.Clear();
+                    activeStaticPoints.Clear();
+                }
+            }
+            else
+            {
+                // 단발형은 별도 정리 없음
+            }
         }
     }
 }
