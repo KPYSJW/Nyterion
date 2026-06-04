@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5ce4ab4eeec36ac408f640291c642ec0
+guid: 6a66efd75171f1747846b2c023d2a5bc
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Spark_0
+      name: PoisonEffect_0
       rect:
         serializedVersion: 2
         x: 0
@@ -111,14 +111,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e3e03b5d0123b33488c0e98ceea36ede
-      internalID: -1861404592
+      spriteID: 9f19cbd762018254eb4bcbd3a4af9577
+      internalID: -668285041
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spark_1
+      name: PoisonEffect_1
       rect:
         serializedVersion: 2
         x: 64
@@ -132,14 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f2cafb1b60677044b820b67212e20c43
-      internalID: 274056323
+      spriteID: 63c855b81b7575349a97f221e4dd5fce
+      internalID: 631231916
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spark_2
+      name: PoisonEffect_2
       rect:
         serializedVersion: 2
         x: 128
@@ -153,14 +153,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3d58efdcecff5474ea9624e2ec9d1405
-      internalID: -1822281151
+      spriteID: 248ec58e826b61d4181e530a14cb9d76
+      internalID: -416131826
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spark_3
+      name: PoisonEffect_3
       rect:
         serializedVersion: 2
         x: 192
@@ -174,14 +174,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 438d2edf106bd1b4698726b4a1b28358
-      internalID: 570956433
+      spriteID: edd3ae5c0926e5343aafb62e9693c843
+      internalID: 379134128
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spark_4
+      name: PoisonEffect_4
       rect:
         serializedVersion: 2
         x: 256
@@ -195,14 +195,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 83c6a2da6cae6384aabdd8e590612d1c
-      internalID: 799271733
+      spriteID: a4301d12c0fbf8042b9c44c0ed634f3b
+      internalID: -701795030
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spark_5
+      name: PoisonEffect_5
       rect:
         serializedVersion: 2
         x: 320
@@ -216,14 +216,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 704ebe9b5fb88d345984767c75ce6289
-      internalID: -777678288
+      spriteID: 7bdeb5f76a4adbf4fab7d756e02af831
+      internalID: -35780256
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spark_6
+      name: PoisonEffect_6
       rect:
         serializedVersion: 2
         x: 384
@@ -237,14 +237,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 18254e4d516513443b5514fee6137a1d
-      internalID: -1815272735
+      spriteID: 2a6dfb9332b431541970d3bf6ab53faa
+      internalID: 478344930
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spark_7
+      name: PoisonEffect_7
       rect:
         serializedVersion: 2
         x: 448
@@ -258,14 +258,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dc38fab346b5b994ba25f635328469ae
-      internalID: -2110218695
+      spriteID: 9003e29e49551f741bf1bcc3a98217e1
+      internalID: -1477948746
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spark_8
+      name: PoisonEffect_8
       rect:
         serializedVersion: 2
         x: 512
@@ -279,8 +279,71 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 867728a5e1360e44782df6256ea1c6b6
-      internalID: 1145075811
+      spriteID: efcedaa7f0b553a4291672291728348c
+      internalID: -975034134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PoisonEffect_9
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6fb748577f0f924f9bdceafe36f250e
+      internalID: 1429405345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PoisonEffect_10
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3421bfea17f2344495f39e3ed028717
+      internalID: -632064036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PoisonEffect_11
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66313b8211425f948b3716fd590356bc
+      internalID: 1286335130
       vertices: []
       indices: 
       edges: []
@@ -296,15 +359,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Spark_0: -1861404592
-      Spark_1: 274056323
-      Spark_2: -1822281151
-      Spark_3: 570956433
-      Spark_4: 799271733
-      Spark_5: -777678288
-      Spark_6: -1815272735
-      Spark_7: -2110218695
-      Spark_8: 1145075811
+      PoisonEffect_0: -668285041
+      PoisonEffect_1: 631231916
+      PoisonEffect_10: -632064036
+      PoisonEffect_11: 1286335130
+      PoisonEffect_2: -416131826
+      PoisonEffect_3: 379134128
+      PoisonEffect_4: -701795030
+      PoisonEffect_5: -35780256
+      PoisonEffect_6: 478344930
+      PoisonEffect_7: -1477948746
+      PoisonEffect_8: -975034134
+      PoisonEffect_9: 1429405345
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

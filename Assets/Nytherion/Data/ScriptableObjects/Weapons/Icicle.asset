@@ -40,7 +40,7 @@ MonoBehaviour:
   visualPositionOffset: {x: 0, y: 0, z: 0}
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 1453523852295367759, guid: faa0e1fb9b693594f9f00ae2dff2402f, type: 3}
-  projectileSpeed: 10
+  projectileSpeed: 5
   extraProjectileMode: 0
   maxChargeTime: 1
   weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
