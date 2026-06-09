@@ -34,7 +34,6 @@ namespace Nytherion.GamePlay.Combat
         private Animator animator;
 
         private float speed;
-        private bool isMoving;
         private bool isHit;
         private Collider2D ignoredCollider;
 
@@ -52,7 +51,6 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnEnable()
         {
-            isMoving = false;
             isHit = false;
             if (myCollider != null)
             {
@@ -67,7 +65,6 @@ namespace Nytherion.GamePlay.Combat
             // 유물 장착 상태 검사 (분열 여부 실시간 갱신)
             CheckRelicSplit();
             
-            Debug.Log("[IceShotProjectile] OnEnable - Ready to launch. canSplit: " + canSplit);
         }
 
         private void OnDisable()
@@ -86,13 +83,12 @@ namespace Nytherion.GamePlay.Combat
             {
                 rb.velocity = Vector2.zero;
             }
-            Debug.Log($"[IceShotProjectile] SetSpeed called. Speed: {speed}");
         }
 
         // 유물 장착 상태를 검사하여 분열 기능 활성화 여부를 세팅
         private void CheckRelicSplit()
         {
-            // 이미 2차 분열이 방지된 자식 투사체(canSplit = false)는 검사에서 제외
+            // 이미 2차 분열이 방지된 자식 투사체는 검사에서 제외
             if (!canSplit) return;
 
             // 기본적으로는 유물이 없으므로 false로 초기화
@@ -118,7 +114,6 @@ namespace Nytherion.GamePlay.Combat
                             if (matchesEnglish || matchesKorean)
                             {
                                 canSplit = true;
-                                Debug.Log($"[IceShotProjectile] Split feature ENABLED by Relic: {relic.koreanName} ({relic.relicName})");
                                 break;
                             }
                         }
@@ -134,7 +129,6 @@ namespace Nytherion.GamePlay.Combat
             if (myCollider != null && ignoredCollider != null)
             {
                 Physics2D.IgnoreCollision(myCollider, ignoredCollider, true);
-                Debug.Log($"[IceShotProjectile] Collision ignored with {ignoredCollider.name}");
             }
         }
 
@@ -144,7 +138,6 @@ namespace Nytherion.GamePlay.Combat
             if (myCollider != null && ignoredCollider != null)
             {
                 Physics2D.IgnoreCollision(myCollider, ignoredCollider, false);
-                Debug.Log($"[IceShotProjectile] Collision restored with {ignoredCollider.name}");
             }
             ignoredCollider = null;
         }
@@ -154,12 +147,10 @@ namespace Nytherion.GamePlay.Combat
         {
             if (isHit) return;
 
-            isMoving = true;
             if (rb != null)
             {
                 rb.velocity = (Vector2)transform.right * speed;
             }
-            Debug.Log("[IceShotProjectile] LaunchProjectile! Velocity: " + (rb != null ? rb.velocity : Vector2.zero));
 
             if (animator != null && !string.IsNullOrEmpty(launchTrigger))
             {
@@ -170,13 +161,10 @@ namespace Nytherion.GamePlay.Combat
         // IProjectileEffect 구현: CollisionObject가 충돌 시 OnHit를 호출함
         public bool OnHit(Collider2D target)
         {
-            Debug.Log($"[IceShotProjectile] OnHit called with target: {target.name}, Tag: {target.tag}");
-            
             // 이미 충돌이 완료된 상태면 true 리턴해서 소멸 방지
             if (isHit) return true;
 
             isHit = true;
-            isMoving = false;
             
             if (rb != null)
             {
@@ -188,6 +176,31 @@ namespace Nytherion.GamePlay.Combat
                 myCollider.enabled = false;
             }
 
+            // 적 충돌 시 특수 피격 이펙트 생성
+            if (target.CompareTag("Enemy"))
+            {
+                // 충돌 지점 계산 (적의 콜라이더에서 투사체의 현재 위치와 가장 가까운 지점)
+                Vector2 hitPoint = target.ClosestPoint(transform.position);
+
+                // 충돌 지점에서 적의 중심으로 향하는 벡터
+                Vector2 direction = ((Vector2)target.transform.position - hitPoint).normalized;
+
+                // direction이 zero vector에 가까울 때의 방어 코드 (투사체가 이미 중심에 겹친 경우 등)
+                if (direction.sqrMagnitude < 0.001f)
+                {
+                    direction = transform.right; // 투사체의 진행 방향을 fallback으로 사용
+                }
+
+                // 이펙트의 up 방향이 direction을 향하도록 회전값(Z축 회전) 계산
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+                Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+                if (ObjectPoolManager.Instance != null)
+                {
+                    GameObject effectObj = ObjectPoolManager.Instance.SpawnFromPool("IceShotHitEffect", hitPoint, rotation);
+                }
+            }
+
             // 분열 처리 (적 충돌 시에만 분열 및 canSplit이 켜져 있을 때만 분열)
             if (target.CompareTag("Enemy") && canSplit)
             {
@@ -196,12 +209,10 @@ namespace Nytherion.GamePlay.Combat
 
             if (animator != null && !string.IsNullOrEmpty(hitTrigger))
             {
-                Debug.Log($"[IceShotProjectile] Triggering animator hit. TriggerName: {hitTrigger}");
                 animator.SetTrigger(hitTrigger);
             }
             else
             {
-                Debug.LogWarning("[IceShotProjectile] Animator is null or hitTrigger is empty. Destroying instantly.");
                 FinishHit();
             }
 
@@ -227,8 +238,6 @@ namespace Nytherion.GamePlay.Combat
             float baseAngle = Mathf.Atan2(currentDir.y, currentDir.x) * Mathf.Rad2Deg;
             float startAngle = baseAngle - (splitAngle / 2f);
             float angleStep = splitCount > 1 ? splitAngle / (splitCount - 1) : 0f;
-
-            Debug.Log($"[IceShotProjectile] Splitting into {splitCount} projectiles (ignoring {target.name}).");
 
             for (int i = 0; i < splitCount; i++)
             {

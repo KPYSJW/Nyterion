@@ -24,7 +24,7 @@ MonoBehaviour:
   baseValue: 10
   equipmentType: 0
   rarity: 3
-  traits: 
+  traits: 08000000
   statModifiers:
   - stat: 4
     value: -10
@@ -38,10 +38,12 @@ MonoBehaviour:
   firePointOffset: {x: 0, y: 0, z: 0}
   spriteRotationOffset: -45
   visualPositionOffset: {x: 0, y: 0, z: 0}
+  weaponEffectPrefab: {fileID: 1638640853019598765, guid: 27e93a4bc666795409e4f64b9786f25c, type: 3}
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 3778041586713616541, guid: daba46b979c3edd449d69086ab4b4663, type: 3}
   projectileSpeed: 5
   extraProjectileMode: 0
   maxChargeTime: 1
+  hitEffectPrefab: {fileID: 6051215695420182853, guid: bdfe3fa95f522f547b9bc5b453d44c2d, type: 3}
   weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
   isArchivable: 1

@@ -50,7 +50,11 @@ namespace Nytherion.GamePlay.Combat
                 if (target != null)
                 {
                     target.TakeDamage(weaponData.damage);
-                    
+                    ApplyStatusEffects(target);
+                    if (weaponData != null)
+                    {
+                        WeaponEffectHelper.PlayHitEffect(weaponData.hitEffectPrefab, hit.collider.transform.position);
+                    }
                 }
             }
 
@@ -67,10 +71,19 @@ namespace Nytherion.GamePlay.Combat
          private void OnTriggerEnter2D(Collider2D collision)
         {
             if (!collision.CompareTag("Enemy")) return;
-            if (!collision.TryGetComponent<IDamageable>(out var target)) return;
+            
+            IDamageable target;
+            if (!collision.TryGetComponent<IDamageable>(out target)) return;
+            
             if (hitTargets.Contains(target)) return;
             hitTargets.Add(target);
             target.TakeDamage(weaponData.damage);
+            ApplyStatusEffects(target);
+
+            if (weaponData != null)
+            {
+                WeaponEffectHelper.PlayHitEffect(weaponData.hitEffectPrefab, collision.transform.position);
+            }
         }
     }
 }

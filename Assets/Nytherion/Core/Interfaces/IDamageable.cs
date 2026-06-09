@@ -6,6 +6,6 @@ namespace Nytherion.Core.Interfaces
 {
     public interface IDamageable
     {
-        void TakeDamage(float damageAmount);
+        void TakeDamage(float damageAmount, bool isChain = false);
     }
 }

@@ -87,12 +87,19 @@ namespace Nytherion.GamePlay.Combat.Behaviors
 
         private float GetDamageValue()
         {
+            float dmg = fallbackDamage;
             if (enemyBase != null && enemyBase.enemyData != null)
             {
-                return enemyBase.enemyData.damageAmount;
+                dmg = enemyBase.enemyData.damageAmount;
             }
 
-            return fallbackDamage;
+            StatusEffectManager effectManager = GetComponent<StatusEffectManager>();
+            if (effectManager != null)
+            {
+                dmg *= effectManager.GetOutgoingDamageMultiplier();
+            }
+
+            return dmg;
         }
     }
 }

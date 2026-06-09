@@ -14,18 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: TangledYarn
   koreanName: "\uAF2C\uC778 \uC2E4\uD0C0\uB798"
-  description_KR: "\uD65C\uC131\uD654\uB41C \uCCB4\uC778 \uB9C1\uD06C\uAC00 3\uAC1C
-    \uC774\uC0C1\uC77C \uB54C \uACF5\uACA9 \uC18D\uB3C4 +15%. "
-  description_EN: '+15% Attack Speed when 3 or more chain links are active. '
+  description_KR: "\uD22C\uC0AC\uCCB4\uAC00 \uC801\uC744 \uAD05\uD1B5\uD558\uC5EC \uC9C0\uB098\uAC11\uB2C8\uB2E4."
+  description_EN: 'Projectiles pierce through enemies.'
   Image: {fileID: 0}
   rarity: 3
   level: 1
   isDisabled: 0
-  effectModules:
-  - condition:
-      rid: 7000000000000000001
-    effects:
-    - rid: 7000000000000000002
+  effectModules: []
   shape:
   - {x: 0, y: 0}
   influenceZones: []
@@ -33,20 +28,4 @@ MonoBehaviour:
   unlockMilestoneID: 
   references:
     version: 2
-    RefIds:
-    - rid: 7000000000000000001
-      type: {class: TotalChainLinksCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        requiredTotalLinks: 3
-    - rid: 7000000000000000002
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        statModifiers:
-        - stat: 5
-          value: 0.15
-          valuePerLevel: 0.05
-          isPercentage: 1
-        - stat: 6
-          value: 0.15
-          valuePerLevel: 0.05
-          isPercentage: 1
+    RefIds: []

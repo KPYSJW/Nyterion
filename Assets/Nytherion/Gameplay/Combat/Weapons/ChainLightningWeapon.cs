@@ -189,6 +189,7 @@ namespace Nytherion.GamePlay.Combat
                     if (targetDamageable != null)
                     {
                         targetDamageable.TakeDamage(currentDamage);
+                        ApplyStatusEffects(targetDamageable);
                     }
                 }
                 currentDamage *= 0.8f;

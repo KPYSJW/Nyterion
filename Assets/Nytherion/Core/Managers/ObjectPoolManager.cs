@@ -133,9 +133,15 @@ namespace Nytherion.Core.Managers
                 return null;
             }
 
+            Pool pool = pools.Find(p => p.tag == tag);
+            Vector3 originalScale = Vector3.one;
+            if (pool != null && pool.prefab != null)
+            {
+                originalScale = pool.prefab.transform.localScale;
+            }
+
             if (poolDictionary[tag].Count == 0)
             {
-                Pool pool = pools.Find(p => p.tag == tag);
                 if (pool != null && pool.prefab != null)
                 {
                     GameObject newObj = container != null ? container.Instantiate(pool.prefab) : Instantiate(pool.prefab);
@@ -147,6 +153,7 @@ namespace Nytherion.Core.Managers
                     
                     newObj.transform.position = position;
                     newObj.transform.rotation = rotation;
+                    newObj.transform.localScale = originalScale;
                     newObj.SetActive(true);
                     return newObj;
                 }
@@ -157,6 +164,7 @@ namespace Nytherion.Core.Managers
             obj.SetActive(true);
             obj.transform.position = position;
             obj.transform.rotation = rotation;
+            obj.transform.localScale = originalScale;
             return obj;
         }
 

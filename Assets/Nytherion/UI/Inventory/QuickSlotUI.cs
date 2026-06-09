@@ -80,6 +80,7 @@ namespace Nytherion.UI.Inventory
 
         public void OnDrop(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             if (eventData.pointerDrag == null) return;
             BaseSlotUI sourceSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
             if (sourceSlot == null || sourceSlot.IsEmpty) return;

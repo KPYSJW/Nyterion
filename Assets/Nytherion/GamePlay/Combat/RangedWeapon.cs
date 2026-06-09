@@ -26,6 +26,8 @@ namespace Nytherion.GamePlay.Combat
         [HideInInspector]
         public string projectilePoolTag = "PlayerProjectile";
 
+        protected GameObject currentProjectilePrefab;
+
         [Header("Extra Projectile Settings")]
         [Tooltip("추가 투사체 발사 방식")]
         public ExtraProjectileMode extraProjectileMode = ExtraProjectileMode.Spread;
@@ -49,6 +51,7 @@ namespace Nytherion.GamePlay.Combat
             {
                 projectileSpeed = data.projectileSpeed;
                 extraProjectileMode = data.extraProjectileMode;
+                currentProjectilePrefab = data.projectilePrefab;
                 
                 if (firePoint != null)
                 {
@@ -56,9 +59,9 @@ namespace Nytherion.GamePlay.Combat
                 }
 
                 // 투사체 태그 업데이트 (프리팹 이름을 태그로 사용)
-                if (data.projectilePrefab != null)
+                if (currentProjectilePrefab != null)
                 {
-                    projectilePoolTag = data.projectilePrefab.name;
+                    projectilePoolTag = currentProjectilePrefab.name;
                 }
             }
             
@@ -70,9 +73,9 @@ namespace Nytherion.GamePlay.Combat
             Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f) + spawnOffset;
             
             GameObject projectile;
-            if (weaponData != null && weaponData.projectilePrefab != null)
+            if (currentProjectilePrefab != null)
             {
-                projectile = ObjectPoolManager.Instance.SpawnFromPool(weaponData.projectilePrefab, spawnPos, Quaternion.identity);
+                projectile = ObjectPoolManager.Instance.SpawnFromPool(currentProjectilePrefab, spawnPos, Quaternion.identity);
             }
             else
             {
@@ -83,32 +86,46 @@ namespace Nytherion.GamePlay.Combat
 
             Vector2 normalizedDir = direction.normalized;
             float angle = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
+            if (weaponData != null)
+            {
+                angle += weaponData.projectileRotationOffset;
+            }
             projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
             //  Rigidbody2D가 있으면 속도 적용
-            if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
+            Rigidbody2D rb;
+            if (projectile.TryGetComponent<Rigidbody2D>(out rb))
             {
                 rb.velocity = normalizedDir * projectileSpeed;
             }
             
             //  IProjectile 인터페이스를 구현한 별도 이동 스크립트가 있으면 속도 전달
-            if (projectile.TryGetComponent<IProjectile>(out var iProj))
+            IProjectile iProj;
+            if (projectile.TryGetComponent<IProjectile>(out iProj))
             {
                 iProj.SetSpeed(projectileSpeed);
             }
             
             
-            if (projectile.TryGetComponent<CollisionObject>(out var collisionObj))
+            if (projectile.TryGetComponent<CollisionObject>(out CollisionObject collisionObj))
             {
                 if (weaponData != null)
                 {
                     collisionObj.damage = weaponData.damage * damageMultiplier;
+                    collisionObj.traits = GetTraits();
+
+                    if (collisionObj.hitEffectPrefab == null)
+                    {
+                        collisionObj.hitEffectPrefab = weaponData.hitEffectPrefab;
+                    }
                 }
             }
 
-            if (projectile.TryGetComponent<SpriteRenderer>(out var projSprite))
+            SpriteRenderer projSprite;
+            if (projectile.TryGetComponent<SpriteRenderer>(out projSprite))
             {
-                if (TryGetComponent<SpriteRenderer>(out var weaponSprite))
+                SpriteRenderer weaponSprite;
+                if (TryGetComponent<SpriteRenderer>(out weaponSprite))
                 {
                     projSprite.sortingLayerID = weaponSprite.sortingLayerID;
                     projSprite.sortingOrder = weaponSprite.sortingOrder + 1; 
@@ -177,7 +194,7 @@ namespace Nytherion.GamePlay.Combat
             }
 
             // 이벤트 발생 (쉐도우 클론 각인 등에서 사용)
-            var eventManager = GameObject.FindObjectOfType<EventManager>();
+            EventManager eventManager = GameObject.FindObjectOfType<EventManager>();
             if (eventManager != null && weaponData != null)
             {
                 float baseDamage = weaponData.damage * damageMultiplier;

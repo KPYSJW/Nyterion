@@ -46,6 +46,8 @@ namespace Nytherion.UI.Inventory.Utils
 
         public static void HandleEndDragShared(BaseSlotUI sourceSlot, PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
+
             if (DragItemIcon.Instance != null)
                 DragItemIcon.Instance.Hide();
 

@@ -35,22 +35,19 @@ namespace Nytherion.GamePlay.Skills
         {
             if (target != null && target.gameObject.activeInHierarchy)
             {
-                // Ÿ  
                 Vector2 direction = (Vector2)target.position - rb.position;
                 direction.Normalize();
 
-                // Ÿ  ȸ
                 float rotateAmount = Vector3.Cross(direction, transform.right).z;
                 rb.angularVelocity = -rotateAmount * rotateSpeed;
             }
             else
             {
-                rb.angularVelocity = 0f; // Ÿ  
+                rb.angularVelocity = 0f; 
             }
 
             currentSpeed = Mathf.MoveTowards(currentSpeed, maxSpeed, acceleration * Time.fixedDeltaTime);
 
-            //  ٶ󺸴  
             rb.velocity = transform.right * currentSpeed;
         }
 

@@ -1,14 +1,13 @@
 using System.Collections;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
-using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.GamePlay.Dungeon;
-using Nytherion.GamePlay.Items;
 
 
 using UnityEngine;
 using VContainer;
+using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
@@ -23,6 +22,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private CurrencyDataManager currencyDataManager;
         public EnemyAIController aiController;
         private EventManager eventManager;
+        private StatusEffectManager statusEffectManager;
 
         [Header("Hit Flash")]
         [SerializeField] private SpriteRenderer spriteRenderer;
@@ -50,11 +50,28 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 aiController.ApplyEnemyData(data);
     
             }
+
+            statusEffectManager = GetComponent<StatusEffectManager>();
+            if (statusEffectManager == null)
+            {
+                statusEffectManager = gameObject.AddComponent<StatusEffectManager>();
+            }
+            else
+            {
+                statusEffectManager.ClearAllEffects();
+            }
+            UpdateStatusColor();
         }
 
-        public void TakeDamage(float damageAmount)
+        public void TakeDamage(float damageAmount, bool isChain = false)
         {
             if (isDead) return;
+
+            // StatusEffectManager를 통한 데미지 배율 적용
+            if (statusEffectManager != null)
+            {
+                damageAmount *= statusEffectManager.GetReceivedDamageMultiplier();
+            }
 
             bool isCritical = false;
             PlayerManager playerManager = UnityEngine.Object.FindObjectOfType<PlayerManager>();
@@ -65,8 +82,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 {
                     isCritical = true;
                     float multiplier = playerManager.currentPlayerData.critDamageMultiplier;
+                    if (statusEffectManager != null)
+                    {
+                        multiplier += statusEffectManager.GetCritDamageMultiplierModifier();
+                    }
                     damageAmount *= multiplier;
-                    Debug.Log($"[Critical Hit] Damage scaled to {damageAmount} (crit chance: {chance})");
                 }
             }
 
@@ -76,6 +96,17 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 eventManager.TriggerEnemyDamagedByPlayerWithCrit(damageAmount, isCritical);
             }
 
+            // 신성 가호 타격 회복 트리거
+            if (statusEffectManager != null && statusEffectManager.HasEffect("Holy"))
+            {
+                statusEffectManager.TriggerHolyHeal();
+            }
+
+            // 감전 전격 체인 트리거 (체인 공격이 아닌 원래 공격일 때만 작동)
+            if (!isChain && statusEffectManager != null && statusEffectManager.HasEffect("Lightning"))
+            {
+                statusEffectManager.TriggerLightningChain(damageAmount);
+            }
 
             currentHealth -= damageAmount;
             if (currentHealth <= 0) Die();
@@ -109,17 +140,35 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             yield return new WaitForSeconds(hitFlashDuration);
 
-            spriteRenderer.color = originalColor;
+            spriteRenderer.color = GetCurrentBaseColor();
             hitFlashCoroutine = null;
         }
+
+        public void UpdateStatusColor()
+        {
+            if (spriteRenderer == null) return;
+
+            if (hitFlashCoroutine == null)
+            {
+                spriteRenderer.color = GetCurrentBaseColor();
+            }
+        }
+
+        private Color GetCurrentBaseColor()
+        {
+            if (statusEffectManager != null)
+            {
+                return statusEffectManager.GetStatusEffectColor();
+            }
+            return originalColor;
+        }
+
         private void DropItems()
         {
             
             if (Random.value <= enemyData.dropChance)
             {
-                Debug.Log($"골드 드랍: {enemyData.goldDropAmount}G ");
                 currencyDataManager.AddCurrency(Core.Enums.CurrencyType.Gold,10);
-                
             }
 
         }

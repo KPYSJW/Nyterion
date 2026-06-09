@@ -102,6 +102,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
+  traits: 
+  hitEffectPrefab: {fileID: 6051215695420182853, guid: bdfe3fa95f522f547b9bc5b453d44c2d, type: 3}
   poolTag: Palyer_AcidicLarva
 --- !u!50 &-1744505625959751428
 Rigidbody2D:

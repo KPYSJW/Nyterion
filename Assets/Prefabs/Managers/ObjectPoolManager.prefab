@@ -99,4 +99,10 @@ MonoBehaviour:
     size: 40
   - tag: Spark
     prefab: {fileID: 2415647646280282227, guid: da4b3e0153b21e746819be3f591293d7, type: 3}
-    size: 10
+    size: 20
+  - tag: PoisonEffect
+    prefab: {fileID: 6051215695420182853, guid: bdfe3fa95f522f547b9bc5b453d44c2d, type: 3}
+    size: 40
+  - tag: IceShotHitEffect
+    prefab: {fileID: 8242796725191159463, guid: c499398c197697d42ada936fbdee7862, type: 3}
+    size: 40

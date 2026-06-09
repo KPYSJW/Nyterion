@@ -89,6 +89,7 @@ namespace Nytherion.UI.Inventory
 
         public void OnDrop(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             if (eventData.pointerDrag == null)
             {
                 return;

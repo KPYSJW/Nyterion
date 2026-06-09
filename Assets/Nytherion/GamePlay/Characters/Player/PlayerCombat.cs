@@ -21,7 +21,7 @@ namespace Nytherion.GamePlay.Characters.Player
         [SerializeField] private Vector3 centerOffset = new Vector3(0, 0.5f, 0);
 
         [Header("Aim Settings")]
-        [SerializeField] private bool useAngleLimit = true;
+        private bool useAngleLimit = false; // 360도 회전을 위해 인스펙터 오버라이드를 무시하고 항상 false로 고정
         [SerializeField] private float aimAngleLimit = 45f; // 중심각 기준 좌우 45도 (합 90도 부채꼴)
 
         public WeaponBase currentWeapon;

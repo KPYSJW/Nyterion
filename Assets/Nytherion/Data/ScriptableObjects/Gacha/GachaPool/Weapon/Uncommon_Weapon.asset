@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rarity: 1
   drawWeight: 50
-  items: []
+  items:
+  - item: {fileID: 11400000, guid: 77eb7bb54ef9b3e4088787a1440cc58c, type: 2}
+    weight: 100

@@ -95,6 +95,7 @@ namespace Nytherion.UI.Skill
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             if (currentSkill == null) return;
 
             // 드래그 시작 시 방해되지 않도록 툴팁을 숨긴다
@@ -116,6 +117,7 @@ namespace Nytherion.UI.Skill
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             // 드래그 중 아이콘 위치를 마우스 위치로 이동
             if (currentSkill != null)
             {
@@ -125,6 +127,7 @@ namespace Nytherion.UI.Skill
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             // 드래그 종료 시 아이콘을 원래 부모로 복귀시키고 위치 초기화
             skillIcon.transform.SetParent(iconOriginalParent);
             skillIcon.transform.localPosition = Vector3.zero;
@@ -135,8 +138,9 @@ namespace Nytherion.UI.Skill
 
         public void OnDrop(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             // 드롭된 객체가 SkillSlotUI 컴포넌트를 가지고 있는지 확인
-            var draggedSlot = eventData.pointerDrag.GetComponent<SkillSlotUI>();
+            SkillSlotUI draggedSlot = eventData.pointerDrag != null ? eventData.pointerDrag.GetComponent<SkillSlotUI>() : null;
 
             // 자기 자신에게 드롭한 것이 아닌 경우 스왑 이벤트 발생
             if (draggedSlot != null && draggedSlot != this)

@@ -24,7 +24,7 @@ MonoBehaviour:
   baseValue: 10
   equipmentType: 0
   rarity: 2
-  traits: 
+  traits: 03000000
   statModifiers: []
   damage: 10
   range: 2
@@ -39,5 +39,6 @@ MonoBehaviour:
   projectileSpeed: 10
   extraProjectileMode: 0
   maxChargeTime: 1
+  hitEffectPrefab: {fileID: 0}
   weaponPrefab: {fileID: 9177589374901164588, guid: 969983ef81ca5014097e4274a1e3db3d, type: 3}
   isArchivable: 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nytherion.Core.Interfaces;
 using Nytherion.GamePlay.Combat;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -24,8 +25,6 @@ namespace Nytherion.GamePlay.Combat
         [Tooltip("연쇄 적 타격 시 스폰할 스파크 이펙트 프리팹 (풀링 사용)")]
         [SerializeField] private GameObject sparkEffectPrefab;
 
-        [Tooltip("스파크 이펙트가 풀로 반환될 지연 시간 (초)")]
-        [SerializeField] private float sparkReturnDelay = 0.5f;
 
         private Rigidbody2D rb;
         private CollisionObject collisionObj;
@@ -137,19 +136,10 @@ namespace Nytherion.GamePlay.Combat
                         targetDamageable.TakeDamage(currentDamage);
                     }
 
-                    // 적 타격 위치에 스파크 이펙트 풀링 스폰
-                    if (sparkEffectPrefab != null && ObjectPoolManager.Instance != null)
+                    // 적 타격 위치에 스파크 이펙트 재생 (헬퍼 경유)
+                    if (ObjectPoolManager.Instance != null)
                     {
-                        GameObject sparkObj = ObjectPoolManager.Instance.SpawnFromPool(sparkEffectPrefab, target.position, Quaternion.identity);
-                        if (sparkObj != null)
-                        {
-                            AutoReturnToPool autoReturn = sparkObj.GetComponent<AutoReturnToPool>();
-                            if (autoReturn == null)
-                            {
-                                autoReturn = sparkObj.AddComponent<AutoReturnToPool>();
-                            }
-                            autoReturn.InitializeDelay(sparkReturnDelay);
-                        }
+                        WeaponEffectHelper.PlayHitEffect(sparkEffectPrefab, target.position);
                     }
                 }
                 currentDamage *= 0.8f; // 연쇄당 데미지 감쇄

@@ -7,12 +7,13 @@ namespace Nytherion.Core.Enums
     public enum EquipmentTrait
     {
         None = 0,
-        Cursed,         // 일반 저주
-        HighCurse,      // 고위 저주 (해방을 위해 여러 조건 필요)
+        Sealed,         // 봉인 상태 (기존 Cursed)
+        Curse,          // 저주 속성 (기존 HighCurse, 받는 피해 증가)
         Fire,           // 화염 속성
         Ice,            // 빙결 속성
         Lightning,      // 전격 속성
         Holy,           // 신성 속성
-        Demonic         // 마성 속성
+        Demonic,         // 마성 속성
+        Poison           // 독 속성
     }
 }
