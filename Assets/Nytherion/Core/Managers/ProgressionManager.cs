@@ -8,6 +8,8 @@ using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Relics;
 using VContainer;
+using System.Collections.Generic;
+using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.Core.Managers
 {
@@ -34,6 +36,7 @@ namespace Nytherion.Core.Managers
         System.Collections.Generic.List<GameObject> GetUnlockedProjectilePrefabs();
         void RecordProjectile(string projectileTag);
         System.Collections.Generic.List<string> GetUnlockedProjectiles();
+        System.Collections.Generic.List<MilestoneData> GetAllMilestones();
     }
 
     public class ProgressionManager : BaseManager, IProgressionManager, ISaveable 
@@ -103,7 +106,54 @@ namespace Nytherion.Core.Managers
 
             eventManager.OnEnemyDied += (enemy) => ProcessAction(ProgressionType.KillEnemy, 1);
             eventManager.OnEnemyDamagedByPlayer += (damage) => ProcessAction(ProgressionType.DealDamage, (int)damage);
-            eventManager.OnBossClearedEvent += (stage) => ProcessAction(ProgressionType.ClearFloor, 1);
+            eventManager.OnBossClearedEvent += (stage) => {
+                ProcessAction(ProgressionType.ClearFloor, 1);
+
+                // 구석 조약돌 (CornerStone) 가장자리 배치 상태로 보스 클리어 업적 연동
+                if (relicManager != null)
+                {
+                    bool isCornerStoneMet = false;
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "CornerStone" && !block.SourceData.isDisabled)
+                        {
+                            int r = pair.Value.y;
+                            int c = pair.Value.x;
+                            if (r == 0 || r == relicManager.GridRows - 1 || c == 0 || c == relicManager.GridColumns - 1)
+                            {
+                                isCornerStoneMet = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isCornerStoneMet)
+                    {
+                        ProcessAction(ProgressionType.ComfyCornerClear, 1);
+                    }
+                }
+
+                // 유리 칼 (Glass Sword) 장착 상태로 보스 클리어 업적 연동
+                if (relicManager != null)
+                {
+                    bool isGlassCapEquipped = false;
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "Glass Sword" && !block.SourceData.isDisabled)
+                        {
+                            isGlassCapEquipped = true;
+                            break;
+                        }
+                    }
+
+                    if (isGlassCapEquipped)
+                    {
+                        ProcessAction(ProgressionType.GlassCapBossClear, 1);
+                    }
+                }
+            };
 
             if (currencyDataManager != null)
             {
@@ -128,7 +178,18 @@ namespace Nytherion.Core.Managers
 
         private void InitializeMilestoneLookup()
         {
-            if (milestoneDatabase == null || milestoneDatabase.allMilestones == null) return;
+            if (milestoneDatabase == null)
+            {
+                Debug.LogError("[ProgressionManager] milestoneDatabase가 Null입니다! 프리팹 또는 인스펙터 바인딩을 확인하세요.");
+                return;
+            }
+            if (milestoneDatabase.allMilestones == null)
+            {
+                Debug.LogError("[ProgressionManager] milestoneDatabase.allMilestones가 Null입니다!");
+                return;
+            }
+
+            Debug.Log($"[ProgressionManager] InitializeMilestoneLookup 성공. 마일스톤 개수: {milestoneDatabase.allMilestones.Count}");
 
             milestoneLookup.Clear();
             milestonesByType.Clear();
@@ -336,6 +397,13 @@ namespace Nytherion.Core.Managers
                     AddProgress(milestone, amount);
                 }
             }
+        }
+
+        public System.Collections.Generic.List<MilestoneData> GetAllMilestones()
+        {
+            return milestoneDatabase != null && milestoneDatabase.allMilestones != null 
+                ? new System.Collections.Generic.List<MilestoneData>(milestoneDatabase.allMilestones) 
+                : new System.Collections.Generic.List<MilestoneData>();
         }
         // --- ISaveable ---
         public override void PopulateSaveData(SaveData saveData)

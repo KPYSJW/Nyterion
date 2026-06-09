@@ -4,6 +4,8 @@ using Nytherion.Core.Managers;
 using Nytherion.Core.Utils;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Systems;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.Gameplay.Relics.Modules
 {
@@ -38,7 +40,17 @@ namespace Nytherion.Gameplay.Relics.Modules
                 }
             }
 
-            return activeChainCount > 0 && activeChainCount % 2 == 0;
+            bool isMet = activeChainCount > 0 && activeChainCount % 2 == 0;
+            if (isMet)
+            {
+                ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                if (progressionManager != null)
+                {
+                    progressionManager.ProcessAction(ProgressionType.SqueakyGearTrigger, 1);
+                }
+            }
+
+            return isMet;
         }
     }
 }

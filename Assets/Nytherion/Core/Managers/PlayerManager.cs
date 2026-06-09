@@ -10,6 +10,7 @@ using System;
 using VContainer;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Systems;
 
 
 namespace Nytherion.Core.Managers
@@ -31,6 +32,13 @@ namespace Nytherion.Core.Managers
         public event Action OnPlayerStatsChanged;
 
         public int CurrentRunKillCount { get; private set; }
+
+        private int luckyCloverResetCountInBattle = 0;
+
+        public void ResetLuckyCloverResetCount()
+        {
+            luckyCloverResetCountInBattle = 0;
+        }
 
         [Inject]
         public void Construct(EquipmentDataManager equipmentDataManager, InputManager inputManager, EventManager eventManager)
@@ -118,6 +126,16 @@ namespace Nytherion.Core.Managers
                                 {
                                     playerController.LastDashTime = -999f;
                                     Debug.Log("[PlayerManager] 치명타 적중! 네잎클로버(LuckyClover) 효과 발동! 대쉬 쿨타임 초기화!");
+
+                                    luckyCloverResetCountInBattle++;
+                                    if (luckyCloverResetCountInBattle >= 3)
+                                    {
+                                        ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                                        if (progressionManager != null)
+                                        {
+                                            progressionManager.ProcessAction(ProgressionType.LuckyCloverResetInOneBattle, 1);
+                                        }
+                                    }
                                 }
                             }
                             break;
@@ -337,14 +355,14 @@ namespace Nytherion.Core.Managers
                 }
             }
 
-            // 유리 병뚜껑 (GlassCap) 유물 효과 적용: 최대 체력 50 고정
+            // 유리 칼 (Glass Sword) 유물 효과 적용: 최대 체력 50 고정
             RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
             if (relicManager != null)
             {
                 foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
                 {
                     RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                    if (block != null && block.RelicId == "GlassCap" && !block.SourceData.isDisabled)
+                    if (block != null && block.RelicId == "Glass Sword" && !block.SourceData.isDisabled)
                     {
                         currentPlayerData.maxHealth = 50f;
                         break;

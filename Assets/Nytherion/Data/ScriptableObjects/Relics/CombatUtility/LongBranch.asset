@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: LongBranch
   m_EditorClassIdentifier: 
   relicName: LongBranch
-  koreanName: 길쭉한 가지
-  description_KR: "상하좌우 인접한 빈 슬롯이 3개 이상일 때 대쉬 속도 +15%. *(뻗어나갈 공간)*"
-  description_EN: "+15% Dash Speed when 3 or more adjacent slots (up, down, left, right) are empty. (Space to expand)"
-  Image: {fileID: 0}
+  koreanName: "\uAE38\uCB49\uD55C \uAC00\uC9C0"
+  description_KR: "\uC0C1\uD558\uC88C\uC6B0 \uC778\uC811\uD55C \uBE48 \uC2AC\uB86F\uC774
+    3\uAC1C \uC774\uC0C1\uC77C \uB54C \uB300\uC26C \uC18D\uB3C4 +15%. "
+  description_EN: +15% Dash Speed when 3 or more adjacent slots (up, down, left,
+    right) are empty.
+  Image: {fileID: 21300000, guid: 652e5238deb680547a71c34c1dcbc799, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0
@@ -28,6 +30,8 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

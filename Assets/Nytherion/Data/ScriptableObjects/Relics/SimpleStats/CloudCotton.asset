@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}
+  m_Name: CloudCotton
+  m_EditorClassIdentifier: 
+  relicName: Cloud Cotton
+  koreanName: "\uAD6C\uB984\uC19C"
+  description_KR: "\uB300\uC26C \uCFE8\uD0C0\uC784\uC744 \uAC10\uC18C\uC2DC\uD0B5\uB2C8\uB2E4."
+  description_EN: Reduces dash cooldown.
+  Image: {fileID: 21300000, guid: 563178e2f6643b142b14599151bcb6fe, type: 3}
+  rarity: 0
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 6716071699098894338
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: -1}
+    type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
+  simpleStatModifiers:
+  - stat: 9
+    value: -0.05
+    valuePerLevel: -0.01
+    isPercentage: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6716071699098894338
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 9
+          value: -0.05
+          valuePerLevel: -0.01
+          isPercentage: 1

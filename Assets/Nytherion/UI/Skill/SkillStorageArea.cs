@@ -10,9 +10,10 @@ namespace Nytherion.UI.Skill
 
         public void OnDrop(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             if (eventData.pointerDrag != null)
             {
-                var draggedSlot = eventData.pointerDrag.GetComponent<SkillSlotUI>();
+                SkillSlotUI draggedSlot = eventData.pointerDrag.GetComponent<SkillSlotUI>();
 
                 if (draggedSlot != null && draggedSlot.slotType == SkillSlotType.Equipped)
                 {

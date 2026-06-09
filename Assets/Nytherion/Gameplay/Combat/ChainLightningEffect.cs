@@ -21,6 +21,9 @@ namespace Nytherion.GamePlay.Combat
         [Tooltip("전류가 흘러가는 속도")]
         public float textureScrollSpeed = 15f;
 
+        [Tooltip("번개를 지그재그가 아닌 완벽한 직선 형태로 그릴지 여부")]
+        public bool useStraightLine = false;
+
         private float elapsed = 0f;
         
         // 실시간 위치 추적을 위한 Transform 레퍼런스
@@ -153,6 +156,12 @@ namespace Nytherion.GamePlay.Combat
         {
             List<Vector3> segmentPoints = new List<Vector3>();
             segmentPoints.Add(start);
+
+            if (useStraightLine)
+            {
+                // 직선 모드인 경우 꺾임 노이즈 연산 없이 시작 지점만 담고 즉시 리턴
+                return segmentPoints;
+            }
 
             Vector3 direction = end - start;
             Vector3 normal = new Vector3(-direction.y, direction.x, 0f).normalized;

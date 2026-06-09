@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}
+  m_Name: NoviceLeatherHelmet
+  m_EditorClassIdentifier: 
+  uniqueID: armor_novice_leather_helmet
+  itemName_KR: "훈련용 가죽 투구"
+  itemName_EN: Novice Leather Helmet
+  icon: {fileID: 0}
+  description_KR: "초보 모험가가 머리를 보호하기 위해 가볍게 착용하는 가죽 투구입니다."
+  description_EN: "A light leather helmet commonly worn by novice adventurers to protect their head."
+  isStackable: 0
+  maxStack: 1
+  baseValue: 80
+  equipmentType: 1
+  rarity: 0
+  traits: []
+  statModifiers:
+  - stat: 0
+    value: 10
+    valuePerLevel: 0
+    isPercentage: 0
+  - stat: 1
+    value: 3
+    valuePerLevel: 0
+    isPercentage: 0
+  armorType: 0

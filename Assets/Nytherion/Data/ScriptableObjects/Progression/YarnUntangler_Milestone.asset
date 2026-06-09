@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}
+  m_Name: YarnUntangler_Milestone
+  m_EditorClassIdentifier: 
+  milestoneID: YarnUntangler
+  title: "실타래 풀기 장인"
+  description: "'꼬인 실타래' 효과(활성 체인 링크 3개 이상) 상태로 방 클리어."
+  icon: {fileID: 0}
+  progressionType: 15
+  requiredMilestones: []
+  targetValue: 1
+  rewards:
+  - rewardType: 0
+    amount: 1
+    skillData: {fileID: 11400000, guid: 9db2d15baa8d38845ab987c170946da2, type: 2}
+    itemData: {fileID: 0}
+    relicData: {fileID: 0}

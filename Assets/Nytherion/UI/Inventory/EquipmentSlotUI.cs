@@ -10,8 +10,8 @@ using VContainer.Unity;
 namespace Nytherion.UI.Inventory
 {
     /// <summary>
-    /// °³º° Àåºñ ½½·ÔÀÇ UI¸¦ Á¦¾î
-    /// ¾ÆÀÌÅÛ µå·¡±× ¾Ø µå·Ó ÀåÂø, ¿ìÅ¬¸¯ ÇØÁ¦ µîÀÇ »óÈ£ÀÛ¿ë Ã³¸®
+    /// ê°œë³„ ì¥ë¹„ ìŠ¬ë¡¯ì˜ UIë¥¼ ì œì–´
+    /// ì•„ì´í…œ ë“œë˜ê·¸ ì•¤ ë“œë¡­ ì¥ì°©, ìš°í´ë¦­ í•´ì œ ë“±ì˜ ìƒí˜¸ì‘ìš© ì²˜ë¦¬
     /// </summary>
     public class EquipmentSlotUI : BaseSlotUI, IDropHandler
     {
@@ -51,7 +51,7 @@ namespace Nytherion.UI.Inventory
         }
 
         /// <summary>
-        /// µ¥ÀÌÅÍ ¸Å´ÏÀú¿¡¼­ ÇöÀç ÀåÂøµÈ Àåºñ Á¤º¸¸¦ °¡Á®¿Í UI¸¦ ÃÊ±âÈ­
+        /// ë°ì´í„° ë§¤ë‹ˆì €ì—ì„œ í˜„ì¬ ì¥ì°©ëœ ì¥ë¹„ ì •ë³´ë¥¼ ê°€ì ¸ì™€ UIë¥¼ ì´ˆê¸°í™”
         /// </summary>
         private void InitializeEquipmentState()
         {
@@ -113,7 +113,7 @@ namespace Nytherion.UI.Inventory
         }
 
         /// <summary>
-        /// Àåºñ µ¥ÀÌÅÍ°¡ º¯°æµÇ¾úÀ» ¶§¤ÁUI¸¦ °»½Å
+        /// ì¥ë¹„ ë°ì´í„°ê°€ ë³€ê²½ë˜ì—ˆì„ ë•Œã…‘UIë¥¼ ê°±ì‹ 
         /// </summary>
         private void HandleEquipmentChanged(EquipmentSlotType changedSlotType, EquipmentData newItem, EquipmentData oldItem)
         {
@@ -124,30 +124,31 @@ namespace Nytherion.UI.Inventory
         }
 
         /// <summary>
-        /// ´Ù¸¥ UI¿¡¼­ ¾ÆÀÌÅÛÀ» ÀÌ ½½·ÔÀ¸·Î µå·ÓÇßÀ» ¶§ È£Ãâ
+        /// ë‹¤ë¥¸ UIì—ì„œ ì•„ì´í…œì„ ì´ ìŠ¬ë¡¯ìœ¼ë¡œ ë“œë¡­í–ˆì„ ë•Œ í˜¸ì¶œ
         /// </summary>
         public void OnDrop(PointerEventData eventData)
         {
-            // µå·¡±× ÁßÀÎ ¿ÀºêÁ§Æ®°¡ ÀÖ´ÂÁö È®ÀÎ, ¾ø´Ù¸é Á¾·á
+            if (eventData.button != PointerEventData.InputButton.Left) return;
+            // ë“œë˜ê·¸ ì¤‘ì¸ ì˜¤ë¸Œì íŠ¸ê°€ ìˆëŠ”ì§€ í™•ì¸, ì—†ë‹¤ë©´ ì¢…ë£Œ
             if (eventData.pointerDrag == null) return;
 
-            // µå·¡±×ÇØ¼­ °¡Á®¿Â ¿ÀºêÁ§Æ®°¡ BaseSlotUI ÄÄÆ÷³ÍÆ®¸¦ °¡Áö°í ÀÖ´ÂÁö È®ÀÎ
+            // ë“œë˜ê·¸í•´ì„œ ê°€ì ¸ì˜¨ ì˜¤ë¸Œì íŠ¸ê°€ BaseSlotUI ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì§€ê³  ìˆëŠ”ì§€ í™•ì¸
             BaseSlotUI sourceBaseSlot = eventData.pointerDrag.GetComponent<BaseSlotUI>();
 
-            // ¤¡°¡Á®¿Â°Ô ½½·Ô UI°¡ ¾Æ´Ï°Å³ª °¡Á®¿Â ½½·ÔÀÌ ºó Ä­ÀÌ°Å³ª, ÀÚ±â ÀÚ½ÅÀ» Å¬¸¯ÇÏ°í Á¦ÀÚ¸®¿¡ ±×´ë·Î ³õÀ» ¶§ Á¾·á
+            // ã„±ê°€ì ¸ì˜¨ê²Œ ìŠ¬ë¡¯ UIê°€ ì•„ë‹ˆê±°ë‚˜ ê°€ì ¸ì˜¨ ìŠ¬ë¡¯ì´ ë¹ˆ ì¹¸ì´ê±°ë‚˜, ìê¸° ìì‹ ì„ í´ë¦­í•˜ê³  ì œìë¦¬ì— ê·¸ëŒ€ë¡œ ë†“ì„ ë•Œ ì¢…ë£Œ
             if (sourceBaseSlot == null || sourceBaseSlot.IsEmpty || sourceBaseSlot == this) return;
 
-            // ¾ÆÀÌÅÛÀÌ ÀÎº¥Åä¸® ½½·Ô¿¡¼­ ¿Ó´ÂÁö È®ÀÎÇÏ°í Àåºñ ½½·Ô¿¡ ¸Â´Â Å¸ÀÔÀÎÁö °Ë»ç
+            // ì•„ì´í…œì´ ì¸ë²¤í† ë¦¬ ìŠ¬ë¡¯ì—ì„œ ì™“ëŠ”ì§€ í™•ì¸í•˜ê³  ì¥ë¹„ ìŠ¬ë¡¯ì— ë§ëŠ” íƒ€ì…ì¸ì§€ ê²€ì‚¬
             if (sourceBaseSlot is InventorySlotUI sourceSlot && CanReceiveItem(sourceSlot.CurrentItem))
             {
-                // ¾ÆÀÌÅÛ Á¤º¸ ÃßÃâ
+                // ì•„ì´í…œ ì •ë³´ ì¶”ì¶œ
                 (ItemData itemToEquip, int count) = sourceSlot.GetItemInfo();
                 if (itemToEquip == null) return;
 
-                // ÀÎº¥Åä¸®¿¡¼­ Á¦°Å ÈÄ ÀåÂø
+                // ì¸ë²¤í† ë¦¬ì—ì„œ ì œê±° í›„ ì¥ì°©
                 if (inventoryDataManager.RemoveItemFromSlot(sourceSlot.SlotIndex, 1))
                 {
-                    // ±âÁ¸¿¡ ÀåÂøµÈ ¾ÆÀÌÅÛÀÌ ÀÖÀ¸¸é ÀÎº¥Åä¸®·Î ¹İÈ¯ 
+                    // ê¸°ì¡´ì— ì¥ì°©ëœ ì•„ì´í…œì´ ìˆìœ¼ë©´ ì¸ë²¤í† ë¦¬ë¡œ ë°˜í™˜ 
                     if (!IsEmpty)
                     {
                         inventoryDataManager.AddItem(CurrentItem, 1);
@@ -165,13 +166,13 @@ namespace Nytherion.UI.Inventory
         }
 
         /// <summary>
-        /// ÇØ´ç ¾ÆÀÌÅÛÀÌ Àåºñ ½½·Ô¿¡ ÀåÂø °¡´ÉÇÑÁö °Ë»ç
+        /// í•´ë‹¹ ì•„ì´í…œì´ ì¥ë¹„ ìŠ¬ë¡¯ì— ì¥ì°© ê°€ëŠ¥í•œì§€ ê²€ì‚¬
         /// </summary>
-        /// <param name="item">°Ë»çÇÒ ¾ÆÀÌÅÛ µ¥ÀÌÅÍ</param>
-        /// <returns>ÀåÂø °¡´É ¿©ºÎ</returns>
+        /// <param name="item">ê²€ì‚¬í•  ì•„ì´í…œ ë°ì´í„°</param>
+        /// <returns>ì¥ì°© ê°€ëŠ¥ ì—¬ë¶€</returns>
         public override bool CanReceiveItem(ItemData item)
         {
-            // µå·¡±×ÇØ ¿Â ¾ÆÀÌÅÛ µ¥ÀÌÅÍ°¡ ºñ¾îÀÖ°Å³ª ¾ÆÀÌÅÛÀÌ Àåºñ Å¸ÀÔÀÌ ¾Æ´Ñ °æ¿ì Á¾·á
+            // ë“œë˜ê·¸í•´ ì˜¨ ì•„ì´í…œ ë°ì´í„°ê°€ ë¹„ì–´ìˆê±°ë‚˜ ì•„ì´í…œì´ ì¥ë¹„ íƒ€ì…ì´ ì•„ë‹Œ ê²½ìš° ì¢…ë£Œ
             if (item == null || !(item is EquipmentData equipment)) return false;
 
             switch (equipment.equipmentType)
@@ -179,10 +180,10 @@ namespace Nytherion.UI.Inventory
                 case EquipmentType.Weapon:
                     return this.slotType == EquipmentSlotType.Weapon;
                 case EquipmentType.Armor:
-                    // ¹Ù¾î±¸ °íÀ¯ µ¥ÀÌÅÍ¸± ÀĞ±â À§ÇØ ArmorDat·Î º¯È¯
+                    // ë°”ì–´êµ¬ ê³ ìœ  ë°ì´í„°ë¦´ ì½ê¸° ìœ„í•´ ArmorDatë¡œ ë³€í™˜
                     if (equipment is ArmorData armor)
                     {
-                        // ¹æ¾î±¸ Å¸ÀÔÀ» È®ÀÎÇÏ°í ÇØ´çÇÏ´Â ½½·Ô¿¡¸¸ µé¾î°¡µµ·Ï ¸ÂÃã
+                        // ë°©ì–´êµ¬ íƒ€ì…ì„ í™•ì¸í•˜ê³  í•´ë‹¹í•˜ëŠ” ìŠ¬ë¡¯ì—ë§Œ ë“¤ì–´ê°€ë„ë¡ ë§ì¶¤
                         switch (armor.armorType)
                         {
                             case ArmorType.Helmet: return this.slotType == EquipmentSlotType.Helmet;
@@ -198,13 +199,13 @@ namespace Nytherion.UI.Inventory
         }
 
         /// <summary>
-        /// ½ÇÁ¦ µ¥ÀÌÅÍ ¸Å´ÏÀú¿¡ Àåºñ »óÅÂ¸¦ ¾÷µ¥ÀÌÆ®ÇÏµµ·Ï ¿äÃ»
+        /// ì‹¤ì œ ë°ì´í„° ë§¤ë‹ˆì €ì— ì¥ë¹„ ìƒíƒœë¥¼ ì—…ë°ì´íŠ¸í•˜ë„ë¡ ìš”ì²­
         /// </summary>
         private void UpdateEquipment(ItemData itemToEquip)
         {
             if (equipmentDataManager == null)
             {
-                Debug.LogError("equipmentDataManager°¡ null");
+                Debug.LogError("equipmentDataManagerê°€ null");
                 return;
             }
 
@@ -212,7 +213,7 @@ namespace Nytherion.UI.Inventory
 
             if (equipment != null)
             {
-                // ÀÎ½ºÅÏ½º ID°¡ ¾øÀ¸¸é °íÀ¯ ID ºÎ¿©
+                // ì¸ìŠ¤í„´ìŠ¤ IDê°€ ì—†ìœ¼ë©´ ê³ ìœ  ID ë¶€ì—¬
                 if (string.IsNullOrEmpty(equipment.instanceId))
                 {
                     equipment.instanceId = System.Guid.NewGuid().ToString();
@@ -223,7 +224,7 @@ namespace Nytherion.UI.Inventory
         }
 
         /// <summary>
-        /// ÇöÀç ÀåÂøµÈ ¾ÆÀÌÅÛÀ» ÇØÁ¦ÇÏ°í ÀÎº¥Åä¸®·Î ¹İÈ¯
+        /// í˜„ì¬ ì¥ì°©ëœ ì•„ì´í…œì„ í•´ì œí•˜ê³  ì¸ë²¤í† ë¦¬ë¡œ ë°˜í™˜
         /// </summary>
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
         {
@@ -237,21 +238,21 @@ namespace Nytherion.UI.Inventory
         {
             if (IsEmpty)
             {
-                Debug.Log($"{slotType} ½½·ÔÀÌ ºñ¾îÀÖ¾î ÇØÁ¦¸¦ Ãë¼Ò");
+                Debug.Log($"{slotType} ìŠ¬ë¡¯ì´ ë¹„ì–´ìˆì–´ í•´ì œë¥¼ ì·¨ì†Œ");
                 return;
             }
-            Debug.Log($"{slotType} ½½·Ô ÇØÁ¦ ½Ãµµ ½ÃÀÛ");
+            Debug.Log($"{slotType} ìŠ¬ë¡¯ í•´ì œ ì‹œë„ ì‹œì‘");
 
             bool isAddedToInventory = inventoryDataManager.AddItem(CurrentItem, 1);
 
             if (isAddedToInventory)
             {
-                Debug.Log("ÀÎº¥Åä¸® Ãß°¡ ¼º°ø. UI ½½·ÔÀ» ºñ¿î´Ù");
+                Debug.Log("ì¸ë²¤í† ë¦¬ ì¶”ê°€ ì„±ê³µ. UI ìŠ¬ë¡¯ì„ ë¹„ìš´ë‹¤");
                 ClearSlot();
             }
             else
             {
-                Debug.LogError("ÀÎº¥Åä¸® Ãß°¡ ½ÇÆĞ");
+                Debug.LogError("ì¸ë²¤í† ë¦¬ ì¶”ê°€ ì‹¤íŒ¨");
             }
         }
 

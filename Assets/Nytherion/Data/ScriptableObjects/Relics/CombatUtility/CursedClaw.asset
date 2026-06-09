@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: CursedClaw
   m_EditorClassIdentifier: 
   relicName: Cursed Claw
-  koreanName: 저주 손톱
-  description: "저주 장비 장착 시 공속 +25%, 공격력 +10. (사악한 손톱 조각)"
-  description_KR: "저주 장비 장착 시 공속 +25%, 공격력 +10. (사악한 손톱 조각)"
-  description_EN: "When Cursed equipment is active, attack speed +25%, Atk +10. (A piece of evil claw)"
-  Image: {fileID: 0}
+  koreanName: "\uB098\uC05C \uC190"
+  description_KR: "\uC800\uC8FC \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uC18D +25%,
+    \uACF5\uACA9\uB825 +10. "
+  description_EN: 'When Cursed equipment is active, attack speed +25%, Atk +10. '
+  Image: {fileID: 21300000, guid: d722518aa797aaa4d86fc8e75bd42e58, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0
@@ -37,6 +37,8 @@ MonoBehaviour:
     type: 4
   - offset: {x: 1, y: 0}
     type: 4
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

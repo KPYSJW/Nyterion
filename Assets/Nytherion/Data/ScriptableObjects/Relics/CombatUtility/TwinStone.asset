@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: TwinStone
   m_EditorClassIdentifier: 
   relicName: Split Pebble
-  koreanName: 쪼개진 조약돌
-  description: "특수 투사체 피해량 +20%. (결국 둘로 갈라진 돌)"
-  description_KR: "특수 투사체 피해량 +20%. (결국 둘로 갈라진 돌)"
-  description_EN: "Special projectile dmg +20%. (Split into two)"
+  koreanName: "\uCABC\uAC1C\uC9C4 \uC870\uC57D\uB3CC"
+  description_KR: "\uD2B9\uC218 \uD22C\uC0AC\uCCB4 \uD53C\uD574\uB7C9 +20%. "
+  description_EN: 'Special projectile dmg +20%. '
   Image: {fileID: 21300000, guid: 7bf1d030a95f72e4a8c26ba4215a8a40, type: 3}
   rarity: 0
   level: 1
@@ -33,6 +32,8 @@ MonoBehaviour:
     type: 1
   - offset: {x: 0, y: -1}
     type: 2
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

@@ -6,6 +6,7 @@ using Nytherion.Core.Interfaces;
 using Nytherion.Core.Utils;
 using System;
 using System.Collections.Generic;
+using Nytherion.Core.Systems;
 
 namespace Nytherion.Gameplay.Relics.Modules
 {
@@ -74,9 +75,15 @@ namespace Nytherion.Gameplay.Relics.Modules
             int units = currentGold / goldUnit;
             float damageIncrease = units * damagePerUnit;
 
-            if (damageIncrease > maxDamageIncrease)
+            if (damageIncrease >= maxDamageIncrease)
             {
                 damageIncrease = maxDamageIncrease;
+
+                ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                if (progressionManager != null)
+                {
+                    progressionManager.ProcessAction(ProgressionType.MaxGoldSnoutBuff, 1);
+                }
             }
 
             ClearModifiers();

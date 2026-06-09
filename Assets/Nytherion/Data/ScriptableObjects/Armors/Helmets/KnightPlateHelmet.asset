@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9c8ddff15885af42a6a2ca2b11dacc4, type: 3}
+  m_Name: KnightPlateHelmet
+  m_EditorClassIdentifier: 
+  uniqueID: armor_knight_plate_helmet
+  itemName_KR: "\uAE30\uC0AC\uC758 \uD310\uAE08 \uD22C\uAD6C"
+  itemName_EN: Knight's Plate Helmet
+  icon: {fileID: 0}
+  description_KR: "\uAE30\uC0AC\uAC00 \uC8FC\uB85C \uC7A5\uCC29\uD558\uB294 \uB2E8\uB2E8\uD55C
+    \uCCA0\uC81C \uD22C\uAD6C\uC785\uB2C8\uB2E4. \uBA38\uB9AC\uB97C \uC548\uC804\uD558\uAC8C
+    \uAC10\uC309\uB2C8\uB2E4."
+  description_EN: A heavy steel helmet worn by knights. Safely wraps the head.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 180
+  equipmentType: 1
+  rarity: 3
+  traits: 
+  statModifiers:
+  - stat: 0
+    value: 25
+    valuePerLevel: 0
+    isPercentage: 0
+  - stat: 1
+    value: 8
+    valuePerLevel: 0
+    isPercentage: 0
+  armorType: 0

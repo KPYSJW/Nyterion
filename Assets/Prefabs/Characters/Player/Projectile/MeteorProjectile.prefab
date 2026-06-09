@@ -121,7 +121,7 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.6}
   serializedVersion: 2
   m_Radius: 0.72
 --- !u!50 &-2708175789440845892
@@ -165,6 +165,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fallSpeed: 20
   explosionRadius: 2.5
+  indicatorPrefab: {fileID: 6562533440526760798, guid: 5040f237235ff0343a39237840f1da89, type: 3}
+  yOffset: 0.4
 --- !u!114 &1992231782877512561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,6 +180,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
+  traits: 03000000
+  hitEffectPrefab: {fileID: 0}
   poolTag: Player_Meteor
 --- !u!95 &4657143030660461995
 Animator:

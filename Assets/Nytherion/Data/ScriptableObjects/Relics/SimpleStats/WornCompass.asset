@@ -13,14 +13,18 @@ MonoBehaviour:
   m_Name: WornCompass
   m_EditorClassIdentifier: 
   relicName: Worn Compass
-  koreanName: 낡은 나침반
-  description_KR: 이동 속도를 증가시킵니다.
+  koreanName: "\uB0A1\uC740 \uB098\uCE68\uBC18"
+  description_KR: "\uC774\uB3D9 \uC18D\uB3C4\uB97C \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
   description_EN: Increases movement speed.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: e5471c49bfd7b3d40ba26dabebc1e05d, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0
-  effectModules: []
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 6716071699098894341
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -35,3 +39,16 @@ MonoBehaviour:
     value: 0.1
     valuePerLevel: 0.02
     isPercentage: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6716071699098894341
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 2
+          value: 0.1
+          valuePerLevel: 0.02
+          isPercentage: 1

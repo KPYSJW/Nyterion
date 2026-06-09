@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: TornPouch
   m_EditorClassIdentifier: 
   relicName: TornPouch
-  koreanName: 구멍 난 주머니
-  description_KR: "골드 획득 시 10% 확률로 획득량 2배. *(흘려도 다시 줍습니다)*"
-  description_EN: "10% chance to double gold gain. (Pick it up again even if it spills)"
+  koreanName: "\uAD6C\uBA4D \uB09C \uC8FC\uBA38\uB2C8"
+  description_KR: "\uACE8\uB4DC \uD68D\uB4DD \uC2DC 10% \uD655\uB960\uB85C \uD68D\uB4DD\uB7C9
+    2\uBC30. "
+  description_EN: '10% chance to double gold gain. '
   Image: {fileID: 0}
   rarity: 0
   level: 1
@@ -24,6 +25,8 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds: []

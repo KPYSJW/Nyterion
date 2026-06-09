@@ -68,6 +68,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             FireChargedAttack(releaseDirection, 1.0f); // 1.0 = 풀차징
 
             lastAttackTime = Time.time;
+            PlayFireAnimation();
         }
 
         public override void AttackEnd()
@@ -85,6 +86,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
             lastAttackTime = Time.time;
             currentChargeTime = 0f;
+            PlayFireAnimation();
         }
 
         protected virtual void OnCharging(float chargePercent) { }

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2eae4ef8975327449a1091606fd9690, type: 3}
+  m_Name: GlassCannon_Milestone
+  m_EditorClassIdentifier: 
+  milestoneID: GlassCannon
+  title: "진짜 유리몸"
+  description: "'유리 칼' 장착(최대 체력 50 고정) 상태로 보스 처치."
+  icon: {fileID: 0}
+  progressionType: 17
+  requiredMilestones: []
+  targetValue: 1
+  rewards:
+  - rewardType: 3
+    amount: 1
+    skillData: {fileID: 0}
+    itemData: {fileID: 11400000, guid: 04156ef240e0cef419a073e7efc320de, type: 2}
+    relicData: {fileID: 0}

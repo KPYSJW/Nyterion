@@ -201,6 +201,7 @@ namespace Nytherion.UI.Shop
         
         public void OnDrop(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             InventorySlotUI droppedSlot = eventData.pointerDrag?.GetComponent<InventorySlotUI>();
 
             if (droppedSlot != null && !droppedSlot.IsEmpty)

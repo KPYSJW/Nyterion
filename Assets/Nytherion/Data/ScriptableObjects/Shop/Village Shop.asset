@@ -105,12 +105,32 @@ MonoBehaviour:
     stock: 1
     isUnlimited: 0
   - shopItemId: 8500efef-b771-4f9a-9f13-6d62290bf6c8
-    item: {fileID: 11400000, guid: 5ee68c96132c51d4d9f731ed604a9ee4, type: 2}
+    item: {fileID: 11400000, guid: 3fdbb23bd678dca4eacbab7c4b769332, type: 2}
     price: 100
     stock: 1
     isUnlimited: 0
   - shopItemId: e54438f9-17cd-49b7-a149-b5b762fd31c4
     item: {fileID: 11400000, guid: 04156ef240e0cef419a073e7efc320de, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: 528a7bd3-1530-471c-884b-9d0cfea19f72
+    item: {fileID: 11400000, guid: dde50779d094d44498df6624e2310b75, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: c014b46d-84dc-4499-8cab-026fc77b694f
+    item: {fileID: 11400000, guid: 77eb7bb54ef9b3e4088787a1440cc58c, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: ad1a1e1b-4177-4949-9bf3-b8aeb959d386
+    item: {fileID: 11400000, guid: 7b07c966f05945c42b6d71fcbff9bdc8, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: 9ed09863-0fe8-4741-aecf-7c8d99ce1550
+    item: {fileID: 11400000, guid: bfcc6bc6f7a9e7d4998a440e0763228f, type: 2}
     price: 100
     stock: 1
     isUnlimited: 0

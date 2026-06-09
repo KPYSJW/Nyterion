@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: CornerStone
   m_EditorClassIdentifier: 
   relicName: CornerStone
-  koreanName: 구석 조약돌
-  description_KR: "각인 보드의 가장자리(테두리) 슬롯에 배치 시 방어력 +4. *(안전한 구석탱이)*"
-  description_EN: "+4 Defense when placed on the edge slots of the board. (Safe corner)"
-  Image: {fileID: 0}
+  koreanName: "\uAC01\uC11D"
+  description_KR: "\uBCF4\uB4DC\uC758 \uAC00\uC7A5\uC790\uB9AC \uC2AC\uB86F\uC5D0
+    \uBC30\uCE58 \uC2DC \uBC29\uC5B4\uB825 +4. "
+  description_EN: '+4 Defense when placed on the edge slots of the board. '
+  Image: {fileID: 21300000, guid: 779f6cf0bb5af1043a1f68047c55e3ab, type: 3}
   rarity: 0
   level: 1
   isDisabled: 0
@@ -28,12 +29,14 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:
     - rid: 4000000000000000001
       type: {class: CornerStoneCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data: {}
+      data: 
     - rid: 4000000000000000002
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:

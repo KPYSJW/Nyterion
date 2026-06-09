@@ -18,10 +18,8 @@ public class BlackholeProjectile : MonoBehaviour
 
     private Collider2D[] hitColliders = new Collider2D[20];
 
-    [Header("����Ȧ ���� ����")]
     [SerializeField] private float centerRadius = 0.5f; 
 
-    [Header("�ð��� ����Ʈ (���û���)")]
     [SerializeField] private Transform rangeVisual;  
     [SerializeField] private Transform centerVisual;
 

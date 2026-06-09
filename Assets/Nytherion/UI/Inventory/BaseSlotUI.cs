@@ -143,17 +143,20 @@ namespace Nytherion.UI.Inventory
 
         public virtual void OnBeginDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             if (IsEmpty) return;
             OnBeginDragEvent?.Invoke(this, eventData);
         }
 
         public virtual void OnDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             // 위치 업데이트는 DragItemIcon.Update에서 전담하므로 여기서는 아무것도 하지 않음
         }
 
         public virtual void OnEndDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
             OnEndDragEvent?.Invoke(this, eventData);
         }
 

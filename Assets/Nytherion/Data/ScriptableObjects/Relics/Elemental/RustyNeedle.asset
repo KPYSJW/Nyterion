@@ -13,11 +13,10 @@ MonoBehaviour:
   m_Name: RustyNeedle
   m_EditorClassIdentifier: 
   relicName: Rusty Needle
-  koreanName: 녹슨 바늘
-  description: "전격 장비 장착 시 공속 +8%. (찌릿찌릿한 녹슨 바늘)"
-  description_KR: "전격 장비 장착 시 공속 +8%. (찌릿찌릿한 녹슨 바늘)"
-  description_EN: "When Lightning equipment is active, attack speed +8%. (Tingly rusty needle)"
-  Image: {fileID: 0}
+  koreanName: "\uB179\uC2A8 \uBC14\uB298"
+  description_KR: "\uC804\uACA9 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uC18D +8%. "
+  description_EN: 'When Lightning equipment is active, attack speed +8%. '
+  Image: {fileID: 21300000, guid: b003c28388c2d7343acadc16381037f6, type: 3}
   rarity: 0
   level: 1
   isDisabled: 0
@@ -31,6 +30,8 @@ MonoBehaviour:
   influenceZones:
   - offset: {x: -1, y: 0}
     type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

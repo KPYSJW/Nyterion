@@ -11,6 +11,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using VContainer;
+using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Systems;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.GamePlay.Dungeon
 {
@@ -465,6 +468,55 @@ namespace Nytherion.GamePlay.Dungeon
             {
                 room.cleared = true;
 
+                // 꼬인 실타래 (TangledYarn) 활성 링크 3개 이상 상태로 방 클리어 업적 연동
+                RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
+                if (relicManager != null)
+                {
+                    bool isTangledYarnMet = false;
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "TangledYarn" && !block.SourceData.isDisabled)
+                        {
+                            // 꼬인 실타래 조건 만족 여부 확인
+                            HashSet<string> seriesIds = new HashSet<string>();
+                            foreach (KeyValuePair<string, Vector2Int> p in relicManager.GetPlacedBlocks())
+                            {
+                                RelicBlock b = relicManager.GetBlockAt(p.Value.y, p.Value.x);
+                                if (b != null && b.SourceData != null && !string.IsNullOrEmpty(b.SourceData.synergySeriesId))
+                                {
+                                    seriesIds.Add(b.SourceData.synergySeriesId);
+                                }
+                            }
+
+                            int totalLinks = 0;
+                            foreach (string seriesId in seriesIds)
+                            {
+                                int length = relicManager.GetMaxChainLength(seriesId);
+                                if (length >= 2)
+                                {
+                                    totalLinks += (length - 1);
+                                }
+                            }
+
+                            if (totalLinks >= 3)
+                            {
+                                isTangledYarnMet = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isTangledYarnMet)
+                    {
+                        ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                        if (progressionManager != null)
+                        {
+                            progressionManager.ProcessAction(ProgressionType.TangledYarnRoomClear, 1);
+                        }
+                    }
+                }
+
                 if (room.type == RoomFirstDungeonGenerator.RoomType.Boss)
                 {
                     _stageManager?.SpawnBossPortal(deadEnemy.transform.position);
@@ -484,6 +536,16 @@ namespace Nytherion.GamePlay.Dungeon
             oldRoom?.DeactivateEnemies();
             newRoom.visited = true;
             newRoom?.ActivateEnemies();
+
+            // 네잎클로버 전투 내 대쉬 초기화 횟수 리셋
+            if (playerObject != null)
+            {
+                PlayerManager playerManager = playerObject.GetComponent<PlayerManager>();
+                if (playerManager != null)
+                {
+                    playerManager.ResetLuckyCloverResetCount();
+                }
+            }
 
             if (newRoom.type == RoomFirstDungeonGenerator.RoomType.Boss && !hasBossSpawned)
             {

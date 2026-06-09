@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Scripture
+  m_EditorClassIdentifier: 
+  relicName: Scripture
+  koreanName: "\uC131\uC11C"
+  description_KR: "\uC2E0\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uD53C\uD761 +2%,
+    \uCD5C\uB300 \uCCB4\uB825 +15. "
+  description_EN: 'When Holy equipment is active, lifesteal +2%, max HP +15. '
+  Image: {fileID: 21300000, guid: 5ed3e19e25f6b6b4e83b75c398b70550, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: 6716071130084147232
+    effects:
+    - rid: 6716071130084147233
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: -1, y: 0}
+    type: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071130084147232
+      type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredTrait: 6
+    - rid: 6716071130084147233
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 11
+          value: 0.02
+          valuePerLevel: 0.005
+          isPercentage: 1
+        - stat: 0
+          value: 15
+          valuePerLevel: 4
+          isPercentage: 0

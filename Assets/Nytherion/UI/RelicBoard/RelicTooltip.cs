@@ -43,32 +43,42 @@ namespace Nytherion.UI.RelicBoard
 
         Vector2 mousePosition = Input.mousePosition;
         
-        Vector2 tooltipSize = rectTransform.sizeDelta;
+        // Pivot을 (0, 1) [좌측 상단]으로 고정하여 계산을 단순화합니다.
+        rectTransform.pivot = new Vector2(0, 1);
         
-        Vector2 pivot = new Vector2(0, 1);
+        float width = rectTransform.rect.width * canvas.scaleFactor;
+        float height = rectTransform.rect.height * canvas.scaleFactor;
         
-        float rightEdge = mousePosition.x + tooltipSize.x * canvas.scaleFactor;
-        float bottomEdge = mousePosition.y - tooltipSize.y * canvas.scaleFactor;
+        float margin = 10f;
+        float cursorOffset = 15f;
         
-        if (rightEdge > Screen.width)
+        // 기본 위치: 마우스 우측 하단
+        float targetX = mousePosition.x + cursorOffset;
+        float targetY = mousePosition.y - cursorOffset;
+        
+        // 화면 오른쪽 경계를 넘어가는 경우 마우스 좌측으로 배치
+        if (targetX + width > Screen.width - margin)
         {
-            pivot.x = 1;
+            targetX = mousePosition.x - width - cursorOffset;
+        }
+        // 마우스 좌측으로 배치했을 때도 화면 왼쪽 경계를 넘어가는 경우 화면 좌측 경계에 맞춤
+        if (targetX < margin)
+        {
+            targetX = margin;
         }
         
-        if (bottomEdge < 0)
+        // 화면 아래쪽 경계를 넘어가는 경우 마우스 상단으로 배치
+        if (targetY - height < margin)
         {
-            pivot.y = 0;
+            targetY = mousePosition.y + height + cursorOffset;
+        }
+        // 마우스 상단으로 배치했을 때도 화면 위쪽 경계를 넘어가는 경우 화면 위쪽 경계에 맞춤
+        if (targetY > Screen.height - margin)
+        {
+            targetY = Screen.height - margin;
         }
         
-        if (rectTransform.pivot != pivot)
-        {
-            rectTransform.pivot = pivot;
-            rectTransform.position = mousePosition;
-        }
-        else
-        {
-            rectTransform.position = mousePosition;
-        }
+        rectTransform.position = new Vector2(targetX, targetY);
     }
 
     public void Show(RelicBlock block)

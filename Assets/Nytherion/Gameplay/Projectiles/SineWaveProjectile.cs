@@ -6,8 +6,8 @@ namespace Nytherion.GamePlay.Skills
     public class SineWaveProjectile : MonoBehaviour
     {
         public float forwardSpeed = 8f;
-        public float waveFrequency = 5f; // ²Ü··°Å¸®´Â¤¤ ¼Óµµ 
-        public float waveMagnitude = 3f; // ²Ü··°Å¸®´Â Æø 
+        public float waveFrequency = 5f; 
+        public float waveMagnitude = 3f;
 
         private Rigidbody2D rb;
         private Vector2 startDirection;

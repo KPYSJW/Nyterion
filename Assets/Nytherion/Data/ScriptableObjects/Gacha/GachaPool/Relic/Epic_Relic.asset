@@ -15,5 +15,35 @@ MonoBehaviour:
   rarity: 3
   drawWeight: 20
   items:
-  - item: {fileID: 11400000, guid: 8a1340403fd148641ab9222c79ee9012, type: 2}
-    weight: 20
+  - item: {fileID: 11400000, guid: a121e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480016, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480023, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480999, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c21e7a5c8dbfe61438756d24e8480112, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: a521e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 50897f7acb1776640a277feb0e767e86, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 3c0383c35d124cf79f03fc6378d904a9, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: a101e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480025, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480020, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: a8f091d11a109bb499c5178c72417730, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480004, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480029, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: d9ffae38f96240838912a5b6c4ce34a5, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: a111e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100

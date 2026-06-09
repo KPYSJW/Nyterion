@@ -1,4 +1,7 @@
 using UnityEngine;
+using System.Collections.Generic;
+using Nytherion.Core.Enums;
+using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Managers;
 
@@ -15,10 +18,24 @@ namespace Nytherion.GamePlay.Combat
         public float damageMultiplier = 1.0f;
 
         protected PlayerManager playerManager;
+        protected Animator animator;
 
         protected virtual void Awake()
         {
             playerManager = GetComponentInParent<PlayerManager>();
+            animator = GetComponent<Animator>();
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
+
+        protected void PlayFireAnimation()
+        {
+            if (animator != null && animator.runtimeAnimatorController != null)
+            {
+                animator.SetTrigger("Fire");
+            }
         }
 
         public virtual void Initialize(WeaponData data)
@@ -28,10 +45,25 @@ namespace Nytherion.GamePlay.Combat
 
             if (data.weaponSprite != null)
             {
-                if (TryGetComponent<SpriteRenderer>(out var sr))
+                SpriteRenderer sr = GetComponent<SpriteRenderer>();
+                if (sr == null)
+                {
+                    sr = GetComponentInChildren<SpriteRenderer>();
+                }
+
+                if (sr != null)
                 {
                     sr.sprite = data.weaponSprite;
                 }
+            }
+
+            // 무기 고유 이펙트 프리팹 생성 및 부착
+            if (data.weaponEffectPrefab != null)
+            {
+                GameObject effectObj = Instantiate(data.weaponEffectPrefab, this.transform);
+                effectObj.transform.localPosition = data.weaponEffectPrefab.transform.localPosition;
+                effectObj.transform.localRotation = data.weaponEffectPrefab.transform.localRotation;
+                effectObj.transform.localScale = data.weaponEffectPrefab.transform.localScale;
             }
         }
 
@@ -43,5 +75,57 @@ namespace Nytherion.GamePlay.Combat
         {
         }
         public abstract void AttackEnd();
+
+        public virtual List<EquipmentTrait> GetTraits()
+        {
+            if (weaponData != null && weaponData.traits != null)
+            {
+                return weaponData.traits;
+            }
+            return new List<EquipmentTrait>();
+        }
+
+        public void ApplyStatusEffects(IDamageable target)
+        {
+            if (target is MonoBehaviour targetMono)
+            {
+                StatusEffectManager effectManager = targetMono.GetComponent<StatusEffectManager>();
+                if (effectManager == null)
+                {
+                    effectManager = targetMono.gameObject.AddComponent<StatusEffectManager>();
+                }
+
+                List<EquipmentTrait> activeTraits = GetTraits();
+                if (activeTraits.Contains(EquipmentTrait.Fire))
+                {
+                    float burnDamage = weaponData != null ? Mathf.Max(1f, weaponData.damage * damageMultiplier * 0.2f) : 2f;
+                    effectManager.ApplyEffect(new FireEffect(burnDamage, 5f));
+                }
+                if (activeTraits.Contains(EquipmentTrait.Curse))
+                {
+                    effectManager.ApplyEffect(new CurseEffect(1.3f, 5f));
+                }
+                if (activeTraits.Contains(EquipmentTrait.Ice))
+                {
+                    effectManager.ApplyEffect(new IceEffect(5f));
+                }
+                if (activeTraits.Contains(EquipmentTrait.Lightning))
+                {
+                    effectManager.ApplyEffect(new LightningEffect(5f));
+                }
+                if (activeTraits.Contains(EquipmentTrait.Holy))
+                {
+                    effectManager.ApplyEffect(new HolyEffect(5f));
+                }
+                if (activeTraits.Contains(EquipmentTrait.Demonic))
+                {
+                    effectManager.ApplyEffect(new DemonicEffect(5f));
+                }
+                if (activeTraits.Contains(EquipmentTrait.Poison))
+                {
+                    effectManager.ApplyEffect(new PoisonEffect(3f, 5f));
+                }
+            }
+        }
     }
 }

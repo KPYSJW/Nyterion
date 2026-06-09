@@ -15,11 +15,12 @@ MonoBehaviour:
   uniqueID: 22b2d2b3-bebc-4e36-8ef9-0339e07dd40f
   itemName_KR: "\uD3ED\uBC1C"
   itemName_EN: Explosion
-  icon: {fileID: 1506884830, guid: 1b68ab5560ae1834c8c7ffa7bc7ccadf, type: 3}
+  icon: {fileID: 21300000, guid: 7e535e51720dae044a25b9d053b6af07, type: 3}
   description_KR: 
   description_EN: 
   isStackable: 0
   maxStack: 1
+  unlockMilestoneID: 
   baseValue: 10
   equipmentType: 0
   rarity: 3
@@ -33,8 +34,11 @@ MonoBehaviour:
   range: 0
   cooldown: 1.5
   weaponType: 0
-  weaponSprite: {fileID: 0}
+  weaponSprite: {fileID: 21300000, guid: 9575dfaffdd75884ca0a7aad900e16e4, type: 3}
   firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: 0, y: 0, z: 0}
+  animatorController: {fileID: 0}
   projectilePrefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
   projectileSpeed: 10
   extraProjectileMode: 0

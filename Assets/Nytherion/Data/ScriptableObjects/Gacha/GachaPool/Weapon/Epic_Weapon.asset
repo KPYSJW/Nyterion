@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: Epic_Weapon
   m_EditorClassIdentifier: 
   rarity: 3
-  drawWeight: 0
-  items: []
+  drawWeight: 15
+  items:
+  - item: {fileID: 11400000, guid: 3fdbb23bd678dca4eacbab7c4b769332, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: dde50779d094d44498df6624e2310b75, type: 2}
+    weight: 100

@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6462430113366070217}
@@ -77,8 +77,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 6
-  m_Sprite: {fileID: 21300000, guid: 274cc5d353702d54381995dc012cb66f, type: 3}
+  m_SortingOrder: 10
+  m_Sprite: {fileID: 21300000, guid: 3f1e00587617cd54e85cd08e57a30c2a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -107,7 +107,6 @@ MonoBehaviour:
   sprite: {fileID: 8590790990860606378}
   meleeWeaponAnimation: {fileID: 0}
   attackClipName: PlayerMeleeAnim
-  collisionObject: {fileID: 0}
   slashEffectAnimator: {fileID: 8547276550110380161}
   slashEffectObject: {fileID: 8110145536906121007}
   slashEffectClipName: Sword_Effect

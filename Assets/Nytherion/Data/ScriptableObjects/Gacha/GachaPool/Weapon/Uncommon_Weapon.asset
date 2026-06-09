@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: Uncommon_Weapon
   m_EditorClassIdentifier: 
   rarity: 1
-  drawWeight: 0
-  items: []
+  drawWeight: 50
+  items:
+  - item: {fileID: 11400000, guid: 77eb7bb54ef9b3e4088787a1440cc58c, type: 2}
+    weight: 100
