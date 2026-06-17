@@ -5,9 +5,6 @@ namespace Nytherion.GamePlay.Combat.Weapon
     public class AnimatorMeleeWeapon : MeleeWeapon
     {
         [Header("Animator Settings")]
-        [Tooltip("무기 프리팹에 부착된 Animator 컴포넌트")]
-        [SerializeField] private Animator animator;
-        
         [Tooltip("공격 시 작동시킬 트리거 파라미터 이름")]
         [SerializeField] private string attackTriggerName = "Attack";
 

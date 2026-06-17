@@ -34,7 +34,6 @@ namespace Nytherion.GamePlay.Combat.Weapon
         [SerializeField] private float effectDuration = 0.5f;
 
         [Header("Animator Settings (Optional)")]
-        [SerializeField] private new Animator animator;
         [SerializeField] private string attackTriggerName = "Attack";
 
         [Header("Idle Position & Rotation Settings")]

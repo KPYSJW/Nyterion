@@ -90,27 +90,30 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 if (meleeWeaponPoint != null)
                 {
-                    currentWeapon = Instantiate(weaponPrefab, meleeWeaponPoint);
+                    currentWeapon = Instantiate(weaponPrefab, meleeWeaponPoint, false);
+                    Debug.Log($"[PlayerCombat] Melee weapon instantiated. Prefab raw localPosition: {weaponPrefab.transform.localPosition}, Instance localPosition: {currentWeapon.transform.localPosition}");
                 }
             }
             else
             {
                 if (weaponPoint != null)
                 {
-                    currentWeapon = Instantiate(weaponPrefab, weaponPoint);
+                    currentWeapon = Instantiate(weaponPrefab, weaponPoint, false);
                 }
             }
 
             if (currentWeapon != null)
             {
+                // Instantiate(..., false)에 의해 프리팹의 원래 localPosition이 유지됩니다.
+                // 만약 WeaponData에 오버라이드용 visualPositionOffset이 명시되어 있다면 그것을 덮어씁니다.
                 if (type != WeaponType.Melee)
                 {
-                    Vector3 posOffset = Vector3.zero;
-                    if (data != null)
+                    Vector3 posOffset = currentWeapon.transform.localPosition;
+                    if (data != null && data.visualPositionOffset != Vector3.zero)
                     {
                         posOffset = data.visualPositionOffset;
                     }
-                    else if (currentWeapon.weaponData != null)
+                    else if (currentWeapon.weaponData != null && currentWeapon.weaponData.visualPositionOffset != Vector3.zero)
                     {
                         posOffset = currentWeapon.weaponData.visualPositionOffset;
                     }
@@ -119,7 +122,17 @@ namespace Nytherion.GamePlay.Characters.Player
                 }
                 else
                 {
-                    currentWeapon.transform.localPosition = Vector3.zero;
+                    Vector3 posOffset = currentWeapon.transform.localPosition;
+                    if (data != null && data.visualPositionOffset != Vector3.zero)
+                    {
+                        posOffset = data.visualPositionOffset;
+                    }
+                    else if (currentWeapon.weaponData != null && currentWeapon.weaponData.visualPositionOffset != Vector3.zero)
+                    {
+                        posOffset = currentWeapon.weaponData.visualPositionOffset;
+                    }
+                    currentWeapon.transform.localPosition = posOffset;
+                    Debug.Log($"[PlayerCombat] Melee localPosition set to: {currentWeapon.transform.localPosition} (data.visualPositionOffset: {(data != null ? data.visualPositionOffset : "null")})");
                 }
 
                 // Animator Controller 런타임 주입 (원거리 무기만 적용)

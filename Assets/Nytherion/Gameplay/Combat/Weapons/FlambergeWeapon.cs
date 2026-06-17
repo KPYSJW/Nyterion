@@ -17,8 +17,6 @@ namespace Nytherion.GamePlay.Combat.Weapon
         [SerializeField] private GameObject slashEffectPrefab;
 
         [Header("Animator Settings")]
-        [Tooltip("무기 자체 휘두르기 애니메이션 재생용 Animator")]
-        [SerializeField] private Animator animator;
         [SerializeField] private string attackTriggerName = "Attack";
 
         [Header("Local Child Effect Settings")]

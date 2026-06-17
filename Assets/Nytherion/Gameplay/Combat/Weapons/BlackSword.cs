@@ -13,8 +13,6 @@ namespace Nytherion.GamePlay.Combat.Weapon
 
 
         [Header("Animator Settings (Optional)")]
-        [SerializeField] private new Animator animator;
-
         [SerializeField] private string attackTriggerName = "Attack";
 
         [Header("Idle Position & Rotation Settings")]

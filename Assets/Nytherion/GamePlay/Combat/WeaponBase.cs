@@ -21,7 +21,7 @@ namespace Nytherion.GamePlay.Combat
         public float damageMultiplier = 1.0f;
 
         protected PlayerManager playerManager;
-        protected Animator animator;
+        [SerializeField] protected Animator animator;
 
         protected virtual void Awake()
         {
