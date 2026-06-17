@@ -195,6 +195,21 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (inputManager == null || weaponPoint == null) return;
 
+            if (currentWeapon != null && currentWeapon.OverrideRotation)
+            {
+                weaponPoint.localPosition = Vector3.zero;
+                weaponPoint.localRotation = Quaternion.identity;
+                weaponPoint.localScale = Vector3.one;
+
+                if (meleeWeaponPoint != null)
+                {
+                    meleeWeaponPoint.localPosition = Vector3.zero;
+                    meleeWeaponPoint.localRotation = Quaternion.identity;
+                    meleeWeaponPoint.localScale = Vector3.one;
+                }
+                return;
+            }
+
             Vector2 mouseScreenPos = inputManager.MousePosition;
 
             if (Camera.main != null)

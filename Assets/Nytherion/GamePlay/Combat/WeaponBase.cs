@@ -12,6 +12,9 @@ namespace Nytherion.GamePlay.Combat
         
         [SerializeField]public WeaponData weaponData;
         
+        [Tooltip("무기가 자체적으로 회전 및 스케일 제어를 제어할지 여부")]
+        public virtual bool OverrideRotation => false;
+        
         [Tooltip("마지막 공격 시간 (Time.time 기준)")]
         protected float lastAttackTime;
 
@@ -69,6 +72,10 @@ namespace Nytherion.GamePlay.Combat
 
         public virtual bool CanAttack()
         {
+            if (weaponData == null)
+            {
+                return true;
+            }
             return Time.time - lastAttackTime >= weaponData.cooldown;
         }
         public virtual void Attack(Vector2 direction, Vector3 targetPosition = default)

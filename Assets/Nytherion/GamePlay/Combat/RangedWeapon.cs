@@ -141,7 +141,18 @@ namespace Nytherion.GamePlay.Combat
 
         protected void FireProjectiles(Vector2 direction, int baseCount, float spreadAngle = 15f)
         {
-            PlayFireAnimation();
+            if (ShouldPlayFireAnimation())
+            {
+                PlayFireAnimation();
+            }
+
+            // 발사 이펙트 생성
+            if (ShouldSpawnFireEffect() && firePoint != null && weaponData != null && weaponData.fireEffectPrefab != null)
+            {
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                WeaponEffectHelper.PlayFireEffect(weaponData.fireEffectPrefab, firePoint.position, rotation, firePoint);
+            }
 
             int extra = 0;
             if (playerManager != null && playerManager.currentPlayerData != null)
@@ -226,5 +237,8 @@ namespace Nytherion.GamePlay.Combat
                 Projectile(direction, spawnOffset);
             }
         }
+
+        protected virtual bool ShouldSpawnFireEffect() => true;
+        protected virtual bool ShouldPlayFireAnimation() => true;
     }
 }

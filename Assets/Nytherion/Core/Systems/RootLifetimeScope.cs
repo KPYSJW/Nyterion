@@ -3,6 +3,7 @@ using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects;
 using VContainer;
 using VContainer.Unity;
 public class RootLifetimeScope : LifetimeScope
@@ -27,6 +28,7 @@ public class RootLifetimeScope : LifetimeScope
     [Header("Core Infrastructure")]
     [SerializeField] private EventManager eventManagerPrefab;
     [SerializeField] private ItemDatabaseSO itemDatabase;
+    [SerializeField] private StatusEffectDatabase statusEffectDatabase;
     [SerializeField] private DataLifetimeScope dataLifetimeScopePrefab;
 
     [Header("System Managers")]
@@ -102,6 +104,15 @@ public class RootLifetimeScope : LifetimeScope
         {
             builder.RegisterInstance(itemDatabase);
             ItemDatabase.Initialize(itemDatabase);
+        }
+
+        if (statusEffectDatabase == null)
+        {
+            Debug.LogError("[RootLifetimeScope] statusEffectDatabase가 할당되지 않았습니다!");
+        }
+        else
+        {
+            builder.RegisterInstance(statusEffectDatabase);
         }
     }
 

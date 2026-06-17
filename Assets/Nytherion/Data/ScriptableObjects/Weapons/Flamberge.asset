@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: Flamberge
+  m_EditorClassIdentifier: 
+  uniqueID: 57190f5d-f20d-4c58-aae9-ac1d2e339bae
+  itemName_KR: "\uAC80"
+  itemName_EN: Flamberge
+  icon: {fileID: 21300000, guid: 55591c58cc4e347498ad7d9f8ec6a2be, type: 3}
+  description_KR: 
+  description_EN: 
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 10
+  equipmentType: 0
+  rarity: 0
+  traits: 
+  statModifiers: []
+  damage: 15
+  range: 0
+  cooldown: 0.4
+  weaponType: 1
+  weaponSprite: {fileID: 21300000, guid: 3f1e00587617cd54e85cd08e57a30c2a, type: 3}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: 0, y: 0, z: 0}
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 10
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 5983682326453375152, guid: 1aec131cb75b7004892f7b283980aeb1, type: 3}
+  isArchivable: 1

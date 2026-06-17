@@ -155,7 +155,8 @@ namespace Nytherion.GamePlay.Combat
                     }
 
                     // 충돌 위치에 피격 이펙트 재생
-                    WeaponEffectHelper.PlayHitEffect(hitEffectPrefab, collision.transform.position);
+                    Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                    WeaponEffectHelper.PlayHitEffect(hitEffectPrefab, hitPoint);
                 }
 
                 bool shouldSurvive = false;

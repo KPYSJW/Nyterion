@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: Atlas
+  m_EditorClassIdentifier: 
+  uniqueID: 99acec77-d8f3-4f68-9f4f-53d03298f723
+  itemName_KR: "\uC544\uD2C0\uB77C\uC2A4"
+  itemName_EN: Atlas
+  icon: {fileID: 21300000, guid: 0acf5075e3f58c346b6d4f358067ac72, type: 3}
+  description_KR: 
+  description_EN: 
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 100
+  equipmentType: 0
+  rarity: 0
+  traits: 
+  statModifiers: []
+  damage: 10
+  range: 4
+  cooldown: 0.1
+  weaponType: 1
+  weaponSprite: {fileID: 21300000, guid: 4b9c527f941e1024f9f4f40e3bbb03d4, type: 3}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: -45, y: 0, z: 0}
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 10
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 5253784083555941397, guid: 7c0ac2545d1bba94ea8227e37148d0d4, type: 3}
+  isArchivable: 1

@@ -36,5 +36,36 @@ namespace Nytherion.GamePlay.Combat
                 }
             }
         }
+
+        public static void PlayFireEffect(GameObject effectPrefab, Vector3 position, Quaternion rotation, Transform parent = null)
+        {
+            if (effectPrefab == null) return;
+
+            GameObject effectObj = null;
+            if (ObjectPoolManager.Instance != null)
+            {
+                effectObj = ObjectPoolManager.Instance.SpawnFromPool(effectPrefab, position, rotation);
+            }
+            else
+            {
+                effectObj = Object.Instantiate(effectPrefab, position, rotation);
+            }
+
+            if (effectObj != null)
+            {
+                if (parent != null)
+                {
+                    effectObj.transform.SetParent(parent);
+                }
+
+                // AutoReturnToPool 컴포넌트 검사 및 대기 지연 초기화
+                AutoReturnToPool autoReturn;
+                if (!effectObj.TryGetComponent<AutoReturnToPool>(out autoReturn))
+                {
+                    autoReturn = effectObj.AddComponent<AutoReturnToPool>();
+                    autoReturn.InitializeDelay(0.5f); // 기본 0.5초 대기 후 풀 반환
+                }
+            }
+        }
     }
 }

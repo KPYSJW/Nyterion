@@ -38,12 +38,13 @@ MonoBehaviour:
   spriteRotationOffset: -45
   visualPositionOffset: {x: 0, y: 0, z: 0}
   weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 7314511624029963599, guid: 170fd382884845442b60752bb65181a9, type: 3}
   projectileSpeed: 5
   projectileRotationOffset: 180
   extraProjectileMode: 0
   maxChargeTime: 1
-  hitEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 3323616655764642522, guid: 6e5b49bf4034d394280ed164e799e605, type: 3}
   weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
   isArchivable: 1
