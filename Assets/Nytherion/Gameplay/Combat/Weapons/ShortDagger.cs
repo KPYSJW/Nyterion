@@ -21,18 +21,37 @@ namespace Nytherion.GamePlay.Combat.Weapons
         [Tooltip("찌르기 애니메이션 전체 진행 시간(초)")]
         [SerializeField] private float attackDuration = 0.12f;
 
-        [Tooltip("최대 거리에 도달하는 타이밍 비율 (0.0 ~ 1.0)")]
-        [SerializeField] private float peakTimePercent = 0.3f;
+        [Header("Combo Effect GameObjects")]
+        [Tooltip("1타 찌르기용 이펙트 오브젝트")]
+        [SerializeField] private GameObject thrustEffectObject;
+        [Tooltip("2타 내리베기용 이펙트 오브젝트")]
+        [SerializeField] private GameObject swingEffectObject;
+        [Tooltip("3타 올려베기용 이펙트 오브젝트")]
+        [SerializeField] private GameObject swingUpEffectObject;
 
-        [Header("Dagger Effect Settings")]
-        [Tooltip("공격 시 활성화할 자식 이펙트 오브젝트")]
-        [SerializeField] private GameObject slashEffectObject;
+        private Animator thrustEffectAnimator;
+        private Animator swingEffectAnimator;
+        private Animator swingUpEffectAnimator;
 
-        [Tooltip("이펙트 오브젝트의 Animator")]
-        [SerializeField] private Animator slashEffectAnimator;
+        private Vector3 thrustEffectInitialPos;
+        private Quaternion thrustEffectInitialRot;
+        private Vector3 thrustEffectInitialScale;
 
-        [Tooltip("실행할 이펙트 애니메이션의 State 이름")]
-        [SerializeField] private string effectStateName = "AttackEffect";
+        private Vector3 swingEffectInitialPos;
+        private Quaternion swingEffectInitialRot;
+        private Vector3 swingEffectInitialScale;
+
+        private Vector3 swingUpEffectInitialPos;
+        private Quaternion swingUpEffectInitialRot;
+        private Vector3 swingUpEffectInitialScale;
+
+        [Header("Combo Effect States")]
+        [Tooltip("1타 찌르기 시 실행할 이펙트 애니메이션 State 이름")]
+        [SerializeField] private string thrustEffectStateName = "AttackEffect";
+        [Tooltip("2타 내리베기 시 실행할 이펙트 애니메이션 State 이름")]
+        [SerializeField] private string swingEffectStateName = "SwingEffect";
+        [Tooltip("3타 올려베기 시 실행할 이펙트 애니메이션 State 이름")]
+        [SerializeField] private string swingUpEffectStateName = "SwingUpEffect";
 
         // 무기 방향 설정을 강제하기 위해 true로 재정의
         public override bool OverrideRotation => true;
@@ -40,15 +59,10 @@ namespace Nytherion.GamePlay.Combat.Weapons
         private PlayerController playerController;
         private SpriteRenderer spriteRenderer;
         private Coroutine attackCoroutine;
-        private Coroutine effectCoroutine;
         private bool isAttacking = false;
 
         private Quaternion idleRotation;
         private Vector3 idleScale;
-
-        private Vector3 effectInitialLocalPos;
-        private Quaternion effectInitialLocalRot;
-        private Vector3 effectInitialLocalScale;
 
         [Header("Smooth Settings")]
         [Tooltip("위치 및 회전 보간 속도 (높을수록 빠르게 쫓아갑니다)")]
@@ -57,6 +71,22 @@ namespace Nytherion.GamePlay.Combat.Weapons
         private Vector3 targetLocalPos;
         private Quaternion targetLocalRot;
         private Vector3 targetLocalScale;
+
+        [Header("Combo Settings")]
+        [Tooltip("공격을 이 시간 동안 하지 않으면 콤보가 1타(찌르기)로 리셋됩니다")]
+        [SerializeField] private float comboResetTime = 1.0f;
+        [Tooltip("휘두르기 동작 시 앞으로 반원을 그리며 뻗어 나갈 거리")]
+        [SerializeField] private float swingDistance = 0.5f;
+
+        [Header("Weapon Animator Settings")]
+        [Tooltip("무기 자체의 찌르기/휘두르기 애니메이션 재생을 담당하는 Animator")]
+        [SerializeField] private Animator weaponAnimator;
+        [SerializeField] private string thrustTriggerName = "Thrust";
+        [SerializeField] private string swingTriggerName = "Swing";
+        [SerializeField] private string swingUpTriggerName = "SwingUp";
+
+        private int attackComboStep = 0;
+        private float lastAttackInputTime = 0f;
 
         // 물리 프레임 업데이트 주기 문제로 인한 트리거 누락을 방지하기 위한 수동 충돌 타겟 관리
         private System.Collections.Generic.HashSet<Nytherion.Core.Interfaces.IDamageable> daggerHitTargets = new System.Collections.Generic.HashSet<Nytherion.Core.Interfaces.IDamageable>();
@@ -76,6 +106,76 @@ namespace Nytherion.GamePlay.Combat.Weapons
             return base.CanAttack();
         }
 
+        private void InitializeEffectObjects()
+        {
+            if (thrustEffectObject != null)
+            {
+                thrustEffectAnimator = thrustEffectObject.GetComponent<Animator>();
+                if (thrustEffectAnimator == null) thrustEffectAnimator = thrustEffectObject.GetComponentInChildren<Animator>();
+                if (thrustEffectAnimator != null) thrustEffectAnimator.keepAnimatorStateOnDisable = false;
+                thrustEffectObject.SetActive(false);
+            }
+            if (swingEffectObject != null)
+            {
+                swingEffectAnimator = swingEffectObject.GetComponent<Animator>();
+                if (swingEffectAnimator == null) swingEffectAnimator = swingEffectObject.GetComponentInChildren<Animator>();
+                if (swingEffectAnimator != null) swingEffectAnimator.keepAnimatorStateOnDisable = false;
+                swingEffectObject.SetActive(false);
+            }
+            if (swingUpEffectObject != null)
+            {
+                swingUpEffectAnimator = swingUpEffectObject.GetComponent<Animator>();
+                if (swingUpEffectAnimator == null) swingUpEffectAnimator = swingUpEffectObject.GetComponentInChildren<Animator>();
+                if (swingUpEffectAnimator != null) swingUpEffectAnimator.keepAnimatorStateOnDisable = false;
+                swingUpEffectObject.SetActive(false);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (attackCoroutine != null)
+            {
+                StopCoroutine(attackCoroutine);
+                attackCoroutine = null;
+            }
+
+            isAttacking = false;
+
+            if (thrustEffectObject != null) thrustEffectObject.SetActive(false);
+            if (swingEffectObject != null) swingEffectObject.SetActive(false);
+            if (swingUpEffectObject != null) swingUpEffectObject.SetActive(false);
+
+            DisableHitbox();
+        }
+
+        /// <summary>
+        /// 유니티 애니메이션 클립 끝에서 호출할 이벤트 수신 메서드
+        /// </summary>
+        public void OnAttackAnimationEnd()
+        {
+            float elapsedSinceAttack = Time.time - lastAttackTime;
+
+            // 공격 시작 직후 짧은 시간(0.15초) 내에 날아오는 이벤트는
+            // 이전 콤보 단계에서 전이 딜레이로 인해 늦게 배달된 찌꺼기 이벤트이므로 무시합니다.
+            if (elapsedSinceAttack < 0.15f)
+            {
+                return;
+            }
+
+            isAttacking = false;
+
+            if (weaponAnimator != null)
+            {
+                weaponAnimator.CrossFade("Idle", 0.1f);
+            }
+
+            if (thrustEffectObject != null) thrustEffectObject.SetActive(false);
+            if (swingEffectObject != null) swingEffectObject.SetActive(false);
+            if (swingUpEffectObject != null) swingUpEffectObject.SetActive(false);
+
+            DisableHitbox();
+        }
+
         public override void Start()
         {
             DisableHitbox();
@@ -87,6 +187,15 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
 
             playerController = GetComponentInParent<PlayerController>();
+
+            if (weaponAnimator == null)
+            {
+                weaponAnimator = GetComponent<Animator>();
+                if (weaponAnimator == null)
+                {
+                    weaponAnimator = GetComponentInChildren<Animator>();
+                }
+            }
             
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)
@@ -120,52 +229,31 @@ namespace Nytherion.GamePlay.Combat.Weapons
             targetLocalRot = idleRotation;
             targetLocalScale = idleScale;
 
-            // 자식 이펙트 오브젝트 자동 캐싱
+            // 자식 이펙트 오브젝트 자동 캐싱 및 초기화
             InitializeEffectObjects();
 
-            // 이펙트의 초기 로컬 트랜스폼 값을 캐싱합니다.
-            if (slashEffectObject != null)
+            // 각 이펙트의 초기 로컬 트랜스폼 값을 캐싱합니다.
+            if (thrustEffectObject != null)
             {
-                effectInitialLocalPos = slashEffectObject.transform.localPosition;
-                effectInitialLocalRot = slashEffectObject.transform.localRotation;
-                effectInitialLocalScale = slashEffectObject.transform.localScale;
+                thrustEffectInitialPos = thrustEffectObject.transform.localPosition;
+                thrustEffectInitialRot = thrustEffectObject.transform.localRotation;
+                thrustEffectInitialScale = thrustEffectObject.transform.localScale;
+            }
+            if (swingEffectObject != null)
+            {
+                swingEffectInitialPos = swingEffectObject.transform.localPosition;
+                swingEffectInitialRot = swingEffectObject.transform.localRotation;
+                swingEffectInitialScale = swingEffectObject.transform.localScale;
+            }
+            if (swingUpEffectObject != null)
+            {
+                swingUpEffectInitialPos = swingUpEffectObject.transform.localPosition;
+                swingUpEffectInitialRot = swingUpEffectObject.transform.localRotation;
+                swingUpEffectInitialScale = swingUpEffectObject.transform.localScale;
             }
 
             // 초기 위치 및 회전 설정
             UpdateWeaponAim();
-        }
-
-        private void InitializeEffectObjects()
-        {
-            try
-            {
-                if (slashEffectObject == null)
-                {
-                    foreach (Transform child in transform)
-                    {
-                        Animator childAnimator = child.GetComponent<Animator>();
-                        if (childAnimator != null && !child.name.Contains("Charge") && !child.name.Contains("charging"))
-                        {
-                            slashEffectObject = child.gameObject;
-                            slashEffectAnimator = childAnimator;
-                            break;
-                        }
-                    }
-                }
-                else if (slashEffectAnimator == null)
-                {
-                    slashEffectAnimator = slashEffectObject.GetComponent<Animator>();
-                }
-
-                if (slashEffectObject != null)
-                {
-                    slashEffectObject.SetActive(false);
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError("[ShortDagger] InitializeEffectObjects Exception: " + e.Message);
-            }
         }
 
         private void Update()
@@ -256,6 +344,13 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     StopCoroutine(attackCoroutine);
                 }
 
+                // 콤보 타임아웃 검사: 마지막 공격 입력 후 일정 시간이 지났으면 콤보 리셋
+                if (Time.time - lastAttackInputTime > comboResetTime)
+                {
+                    attackComboStep = 0;
+                }
+                lastAttackInputTime = Time.time;
+
                 if (playerController != null && InputManager.Instance != null && Camera.main != null)
                 {
                     Vector2 mouseScreenPos = InputManager.Instance.MousePosition;
@@ -279,8 +374,45 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
                     float currentAttackDuration = attackDuration / speedMultiplier;
 
-                    attackCoroutine = StartCoroutine(ThrustRoutine(finalAimAngle, currentAttackDuration, thrustDistance, speedMultiplier));
-                    PlaySlashEffect(currentAttackDuration, speedMultiplier);
+                    int currentStep = attackComboStep;
+
+                    // 무기 자체 애니메이터 속도도 플레이어의 공격 속도 스탯과 동기화
+                    if (weaponAnimator != null)
+                    {
+                        weaponAnimator.speed = speedMultiplier;
+                    }
+
+                    // 트리거 누적으로 인한 전이 꼬임 방지를 위해 이전 트리거들을 초기화
+                    ResetAllWeaponTriggers();
+
+                    // 콤보 단계에 따라 찌르기(1타) -> 내리베기(2타) -> 올려베기(3타) 실행
+                    if (attackComboStep == 0)
+                    {
+                        attackCoroutine = StartCoroutine(ThrustRoutine(finalAimAngle, currentAttackDuration, thrustDistance, speedMultiplier));
+                        attackComboStep = 1;
+                    }
+                    else if (attackComboStep == 1)
+                    {
+                        attackCoroutine = StartCoroutine(SwingRoutine(finalAimAngle, currentAttackDuration, swingDistance, speedMultiplier));
+                        attackComboStep = 2;
+                    }
+                    else
+                    {
+                        attackCoroutine = StartCoroutine(SwingUpRoutine(finalAimAngle, currentAttackDuration, swingDistance, speedMultiplier));
+                        attackComboStep = 0;
+                    }
+
+                    string targetEffectState = thrustEffectStateName;
+                    if (currentStep == 1)
+                    {
+                        targetEffectState = swingEffectStateName;
+                    }
+                    else if (currentStep == 2)
+                    {
+                        targetEffectState = swingUpEffectStateName;
+                    }
+
+                    PlaySlashEffect(currentAttackDuration, speedMultiplier, currentStep, targetEffectState);
                 }
             }
             catch (System.Exception e)
@@ -289,71 +421,65 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
         }
 
-        private void PlaySlashEffect(float currentAttackDuration, float speedMultiplier)
+        private void PlaySlashEffect(float currentAttackDuration, float speedMultiplier, int comboStep, string effectState)
         {
             try
             {
-                if (slashEffectObject == null || slashEffectAnimator == null)
+                GameObject targetObj = null;
+                Animator targetAnimator = null;
+                Vector3 initialPos = Vector3.zero;
+                Quaternion initialRot = Quaternion.identity;
+                Vector3 initialScale = Vector3.one;
+
+                if (comboStep == 0)
+                {
+                    targetObj = thrustEffectObject;
+                    targetAnimator = thrustEffectAnimator;
+                    initialPos = thrustEffectInitialPos;
+                    initialRot = thrustEffectInitialRot;
+                    initialScale = thrustEffectInitialScale;
+                }
+                else if (comboStep == 1)
+                {
+                    targetObj = swingEffectObject;
+                    targetAnimator = swingEffectAnimator;
+                    initialPos = swingEffectInitialPos;
+                    initialRot = swingEffectInitialRot;
+                    initialScale = swingEffectInitialScale;
+                }
+                else if (comboStep == 2)
+                {
+                    targetObj = swingUpEffectObject;
+                    targetAnimator = swingUpEffectAnimator;
+                    initialPos = swingUpEffectInitialPos;
+                    initialRot = swingUpEffectInitialRot;
+                    initialScale = swingUpEffectInitialScale;
+                }
+
+                if (targetObj == null || targetAnimator == null)
                 {
                     return;
                 }
 
-                if (effectCoroutine != null)
-                {
-                    StopCoroutine(effectCoroutine);
-                }
+                // 기존 다른 이펙트들이 켜진 상태로 방치되는 것 방지
+                if (thrustEffectObject != null) thrustEffectObject.SetActive(false);
+                if (swingEffectObject != null) swingEffectObject.SetActive(false);
+                if (swingUpEffectObject != null) swingUpEffectObject.SetActive(false);
 
-                effectCoroutine = StartCoroutine(PlaySlashEffectRoutine(currentAttackDuration, speedMultiplier));
+                // 타겟 이펙트 활성화 및 위치 초기화
+                targetObj.SetActive(true);
+                targetObj.transform.localPosition = initialPos;
+                targetObj.transform.localRotation = initialRot;
+                targetObj.transform.localScale = initialScale;
+
+                targetAnimator.speed = speedMultiplier;
+                targetAnimator.Play(effectState, 0, 0f);
+                targetAnimator.Update(0f);
             }
             catch (System.Exception e)
             {
                 Debug.LogError("[ShortDagger] PlaySlashEffect Exception: " + e.Message + "\n" + e.StackTrace);
             }
-        }
-
-        private IEnumerator PlaySlashEffectRoutine(float currentAttackDuration, float speedMultiplier)
-        {
-            if (slashEffectObject == null) yield break;
-
-            slashEffectObject.SetActive(true);
-            
-            // 사용자의 세팅 의도에 맞춰 다시 무기 공격 속도 배율에 이펙트 재생 속도를 연동시킵니다.
-            slashEffectAnimator.speed = speedMultiplier;
-            slashEffectAnimator.Play(effectStateName, 0, 0f);
-            
-            // 애니메이터 상태 즉시 갱신
-            slashEffectAnimator.Update(0f);
-
-            // 재생 시간도 속도 배율을 반영하여 보정합니다.
-            AnimatorStateInfo stateInfo = slashEffectAnimator.GetCurrentAnimatorStateInfo(0);
-            float effectDuration = stateInfo.length / speedMultiplier;
-
-            // 최소 대기 시간 보장
-            if (effectDuration <= 0f)
-            {
-                effectDuration = 0.3f;
-            }
-
-            float elapsed = 0f;
-            while (elapsed < effectDuration)
-            {
-                elapsed += Time.deltaTime;
-
-                // 매 프레임 이펙트의 로컬 트랜스폼을 캐싱된 최초 설정 값으로 강제 고정합니다.
-                // 이를 통해 플레이어가 이동하거나 무기가 움직여도 이펙트가 어긋나지 않고 밀착 추적합니다.
-                if (slashEffectObject != null)
-                {
-                    slashEffectObject.transform.localPosition = effectInitialLocalPos;
-                    slashEffectObject.transform.localRotation = effectInitialLocalRot;
-                    slashEffectObject.transform.localScale = effectInitialLocalScale;
-                }
-
-                yield return null;
-            }
-
-            slashEffectAnimator.speed = 1f;
-            slashEffectObject.SetActive(false);
-            effectCoroutine = null;
         }
 
         private IEnumerator ThrustRoutine(float aimAngle, float currentAttackDuration, float activeThrustDistance, float speedMultiplier)
@@ -367,7 +493,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
             float finalRotationZ = aimAngle + (facingRight ? -45f : 45f);
             targetLocalRot = Quaternion.Euler(0f, 0f, finalRotationZ);
 
-            // 제자리 공격이므로 위치 타겟은 대기 위치 유지
             Vector3 targetIdlePos = idleOffset;
             if (!facingRight)
             {
@@ -375,7 +500,11 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
             targetLocalPos = targetIdlePos;
 
-            Vector3 thrustDir = new Vector3(Mathf.Cos(aimAngle * Mathf.Deg2Rad), Mathf.Sin(aimAngle * Mathf.Deg2Rad), 0f);
+            // 2. 무기 애니메이터에 찌르기 상태 즉시 재생
+            if (weaponAnimator != null)
+            {
+                weaponAnimator.Play(thrustTriggerName, 0, 0f);
+            }
 
             float elapsed = 0f;
             EnableHitbox();
@@ -385,32 +514,146 @@ namespace Nytherion.GamePlay.Combat.Weapons
             {
                 elapsed += Time.deltaTime;
                 float normalizedTime = Mathf.Clamp01(elapsed / currentAttackDuration);
-                float currentThrustDistance = 0f;
 
-                if (normalizedTime < peakTimePercent)
+                // 찌르기 공격 동작 시간 동안 피격 판정 검사 실행
+                if (normalizedTime < 0.75f)
                 {
-                    float t = normalizedTime / peakTimePercent;
-                    currentThrustDistance = Mathf.Lerp(0f, activeThrustDistance, t);
-
                     CheckManualCollision();
                 }
                 else
                 {
                     DisableHitbox();
-
-                    float t = (normalizedTime - peakTimePercent) / (1f - peakTimePercent);
-                    currentThrustDistance = Mathf.Lerp(activeThrustDistance, 0f, t);
                 }
 
-                // 타겟 위치를 찌르기 궤적에 맞추어 실시간으로 갱신 (Update가 부드럽게 쫓아갑니다)
-                targetLocalPos = targetIdlePos + thrustDir * currentThrustDistance;
+                // 위치는 고정 대기 상태를 유지하며, 자식 비주얼의 키프레임 애니메이션에 움직임을 맡깁니다.
+                targetLocalPos = targetIdlePos;
                 yield return null;
             }
 
             DisableHitbox();
 
-            // 2. 공격 완료 후 상태 초기화 (Update의 !isAttacking 분기가 대기 상태 복원 보간을 수행합니다)
-            isAttacking = false;
+            // 🌟 예외 방지 안전 타이머: 에디터에서 애니메이션 이벤트를 누락했거나 소실되었을 경우 2.0초 후 강제 해제하여 콤보가 먹통이 되는 것을 방지합니다.
+            yield return new WaitForSeconds(2.0f);
+            if (isAttacking)
+            {
+                OnAttackAnimationEnd();
+            }
+            attackCoroutine = null;
+        }
+
+        private IEnumerator SwingRoutine(float aimAngle, float currentAttackDuration, float activeSwingDistance, float speedMultiplier)
+        {
+            isAttacking = true;
+            daggerHitTargets.Clear();
+
+            bool facingRight = playerController.IsFacingRight;
+
+            // 1. 공격 시작 시 마우스 조준 방향으로 루트 회전만 순간 조준
+            targetLocalScale = new Vector3(idleScale.x, facingRight ? idleScale.y : -idleScale.y, idleScale.z);
+            float finalRotationZ = aimAngle + (facingRight ? -45f : 45f);
+            targetLocalRot = Quaternion.Euler(0f, 0f, finalRotationZ);
+
+            Vector3 targetIdlePos = idleOffset;
+            if (!facingRight)
+            {
+                targetIdlePos.x = -idleOffset.x;
+            }
+            targetLocalPos = targetIdlePos;
+
+            // 2. 무기 애니메이터에 휘두르기 상태 즉시 재생
+            if (weaponAnimator != null)
+            {
+                weaponAnimator.Play(swingTriggerName, 0, 0f);
+            }
+
+            float elapsed = 0f;
+            EnableHitbox();
+
+            while (elapsed < currentAttackDuration)
+            {
+                elapsed += Time.deltaTime;
+                float normalizedTime = Mathf.Clamp01(elapsed / currentAttackDuration);
+
+                // 휘두르는 공격 동작 시간 동안 피격 판정 검사 실행
+                if (normalizedTime < 0.75f)
+                {
+                    CheckManualCollision();
+                }
+                else
+                {
+                    DisableHitbox();
+                }
+
+                targetLocalPos = targetIdlePos;
+                yield return null;
+            }
+
+            DisableHitbox();
+
+            // 🌟 예외 방지 안전 타이머: 에디터에서 애니메이션 이벤트를 누락했거나 소실되었을 경우 2.0초 후 강제 해제하여 콤보가 먹통이 되는 것을 방지합니다.
+            yield return new WaitForSeconds(2.0f);
+            if (isAttacking)
+            {
+                OnAttackAnimationEnd();
+            }
+            attackCoroutine = null;
+        }
+
+        private IEnumerator SwingUpRoutine(float aimAngle, float currentAttackDuration, float activeSwingDistance, float speedMultiplier)
+        {
+            isAttacking = true;
+            daggerHitTargets.Clear();
+
+            bool facingRight = playerController.IsFacingRight;
+
+            // 1. 공격 시작 시 마우스 조준 방향으로 루트 회전만 순간 조준
+            targetLocalScale = new Vector3(idleScale.x, facingRight ? idleScale.y : -idleScale.y, idleScale.z);
+            float finalRotationZ = aimAngle + (facingRight ? -45f : 45f);
+            targetLocalRot = Quaternion.Euler(0f, 0f, finalRotationZ);
+
+            Vector3 targetIdlePos = idleOffset;
+            if (!facingRight)
+            {
+                targetIdlePos.x = -idleOffset.x;
+            }
+            targetLocalPos = targetIdlePos;
+
+            // 2. 무기 애니메이터에 3타 올려베기 상태 즉시 재생
+            if (weaponAnimator != null)
+            {
+                weaponAnimator.Play(swingUpTriggerName, 0, 0f);
+            }
+
+            float elapsed = 0f;
+            EnableHitbox();
+
+            while (elapsed < currentAttackDuration)
+            {
+                elapsed += Time.deltaTime;
+                float normalizedTime = Mathf.Clamp01(elapsed / currentAttackDuration);
+
+                // 올려베는 공격 동작 시간 동안 피격 판정 검사 실행
+                if (normalizedTime < 0.75f)
+                {
+                    CheckManualCollision();
+                }
+                else
+                {
+                    DisableHitbox();
+                }
+
+                targetLocalPos = targetIdlePos;
+                yield return null;
+            }
+
+            DisableHitbox();
+
+            // 🌟 예외 방지 안전 타이머
+            yield return new WaitForSeconds(2.0f);
+            if (isAttacking)
+            {
+                OnAttackAnimationEnd();
+            }
             attackCoroutine = null;
         }
 
@@ -456,28 +699,26 @@ namespace Nytherion.GamePlay.Combat.Weapons
         {
         }
 
-        private void OnDisable()
+        private void ResetAllWeaponTriggers()
         {
-            if (attackCoroutine != null)
+            if (weaponAnimator == null) return;
+            
+            weaponAnimator.ResetTrigger(thrustTriggerName);
+            weaponAnimator.ResetTrigger(swingTriggerName);
+            weaponAnimator.ResetTrigger(swingUpTriggerName);
+        }
+
+        private bool HasParameter(Animator animatorComp, string paramName)
+        {
+            if (animatorComp == null || string.IsNullOrEmpty(paramName)) return false;
+            foreach (AnimatorControllerParameter param in animatorComp.parameters)
             {
-                StopCoroutine(attackCoroutine);
-                attackCoroutine = null;
+                if (param.name == paramName)
+                {
+                    return true;
+                }
             }
-
-            if (effectCoroutine != null)
-            {
-                StopCoroutine(effectCoroutine);
-                effectCoroutine = null;
-            }
-
-            isAttacking = false;
-
-            if (slashEffectObject != null)
-            {
-                slashEffectObject.SetActive(false);
-            }
-
-            DisableHitbox();
+            return false;
         }
     }
 }

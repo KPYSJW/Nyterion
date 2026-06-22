@@ -91,7 +91,6 @@ namespace Nytherion.GamePlay.Characters.Player
                 if (meleeWeaponPoint != null)
                 {
                     currentWeapon = Instantiate(weaponPrefab, meleeWeaponPoint, false);
-                    Debug.Log($"[PlayerCombat] Melee weapon instantiated. Prefab raw localPosition: {weaponPrefab.transform.localPosition}, Instance localPosition: {currentWeapon.transform.localPosition}");
                 }
             }
             else
@@ -132,7 +131,6 @@ namespace Nytherion.GamePlay.Characters.Player
                         posOffset = currentWeapon.weaponData.visualPositionOffset;
                     }
                     currentWeapon.transform.localPosition = posOffset;
-                    Debug.Log($"[PlayerCombat] Melee localPosition set to: {currentWeapon.transform.localPosition} (data.visualPositionOffset: {(data != null ? data.visualPositionOffset : "null")})");
                 }
 
                 // Animator Controller 런타임 주입 (원거리 무기만 적용)

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
   m_Name: Gust
   m_EditorClassIdentifier: 
-  uniqueID: 
-  itemName_KR: 
-  itemName_EN: 
-  icon: {fileID: 0}
+  uniqueID: b92f23d3-c667-4578-ac67-c7d25603fb91
+  itemName_KR: "\uB3CC\uD48D"
+  itemName_EN: Gust
+  icon: {fileID: 21300000, guid: 18a7bffdf622b5e48b2a6b5bb35539bc, type: 3}
   description_KR: 
   description_EN: 
   isStackable: 0
@@ -26,14 +26,14 @@ MonoBehaviour:
   rarity: 0
   traits: 
   statModifiers: []
-  damage: 0
-  range: 0
+  damage: 5
+  range: 1
   cooldown: 0
-  weaponType: 0
-  weaponSprite: {fileID: 0}
+  weaponType: 1
+  weaponSprite: {fileID: 21300000, guid: 7dfb05d3631893c4293c6a7ed939606a, type: 3}
   firePointOffset: {x: 0, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: 0, y: 0, z: 0}
+  visualPositionOffset: {x: 0.1, y: -0.1, z: 0}
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
   chargeEffectPrefab: {fileID: 0}
@@ -44,5 +44,5 @@ MonoBehaviour:
   extraProjectileMode: 0
   maxChargeTime: 1
   hitEffectPrefab: {fileID: 0}
-  weaponPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 4020038965233881614, guid: 0a6a8c0dc28819d469fe1781a3100238, type: 3}
   isArchivable: 1
