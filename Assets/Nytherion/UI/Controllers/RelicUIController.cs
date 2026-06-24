@@ -40,12 +40,20 @@ namespace Nytherion.UI.Controllers
             {
                 eventManager.OnInteraction += HandleInteraction;
             }
+            if (inputManager != null)
+            {
+                inputManager.onToggleRelicUI += Toggle;
+            }
         }
         private void OnDisable()
         {
             if (eventManager != null)
             {
                 eventManager.OnInteraction -= HandleInteraction;
+            }
+            if (inputManager != null)
+            {
+                inputManager.onToggleRelicUI -= Toggle;
             }
         }
         private void HandleInteraction(InteractableType type)

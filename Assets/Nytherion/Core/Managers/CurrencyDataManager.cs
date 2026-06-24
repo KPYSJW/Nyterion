@@ -57,12 +57,12 @@ namespace Nytherion.Core.Managers
         {
             if (!IsInitialized || amount <= 0) return false;
 
-            // 구멍 난 주머니 (TornPouch) 유물 효과 적용: 골드 획득 시 10% 확률로 획득량 2배
             if (currencyType == CurrencyType.Gold && !isLoadingFromSave)
             {
                 RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
                 if (relicManager != null)
                 {
+                    // 1. 구멍 난 주머니 (TornPouch) 효과: 골드 획득 시 10% 확률로 획득량 2배
                     foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
                     {
                         RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
@@ -79,6 +79,32 @@ namespace Nytherion.Core.Managers
                                     progressionManager.ProcessAction(ProgressionType.TornPouchTrigger, 1);
                                 }
                             }
+                            break;
+                        }
+                    }
+
+                    // 2. 보물지도 (TreasureMap) 효과: 골드 획득 시 고정 추가 획득 (+5, 레벨당 +2)
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "TreasureMap" && !block.SourceData.isDisabled)
+                        {
+                            int extraGold = 5 + (block.SourceData.level - 1) * 2;
+                            amount += extraGold;
+                            Debug.Log($"[CurrencyDataManager] 보물지도(TreasureMap) 효과 발동! 골드 +{extraGold} 추가 획득!");
+                            break;
+                        }
+                    }
+
+                    // 3. 행운의 주화 (LuckyCoin) 효과: 모든 골드 획득량 퍼센트 증가 (+25%, 레벨당 +5%)
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "LuckyCoin" && !block.SourceData.isDisabled)
+                        {
+                            float multiplier = 1f + 0.25f + (block.SourceData.level - 1) * 0.05f;
+                            amount = Mathf.RoundToInt(amount * multiplier);
+                            Debug.Log($"[CurrencyDataManager] 행운의 주화(LuckyCoin) 효과 발동! 획득 골드 {multiplier * 100}%로 증가!");
                             break;
                         }
                     }

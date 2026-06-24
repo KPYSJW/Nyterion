@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Censer
   koreanName: "\uD5A5\uB85C"
-  description_KR: "\uC2A4\uD0AC \uCDA9\uC804 \uB300\uAE30 \uC2DC\uAC04\uC744 \uB2E8\uCD95\uC2DC\uD0B5\uB2C8\uB2E4."
+  description_KR: "\uCC28\uC9C0 \uC2DC\uAC04 \uB2E8\uCD95 +8% (\uB808\uBCA8\uB2F9
+    +2%)"
   description_EN: Reduces skill charge time.
   Image: {fileID: 21300000, guid: e24da81cbb9cf054f977fa7b044bdd6b, type: 3}
   rarity: 2

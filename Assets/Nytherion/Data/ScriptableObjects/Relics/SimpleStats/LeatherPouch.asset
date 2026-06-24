@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Leather Pouch
   koreanName: "\uAC00\uC8FD \uC8FC\uBA38\uB2C8"
-  description_KR: "\uB300\uC26C \uC18D\uB3C4\uB97C \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
+  description_KR: "\uB300\uC2DC \uC18D\uB3C4 +10% (\uB808\uBCA8\uB2F9 +2%)"
   description_EN: Increases dash speed.
   Image: {fileID: 21300000, guid: 8f43f9d3bfbaee44aa231959466a65a6, type: 3}
   rarity: 1

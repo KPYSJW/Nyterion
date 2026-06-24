@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}
   m_Name: BloodNib
   m_EditorClassIdentifier: 
-  relicName: Blood Nib
-  koreanName: 핏빛 펜촉
-  description_KR: 근접 및 원거리 공격력을 증가시킵니다.
+  relicName: Broken Sword
+  koreanName: "\uBD80\uB7EC\uC9C4 \uAC80"
+  description_KR: "\uADFC\uC811 \uACF5\uACA9\uB825 +4 (\uB808\uBCA8\uB2F9 +1), \uC6D0\uAC70\uB9AC
+    \uACF5\uACA9\uB825 +4 (\uB808\uBCA8\uB2F9 +1)"
   description_EN: Increases melee and ranged damage.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 4a28827c899a71741a7b0d6deff20e65, type: 3}
   rarity: 2
-  level: 1
+  level: 3
   isDisabled: 0
   effectModules: []
   shape:
@@ -39,3 +40,6 @@ MonoBehaviour:
     value: 4
     valuePerLevel: 1
     isPercentage: 0
+  references:
+    version: 2
+    RefIds: []

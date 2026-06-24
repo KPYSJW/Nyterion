@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}
+  m_Name: CrimsonLeaf
+  m_EditorClassIdentifier: 
+  relicName: Crimson Leaf
+  koreanName: "\uBD89\uC740 \uC78E\uC0AC\uADC0"
+  description_KR: "\uD761\uD608 +3% (\uB808\uBCA8\uB2F9 +1%)"
+  description_EN: The sharp tooth of a beast. Absorbs a very small amount of life
+    when attacking.
+  Image: {fileID: 21300000, guid: 4848d38a5cd7a8a48b9c8ea86d3aa491, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 6716071652329783302
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 1, y: 0}
+    type: 1
+  - offset: {x: -1, y: 0}
+    type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
+  simpleStatModifiers:
+  - stat: 11
+    value: 0.03
+    valuePerLevel: 0.01
+    isPercentage: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6716071652329783302
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 11
+          value: 0.03
+          valuePerLevel: 0.01
+          isPercentage: 1

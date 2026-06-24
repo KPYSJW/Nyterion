@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Hourglass
   koreanName: "\uBAA8\uB798\uC2DC\uACC4"
-  description_KR: "\uC2DC\uAC04\uC774 \uB4A4\uD2C0\uB9B0 \uBAA8\uB798\uC2DC\uACC4
-    \uD30C\uD3B8\uC785\uB2C8\uB2E4. \uB300\uC26C \uCFE8\uB2E4\uC6B4\uACFC \uACF5\uACA9
-    \uCC28\uC9C0 \uD0C0\uC784\uC774 \uC904\uC5B4\uB4ED\uB2C8\uB2E4."
+  description_KR: "\uB300\uC2DC \uC7AC\uC0AC\uC6A9 \uB300\uAE30\uC2DC\uAC04 -0.3 (\uB808\uBCA8\uB2F9 -0.05), \uCE58\uBA85\uD0C0 \uD655\uB960 +15% (\uB808\uBCA8\uB2F9 +3%)"
   description_EN: A fragment of an hourglass with warped time, reducing dash cooldown
     and attack charge time.
   Image: {fileID: 21300000, guid: 009962b771081a741a8f54329fdd8586, type: 3}
@@ -42,7 +40,7 @@ MonoBehaviour:
     value: -0.3
     valuePerLevel: -0.05
     isPercentage: 0
-  - stat: 16
+  - stat: 13
     value: 0.15
     valuePerLevel: 0.03
     isPercentage: 1
@@ -59,7 +57,7 @@ MonoBehaviour:
           value: -0.3
           valuePerLevel: -0.05
           isPercentage: 0
-        - stat: 16
+        - stat: 13
           value: 0.15
           valuePerLevel: 0.03
           isPercentage: 1

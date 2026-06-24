@@ -24,35 +24,46 @@ namespace Nytherion.Data.ScriptableObjects.Relics
             InitializeSimpleStats();
         }
 
-        public void InitializeSimpleStats()
+        public void InitializeSimpleStats(bool force = false)
         {
-            if (isInitialized) return;
+            if (!force && isInitialized) return;
             if (simpleStatModifiers == null || simpleStatModifiers.Count == 0) return;
 
             // 이미 StatRelicEffect가 있는지 확인
             bool hasStatEffect = false;
-            foreach (var module in effectModules)
+            RelicEffectModule existingModule = null;
+            StatRelicEffect existingEffect = null;
+
+            foreach (RelicEffectModule module in effectModules)
             {
                 if (module.effects != null)
                 {
-                    foreach (var effect in module.effects)
+                    foreach (RelicEffectBase effect in module.effects)
                     {
                         if (effect is StatRelicEffect)
                         {
                             hasStatEffect = true;
+                            existingModule = module;
+                            existingEffect = effect as StatRelicEffect;
                             break;
                         }
                     }
                 }
+                if (hasStatEffect) break;
             }
 
-            // 없다면 자동으로 빈 조건과 함께 StatRelicEffect 모듈을 생성하여 삽입
-            if (!hasStatEffect)
+            if (force && hasStatEffect && existingEffect != null)
             {
-                var statEffect = new StatRelicEffect();
+                // 강제 갱신 모드일 때는 기존 이펙트의 스탯 리스트를 최신화
+                existingEffect.statModifiers = new List<StatModifier>(simpleStatModifiers);
+            }
+            else if (!hasStatEffect)
+            {
+                // 없다면 자동으로 빈 조건과 함께 StatRelicEffect 모듈을 생성하여 삽입
+                StatRelicEffect statEffect = new StatRelicEffect();
                 statEffect.statModifiers = new List<StatModifier>(simpleStatModifiers);
 
-                var autoModule = new RelicEffectModule();
+                RelicEffectModule autoModule = new RelicEffectModule();
                 autoModule.condition = null; // 항상 발동
                 autoModule.effects.Add(statEffect);
 

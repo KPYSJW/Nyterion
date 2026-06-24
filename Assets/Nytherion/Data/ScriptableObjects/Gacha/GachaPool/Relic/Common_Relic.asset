@@ -15,35 +15,45 @@ MonoBehaviour:
   rarity: 0
   drawWeight: 100
   items:
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480001, type: 2}
+    weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480006, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: b242e2760ade8e4cae771239b9c1d0ef, type: 2}
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480008, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: e729a622bdad4dd592062232f860e009, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: 85012adabbd5c1e4fb8bc67bc413e4d7, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: 693401abb81ec524ebbaa6a25f3fbffc, type: 2}
-    weight: 100
-  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480008, type: 2}
-    weight: 100
-  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480007, type: 2}
+  - item: {fileID: 11400000, guid: 227d51daacf86e8418fb307f9ce1e0db, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: a721e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480007, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: ae968736b9554844b866effcbac89a6b, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 693401abb81ec524ebbaa6a25f3fbffc, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: df201a091ead80246955d6fa69924dea, type: 2}
+    weight: 100
   - item: {fileID: 11400000, guid: 608e6b404c9d1384e9e8b7e5b9bd2011, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480001, type: 2}
-    weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480026, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 5c3fa2f6691d6944eadbf1b5936a9318, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480024, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: f8235016eb97f10489616450c93424b8, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: df201a091ead80246955d6fa69924dea, type: 2}
-    weight: 100
   - item: {fileID: 11400000, guid: 4667e2d4c60a4f8e860027222714178a, type: 2}
     weight: 100
+  - item: {fileID: 11400000, guid: 175ccbf4fb126894e84989e5cbca0446, type: 2}
+    weight: 100
   - item: {fileID: 11400000, guid: 6f31e8acefd8781479629580c65336fd, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: b242e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 4e8eea5f098a61040905d1f18b300733, type: 2}
     weight: 100

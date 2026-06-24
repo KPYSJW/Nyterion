@@ -14,20 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Lucky Coin
   koreanName: "\uD589\uC6B4\uC758 \uC8FC\uD654"
-  description_KR: "\uC8FC\uBA38\uB2C8\uC5D0 \uC9C0\uB2C8\uBA74 \uC0AC\uC18C\uD55C
-    \uD589\uC6B4\uC774 \uB530\uB985\uB2C8\uB2E4. \uC57D\uAC04\uC758 \uB300\uC26C
-    \uCFE8\uB2E4\uC6B4 \uAC10\uC18C \uD6A8\uACFC\uB97C \uC81C\uACF5\uD569\uB2C8\uB2E4."
-  description_EN: Carrying this coin brings small fortunes, slightly reducing dash
-    cooldown.
+  description_KR: "\uACE8\uB4DC \uD68D\uB4DD\uB7C9 +25% (\uB808\uBCA8\uB2F9 +5%)"
+  description_EN: Carrying this coin increases gold gain by 25% (+5% per level).
   Image: {fileID: 21300000, guid: 7899e817078cc864babf440acf33c241, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0
-  effectModules:
-  - condition:
-      rid: -2
-    effects:
-    - rid: 6716071652329783296
+  effectModules: []
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -35,21 +28,7 @@ MonoBehaviour:
     type: 1
   synergySeriesId: 
   unlockMilestoneID: 
-  simpleStatModifiers:
-  - stat: 9
-    value: -0.15
-    valuePerLevel: -0.03
-    isPercentage: 0
+  simpleStatModifiers: []
   references:
     version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 6716071652329783296
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        statModifiers:
-        - stat: 9
-          value: -0.15
-          valuePerLevel: -0.03
-          isPercentage: 0
+    RefIds: []

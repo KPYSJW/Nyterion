@@ -179,20 +179,6 @@ namespace Nytherion.UI.Inventory
             {
                 case EquipmentType.Weapon:
                     return this.slotType == EquipmentSlotType.Weapon;
-                case EquipmentType.Armor:
-                    // 바어구 고유 데이터릴 읽기 위해 ArmorDat로 변환
-                    if (equipment is ArmorData armor)
-                    {
-                        // 방어구 타입을 확인하고 해당하는 슬롯에만 들어가도록 맞춤
-                        switch (armor.armorType)
-                        {
-                            case ArmorType.Helmet: return this.slotType == EquipmentSlotType.Helmet;
-                            case ArmorType.Armor: return this.slotType == EquipmentSlotType.Armor;
-                            case ArmorType.Boots: return this.slotType == EquipmentSlotType.Boots;
-                            case ArmorType.Accessory: return this.slotType == EquipmentSlotType.Accessory;
-                        }
-                    }
-                    return false;
                 default:
                     return false;
             }

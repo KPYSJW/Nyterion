@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43c7997b6cdbe61438756d24e848ec0c, type: 3}
+  m_Name: LeatherBracelet
+  m_EditorClassIdentifier: 
+  relicName: Leather Bracelet
+  koreanName: "\uAC00\uC8FD \uD314\uCC0C"
+  description_KR: "\uADFC\uC811 \uBB3C\uB9AC \uB370\uBBF8\uC9C0\uB97C 5% \uB9CC\uD07C
+    \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
+  description_EN: 
+  Image: {fileID: 21300000, guid: 8cbcc0bfe41d40246a4cba1d5befb111, type: 3}
+  rarity: 0
+  level: 1
+  isDisabled: 0
+  effectModules: []
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
+  simpleStatModifiers: []
+  references:
+    version: 2
+    RefIds: []

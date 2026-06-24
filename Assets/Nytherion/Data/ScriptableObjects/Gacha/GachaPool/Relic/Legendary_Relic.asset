@@ -15,6 +15,8 @@ MonoBehaviour:
   rarity: 4
   drawWeight: 5
   items:
+  - item: {fileID: 11400000, guid: c589af25c5fc73643aefd23481b151b8, type: 2}
+    weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480005, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480021, type: 2}
@@ -30,6 +32,8 @@ MonoBehaviour:
   - item: {fileID: 11400000, guid: cc058ee970d7b8648a25556e394a508c, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: d628de4d42cd4c309871f265dea04332, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 92a3dde5f89e43742ab56395677a1003, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: a621e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100

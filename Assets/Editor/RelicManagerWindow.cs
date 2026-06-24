@@ -98,6 +98,15 @@ namespace Nytherion.Editor
                 lastTab = currentTab;
             }
 
+            RelicDatabaseSO database = GetDatabase();
+            int dbCount = database != null && database.allRelics != null ? database.allRelics.Count : 0;
+            int dbUniqueCount = database != null && database.allRelics != null ? database.allRelics.Where(r => r != null).Distinct().Count() : 0;
+
+            EditorGUILayout.BeginHorizontal("box");
+            GUILayout.Label($"전체 에셋 수: {allRelics.Count}개", EditorStyles.boldLabel);
+            GUILayout.Label($"|   DB 등록 수: {dbCount}개 (고유 유물: {dbUniqueCount}개)", EditorStyles.boldLabel);
+            EditorGUILayout.EndHorizontal();
+
             EditorGUILayout.Space();
 
             if (currentTab == WindowTab.Create) DrawCreateTab();
@@ -251,9 +260,37 @@ namespace Nytherion.Editor
                 }
                 EditorGUILayout.EndHorizontal();
             }
+
+            int duplicateCount = database.allRelics.Count - database.allRelics.Where(r => r != null).Distinct().Count();
+            if (duplicateCount > 0)
+            {
+                EditorGUILayout.BeginHorizontal();
+                GUI.color = new Color(1f, 0.6f, 0.6f);
+                EditorGUILayout.HelpBox($"{duplicateCount} duplicate references found in the database.", MessageType.Warning);
+                GUI.color = Color.white;
+                if (GUILayout.Button("Remove Duplicates", GUILayout.Height(38)))
+                {
+                    FixDatabaseDuplicates();
+                }
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
-        private RelicDatabaseSO GetDatabase()
+        private void FixDatabaseDuplicates()
+        {
+            RelicDatabaseSO database = GetDatabase();
+            if (database == null) return;
+
+            Undo.RecordObject(database, "Fix Relic Database Duplicates");
+            List<RelicData> uniqueRelics = database.allRelics.Where(r => r != null).Distinct().OrderBy(r => r.koreanName).ToList();
+            database.allRelics = uniqueRelics;
+
+            EditorUtility.SetDirty(database);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[RelicManager] Database duplicates removed successfully.");
+        }
+
+        private static RelicDatabaseSO GetDatabase()
         {
             RelicDatabaseSO database = AssetDatabase.LoadAssetAtPath<RelicDatabaseSO>(DATABASE_PATH);
             if (database == null)
@@ -270,6 +307,11 @@ namespace Nytherion.Editor
 
         private void SyncAllToDatabase()
         {
+            SyncAllToDatabase(allRelics);
+        }
+
+        private static void SyncAllToDatabase(List<RelicData> relics)
+        {
             RelicDatabaseSO database = GetDatabase();
             if (database == null)
             {
@@ -281,7 +323,7 @@ namespace Nytherion.Editor
             if (database.allRelics == null) database.allRelics = new List<RelicData>();
 
             int addedCount = 0;
-            foreach (var relic in allRelics)
+            foreach (RelicData relic in relics)
             {
                 if (!database.allRelics.Contains(relic))
                 {
@@ -291,7 +333,7 @@ namespace Nytherion.Editor
             }
 
             database.allRelics.RemoveAll(r => r == null);
-            database.allRelics = database.allRelics.OrderBy(r => r.koreanName).ToList();
+            database.allRelics = database.allRelics.Distinct().OrderBy(r => r.koreanName).ToList();
 
             EditorUtility.SetDirty(database);
             AssetDatabase.SaveAssets();
@@ -588,7 +630,7 @@ namespace Nytherion.Editor
             }
         }
 
-        private void AddToDatabase(RelicData newRelic)
+        private static void AddToDatabase(RelicData newRelic)
         {
             RelicDatabaseSO database = GetDatabase();
             if (database != null)
@@ -606,7 +648,7 @@ namespace Nytherion.Editor
             }
         }
 
-        private void AddToGachaPool(RelicData relic)
+        private static void AddToGachaPool(RelicData relic)
         {
             string poolPath = $"Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/{relic.rarity}_Relic.asset";
             Nytherion.Data.ScriptableObjects.Gacha.GachaPoolSO pool = AssetDatabase.LoadAssetAtPath<Nytherion.Data.ScriptableObjects.Gacha.GachaPoolSO>(poolPath);
@@ -629,17 +671,78 @@ namespace Nytherion.Editor
             string path = EditorUtility.SaveFilePanel("Export Relics to CSV", "", "RelicData.csv", "csv");
             if (string.IsNullOrEmpty(path)) return;
 
-            string[] headers = new string[] { "EN_Name", "KR_Name", "Rarity", "Level", "Description_KR" };
+            string[] headers = new string[] { 
+                "EN_Name", "KR_Name", "Rarity", "Level", "Description_KR",
+                "Synergy_Series_ID", "Unlock_Milestone_ID",
+                "Influence_Zones",
+                "Stat1_Type", "Stat1_Value", "Stat1_ValuePerLevel", "Stat1_IsPercentage",
+                "Stat2_Type", "Stat2_Value", "Stat2_ValuePerLevel", "Stat2_IsPercentage"
+            };
             List<string[]> rows = new List<string[]>();
 
             foreach (RelicData r in allRelics)
             {
+                string synergySeriesId = r.synergySeriesId ?? "";
+                string unlockMilestoneID = r.unlockMilestoneID ?? "";
+
+                string influenceZonesStr = "";
+                if (r.influenceZones != null && r.influenceZones.Count > 0)
+                {
+                    List<string> zoneStrings = new List<string>();
+                    foreach (InfluenceZone zone in r.influenceZones)
+                    {
+                        zoneStrings.Add($"{zone.offset.x},{zone.offset.y}:{zone.type}");
+                    }
+                    influenceZonesStr = string.Join(";", zoneStrings);
+                }
+
+                string stat1Type = "";
+                string stat1Value = "";
+                string stat1ValuePerLevel = "";
+                string stat1IsPercentage = "";
+
+                string stat2Type = "";
+                string stat2Value = "";
+                string stat2ValuePerLevel = "";
+                string stat2IsPercentage = "";
+
+                if (r is SimpleStatRelicData simpleRelic && simpleRelic.simpleStatModifiers != null)
+                {
+                    if (simpleRelic.simpleStatModifiers.Count > 0 && simpleRelic.simpleStatModifiers[0] != null)
+                    {
+                        StatModifier m1 = simpleRelic.simpleStatModifiers[0];
+                        stat1Type = m1.stat.ToString();
+                        stat1Value = m1.value.ToString();
+                        stat1ValuePerLevel = m1.valuePerLevel.ToString();
+                        stat1IsPercentage = m1.isPercentage.ToString().ToUpper();
+                    }
+                    if (simpleRelic.simpleStatModifiers.Count > 1 && simpleRelic.simpleStatModifiers[1] != null)
+                    {
+                        StatModifier m2 = simpleRelic.simpleStatModifiers[1];
+                        stat2Type = m2.stat.ToString();
+                        stat2Value = m2.value.ToString();
+                        stat2ValuePerLevel = m2.valuePerLevel.ToString();
+                        stat2IsPercentage = m2.isPercentage.ToString().ToUpper();
+                    }
+                }
+
                 rows.Add(new string[] {
                     r.relicName,
                     r.koreanName,
                     r.rarity.ToString(),
                     r.level.ToString(),
-                    r.description_KR
+                    r.description_KR,
+                    synergySeriesId,
+                    unlockMilestoneID,
+                    influenceZonesStr,
+                    stat1Type,
+                    stat1Value,
+                    stat1ValuePerLevel,
+                    stat1IsPercentage,
+                    stat2Type,
+                    stat2Value,
+                    stat2ValuePerLevel,
+                    stat2IsPercentage
                 });
             }
 
@@ -656,35 +759,361 @@ namespace Nytherion.Editor
             if (data == null) return;
 
             int updatedCount = 0;
+            int createdCount = 0;
+
             foreach (Dictionary<string, string> entry in data)
             {
+                if (!entry.ContainsKey("EN_Name") || string.IsNullOrEmpty(entry["EN_Name"])) continue;
+
                 string enName = entry["EN_Name"];
                 RelicData relic = allRelics.Find(r => r.relicName == enName);
+                bool isNew = (relic == null);
 
-                if (relic != null)
+                if (isNew)
                 {
-                    Undo.RecordObject(relic, "Update Relic from CSV");
-                    if (entry.ContainsKey("KR_Name")) relic.koreanName = entry["KR_Name"];
-                    if (entry.ContainsKey("Rarity"))
-                    {
-                        if (System.Enum.TryParse(entry["Rarity"], out Rarity rarity))
-                            relic.rarity = rarity;
-                    }
-                    if (entry.ContainsKey("Level"))
-                    {
-                        if (int.TryParse(entry["Level"], out int level))
-                            relic.level = level;
-                    }
-                    if (entry.ContainsKey("Description_KR")) relic.description_KR = entry["Description_KR"];
+                    SimpleStatRelicData newRelic = ScriptableObject.CreateInstance<SimpleStatRelicData>();
+                    newRelic.relicName = enName;
+                    relic = newRelic;
+                }
 
-                    EditorUtility.SetDirty(relic);
+                Undo.RecordObject(relic, "Update Relic from CSV");
+
+                if (entry.ContainsKey("KR_Name")) relic.koreanName = entry["KR_Name"];
+                if (entry.ContainsKey("Rarity"))
+                {
+                    if (System.Enum.TryParse(entry["Rarity"], out Rarity rarity))
+                        relic.rarity = rarity;
+                }
+                if (entry.ContainsKey("Level"))
+                {
+                    if (int.TryParse(entry["Level"], out int level))
+                        relic.level = level;
+                }
+                if (entry.ContainsKey("Description_KR")) relic.description_KR = entry["Description_KR"];
+                if (entry.ContainsKey("Synergy_Series_ID")) relic.synergySeriesId = entry["Synergy_Series_ID"];
+                if (entry.ContainsKey("Unlock_Milestone_ID")) relic.unlockMilestoneID = entry["Unlock_Milestone_ID"];
+
+                if (entry.ContainsKey("Influence_Zones"))
+                {
+                    if (relic.influenceZones == null)
+                    {
+                        relic.influenceZones = new List<InfluenceZone>();
+                    }
+                    relic.influenceZones.Clear();
+
+                    string zonesStr = entry["Influence_Zones"];
+                    if (!string.IsNullOrEmpty(zonesStr))
+                    {
+                        string[] zoneEntries = zonesStr.Split(';');
+                        foreach (string entryStr in zoneEntries)
+                        {
+                            if (string.IsNullOrEmpty(entryStr)) continue;
+                            string[] parts = entryStr.Split(':');
+                            if (parts.Length != 2) continue;
+
+                            string[] coords = parts[0].Split(',');
+                            if (coords.Length != 2) continue;
+
+                            if (int.TryParse(coords[0], out int offsetX) && int.TryParse(coords[1], out int offsetY))
+                            {
+                                if (System.Enum.TryParse(parts[1], out InfluenceType infType))
+                                {
+                                    relic.influenceZones.Add(new InfluenceZone
+                                    {
+                                        offset = new Vector2Int(offsetX, offsetY),
+                                        type = infType
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (relic is SimpleStatRelicData simpleRelic)
+                {
+                    if (simpleRelic.simpleStatModifiers == null)
+                    {
+                        simpleRelic.simpleStatModifiers = new List<StatModifier>();
+                    }
+                    simpleRelic.simpleStatModifiers.Clear();
+
+                    if (entry.ContainsKey("Stat1_Type") && !string.IsNullOrEmpty(entry["Stat1_Type"]))
+                    {
+                        if (System.Enum.TryParse(entry["Stat1_Type"], out StatType stat1Type))
+                        {
+                            float val = 0f;
+                            float valPerLvl = 0f;
+                            bool isPct = false;
+
+                            if (entry.ContainsKey("Stat1_Value")) float.TryParse(entry["Stat1_Value"], out val);
+                            if (entry.ContainsKey("Stat1_ValuePerLevel")) float.TryParse(entry["Stat1_ValuePerLevel"], out valPerLvl);
+                            if (entry.ContainsKey("Stat1_IsPercentage"))
+                            {
+                                string isPctStr = entry["Stat1_IsPercentage"].ToLower();
+                                isPct = (isPctStr == "true" || isPctStr == "1");
+                            }
+
+                            StatModifier modifier1 = new StatModifier
+                            {
+                                stat = stat1Type,
+                                value = val,
+                                valuePerLevel = valPerLvl,
+                                isPercentage = isPct
+                            };
+                            simpleRelic.simpleStatModifiers.Add(modifier1);
+                        }
+                    }
+
+                    if (entry.ContainsKey("Stat2_Type") && !string.IsNullOrEmpty(entry["Stat2_Type"]))
+                    {
+                        if (System.Enum.TryParse(entry["Stat2_Type"], out StatType stat2Type))
+                        {
+                            float val = 0f;
+                            float valPerLvl = 0f;
+                            bool isPct = false;
+
+                            if (entry.ContainsKey("Stat2_Value")) float.TryParse(entry["Stat2_Value"], out val);
+                            if (entry.ContainsKey("Stat2_ValuePerLevel")) float.TryParse(entry["Stat2_ValuePerLevel"], out valPerLvl);
+                            if (entry.ContainsKey("Stat2_IsPercentage"))
+                            {
+                                string isPctStr = entry["Stat2_IsPercentage"].ToLower();
+                                isPct = (isPctStr == "true" || isPctStr == "1");
+                            }
+
+                            StatModifier modifier2 = new StatModifier
+                            {
+                                stat = stat2Type,
+                                value = val,
+                                valuePerLevel = valPerLvl,
+                                isPercentage = isPct
+                            };
+                            simpleRelic.simpleStatModifiers.Add(modifier2);
+                        }
+                    }
+
+                    simpleRelic.InitializeSimpleStats(true);
+                }
+
+                EditorUtility.SetDirty(relic);
+
+                if (isNew)
+                {
+                    string directoryPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats";
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+                    string assetPath = $"{directoryPath}/{enName.Replace(" ", "_")}.asset";
+                    AssetDatabase.CreateAsset(relic, assetPath);
+
+                    AddToDatabase(relic);
+                    AddToGachaPool(relic);
+                    createdCount++;
+                }
+                else
+                {
                     updatedCount++;
                 }
             }
 
             AssetDatabase.SaveAssets();
             RefreshRelicList();
-            EditorUtility.DisplayDialog("Success", $"{updatedCount} relics updated from CSV!", "OK");
+            SyncAllToDatabase();
+
+            EditorUtility.DisplayDialog("Success", $"{createdCount} new relics created, {updatedCount} relics updated from CSV!", "OK");
+        }
+
+        public static void ImportRelicsFromDefaultCSVPath()
+        {
+            string path = "Assets/Nytherion/Data/ScriptableObjects/Relics/RelicImportData.csv";
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"[RelicManager] CSV file not found at: {path}");
+                return;
+            }
+
+            List<Dictionary<string, string>> data = DataSyncUtility.ImportFromCSV(path);
+            if (data == null)
+            {
+                Debug.LogError("[RelicManager] Failed to import data from CSV.");
+                return;
+            }
+
+            string[] guids = AssetDatabase.FindAssets("t:RelicData");
+            List<RelicData> allRelicsList = new List<RelicData>();
+            foreach (string guid in guids)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                RelicData relicAsset = AssetDatabase.LoadAssetAtPath<RelicData>(assetPath);
+                if (relicAsset != null)
+                {
+                    allRelicsList.Add(relicAsset);
+                }
+            }
+
+            int updatedCount = 0;
+            int createdCount = 0;
+
+            foreach (Dictionary<string, string> entry in data)
+            {
+                if (!entry.ContainsKey("EN_Name") || string.IsNullOrEmpty(entry["EN_Name"])) continue;
+
+                string enName = entry["EN_Name"];
+                RelicData relic = allRelicsList.Find(r => r.relicName == enName);
+                bool isNew = (relic == null);
+
+                if (isNew)
+                {
+                    SimpleStatRelicData newRelic = ScriptableObject.CreateInstance<SimpleStatRelicData>();
+                    newRelic.relicName = enName;
+                    relic = newRelic;
+                }
+
+                Undo.RecordObject(relic, "Update Relic from CSV");
+
+                if (entry.ContainsKey("KR_Name")) relic.koreanName = entry["KR_Name"];
+                if (entry.ContainsKey("Rarity"))
+                {
+                    if (System.Enum.TryParse(entry["Rarity"], out Rarity rarity))
+                        relic.rarity = rarity;
+                }
+                if (entry.ContainsKey("Level"))
+                {
+                    if (int.TryParse(entry["Level"], out int level))
+                        relic.level = level;
+                }
+                if (entry.ContainsKey("Description_KR")) relic.description_KR = entry["Description_KR"];
+                if (entry.ContainsKey("Synergy_Series_ID")) relic.synergySeriesId = entry["Synergy_Series_ID"];
+                if (entry.ContainsKey("Unlock_Milestone_ID")) relic.unlockMilestoneID = entry["Unlock_Milestone_ID"];
+
+                if (entry.ContainsKey("Influence_Zones"))
+                {
+                    if (relic.influenceZones == null)
+                    {
+                        relic.influenceZones = new List<InfluenceZone>();
+                    }
+                    relic.influenceZones.Clear();
+
+                    string zonesStr = entry["Influence_Zones"];
+                    if (!string.IsNullOrEmpty(zonesStr))
+                    {
+                        string[] zoneEntries = zonesStr.Split(';');
+                        foreach (string entryStr in zoneEntries)
+                        {
+                            if (string.IsNullOrEmpty(entryStr)) continue;
+                            string[] parts = entryStr.Split(':');
+                            if (parts.Length != 2) continue;
+
+                            string[] coords = parts[0].Split(',');
+                            if (coords.Length != 2) continue;
+
+                            if (int.TryParse(coords[0], out int offsetX) && int.TryParse(coords[1], out int offsetY))
+                            {
+                                if (System.Enum.TryParse(parts[1], out InfluenceType infType))
+                                {
+                                    relic.influenceZones.Add(new InfluenceZone
+                                    {
+                                        offset = new Vector2Int(offsetX, offsetY),
+                                        type = infType
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (relic is SimpleStatRelicData simpleRelic)
+                {
+                    if (simpleRelic.simpleStatModifiers == null)
+                    {
+                        simpleRelic.simpleStatModifiers = new List<StatModifier>();
+                    }
+                    simpleRelic.simpleStatModifiers.Clear();
+
+                    if (entry.ContainsKey("Stat1_Type") && !string.IsNullOrEmpty(entry["Stat1_Type"]))
+                    {
+                        if (System.Enum.TryParse(entry["Stat1_Type"], out StatType stat1Type))
+                        {
+                            float val = 0f;
+                            float valPerLvl = 0f;
+                            bool isPct = false;
+
+                            if (entry.ContainsKey("Stat1_Value")) float.TryParse(entry["Stat1_Value"], out val);
+                            if (entry.ContainsKey("Stat1_ValuePerLevel")) float.TryParse(entry["Stat1_ValuePerLevel"], out valPerLvl);
+                            if (entry.ContainsKey("Stat1_IsPercentage"))
+                            {
+                                string isPctStr = entry["Stat1_IsPercentage"].ToLower();
+                                isPct = (isPctStr == "true" || isPctStr == "1");
+                            }
+
+                            StatModifier modifier1 = new StatModifier
+                            {
+                                stat = stat1Type,
+                                value = val,
+                                valuePerLevel = valPerLvl,
+                                isPercentage = isPct
+                            };
+                            simpleRelic.simpleStatModifiers.Add(modifier1);
+                        }
+                    }
+
+                    if (entry.ContainsKey("Stat2_Type") && !string.IsNullOrEmpty(entry["Stat2_Type"]))
+                    {
+                        if (System.Enum.TryParse(entry["Stat2_Type"], out StatType stat2Type))
+                        {
+                            float val = 0f;
+                            float valPerLvl = 0f;
+                            bool isPct = false;
+
+                            if (entry.ContainsKey("Stat2_Value")) float.TryParse(entry["Stat2_Value"], out val);
+                            if (entry.ContainsKey("Stat2_ValuePerLevel")) float.TryParse(entry["Stat2_ValuePerLevel"], out valPerLvl);
+                            if (entry.ContainsKey("Stat2_IsPercentage"))
+                            {
+                                string isPctStr = entry["Stat2_IsPercentage"].ToLower();
+                                isPct = (isPctStr == "true" || isPctStr == "1");
+                            }
+
+                            StatModifier modifier2 = new StatModifier
+                            {
+                                stat = stat2Type,
+                                value = val,
+                                valuePerLevel = valPerLvl,
+                                isPercentage = isPct
+                            };
+                            simpleRelic.simpleStatModifiers.Add(modifier2);
+                        }
+                    }
+
+                    simpleRelic.InitializeSimpleStats(true);
+                }
+
+                EditorUtility.SetDirty(relic);
+
+                if (isNew)
+                {
+                    string directoryPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats";
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+                    string assetPath = $"{directoryPath}/{enName.Replace(" ", "_")}.asset";
+                    AssetDatabase.CreateAsset(relic, assetPath);
+
+                    AddToDatabase(relic);
+                    AddToGachaPool(relic);
+                    createdCount++;
+                    allRelicsList.Add(relic);
+                }
+                else
+                {
+                    updatedCount++;
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            SyncAllToDatabase(allRelicsList);
+
+            Debug.Log($"[RelicManager] Batch import success: {createdCount} relics created, {updatedCount} relics updated.");
         }
     }
 
