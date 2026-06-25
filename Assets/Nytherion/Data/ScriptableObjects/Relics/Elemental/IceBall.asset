@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Ice Ball
   koreanName: "\uC544\uC774\uC2A4 \uBCFC"
-  description_KR: "\uBE59\uACB0 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uBC29\uC5B4\uB825
-    +4, \uB300\uC26C \uCFE8\uD0C0\uC784 -8%. "
-  description_EN: 'When Ice equipment is active, defense +4, dash cooldown -8%. '
+  description_KR: "\uBE59\uACB0 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uBC29\uC5B4\uB825 +5, \uBE59\uACB0 \uD53C\uD574 +10% \uC99D\uAC00."
+  description_EN: 'When Ice equipment is active, defense +5, Ice damage +10%. '
   Image: {fileID: 21300000, guid: 05bb0a55738c6b449a5b46d62c8b67d8, type: 3}
   rarity: 2
   level: 1
@@ -47,10 +46,14 @@ MonoBehaviour:
       data:
         statModifiers:
         - stat: 1
-          value: 4
+          value: 5
           valuePerLevel: 1
           isPercentage: 0
-        - stat: 9
-          value: -0.08
-          valuePerLevel: -0.02
+        - stat: 3
+          value: 0.1
+          valuePerLevel: 0.03
+          isPercentage: 1
+        - stat: 4
+          value: 0.1
+          valuePerLevel: 0.03
           isPercentage: 1

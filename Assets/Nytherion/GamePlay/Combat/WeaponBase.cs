@@ -110,7 +110,7 @@ namespace Nytherion.GamePlay.Combat
                 }
                 if (activeTraits.Contains(EquipmentTrait.Curse))
                 {
-                    effectManager.ApplyEffect(new CurseEffect(1.3f, 5f));
+                    effectManager.ApplyEffect(new CurseEffect(1.1f, 5f));
                 }
                 if (activeTraits.Contains(EquipmentTrait.Ice))
                 {

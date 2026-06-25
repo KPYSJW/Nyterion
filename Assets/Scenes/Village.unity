@@ -181,8 +181,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon x 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1484,7 +1484,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 86049443}
   nameText: {fileID: 526146093}
-  levelText: {fileID: 1862017537}
   descriptionText: {fileID: 1482413213}
   influenceCells:
   - {fileID: 862471982}
@@ -2245,8 +2244,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Close
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2517,6 +2516,7 @@ MonoBehaviour:
   roomIconPrefab: {fileID: 667391318892503220, guid: eb998911152d6da419bfbe833a8dbed4, type: 3}
   playerIcon: {fileID: 454730185}
   linePrefab: {fileID: 7129129202584483886, guid: d7a5a3a96c249b04497328987f919e6e, type: 3}
+  StageNumber: {fileID: 0}
   roomIconSize: 20
   iconSpacing: 50
   mapPadding: 50
@@ -3722,8 +3722,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon x 10
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4743,8 +4743,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: TestDamage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4969,8 +4969,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Close
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5950,8 +5950,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: TestBlock
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7793,7 +7793,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -99.99992}
+  m_AnchoredPosition: {x: 0, y: -399.99994}
   m_SizeDelta: {x: 680, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &790586204
@@ -7834,7 +7834,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statsContainer: {fileID: 790586203}
   statCellPrefab: {fileID: 8718112075567135313, guid: 154ab9f8d61aff94593701fbdeee39b4, type: 3}
-  scrollRect: {fileID: 135070048}
 --- !u!114 &790586206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8602,8 +8601,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10280,7 +10279,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 285172464}
   m_HandleRect: {fileID: 285172463}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -11201,8 +11200,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon x 10
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -12231,8 +12230,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Relic x 10
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -13388,6 +13387,8 @@ MonoBehaviour:
   storageSlotPrefab: {fileID: 6419789725286957115, guid: e2ba06097f52a4f4993b965cae2f6be0, type: 3}
   levelUpGizmoPrefab: {fileID: 3142902908754315950, guid: 685e10347cd99754bb8dd5043b88cc6f, type: 3}
   levelDownGizmoPrefab: {fileID: 3142902908754315950, guid: c93654ea3214cf34bbbb393124b691ac, type: 3}
+  silenceGizmoPrefab: {fileID: 0}
+  synergyLinkGizmoPrefab: {fileID: 0}
 --- !u!1 &1291734599
 GameObject:
   m_ObjectHideFlags: 0
@@ -13910,13 +13911,16 @@ MonoBehaviour:
   gachaCanvasGroup: {fileID: 808918960}
   gachaMainPanel: {fileID: 1562094187}
   gachaResultPanel: {fileID: 947773327}
-  tokenCountText: {fileID: 2029076259}
-  drawWeaponOnceButton: {fileID: 1779015169}
-  drawWeaponTenTimesButton: {fileID: 1414992460}
-  drawRelicOnceButton: {fileID: 1814822529}
-  drawRelicTenTimesButton: {fileID: 885963819}
+  weaponSubPanel: {fileID: 0}
+  relicSubPanel: {fileID: 0}
+  skillSubPanel: {fileID: 0}
+  drawOnceBtton: {fileID: 0}
+  drawTenBtton: {fileID: 0}
   gachaCloseButton: {fileID: 866528878}
   resultCloseButton: {fileID: 1901352306}
+  weaponTabButton: {fileID: 0}
+  relicTabButton: {fileID: 0}
+  skillTabButton: {fileID: 0}
   resultSlotParent: {fileID: 2095936996}
   resultSlotPrefab: {fileID: 1133801556008070876, guid: 55eed6146f7338d44ab6fc5a565a32a0, type: 3}
   masterSlider: {fileID: 1654825913}
@@ -13932,6 +13936,11 @@ MonoBehaviour:
   shopPlayerGoldText: {fileID: 1244916238}
   shopPlayerInventoryParent: {fileID: 1928356430}
   sellSlotUI: {fileID: 1924472538}
+  shopBuyTabButton: {fileID: 0}
+  shopBuybackTabButton: {fileID: 0}
+  shopEmptyStateUI: {fileID: 0}
+  shopBuyPopupUI: {fileID: 0}
+  shopSellPopupUI: {fileID: 0}
   menuCanvasGroup: {fileID: 1552228772}
   menuMainPanel: {fileID: 167900998}
   menuResumeButton: {fileID: 1038091855}
@@ -13946,6 +13955,13 @@ MonoBehaviour:
   currencyDisplays:
   - {fileID: 1155619675}
   - {fileID: 807638815}
+  ProgressionMainPanel: {fileID: 0}
+  ProgressionTitleText: {fileID: 0}
+  ProgressionSlotParent: {fileID: 0}
+  SkillMainPanel: {fileID: 0}
+  storageContent: {fileID: 0}
+  storageDropArea: {fileID: 0}
+  equipSlots: []
 --- !u!4 &1337889559
 Transform:
   m_ObjectHideFlags: 0
@@ -15720,8 +15736,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon x 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -16914,8 +16930,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1471548359}
   m_HandleRect: {fileID: 1471548358}
   m_Direction: 2
-  m_Value: 0.9999998
-  m_Size: 0.25000015
+  m_Value: 2.4999998
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -20143,8 +20159,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1871193208}
   m_HandleRect: {fileID: 1871193207}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.375
+  m_Value: 8.500004
+  m_Size: 0.75
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -20368,8 +20384,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Relic x 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -21230,7 +21246,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -99.99997}
+  m_AnchoredPosition: {x: 0, y: -1600.0007}
   m_SizeDelta: {x: 660, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1928356431
@@ -21420,6 +21436,8 @@ MonoBehaviour:
   relicUIControllerPrefab: {fileID: 350585857376641199, guid: 12b4aadbf60eb3f418d9c62526b30c73, type: 3}
   inventoryUIControllerPrefab: {fileID: 8363679607838440420, guid: f6a64193b94f01248ae2132cfaf2f23b, type: 3}
   currencyUIControllerPrefab: {fileID: 6784533205815192033, guid: db208ab0a8d69a148b7676f1a8e19157, type: 3}
+  milestoneUIControllerPrefab: {fileID: 0}
+  skillUIControllerPrefab: {fileID: 0}
   playerManagerPrefab: {fileID: -2891475838477974602, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
   itemUsageManagerPrefab: {fileID: 7984585239593921606, guid: 4d55406ce8a55294dbc5ee1bb0d895af, type: 3}
@@ -21431,6 +21449,9 @@ MonoBehaviour:
   settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
   inventoryPresenterPrefab: {fileID: 5460479264783606384, guid: 42fd5338b2e9454409cda7953ccbd408, type: 3}
   gameSceneUIManager: {fileID: 8384210597063002988, guid: 5f3cd501b1e31ff45b36c99fa51fb6a0, type: 3}
+  globalUIManagerPrefab: {fileID: 0}
+  progressionDebugUI: {fileID: 0}
+  debugPanelUI: {fileID: 0}
 --- !u!4 &1963651475
 Transform:
   m_ObjectHideFlags: 0

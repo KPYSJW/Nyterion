@@ -15,11 +15,11 @@ MonoBehaviour:
   rarity: 2
   drawWeight: 40
   items:
-  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480013, type: 2}
-    weight: 100
   - item: {fileID: 11400000, guid: a421e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: ab744c06031e1694dba8c0ae1d660cae, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480013, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480012, type: 2}
     weight: 100
@@ -37,6 +37,10 @@ MonoBehaviour:
     weight: 100
   - item: {fileID: 11400000, guid: a821e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
+  - item: {fileID: 11400000, guid: 8851e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 78aab589b131eeb45ac79139414f5b5c, type: 2}
+    weight: 100
   - item: {fileID: 11400000, guid: 4d85d52af4aa2ea44963ecccab8cbca4, type: 2}
     weight: 20
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480019, type: 2}
@@ -53,13 +57,19 @@ MonoBehaviour:
     weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480028, type: 2}
     weight: 100
+  - item: {fileID: 11400000, guid: 8651e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
   - item: {fileID: 11400000, guid: 1394d2f3e007d46489e2ad48936e2e6f, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 8251e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 8351e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480015, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: b3a288b4e9e74e00b7e73afd36a02314, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: 78aab589b131eeb45ac79139414f5b5c, type: 2}
+  - item: {fileID: 11400000, guid: 8451e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480003, type: 2}
     weight: 100

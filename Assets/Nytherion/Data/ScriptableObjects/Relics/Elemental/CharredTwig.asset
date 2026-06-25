@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Charred Twig
   koreanName: "\uADF8\uC744\uB9B0 \uAC00\uC9C0"
-  description_KR: "\uD654\uC5FC \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uC18D +10%,
-    \uB300\uC26C \uC18D\uB3C4 +10%. "
-  description_EN: 'When Fire equipment is active, attack speed +10%, dash speed +10%. '
+  description_KR: "\uD654\uC5C4 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uC18D +10%, \uD654\uC5C4 \uD53C\uD574 +10% \uC99D\uAC00."
+  description_EN: 'When Fire equipment is active, attack speed +10%, Fire damage +10%. '
   Image: {fileID: 21300000, guid: 114b8f6b7edd92c408e75387c535304e, type: 3}
   rarity: 2
   level: 1
@@ -50,7 +49,11 @@ MonoBehaviour:
           value: 0.1
           valuePerLevel: 0.02
           isPercentage: 1
-        - stat: 7
+        - stat: 3
+          value: 0.1
+          valuePerLevel: 0.02
+          isPercentage: 1
+        - stat: 4
           value: 0.1
           valuePerLevel: 0.02
           isPercentage: 1

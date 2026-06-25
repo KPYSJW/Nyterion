@@ -1045,6 +1045,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2c33c68d52ff6341b859349ae0bc6d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
   pools:
   - tag: Goblin
     prefab: {fileID: 6406644339438500767, guid: 17fde502d382da64a805f35f8d770687, type: 3}
@@ -1724,7 +1725,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100.000015}
+  m_AnchoredPosition: {x: 0, y: -400}
   m_SizeDelta: {x: 680, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &349391062
@@ -1739,10 +1740,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba657a6007fc41645878a40a751b3167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerData: {fileID: 11400000, guid: fb11d3df7e5a27d43bd00264c2d31f60, type: 2}
   statsContainer: {fileID: 349391061}
   statCellPrefab: {fileID: 8718112075567135313, guid: 154ab9f8d61aff94593701fbdeee39b4, type: 3}
-  scrollRect: {fileID: 2132678734}
 --- !u!114 &349391064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3050,6 +3049,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a217cf67cfc3c4e93b40d792b86c28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
 --- !u!4 &511783315
 Transform:
   m_ObjectHideFlags: 0
@@ -3205,17 +3205,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81f599e74a26e814faf5f829779fcb0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slots:
-  - {fileID: 3141311151574102235, guid: 91520e8127259d14fa16a318b4013704, type: 3}
-  - {fileID: 3141311151574102235, guid: b0fd95f465aad814cada42b97a567228, type: 3}
-  - {fileID: 3141311151574102235, guid: d2bdf10b270f06541bce1e5eb59a8060, type: 3}
-  - {fileID: 3141311151574102235, guid: c3cff84ed188c9b47a5c476462c1d842, type: 3}
-  - {fileID: 3141311151574102235, guid: e1f95a254362f3846bed8b5921731381, type: 3}
-  - {fileID: 3141311151574102235, guid: aa50a1a20cc3be84d9af577d136a61ae, type: 3}
-  - {fileID: 3141311151574102235, guid: 17655f0201765f84785da0be0d4f0bf1, type: 3}
-  - {fileID: 3141311151574102235, guid: bdb6f342c1a13d744b4f31608d32749f, type: 3}
-  - {fileID: 3141311151574102235, guid: 2055169aebde9c649a81fdaf107bce34, type: 3}
-  - {fileID: 3141311151574102235, guid: 3cddf2783d8c16a4991ca453b4bcbe4d, type: 3}
   keys: 31000000320000003300000034000000350000003600000037000000380000003900000030000000
 --- !u!4 &545297293
 Transform:
@@ -3804,10 +3793,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbeb0c70719f0ea43bfa26c29886649e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stages:
-  - {fileID: 11400000, guid: 8b20188bffbc7f640be4ed861ac7bf02, type: 2}
-  - {fileID: 11400000, guid: ef8bcaf75497cbc4ab4eb6bd670e0f78, type: 2}
-  spawner: {fileID: 1980434649}
+  autoInitializeOnAwake: 0
+  startingStage: {fileID: 0}
 --- !u!1 &655474227
 GameObject:
   m_ObjectHideFlags: 0
@@ -3860,6 +3847,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   amountText: {fileID: 655474230}
+  prefix: 
+  suffix: 
+  useThousandsSeparator: 0
 --- !u!114 &655474230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4246,15 +4236,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9d56c0fc105d5242aad339ac06eae79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuUI: {fileID: 840940608}
-  mainPanel: {fileID: 2096469789}
-  resumeButton: {fileID: 1782330485}
-  settingsButton: {fileID: 1516406997}
-  settingsPanel: {fileID: 1955987554}
-  controlButton: {fileID: 1737717714}
-  controlsPanel: {fileID: 1862195818}
-  mainMenuButton: {fileID: 2042787342}
-  toggleMenuAction: {fileID: -25034785409093883, guid: 846a314fc817f66499dcadf2d56158a7, type: 3}
+  controlledCanvasGroup: {fileID: 0}
+  OnPanelOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPanelClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  gameSceneuiRefs: {fileID: 0}
 --- !u!4 &736321959
 Transform:
   m_ObjectHideFlags: 0
@@ -4419,6 +4408,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 2
   amountText: {fileID: 758589165}
+  prefix: 
+  suffix: 
+  useThousandsSeparator: 0
 --- !u!114 &758589165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6087,11 +6079,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 100
   m_TargetDisplay: 0
---- !u!4 &962403845 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5120804287783034592, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-  m_PrefabInstance: {fileID: 4867036477210911310}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &965508735
 GameObject:
   m_ObjectHideFlags: 0
@@ -6807,6 +6794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26630484c6b28f241926e1cc7da85317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
 --- !u!4 &1017224715
 Transform:
   m_ObjectHideFlags: 0
@@ -7156,8 +7144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7205fd6fe0aa96243905b9ec3a7f1419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotParent: {fileID: 2077232006}
-  slotPrefab: {fileID: 6342647029431398638, guid: 692090581c23e93499fd924cba8e9ce6, type: 3}
+  autoInitializeOnAwake: 0
   maxSlotCount: 30
 --- !u!114 &1048833959
 MonoBehaviour:
@@ -7171,11 +7158,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92ca4198d07bcad46949cb46689ac3d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryPanel: {fileID: 252889441}
+  controlledCanvasGroup: {fileID: 0}
+  OnPanelOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPanelClosed:
+    m_PersistentCalls:
+      m_Calls: []
   toggleInventoryAction: {fileID: -7465380718014958578, guid: 846a314fc817f66499dcadf2d56158a7, type: 3}
-  slotParent: {fileID: 2077232006}
-  closeButton: {fileID: 1188433269}
-  tooltipCanvas: {fileID: 332626404}
+  gameSceneuiRefs: {fileID: 0}
 --- !u!1 &1055039085
 GameObject:
   m_ObjectHideFlags: 0
@@ -9274,8 +9265,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9412,6 +9403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17edee5eab0e7624eac3dfe1c4056fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
 --- !u!224 &1366862288 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3105964096157326149, guid: 91520e8127259d14fa16a318b4013704, type: 3}
@@ -11352,8 +11344,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1721288127}
   m_HandleRect: {fileID: 1721288126}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.375
+  m_Value: 8.5
+  m_Size: 0.75
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11448,6 +11440,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   amountText: {fileID: 1688537844}
+  prefix: 
+  suffix: 
+  useThousandsSeparator: 0
 --- !u!114 &1688537844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13397,11 +13392,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c18bb658a4f40845be45a905b8ec9c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterSlider: {fileID: 433948947}
-  bgmSlider: {fileID: 605029934}
-  sfxSlider: {fileID: 548214408}
-  fullscreenToggle: {fileID: 381514270}
-  resolutionDropdown: {fileID: 298749730}
+  gameSceneuiRefs: {fileID: 0}
+  masterInputField: {fileID: 0}
+  bgmInputField: {fileID: 0}
+  sfxInputField: {fileID: 0}
+  masterUpButton: {fileID: 0}
+  masterDownButton: {fileID: 0}
+  bgmUpButton: {fileID: 0}
+  bgmDownButton: {fileID: 0}
+  sfxUpButton: {fileID: 0}
+  sfxDownButton: {fileID: 0}
 --- !u!4 &1949516016
 Transform:
   m_ObjectHideFlags: 0
@@ -13680,7 +13680,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentStageData: {fileID: 11400000, guid: 8b20188bffbc7f640be4ed861ac7bf02, type: 2}
-  player: {fileID: 962403845}
   minSpawnRadius: 5
   maxSpawnRadius: 15
 --- !u!4 &1980434650
@@ -13985,8 +13984,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 113935554}
   m_HandleRect: {fileID: 113935553}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.25
+  m_Value: 2.5
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -14365,7 +14364,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100}
+  m_AnchoredPosition: {x: 0, y: -1600}
   m_SizeDelta: {x: 660, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2077232007

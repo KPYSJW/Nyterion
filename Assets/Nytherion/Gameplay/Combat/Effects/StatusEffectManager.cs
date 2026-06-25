@@ -134,6 +134,53 @@ namespace Nytherion.GamePlay.Combat
             }
             if (newEffect == null) return;
 
+            if (newEffect is FireEffect)
+            {
+                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
+                if (relicManager != null)
+                {
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "Sulphur Hourglass" && !block.SourceData.isDisabled)
+                        {
+                            float multiplier = 1.5f + (block.SourceData.level - 1) * 0.1f;
+                            newEffect.ModifyDuration(newEffect.Duration * multiplier);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (newEffect is PoisonEffect)
+            {
+                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
+                if (relicManager != null)
+                {
+                    float durationMultiplier = 1.0f;
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && !block.SourceData.isDisabled)
+                        {
+                            if (block.RelicId == "Venom Hourglass")
+                            {
+                                float bonus = 0.5f + (block.SourceData.level - 1) * 0.1f;
+                                durationMultiplier += bonus;
+                            }
+                            else if (block.RelicId == "Hydra's Fang")
+                            {
+                                float bonus = 0.3f + (block.SourceData.level - 1) * 0.05f;
+                                durationMultiplier += bonus;
+                            }
+                        }
+                    }
+                    if (durationMultiplier > 1.0f)
+                    {
+                        newEffect.ModifyDuration(newEffect.Duration * durationMultiplier);
+                    }
+                }
+            }
+
             if (database != null)
             {
                 newEffect.EffectIcon = database.GetIcon(newEffect.EffectId);

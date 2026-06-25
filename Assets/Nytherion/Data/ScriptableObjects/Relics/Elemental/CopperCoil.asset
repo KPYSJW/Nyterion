@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Copper Coil
   koreanName: "\uAD6C\uB9AC \uCF54\uC77C"
-  description_KR: "\uC804\uACA9 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uCDA9\uC804 \uC18D\uB3C4
-    +12% \uB2E8\uCD95. "
-  description_EN: 'When Lightning equipment is active, skill charge speed +12%. '
+  description_KR: "\uC804\uAE30 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uCDA9\uC804 \uC18D\uB3C4 +12% \uB2E8\uCD95, \uC804\uAE30 \uD53C\uD574 +10% \uC99D\uAC00."
+  description_EN: 'When Lightning equipment is active, skill charge speed +12%, Lightning damage +10%.'
   Image: {fileID: 21300000, guid: 044a115a2ebbd85458f73d2844501849, type: 3}
   rarity: 2
   level: 1
@@ -48,5 +47,13 @@ MonoBehaviour:
         statModifiers:
         - stat: 12
           value: 0.12
+          valuePerLevel: 0.03
+          isPercentage: 1
+        - stat: 3
+          value: 0.1
+          valuePerLevel: 0.03
+          isPercentage: 1
+        - stat: 4
+          value: 0.1
           valuePerLevel: 0.03
           isPercentage: 1

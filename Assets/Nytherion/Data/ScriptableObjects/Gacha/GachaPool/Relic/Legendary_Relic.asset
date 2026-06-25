@@ -15,7 +15,7 @@ MonoBehaviour:
   rarity: 4
   drawWeight: 5
   items:
-  - item: {fileID: 11400000, guid: c589af25c5fc73643aefd23481b151b8, type: 2}
+  - item: {fileID: 11400000, guid: 9551e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480005, type: 2}
     weight: 100
@@ -25,15 +25,29 @@ MonoBehaviour:
     weight: 100
   - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480031, type: 2}
     weight: 100
+  - item: {fileID: 11400000, guid: 9451e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 9751e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
   - item: {fileID: 11400000, guid: a55be5fc3d67e8a4d9bc055354e95709, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: 7990afec806287d449dc3ef11f514b9b, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: cc058ee970d7b8648a25556e394a508c, type: 2}
     weight: 100
+  - item: {fileID: 11400000, guid: 9051e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
   - item: {fileID: 11400000, guid: d628de4d42cd4c309871f265dea04332, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: 92a3dde5f89e43742ab56395677a1003, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 8e845d6701654601b77a58f538608a08, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 8951e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 9251e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 9151e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: a621e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
@@ -41,7 +55,7 @@ MonoBehaviour:
     weight: 100
   - item: {fileID: 11400000, guid: eb004fd5e2e87684bab751773214a100, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: 8e845d6701654601b77a58f538608a08, type: 2}
+  - item: {fileID: 11400000, guid: c589af25c5fc73643aefd23481b151b8, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: 7746af5f3312f0d46a813530bb44c45e, type: 2}
     weight: 100

@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: EyeOfArchdemon
+  m_EditorClassIdentifier: 
+  relicName: Eye of the Archdemon
+  koreanName: "\uB300\uC545\uB9C8\uC758 \uB205"
+  description_KR: "\uB9C8\uC131\u0020\uD53C\uD574\u0020\u002B\u0032\u0035\u0025\u0020\uC99D\uAC00\u002C\u0020\uCE58\uBA85\uD0C0\u0020\uD655\uB960\u0020\u002B\u0031\u0030\u0025\u002C\u0020\uCE58\uBA85\uD0C0\u0020\uD53C\uD574\u0020\u002B\u0034\u0030\u0025\u0070\u0020\uC99D\uAC00\u002E"
+  description_EN: 'Demonic damage +25%, critical chance +10%, crit bonus damage +40%p.'
+  Image: {fileID: 0}
+  rarity: 4
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: 6716071130084147380
+    effects:
+    - rid: 6716071130084147381
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: -1, y: 0}
+    type: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+  synergySeriesId: 
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071130084147380
+      type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredTrait: 8
+    - rid: 6716071130084147381
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 2
+          value: 0.1
+          valuePerLevel: 0.03
+          isPercentage: 1
+        - stat: 3
+          value: 0.25
+          valuePerLevel: 0.08
+          isPercentage: 1
+        - stat: 4
+          value: 0.25
+          valuePerLevel: 0.08
+          isPercentage: 1

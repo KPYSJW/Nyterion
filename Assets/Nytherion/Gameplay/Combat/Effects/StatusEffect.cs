@@ -22,6 +22,12 @@ namespace Nytherion.GamePlay.Combat
             this.Timer = duration;
         }
 
+        public void ModifyDuration(float newDuration)
+        {
+            this.Duration = newDuration;
+            this.Timer = newDuration;
+        }
+
         public virtual void ResetDuration()
         {
             Timer = Duration;

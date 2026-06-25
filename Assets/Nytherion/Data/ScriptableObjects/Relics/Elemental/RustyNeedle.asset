@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Rusty Needle
   koreanName: "\uB179\uC2A8 \uBC14\uB298"
-  description_KR: "\uC804\uACA9 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uC18D +8%. "
-  description_EN: 'When Lightning equipment is active, attack speed +8%. '
+  description_KR: "\uC804\uAE30 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uC18D +8%, \uC804\uAE30 \uD53C\uD574 +5% \uC99D\uAC00."
+  description_EN: 'When Lightning equipment is active, attack speed +8%, Lightning damage +5%.'
   Image: {fileID: 21300000, guid: b003c28388c2d7343acadc16381037f6, type: 3}
   rarity: 0
   level: 1
@@ -50,4 +50,12 @@ MonoBehaviour:
         - stat: 6
           value: 0.08
           valuePerLevel: 0.02
+          isPercentage: 1
+        - stat: 3
+          value: 0.05
+          valuePerLevel: 0.015
+          isPercentage: 1
+        - stat: 4
+          value: 0.05
+          valuePerLevel: 0.015
           isPercentage: 1
