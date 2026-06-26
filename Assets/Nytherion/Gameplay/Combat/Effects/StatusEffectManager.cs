@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.Data.ScriptableObjects;
+using Nytherion.Core.Data;
+using Nytherion.GamePlay.Relics;
 using VContainer;
 
 namespace Nytherion.GamePlay.Combat
