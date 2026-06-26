@@ -16,7 +16,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
         }
         protected override void FireChargedAttack(Vector2 direction, float chargePercent)
         {
-            int currentProjectileCount = Mathf.FloorToInt(Mathf.Lerp(1, maxProjectileCount, chargePercent));
+            int currentProjectileCount = IsChargingEnabled() ? Mathf.FloorToInt(Mathf.Lerp(1, maxProjectileCount, chargePercent)) : 1;
 
             FireProjectiles(direction, currentProjectileCount, spreadAngle);
 

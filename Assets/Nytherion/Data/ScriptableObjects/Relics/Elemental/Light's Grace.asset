@@ -18,7 +18,7 @@ MonoBehaviour:
     \uCD5C\uB300 \uCCB4\uB825 +30, \uC2E0\uC131 \uD53C\uD574 +25% \uC99D\uAC00."
   description_EN: When Holy equipment is active, lifesteal +5%, max HP +30, Holy
     damage +25%.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: ce439f174a4476448b28d130dc44aa06, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0

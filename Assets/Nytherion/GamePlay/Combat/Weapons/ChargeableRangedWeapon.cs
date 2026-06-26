@@ -13,13 +13,44 @@ namespace Nytherion.GamePlay.Combat.Weapons
     {
         [Header("Charge Settings")]
         public float maxChargeTime = 1.5f;
+        public float chargeThresholdTime = 0.15f;
 
         protected float currentChargeTime = 0f;
         protected bool isCharging = false;
+        protected bool isPressing = false;
+        protected float pressTime = 0f;
+        
         private GameObject activeChargeEffectInstance = null;
+        private GameObject sparkChargeObject = null;
+        private Vector3 originalSparkChargeScale = Vector3.one;
 
         public bool IsCharging => isCharging;
         public float ChargePercent => GetAdjustedMaxChargeTime() > 0f ? (currentChargeTime / GetAdjustedMaxChargeTime()) : 0f;
+
+        public override void Initialize(Nytherion.Data.ScriptableObjects.Weapons.WeaponData data)
+        {
+            base.Initialize(data);
+            if (data != null)
+            {
+                maxChargeTime = data.maxChargeTime;
+                chargeThresholdTime = data.chargeThresholdTime;
+            }
+            FindSparkChargeObject();
+        }
+
+        private void FindSparkChargeObject()
+        {
+            if (firePoint != null)
+            {
+                Transform sparkChargeTr = firePoint.Find("SparkCharge");
+                if (sparkChargeTr != null)
+                {
+                    sparkChargeObject = sparkChargeTr.gameObject;
+                    originalSparkChargeScale = sparkChargeTr.localScale;
+                    sparkChargeObject.SetActive(false);
+                }
+            }
+        }
 
         protected float GetAdjustedMaxChargeTime()
         {
@@ -35,29 +66,89 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         private void Update()
         {
-            if (isCharging)
+            if (isPressing)
             {
-                float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
+                pressTime += Time.deltaTime;
 
-                if (adjustedMaxChargeTime <= 0f)
+                if (!isCharging)
                 {
-                    // 차징 시간이 0이면 즉시 최대 차징으로 발사
-                    FireImmediate();
-                    return;
+                    if (pressTime >= chargeThresholdTime)
+                    {
+                        isCharging = true;
+                        currentChargeTime = 0f;
+                        SpawnChargeEffect();
+                        if (sparkChargeObject != null)
+                        {
+                            sparkChargeObject.SetActive(true);
+                            Animator anim = sparkChargeObject.GetComponent<Animator>();
+                            if (anim != null)
+                            {
+                                anim.enabled = true;
+                                anim.Rebind();
+                                anim.Play("Idle", -1, 0f);
+                                anim.Update(0f);
+                            }
+                        }
+                    }
                 }
+                else
+                {
+                    float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
 
-                currentChargeTime += Time.deltaTime;
-                currentChargeTime = Mathf.Clamp(currentChargeTime, 0f, adjustedMaxChargeTime);
+                    if (adjustedMaxChargeTime <= 0f)
+                    {
+                        // 차징 시간이 0이면 즉시 최대 차징으로 발사
+                        FireImmediate();
+                        return;
+                    }
 
-                float chargePercent = currentChargeTime / adjustedMaxChargeTime;
+                    currentChargeTime += Time.deltaTime;
+                    currentChargeTime = Mathf.Clamp(currentChargeTime, 0f, adjustedMaxChargeTime);
 
-                OnCharging(chargePercent);
+                    float chargePercent = currentChargeTime / adjustedMaxChargeTime;
+
+                    if (sparkChargeObject != null)
+                    {
+                        float scaleMultiplier = Mathf.Lerp(0.2f, 1.2f, chargePercent);
+                        sparkChargeObject.transform.localScale = originalSparkChargeScale * scaleMultiplier;
+                    }
+
+                    OnCharging(chargePercent);
+                }
             }
+        }
+
+        protected bool IsChargingEnabled()
+        {
+            // 임시 테스트 조치: 유물이 없어도 항상 차징 가능하도록 설정
+            return true;
+
+            /*
+            if (weaponData == null) return true;
+
+            if (!string.IsNullOrEmpty(weaponData.requiredRelicId))
+            {
+                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
+                if (relicManager != null)
+                {
+                    return relicManager.IsRelicActive(weaponData.requiredRelicId);
+                }
+                return false;
+            }
+
+            return true;
+            */
         }
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
             if (!CanAttack()) return;
+
+            if (!IsChargingEnabled())
+            {
+                FireImmediateNormal();
+                return;
+            }
 
             float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
             if (adjustedMaxChargeTime <= 0f)
@@ -66,16 +157,44 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 return;
             }
 
-            isCharging = true;
+            isPressing = true;
+            pressTime = 0f;
+            isCharging = false;
             currentChargeTime = 0f;
-            SpawnChargeEffect();
+        }
+
+        private void FireImmediateNormal()
+        {
+            isPressing = false;
+            isCharging = false;
+            currentChargeTime = 0f;
+            ClearChargeEffect();
+            if (sparkChargeObject != null)
+            {
+                sparkChargeObject.transform.localScale = originalSparkChargeScale;
+                sparkChargeObject.SetActive(false);
+            }
+
+            float rotationOffset = weaponData != null ? weaponData.spriteRotationOffset : 0f;
+            float scaleSign = Mathf.Sign(transform.lossyScale.y);
+            Vector2 releaseDirection = Quaternion.Euler(0f, 0f, -rotationOffset * scaleSign) * transform.right;
+            FireChargedAttack(releaseDirection, 0f);
+
+            lastAttackTime = Time.time;
+            PlayFireAnimation();
         }
 
         private void FireImmediate()
         {
+            isPressing = false;
             isCharging = false;
             currentChargeTime = 0f;
             ClearChargeEffect();
+            if (sparkChargeObject != null)
+            {
+                sparkChargeObject.transform.localScale = originalSparkChargeScale;
+                sparkChargeObject.SetActive(false);
+            }
 
             float rotationOffset = weaponData != null ? weaponData.spriteRotationOffset : 0f;
             float scaleSign = Mathf.Sign(transform.lossyScale.y);
@@ -88,23 +207,39 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         public override void AttackEnd()
         {
-            if (!isCharging) return;
-
-            isCharging = false;
-            ClearChargeEffect();
-
-            float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
-            float finalChargePercent = adjustedMaxChargeTime > 0f ? (currentChargeTime / adjustedMaxChargeTime) : 1.0f;
+            if (!isPressing) return;
 
             float rotationOffset = weaponData != null ? weaponData.spriteRotationOffset : 0f;
             float scaleSign = Mathf.Sign(transform.lossyScale.y);
             Vector2 releaseDirection = Quaternion.Euler(0f, 0f, -rotationOffset * scaleSign) * transform.right;
 
-            FireChargedAttack(releaseDirection, finalChargePercent);
+            if (!isCharging)
+            {
+                isPressing = false;
+                FireChargedAttack(releaseDirection, 0f);
+                lastAttackTime = Time.time;
+                PlayFireAnimation();
+            }
+            else
+            {
+                isPressing = false;
+                isCharging = false;
+                ClearChargeEffect();
+                if (sparkChargeObject != null)
+                {
+                    sparkChargeObject.transform.localScale = originalSparkChargeScale;
+                    sparkChargeObject.SetActive(false);
+                }
 
-            lastAttackTime = Time.time;
-            currentChargeTime = 0f;
-            PlayFireAnimation();
+                float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
+                float finalChargePercent = adjustedMaxChargeTime > 0f ? (currentChargeTime / adjustedMaxChargeTime) : 1.0f;
+
+                FireChargedAttack(releaseDirection, finalChargePercent);
+
+                lastAttackTime = Time.time;
+                currentChargeTime = 0f;
+                PlayFireAnimation();
+            }
         }
 
         protected virtual void OnCharging(float chargePercent) { }
@@ -170,9 +305,15 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         private void OnDisable()
         {
+            isPressing = false;
             isCharging = false;
             currentChargeTime = 0f;
             ClearChargeEffect();
+            if (sparkChargeObject != null)
+            {
+                sparkChargeObject.transform.localScale = originalSparkChargeScale;
+                sparkChargeObject.SetActive(false);
+            }
         }
     }
 }

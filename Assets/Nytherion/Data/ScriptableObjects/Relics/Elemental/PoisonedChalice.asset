@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: PoisonedChalice
   m_EditorClassIdentifier: 
   relicName: Poisoned Chalice
-  koreanName: "\uB3C5\uC0AC \uBAA8\uB798\uC2DC\uAC8C"
+  koreanName: "\uB3C5\uC774 \uB4E0 \uC131\uBC30"
   description_KR: "\uB3C5 \uC0C1\uD0DC\uC774\uC0C1 \uC9C0\uC18D \uC2DC\uAC04 +50%
     \uC99D\uAC00, \uB3C5 \uD53C\uD574 +10% \uC99D\uAC00."
   description_EN: Poison status duration +50%, Poison damage +10%.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 71f7b03ddf287bc4ea7ca194efd467fc, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

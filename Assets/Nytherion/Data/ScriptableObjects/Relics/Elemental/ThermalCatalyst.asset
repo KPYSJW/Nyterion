@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
   m_Name: ThermalCatalyst
   m_EditorClassIdentifier: 
-  relicName: Thermal Catalyst
-  koreanName: "\uBC1C\uC5F4 \uCD09\uB9E4"
-  description_KR: "\uD654\uC5FC \uC0C1\uD0DC\uC774\uC161 \uD53C\uD574 \uC8FC\uAE30 -30% \uB2E8\uCD95."
-  description_EN: 'Fire damage interval shortened by 30%.'
-  Image: {fileID: 0}
+  relicName: Fire Pepper
+  koreanName: "\uBD88\uACE0\uCD94"
+  description_KR: "\uD654\uC5FC \uC0C1\uD0DC\uC774\uC161 \uD53C\uD574 \uC8FC\uAE30
+    -30% \uB2E8\uCD95."
+  description_EN: Fire damage interval shortened by 30%.
+  Image: {fileID: 21300000, guid: a2c8c295e8fca5f4594330760bda4cad, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

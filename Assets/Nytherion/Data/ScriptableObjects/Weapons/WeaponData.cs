@@ -52,6 +52,10 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float projectileRotationOffset = 0f;
         public ExtraProjectileMode extraProjectileMode = ExtraProjectileMode.Spread;
         public float maxChargeTime = 1.0f;
+        [Tooltip("차징 판정이 시작되기까지 누르고 있어야 하는 최소 시간(초)")]
+        public float chargeThresholdTime = 0.15f;
+        [Tooltip("이 무기가 차징 무기로 활성화되기 위해 필요한 유물 ID (비어 있으면 항상 차징 가능)")]
+        public string requiredRelicId = "";
         [Tooltip("적 충돌 시 발생할 피격 이펙트 프리팹 (예: 독 속성 이펙트 등)")]
         public GameObject hitEffectPrefab;
         

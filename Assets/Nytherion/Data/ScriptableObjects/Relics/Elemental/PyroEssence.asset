@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: 'Pyro Essence '
   koreanName: "\uD654\uB839\uC758 \uC815\uC218"
-  description_KR: "\uD654\uC5C4 \uC0C1\uD0DC\uC774\uC161 \uC9C0\uC18D \uC2DC\uAC04
+  description_KR: "\uD654\uC5FC \uC0C1\uD0DC\uC774\uC0C1 \uC9C0\uC18D \uC2DC\uAC04
     +50% \uC99D\uAC00."
   description_EN: Fire status duration +50%.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 08433541ac11d404fb4a23fd47911cca, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

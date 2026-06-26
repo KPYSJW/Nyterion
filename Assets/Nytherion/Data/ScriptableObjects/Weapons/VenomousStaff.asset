@@ -44,6 +44,7 @@ MonoBehaviour:
   projectileSpeed: 5
   extraProjectileMode: 0
   maxChargeTime: 1
+  requiredRelicId: ChargeRelic
   hitEffectPrefab: {fileID: 6051215695420182853, guid: bdfe3fa95f522f547b9bc5b453d44c2d, type: 3}
-  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  weaponPrefab: {fileID: -2914722070659980993, guid: 40c8259e556c49f0b83a0aed8e9049db, type: 3}
   isArchivable: 1

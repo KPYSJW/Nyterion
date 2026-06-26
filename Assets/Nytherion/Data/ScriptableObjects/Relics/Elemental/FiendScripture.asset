@@ -18,7 +18,7 @@ MonoBehaviour:
     +20%p, \uB9C8\uC131 \uD53C\uD574 +10% \uC99D\uAC00."
   description_EN: Demonic debuff defense reduction +10%p, crit bonus damage +20%p,
     Demonic damage +10%.
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: db30816255ec0224a8ed7c5b18f1e507, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

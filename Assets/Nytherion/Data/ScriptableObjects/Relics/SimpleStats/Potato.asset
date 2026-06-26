@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uAE30\uBCF8 \uBC29\uC5B4\uB825\uC744 \uACE0\uC815\uCE58\uB85C
     \uC57D\uAC04 \uD5A5\uC0C1\uC2DC\uD0B5\uB2C8\uB2E4."
   description_EN: 
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 9a5d7a344ab55cd4da85deaea8383f3c, type: 3}
   rarity: 0
   level: 1
   isDisabled: 0

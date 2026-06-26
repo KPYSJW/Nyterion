@@ -39,12 +39,12 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 CollisionObject collisionObj;
                 if (projObj.TryGetComponent<CollisionObject>(out collisionObj))
                 {
-                    float currentDamageMultiplier = Mathf.Lerp(0.5f, maxDamageMultiplier, chargePercent);
+                    float currentDamageMultiplier = IsChargingEnabled() ? Mathf.Lerp(0.5f, maxDamageMultiplier, chargePercent) : 1.0f;
                     collisionObj.damage = weaponData.damage * currentDamageMultiplier;
                 }
 
                 // 2. 투사체 속도 배율 적용 (차징 시간에 따라 50% ~ 180% 속도)
-                float speedMultiplier = Mathf.Lerp(0.5f, maxSpeedMultiplier, chargePercent);
+                float speedMultiplier = IsChargingEnabled() ? Mathf.Lerp(0.5f, maxSpeedMultiplier, chargePercent) : 1.0f;
                 float finalSpeed = weaponData.projectileSpeed * speedMultiplier;
 
                 Rigidbody2D rb;
@@ -66,7 +66,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     piercingEffect = projObj.AddComponent<PiercingEffect>();
                 }
 
-                if (chargePercent >= pierceThreshold)
+                if (IsChargingEnabled() && chargePercent >= pierceThreshold)
                 {
                     piercingEffect.enabled = true;
 

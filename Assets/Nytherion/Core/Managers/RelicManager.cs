@@ -383,6 +383,21 @@ namespace Nytherion.Core.Managers
         {
             LoadDataFromSave(saveData.relicData);
         }
+
+        public bool IsRelicActive(string relicId)
+        {
+            if (placedBlockPositions == null || logicGrid == null) return false;
+
+            foreach (KeyValuePair<string, Vector2Int> pair in placedBlockPositions)
+            {
+                RelicBlock block = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
+                if (block != null && block.RelicId == relicId && !block.SourceData.isDisabled)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
     }
 }
