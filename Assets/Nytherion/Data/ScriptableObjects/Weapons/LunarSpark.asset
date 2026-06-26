@@ -36,7 +36,7 @@ MonoBehaviour:
   visualPositionOffset: {x: 0, y: 0, z: 0}
   weaponEffectPrefab: {fileID: 1638640853019598765, guid: 700c5eab698ea094f926443b4b13a6be, type: 3}
   fireEffectPrefab: {fileID: 0}
-  chargeEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 6875144641795958832, guid: 0cbd923996677e44d905155d2351e565, type: 3}
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 3778041586713616541, guid: 717df3b1cd0d8aa42a07507be34a2d98, type: 3}
   projectileSpeed: 5

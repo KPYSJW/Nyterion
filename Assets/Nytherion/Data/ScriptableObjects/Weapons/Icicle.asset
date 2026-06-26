@@ -35,15 +35,20 @@ MonoBehaviour:
   cooldown: 1
   weaponType: 0
   weaponSprite: {fileID: 21300000, guid: e158fa480518ac74392cf96cbe1810ae, type: 3}
-  firePointOffset: {x: 0, y: 0, z: 0}
+  firePointOffset: {x: 0.3, y: 0.3, z: 0}
   spriteRotationOffset: -45
   visualPositionOffset: {x: 0, y: 0, z: 0}
   weaponEffectPrefab: {fileID: 1638640853019598765, guid: cb94d641049d77043b0b1d0940c439b5, type: 3}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 1453523852295367759, guid: faa0e1fb9b693594f9f00ae2dff2402f, type: 3}
   projectileSpeed: 5
+  projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
   hitEffectPrefab: {fileID: 0}
   weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
   isArchivable: 1
