@@ -120,10 +120,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         protected bool IsChargingEnabled()
         {
-            // 임시 테스트 조치: 유물이 없어도 항상 차징 가능하도록 설정
-            return true;
-
-            /*
             if (weaponData == null) return true;
 
             if (!string.IsNullOrEmpty(weaponData.requiredRelicId))
@@ -137,7 +133,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
 
             return true;
-            */
         }
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)

@@ -45,6 +45,6 @@ MonoBehaviour:
   maxChargeTime: 1
   chargeThresholdTime: 0.15
   requiredRelicId: 
-  hitEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 8898539355576231548, guid: e0b13f6003df5254686bfa87c5a49070, type: 3}
   weaponPrefab: {fileID: 1472925551449637739, guid: 4f8e25e862823d44bb7a3ccd6f73f7c1, type: 3}
   isArchivable: 1

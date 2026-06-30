@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 namespace Nytherion.GamePlay.Combat.Weapons
 {
@@ -29,6 +30,65 @@ namespace Nytherion.GamePlay.Combat.Weapons
         }
 
         protected override void FireChargedAttack(Vector2 direction, float chargePercent)
+        {
+            // "유물에 의해 차징이 가능해진 경우" 조건 체크
+            // 1. weaponData.requiredRelicId가 존재하고
+            // 2. RelicManager에서 해당 유물이 활성화되어 있고
+            // 3. 실제로 차징을 시도해서 쏜 경우 (chargePercent > 0f)
+            bool isRelicActive = false;
+            if (weaponData != null && !string.IsNullOrEmpty(weaponData.requiredRelicId))
+            {
+                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
+                if (relicManager != null)
+                {
+                    isRelicActive = relicManager.IsRelicActive(weaponData.requiredRelicId);
+                }
+            }
+
+            if (isRelicActive && chargePercent > 0f)
+            {
+                int extra = 0;
+                if (playerManager != null && playerManager.currentPlayerData != null)
+                {
+                    extra = Mathf.FloorToInt(playerManager.currentPlayerData.extraProjectiles);
+                }
+
+                // 차징 정도(0.0 ~ 1.0)에 비례하여 최대 5개의 추가 탄환 개수를 조절
+                int relicExtraCount = Mathf.RoundToInt(chargePercent * 5f);
+                int totalCount = 1 + extra + relicExtraCount;
+
+                if (totalCount > 1)
+                {
+                    StartCoroutine(FireLeafBowBurstRoutine(direction, totalCount, chargePercent));
+                }
+                else
+                {
+                    FireSingleChargedProjectile(direction, chargePercent);
+                }
+            }
+            else
+            {
+                FireSingleChargedProjectile(direction, chargePercent);
+            }
+
+            // 발사 완료 후 무기 스케일을 원래대로 복원
+            // transform.localScale = originalScale;
+        }
+
+        private IEnumerator FireLeafBowBurstRoutine(Vector2 direction, int totalCount, float chargePercent)
+        {
+            WaitForSeconds wait = new WaitForSeconds(burstInterval);
+            for (int i = 0; i < totalCount; i++)
+            {
+                FireSingleChargedProjectile(direction, chargePercent);
+                if (i < totalCount - 1)
+                {
+                    yield return wait;
+                }
+            }
+        }
+
+        private void FireSingleChargedProjectile(Vector2 direction, float chargePercent)
         {
             // 투사체 생성
             GameObject projObj = Projectile(direction);
@@ -85,9 +145,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     piercingEffect.enabled = false;
                 }
             }
-
-            // 발사 완료 후 무기 스케일을 원래대로 복원
-            // transform.localScale = originalScale;
         }
     }
 }
