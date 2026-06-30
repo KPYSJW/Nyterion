@@ -5,12 +5,15 @@ namespace Nytherion.GamePlay.Combat
 {
     public static class WeaponEffectHelper
     {
-        public static void PlayHitEffect(GameObject effectPrefab, Vector3 position)
+        public static void PlayHitEffect(GameObject effectPrefab, Vector3 position, float chargePercent = 0f)
         {
             if (effectPrefab == null) return;
 
-            // 방법 A 적용: 크기 0.8~1.2 랜덤화, Z축 회전 0~360도 랜덤화
-            float randomScale = Random.Range(0.8f, 1.2f);
+            // 일반 공격(chargePercent=0) 시 0.6 ~ 1.0
+            // 최대 차징(chargePercent=1) 시 1.0 ~ 1.4
+            float minScale = Mathf.Lerp(0.6f, 1.0f, chargePercent);
+            float maxScale = Mathf.Lerp(1.0f, 1.4f, chargePercent);
+            float randomScale = Random.Range(minScale, maxScale);
             Quaternion randomRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
 
             GameObject effectObj = null;
@@ -25,7 +28,8 @@ namespace Nytherion.GamePlay.Combat
 
             if (effectObj != null)
             {
-                effectObj.transform.localScale = new Vector3(randomScale, randomScale, 1f);
+                Vector3 originalScale = effectPrefab.transform.localScale;
+                effectObj.transform.localScale = new Vector3(originalScale.x * randomScale, originalScale.y * randomScale, originalScale.z);
 
                 // AutoReturnToPool 컴포넌트 검사 및 대기 지연 초기화
                 AutoReturnToPool autoReturn;

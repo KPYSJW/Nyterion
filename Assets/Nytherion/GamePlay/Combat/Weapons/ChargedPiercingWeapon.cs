@@ -18,7 +18,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         protected override void FireChargedAttack(Vector2 direction, float chargePercent)
         {
-            GameObject projObj = Projectile(direction);
+            GameObject projObj = Projectile(direction, default, chargePercent);
 
             if (projObj != null && projObj.TryGetComponent<CollisionObject>(out CollisionObject collisionObj))
             {

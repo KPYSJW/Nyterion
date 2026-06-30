@@ -12,6 +12,7 @@ namespace Nytherion.GamePlay.Combat
     public class CollisionObject : MonoBehaviour
     {
         [HideInInspector] public float damage;
+        [HideInInspector] public float chargePercent = 0f;
 
         [Header("Projectile Traits")]
         public List<EquipmentTrait> traits = new List<EquipmentTrait>();
@@ -156,7 +157,7 @@ namespace Nytherion.GamePlay.Combat
 
                     // 충돌 위치에 피격 이펙트 재생
                     Vector2 hitPoint = collision.ClosestPoint(transform.position);
-                    WeaponEffectHelper.PlayHitEffect(hitEffectPrefab, hitPoint);
+                    WeaponEffectHelper.PlayHitEffect(hitEffectPrefab, hitPoint, chargePercent);
                 }
 
                 bool shouldSurvive = false;

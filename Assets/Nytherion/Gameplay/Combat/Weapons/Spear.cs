@@ -57,6 +57,9 @@ namespace Nytherion.GamePlay.Combat.Weapons
         // 무기 방향 설정을 강제하기 위해 true로 재정의
         public override bool OverrideRotation => true;
 
+        [Header("Spear Threshold Settings")]
+        [SerializeField] private float chargeThresholdTime = 0.15f;
+
         private PlayerController playerController;
         private SpriteRenderer spriteRenderer;
         private Coroutine attackCoroutine;
@@ -65,6 +68,8 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         // 차징 진행 상태 및 머티리얼 캐싱
         private bool isCharging = false;
+        private bool isPressing = false;
+        private float pressTime = 0f;
         private float currentChargeTime = 0f;
         private Material originalMaterial;
         private bool isMaterialSwapped = false;
@@ -209,20 +214,41 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 UpdateWeaponAim();
             }
 
-            // 차징 중일 때 누적 시간 업데이트
-            if (isChargeable && isCharging && !isAttacking)
+            // 마우스 버튼이 유지되고 있을 때 누적 시간 및 차징 판단 업데이트
+            if (isChargeable && isPressing && !isAttacking)
             {
-                currentChargeTime += Time.deltaTime;
-                float adjustedMaxCharge = GetAdjustedMaxChargeTime();
-                
-                float chargePercent = adjustedMaxCharge > 0f ? Mathf.Clamp01(currentChargeTime / adjustedMaxCharge) : 1f;
-                UpdateChargingVisual(chargePercent);
+                pressTime += Time.deltaTime;
 
-                // 차징 시간이 한계를 넘고도 릴리즈가 안 될 경우 (인풋 상태 꼬임 방지용 자동 릴리즈)
-                if (currentChargeTime >= (adjustedMaxCharge * 3.0f))
+                if (!isCharging)
                 {
-                    AttackEnd(); // 강제 릴리즈 발사
-                    return;
+                    if (pressTime >= chargeThresholdTime)
+                    {
+                        isCharging = true;
+                        currentChargeTime = 0f;
+                        SetChargingEffect(true); // 차징 파티클 활성화
+
+                        if (chargingMaterial != null && spriteRenderer != null && !isMaterialSwapped)
+                        {
+                            originalMaterial = spriteRenderer.sharedMaterial;
+                            spriteRenderer.material = Instantiate(chargingMaterial);
+                            isMaterialSwapped = true;
+                        }
+                    }
+                }
+                else
+                {
+                    currentChargeTime += Time.deltaTime;
+                    float adjustedMaxCharge = GetAdjustedMaxChargeTime();
+                    
+                    float chargePercent = adjustedMaxCharge > 0f ? Mathf.Clamp01(currentChargeTime / adjustedMaxCharge) : 1f;
+                    UpdateChargingVisual(chargePercent);
+
+                    // 차징 시간이 한계를 넘고도 릴리즈가 안 될 경우 (인풋 상태 꼬임 방지용 자동 릴리즈)
+                    if (currentChargeTime >= (adjustedMaxCharge * 3.0f))
+                    {
+                        AttackEnd(); // 강제 릴리즈 발사
+                        return;
+                    }
                 }
             }
         }
@@ -313,21 +339,15 @@ namespace Nytherion.GamePlay.Combat.Weapons
                         return;
                     }
 
-                    isCharging = true;
+                    isPressing = true;
+                    pressTime = 0f;
+                    isCharging = false;
                     currentChargeTime = 0f;
-                    SetChargingEffect(true); // 차징 파티클 활성화
-
-                    if (chargingMaterial != null && spriteRenderer != null && !isMaterialSwapped)
-                    {
-                        originalMaterial = spriteRenderer.sharedMaterial;
-                        spriteRenderer.material = Instantiate(chargingMaterial);
-                        isMaterialSwapped = true;
-                    }
                 }
                 else
                 {
                     // 차징 미적용 무기면 즉시 일반 공격 실행
-                    ExecuteSpearAttack(1f);
+                    ExecuteSpearAttack(1f, thrustDistance);
                 }
             }
             catch (System.Exception e)
@@ -366,7 +386,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
         }
 
-        private void ExecuteSpearAttack(float chargePercent)
+        private void ExecuteSpearAttack(float finalDamageMultiplier, float finalThrustDistance)
         {
             try
             {
@@ -400,12 +420,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     }
 
                     float currentAttackDuration = attackDuration / speedMultiplier;
-
-                    // 차징 완료도에 따른 대미지 배율 (차징 시 최소 50% ~ 최대 150% 대미지 보정 적용)
-                    float finalDamageMultiplier = isChargeable ? Mathf.Lerp(0.5f, 1.5f, chargePercent) : 1f;
-                    
-                    // 차징 완료도에 따른 돌진 거리 보정 (최소 50% ~ 최대 100% 거리 보정)
-                    float finalThrustDistance = isChargeable ? Mathf.Lerp(thrustDistance * 0.5f, thrustDistance, chargePercent) : thrustDistance;
 
                     attackCoroutine = StartCoroutine(ThrustRoutine(finalAimAngle, currentAttackDuration, finalThrustDistance, speedMultiplier, finalDamageMultiplier));
                     PlaySlashEffect(currentAttackDuration, speedMultiplier);
@@ -568,17 +582,31 @@ namespace Nytherion.GamePlay.Combat.Weapons
         {
             try
             {
-                if (isChargeable && isCharging)
+                if (isChargeable && isPressing)
                 {
-                    isCharging = false;
-                    SetChargingEffect(false); // 차징 파티클 비활성화
-                    ResetChargingMaterial(); // 머티리얼 복구
+                    isPressing = false;
 
-                    float adjustedMaxCharge = GetAdjustedMaxChargeTime();
-                    float chargePercent = adjustedMaxCharge > 0f ? Mathf.Clamp01(currentChargeTime / adjustedMaxCharge) : 1f;
+                    if (!isCharging)
+                    {
+                        // 임계값 미만으로 누르고 뗀 경우 -> 일반 찌르기 공격 (100% 대미지, 기본 거리)
+                        ExecuteSpearAttack(1f, thrustDistance);
+                    }
+                    else
+                    {
+                        // 임계값 이상 누르고 뗀 경우 -> 차징 찌르기 공격 (차징량 비례)
+                        isCharging = false;
+                        SetChargingEffect(false); // 차징 파티클 비활성화
+                        ResetChargingMaterial(); // 머티리얼 복구
 
-                    ExecuteSpearAttack(chargePercent);
-                    currentChargeTime = 0f;
+                        float adjustedMaxCharge = GetAdjustedMaxChargeTime();
+                        float chargePercent = adjustedMaxCharge > 0f ? Mathf.Clamp01(currentChargeTime / adjustedMaxCharge) : 1f;
+
+                        float finalDamageMultiplier = Mathf.Lerp(0.5f, 1.5f, chargePercent);
+                        float finalThrustDistance = Mathf.Lerp(thrustDistance * 0.5f, thrustDistance, chargePercent);
+
+                        ExecuteSpearAttack(finalDamageMultiplier, finalThrustDistance);
+                        currentChargeTime = 0f;
+                    }
                 }
             }
             catch (System.Exception e)
@@ -658,6 +686,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
 
             isAttacking = false;
+            isPressing = false;
             isCharging = false;
             currentChargeTime = 0f;
             SetChargingEffect(false);
