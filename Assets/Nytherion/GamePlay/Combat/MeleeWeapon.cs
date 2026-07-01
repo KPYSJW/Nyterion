@@ -15,7 +15,7 @@ namespace Nytherion.GamePlay.Combat
         {
             col.enabled = value;
         }
-        public void EnableHitbox()
+        public virtual void EnableHitbox()
         {
             if (col != null)
             {
@@ -23,7 +23,7 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        public void DisableHitbox()
+        public virtual void DisableHitbox()
         {
             if (col != null)
             {

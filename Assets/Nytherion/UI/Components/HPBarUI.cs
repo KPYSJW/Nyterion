@@ -8,7 +8,7 @@ namespace Nytherion.UI.Components
 {
     public class HPBarUI : MonoBehaviour
     {
-        [SerializeField] private Slider hpSlider;
+        [SerializeField] private Image hpFillImage;
         [SerializeField] private TextMeshProUGUI hpText;
 
         private PlayerHealth playerHealth;
@@ -49,8 +49,11 @@ namespace Nytherion.UI.Components
 
         private void UpdateHP(float current, float max)
         {
-            hpSlider.maxValue = max;
-            hpSlider.value = current;
+            if (hpFillImage != null)
+            {
+                float fillRatio = max > 0f ? current / max : 0f;
+                hpFillImage.fillAmount = fillRatio;
+            }
             hpText.text = $"{current}";
         }
     }
