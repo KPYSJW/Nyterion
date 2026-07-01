@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: Abaddon
+  m_EditorClassIdentifier: 
+  uniqueID: 2a564faf-19ad-4a5c-9e7e-c7bdef212f88
+  itemName_KR: "\uC544\uBC14\uB3C8"
+  itemName_EN: Abaddon
+  icon: {fileID: 21300000, guid: 8b2b3de29c1c48d43a7c3c6a365c9e6d, type: 3}
+  description_KR: 
+  description_EN: 
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 100
+  equipmentType: 0
+  rarity: 0
+  traits: 
+  statModifiers: []
+  damage: 10
+  range: 1
+  cooldown: 0.5
+  weaponType: 1
+  weaponSprite: {fileID: 21300000, guid: c8a1669d49d872345ae23b88258e3cc1, type: 3}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: 0, y: 0, z: 0}
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 10
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 203003012477916132, guid: 24e88cad8ccb43442ba137decf2740c1, type: 3}
+  isArchivable: 1

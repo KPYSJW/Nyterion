@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.Data.ScriptableObjects;
+using Nytherion.Core.Data;
+using Nytherion.GamePlay.Relics;
+using VContainer;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -9,11 +13,36 @@ namespace Nytherion.GamePlay.Combat
         private List<StatusEffect> activeEffects = new List<StatusEffect>();
         private EnemyBase owner;
         private Dictionary<string, GameObject> vfxDictionary = new Dictionary<string, GameObject>();
+        private EnemyStatusDisplayUI statusDisplay;
+        private StatusEffectDatabase database;
+
+        [Inject]
+        public void Construct(StatusEffectDatabase database)
+        {
+            this.database = database;
+        }
 
         private void Awake()
         {
             owner = GetComponent<EnemyBase>();
             CacheVFX();
+
+            // VContainer 자동 주입이 수행되지 않은 경우(예: 풀링에 의한 동적 생성), 수동으로 전역 컨테이너에서 해소
+            if (database == null && RootLifetimeScope.Instance != null)
+            {
+                IObjectResolver container = RootLifetimeScope.Instance.Container;
+                if (container != null)
+                {
+                    database = container.Resolve<StatusEffectDatabase>();
+                }
+            }
+        }
+
+        private void Start()
+        {
+            SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+            statusDisplay = gameObject.AddComponent<EnemyStatusDisplayUI>();
+            statusDisplay.Initialize(sr);
         }
 
         private void CacheVFX()
@@ -62,6 +91,8 @@ namespace Nytherion.GamePlay.Combat
 
         public void PlayVFX(string effectId)
         {
+            // 속성 이펙트 재생 비활성화
+            /*
             GameObject go;
             if (vfxDictionary.TryGetValue(effectId, out go))
             {
@@ -82,26 +113,91 @@ namespace Nytherion.GamePlay.Combat
                     animatorComponent.Update(0f);
                 }
             }
+            */
         }
 
         public void StopVFX(string effectId)
         {
+            // 속성 이펙트 정지 비활성화
+            /*
             GameObject go;
             if (vfxDictionary.TryGetValue(effectId, out go))
             {
                 go.SetActive(false);
             }
+            */
         }
 
         public void ApplyEffect(StatusEffect newEffect)
         {
+            if (database == null)
+            {
+                Debug.LogError("StatusEffectDatabase가 주입되지 않았습니다! RootLifetimeScope를 확인하세요.");
+            }
             if (newEffect == null) return;
+
+            if (newEffect is FireEffect)
+            {
+                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
+                if (relicManager != null)
+                {
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && block.RelicId == "Sulphur Hourglass" && !block.SourceData.isDisabled)
+                        {
+                            float multiplier = 1.5f + (block.SourceData.level - 1) * 0.1f;
+                            newEffect.ModifyDuration(newEffect.Duration * multiplier);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (newEffect is PoisonEffect)
+            {
+                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
+                if (relicManager != null)
+                {
+                    float durationMultiplier = 1.0f;
+                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    {
+                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                        if (block != null && !block.SourceData.isDisabled)
+                        {
+                            if (block.RelicId == "Venom Hourglass")
+                            {
+                                float bonus = 0.5f + (block.SourceData.level - 1) * 0.1f;
+                                durationMultiplier += bonus;
+                            }
+                            else if (block.RelicId == "Hydra's Fang")
+                            {
+                                float bonus = 0.3f + (block.SourceData.level - 1) * 0.05f;
+                                durationMultiplier += bonus;
+                            }
+                        }
+                    }
+                    if (durationMultiplier > 1.0f)
+                    {
+                        newEffect.ModifyDuration(newEffect.Duration * durationMultiplier);
+                    }
+                }
+            }
+
+            if (database != null)
+            {
+                newEffect.EffectIcon = database.GetIcon(newEffect.EffectId);
+            }
 
             StatusEffect existing = activeEffects.Find(e => e.EffectId == newEffect.EffectId);
             if (existing != null)
             {
                 existing.ResetDuration();
                 existing.OnStack(newEffect);
+                existing.EffectIcon = newEffect.EffectIcon;
+                if (statusDisplay != null)
+                {
+                    statusDisplay.UpdateDisplay(activeEffects);
+                }
                 return;
             }
 
@@ -112,6 +208,11 @@ namespace Nytherion.GamePlay.Combat
             if (owner != null)
             {
                 owner.UpdateStatusColor();
+            }
+
+            if (statusDisplay != null)
+            {
+                statusDisplay.UpdateDisplay(activeEffects);
             }
         }
 
@@ -133,9 +234,16 @@ namespace Nytherion.GamePlay.Combat
                 }
             }
 
-            if (anyRemoved && owner != null)
+            if (anyRemoved)
             {
-                owner.UpdateStatusColor();
+                if (owner != null)
+                {
+                    owner.UpdateStatusColor();
+                }
+                if (statusDisplay != null)
+                {
+                    statusDisplay.UpdateDisplay(activeEffects);
+                }
             }
         }
 
@@ -249,6 +357,10 @@ namespace Nytherion.GamePlay.Combat
                 activeEffects[i].OnRemove();
             }
             activeEffects.Clear();
+            if (statusDisplay != null)
+            {
+                statusDisplay.UpdateDisplay(activeEffects);
+            }
         }
 
         private void OnEnable()

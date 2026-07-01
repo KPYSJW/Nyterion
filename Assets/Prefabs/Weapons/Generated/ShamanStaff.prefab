@@ -101,6 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponData: {fileID: 11400000, guid: 7b07c966f05945c42b6d71fcbff9bdc8, type: 2}
   damageMultiplier: 1
+  animator: {fileID: 0}
   firePoint: {fileID: 4288061520210801657}
   projectilePoolTag: ManaBall
   extraProjectileMode: 1
@@ -155,7 +156,7 @@ Transform:
   m_GameObject: {fileID: 4964738641561314771}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.69, y: 0, z: 0}
+  m_LocalPosition: {x: 0.3, y: 0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -259,17 +259,6 @@ namespace Nytherion.UI.Inventory
                 {
                     targetSlotType = EquipmentSlotType.Weapon;
                 }
-                else if (equipment is ArmorData armor)
-                {
-                    switch (armor.armorType)
-                    {
-                        case ArmorType.Helmet: targetSlotType = EquipmentSlotType.Helmet; break;
-                        case ArmorType.Armor: targetSlotType = EquipmentSlotType.Armor; break;
-                        case ArmorType.Boots: targetSlotType = EquipmentSlotType.Boots; break;
-                        case ArmorType.Accessory: targetSlotType = EquipmentSlotType.Accessory; break;
-                        default: return;
-                    }
-                }
                 else
                 {
                     return;

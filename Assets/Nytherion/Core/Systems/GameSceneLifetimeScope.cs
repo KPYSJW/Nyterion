@@ -422,7 +422,14 @@ public class GameSceneLifetimeScope : LifetimeScope
             Debug.LogWarning("[GameSceneLifetimeScope] FollowCamera를 찾을 수 없습니다!");
         }
 
-        if (settingsManagerPrefab != null)
+        SettingsManager settingsManagerInScene = FindObjectOfType<SettingsManager>(true);
+        if (settingsManagerInScene != null)
+        {
+            builder.RegisterComponent(settingsManagerInScene)
+                    .AsImplementedInterfaces()
+                    .AsSelf();
+        }
+        else if (settingsManagerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(settingsManagerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()

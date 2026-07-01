@@ -18,24 +18,26 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         protected override void FireChargedAttack(Vector2 direction, float chargePercent)
         {
-            GameObject projObj = Projectile(direction);
+            GameObject projObj = Projectile(direction, default, chargePercent);
 
-            if (projObj != null && projObj.TryGetComponent<CollisionObject>(out var collisionObj))
+            if (projObj != null && projObj.TryGetComponent<CollisionObject>(out CollisionObject collisionObj))
             {
-                float currentDamageMultiplier = Mathf.Lerp(1.0f, maxDamageMultiplier, chargePercent);
+                float currentDamageMultiplier = IsChargingEnabled() ? Mathf.Lerp(1.0f, maxDamageMultiplier, chargePercent) : 1.0f;
                 collisionObj.damage = weaponData.damage * currentDamageMultiplier;
 
-                if (!projObj.TryGetComponent<PiercingEffect>(out var piercingEffect))
+                PiercingEffect piercingEffect;
+                if (!projObj.TryGetComponent<PiercingEffect>(out piercingEffect))
                 {
                     piercingEffect = projObj.AddComponent<PiercingEffect>();
                 }
 
-                if (chargePercent >= pierceThreshold)
+                if (IsChargingEnabled() && chargePercent >= pierceThreshold)
                 {
                     piercingEffect.enabled = true;
 
                     projObj.transform.localScale *= 1.5f;
-                    if (projObj.TryGetComponent<SpriteRenderer>(out var sr))
+                    SpriteRenderer sr;
+                    if (projObj.TryGetComponent<SpriteRenderer>(out sr))
                     {
                         sr.color = Color.red;
                     }

@@ -45,4 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoInitializeOnAwake: 0
-  maxSlotCount: 24
+  maxSlotCount: 25

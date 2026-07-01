@@ -12,13 +12,16 @@ namespace Nytherion.GamePlay.Combat
         
         [SerializeField]public WeaponData weaponData;
         
+        [Tooltip("무기가 자체적으로 회전 및 스케일 제어를 제어할지 여부")]
+        public virtual bool OverrideRotation => false;
+        
         [Tooltip("마지막 공격 시간 (Time.time 기준)")]
         protected float lastAttackTime;
 
         public float damageMultiplier = 1.0f;
 
         protected PlayerManager playerManager;
-        protected Animator animator;
+        [SerializeField] protected Animator animator;
 
         protected virtual void Awake()
         {
@@ -69,6 +72,10 @@ namespace Nytherion.GamePlay.Combat
 
         public virtual bool CanAttack()
         {
+            if (weaponData == null)
+            {
+                return true;
+            }
             return Time.time - lastAttackTime >= weaponData.cooldown;
         }
         public virtual void Attack(Vector2 direction, Vector3 targetPosition = default)
@@ -103,7 +110,7 @@ namespace Nytherion.GamePlay.Combat
                 }
                 if (activeTraits.Contains(EquipmentTrait.Curse))
                 {
-                    effectManager.ApplyEffect(new CurseEffect(1.3f, 5f));
+                    effectManager.ApplyEffect(new CurseEffect(1.1f, 5f));
                 }
                 if (activeTraits.Contains(EquipmentTrait.Ice))
                 {

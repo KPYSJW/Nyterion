@@ -185,8 +185,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  traits: 
+  traits: 04000000
   hitEffectPrefab: {fileID: 0}
+  fireIcon: {fileID: 0}
+  iceIcon: {fileID: 0}
+  lightningIcon: {fileID: 0}
+  poisonIcon: {fileID: 0}
+  curseIcon: {fileID: 0}
+  holyIcon: {fileID: 0}
+  demonicIcon: {fileID: 0}
   poolTag: Player_IceShot
 --- !u!114 &3535878081888782905
 MonoBehaviour:
@@ -200,7 +207,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ee676d566ed3d843ac117b07dfec0ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitEffectPrefab: {fileID: 8242796725191159463, guid: c499398c197697d42ada936fbdee7862, type: 3}
   launchTrigger: Launch
   hitTrigger: Hit
   requiredRelicName: Glacial Prism

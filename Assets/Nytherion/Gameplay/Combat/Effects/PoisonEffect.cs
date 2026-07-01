@@ -1,4 +1,7 @@
 using UnityEngine;
+using System.Collections.Generic;
+using Nytherion.Core.Data;
+using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -19,10 +22,40 @@ namespace Nytherion.GamePlay.Combat
 
         public override void OnApply()
         {
+            AdjustTickInterval();
             nextTickTime = Time.time + tickInterval;
             if (manager != null)
             {
                 manager.PlayVFX(EffectId);
+            }
+        }
+
+        private void AdjustTickInterval()
+        {
+            Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
+            if (relicManager != null)
+            {
+                foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                {
+                    RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                    if (block != null && !block.SourceData.isDisabled)
+                    {
+                        if (block.RelicId == "Toxic Catalyst")
+                        {
+                            float reduction = 0.3f + (block.SourceData.level - 1) * 0.05f;
+                            reduction = Mathf.Clamp(reduction, 0f, 0.6f);
+                            tickInterval = 1.0f * (1f - reduction);
+                            break;
+                        }
+                        else if (block.RelicId == "Hydra's Fang")
+                        {
+                            float reduction = 0.1f + (block.SourceData.level - 1) * 0.02f;
+                            reduction = Mathf.Clamp(reduction, 0f, 0.3f);
+                            tickInterval = 1.0f * (1f - reduction);
+                            break;
+                        }
+                    }
+                }
             }
         }
 

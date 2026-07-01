@@ -177,6 +177,16 @@ namespace Nytherion.Core.Managers
             }
 
             objectToReturn.SetActive(false);
+
+            if (poolRoots.TryGetValue(tag, out Transform root))
+            {
+                objectToReturn.transform.SetParent(root);
+            }
+            else
+            {
+                objectToReturn.transform.SetParent(null);
+            }
+
             poolDictionary[tag].Enqueue(objectToReturn);
         }
 

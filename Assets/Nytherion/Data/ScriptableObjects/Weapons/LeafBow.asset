@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LeafBow
   m_EditorClassIdentifier: 
   uniqueID: 59224cfd-7372-43bd-8077-b491374912dd
-  itemName_KR: "\uD65C"
+  itemName_KR: "\uB098\uBB34 \uD65C"
   itemName_EN: Leaf Bow
   icon: {fileID: 21300000, guid: 55343bcb745475b4bbede261bd077ebc, type: 3}
   description_KR: 
@@ -30,15 +30,21 @@ MonoBehaviour:
   range: 0
   cooldown: 0.1
   weaponType: 0
-  weaponSprite: {fileID: 1241908162, guid: f642668e82e4d924e8cece4e26922abe, type: 3}
-  firePointOffset: {x: 0, y: 0, z: 0}
+  weaponSprite: {fileID: 21300000, guid: 965b6168b939aa34e99724f665471eb7, type: 3}
+  firePointOffset: {x: 0.13, y: -0.13, z: 0}
   spriteRotationOffset: 45
   visualPositionOffset: {x: 0, y: 0, z: 0}
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 7306622082136586299, guid: c66eebec310444c4796220c745954f62, type: 3}
+  chargeEffectPrefab: {fileID: 7306622082136586299, guid: c66eebec310444c4796220c745954f62, type: 3}
   animatorController: {fileID: 22100000, guid: 2bbfb3c97b30f224fa8cb6aa37d5c570, type: 2}
-  projectilePrefab: {fileID: 3778041586713616541, guid: 2eaf7d6fe073aef4caa6d4099d63f3a9, type: 3}
-  projectileSpeed: 10
+  projectilePrefab: {fileID: 1453523852295367759, guid: 699b4cfa5de25e94db8b510f76821dc3, type: 3}
+  projectileSpeed: 14
+  projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
-  hitEffectPrefab: {fileID: 0}
-  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  chargeThresholdTime: 0.15
+  requiredRelicId: ChargeRelic
+  hitEffectPrefab: {fileID: 7501527366971250573, guid: 977fd419f27185242918e87a03ec7e98, type: 3}
+  weaponPrefab: {fileID: -2914722070659980993, guid: e2b0acf08dec30a44b07ddd1938a73b1, type: 3}
   isArchivable: 1

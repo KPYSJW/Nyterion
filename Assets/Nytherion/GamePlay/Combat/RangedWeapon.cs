@@ -68,7 +68,7 @@ namespace Nytherion.GamePlay.Combat
             burstWait = new WaitForSeconds(burstInterval);
         }
 
-        public GameObject Projectile(Vector2 direction, Vector3 spawnOffset = default)
+        public GameObject Projectile(Vector2 direction, Vector3 spawnOffset = default, float chargePercent = 0f)
         {
             Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f) + spawnOffset;
             
@@ -113,6 +113,7 @@ namespace Nytherion.GamePlay.Combat
                 {
                     collisionObj.damage = weaponData.damage * damageMultiplier;
                     collisionObj.traits = GetTraits();
+                    collisionObj.chargePercent = chargePercent;
 
                     if (collisionObj.hitEffectPrefab == null)
                     {
@@ -139,9 +140,20 @@ namespace Nytherion.GamePlay.Combat
             return projectile; 
         }
 
-        protected void FireProjectiles(Vector2 direction, int baseCount, float spreadAngle = 15f)
+        protected void FireProjectiles(Vector2 direction, int baseCount, float spreadAngle = 15f, float chargePercent = 0f)
         {
-            PlayFireAnimation();
+            if (ShouldPlayFireAnimation())
+            {
+                PlayFireAnimation();
+            }
+
+            // 발사 이펙트 생성
+            if (ShouldSpawnFireEffect() && firePoint != null && weaponData != null && weaponData.fireEffectPrefab != null)
+            {
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                WeaponEffectHelper.PlayFireEffect(weaponData.fireEffectPrefab, firePoint.position, rotation, firePoint);
+            }
 
             int extra = 0;
             if (playerManager != null && playerManager.currentPlayerData != null)
@@ -152,7 +164,7 @@ namespace Nytherion.GamePlay.Combat
 
             if (totalCount <= 1)
             {
-                Projectile(direction);
+                Projectile(direction, default, chargePercent);
             }
             else
             {
@@ -167,7 +179,7 @@ namespace Nytherion.GamePlay.Combat
                         {
                             float currentAngle = startAngle + (spreadAngle * i);
                             Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
-                            Projectile(spreadDirection);
+                            Projectile(spreadDirection, default, chargePercent);
                         }
                     }
                     else
@@ -179,17 +191,17 @@ namespace Nytherion.GamePlay.Combat
                         {
                             float currentAngle = startAngle + (angleStep * i);
                             Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
-                            Projectile(spreadDirection);
+                            Projectile(spreadDirection, default, chargePercent);
                         }
                     }
                 }
                 else if (extraProjectileMode == ExtraProjectileMode.Burst)
                 {
-                    StartCoroutine(FireBurstRoutine(direction, totalCount));
+                    StartCoroutine(FireBurstRoutine(direction, totalCount, chargePercent));
                 }
                 else if (extraProjectileMode == ExtraProjectileMode.Parallel)
                 {
-                    FireParallel(direction, totalCount);
+                    FireParallel(direction, totalCount, chargePercent);
                 }
             }
 
@@ -202,11 +214,11 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        private IEnumerator FireBurstRoutine(Vector2 direction, int totalCount)
+        private IEnumerator FireBurstRoutine(Vector2 direction, int totalCount, float chargePercent)
         {
             for (int i = 0; i < totalCount; i++)
             {
-                Projectile(direction);
+                Projectile(direction, default, chargePercent);
                 if (i < totalCount - 1)
                 {
                     yield return burstWait;
@@ -214,7 +226,7 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        private void FireParallel(Vector2 direction, int totalCount)
+        private void FireParallel(Vector2 direction, int totalCount, float chargePercent)
         {
             Vector2 perp = new Vector2(-direction.y, direction.x).normalized;
             float startOffset = -((totalCount - 1) * parallelSpacing) / 2f;
@@ -223,8 +235,11 @@ namespace Nytherion.GamePlay.Combat
             {
                 float currentOffset = startOffset + (i * parallelSpacing);
                 Vector3 spawnOffset = new Vector3(perp.x, perp.y, 0f) * currentOffset;
-                Projectile(direction, spawnOffset);
+                Projectile(direction, spawnOffset, chargePercent);
             }
         }
+
+        protected virtual bool ShouldSpawnFireEffect() => true;
+        protected virtual bool ShouldPlayFireAnimation() => true;
     }
 }

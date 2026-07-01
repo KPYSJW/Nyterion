@@ -61,19 +61,62 @@ namespace Nytherion.UI.Inventory.Utils
 
             if (sourceSlot == null || sourceSlot.IsEmpty) return;
 
-            var results = new List<RaycastResult>();
+            List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, results);
 
             BaseSlotUI targetSlot = null;
-            foreach (var result in results)
+            foreach (RaycastResult result in results)
             {
-                var slot = result.gameObject.GetComponentInParent<BaseSlotUI>();
+                BaseSlotUI slot = result.gameObject.GetComponentInParent<BaseSlotUI>();
                 if (slot != null)
                 {
                     targetSlot = slot;
                     break;
                 }
             }
+
+            // [보정 로직] 정확하게 슬롯 위에 드롭하지 못했더라도 근처에 퀵슬롯이 있다면 보정해서 넣어줍니다.
+            if (targetSlot == null)
+            {
+                QuickSlotUI closestQuickSlot = null;
+                float minDistance = float.MaxValue;
+                float thresholdDistance = 80f; // 감도 조절 임계값 (픽셀 기준)
+
+                QuickSlotUI[] allQuickSlots = UnityEngine.Object.FindObjectsOfType<QuickSlotUI>();
+                foreach (QuickSlotUI quickSlot in allQuickSlots)
+                {
+                    if (quickSlot != null && quickSlot.gameObject.activeInHierarchy)
+                    {
+                        RectTransform rectTransform = quickSlot.transform as RectTransform;
+                        if (rectTransform != null)
+                        {
+                            Camera cam = null;
+                            Canvas canvas = quickSlot.GetComponentInParent<Canvas>();
+                            if (canvas != null && (canvas.renderMode == RenderMode.ScreenSpaceCamera || canvas.renderMode == RenderMode.WorldSpace))
+                            {
+                                cam = canvas.worldCamera;
+                            }
+                            if (cam == null) cam = Camera.main;
+
+                            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(cam, rectTransform.position);
+                            float dist = Vector2.Distance(eventData.position, screenPos);
+                            if (dist < minDistance && dist <= thresholdDistance)
+                            {
+                                minDistance = dist;
+                                closestQuickSlot = quickSlot;
+                            }
+                        }
+                    }
+                }
+
+                if (closestQuickSlot != null)
+                {
+                    ExecuteEvents.Execute<IDropHandler>(closestQuickSlot.gameObject, eventData, ExecuteEvents.dropHandler);
+                }
+            }
+
+            // 보정 로직을 거친 후 dropHandled가 true가 되었을 수 있으므로 다시 체크
+            if (dropHandled) return;
 
             if (targetSlot != null)
             {

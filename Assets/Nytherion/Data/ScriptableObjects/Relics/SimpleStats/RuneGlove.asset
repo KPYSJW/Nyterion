@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Rune Glove
   koreanName: "\uB8EC\uC7A5\uAC11"
-  description_KR: "\uADFC\uC811 \uBC0F \uC6D0\uAC70\uB9AC \uACF5\uACA9\uB825\uC744
-    \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
+  description_KR: "\uADFC\uC811 \uACF5\uACA9\uB825 +6 (\uB808\uBCA8\uB2F9 +2), \uC6D0\uAC70\uB9AC \uACF5\uACA9\uB825 +6 (\uB808\uBCA8\uB2F9 +2)"
   description_EN: Increases melee and ranged damage.
   Image: {fileID: 21300000, guid: 144a82c134dbce94d955708b654a6013, type: 3}
   rarity: 3

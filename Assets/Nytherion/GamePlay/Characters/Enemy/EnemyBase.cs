@@ -156,10 +156,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private Color GetCurrentBaseColor()
         {
-            if (statusEffectManager != null)
-            {
-                return statusEffectManager.GetStatusEffectColor();
-            }
             return originalColor;
         }
 

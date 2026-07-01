@@ -31,14 +31,17 @@ MonoBehaviour:
   cooldown: 0.08
   weaponType: 0
   weaponSprite: {fileID: 21300000, guid: a2be363839160cd40afafb32a1a61761, type: 3}
-  firePointOffset: {x: 0, y: 0, z: 0}
+  firePointOffset: {x: 0.4, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: 0, y: 0, z: 0}
+  visualPositionOffset: {x: -0.2, y: 0, z: 0}
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 3595441880066981771, guid: e10ed0cbe39f5c2439290de4b9e8a95c, type: 3}
   animatorController: {fileID: 0}
-  projectilePrefab: {fileID: 1453523852295367759, guid: 2ff9b7ec442117043b64f8d68c4c0ed8, type: 3}
-  projectileSpeed: 10
+  projectilePrefab: {fileID: 4388211735977503658, guid: 8fae2d79634426a44af06f51afb709b1, type: 3}
+  projectileSpeed: 7
+  projectileRotationOffset: 0
   extraProjectileMode: 1
   maxChargeTime: 1
-  hitEffectPrefab: {fileID: 0}
-  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  hitEffectPrefab: {fileID: 2773623504146537913, guid: 02e616b90ff8cd04dbdabd600df6f382, type: 3}
+  weaponPrefab: {fileID: -2914722070659980993, guid: f2b0acf08dec30a44b07ddd1938a737a, type: 3}
   isArchivable: 1

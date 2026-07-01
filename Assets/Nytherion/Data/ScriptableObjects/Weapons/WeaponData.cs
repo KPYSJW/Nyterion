@@ -35,6 +35,12 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Tooltip("무기 자체에 부착할 이펙트 프리팹 (예: 스태프의 파티클 시스템 등)")]
         public GameObject weaponEffectPrefab;
 
+        [Tooltip("발사 시 발생할 이펙트 프리팹 (예: 머즐 플래시 등)")]
+        public GameObject fireEffectPrefab;
+
+        [Tooltip("차징(충전) 중 지속적으로 발생할 이펙트 프리팹 (예: 차징 기 축적 이펙트 등)")]
+        public GameObject chargeEffectPrefab;
+
         [Header("Animation Settings")]
         [Tooltip("무기 전용 애니메이터 컨트롤러 (Idle, Fire 애니메이션 연동용)")]
         public RuntimeAnimatorController animatorController;
@@ -46,6 +52,10 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float projectileRotationOffset = 0f;
         public ExtraProjectileMode extraProjectileMode = ExtraProjectileMode.Spread;
         public float maxChargeTime = 1.0f;
+        [Tooltip("차징 판정이 시작되기까지 누르고 있어야 하는 최소 시간(초)")]
+        public float chargeThresholdTime = 0.15f;
+        [Tooltip("이 무기가 차징 무기로 활성화되기 위해 필요한 유물 ID (비어 있으면 항상 차징 가능)")]
+        public string requiredRelicId = "";
         [Tooltip("적 충돌 시 발생할 피격 이펙트 프리팹 (예: 독 속성 이펙트 등)")]
         public GameObject hitEffectPrefab;
         

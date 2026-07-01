@@ -15,7 +15,7 @@ namespace Nytherion.UI.Inventory
         [Header("References")]
         [SerializeField] private RectTransform statsContainer;
         [SerializeField] private GameObject statCellPrefab;
-        [SerializeField] private ScrollRect scrollRect;
+
 
         private readonly List<GameObject> statCells = new List<GameObject>();
         private PlayerManager playerManager;
@@ -69,11 +69,7 @@ namespace Nytherion.UI.Inventory
                 Debug.LogError("Stat Cell Prefab이 할당되지 않았습니다.", this);
                 return false;
             }
-            if (scrollRect == null)
-            {
-                Debug.LogError("ScrollRect가 할당되지 않았습니다.", this);
-                return false;
-            }
+
             return true;
         }
 
@@ -83,10 +79,7 @@ namespace Nytherion.UI.Inventory
 
             ClearStatsUI();
             CreateStatCells();
-            if (gameObject.activeInHierarchy)
-            {
-                StartCoroutine(ResetScrollPosition());
-            }
+
         }
 
         private void CreateStatCells()
@@ -97,15 +90,17 @@ namespace Nytherion.UI.Inventory
             System.Reflection.FieldInfo[] fields = typeof(PlayerData).GetFields();
             foreach (System.Reflection.FieldInfo field in fields)
             {
+                if (field.Name == "dashSpeed" || field.Name == "dashDuration" || field.Name == "dashCooldown" || field.Name == "dashDistance") continue;
+
                 object value = field.GetValue(currentPlayerData);
                 if (value == null) continue;
 
                 string displayValue = value.ToString();
                 if (value is float floatValue)
                 {
-                    if (field.Name == "dashDuration" || field.Name == "dashCooldown")
+                    if (field.Name == "critChance" || field.Name == "lifesteal" || field.Name == "chargeTimeReduction" || field.Name == "critDamageMultiplier")
                     {
-                        displayValue = floatValue.ToString("F2");
+                        displayValue = $"{Mathf.RoundToInt(floatValue * 100f)}%";
                     }
                     else
                     {
@@ -155,14 +150,7 @@ namespace Nytherion.UI.Inventory
             statCells.Clear();
         }
 
-        private IEnumerator ResetScrollPosition()
-        {
-            yield return new WaitForEndOfFrame();
-            if (scrollRect != null)
-            {
-                scrollRect.verticalNormalizedPosition = 1f;
-            }
-        }
+
 
         private string GetKoreanStatName(string englishName)
         {
@@ -175,9 +163,11 @@ namespace Nytherion.UI.Inventory
                 "rangedDamage" => "원거리 공격력",
                 "meleeSpeed" => "근접 공격 속도",
                 "rangedSpeed" => "원거리 공격 속도",
-                "dashSpeed" => "대시 속도",
-                "dashDuration" => "대시 지속시간",
-                "dashCooldown" => "대시 쿨다운",
+                "extraProjectiles" => "추가 투사체 수",
+                "lifesteal" => "생명력 흡수",
+                "chargeTimeReduction" => "충전 시간 감소",
+                "critChance" => "치명타 확률",
+                "critDamageMultiplier" => "치명타 피해량",
                 _ => englishName
             };
         }

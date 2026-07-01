@@ -1,0 +1,19 @@
+EN_Name,KR_Name,Rarity,Level,Description_KR,Synergy_Series_ID,Unlock_Milestone_ID,Influence_Zones,Stat1_Type,Stat1_Value,Stat1_ValuePerLevel,Stat1_IsPercentage,Stat2_Type,Stat2_Value,Stat2_ValuePerLevel,Stat2_IsPercentage
+IronHeart,철의 심장,Common,1,기본 최대 체력을 고정치로 증가시켜 기초 생존을 돕습니다.,Earth,,,MaxHealth,15,5,FALSE,,,,
+WornShield,닳은 방패,Common,1,기본 방어력을 고정치로 약간 향상시킵니다.,,,,,Defense,3,1,FALSE,,,,
+LightBoot,가벼운 가죽신,Common,1,이동 속도를 5% 만큼 영구적으로 증가시킵니다.,,,,,MoveSpeed,0.05,0.01,TRUE,,,,
+RustyDagger,녹슨 수검,Common,1,근접 물리 데미지를 5% 만큼 증가시킵니다.,,,,,MeleeDamage,0.05,0.015,TRUE,,,,
+TrainingBow,연습용 목궁,Common,1,원거리 물리 데미지를 5% 만큼 증가시킵니다.,,,,,RangedDamage,0.05,0.015,TRUE,,,,
+SharpenedFlint,날카로운 부싯돌,Uncommon,1,치명타 발생 확률을 5% 만큼 증가시킵니다.,,,,,CritChance,0.05,0.01,TRUE,,,,
+PolishedScope,광택 나는 조준경,Uncommon,1,원거리 공격의 속도(연사 속도)를 8% 만큼 빠르게 합니다.,,,,,RangedSpeed,0.08,0.02,TRUE,,,,
+HeavyGauntlet,무거운 무쇠 건틀릿,Uncommon,1,근접 공격의 속도(공격 속도)를 8% 만큼 빠르게 합니다.,,,,,MeleeSpeed,0.08,0.02,TRUE,,,,
+FeatherCharm,가벼운 깃털 부적,Uncommon,1,대시 능력의 재사용 대기시간(쿨타임)을 8% 단축시킵니다.,,,,,DashCooldown,-0.08,-0.02,TRUE,,,,
+VampireFang,흡혈귀의 송곳니,Rare,1,피해를 줄 때마다 피해량의 2%를 체력으로 즉시 흡수합니다.,Blood,UNLOCK_VAMP,,Lifesteal,0.02,0.005,FALSE,,,,
+HeavyMace,묵직한 메이스,Rare,1,치명타로 피해를 입힐 때 치명타 피해량을 25% 만큼 늘려줍니다.,,,,,CritDamage,0.25,0.08,TRUE,,,,
+WindQuiver,바람의 화살통,Rare,1,원거리 공격력을 10% 증가시키고 원거리 공격 속도를 5% 높입니다.,,,,,RangedDamage,0.10,0.03,TRUE,RangedSpeed,0.05,0.015,TRUE
+WarriorsCrest,전사의 가문 문장,Rare,1,근접 공격력을 10% 증가시키고 방어력을 고정치로 5 올려줍니다.,,,,,MeleeDamage,0.10,0.03,TRUE,Defense,5,2,FALSE
+MagicQuiver,마법 깃든 화살통,Epic,1,모든 원거리 공격 시 투사체가 1개 추가로 발사됩니다. (원거리 공격력 5% 증가),,,,,ExtraProjectiles,1,0,FALSE,RangedDamage,0.05,0.02,TRUE
+AlchemistsCatalyst,연금술사의 가속 촉매,Epic,1,차징형 무기 및 스킬의 차징 소요 시간을 15% 단축시킵니다.,,,,,ChargeTimeReduction,-0.15,-0.03,TRUE,,,,
+HerosElixir,영웅의 오색 비약,Epic,1,플레이어의 모든 기본 스탯(공격력, 방어력, 체력 등)이 6% 만큼 증가합니다.,,,,,All,0.06,0.02,TRUE,,,,
+PandorasBow,판도라의 마궁,Legendary,1,원거리 투사체가 2개 추가로 발사되며 원거리 공격 속도가 10% 빨라집니다.,,,,,ExtraProjectiles,2,0,FALSE,RangedSpeed,0.10,0.03,TRUE
+BloodlustRing,피의 굶주림 반지,Legendary,1,흡혈량이 4% 추가되고 치명타 확률이 10% 만큼 큰 폭으로 증가합니다.,,,,,Lifesteal,0.04,0.01,FALSE,CritChance,0.10,0.02,TRUE

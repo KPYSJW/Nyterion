@@ -1,0 +1,1918 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-kyung" at "2026-06-24T07:59:51.3770758Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 48568, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.17.4+4293ba1
+  Session Id:              8308814e2c394591999ffc3f6998205c
+  Correlation Id:          f906ba6d7d0d3d5eda6f8d09d8304c70
+  External correlation Id: 7156655210490559729
+  Machine Id:              sgq3U92oUHjAYY2K+5R//JWuJmw=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-kyung" (connect: 0.00s, validation: 0.01s, handshake: 0.07s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-kyung-notifications" at "2026-06-24T07:59:51.4606612Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully updated license
+Built from '2022.3/respin/2022.3.62f2-4af31df585-v2' branch; Version is '2022.3.62f2 (7670c08855a9) revision 7762112'; Using compiler version '192829333'; Build Type 'Release'
+OS: 'Windows 10  (10.0.19045) 64bit Core' Language: 'ko' Physical Memory: 24514 MB
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Serial number assigned to: "F4-6RG9-4KD6-T4HW-2SXE-XXXX"
+[Licensing::Module] Serial number assigned to: "14568601583659-UnityPersXXXX"
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Serial number assigned to: "F4-6RG9-4KD6-T4HW-2SXE-XXXX"
+[Licensing::Module] Serial number assigned to: "14568601583659-UnityPersXXXX"
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Unity.exe
+-batchmode
+-quit
+-projectPath
+c:\RoguelikePrototype
+-executeMethod
+Nytherion.Editor.RelicManagerWindow.ImportRelicsFromDefaultCSVPath
+-logFile
+unity_import_log.txt
+Successfully changed project path to: c:\RoguelikePrototype
+C:/RoguelikePrototype
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [5444]  Target information:
+
+Player connection [5444]  * "[IP] 192.168.0.2 [Port] 55504 [Flags] 2 [Guid] 1288913231 [EditorId] 1288913231 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-HR3SF2C) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [5444] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [5444] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+[Package Manager] UpmClient::Connect -- Connected to IPC stream "Upm-45824" after 0.7 seconds.
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 65 packages:
+  Packages from [https://package.openupm.com]:
+    jp.hadashikick.vcontainer@1.17.0 (location: C:\RoguelikePrototype\Library\PackageCache\jp.hadashikick.vcontainer@1.17.0)
+  Packages from [https://packages.unity.com]:
+    com.unity.2d.animation@9.2.2 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.animation@9.2.2)
+    com.unity.2d.aseprite@1.1.11 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.aseprite@1.1.11)
+    com.unity.ai.navigation@1.1.7 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.ai.navigation@1.1.7)
+    com.unity.collab-proxy@2.8.2 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.collab-proxy@2.8.2)
+    com.unity.ide.rider@3.0.36 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.ide.rider@3.0.36)
+    com.unity.ide.visualstudio@2.0.22 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.ide.visualstudio@2.0.22)
+    com.unity.inputsystem@1.14.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.inputsystem@1.14.0)
+    com.unity.nuget.newtonsoft-json@3.2.1 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.nuget.newtonsoft-json@3.2.1)
+    com.unity.test-framework@1.1.33 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.test-framework@1.1.33)
+    com.unity.textmeshpro@3.0.7 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.textmeshpro@3.0.7)
+    com.unity.timeline@1.7.7 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.timeline@1.7.7)
+    com.unity.visualscripting@1.9.4 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.visualscripting@1.9.4)
+    com.unity.ext.nunit@1.0.6 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.ext.nunit@1.0.6)
+    com.unity.mathematics@1.2.6 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.mathematics@1.2.6)
+    com.unity.burst@1.8.21 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.burst@1.8.21)
+    com.unity.2d.pixel-perfect@5.1.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.pixel-perfect@5.1.0)
+    com.unity.2d.psdimporter@8.1.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.psdimporter@8.1.0)
+    com.unity.2d.spriteshape@9.1.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.spriteshape@9.1.0)
+    com.unity.2d.tilemap.extras@3.1.3 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.tilemap.extras@3.1.3)
+    com.unity.2d.common@8.1.1 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.common@8.1.1)
+    com.unity.collections@1.2.4 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.collections@1.2.4)
+    com.unity.searcher@4.9.2 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.searcher@4.9.2)
+  Built-in packages:
+    com.unity.feature.2d@2.0.1 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.feature.2d@2.0.1)
+    com.unity.render-pipelines.universal@14.0.12 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.render-pipelines.universal@14.0.12)
+    com.unity.ugui@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.ugui@1.0.0)
+    com.unity.modules.ai@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.ai@1.0.0)
+    com.unity.modules.androidjni@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.androidjni@1.0.0)
+    com.unity.modules.animation@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.animation@1.0.0)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.assetbundle@1.0.0)
+    com.unity.modules.audio@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.audio@1.0.0)
+    com.unity.modules.cloth@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.cloth@1.0.0)
+    com.unity.modules.director@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.director@1.0.0)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.imageconversion@1.0.0)
+    com.unity.modules.imgui@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.imgui@1.0.0)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.jsonserialize@1.0.0)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.particlesystem@1.0.0)
+    com.unity.modules.physics@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.physics@1.0.0)
+    com.unity.modules.physics2d@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.physics2d@1.0.0)
+    com.unity.modules.screencapture@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.screencapture@1.0.0)
+    com.unity.modules.terrain@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.terrain@1.0.0)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.terrainphysics@1.0.0)
+    com.unity.modules.tilemap@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.tilemap@1.0.0)
+    com.unity.modules.ui@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.ui@1.0.0)
+    com.unity.modules.uielements@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.uielements@1.0.0)
+    com.unity.modules.umbra@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.umbra@1.0.0)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.unityanalytics@1.0.0)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.unitywebrequest@1.0.0)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle@1.0.0)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.unitywebrequestaudio@1.0.0)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.unitywebrequesttexture@1.0.0)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.unitywebrequestwww@1.0.0)
+    com.unity.modules.vehicles@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.vehicles@1.0.0)
+    com.unity.modules.video@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.video@1.0.0)
+    com.unity.modules.vr@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.vr@1.0.0)
+    com.unity.modules.wind@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.wind@1.0.0)
+    com.unity.modules.xr@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.xr@1.0.0)
+    com.unity.modules.subsystems@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.modules.subsystems@1.0.0)
+    com.unity.render-pipelines.core@14.0.12 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.render-pipelines.core@14.0.12)
+    com.unity.shadergraph@14.0.12 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.shadergraph@14.0.12)
+    com.unity.render-pipelines.universal-config@14.0.10 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.render-pipelines.universal-config@14.0.10)
+    com.unity.2d.sprite@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.sprite@1.0.0)
+    com.unity.2d.tilemap@1.0.0 (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.2d.tilemap@1.0.0)
+  Git packages:
+    com.h8man.2d.navmeshplus@https://github.com/h8man/NavMeshPlus.git#master (location: C:\RoguelikePrototype\Library\PackageCache\com.h8man.2d.navmeshplus@53de7d5c64)
+    com.unity.ide.windsurf@https://github.com/Asuta/com.unity.ide.windsurf.git (location: C:\RoguelikePrototype\Library\PackageCache\com.unity.ide.windsurf@6161accf3e)
+[Subsystems] No new subsystems found in resolved package list.
+Package Manager log level set to [2]
+[Package Manager] Done registering packages in 0.21 seconds
+Artifact Garbage Collection - Removed 34 unused hashed content files
+Refreshing native plugins compatible for Editor in 27.69 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2022.3.62f2 (7670c08855a9)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2022.3.62f2/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/RoguelikePrototype/Assets
+GfxDevice: creating device client; threaded=0; jobified=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce GTX 1660 Ti (ID=0x2182)
+    Vendor:   NVIDIA
+    VRAM:     5966 MB
+    Driver:   32.0.15.9649
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Serial number assigned to: "F4-6RG9-4KD6-T4HW-2SXE-XXXX"
+[Licensing::Module] Serial number assigned to: "14568601583659-UnityPersXXXX"
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2022.3.62f2/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2022.3.62f2/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2022.3.62f2/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56824
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.62f2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.017065 seconds.
+- Loaded All Assemblies, in  0.534 seconds
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.378 seconds
+Domain Reload Profiling: 909ms
+	BeginReloadAssembly (150ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (50ms)
+	RebuildNativeTypeToScriptingClass (13ms)
+	initialDomainReloadingComplete (101ms)
+	LoadAllAssembliesAndSetupDomain (216ms)
+		LoadAssemblies (146ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (213ms)
+			TypeCache.Refresh (210ms)
+				TypeCache.ScanAssembly (190ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (378ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (313ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (15ms)
+			SetLoadedEditorAssemblies (11ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (2ms)
+			ProcessInitializeOnLoadAttributes (214ms)
+			ProcessInitializeOnLoadMethodAttributes (71ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Serial number assigned to: "F4-6RG9-4KD6-T4HW-2SXE-XXXX"
+[Licensing::Module] Serial number assigned to: "14568601583659-UnityPersXXXX"
+Application.AssetDatabase Initial Refresh Start
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:80
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\RoguelikePrototype\
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping application/grpc - - 200 - application/grpc 59.6468ms
+Starting: C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/RoguelikePrototype
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\Facades\System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\NetStandard\Extensions\2.0.0\System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\System.ComponentModel.Composition.dll" in favor of "C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\NetStandard\compat\2.1.0\shims\netfx\System.ComponentModel.Composition.dll"
+DisplayProgressbar: Compiling Scripts
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library\PackageCache\com.unity.burst@1.8.21\Unity.Burst.CodeGen\Unity.Burst.Cecil.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors application/grpc - - 200 - application/grpc 660.9154ms
+ExitCode: 4 Duration: 0s971ms
+Rebuilding DAG because FileSignature timestamp changed: Library/Bee/1900b0aE-inputdata.json
+[716/936    0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra requires additional run (0.92 seconds), 1 items updated, 715 evaluated
+Starting: C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\Tools\netcorerun\netcorerun.exe "C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\Tools\BuildPipeline\ScriptCompilationBuildProgram.exe" "Library/Bee/1900b0aE.dag.json" "Library/Bee/1900b0aE-inputdata.json" "Library\Bee\buildprogram0.traceevents"
+WorkingDir: C:/RoguelikePrototype
+ExitCode: 0 Duration: 2s936ms
+Starting: C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Data\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --dagfilejson="Library\Bee\1900b0aE.dag.json" --profile="Library/Bee/backend2.traceevents" ScriptAssemblies
+WorkingDir: C:/RoguelikePrototype
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Current configuration matches the requested one, skipping
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors application/grpc - - 200 - application/grpc 1.2482ms
+ExitCode: 0 Duration: 0s563ms
+Finished compiling graph: 939 nodes, 13780 flattened edges (10990 ToBuild, 156 ToUse), maximum node priority 969
+[716/936    0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.53 seconds), 1 items updated, 936 evaluated
+AssetDatabase: script compilation time: 5.160028s
+Begin MonoManager ReloadAssembly
+Total cache size 267855865
+Total cache size after purge 267855865
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  1.145 seconds
+Refreshing native plugins compatible for Editor in 14.45 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Refreshing native plugins compatible for Editor in 10.87 ms, found 4 plugins.
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  5.179 seconds
+Domain Reload Profiling: 6317ms
+	BeginReloadAssembly (245ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (10ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (42ms)
+	RebuildCommonClasses (48ms)
+	RebuildNativeTypeToScriptingClass (15ms)
+	initialDomainReloadingComplete (52ms)
+	LoadAllAssembliesAndSetupDomain (778ms)
+		LoadAssemblies (514ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (392ms)
+			TypeCache.Refresh (321ms)
+				TypeCache.ScanAssembly (286ms)
+			ScanForSourceGeneratedMonoScriptInfo (45ms)
+			ResolveRequiredComponents (23ms)
+	FinalizeReload (5180ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (4743ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (9ms)
+			SetLoadedEditorAssemblies (6ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (131ms)
+			ProcessInitializeOnLoadAttributes (4395ms)
+			ProcessInitializeOnLoadMethodAttributes (169ms)
+			AfterProcessingInitializeOnLoad (32ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (14ms)
+Asset Pipeline Refresh (id=1acff71df42d8874db042e2dac12880d): Total: 15.663 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=3886 ms
+		Asset DB Callback time: managed=35 ms, native=0 ms
+		Scripting: domain reloads=1, domain reload time=6484 ms, compile time=5162 ms, other=94 ms
+		Project Asset Count: scripts=7950, non-scripts=4058
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.902ms
+	ApplyChangesToAssetFolders: 0.063ms
+	Scan: 738.343ms
+	OnSourceAssetsModified: 0.003ms
+	GetAllGuidsForCategorization: 3.405ms
+	CategorizeAssets: 472.928ms
+	ImportOutOfDateAssets: 5277.582ms (60.749ms without children)
+		CompileScripts: 5162.315ms
+		ReloadNativeAssets: 0.037ms
+		UnloadImportedAssets: 43.426ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 6.343ms
+		InitializingProgressBar: 0.020ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.007ms
+		OnDemandSchedulerStart: 4.685ms
+	PostProcessAllAssets: 35.567ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.001ms
+	UnloadStreamsBegin: 1.107ms
+	PersistCurrentRevisions: 3.008ms
+	UnloadStreamsEnd: 0.204ms
+	GenerateScriptTypeHashes: 7.841ms
+	Untracked: 9130.091ms
+Application.AssetDatabase Initial Refresh End
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.06 seconds
+Scanning for USB devices : 4.570ms
+Initializing Unity extensions:
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Serial number assigned to: "F4-6RG9-4KD6-T4HW-2SXE-XXXX"
+[Licensing::Module] Serial number assigned to: "14568601583659-UnityPersXXXX"
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-PrototypeV01
+[PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ProgressiveSceneManager::Cancel()
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 109 unused Assets / (0.7 MB). Loaded Objects now: 7132.
+Memory consumption went from 199.9 MB to 199.1 MB.
+Total: 11.836500 ms (FindLiveObjects: 0.688900 ms CreateObjectMapping: 0.990200 ms MarkObjects: 8.104800 ms  DeleteObjects: 2.051400 ms)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/IronHeart.asset using Guid(227d51daacf86e8418fb307f9ce1e0db) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '209aefbaf23b11d51513109f151a062d') in 0.013538 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'adfe6e1a96046db415044faa31dc380f') in 0.002867 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Common_Relic.asset using Guid(82ab1c4174c6d1645a64027f001a882e) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '4ac2a405b571fdd7db3eddc9de8d2437') in 0.003378 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 17개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 11.32 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=1406b13b90252ab4b8d27cc7971f995e): Total: 0.450 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=6 ms, native=223 ms
+		Asset DB Callback time: managed=194 ms, native=25 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4059
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.003ms
+	ApplyChangesToAssetFolders: 0.372ms
+	Scan: 15.964ms
+	OnSourceAssetsModified: 1.192ms
+	GetAllGuidsForCategorization: 3.802ms
+	CategorizeAssets: 70.341ms
+	ImportOutOfDateAssets: 57.809ms (4.735ms without children)
+		ImportManagerImport: 29.630ms (7.695ms without children)
+			ImportInProcess: 21.852ms
+			UpdateCategorizedAssets: 0.083ms
+		ReloadNativeAssets: 0.342ms
+		UnloadImportedAssets: 1.066ms
+		ReloadImportedAssets: 0.000ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 10.737ms
+		InitializingProgressBar: 0.020ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.003ms
+		OnDemandSchedulerStart: 11.275ms
+	PostProcessAllAssets: 333.480ms
+	Hotreload: 13.370ms
+	GatherAllCurrentPrimaryArtifactRevisions: 6.037ms
+	UnloadStreamsBegin: 2.420ms
+	PersistCurrentRevisions: 3.174ms
+	UnloadStreamsEnd: 0.843ms
+	Untracked: -58.710ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/WornShield.asset using Guid(4e8eea5f098a61040905d1f18b300733) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'e6699d9d91c4f069bee0232b7145f00a') in 0.003694 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '7f85fc6c7ceb367eac9a28229ec4a3f1') in 0.004279 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Common_Relic.asset using Guid(82ab1c4174c6d1645a64027f001a882e) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'dd4659e61f1bc1d32f8f778b829835f8') in 0.003143 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 18개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 9.51 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=2dd86e30dc8335f4e94b24e18dcffbe0): Total: 0.319 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=195 ms
+		Asset DB Callback time: managed=110 ms, native=12 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4060
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.003ms
+	ApplyChangesToAssetFolders: 0.788ms
+	Scan: 16.682ms
+	OnSourceAssetsModified: 0.237ms
+	GetAllGuidsForCategorization: 4.291ms
+	CategorizeAssets: 64.227ms
+	ImportOutOfDateAssets: 48.977ms (6.533ms without children)
+		ImportManagerImport: 21.285ms (6.980ms without children)
+			ImportInProcess: 14.195ms
+			UpdateCategorizedAssets: 0.110ms
+		ReloadNativeAssets: 0.310ms
+		UnloadImportedAssets: 0.913ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 8.236ms
+		InitializingProgressBar: 0.026ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.004ms
+		OnDemandSchedulerStart: 11.669ms
+	PostProcessAllAssets: 242.927ms
+	Hotreload: 10.082ms
+	GatherAllCurrentPrimaryArtifactRevisions: 6.096ms
+	UnloadStreamsBegin: 1.178ms
+	PersistCurrentRevisions: 2.992ms
+	UnloadStreamsEnd: 0.602ms
+	Untracked: -80.280ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/LightBoot.asset using Guid(ae968736b9554844b866effcbac89a6b) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'c8819a05922c1e1e944fbf91c48e1e38') in 0.002817 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'fea462fbf828c264deff4ddcfef720ce') in 0.003368 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Common_Relic.asset using Guid(82ab1c4174c6d1645a64027f001a882e) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '2d88d42f3af9912a2ae076c32b9a21ff') in 0.004842 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 19개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 10.22 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=628c1ae2f489e3b4c92b6be1e60fc73e): Total: 0.352 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=207 ms
+		Asset DB Callback time: managed=130 ms, native=13 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4061
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.493ms
+	Scan: 15.630ms
+	OnSourceAssetsModified: 0.258ms
+	GetAllGuidsForCategorization: 3.061ms
+	CategorizeAssets: 67.023ms
+	ImportOutOfDateAssets: 57.572ms (6.253ms without children)
+		ImportManagerImport: 22.812ms (8.767ms without children)
+			ImportInProcess: 13.894ms
+			UpdateCategorizedAssets: 0.150ms
+		ReloadNativeAssets: 0.475ms
+		UnloadImportedAssets: 0.907ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 12.676ms
+		InitializingProgressBar: 0.029ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.005ms
+		OnDemandSchedulerStart: 14.413ms
+	PostProcessAllAssets: 278.452ms
+	Hotreload: 11.002ms
+	GatherAllCurrentPrimaryArtifactRevisions: 6.808ms
+	UnloadStreamsBegin: 1.108ms
+	PersistCurrentRevisions: 3.853ms
+	UnloadStreamsEnd: 0.767ms
+	Untracked: -94.142ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/RustyDagger.asset using Guid(5c3fa2f6691d6944eadbf1b5936a9318) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'c3c5b4dbc0c662cd69c7978c5ee2bf47') in 0.002844 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '6437ac28172a8114d8d1c37faad82db7') in 0.003091 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Common_Relic.asset using Guid(82ab1c4174c6d1645a64027f001a882e) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'a21e9c6b55fd6b5f7d0a20f7b06fdd53') in 0.003547 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 20개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 9.61 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=fc0d77e6e17fd2941ae3a0f3ecc51fbe): Total: 0.342 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=205 ms
+		Asset DB Callback time: managed=122 ms, native=13 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4062
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.487ms
+	Scan: 17.964ms
+	OnSourceAssetsModified: 0.224ms
+	GetAllGuidsForCategorization: 3.143ms
+	CategorizeAssets: 64.085ms
+	ImportOutOfDateAssets: 50.904ms (6.040ms without children)
+		ImportManagerImport: 21.950ms (8.444ms without children)
+			ImportInProcess: 13.369ms
+			UpdateCategorizedAssets: 0.137ms
+		ReloadNativeAssets: 0.327ms
+		UnloadImportedAssets: 1.155ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 10.246ms
+		InitializingProgressBar: 0.035ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.004ms
+		OnDemandSchedulerStart: 11.146ms
+	PostProcessAllAssets: 265.447ms
+	Hotreload: 10.315ms
+	GatherAllCurrentPrimaryArtifactRevisions: 5.734ms
+	UnloadStreamsBegin: 1.055ms
+	PersistCurrentRevisions: 4.473ms
+	UnloadStreamsEnd: 0.663ms
+	Untracked: -82.393ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/TrainingBow.asset using Guid(175ccbf4fb126894e84989e5cbca0446) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'b459bd925ab4a3497f6c96932665ea39') in 0.002688 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '02c71aeedffcf4d7370a646d6b0fb8d7') in 0.003851 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Common_Relic.asset using Guid(82ab1c4174c6d1645a64027f001a882e) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '32fada4a4c4caac8b76efde0100147fa') in 0.004249 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 21개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 8.53 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=20a1673f5b0dcea49abe3b33693483a1): Total: 0.441 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=268 ms
+		Asset DB Callback time: managed=159 ms, native=11 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4063
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.433ms
+	Scan: 16.858ms
+	OnSourceAssetsModified: 0.222ms
+	GetAllGuidsForCategorization: 4.026ms
+	CategorizeAssets: 112.957ms
+	ImportOutOfDateAssets: 58.221ms (6.115ms without children)
+		ImportManagerImport: 21.573ms (7.965ms without children)
+			ImportInProcess: 13.488ms
+			UpdateCategorizedAssets: 0.120ms
+		ReloadNativeAssets: 0.526ms
+		UnloadImportedAssets: 3.320ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 12.301ms
+		InitializingProgressBar: 0.037ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.004ms
+		OnDemandSchedulerStart: 14.345ms
+	PostProcessAllAssets: 315.329ms
+	Hotreload: 9.147ms
+	GatherAllCurrentPrimaryArtifactRevisions: 4.750ms
+	UnloadStreamsBegin: 0.820ms
+	PersistCurrentRevisions: 2.948ms
+	UnloadStreamsEnd: 1.881ms
+	Untracked: -86.661ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/SharpenedFlint.asset using Guid(ae73a6b6ff3097a4cab7c4feba426685) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '696a891ae5ab1e1cc83ad6ba7e472e54') in 0.003482 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '251b4baf3d98113a6a50456fbf490293') in 0.002737 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Uncommon_Relic.asset using Guid(006bfc2c80ef94246a2b4465cd73fe83) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '6eadbb96ae02cdccc847ac00fa70e5af') in 0.004023 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 7개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 10.02 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=01bc7f1c95ab0154d878c608ffc3b012): Total: 0.345 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=205 ms
+		Asset DB Callback time: managed=126 ms, native=12 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4064
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.006ms
+	ApplyChangesToAssetFolders: 0.599ms
+	Scan: 16.588ms
+	OnSourceAssetsModified: 0.200ms
+	GetAllGuidsForCategorization: 3.853ms
+	CategorizeAssets: 67.353ms
+	ImportOutOfDateAssets: 51.099ms (7.349ms without children)
+		ImportManagerImport: 20.464ms (6.882ms without children)
+			ImportInProcess: 13.464ms
+			UpdateCategorizedAssets: 0.118ms
+		ReloadNativeAssets: 0.338ms
+		UnloadImportedAssets: 1.219ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 10.110ms
+		InitializingProgressBar: 0.039ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.004ms
+		OnDemandSchedulerStart: 11.575ms
+	PostProcessAllAssets: 273.370ms
+	Hotreload: 10.917ms
+	GatherAllCurrentPrimaryArtifactRevisions: 5.310ms
+	UnloadStreamsBegin: 1.195ms
+	PersistCurrentRevisions: 3.126ms
+	UnloadStreamsEnd: 0.904ms
+	Untracked: -89.782ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/PolishedScope.asset using Guid(2cc990630963ed0479ac5dc42c63de08) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'e29e8d39d8ac33854ee6e0f7bb3d9554') in 0.004151 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '4cdf67666b7bb51f3f943f0ac32bc28f') in 0.003939 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Uncommon_Relic.asset using Guid(006bfc2c80ef94246a2b4465cd73fe83) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'da0abafaaf39616fc13f4730da1a3021') in 0.002876 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 8개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 11.67 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=17926351e769f9048aefcf2bda97ba94): Total: 0.357 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=212 ms
+		Asset DB Callback time: managed=129 ms, native=14 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4065
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.483ms
+	Scan: 13.757ms
+	OnSourceAssetsModified: 0.218ms
+	GetAllGuidsForCategorization: 5.023ms
+	CategorizeAssets: 71.938ms
+	ImportOutOfDateAssets: 52.531ms (4.344ms without children)
+		ImportManagerImport: 20.916ms (7.282ms without children)
+			ImportInProcess: 13.553ms
+			UpdateCategorizedAssets: 0.081ms
+		ReloadNativeAssets: 0.366ms
+		UnloadImportedAssets: 1.381ms
+		ReloadImportedAssets: 0.000ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 13.371ms
+		InitializingProgressBar: 0.023ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.003ms
+		OnDemandSchedulerStart: 12.126ms
+	PostProcessAllAssets: 272.807ms
+	Hotreload: 12.348ms
+	GatherAllCurrentPrimaryArtifactRevisions: 6.039ms
+	UnloadStreamsBegin: 0.950ms
+	PersistCurrentRevisions: 4.903ms
+	UnloadStreamsEnd: 0.799ms
+	Untracked: -84.790ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/HeavyGauntlet.asset using Guid(25efcac3ec405c0498d93c7f8d01f2d9) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'c0ee74afa20e76cc32d1daccb93a4ac8') in 0.003944 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '5d8130c4893fabc68c91b041d17c3303') in 0.003497 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Uncommon_Relic.asset using Guid(006bfc2c80ef94246a2b4465cd73fe83) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '4a66b37e1a7d70bae5e6082309b96d9b') in 0.012807 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 9개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 7.95 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=7d5ca87007f900443bd32f3657141619): Total: 0.368 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=218 ms
+		Asset DB Callback time: managed=136 ms, native=11 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4066
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.003ms
+	ApplyChangesToAssetFolders: 0.531ms
+	Scan: 21.151ms
+	OnSourceAssetsModified: 0.168ms
+	GetAllGuidsForCategorization: 2.398ms
+	CategorizeAssets: 67.719ms
+	ImportOutOfDateAssets: 59.535ms (5.055ms without children)
+		ImportManagerImport: 30.201ms (6.727ms without children)
+			ImportInProcess: 23.348ms
+			UpdateCategorizedAssets: 0.126ms
+		ReloadNativeAssets: 0.434ms
+		UnloadImportedAssets: 1.259ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 11.169ms
+		InitializingProgressBar: 0.041ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.004ms
+		OnDemandSchedulerStart: 11.371ms
+	PostProcessAllAssets: 289.644ms
+	Hotreload: 8.957ms
+	GatherAllCurrentPrimaryArtifactRevisions: 6.390ms
+	UnloadStreamsBegin: 1.051ms
+	PersistCurrentRevisions: 4.007ms
+	UnloadStreamsEnd: 1.084ms
+	Untracked: -95.108ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/FeatherCharm.asset using Guid(2a070faa322125d4ab7dfd5f113c19c1) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '2293297f9dd5b699c4a5a9e1a6a6c99c') in 0.003138 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'e5215adc04aa1e35b15441197a5748ad') in 0.002649 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Uncommon_Relic.asset using Guid(006bfc2c80ef94246a2b4465cd73fe83) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'fa540ec49673e26f4005c55245202a09') in 0.003242 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 10개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 8.50 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=ac086ba33b6dbbf479d423e5a4a1f986): Total: 0.355 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=211 ms
+		Asset DB Callback time: managed=132 ms, native=10 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4067
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.804ms
+	Scan: 15.627ms
+	OnSourceAssetsModified: 0.200ms
+	GetAllGuidsForCategorization: 3.633ms
+	CategorizeAssets: 74.561ms
+	ImportOutOfDateAssets: 53.471ms (6.247ms without children)
+		ImportManagerImport: 20.774ms (8.859ms without children)
+			ImportInProcess: 11.727ms
+			UpdateCategorizedAssets: 0.189ms
+		ReloadNativeAssets: 0.342ms
+		UnloadImportedAssets: 0.947ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 11.729ms
+		InitializingProgressBar: 0.037ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.006ms
+		OnDemandSchedulerStart: 13.389ms
+	PostProcessAllAssets: 284.439ms
+	Hotreload: 9.339ms
+	GatherAllCurrentPrimaryArtifactRevisions: 3.476ms
+	UnloadStreamsBegin: 1.204ms
+	PersistCurrentRevisions: 3.293ms
+	UnloadStreamsEnd: 0.961ms
+	Untracked: -96.362ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/VampireFang.asset using Guid(bd349f7e4e31f7c4796c069156eaddd9) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '3dee17c316e8d604fcf3ae2a00c3c70d') in 0.004083 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '8b859c354e81643c4bc6540be6f83039') in 0.004108 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Rare_Relic.asset using Guid(2013c983454721644ba2b13d35aca8f4) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '6f80ec2956b2ef4d05b25da5821ef2e1') in 0.003830 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 21개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 10.68 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=5818d1e7c1751144781374b37b506740): Total: 0.353 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=198 ms
+		Asset DB Callback time: managed=139 ms, native=14 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4068
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.424ms
+	Scan: 16.783ms
+	OnSourceAssetsModified: 0.201ms
+	GetAllGuidsForCategorization: 3.191ms
+	CategorizeAssets: 59.573ms
+	ImportOutOfDateAssets: 58.267ms (5.949ms without children)
+		ImportManagerImport: 21.527ms (6.305ms without children)
+			ImportInProcess: 15.124ms
+			UpdateCategorizedAssets: 0.098ms
+		ReloadNativeAssets: 0.507ms
+		UnloadImportedAssets: 1.446ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 15.729ms
+		InitializingProgressBar: 0.029ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.005ms
+		OnDemandSchedulerStart: 13.074ms
+	PostProcessAllAssets: 276.456ms
+	Hotreload: 11.579ms
+	GatherAllCurrentPrimaryArtifactRevisions: 3.773ms
+	UnloadStreamsBegin: 0.668ms
+	PersistCurrentRevisions: 2.881ms
+	UnloadStreamsEnd: 0.748ms
+	Untracked: -81.257ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/HeavyMace.asset using Guid(1394d2f3e007d46489e2ad48936e2e6f) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'e9f363ee294d161e148f3ad1a441b557') in 0.004919 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '5b3adedd811276c19465b50c8b92302c') in 0.005086 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Rare_Relic.asset using Guid(2013c983454721644ba2b13d35aca8f4) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '6d46c5c995f0c4a324bfac849491eaa3') in 0.005027 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 22개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 10.08 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=354cf95c01ce40345a7ad6b1d0b0e791): Total: 0.360 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=205 ms
+		Asset DB Callback time: managed=139 ms, native=13 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4069
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.003ms
+	ApplyChangesToAssetFolders: 0.532ms
+	Scan: 18.744ms
+	OnSourceAssetsModified: 0.162ms
+	GetAllGuidsForCategorization: 3.120ms
+	CategorizeAssets: 61.534ms
+	ImportOutOfDateAssets: 54.049ms (6.504ms without children)
+		ImportManagerImport: 25.314ms (7.766ms without children)
+			ImportInProcess: 17.428ms
+			UpdateCategorizedAssets: 0.120ms
+		ReloadNativeAssets: 0.323ms
+		UnloadImportedAssets: 0.986ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 10.591ms
+		InitializingProgressBar: 0.026ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.006ms
+		OnDemandSchedulerStart: 10.298ms
+	PostProcessAllAssets: 283.231ms
+	Hotreload: 10.883ms
+	GatherAllCurrentPrimaryArtifactRevisions: 9.680ms
+	UnloadStreamsBegin: 1.097ms
+	PersistCurrentRevisions: 3.360ms
+	UnloadStreamsEnd: 0.550ms
+	Untracked: -87.233ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/WindQuiver.asset using Guid(78aab589b131eeb45ac79139414f5b5c) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'b548e8db256b46a2625e2112d155e970') in 0.004399 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'f9e66d6ef1a1ef1da369754c6cece11b') in 0.004204 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Rare_Relic.asset using Guid(2013c983454721644ba2b13d35aca8f4) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'f988b327fa511c9d01c49cc68903d2fe') in 0.003690 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 23개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 10.01 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=a5d43b1182c085d459f3f1a6c9220b57): Total: 0.402 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=219 ms
+		Asset DB Callback time: managed=168 ms, native=12 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4070
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.003ms
+	ApplyChangesToAssetFolders: 0.559ms
+	Scan: 14.261ms
+	OnSourceAssetsModified: 0.146ms
+	GetAllGuidsForCategorization: 2.709ms
+	CategorizeAssets: 74.420ms
+	ImportOutOfDateAssets: 59.692ms (6.141ms without children)
+		ImportManagerImport: 25.509ms (10.101ms without children)
+			ImportInProcess: 15.242ms
+			UpdateCategorizedAssets: 0.166ms
+		ReloadNativeAssets: 0.358ms
+		UnloadImportedAssets: 1.044ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 12.199ms
+		InitializingProgressBar: 0.030ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.006ms
+		OnDemandSchedulerStart: 14.403ms
+	PostProcessAllAssets: 321.949ms
+	Hotreload: 11.633ms
+	GatherAllCurrentPrimaryArtifactRevisions: 6.364ms
+	UnloadStreamsBegin: 1.161ms
+	PersistCurrentRevisions: 4.668ms
+	UnloadStreamsEnd: 1.133ms
+	Untracked: -96.647ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/WarriorsCrest.asset using Guid(ab744c06031e1694dba8c0ae1d660cae) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'bec13e45daa76912f9a37f06e8a93029') in 0.004039 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'c412ddf1f25c69124ef9a8465940b885') in 0.003742 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Rare_Relic.asset using Guid(2013c983454721644ba2b13d35aca8f4) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'cd7fba9e8e76eeeb77e96a27bb93e628') in 0.002939 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 24개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 10.01 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=999c6b7d37bb71a49bfeb3ac00e992ef): Total: 0.421 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=253 ms
+		Asset DB Callback time: managed=153 ms, native=14 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4071
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.455ms
+	Scan: 36.772ms
+	OnSourceAssetsModified: 0.205ms
+	GetAllGuidsForCategorization: 2.649ms
+	CategorizeAssets: 82.030ms
+	ImportOutOfDateAssets: 64.801ms (8.107ms without children)
+		ImportManagerImport: 23.317ms (8.552ms without children)
+			ImportInProcess: 14.642ms
+			UpdateCategorizedAssets: 0.122ms
+		ReloadNativeAssets: 0.377ms
+		UnloadImportedAssets: 1.254ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 15.892ms
+		InitializingProgressBar: 0.026ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.005ms
+		OnDemandSchedulerStart: 15.822ms
+	PostProcessAllAssets: 296.613ms
+	Hotreload: 11.653ms
+	GatherAllCurrentPrimaryArtifactRevisions: 5.251ms
+	UnloadStreamsBegin: 0.695ms
+	PersistCurrentRevisions: 3.165ms
+	UnloadStreamsEnd: 0.948ms
+	Untracked: -84.160ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/MagicQuiver.asset using Guid(c17c5a03e1360d4429a6c94c7b528e75) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '21ab980500248e2e38b952c59dd9992d') in 0.004233 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '7bd848cc90ca7db3e34b31eb79ede293') in 0.004313 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Epic_Relic.asset using Guid(5d081cc61dfd1b049b91bd7f7575e656) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'a5097d9777569c15f38c13fc0fef7fef') in 0.004404 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 17개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 9.76 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=80d59aa22ea093f42bc52e217381efb2): Total: 0.409 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=236 ms
+		Asset DB Callback time: managed=160 ms, native=12 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4072
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.363ms
+	Scan: 19.841ms
+	OnSourceAssetsModified: 0.209ms
+	GetAllGuidsForCategorization: 2.460ms
+	CategorizeAssets: 71.433ms
+	ImportOutOfDateAssets: 69.544ms (5.090ms without children)
+		ImportManagerImport: 23.763ms (8.132ms without children)
+			ImportInProcess: 15.500ms
+			UpdateCategorizedAssets: 0.130ms
+		ReloadNativeAssets: 0.438ms
+		UnloadImportedAssets: 0.918ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 13.377ms
+		InitializingProgressBar: 0.061ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.004ms
+		OnDemandSchedulerStart: 25.893ms
+	PostProcessAllAssets: 330.409ms
+	Hotreload: 10.691ms
+	GatherAllCurrentPrimaryArtifactRevisions: 3.284ms
+	UnloadStreamsBegin: 0.806ms
+	PersistCurrentRevisions: 4.908ms
+	UnloadStreamsEnd: 2.000ms
+	Untracked: -107.387ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/AlchemistsCatalyst.asset using Guid(1618a435bcf09aa408e50d0673378a70) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'd28443e95f11d8ad22b5645bdd605a5d') in 0.004086 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'd9e2698b2f9664167c971c4de88f1115') in 0.004337 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Epic_Relic.asset using Guid(5d081cc61dfd1b049b91bd7f7575e656) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '4e2907c7270ee2ac5add7b978f66e7f5') in 0.003460 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 18개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 8.03 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=dea3cc556437544469cf49067f838776): Total: 0.371 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=222 ms
+		Asset DB Callback time: managed=137 ms, native=10 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4073
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.003ms
+	ApplyChangesToAssetFolders: 0.753ms
+	Scan: 20.399ms
+	OnSourceAssetsModified: 0.219ms
+	GetAllGuidsForCategorization: 3.005ms
+	CategorizeAssets: 73.703ms
+	ImportOutOfDateAssets: 58.819ms (4.858ms without children)
+		ImportManagerImport: 20.872ms (6.227ms without children)
+			ImportInProcess: 14.549ms
+			UpdateCategorizedAssets: 0.096ms
+		ReloadNativeAssets: 0.353ms
+		UnloadImportedAssets: 1.636ms
+		ReloadImportedAssets: 0.000ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 13.647ms
+		InitializingProgressBar: 0.023ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.004ms
+		OnDemandSchedulerStart: 17.425ms
+	PostProcessAllAssets: 293.952ms
+	Hotreload: 8.599ms
+	GatherAllCurrentPrimaryArtifactRevisions: 4.892ms
+	UnloadStreamsBegin: 0.875ms
+	PersistCurrentRevisions: 4.894ms
+	UnloadStreamsEnd: 0.937ms
+	Untracked: -100.374ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/HerosElixir.asset using Guid(c4f9e88e3e39df74d980ff30efd7a512) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '30ddafdfe752dee2d810859cb9f1458d') in 0.002657 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'fec2a2a81e0fd7d90c96a22559aa7aa2') in 0.002586 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Epic_Relic.asset using Guid(5d081cc61dfd1b049b91bd7f7575e656) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '724ae5b96bc864c43fd7d91b99c43ff1') in 0.003416 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 19개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 8.39 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=61a80c13791fde54984f8405b7025b58): Total: 0.326 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=199 ms
+		Asset DB Callback time: managed=115 ms, native=11 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4074
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.387ms
+	Scan: 16.129ms
+	OnSourceAssetsModified: 0.213ms
+	GetAllGuidsForCategorization: 3.071ms
+	CategorizeAssets: 64.231ms
+	ImportOutOfDateAssets: 50.992ms (5.513ms without children)
+		ImportManagerImport: 18.353ms (6.864ms without children)
+			ImportInProcess: 11.409ms
+			UpdateCategorizedAssets: 0.080ms
+		ReloadNativeAssets: 0.416ms
+		UnloadImportedAssets: 1.106ms
+		ReloadImportedAssets: 0.000ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 12.975ms
+		InitializingProgressBar: 0.030ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.004ms
+		OnDemandSchedulerStart: 12.595ms
+	PostProcessAllAssets: 251.169ms
+	Hotreload: 8.980ms
+	GatherAllCurrentPrimaryArtifactRevisions: 4.290ms
+	UnloadStreamsBegin: 0.696ms
+	PersistCurrentRevisions: 6.779ms
+	UnloadStreamsEnd: 0.871ms
+	Untracked: -81.881ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/PandorasBow.asset using Guid(92a3dde5f89e43742ab56395677a1003) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '5bc9330438b75f4d7159c6675ea6eb00') in 0.002458 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'f42ad44218eb7b6899152aab31c9ad9f') in 0.004761 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Legendary_Relic.asset using Guid(8e012b5cf26a66b43ab973576b3df806) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'd25285d9dd5cba57af66db916c20faf0') in 0.003866 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 15개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 11.02 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=06423a266a14bde4aa4c244258174959): Total: 0.340 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=205 ms
+		Asset DB Callback time: managed=119 ms, native=14 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4075
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.538ms
+	Scan: 16.562ms
+	OnSourceAssetsModified: 0.194ms
+	GetAllGuidsForCategorization: 3.264ms
+	CategorizeAssets: 63.843ms
+	ImportOutOfDateAssets: 54.864ms (8.163ms without children)
+		ImportManagerImport: 22.954ms (8.782ms without children)
+			ImportInProcess: 14.021ms
+			UpdateCategorizedAssets: 0.152ms
+		ReloadNativeAssets: 0.783ms
+		UnloadImportedAssets: 1.179ms
+		ReloadImportedAssets: 0.000ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 9.409ms
+		InitializingProgressBar: 0.038ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.005ms
+		OnDemandSchedulerStart: 12.331ms
+	PostProcessAllAssets: 263.692ms
+	Hotreload: 12.369ms
+	GatherAllCurrentPrimaryArtifactRevisions: 4.169ms
+	UnloadStreamsBegin: 0.936ms
+	PersistCurrentRevisions: 4.305ms
+	UnloadStreamsEnd: 0.905ms
+	Untracked: -86.098ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/SimpleStats/BloodlustRing.asset using Guid(c589af25c5fc73643aefd23481b151b8) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'ac7ec23ecb4be7ed3b2ebfbb63d7967a') in 0.006326 seconds
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '98bf060cab9d16511bcded3c65cbf539') in 0.003779 seconds
+[RelicManager] Database automatically updated via AssetPostprocessor.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1117)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1117)
+
+Start importing Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Legendary_Relic.asset using Guid(8e012b5cf26a66b43ab973576b3df806) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: 'b8e1f9539ded8b1bde05fd26130bd107') in 0.003948 seconds
+[RelicGachaSync] 유물 가챠 풀 동기화 완료: 총 16개 유물 등록.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicGachaSync:SyncRelicsToGachaPools (bool) (at Assets/Editor/RelicGachaSync.cs:134)
+Nytherion.Editor.RelicAssetPostprocessor:OnPostprocessAllAssets (string[],string[],string[],string[]) (at Assets/Editor/RelicManagerWindow.cs:1121)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.AssetPostprocessingInternal:InvokeMethod (System.Reflection.MethodInfo,object[])
+UnityEditor.AssetPostprocessingInternal:PostprocessAllAssets (string[],string[],string[],string[],string[],bool)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1063)
+
+(Filename: Assets/Editor/RelicGachaSync.cs Line: 134)
+
+Refreshing native plugins compatible for Editor in 10.89 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=caa2cd3bb926b0f4db268e1eb188ab20): Total: 0.349 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=3 (actual=3, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=218 ms
+		Asset DB Callback time: managed=116 ms, native=13 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=7950, non-scripts=4076
+		Asset File Changes: new=1, changed=3, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeBeforeRefreshCallbacks: 0.002ms
+	ApplyChangesToAssetFolders: 0.492ms
+	Scan: 16.692ms
+	OnSourceAssetsModified: 0.174ms
+	GetAllGuidsForCategorization: 2.128ms
+	CategorizeAssets: 68.037ms
+	ImportOutOfDateAssets: 61.792ms (8.377ms without children)
+		ImportManagerImport: 24.383ms (7.295ms without children)
+			ImportInProcess: 16.853ms
+			UpdateCategorizedAssets: 0.235ms
+		ReloadNativeAssets: 0.615ms
+		UnloadImportedAssets: 1.168ms
+		ReloadImportedAssets: 0.001ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 14.646ms
+		InitializingProgressBar: 0.032ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.005ms
+		OnDemandSchedulerStart: 12.566ms
+	PostProcessAllAssets: 263.688ms
+	Hotreload: 12.074ms
+	GatherAllCurrentPrimaryArtifactRevisions: 6.649ms
+	UnloadStreamsBegin: 0.737ms
+	PersistCurrentRevisions: 3.430ms
+	UnloadStreamsEnd: 0.871ms
+	Untracked: -88.039ms
+Start importing Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset using Guid(a65bb19fc4e3962499d93dadf5a1d350) Importer(-1,00000000000000000000000000000000) [PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+ -> (artifact id: '98bf060cab9d16511bcded3c65cbf539') in 0.002521 seconds
+Refreshing native plugins compatible for Editor in 11.48 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=36b141960202c9b4bb3d9705c876206e): Total: 0.104 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[RelicManager] Batch import success: 18 relics created, 0 relics updated.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Nytherion.Editor.RelicManagerWindow:ImportRelicsFromDefaultCSVPath () (at Assets/Editor/RelicManagerWindow.cs:1079)
+
+(Filename: Assets/Editor/RelicManagerWindow.cs Line: 1079)
+
+Batchmode quit successfully invoked - shutting down!
+[PhysX] Initialized MultithreadedTaskDispatcher with 12 workers.
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-kyung-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-kyung channel disconnected successfully.
+Cleanup mono
+abort_threads: Failed aborting id: 000000000000BDD4, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000000DC8, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 000000000000BDD4, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000000DC8, mono_thread_manage will ignore it
+
+debugger-agent: Unable to listen on 6076
+[Performance] WinEditorMain                                                                                                  :        1 samples, Peak.  1.24 s (1.0x), Avg.  1.24 s, Total. 1.236 s (4.1%)
+[Performance] WinEditorMain.ConfigureCrashHandler                                                                            :        1 samples, Peak.  31.3 us (1.0x), Avg.  31.3 us, Total. 31.30 us (0.0%)
+[Performance] WinEditorMain.CurlRequestInitialize                                                                            :        1 samples, Peak.  2.92 ms (1.0x), Avg.  2.92 ms, Total. 2.922 ms (0.0%)
+[Performance] WinEditorMain.SetupLogFile                                                                                     :        1 samples, Peak.   666 us (1.0x), Avg.   666 us, Total. 666.2 us (0.0%)
+[Performance] WinEditorMain.RunNativeTestsIfRequiredAndExit                                                                  :        1 samples, Peak.   200 ns (1.0x), Avg.   200 ns, Total. 200.0 ns (0.0%)
+[Performance] WinEditorMain.Licensing                                                                                        :        1 samples, Peak.  1.15 s (1.0x), Avg.  1.15 s, Total. 1.154 s (3.9%)
+[Performance] WinEditorMain.InitializeCrashHandler                                                                           :        1 samples, Peak.  15.4 ms (1.0x), Avg.  15.4 ms, Total. 15.42 ms (0.1%)
+[Performance] WinEditorMain.CreateApplication                                                                                :        1 samples, Peak.  55.0 ms (1.0x), Avg.  55.0 ms, Total. 55.04 ms (0.2%)
+[Performance] Application.InitializeProject                                                                                  :        1 samples, Peak.  20.4 s (1.0x), Avg.  20.4 s, Total. 20.44 s (68.2%)
+[Performance] Application.PackageManager.StartServer                                                                         :        1 samples, Peak.  5.99 ms (1.0x), Avg.  5.99 ms, Total. 5.988 ms (0.0%)
+[Performance] Application.AcquireProjectLock                                                                                 :        1 samples, Peak.  15.5 ms (1.0x), Avg.  15.5 ms, Total. 15.49 ms (0.1%)
+[Performance] Application.InitializeEngineNoGraphics                                                                         :        1 samples, Peak.  90.1 ms (1.0x), Avg.  90.1 ms, Total. 90.11 ms (0.3%)
+[Performance] Application.PackageManager.Initialize                                                                          :        1 samples, Peak.   675 ms (1.0x), Avg.   675 ms, Total. 674.8 ms (2.3%)
+[Performance] Connecting to Package Manager                                                                                  :       68 samples, Peak.   149 us (31.4x), Avg.  4.75 us, Total. 322.9 us (0.0%)
+[Performance] Application.EngineGraphics.Initialize                                                                          :        1 samples, Peak.   479 ms (1.0x), Avg.   479 ms, Total. 479.1 ms (1.6%)
+[Performance] Application.GI.Initialize                                                                                      :        1 samples, Peak.  7.27 ms (1.0x), Avg.  7.27 ms, Total. 7.269 ms (0.0%)
+[Performance] Application.LoadAllDefaultResourcesFromEditor                                                                  :        1 samples, Peak.  4.29 ms (1.0x), Avg.  4.29 ms, Total. 4.288 ms (0.0%)
+[Performance] Application.LoadMonoAssemblies                                                                                 :        1 samples, Peak.   939 ms (1.0x), Avg.   939 ms, Total. 939.1 ms (3.1%)
+[Performance] RestoreManagedReferences                                                                                       :        2 samples, Peak.   139 ms (2.0x), Avg.  69.6 ms, Total. 139.3 ms (0.5%)
+[Performance] InitializeOnLoad DrivenRectTransformUndo                                                                       :        2 samples, Peak.   478 us (1.0x), Avg.   468 us, Total. 936.5 us (0.0%)
+[Performance] InitializeOnLoad SceneSearch                                                                                   :        2 samples, Peak.   145 us (1.1x), Avg.   131 us, Total. 261.8 us (0.0%)
+[Performance] InitializeOnLoad CloudBuild                                                                                    :        2 samples, Peak.  5.90 us (1.2x), Avg.  5.00 us, Total. 10.000 us (0.0%)
+[Performance] InitializeOnLoad NativeFormatImporterUtility                                                                   :        2 samples, Peak.  4.58 ms (1.2x), Avg.  3.79 ms, Total. 7.590 ms (0.0%)
+[Performance] InitializeOnLoad SearchService                                                                                 :        2 samples, Peak.   247 us (1.3x), Avg.   186 us, Total. 371.4 us (0.0%)
+[Performance] InitializeOnLoad SettingsService                                                                               :        2 samples, Peak.  22.0 us (1.5x), Avg.  14.7 us, Total. 29.50 us (0.0%)
+[Performance] InitializeOnLoad WindowLayout                                                                                  :        2 samples, Peak.  1.04 ms (1.0x), Avg.  1.01 ms, Total. 2.020 ms (0.0%)
+[Performance] InitializeOnLoad AssetStoreContext                                                                             :        2 samples, Peak.  39.4 ms (1.0x), Avg.  39.2 ms, Total. 78.47 ms (0.3%)
+[Performance] InitializeOnLoad PoolManager                                                                                   :        2 samples, Peak.  1.52 ms (1.4x), Avg.  1.08 ms, Total. 2.157 ms (0.0%)
+[Performance] InitializeOnLoad MixerEffectDefinitionReloader                                                                 :        2 samples, Peak.  2.76 ms (1.1x), Avg.  2.47 ms, Total. 4.934 ms (0.0%)
+[Performance] InitializeOnLoad ProjectSearch                                                                                 :        2 samples, Peak.   190 us (1.3x), Avg.   143 us, Total. 286.3 us (0.0%)
+[Performance] InitializeOnLoad UISystemProfilerRenderService                                                                 :        2 samples, Peak.  21.1 us (1.2x), Avg.  17.1 us, Total. 34.20 us (0.0%)
+[Performance] InitializeOnLoad EditMode                                                                                      :        2 samples, Peak.  1.18 ms (1.5x), Avg.   815 us, Total. 1.630 ms (0.0%)
+[Performance] InitializeOnLoad UnityConnect                                                                                  :        2 samples, Peak.  75.0 us (1.1x), Avg.  69.2 us, Total. 138.4 us (0.0%)
+[Performance] InitializeOnLoad ManagedDebugger                                                                               :        2 samples, Peak.   780 us (1.5x), Avg.   532 us, Total. 1.064 ms (0.0%)
+[Performance] InitializeOnLoad ShortcutIntegration                                                                           :        2 samples, Peak.  75.5 us (1.0x), Avg.  73.1 us, Total. 146.2 us (0.0%)
+[Performance] InitializeOnLoad AddComponentWindow                                                                            :        2 samples, Peak.   152 us (1.1x), Avg.   133 us, Total. 266.0 us (0.0%)
+[Performance] InitializeOnLoad ManagedDebuggerWindow                                                                         :        2 samples, Peak.   160 us (1.1x), Avg.   150 us, Total. 299.7 us (0.0%)
+[Performance] InitializeOnLoad CacheServerWindow                                                                             :        2 samples, Peak.  19.7 us (1.5x), Avg.  13.5 us, Total. 27.10 us (0.0%)
+[Performance] InitializeOnLoad PlayModeDownload                                                                              :        2 samples, Peak.  8.94 ms (1.9x), Avg.  4.61 ms, Total. 9.227 ms (0.0%)
+[Performance] InitializeOnLoad MenuItems                                                                                     :        2 samples, Peak.   150 us (1.2x), Avg.   125 us, Total. 250.3 us (0.0%)
+[Performance] InitializeOnLoad PrefabInstanceChangedListener                                                                 :        2 samples, Peak.   233 us (1.2x), Avg.   189 us, Total. 377.4 us (0.0%)
+[Performance] InitializeOnLoad ObjectSelectorSearch                                                                          :        2 samples, Peak.   144 us (1.6x), Avg.  92.4 us, Total. 184.9 us (0.0%)
+[Performance] InitializeOnLoad EditorMonitor                                                                                 :        2 samples, Peak.  1.67 ms (1.6x), Avg.  1.06 ms, Total. 2.128 ms (0.0%)
+[Performance] InitializeOnLoad RetainedMode                                                                                  :        2 samples, Peak.  5.08 ms (1.1x), Avg.  4.55 ms, Total. 9.095 ms (0.0%)
+[Performance] InitializeOnLoad EditorShaderLoader                                                                            :        2 samples, Peak.   729 us (1.0x), Avg.   700 us, Total. 1.401 ms (0.0%)
+[Performance] InitializeOnLoad EditorDelegateRegistration                                                                    :        2 samples, Peak.   633 us (1.2x), Avg.   538 us, Total. 1.077 ms (0.0%)
+[Performance] InitializeOnLoad UIDocumentHierarchyWatcher                                                                    :        2 samples, Peak.  89.4 us (1.0x), Avg.  87.2 us, Total. 174.4 us (0.0%)
+[Performance] InitializeOnLoad LiveReloadTrackerCreator                                                                      :        2 samples, Peak.   215 us (1.2x), Avg.   177 us, Total. 354.0 us (0.0%)
+[Performance] InitializeOnLoad UxmlObjectEditorFactories                                                                     :        2 samples, Peak.  1.09 ms (1.4x), Avg.   755 us, Total. 1.509 ms (0.0%)
+[Performance] InitializeOnLoad UXMLEditorFactories                                                                           :        2 samples, Peak.   103 ms (1.1x), Avg.  95.8 ms, Total. 191.7 ms (0.6%)
+[Performance] InitializeOnLoad PurchasingService                                                                             :        2 samples, Peak.  9.96 ms (1.1x), Avg.  9.33 ms, Total. 18.66 ms (0.1%)
+[Performance] InitializeOnLoad CloudBuildPoller                                                                              :        2 samples, Peak.   147 us (1.1x), Avg.   130 us, Total. 259.9 us (0.0%)
+[Performance] InitializeOnLoad EditorGameServicesAnalytics                                                                   :        2 samples, Peak.  4.71 ms (1.8x), Avg.  2.60 ms, Total. 5.203 ms (0.0%)
+[Performance] InitializeOnLoad AnalyticsService                                                                              :        2 samples, Peak.   254 us (1.1x), Avg.   233 us, Total. 465.4 us (0.0%)
+[Performance] InitializeOnLoad BuildService                                                                                  :        2 samples, Peak.   353 us (1.3x), Avg.   271 us, Total. 542.9 us (0.0%)
+[Performance] InitializeOnLoad AdsService                                                                                    :        2 samples, Peak.   699 us (1.2x), Avg.   576 us, Total. 1.152 ms (0.0%)
+[Performance] InitializeOnLoad UDPService                                                                                    :        2 samples, Peak.   296 us (1.2x), Avg.   238 us, Total. 476.6 us (0.0%)
+[Performance] InitializeOnLoad CrashService                                                                                  :        2 samples, Peak.   214 us (1.1x), Avg.   195 us, Total. 389.5 us (0.0%)
+[Performance] InitializeOnLoad ServicesRepository                                                                            :        2 samples, Peak.  2.10 us (1.4x), Avg.  1.45 us, Total. 2.900 us (0.0%)
+[Performance] InitializeOnLoad SearchWindow                                                                                  :        2 samples, Peak.  1.69 ms (1.8x), Avg.   924 us, Total. 1.849 ms (0.0%)
+[Performance] InitializeOnLoad CustomIndexers                                                                                :        2 samples, Peak.  29.4 ms (1.1x), Avg.  25.9 ms, Total. 51.74 ms (0.2%)
+[Performance] InitializeOnLoad SearchMonitor                                                                                 :        2 samples, Peak.  2.84 ms (1.4x), Avg.  1.97 ms, Total. 3.938 ms (0.0%)
+[Performance] InitializeOnLoad ParameterControllerEditor                                                                     :        2 samples, Peak.  20.5 us (1.0x), Avg.  19.7 us, Total. 39.40 us (0.0%)
+[Performance] InitializeOnLoad LayerSettingsWindow                                                                           :        2 samples, Peak.  83.8 us (1.9x), Avg.  44.9 us, Total. 89.80 us (0.0%)
+[Performance] InitializeOnLoad PackageManagerHookGUIDConverter.RegisterPackagesEventHandler                                  :        2 samples, Peak.  1.61 ms (1.7x), Avg.   935 us, Total. 1.871 ms (0.0%)
+[Performance] InitializeOnLoad EditorDragAndDrop.RegisterEditorClient                                                        :        2 samples, Peak.   918 us (1.4x), Avg.   652 us, Total. 1.303 ms (0.0%)
+[Performance] InitializeOnLoad EditorEventCallbacks.InitializeFontAssetResourceChangeCallBacks                               :        2 samples, Peak.  3.33 ms (1.3x), Avg.  2.55 ms, Total. 5.102 ms (0.0%)
+[Performance] InitializeOnLoad SceneTemplateService.Init                                                                     :        2 samples, Peak.  1.40 ms (1.0x), Avg.  1.33 ms, Total. 2.669 ms (0.0%)
+[Performance] InitializeOnLoad DiagnosticSwitchesConsoleMessage.Init                                                         :        2 samples, Peak.  10.3 ms (1.8x), Avg.  5.60 ms, Total. 11.19 ms (0.0%)
+[Performance] InitializeOnLoad PackageManagerWindow.EditorInitializedInSafeMode                                              :        2 samples, Peak.  39.0 ms (2.0x), Avg.  19.7 ms, Total. 39.35 ms (0.1%)
+[Performance] InitializeOnLoad ToolShortcutContext.Init                                                                      :        2 samples, Peak.   270 us (1.3x), Avg.   209 us, Total. 418.0 us (0.0%)
+[Performance] InitializeOnLoad MemoryProfilerCompilationGuard.InjectCompileGuard                                             :        2 samples, Peak.   199 us (1.1x), Avg.   182 us, Total. 363.8 us (0.0%)
+[Performance] InitializeOnLoad AssetPostprocessingInternal.RefreshCustomDependencies                                         :        2 samples, Peak.  4.66 ms (1.1x), Avg.  4.41 ms, Total. 8.827 ms (0.0%)
+[Performance] InitializeOnLoad SysrootManager.Initialize                                                                     :        2 samples, Peak.  1.04 ms (1.4x), Avg.   755 us, Total. 1.510 ms (0.0%)
+[Performance] InitializeOnLoad ScopedRegistryAddedPopup.SubscribeToRegistriesAdded                                           :        2 samples, Peak.  14.1 ms (2.0x), Avg.  7.12 ms, Total. 14.24 ms (0.0%)
+[Performance] InitializeOnLoad SceneVisibilityManager.Initialize                                                             :        2 samples, Peak.  7.95 ms (1.7x), Avg.  4.72 ms, Total. 9.449 ms (0.0%)
+[Performance] InitializeOnLoad EditorWindow.Initialize                                                                       :        2 samples, Peak.  1.01 ms (1.6x), Avg.   653 us, Total. 1.306 ms (0.0%)
+[Performance] AssemblyReloadEvents.afterAssemblyReload: UnityEditor.SceneTemplate.SceneTemplateService.AfterAssemblyReload   :        2 samples, Peak.  8.01 ms (1.9x), Avg.  4.16 ms, Total. 8.329 ms (0.0%)
+[Performance] ProcessService.EditorAfterLoadAllAssemblies                                                                    :        2 samples, Peak.   695 us (1.4x), Avg.   481 us, Total. 962.2 us (0.0%)
+[Performance] Application.ReadLicenseInfo                                                                                    :        1 samples, Peak.  14.1 ms (1.0x), Avg.  14.1 ms, Total. 14.11 ms (0.0%)
+[Performance] Application.InitialRefresh                                                                                     :        1 samples, Peak.  15.7 s (1.0x), Avg.  15.7 s, Total. 15.67 s (52.3%)
+[Performance] Compiling Scripts                                                                                              :        1 samples, Peak.  5.16 s (1.0x), Avg.  5.16 s, Total. 5.160 s (17.2%)
+[Performance] AssemblyReloadEvents.beforeAssemblyReload: UnityEditor.SceneTemplate.SceneTemplateService.BeforeAssemblyReload :        1 samples, Peak.   707 us (1.0x), Avg.   707 us, Total. 706.7 us (0.0%)
+[Performance] InitializeOnLoad TouchSimulation                                                                               :        1 samples, Peak.   429 us (1.0x), Avg.   429 us, Total. 428.9 us (0.0%)
+[Performance] InitializeOnLoad InputSystem                                                                                   :        1 samples, Peak.  83.1 ms (1.0x), Avg.  83.1 ms, Total. 83.08 ms (0.3%)
+[Performance] InitializeOnLoad InputSystemUIInputModuleEditor                                                                :        1 samples, Peak.   226 us (1.0x), Avg.   226 us, Total. 226.4 us (0.0%)
+[Performance] InitializeOnLoad EnableUITKEditor                                                                              :        1 samples, Peak.  93.6 us (1.0x), Avg.  93.6 us, Total. 93.60 us (0.0%)
+[Performance] InitializeOnLoad RelicGachaSync                                                                                :        1 samples, Peak.   544 us (1.0x), Avg.   544 us, Total. 544.4 us (0.0%)
+[Performance] InitializeOnLoad BurstLoader                                                                                   :        1 samples, Peak.  3.47 s (1.0x), Avg.  3.47 s, Total. 3.466 s (11.6%)
+[Performance] InitializeOnLoad EditorToolManager                                                                             :        2 samples, Peak.  4.94 ms (1.8x), Avg.  2.71 ms, Total. 5.423 ms (0.0%)
+[Performance] InitializeOnLoad ShadowCasterGroup2DManager                                                                    :        1 samples, Peak.   115 us (1.0x), Avg.   115 us, Total. 115.1 us (0.0%)
+[Performance] InitializeOnLoad ProbeGIBaking                                                                                 :        1 samples, Peak.  3.19 ms (1.0x), Avg.  3.19 ms, Total. 3.188 ms (0.0%)
+[Performance] InitializeOnLoad FilterWindow                                                                                  :        1 samples, Peak.  55.8 us (1.0x), Avg.  55.8 us, Total. 55.80 us (0.0%)
+[Performance] InitializeOnLoad RealtimeProbeSubdivisionDebug                                                                 :        1 samples, Peak.  1.10 ms (1.0x), Avg.  1.10 ms, Total. 1.101 ms (0.0%)
+[Performance] InitializeOnLoad NodeClassCache                                                                                :        1 samples, Peak.  13.9 us (1.0x), Avg.  13.9 us, Total. 13.90 us (0.0%)
+[Performance] InitializeOnLoad ShaderGraphMaterialsUpdater                                                                   :        2 samples, Peak.   716 us (1.6x), Avg.   451 us, Total. 901.6 us (0.0%)
+[Performance] InitializeOnLoad Renderer2DAnalytics                                                                           :        1 samples, Peak.   206 us (1.0x), Avg.   206 us, Total. 205.7 us (0.0%)
+[Performance] InitializeOnLoad BackgroundWatcher                                                                             :        1 samples, Peak.   171 us (1.0x), Avg.   171 us, Total. 171.1 us (0.0%)
+[Performance] InitializeOnLoad UnityTestProtocolStarter                                                                      :        1 samples, Peak.   212 us (1.0x), Avg.   212 us, Total. 212.1 us (0.0%)
+[Performance] InitializeOnLoad TestStarter                                                                                   :        1 samples, Peak.   697 us (1.0x), Avg.   697 us, Total. 697.5 us (0.0%)
+[Performance] InitializeOnLoad RerunCallbackInitializer                                                                      :        1 samples, Peak.  4.14 ms (1.0x), Avg.  4.14 ms, Total. 4.138 ms (0.0%)
+[Performance] InitializeOnLoad RiderScriptEditor                                                                             :        1 samples, Peak.  12.2 ms (1.0x), Avg.  12.2 ms, Total. 12.22 ms (0.0%)
+[Performance] InitializeOnLoad CallbackInitializer                                                                           :        1 samples, Peak.  2.83 ms (1.0x), Avg.  2.83 ms, Total. 2.827 ms (0.0%)
+[Performance] InitializeOnLoad SpriteEditorWindow                                                                            :        1 samples, Peak.   609 us (1.0x), Avg.   609 us, Total. 608.6 us (0.0%)
+[Performance] InitializeOnLoad PlasticPlugin                                                                                 :        1 samples, Peak.   459 ms (1.0x), Avg.   459 ms, Total. 459.4 ms (1.5%)
+[Performance] InitializeOnLoad ToolbarBootstrap                                                                              :        1 samples, Peak.  57.5 ms (1.0x), Avg.  57.5 ms, Total. 57.53 ms (0.2%)
+[Performance] InitializeOnLoad BackgroundImport                                                                              :        1 samples, Peak.   168 us (1.0x), Avg.   168 us, Total. 167.8 us (0.0%)
+[Performance] InitializeOnLoad VSUsageUtility                                                                                :        1 samples, Peak.  28.9 ms (1.0x), Avg.  28.9 ms, Total. 28.94 ms (0.1%)
+[Performance] InitializeOnLoad VisualStudioEditor                                                                            :        2 samples, Peak.  9.64 ms (1.4x), Avg.  6.80 ms, Total. 13.60 ms (0.0%)
+[Performance] InitializeOnLoad TestRunnerApiListener                                                                         :        2 samples, Peak.  1.08 ms (1.3x), Avg.   823 us, Total. 1.645 ms (0.0%)
+[Performance] InitializeOnLoad VisualStudioIntegration                                                                       :        2 samples, Peak.  2.59 ms (1.3x), Avg.  2.04 ms, Total. 4.090 ms (0.0%)
+[Performance] InitializeOnLoad PrefabLayoutRebuilder                                                                         :        1 samples, Peak.   655 us (1.0x), Avg.   655 us, Total. 654.6 us (0.0%)
+[Performance] InitializeOnLoad SpriteSkinCompositeStartup                                                                    :        1 samples, Peak.  28.6 ms (1.0x), Avg.  28.6 ms, Total. 28.56 ms (0.1%)
+[Performance] InitializeOnLoad UnityAnalyticsStorage                                                                         :        1 samples, Peak.   688 us (1.0x), Avg.   688 us, Total. 688.2 us (0.0%)
+[Performance] InitializeOnLoad BoneGizmoInitializer                                                                          :        1 samples, Peak.  5.96 ms (1.0x), Avg.  5.96 ms, Total. 5.957 ms (0.0%)
+[Performance] InitializeOnLoad Analytics                                                                                     :        1 samples, Peak.   352 us (1.0x), Avg.   352 us, Total. 352.2 us (0.0%)
+[Performance] InitializeOnLoad NavigationWindow                                                                              :        1 samples, Peak.   796 us (1.0x), Avg.   796 us, Total. 796.5 us (0.0%)
+[Performance] InitializeOnLoad SceneDragAndDrop                                                                              :        1 samples, Peak.   225 us (1.0x), Avg.   225 us, Total. 225.1 us (0.0%)
+[Performance] InitializeOnLoad SpriteShapeUpdateCache                                                                        :        1 samples, Peak.   844 us (1.0x), Avg.   844 us, Total. 844.4 us (0.0%)
+[Performance] InitializeOnLoad SpriteShapeUnityAnalyticsStorage                                                              :        1 samples, Peak.  37.4 us (1.0x), Avg.  37.4 us, Total. 37.40 us (0.0%)
+[Performance] InitializeOnLoad IKEditorManager.CreateInstance                                                                :        1 samples, Peak.  5.08 ms (1.0x), Avg.  5.08 ms, Total. 5.084 ms (0.0%)
+[Performance] InitializeOnLoad $BurstDirectCallInitializer.Initialize                                                        :        7 samples, Peak.  25.6 ms (3.7x), Avg.  6.93 ms, Total. 48.48 ms (0.2%)
+[Performance] InitializeOnLoad SceneViewGridManager.Initialize                                                               :        1 samples, Peak.  7.44 ms (1.0x), Avg.  7.44 ms, Total. 7.440 ms (0.0%)
+[Performance] InitializeOnLoad TilemapPrefabStageHelper.Initialize                                                           :        1 samples, Peak.  3.86 ms (1.0x), Avg.  3.86 ms, Total. 3.865 ms (0.0%)
+[Performance] InitializeOnLoad SceneViewOpenTilePaletteHelper.Initialize                                                     :        1 samples, Peak.  2.37 ms (1.0x), Avg.  2.37 ms, Total. 2.375 ms (0.0%)
+[Performance] InitializeOnLoad TileDragAndDropManager.Initialize                                                             :        1 samples, Peak.  3.23 ms (1.0x), Avg.  3.23 ms, Total. 3.225 ms (0.0%)
+[Performance] InitializeOnLoad VisualStudioEditor.LegacyVisualStudioCodePackageDisabler                                      :        2 samples, Peak.  1.01 ms (1.1x), Avg.   882 us, Total. 1.764 ms (0.0%)
+[Performance] InitializeOnLoad InputSystemPackageControl.SubscribePackageManagerEvent                                        :        1 samples, Peak.   158 us (1.0x), Avg.   158 us, Total. 158.3 us (0.0%)
+[Performance] InitializeOnLoad InputSystemPluginControl.CheckForExtension                                                    :        1 samples, Peak.  1.79 ms (1.0x), Avg.  1.79 ms, Total. 1.788 ms (0.0%)
+[Performance] InitializeOnLoad MaterialReimporter.RegisterUpgraderReimport                                                   :        2 samples, Peak.   379 us (1.6x), Avg.   234 us, Total. 468.0 us (0.0%)
+[Performance] InitializeOnLoad BackgroundImport.Setup                                                                        :        1 samples, Peak.  2.55 ms (1.0x), Avg.  2.55 ms, Total. 2.554 ms (0.0%)
+[Performance] InitializeOnLoad TestJobDataHolder.ResumeRunningJobs                                                           :        1 samples, Peak.  2.53 ms (1.0x), Avg.  2.53 ms, Total. 2.527 ms (0.0%)
+[Performance] InitializeOnLoad AnalyticsReporter.RegisterCallbacks                                                           :        1 samples, Peak.   953 us (1.0x), Avg.   953 us, Total. 953.1 us (0.0%)
+[Performance] InitializeOnLoad DebugManagerWindowLifetimeAnalytic.SubscribeToDebugManagerOpenCloseWindows                    :        1 samples, Peak.   557 us (1.0x), Avg.   557 us, Total. 556.7 us (0.0%)
+[Performance] InitializeOnLoad CoreRenderPipelinePreferences.InitPreferenceProviders                                         :        1 samples, Peak.  55.0 ms (1.0x), Avg.  55.0 ms, Total. 55.03 ms (0.2%)
+[Performance] InitializeOnLoad VolumeGizmoDrawer.InitVolumeGizmoCallbacks                                                    :        1 samples, Peak.   767 us (1.0x), Avg.   767 us, Total. 766.8 us (0.0%)
+[Performance] DidReloadScriptsAdvancedDropdownWindow.OnScriptReload                                                          :        2 samples, Peak.   480 us (1.3x), Avg.   380 us, Total. 760.1 us (0.0%)
+[Performance] DidReloadScriptsNavMeshExtension.OnScriptReload                                                                :        1 samples, Peak.   570 us (1.0x), Avg.   570 us, Total. 569.6 us (0.0%)
+[Performance] DidReloadScriptsTestRunnerWindow.CompilationCallback                                                           :        1 samples, Peak.   967 us (1.0x), Avg.   967 us, Total. 966.8 us (0.0%)
+[Performance] DidReloadScriptsTestListCache.ScriptReloaded                                                                   :        1 samples, Peak.  2.60 ms (1.0x), Avg.  2.60 ms, Total. 2.597 ms (0.0%)
+[Performance] DidReloadScriptsLookDev.OnEditorReload                                                                         :        1 samples, Peak.   380 us (1.0x), Avg.   380 us, Total. 379.5 us (0.0%)
+[Performance] DidReloadScriptsDebugWindow.OnEditorReload                                                                     :        1 samples, Peak.  10.1 ms (1.0x), Avg.  10.1 ms, Total. 10.09 ms (0.0%)
+[Performance] DidReloadScriptsVolumeComponentEditor.OnEditorReload                                                           :        1 samples, Peak.   113 ms (1.0x), Avg.   113 ms, Total. 113.5 ms (0.4%)
+[Performance] AssemblyReloadEvents.afterAssemblyReload: UnityEditor.U2D.Animation.BoneGizmo.OnAfterAssemblyReload            :        1 samples, Peak.  1.28 ms (1.0x), Avg.  1.28 ms, Total. 1.276 ms (0.0%)
+[Performance] UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets                                      :       40 samples, Peak.  3.06 ms (19.7x), Avg.   155 us, Total. 6.213 ms (0.0%)
+[Performance] InputActionAssetPostprocessor.OnPostprocessAllAssets                                                           :       40 samples, Peak.   610 us (12.6x), Avg.  48.3 us, Total. 1.931 ms (0.0%)
+[Performance] InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets                                               :       40 samples, Peak.  79.4 us (5.4x), Avg.  14.6 us, Total. 583.9 us (0.0%)
+[Performance] ProjectSettingsPostprocessor.OnPostprocessAllAssets                                                            :       40 samples, Peak.   251 us (12.5x), Avg.  20.1 us, Total. 803.0 us (0.0%)
+[Performance] SyncVS.PostprocessSyncProject                                                                                  :       20 samples, Peak.  16.2 ms (6.1x), Avg.  2.63 ms, Total. 52.67 ms (0.2%)
+[Performance] Application.ImportPackagesAndSetTemplateWhenCreatingProject                                                    :        1 samples, Peak.  20.3 ms (1.0x), Avg.  20.3 ms, Total. 20.30 ms (0.1%)
+[Performance] Application.SyncCurrentColorSpace                                                                              :        1 samples, Peak.   251 ms (1.0x), Avg.   251 ms, Total. 250.9 ms (0.8%)
+[Performance] Application.OnUsbDevicesChanged                                                                                :        1 samples, Peak.  4.63 ms (1.0x), Avg.  4.63 ms, Total. 4.630 ms (0.0%)
+[Performance] Application.AssetInstanceCacheUpdate                                                                           :        1 samples, Peak.   300 ns (1.0x), Avg.   300 ns, Total. 300.0 ns (0.0%)
+[Performance] Application.UnityExtensions.Initialize                                                                         :        1 samples, Peak.  14.2 ms (1.0x), Avg.  14.2 ms, Total. 14.25 ms (0.0%)
+[Performance] CodeEditorProjectSync.SyncEditorProject                                                                        :        1 samples, Peak.  1.04 s (1.0x), Avg.  1.04 s, Total. 1.043 s (3.5%)
+[Performance] Application.ExecuteStartups                                                                                    :        1 samples, Peak.   126 ms (1.0x), Avg.   126 ms, Total. 125.6 ms (0.4%)
+[Performance] Menu.RegisterMenuInterface                                                                                     :       26 samples, Peak.  2.50 us (7.3x), Avg.   342 ns, Total. 8.900 us (0.0%)
+[Performance] Gizmo.RebuildRenderers                                                                                         :        1 samples, Peak.   122 ms (1.0x), Avg.   122 ms, Total. 121.5 ms (0.4%)
+[Performance] Gizmo.AddGizmoRenderers                                                                                        :      113 samples, Peak.  2.07 ms (27.6x), Avg.  75.0 us, Total. 8.472 ms (0.0%)
+[Performance] Application.editorInitializingProject                                                                          :        1 samples, Peak.   181 ms (1.0x), Avg.   181 ms, Total. 180.5 ms (0.6%)
+[Performance] Application.InitializeMenu                                                                                     :        1 samples, Peak.   267 ms (1.0x), Avg.   267 ms, Total. 266.9 ms (0.9%)
+[Performance] Menu.RebuildAll                                                                                                :        1 samples, Peak.   267 ms (1.0x), Avg.   267 ms, Total. 266.9 ms (0.9%)
+[Performance] Menu.BuildRegisteredMenuInterfaces                                                                             :        1 samples, Peak.   262 ms (1.0x), Avg.   262 ms, Total. 261.8 ms (0.9%)
+[Performance] Menu.FilterMenuItem                                                                                            :      964 samples, Peak.   148 ms (958.3x), Avg.   155 us, Total. 149.2 ms (0.5%)
+[Performance] UpdateAllMenus                                                                                                 :        1 samples, Peak.  1.25 ms (1.0x), Avg.  1.25 ms, Total. 1.251 ms (0.0%)
+[Performance] Menu.RebuildOSMainMenu                                                                                         :        1 samples, Peak.  3.20 ms (1.0x), Avg.  3.20 ms, Total. 3.204 ms (0.0%)
+[Performance] EditorSceneManager.sceneClosing: UnityEditor.SceneVisibilityManager.EditorSceneManagerOnSceneClosing           :        1 samples, Peak.   303 us (1.0x), Avg.   303 us, Total. 302.8 us (0.0%)
+[Performance] GUIView.RepaintAll.PlayerLoopController                                                                        :        1 samples, Peak.  1.10 us (1.0x), Avg.  1.10 us, Total. 1.100 us (0.0%)
+[Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneTemplate.SceneTemplateService.OnNewSceneCreated           :        1 samples, Peak.   340 us (1.0x), Avg.   340 us, Total. 340.4 us (0.0%)
+[Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneVisibilityManager.EditorSceneManagerOnNewSceneCreated     :        1 samples, Peak.   253 us (1.0x), Avg.   253 us, Total. 253.3 us (0.0%)
+[Performance] EditorSceneManager.newSceneCreated: UnityEditor.SceneManagement.StageNavigationManager.OnNewSceneCreated       :        1 samples, Peak.  75.0 us (1.0x), Avg.  75.0 us, Total. 75.00 us (0.0%)
+[Performance] Application.InvokeFinishedLoadingProject                                                                       :        1 samples, Peak.  28.7 ms (1.0x), Avg.  28.7 ms, Total. 28.73 ms (0.1%)
+[Performance] ProcessService.OnProjectLoaded                                                                                 :        1 samples, Peak.  70.1 us (1.0x), Avg.  70.1 us, Total. 70.10 us (0.0%)
+[Performance] VersionControl.Task.Wait                                                                                       :        1 samples, Peak.  28.7 us (1.0x), Avg.  28.7 us, Total. 28.70 us (0.0%)
+[Performance] PaletteAssetModificationProcessor.OnWillCreateAsset                                                            :       36 samples, Peak.  2.08 ms (29.9x), Avg.  69.5 us, Total. 2.502 ms (0.0%)
+[Performance] ScriptTemplateProcessor.OnWillCreateAsset                                                                      :       36 samples, Peak.   311 us (8.1x), Avg.  38.3 us, Total. 1.377 ms (0.0%)
+[Performance] MaterialModificationProcessor.OnWillCreateAsset                                                                :       72 samples, Peak.   368 us (17.1x), Avg.  21.6 us, Total. 1.554 ms (0.0%)
+[Performance] BuilderAssetModificationProcessor.OnWillCreateAsset                                                            :       36 samples, Peak.   791 us (19.4x), Avg.  40.8 us, Total. 1.468 ms (0.0%)
+[Performance] ShaderImporter.SourceAssetModified                                                                             :       54 samples, Peak.  1.90 us (2.0x), Avg.   965 ns, Total. 52.10 us (0.0%)
+[Performance] ShaderIncludeImporter.SourceAssetModified                                                                      :       54 samples, Peak.  1.80 us (1.9x), Avg.   969 ns, Total. 52.30 us (0.0%)
+[Performance] PSDImporterAssetPostProcessor.OnPreprocessAsset                                                                :       55 samples, Peak.   404 us (14.9x), Avg.  27.1 us, Total. 1.491 ms (0.0%)
+[Performance] PresetManagerPostProcessor.OnPreprocessAsset                                                                   :       55 samples, Peak.   270 us (12.6x), Avg.  21.4 us, Total. 1.179 ms (0.0%)
+[Performance] CancelSplashScreenOnAssetChange.OnPreprocessAsset                                                              :       55 samples, Peak.   163 us (27.6x), Avg.  5.92 us, Total. 325.4 us (0.0%)
+[Performance] ShaderGraphAssetPostProcessor.OnPreprocessAsset                                                                :       55 samples, Peak.   418 us (28.9x), Avg.  14.5 us, Total. 795.2 us (0.0%)
+[Performance] SpritePostProcess.OnPreprocessAsset                                                                            :       55 samples, Peak.  2.98 ms (39.0x), Avg.  76.4 us, Total. 4.202 ms (0.0%)
+[Performance] AssetDatabase.ImportAssets                                                                                     :       93 samples, Peak.   104 ms (3.9x), Avg.  26.5 ms, Total. 2.460 s (8.2%)
+[Performance] MilestoneAssetPostprocessor.OnPostprocessAllAssets                                                             :       38 samples, Peak.  1.27 ms (11.2x), Avg.   113 us, Total. 4.281 ms (0.0%)
+[Performance] RelicAssetPostprocessor.OnPostprocessAllAssets                                                                 :       38 samples, Peak.   326 ms (1.2x), Avg.   264 ms, Total. 10.03 s (33.5%)
+[Performance] PaletteAssetModificationProcessor.OnWillSaveAssets                                                             :       39 samples, Peak.   119 us (8.0x), Avg.  15.0 us, Total. 584.2 us (0.0%)
+[Performance] StateMacroSavedEvent.OnWillSaveAssets                                                                          :       39 samples, Peak.   297 us (6.7x), Avg.  44.1 us, Total. 1.718 ms (0.0%)
+[Performance] FlowMacroSavedEvent.OnWillSaveAssets                                                                           :       39 samples, Peak.   419 us (15.4x), Avg.  27.2 us, Total. 1.062 ms (0.0%)
+[Performance] AssetModificationProcessor.OnWillSaveAssets                                                                    :       39 samples, Peak.   637 us (33.2x), Avg.  19.2 us, Total. 748.0 us (0.0%)
+[Performance] UnityCloudProjectLinkMonitor.OnWillSaveAssets                                                                  :       39 samples, Peak.   492 us (34.2x), Avg.  14.4 us, Total. 562.1 us (0.0%)
+[Performance] BuilderAssetModificationProcessor.OnWillSaveAssets                                                             :       39 samples, Peak.   307 us (26.9x), Avg.  11.4 us, Total. 445.4 us (0.0%)
+[Performance] TerrainModificationProcessor.OnWillSaveAssets                                                                  :       39 samples, Peak.  1.71 ms (37.2x), Avg.  46.0 us, Total. 1.793 ms (0.0%)
+[Performance] AssetDatabase.Refresh                                                                                          :       18 samples, Peak.  16.2 ms (1.2x), Avg.  13.7 ms, Total. 247.3 ms (0.8%)
+[Performance] SkillAssetPostprocessor.OnPostprocessAllAssets                                                                 :       38 samples, Peak.  1.20 ms (9.5x), Avg.   127 us, Total. 4.812 ms (0.0%)
+[Performance] TMPro_TexturePostProcessor.OnPostprocessAllAssets                                                              :       38 samples, Peak.   594 us (11.7x), Avg.  50.9 us, Total. 1.934 ms (0.0%)
+[Performance] AssetPostprocessor.OnPostprocessAllAssets                                                                      :       38 samples, Peak.  1.08 ms (17.7x), Avg.  61.2 us, Total. 2.325 ms (0.0%)
+[Performance] BuilderAssetPostprocessor.OnPostprocessAllAssets                                                               :       38 samples, Peak.  3.67 ms (16.2x), Avg.   227 us, Total. 8.607 ms (0.0%)
+[Performance] ArtifactBrowserPostProcessor.OnPostprocessAllAssets                                                            :       38 samples, Peak.   589 us (15.9x), Avg.  37.1 us, Total. 1.409 ms (0.0%)
+[Performance] AssetEvents.OnPostprocessAllAssets                                                                             :       76 samples, Peak.   332 us (20.6x), Avg.  16.1 us, Total. 1.226 ms (0.0%)
+[Performance] AudioMixerPostprocessor.OnPostprocessAllAssets                                                                 :       38 samples, Peak.   879 us (17.1x), Avg.  51.3 us, Total. 1.949 ms (0.0%)
+[Performance] StyleCatalogPostProcessor.OnPostprocessAllAssets                                                               :       38 samples, Peak.  25.6 ms (18.8x), Avg.  1.36 ms, Total. 51.70 ms (0.2%)
+[Performance] BuildCatalog                                                                                                   :        1 samples, Peak.  24.0 ms (1.0x), Avg.  24.0 ms, Total. 24.01 ms (0.1%)
+[Performance] ModelImporterPostProcessor.OnPostprocessAllAssets                                                              :       38 samples, Peak.  2.64 ms (16.6x), Avg.   159 us, Total. 6.054 ms (0.0%)
+[Performance] MaterialPostprocessor.OnPostprocessAllAssets                                                                   :       76 samples, Peak.   629 us (14.6x), Avg.  43.0 us, Total. 3.270 ms (0.0%)
+[Performance] RetainedModeAssetPostprocessor.OnPostprocessAllAssets                                                          :       38 samples, Peak.  2.66 ms (16.9x), Avg.   158 us, Total. 5.994 ms (0.0%)
+[Performance] AssetChangedListener.OnPostprocessAllAssets                                                                    :       38 samples, Peak.  2.54 ms (13.5x), Avg.   188 us, Total. 7.157 ms (0.0%)
+[Performance] PostProcessor.OnPostprocessAllAssets                                                                           :       38 samples, Peak.   397 us (7.3x), Avg.  54.1 us, Total. 2.058 ms (0.0%)
+[Performance] ShaderGraphAssetPostProcessor.OnPostprocessAllAssets                                                           :       38 samples, Peak.  1.36 ms (8.0x), Avg.   171 us, Total. 6.498 ms (0.0%)
+[Performance] SpeedTreePostProcessor.OnPostprocessAllAssets                                                                  :       38 samples, Peak.   169 us (8.1x), Avg.  20.9 us, Total. 795.6 us (0.0%)
+[Performance] TextAssetPostProcessor.OnPostprocessAllAssets                                                                  :       38 samples, Peak.   418 us (12.9x), Avg.  32.4 us, Total. 1.233 ms (0.0%)
+[Performance] AssetProcessor.OnPostprocessAllAssets                                                                          :      114 samples, Peak.   929 us (30.1x), Avg.  30.9 us, Total. 3.524 ms (0.0%)
+[Performance] SpriteLibraryAssetPostprocessor.OnPostprocessAllAssets                                                         :       38 samples, Peak.   248 us (15.0x), Avg.  16.5 us, Total. 628.4 us (0.0%)
+[Performance] PSDImporterAssetPostProcessor.OnPostprocessAllAssets                                                           :       38 samples, Peak.   107 us (11.4x), Avg.  9.44 us, Total. 358.7 us (0.0%)
+[Performance] PSDImportPostProcessor.OnPostprocessAllAssets                                                                  :       38 samples, Peak.   253 us (14.6x), Avg.  17.4 us, Total. 659.4 us (0.0%)
+[Performance] SpriteEditorTexturePostprocessor.OnPostprocessAllAssets                                                        :       38 samples, Peak.   658 us (6.4x), Avg.   103 us, Total. 3.933 ms (0.0%)
+[Performance] SpriteShapeAssetPostProcessor.OnPostprocessAllAssets                                                           :       38 samples, Peak.   824 us (15.3x), Avg.  53.9 us, Total. 2.047 ms (0.0%)
+[Performance] EditorApplication.projectChanged: UnityEditor.Audio.MixerEffectDefinitionReloader.OnProjectChanged             :       18 samples, Peak.  1.30 ms (2.0x), Avg.   640 us, Total. 11.51 ms (0.0%)
+[Performance] EditorApplication.projectChanged: UnityEngine.InputSystem.LowLevel.NativeInputRuntime.OnProjectChanged         :       18 samples, Peak.   232 us (13.7x), Avg.  17.0 us, Total. 306.0 us (0.0%)
+[Performance] EditorApplication.quitting: Unity.Burst.Editor.BurstLoader.OnEditorApplicationQuitting                         :        1 samples, Peak.  42.9 us (1.0x), Avg.  42.9 us, Total. 42.90 us (0.0%)
+[Performance] EditorApplication.quitting: UnityEditor.Tilemaps.SceneViewGridManager.EditorQuitting                           :        1 samples, Peak.   102 us (1.0x), Avg.   102 us, Total. 102.0 us (0.0%)
+[Performance] EditorApplication.quitting: callback in UnityEditor.TextCore.Text.EditorEventCallbacks                         :        1 samples, Peak.  16.5 ms (1.0x), Avg.  16.5 ms, Total. 16.51 ms (0.1%)
+[Performance] Application.Shutdown.PauseProfilerSession                                                                      :        1 samples, Peak.  50.1 us (1.0x), Avg.  50.1 us, Total. 50.10 us (0.0%)
+[Performance] Application.Shutdown.PauseAssetImportWorkers                                                                   :        1 samples, Peak.  3.41 ms (1.0x), Avg.  3.41 ms, Total. 3.414 ms (0.0%)
+[Performance] Application.Shutdown.SaveAssets                                                                                :        1 samples, Peak.  1.01 ms (1.0x), Avg.  1.01 ms, Total. 1.007 ms (0.0%)
+[Performance] Application.Shutdown.CleanupRenderPipeline                                                                     :        1 samples, Peak.  3.70 us (1.0x), Avg.  3.70 us, Total. 3.700 us (0.0%)
+[Performance] Application.Shutdown.StopPreloadManager                                                                        :        1 samples, Peak.  10.5 ms (1.0x), Avg.  10.5 ms, Total. 10.53 ms (0.0%)
+[Performance] Application.Shutdown.DestroyWorld                                                                              :        1 samples, Peak.  1.78 ms (1.0x), Avg.  1.78 ms, Total. 1.775 ms (0.0%)
+[Performance] Application.Shutdown.CleanupAfterLoad                                                                          :        1 samples, Peak.   340 ms (1.0x), Avg.   340 ms, Total. 339.9 ms (1.1%)
+[Performance] Application.Shutdown.Progress                                                                                  :        1 samples, Peak.  14.7 us (1.0x), Avg.  14.7 us, Total. 14.70 us (0.0%)
+[Performance] Application.Shutdown.GICleanupManagers                                                                         :        1 samples, Peak.   568 us (1.0x), Avg.   568 us, Total. 568.2 us (0.0%)
+[Performance] Application.Shutdown.MenuCleanupClass                                                                          :        1 samples, Peak.   467 us (1.0x), Avg.   467 us, Total. 466.8 us (0.0%)
+[Performance] Application.Shutdown.ADBSaveStateBeforeShutdown                                                                :        1 samples, Peak.  8.10 us (1.0x), Avg.  8.10 us, Total. 8.100 us (0.0%)
+[Performance] Application.Shutdown.RemoteShutdown                                                                            :        1 samples, Peak.   800 ns (1.0x), Avg.   800 ns, Total. 800.0 ns (0.0%)
+[Performance] Application.Shutdown.CleanupVCProvider                                                                         :        1 samples, Peak.  12.0 us (1.0x), Avg.  12.0 us, Total. 12.00 us (0.0%)
+[Performance] Application.Shutdown.InputShutdown                                                                             :        1 samples, Peak.  2.40 us (1.0x), Avg.  2.40 us, Total. 2.400 us (0.0%)
+[Performance] Application.Shutdown.GizmoManagerDestroy                                                                       :        1 samples, Peak.  1.02 ms (1.0x), Avg.  1.02 ms, Total. 1.018 ms (0.0%)
+[Performance] Application.Shutdown.ProfilerSession                                                                           :        1 samples, Peak.   184 us (1.0x), Avg.   184 us, Total. 184.2 us (0.0%)
+[Performance] Application.Shutdown.ReleaseGfxWindowOnAllGUIViews                                                             :        1 samples, Peak.   400 ns (1.0x), Avg.   400 ns, Total. 400.0 ns (0.0%)
+[Performance] Application.Shutdown.CleanupEngine                                                                             :        1 samples, Peak.   220 ms (1.0x), Avg.   220 ms, Total. 219.6 ms (0.7%)
+[Performance] Application.Shutdown.CleanupAssetDatabase                                                                      :        1 samples, Peak.  18.6 ms (1.0x), Avg.  18.6 ms, Total. 18.57 ms (0.1%)
+[Performance] Application.Shutdown.ScriptCompilationCleanUp                                                                  :        1 samples, Peak.  25.1 ms (1.0x), Avg.  25.1 ms, Total. 25.12 ms (0.1%)
+[Performance] Application.Shutdown.DestroyJobSystem                                                                          :        1 samples, Peak.   141 us (1.0x), Avg.   141 us, Total. 141.3 us (0.0%)
+[Performance] Application.Shutdown.CleanupPersistentManager                                                                  :        1 samples, Peak.  6.13 ms (1.0x), Avg.  6.13 ms, Total. 6.128 ms (0.0%)
+[Performance] Application.Shutdown.CleanupAsyncReadManager                                                                   :        1 samples, Peak.   833 us (1.0x), Avg.   833 us, Total. 833.4 us (0.0%)
+[Performance] Application.Shutdown.CleanupProgressBar                                                                        :        1 samples, Peak.   400 ns (1.0x), Avg.   400 ns, Total. 400.0 ns (0.0%)
+[Performance] Application.Shutdown.CleanupMono                                                                               :        1 samples, Peak.   206 ms (1.0x), Avg.   206 ms, Total. 205.9 ms (0.7%)
+[Performance] Application.Shutdown.CleanupStdConverters                                                                      :        1 samples, Peak.  11.2 us (1.0x), Avg.  11.2 us, Total. 11.20 us (0.0%)
+[Performance] Application.Shutdown.UnloadAllPlatformSupportModuleNativeDlls                                                  :        1 samples, Peak.   500 ns (1.0x), Avg.   500 ns, Total. 500.0 ns (0.0%)
+[Performance] Application.Shutdown.UnloadAllPlatformSupportNativeLibraries                                                   :        1 samples, Peak. 100.0 ns (1.0x), Avg. 100.0 ns, Total. 100.00 ns (0.0%)
+[Performance] Application.Shutdown.CleanupAutoDocumentation                                                                  :        1 samples, Peak.   453 us (1.0x), Avg.   453 us, Total. 453.0 us (0.0%)
+[Performance] Application.Shutdown.ShaderNameManagerDestroy                                                                  :        1 samples, Peak.  92.1 us (1.0x), Avg.  92.1 us, Total. 92.10 us (0.0%)
+[Performance] Application.Shutdown.CleanupCacheServer                                                                        :        1 samples, Peak.   200 ns (1.0x), Avg.   200 ns, Total. 200.0 ns (0.0%)
+[Performance] Application.Shutdown.Virtualization_Shutdown                                                                   :        1 samples, Peak.   400 ns (1.0x), Avg.   400 ns, Total. 400.0 ns (0.0%)
+[Performance] Application.Shutdown.DevConnections                                                                            :        1 samples, Peak.   111 us (1.0x), Avg.   111 us, Total. 111.0 us (0.0%)
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0

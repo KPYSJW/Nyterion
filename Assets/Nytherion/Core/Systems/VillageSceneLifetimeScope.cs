@@ -383,7 +383,14 @@ public class VillageSceneLifetimeScope : LifetimeScope
             Debug.LogWarning("[GameSceneLifetimeScope] FollowCamera�� ã�� �� �����ϴ�!");
         }
 
-        if (settingsManagerPrefab != null)
+        SettingsManager settingsManagerInScene = FindObjectOfType<SettingsManager>(true);
+        if (settingsManagerInScene != null)
+        {
+            builder.RegisterComponent(settingsManagerInScene)
+                    .AsImplementedInterfaces()
+                    .AsSelf();
+        }
+        else if (settingsManagerPrefab != null)
         {
             builder.RegisterComponentInNewPrefab(settingsManagerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()

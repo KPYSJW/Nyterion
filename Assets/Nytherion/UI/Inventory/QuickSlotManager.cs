@@ -70,7 +70,6 @@ namespace Nytherion.UI.Inventory
                 {
                     int slotIndex = i;
                     slots[i].Initialize(slotIndex);
-                    slots[i].SetKeyLabel(keys[i].ToString().Replace("Alpha", ""));
                     slots[i].OnItemSet += (item, count) => OnQuickSlotUpdated?.Invoke();
                     slots[i].OnItemCleared += () => OnQuickSlotUpdated?.Invoke();
                 }

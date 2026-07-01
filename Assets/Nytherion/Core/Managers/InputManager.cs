@@ -24,6 +24,7 @@ namespace Nytherion.Core.Managers
         public event Action<int> onSkillInput;
         public event Action onToggleSkillUI;
         public event Action onToggleProgressionUI;
+        public event Action onToggleRelicUI;
 
         public event Action OnPausePressed;
 
@@ -159,5 +160,13 @@ namespace Nytherion.Core.Managers
         }
         public void EnablePlayerControls() => playerActions.Player.Enable();
         public void DisablePlayerControls() => playerActions.Player.Disable();
+
+        private void Update()
+        {
+            if (Keyboard.current != null && Keyboard.current.uKey.wasPressedThisFrame)
+            {
+                onToggleRelicUI?.Invoke();
+            }
+        }
     }
 }

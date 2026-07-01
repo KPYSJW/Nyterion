@@ -3249,6 +3249,7 @@ MonoBehaviour:
   roomIconPrefab: {fileID: 667391318892503220, guid: eb998911152d6da419bfbe833a8dbed4, type: 3}
   playerIcon: {fileID: 501085944}
   linePrefab: {fileID: 7129129202584483886, guid: d7a5a3a96c249b04497328987f919e6e, type: 3}
+  StageNumber: {fileID: 0}
   roomIconSize: 20
   iconSpacing: 50
   mapPadding: 50
@@ -4117,8 +4118,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: TestBlock
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7049,28 +7050,30 @@ MonoBehaviour:
   gachaManagerPrefab: {fileID: 6324277345916687726, guid: 11f9d19a26b69664c853ec605580bf08, type: 3}
   gachaUIControllerPrefab: {fileID: 955757730080653849, guid: cd3095b76e21de446b975b43a7af50c9, type: 3}
   interactionManagerPrefab: {fileID: 698421397120775284, guid: 33122866e9f99104786f6979d96cafc0, type: 3}
-  stageManagerPrefab: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}
   dungeonManagerPrefab: {fileID: -8684038073368422215, guid: 9df737e19a6bd5044b571a31aed06b12, type: 3}
   quickSlotManagerPrefab: {fileID: 1073868026320572463, guid: d8e41a7f68c20bd46a54a5324c19797f, type: 3}
   objectPoolManagerPrefab: {fileID: 2073554065287845231, guid: 43b2dead484a1fa43aa9656366557b9b, type: 3}
-  saveLoadManagerPrefab: {fileID: 1223338905626847151, guid: d1dc8b91acef336499702f2dedaf5330, type: 3}
-  currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
-  inventoryManagerPrefab: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
-  relicManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
-  equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
-  shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
   inventoryUIPrefab: {fileID: 8904536052482001746, guid: 8d104a9ea69e2db4485f645416c87f95, type: 3}
   shopUIPrefab: {fileID: 8585506431199400136, guid: 64f76ba40056f374d8a12a54fa013056, type: 3}
   relicUIControllerPrefab: {fileID: 350585857376641199, guid: 12b4aadbf60eb3f418d9c62526b30c73, type: 3}
+  inventoryUIControllerPrefab: {fileID: 0}
+  currencyUIControllerPrefab: {fileID: 0}
+  milestoneUIControllerPrefab: {fileID: 0}
+  skillUIControllerPrefab: {fileID: 0}
   playerManagerPrefab: {fileID: -2891475838477974602, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
   itemUsageManagerPrefab: {fileID: 7984585239593921606, guid: 4d55406ce8a55294dbc5ee1bb0d895af, type: 3}
+  inventoryManagerPrefab: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
+  currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
   relicSystemDebuggerPrefab: {fileID: 3331487929666877543, guid: 394d30e042c9e0f4ea5cdbbf3e518f3d, type: 3}
   enemySpawnerPrefab: {fileID: 3311273739936786302, guid: fab70de81019c214485cbcb07e8c6f08, type: 3}
   followCameraPrefab: {fileID: 1351506084518171216, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
   settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
   inventoryPresenterPrefab: {fileID: 5460479264783606384, guid: 42fd5338b2e9454409cda7953ccbd408, type: 3}
   gameSceneUIManager: {fileID: 8384210597063002988, guid: 5f3cd501b1e31ff45b36c99fa51fb6a0, type: 3}
+  globalUIManagerPrefab: {fileID: 0}
+  progressionDebugUI: {fileID: 0}
+  debugPanelUI: {fileID: 0}
 --- !u!4 &644074686
 Transform:
   m_ObjectHideFlags: 0
@@ -7748,8 +7751,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7958,8 +7961,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Close
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10155,6 +10158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26630484c6b28f241926e1cc7da85317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
 --- !u!4 &981909462
 Transform:
   m_ObjectHideFlags: 0
@@ -10843,6 +10847,8 @@ MonoBehaviour:
   storageSlotPrefab: {fileID: 6419789725286957115, guid: e2ba06097f52a4f4993b965cae2f6be0, type: 3}
   levelUpGizmoPrefab: {fileID: 3142902908754315950, guid: 685e10347cd99754bb8dd5043b88cc6f, type: 3}
   levelDownGizmoPrefab: {fileID: 3142902908754315950, guid: c93654ea3214cf34bbbb393124b691ac, type: 3}
+  silenceGizmoPrefab: {fileID: 0}
+  synergyLinkGizmoPrefab: {fileID: 0}
 --- !u!1 &1065484523
 GameObject:
   m_ObjectHideFlags: 0
@@ -12342,13 +12348,16 @@ MonoBehaviour:
   gachaCanvasGroup: {fileID: 78036498}
   gachaMainPanel: {fileID: 2128420053}
   gachaResultPanel: {fileID: 1985266251}
-  tokenCountText: {fileID: 1894147620}
-  drawWeaponOnceButton: {fileID: 1299111487}
-  drawWeaponTenTimesButton: {fileID: 1731515538}
-  drawRelicOnceButton: {fileID: 27289534}
-  drawRelicTenTimesButton: {fileID: 793019681}
+  weaponSubPanel: {fileID: 0}
+  relicSubPanel: {fileID: 0}
+  skillSubPanel: {fileID: 0}
+  drawOnceBtton: {fileID: 0}
+  drawTenBtton: {fileID: 0}
   gachaCloseButton: {fileID: 50274784}
   resultCloseButton: {fileID: 613681351}
+  weaponTabButton: {fileID: 0}
+  relicTabButton: {fileID: 0}
+  skillTabButton: {fileID: 0}
   resultSlotParent: {fileID: 1961087919}
   resultSlotPrefab: {fileID: 1133801556008070876, guid: 55eed6146f7338d44ab6fc5a565a32a0, type: 3}
   masterSlider: {fileID: 86255024}
@@ -12364,6 +12373,11 @@ MonoBehaviour:
   shopPlayerGoldText: {fileID: 97213116}
   shopPlayerInventoryParent: {fileID: 1751922873}
   sellSlotUI: {fileID: 2070626695}
+  shopBuyTabButton: {fileID: 0}
+  shopBuybackTabButton: {fileID: 0}
+  shopEmptyStateUI: {fileID: 0}
+  shopBuyPopupUI: {fileID: 0}
+  shopSellPopupUI: {fileID: 0}
   menuCanvasGroup: {fileID: 262096834}
   menuMainPanel: {fileID: 412291301}
   menuResumeButton: {fileID: 2071977788}
@@ -12378,6 +12392,13 @@ MonoBehaviour:
   currencyDisplays:
   - {fileID: 1371872494}
   - {fileID: 1914935544}
+  ProgressionMainPanel: {fileID: 0}
+  ProgressionTitleText: {fileID: 0}
+  ProgressionSlotParent: {fileID: 0}
+  SkillMainPanel: {fileID: 0}
+  storageContent: {fileID: 0}
+  storageDropArea: {fileID: 0}
+  equipSlots: []
 --- !u!4 &1225065776
 Transform:
   m_ObjectHideFlags: 0
@@ -12980,7 +13001,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 1260613761}
   nameText: {fileID: 221284349}
-  levelText: {fileID: 1665049537}
   descriptionText: {fileID: 935917467}
   influenceCells:
   - {fileID: 1457979645}
@@ -13475,8 +13495,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon x 10
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -13926,8 +13946,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon x 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -14173,8 +14193,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1885568659}
   m_HandleRect: {fileID: 1885568658}
   m_Direction: 2
-  m_Value: 0.9999998
-  m_Size: 0.25000015
+  m_Value: 2.4999998
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -17102,7 +17122,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1569460925}
   m_HandleRect: {fileID: 1569460924}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -17757,7 +17777,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -99.99997}
+  m_AnchoredPosition: {x: 0, y: -1600.0007}
   m_SizeDelta: {x: 660, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1751922874
@@ -18339,8 +18359,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: TestDamage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -18629,8 +18649,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Relic x 10
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -18763,8 +18783,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon x 10
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -19340,7 +19360,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -99.99994}
+  m_AnchoredPosition: {x: 0, y: -399.99994}
   m_SizeDelta: {x: 680, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1853265356
@@ -19381,7 +19401,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statsContainer: {fileID: 1853265355}
   statCellPrefab: {fileID: 8718112075567135313, guid: 154ab9f8d61aff94593701fbdeee39b4, type: 3}
-  scrollRect: {fileID: 1727350474}
 --- !u!114 &1853265358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20913,8 +20932,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Close
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -21047,8 +21066,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Weapon x 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -21279,8 +21298,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 178273509}
   m_HandleRect: {fileID: 178273508}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.375
+  m_Value: 8.500004
+  m_Size: 0.75
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -21787,8 +21806,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Relic x 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e139a36916844414886737bb7121a36a, type: 2}
-  m_sharedMaterial: {fileID: -485604486361239836, guid: e139a36916844414886737bb7121a36a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
+  m_sharedMaterial: {fileID: 1011828708406565382, guid: 3ea9213abafbd9147b85db3b64237362, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -36,7 +36,32 @@ namespace Nytherion.GamePlay.Combat
 
         private IEnumerator ReturnToPoolAfterDelay()
         {
-            yield return new WaitForSeconds(returnDelay);
+            Animator animator = GetComponent<Animator>();
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+
+            if (animator != null && animator.isActiveAndEnabled)
+            {
+                // 애니메이터가 상태를 올바르게 초기화할 수 있도록 한 프레임 대기합니다.
+                yield return null;
+
+                AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                if (!stateInfo.loop)
+                {
+                    float duration = stateInfo.length;
+                    yield return new WaitForSeconds(duration);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(returnDelay);
+                }
+            }
+            else
+            {
+                yield return new WaitForSeconds(returnDelay);
+            }
 
             if (ObjectPoolManager.Instance != null)
             {

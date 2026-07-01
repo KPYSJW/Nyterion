@@ -140,6 +140,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   eventManagerPrefab: {fileID: 6703879477207762094, guid: 42b39eabf4bd1a34db877fb5adf9535f, type: 3}
   itemDatabase: {fileID: 11400000, guid: f9b21e1c662560447a97d34c43a8f038, type: 2}
+  statusEffectDatabase: {fileID: 11400000, guid: f7be31e83ceb2724ab101f552ecf2f36, type: 2}
   dataLifetimeScopePrefab: {fileID: 3299846007111062224}
   audioManagerPrefab: {fileID: 4032553791337175984, guid: a4a4b80b1b905474e8ab3602db3af216, type: 3}
   sceneTransitionManagerPrefab: {fileID: 3582742344203591957, guid: e7f174a1dd4b4e9468001f3debdfe3a7, type: 3}

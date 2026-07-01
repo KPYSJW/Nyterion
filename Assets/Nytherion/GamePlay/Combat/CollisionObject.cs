@@ -12,6 +12,7 @@ namespace Nytherion.GamePlay.Combat
     public class CollisionObject : MonoBehaviour
     {
         [HideInInspector] public float damage;
+        [HideInInspector] public float chargePercent = 0f;
 
         [Header("Projectile Traits")]
         public List<EquipmentTrait> traits = new List<EquipmentTrait>();
@@ -130,7 +131,7 @@ namespace Nytherion.GamePlay.Combat
                         }
                         if (traits.Contains(EquipmentTrait.Curse))
                         {
-                            effectManager.ApplyEffect(new CurseEffect(1.3f, 5f));
+                            effectManager.ApplyEffect(new CurseEffect(1.1f, 5f));
                         }
                         if (traits.Contains(EquipmentTrait.Ice))
                         {
@@ -155,7 +156,8 @@ namespace Nytherion.GamePlay.Combat
                     }
 
                     // 충돌 위치에 피격 이펙트 재생
-                    WeaponEffectHelper.PlayHitEffect(hitEffectPrefab, collision.transform.position);
+                    Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                    WeaponEffectHelper.PlayHitEffect(hitEffectPrefab, hitPoint, chargePercent);
                 }
 
                 bool shouldSurvive = false;

@@ -11,6 +11,10 @@ namespace Nytherion.GamePlay.Combat.Weapon
         [SerializeField] private Animation meleeWeaponAnimation;
         [SerializeField] private string attackClipName  = "PlayerMeleeAnim";
         
+        [Header("Animator Settings (Optional)")]
+        [Tooltip("Animator 기반으로 작동 시 할당합니다 (예: Flamberge)")]
+        [SerializeField] private Animator myAnimator;
+        [SerializeField] private string attackTriggerName = "Attack";
 
         [Header("Effect Animation")]
         [SerializeField] private Animator  slashEffectAnimator;
@@ -29,6 +33,10 @@ namespace Nytherion.GamePlay.Combat.Weapon
             if(meleeWeaponAnimation==null)
             {
                 meleeWeaponAnimation=GetComponentInParent<Animation>();
+            }
+            if(myAnimator==null)
+            {
+                myAnimator=GetComponent<Animator>();
             }
         }
 
@@ -76,6 +84,12 @@ namespace Nytherion.GamePlay.Combat.Weapon
                 meleeWeaponAnimation.Play(attackClipName);
                 
             }
+
+            if (myAnimator != null)
+            {
+                myAnimator.SetTrigger(attackTriggerName);
+            }
+
             //PlaySlashEffect();
 
             lastAttackTime = Time.time;

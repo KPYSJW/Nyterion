@@ -90,27 +90,29 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 if (meleeWeaponPoint != null)
                 {
-                    currentWeapon = Instantiate(weaponPrefab, meleeWeaponPoint);
+                    currentWeapon = Instantiate(weaponPrefab, meleeWeaponPoint, false);
                 }
             }
             else
             {
                 if (weaponPoint != null)
                 {
-                    currentWeapon = Instantiate(weaponPrefab, weaponPoint);
+                    currentWeapon = Instantiate(weaponPrefab, weaponPoint, false);
                 }
             }
 
             if (currentWeapon != null)
             {
+                // Instantiate(..., false)에 의해 프리팹의 원래 localPosition이 유지됩니다.
+                // 만약 WeaponData에 오버라이드용 visualPositionOffset이 명시되어 있다면 그것을 덮어씁니다.
                 if (type != WeaponType.Melee)
                 {
-                    Vector3 posOffset = Vector3.zero;
-                    if (data != null)
+                    Vector3 posOffset = currentWeapon.transform.localPosition;
+                    if (data != null && data.visualPositionOffset != Vector3.zero)
                     {
                         posOffset = data.visualPositionOffset;
                     }
-                    else if (currentWeapon.weaponData != null)
+                    else if (currentWeapon.weaponData != null && currentWeapon.weaponData.visualPositionOffset != Vector3.zero)
                     {
                         posOffset = currentWeapon.weaponData.visualPositionOffset;
                     }
@@ -119,7 +121,16 @@ namespace Nytherion.GamePlay.Characters.Player
                 }
                 else
                 {
-                    currentWeapon.transform.localPosition = Vector3.zero;
+                    Vector3 posOffset = currentWeapon.transform.localPosition;
+                    if (data != null && data.visualPositionOffset != Vector3.zero)
+                    {
+                        posOffset = data.visualPositionOffset;
+                    }
+                    else if (currentWeapon.weaponData != null && currentWeapon.weaponData.visualPositionOffset != Vector3.zero)
+                    {
+                        posOffset = currentWeapon.weaponData.visualPositionOffset;
+                    }
+                    currentWeapon.transform.localPosition = posOffset;
                 }
 
                 // Animator Controller 런타임 주입 (원거리 무기만 적용)
@@ -181,7 +192,7 @@ namespace Nytherion.GamePlay.Characters.Player
             if (isAttackHeld && currentWeapon != null)
             {
                 // 차징 무기가 아닌 경우 꾹 누르고 있으면 쿨다운에 맞춰 자동 연사 (Auto-fire)
-                if (!(currentWeapon is ChargeableRangedWeapon))
+                if (!(currentWeapon is IChargeableWeapon))
                 {
                     if (currentWeapon.CanAttack())
                     {
@@ -194,6 +205,21 @@ namespace Nytherion.GamePlay.Characters.Player
         private void RotateWeaponToMouse()
         {
             if (inputManager == null || weaponPoint == null) return;
+
+            if (currentWeapon != null && currentWeapon.OverrideRotation)
+            {
+                weaponPoint.localPosition = Vector3.zero;
+                weaponPoint.localRotation = Quaternion.identity;
+                weaponPoint.localScale = Vector3.one;
+
+                if (meleeWeaponPoint != null)
+                {
+                    meleeWeaponPoint.localPosition = Vector3.zero;
+                    meleeWeaponPoint.localRotation = Quaternion.identity;
+                    meleeWeaponPoint.localScale = Vector3.one;
+                }
+                return;
+            }
 
             Vector2 mouseScreenPos = inputManager.MousePosition;
 

@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Ice Cube
   koreanName: "\uAC01\uC5BC\uC74C"
-  description_KR: "\uBE59\uACB0 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uB300\uC26C \uC18D\uB3C4
-    +20%, \uB300\uC26C \uC9C0\uC18D +15%. "
-  description_EN: When Ice equipment is active, dash speed +20%, dash duration +15%.
+  description_KR: "\uBE59\uACB0 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uBE59\uACB0 \uD53C\uD574 +15% \uC99D\uAC00, \uBC29\uC5B4\uB825 +6."
+  description_EN: 'When Ice equipment is active, Ice damage +15%, defense +6.'
   Image: {fileID: 21300000, guid: 93e967b4af5513548bf55083955490e3, type: 3}
   rarity: 3
   level: 1
@@ -48,11 +47,15 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 7
-          value: 0.2
+        - stat: 3
+          value: 0.15
           valuePerLevel: 0.05
           isPercentage: 1
-        - stat: 8
+        - stat: 4
           value: 0.15
-          valuePerLevel: 0.03
+          valuePerLevel: 0.05
           isPercentage: 1
+        - stat: 1
+          value: 6
+          valuePerLevel: 2
+          isPercentage: 0

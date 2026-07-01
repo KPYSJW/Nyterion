@@ -15,7 +15,6 @@ namespace Nytherion.UI.Inventory
     {
         public int SlotIndex { get; private set; }
         public event Action<ItemData, int> OnItemUsed;
-        [SerializeField] private TMPro.TextMeshProUGUI keyLabelText;
         private Action<ItemData, int> onItemUsed;
         private IUseableItem useableItem;
         private InventoryDataManager inventoryDataManager;
@@ -65,14 +64,6 @@ namespace Nytherion.UI.Inventory
         protected override void Awake()
         {
             base.Awake();
-            if (keyLabelText == null)
-            {
-                Debug.LogError("keyLabelText is not assigned in the inspector!", this);
-            }
-            else
-            {
-                keyLabelText.gameObject.SetActive(true);
-            }
 
             OnBeginDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleBeginDragShared(slot);
             OnEndDragEvent += (slot, eventData) => InventoryUtils.DragDropUIHandler.HandleEndDragShared(slot, eventData);
@@ -113,14 +104,6 @@ namespace Nytherion.UI.Inventory
             {
                 InventoryUtils.SlotTransferHelper.TransferItem(sourceSlot, this);
                 InventoryUtils.DragDropUIHandler.dropHandled = true;
-            }
-        }
-
-        public void SetKeyLabel(string label)
-        {
-            if (keyLabelText != null)
-            {
-                keyLabelText.text = label;
             }
         }
 

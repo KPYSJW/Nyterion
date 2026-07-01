@@ -7,6 +7,7 @@ namespace Nytherion.GamePlay.Combat
     {
         public abstract string EffectId { get; }
         public virtual Color EffectColor => Color.white;
+        public Sprite EffectIcon { get; set; }
         public float Duration { get; protected set; }
         public float Timer { get; protected set; }
 
@@ -19,6 +20,12 @@ namespace Nytherion.GamePlay.Combat
             this.manager = manager;
             this.Duration = duration;
             this.Timer = duration;
+        }
+
+        public void ModifyDuration(float newDuration)
+        {
+            this.Duration = newDuration;
+            this.Timer = newDuration;
         }
 
         public virtual void ResetDuration()

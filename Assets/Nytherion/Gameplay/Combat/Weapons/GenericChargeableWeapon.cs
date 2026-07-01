@@ -18,7 +18,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         protected override void FireChargedAttack(Vector2 direction, float chargePercent)
         {
-            this.damageMultiplier = Mathf.Lerp(0.5f, 1.0f, chargePercent);
+            this.damageMultiplier = IsChargingEnabled() ? Mathf.Lerp(0.5f, 1.0f, chargePercent) : 1.0f;
             
             FireProjectiles(direction, 1);
         }

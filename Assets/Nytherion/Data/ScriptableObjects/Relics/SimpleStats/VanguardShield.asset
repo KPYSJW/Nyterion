@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Vanguard Shield
   koreanName: "\uC120\uBD09\uC7A5\uC758 \uBC29\uD328"
-  description_KR: "\uC804\uC120\uC5D0\uC11C \uC4F0\uC774\uB294 \uAC70\uB300\uD55C
-    \uBC29\uD328 \uD615\uC0C1\uC758 \uAC01\uC778\uC785\uB2C8\uB2E4. \uBC29\uC5B4\uB825\uACFC
-    \uC0DD\uBA85\uB825\uC744 \uB300\uD3ED \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+  description_KR: "\uBC29\uC5B4\uB825 +15 (\uB808\uBCA8\uB2F9 +3), \uCD5C\uB300 \uCCB4\uB825 +60 (\uB808\uBCA8\uB2F9 +10)"
   description_EN: A heavy battlefield shield engraving, granting immense defense
     and health.
   Image: {fileID: 21300000, guid: 134bb7a238023d043a3d6129be61ddcc, type: 3}

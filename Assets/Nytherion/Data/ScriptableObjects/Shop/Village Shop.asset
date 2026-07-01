@@ -134,3 +134,28 @@ MonoBehaviour:
     price: 100
     stock: 1
     isUnlimited: 0
+  - shopItemId: 561d05c4-b207-4e7a-ab26-e1f7b163a6a3
+    item: {fileID: 11400000, guid: 323c157966016e94692a23fdc1952326, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: 61064644-1e5e-4320-9669-a36bc8ae881c
+    item: {fileID: 11400000, guid: e128a3f8902d4bda85cc4aef52ef29b8, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: 3677a5fa-7801-4f36-bb44-7ae62c6f3fa1
+    item: {fileID: 11400000, guid: e79d5d30ce3363d41a45cff77bc5a2e6, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: a4840cbf-db37-449d-a786-3607d0dcbc1e
+    item: {fileID: 11400000, guid: 742c991ecf50a4a42838d99a1c24e561, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
+  - shopItemId: 1bac3356-5ba3-47f1-b401-cc96e57ef056
+    item: {fileID: 11400000, guid: 9bb9f2fd648443e4ea74a1147a6fc75e, type: 2}
+    price: 100
+    stock: 1
+    isUnlimited: 0
