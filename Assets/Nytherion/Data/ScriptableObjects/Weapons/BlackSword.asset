@@ -44,6 +44,8 @@ MonoBehaviour:
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
-  hitEffectPrefab: {fileID: 0}
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 1416822979869043202, guid: 80d3b81f724fe4541a5d026e73d6311c, type: 3}
   weaponPrefab: {fileID: 3381123201908648791, guid: 870eb4798c347f5418ed51633b9706c5, type: 3}
   isArchivable: 1
