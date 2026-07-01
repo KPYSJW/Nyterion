@@ -5,7 +5,7 @@ namespace Nytherion.GamePlay.Combat
 {
     public static class WeaponEffectHelper
     {
-        public static void PlayHitEffect(GameObject effectPrefab, Vector3 position, float chargePercent = 0f)
+        public static void PlayHitEffect(GameObject effectPrefab, Vector3 position, float chargePercent = 0f, Vector3? direction = null)
         {
             if (effectPrefab == null) return;
 
@@ -14,16 +14,37 @@ namespace Nytherion.GamePlay.Combat
             float minScale = Mathf.Lerp(0.6f, 1.0f, chargePercent);
             float maxScale = Mathf.Lerp(1.0f, 1.4f, chargePercent);
             float randomScale = Random.Range(minScale, maxScale);
-            Quaternion randomRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
+            
+            // atlas의 hiteffect는 이미지가 아래에서 위로 뻗어나가므로 회전을 고정하거나 공격 방향에 정렬합니다.
+            Quaternion targetRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
+            if (effectPrefab.name.Contains("AtlasHitEffect"))
+            {
+                if (direction.HasValue && direction.Value != Vector3.zero)
+                {
+                    Vector3 dir2D = new Vector3(direction.Value.x, direction.Value.y, 0f).normalized;
+                    if (dir2D != Vector3.zero)
+                    {
+                        targetRotation = Quaternion.FromToRotation(Vector3.up, dir2D);
+                    }
+                    else
+                    {
+                        targetRotation = Quaternion.identity;
+                    }
+                }
+                else
+                {
+                    targetRotation = Quaternion.identity;
+                }
+            }
 
             GameObject effectObj = null;
             if (ObjectPoolManager.Instance != null)
             {
-                effectObj = ObjectPoolManager.Instance.SpawnFromPool(effectPrefab, position, randomRotation);
+                effectObj = ObjectPoolManager.Instance.SpawnFromPool(effectPrefab, position, targetRotation);
             }
             else
             {
-                effectObj = Object.Instantiate(effectPrefab, position, randomRotation);
+                effectObj = Object.Instantiate(effectPrefab, position, targetRotation);
             }
 
             if (effectObj != null)

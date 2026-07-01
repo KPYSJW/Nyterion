@@ -53,7 +53,9 @@ namespace Nytherion.GamePlay.Combat
                     ApplyStatusEffects(target);
                     if (weaponData != null)
                     {
-                        WeaponEffectHelper.PlayHitEffect(weaponData.hitEffectPrefab, hit.collider.transform.position);
+                        Vector3 hitPoint = (Vector3)hit.point;
+                        Vector3 attackDir = (hitPoint - transform.position).normalized;
+                        WeaponEffectHelper.PlayHitEffect(weaponData.hitEffectPrefab, hitPoint, direction: attackDir);
                     }
                 }
             }
@@ -82,7 +84,19 @@ namespace Nytherion.GamePlay.Combat
 
             if (weaponData != null)
             {
-                WeaponEffectHelper.PlayHitEffect(weaponData.hitEffectPrefab, collision.transform.position);
+                Vector3 hitPoint = collision.transform.position;
+                Vector3 attackDir = (hitPoint - transform.position).normalized;
+                
+                if (col != null)
+                {
+                    ColliderDistance2D dist = col.Distance(collision);
+                    if (dist.isValid)
+                    {
+                        hitPoint = (Vector3)dist.pointB;
+                        attackDir = (hitPoint - transform.position).normalized;
+                    }
+                }
+                WeaponEffectHelper.PlayHitEffect(weaponData.hitEffectPrefab, hitPoint, direction: attackDir);
             }
         }
     }

@@ -192,7 +192,7 @@ namespace Nytherion.GamePlay.Characters.Player
             if (isAttackHeld && currentWeapon != null)
             {
                 // 차징 무기가 아닌 경우 꾹 누르고 있으면 쿨다운에 맞춰 자동 연사 (Auto-fire)
-                if (!(currentWeapon is ChargeableRangedWeapon))
+                if (!(currentWeapon is IChargeableWeapon))
                 {
                     if (currentWeapon.CanAttack())
                     {

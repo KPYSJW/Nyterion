@@ -512,7 +512,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     currentThrustDistance = Mathf.Lerp(0f, activeThrustDistance, t);
 
                     // 전진하는 매 프레임 수동으로 즉각적인 Overlap 검사를 실행하여 타격 신뢰성을 보장
-                    CheckManualCollision(finalDamageMultiplier);
+                    CheckManualCollision(finalDamageMultiplier, thrustDir);
                 }
                 else
                 {
@@ -541,7 +541,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             spearHitTargets.Clear();
         }
 
-        private void CheckManualCollision(float finalDamageMultiplier)
+        private void CheckManualCollision(float finalDamageMultiplier, Vector3 thrustDir)
         {
             ContactFilter2D filter = new ContactFilter2D();
             filter.useTriggers = true;
@@ -571,7 +571,13 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
                         if (weaponData != null)
                         {
-                            WeaponEffectHelper.PlayHitEffect(weaponData.hitEffectPrefab, other.transform.position);
+                            Vector3 hitPoint = other.transform.position;
+                            ColliderDistance2D dist = col.Distance(other);
+                            if (dist.isValid)
+                            {
+                                hitPoint = (Vector3)dist.pointB;
+                            }
+                            WeaponEffectHelper.PlayHitEffect(weaponData.hitEffectPrefab, hitPoint, direction: thrustDir);
                         }
                     }
                 }
