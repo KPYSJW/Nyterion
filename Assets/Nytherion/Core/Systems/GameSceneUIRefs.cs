@@ -43,15 +43,14 @@ public class GameSceneUIRefs : MonoBehaviour
     [Header("Gacha Panels")]
     [SerializeField] private GameObject gachaMainPanel;
     public GameObject GachaMainPanel => gachaMainPanel;
-    [SerializeField] private GameObject gachaResultPanel;
-    public GameObject GachaResultPanel => gachaResultPanel;
+    [SerializeField] private GameObject weaponResultPanel;
+    public GameObject WeaponResultPanel => weaponResultPanel;
+    [SerializeField] private GameObject relicResultPanel;
+    public GameObject RelicResultPanel => relicResultPanel;
     [SerializeField] private GameObject weaponSubPanel;
     public GameObject WeaponSubPanel => weaponSubPanel;
     [SerializeField] private GameObject relicSubPanel;
     public GameObject RelicSubPanel => relicSubPanel;
-    [SerializeField] private GameObject skillSubPanel;
-    public GameObject SkillSubPanel => skillSubPanel;
-
 
     [Header("Gacha UI Buttons")]
     [SerializeField] private Button drawOnceBtton;
@@ -62,19 +61,26 @@ public class GameSceneUIRefs : MonoBehaviour
     
     [SerializeField] private Button gachaCloseButton;
     public Button GachaCloseButton => gachaCloseButton;
-    [SerializeField] private Button resultCloseButton;
-    public Button ResultCloseButton => resultCloseButton;
+    [SerializeField] private Button weaponResultCloseButton;
+    public Button WeaponResultCloseButton => weaponResultCloseButton;
+    [SerializeField] private Button relicResultCloseButton;
+    public Button RelicResultCloseButton => relicResultCloseButton;
 
-    [SerializeField] private Button weaponTabButton;
-    public Button WeaponTabButton => weaponTabButton;
-    [SerializeField] private Button relicTabButton;
-    public Button RelicTabButton => relicTabButton; 
-    [SerializeField] private Button skillTabButton;
-    public Button SkillTabButton => skillTabButton;
+    [Header("Gacha Type Indicator Text")]
+    [SerializeField] private TextMeshProUGUI gachaTypeTitleText;
+    public TextMeshProUGUI GachaTypeTitleText => gachaTypeTitleText;
+
+    [Header("Gacha Navigation Buttons")]
+    [SerializeField] private Button prevGachaButton;
+    public Button PrevGachaButton => prevGachaButton;
+    [SerializeField] private Button nextGachaButton;
+    public Button NextGachaButton => nextGachaButton;
 
     [Header("Gacha Result Panel")]
-    [SerializeField] private Transform resultSlotParent;
-    public Transform ResultSlotParent => resultSlotParent;
+    [SerializeField] private Transform weaponResultSlotParent;
+    public Transform WeaponResultSlotParent => weaponResultSlotParent;
+    [SerializeField] private Transform relicResultSlotParent;
+    public Transform RelicResultSlotParent => relicResultSlotParent;
     [SerializeField] private GameObject resultSlotPrefab;
     public GameObject ResultSlotPrefab => resultSlotPrefab;
 

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Relic_Laser
+  m_EditorClassIdentifier: 
+  relicName: Relic of Laser
+  koreanName: "Laser \uAC01\uC778"
+  description_KR: "[Laser] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Laser]
+    : \uC9C1\uC120 \uBC29\uD5A5\uC73C\uB85C \uAC15\uB825\uD55C \uAD00\uD1B5 \uB808\uC774\uC800\uB97C
+    \uBC1C\uC0AC\uD558\uC5EC \uADA4\uC801 \uC0C1\uC758 \uBAA8\uB4E0 \uC801\uC744
+    \uD30C\uAD34\uD569\uB2C8\uB2E4."
+  description_EN: "Obtain [Laser] skill.\n[Laser] : \uC9C1\uC120 \uBC29\uD5A5\uC73C\uB85C
+    \uAC15\uB825\uD55C \uAD00\uD1B5 \uB808\uC774\uC800\uB97C \uBC1C\uC0AC\uD558\uC5EC
+    \uADA4\uC801 \uC0C1\uC758 \uBAA8\uB4E0 \uC801\uC744 \uD30C\uAD34\uD569\uB2C8\uB2E4."
+  Image: {fileID: 1557350834, guid: 2af3bd9a622f59848a16b41c4dd0dae3, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 2313383513706201103
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2313383513706201103
+      type: {class: GrantSkillEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        skillData: {fileID: 11400000, guid: 40cb3348b3dc96849ad26abdb73b9fcb, type: 2}

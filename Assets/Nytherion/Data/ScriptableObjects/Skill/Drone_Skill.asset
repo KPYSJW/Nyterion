@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -15,13 +15,15 @@ MonoBehaviour:
   skillID: skill_drone
   skillType: 3
   skillName: Drone
-  description: 
+  description: "\uD50C\uB808\uC774\uC5B4 \uC8FC\uBCC0\uC744 \uC120\uD68C\uD558\uBA70
+    \uC811\uADFC\uD558\uB294 \uC801\uB4E4\uC744 \uC790\uB3D9\uC73C\uB85C \uCD94\uACA9
+    \uACF5\uACA9\uD558\uB294 \uC9C0\uC6D0 \uB4DC\uB860\uC744 \uC18C\uD658\uD569\uB2C8\uB2E4."
   skillLevel: 0
   exp: 0
   coolDown: 10
+  manaCost: 0
   damage: 10
   range: 5
   icon: {fileID: 21300000, guid: 59c3a398a748c9948b73d0c814cf0edb, type: 3}
   skillPrefab: {fileID: 4812313363314114940, guid: e138f7f50a65d334490f7e769cfb4f4e, type: 3}
-
-  unlockMilestoneID: Drone
+  unlockMilestoneID: 

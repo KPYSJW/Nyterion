@@ -18,6 +18,8 @@ namespace Nytherion.Core.Managers
         bool IsSkillUnlocked(SkillData skillData);
         bool IsSkillUnlocked(string skillId);
         void UnlockSkill(SkillData skillData);
+        void LockSkill(SkillData skillData);
+        void LockSkill(string skillId);
         bool IsMilestoneCompleted(string milestoneId);
         void CompleteMilestone(string milestoneId);
         void CompleteMilestone(MilestoneData milestone);
@@ -30,6 +32,7 @@ namespace Nytherion.Core.Managers
         event Action<string, int, int> OnMilestoneProgressUpdated;
 
         event Action<SkillData> OnSkillUnlocked;
+        event Action<SkillData> OnSkillLocked;
         event Action<string> OnMilestoneCompleted;
 
         void RecordProjectile(GameObject projectilePrefab);
@@ -49,6 +52,7 @@ namespace Nytherion.Core.Managers
 
         private System.Collections.Generic.Dictionary<string, MilestoneData> milestoneLookup = new System.Collections.Generic.Dictionary<string, MilestoneData>();
         private System.Collections.Generic.Dictionary<ProgressionType, System.Collections.Generic.List<MilestoneData>> milestonesByType = new System.Collections.Generic.Dictionary<ProgressionType, System.Collections.Generic.List<MilestoneData>>();
+        private System.Collections.Generic.Dictionary<string, int> skillUnlockRefCount = new System.Collections.Generic.Dictionary<string, int>();
 
         private CurrencyDataManager currencyDataManager;
         private InventoryDataManager inventoryDataManager;
@@ -212,6 +216,7 @@ namespace Nytherion.Core.Managers
         }
 
         public event Action<SkillData> OnSkillUnlocked;
+        public event Action<SkillData> OnSkillLocked;
         public event Action<string> OnMilestoneCompleted;
         public event Action<string, int, int> OnMilestoneProgressUpdated;
         public event Action OnProgressionDataLoaded;
@@ -228,11 +233,58 @@ namespace Nytherion.Core.Managers
 
         public void UnlockSkill(SkillData skillData)
         {
-            if (skillData != null && !state.unlockedSkills.Contains(skillData.skillID))
-            {
-                state.unlockedSkills.Add(skillData.skillID);
+            if (skillData == null || string.IsNullOrEmpty(skillData.skillID)) return;
 
+            string skillId = skillData.skillID;
+            if (!skillUnlockRefCount.ContainsKey(skillId))
+            {
+                skillUnlockRefCount[skillId] = 0;
+            }
+
+            skillUnlockRefCount[skillId]++;
+
+            if (!state.unlockedSkills.Contains(skillId))
+            {
+                state.unlockedSkills.Add(skillId);
                 OnSkillUnlocked?.Invoke(skillData);
+            }
+        }
+
+        public void LockSkill(SkillData skillData)
+        {
+            if (skillData == null || string.IsNullOrEmpty(skillData.skillID)) return;
+            LockSkill(skillData.skillID, skillData);
+        }
+
+        public void LockSkill(string skillId)
+        {
+            LockSkill(skillId, null);
+        }
+
+        private void LockSkill(string skillId, SkillData skillData)
+        {
+            if (string.IsNullOrEmpty(skillId)) return;
+
+            if (skillUnlockRefCount.ContainsKey(skillId))
+            {
+                skillUnlockRefCount[skillId]--;
+                if (skillUnlockRefCount[skillId] <= 0)
+                {
+                    skillUnlockRefCount.Remove(skillId);
+                    if (state.unlockedSkills.Contains(skillId))
+                    {
+                        state.unlockedSkills.Remove(skillId);
+                        OnSkillLocked?.Invoke(skillData);
+                    }
+                }
+            }
+            else
+            {
+                if (state.unlockedSkills.Contains(skillId))
+                {
+                    state.unlockedSkills.Remove(skillId);
+                    OnSkillLocked?.Invoke(skillData);
+                }
             }
         }
 

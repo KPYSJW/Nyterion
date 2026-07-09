@@ -101,6 +101,114 @@ namespace Nytherion.Core.Managers
             Debug.LogWarning("스킬 보관함이 가득 찼습니다.");
         }
 
+        /// <summary>
+        /// 유물(각인) 장착 시 스킬 보관함에 스킬을 지급하고 레벨을 유물 레벨과 동기화
+        /// </summary>
+        public void GrantSkillFromRelic(SkillData skillData, int relicLevel)
+        {
+            if (skillData == null || string.IsNullOrEmpty(skillData.skillID)) return;
+
+            string skillId = skillData.skillID;
+
+            // 레벨 상태 설정 및 갱신 (유물 레벨로 동기화)
+            if (!skillStates.TryGetValue(skillId, out SkillState state))
+            {
+                state = new SkillState();
+                skillStates[skillId] = state;
+            }
+            state.level = Mathf.Max(1, relicLevel);
+
+            // 이미 storageSkills나 equippedSkills에 존재하는지 확인
+            bool alreadyExists = false;
+            for (int i = 0; i < storageSkills.Length; i++)
+            {
+                if (storageSkills[i] != null && storageSkills[i].skillID == skillId)
+                {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+
+            if (!alreadyExists)
+            {
+                for (int i = 0; i < equippedSkills.Length; i++)
+                {
+                    if (equippedSkills[i] != null && equippedSkills[i].skillID == skillId)
+                    {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+            }
+
+            // 존재하지 않는다면 storageSkills의 첫 빈 슬롯에 스킬 할당
+            if (!alreadyExists)
+            {
+                bool added = false;
+                for (int i = 0; i < storageSkills.Length; i++)
+                {
+                    if (storageSkills[i] == null)
+                    {
+                        storageSkills[i] = skillData;
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added)
+                {
+                    Debug.LogWarning($"[SkillDataManager] 스킬 보관함이 가득 차서 {skillData.skillName} 스킬을 추가할 수 없습니다.");
+                }
+            }
+
+            OnSkillDataChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// 유물(각인) 장착 해제 시 스킬 보관함 및 장착 슬롯에서 해당 스킬 제거
+        /// </summary>
+        public void RevokeSkillFromRelic(SkillData skillData)
+        {
+            if (skillData == null || string.IsNullOrEmpty(skillData.skillID)) return;
+
+            string skillId = skillData.skillID;
+
+            // 보관함에서 제거
+            for (int i = 0; i < storageSkills.Length; i++)
+            {
+                if (storageSkills[i] != null && storageSkills[i].skillID == skillId)
+                {
+                    storageSkills[i] = null;
+                }
+            }
+
+            // 장착 슬롯에서 제거
+            bool removedFromEquipped = false;
+            for (int i = 0; i < equippedSkills.Length; i++)
+            {
+                if (equippedSkills[i] != null && equippedSkills[i].skillID == skillId)
+                {
+                    equippedSkills[i] = null;
+                    removedFromEquipped = true;
+                }
+            }
+
+            // 스킬 상태 정보 제거
+            skillStates.Remove(skillId);
+
+            // 장착 중이던 스킬이 제거되었으면 플레이어 전투 스킬 갱신
+            if (removedFromEquipped)
+            {
+                Nytherion.GamePlay.Characters.Player.PlayerSkillManager playerSkillManager = UnityEngine.Object.FindObjectOfType<Nytherion.GamePlay.Characters.Player.PlayerSkillManager>();
+                if (playerSkillManager != null)
+                {
+                    playerSkillManager.SetEquippedSkills(equippedSkills);
+                }
+            }
+
+            OnSkillDataChanged?.Invoke();
+        }
+
 
         /// <summary>
         /// UI 에서 장착 상태나 보관함 순서가 변경되었을 때 데이터를 최신화
