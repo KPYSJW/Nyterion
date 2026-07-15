@@ -101,22 +101,14 @@ public class GameSceneUIRefs : MonoBehaviour
     public GameObject ShopUIPrefab => shopUIPrefab;
     [SerializeField] private CanvasGroup shopCanvasGroup;
     public CanvasGroup ShopCanvasGroup => shopCanvasGroup;
-    [SerializeField] private Transform shopSlotParent;
-    public Transform ShopSlotParent => shopSlotParent;
-    [SerializeField] private GameObject shopSlotPrefab;
-    public GameObject ShopSlotPrefab => shopSlotPrefab;
+    [SerializeField] private ShopSlotUI[] shopSlots;
+    public ShopSlotUI[] ShopSlots => shopSlots;
     [SerializeField] private Button shopCloseButton;
     public Button ShopCloseButton => shopCloseButton;
     [SerializeField] private TextMeshProUGUI shopPlayerGoldText;
     public TextMeshProUGUI ShopPlayerGoldText => shopPlayerGoldText;
     [SerializeField] private Transform shopPlayerInventoryParent;
     public Transform ShopPlayerInventoryParent => shopPlayerInventoryParent;
-    [SerializeField] private SellSlotUI sellSlotUI;
-    public SellSlotUI SellSlotUI => sellSlotUI;
-    [SerializeField] private Button shopBuyTabButton;    
-    public Button ShopBuyTabButton => shopBuyTabButton;
-    [SerializeField] private Button shopBuybackTabButton;
-    public Button ShopBuybackTabButton => shopBuybackTabButton;
     [SerializeField] private GameObject shopEmptyStateUI;
     public GameObject ShopEmptyStateUI => shopEmptyStateUI;
 
@@ -127,6 +119,12 @@ public class GameSceneUIRefs : MonoBehaviour
     [Header("Shop Sell Popup")]
     [SerializeField] private SellPopupUI shopSellPopupUI;
     public SellPopupUI ShopSellPopupUI => shopSellPopupUI;
+
+    [Header("Shop Reroll UI")]
+    [SerializeField] private Button shopRerollButton;
+    public Button ShopRerollButton => shopRerollButton;
+    [SerializeField] private TextMeshProUGUI shopRerollCostText;
+    public TextMeshProUGUI ShopRerollCostText => shopRerollCostText;
 
     [Header("Menu UI")]
     [SerializeField] private CanvasGroup menuCanvasGroup;

@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: Relic_SoulEater
+  m_Name: AncientSkull
   m_EditorClassIdentifier: 
-  relicName: Relic of SoulEater
-  koreanName: "SoulEater \uAC01\uC778"
+  relicName: Ancient Skull
+  koreanName: "\uACE0\uB300\uD574\uACE8"
   description_KR: "[SoulEater] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[SoulEater]
     : \uC801 \uCC98\uCE58 \uC2DC \uC601\uD63C\uC744 \uD761\uC218\uD558\uC5EC \uCCB4\uB825\uC744
     \uD68C\uBCF5\uD558\uACE0 \uC7A0\uC2DC \uB3D9\uC548 \uB2A5\uB825\uC744 \uAC15\uD654\uD569\uB2C8\uB2E4."
   description_EN: "Obtain [SoulEater] skill.\n[SoulEater] : \uC801 \uCC98\uCE58 \uC2DC
     \uC601\uD63C\uC744 \uD761\uC218\uD558\uC5EC \uCCB4\uB825\uC744 \uD68C\uBCF5\uD558\uACE0
     \uC7A0\uC2DC \uB3D9\uC548 \uB2A5\uB825\uC744 \uAC15\uD654\uD569\uB2C8\uB2E4."
-  Image: {fileID: 21300000, guid: 783a2cec6c880b44a838fb8d6784ad88, type: 3}
+  Image: {fileID: 21300000, guid: 605854ef5826a5e4ba9bcbc7341e1d55, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

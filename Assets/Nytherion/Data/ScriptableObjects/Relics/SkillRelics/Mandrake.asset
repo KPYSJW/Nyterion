@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: Relic_Overdrive
+  m_Name: Mandrake
   m_EditorClassIdentifier: 
-  relicName: Relic of Overdrive
-  koreanName: "Overdrive \uAC01\uC778"
+  relicName: Mandrake
+  koreanName: "\uB9E8\uB4DC\uB808\uC774\uD06C"
   description_KR: "[Overdrive] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Overdrive]
     : \uACFC\uBD80\uD558 \uC0C1\uD0DC\uC5D0 \uC9C4\uC785\uD558\uC5EC \uC77C\uC815
     \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640 \uB300\uC26C \uC18D\uB3C4\uAC00
@@ -21,7 +21,7 @@ MonoBehaviour:
   description_EN: "Obtain [Overdrive] skill.\n[Overdrive] : \uACFC\uBD80\uD558 \uC0C1\uD0DC\uC5D0
     \uC9C4\uC785\uD558\uC5EC \uC77C\uC815 \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640
     \uB300\uC26C \uC18D\uB3C4\uAC00 \uADF9\uB300\uD654\uB429\uB2C8\uB2E4."
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 1073be4f7aaa7424fbc413e401329463, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

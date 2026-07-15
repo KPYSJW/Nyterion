@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: Relic_Multi_Shot
+  m_Name: FossilClam
   m_EditorClassIdentifier: 
-  relicName: Relic of Multi_Shot
-  koreanName: "Multi Shot \uAC01\uC778"
+  relicName: Fossil Clam
+  koreanName: "\uD654\uC11D\uC870\uAC1C"
   description_KR: "[Multi Shot] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Multi
     Shot] : \uD22C\uC0AC\uCCB4 \uBC1C\uC0AC \uC2DC \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB97C
     \uC5EC\uB7EC \uBC29\uD5A5\uC73C\uB85C \uB3D9\uC2DC \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
   description_EN: "Obtain [Multi Shot] skill.\n[Multi Shot] : \uD22C\uC0AC\uCCB4
     \uBC1C\uC0AC \uC2DC \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB97C \uC5EC\uB7EC \uBC29\uD5A5\uC73C\uB85C
     \uB3D9\uC2DC \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: bc3c0c78e6b8ae5489adcb9af4f85980, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

@@ -18,13 +18,13 @@ namespace Nytherion.Core.Managers
 
         private SceneTransitionManager sceneTransitionManager;
         private DungeonManager dungeonManager;
+        private ShopManager shopManager;
 
-       
-        /*[Inject]
-        public void Construct(SceneTransitionManager sceneTransitionManager)
+        [Inject]
+        public void Construct(ShopManager shopManager)
         {
-            this.sceneTransitionManager = sceneTransitionManager;
-        }*/
+            this.shopManager = shopManager;
+        }
 
         public void SetDungeonManager(DungeonManager dungeonManager)
         {
@@ -65,6 +65,11 @@ namespace Nytherion.Core.Managers
             {
                 Debug.Log("마지막 스테이지 클리어!");
                 return;
+            }
+
+            if (shopManager != null)
+            {
+                shopManager.ResetRerollCount();
             }
 
             string sceneToLoad = CurrentStage.victorySceneName;

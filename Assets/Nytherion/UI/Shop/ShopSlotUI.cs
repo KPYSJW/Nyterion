@@ -12,13 +12,11 @@ using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.UI.Shop
 {
-    public class ShopSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class ShopSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         [SerializeField] private Image iconImage;
-        [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI priceText;
         //[SerializeField] private TextMeshProUGUI descriptionText;
-        [SerializeField] private TextMeshProUGUI stockText;
         [SerializeField] private Button buyButton;
         [SerializeField] private CanvasGroup canvasGroup;
 
@@ -39,8 +37,10 @@ namespace Nytherion.UI.Shop
 
             if (CurrentItem != null && CurrentItem.item != null)
             {
-                iconImage.sprite = CurrentItem.item.icon;
-                nameText.text = CurrentItem.item.itemName;
+                if (iconImage != null)
+                {
+                    iconImage.sprite = CurrentItem.item.icon;
+                }
 
                 int displayPrice = CurrentItem.price;
 
@@ -59,12 +59,16 @@ namespace Nytherion.UI.Shop
                     }
                 }
 
-                priceText.text = $"{displayPrice} Gold";
-                
-                stockText.text = CurrentItem.isUnlimited ? "" : $"X {CurrentItem.stock}";
+                if (priceText != null)
+                {
+                    priceText.text = $"{displayPrice}";
+                }
 
-                buyButton.onClick.RemoveAllListeners();
-                buyButton.onClick.AddListener(OnBuyButtonClicked);
+                if (buyButton != null)
+                {
+                    buyButton.onClick.RemoveAllListeners();
+                    buyButton.onClick.AddListener(OnBuyButtonClicked);
+                }
                 gameObject.SetActive(true);
 
                 if (IsSoldOut())
@@ -81,18 +85,30 @@ namespace Nytherion.UI.Shop
                 gameObject.SetActive(false);
             }
         }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 2)
+            {
+                if (CurrentItem != null && !IsSoldOut())
+                {
+                    OnBuyButtonClicked();
+                }
+            }
+        }
+
         public void UpdateStockUI()
         {
             if (CurrentItem != null)
             {
                 // ShopManager에서 최신 재고 정보 가져오기
-                var shopManager = FindObjectOfType<ShopManager>();
+                ShopManager shopManager = FindObjectOfType<ShopManager>();
                 if (shopManager != null && !string.IsNullOrEmpty(currentShopName))
                 {
-                    var shopItems = shopManager.GetShopItems(currentShopName);
+                    List<ShopItemData> shopItems = shopManager.GetShopItems(currentShopName);
                     if (shopItems != null)
                     {
-                        var updatedItem = shopItems.Find(item => item.shopItemId == CurrentItem.shopItemId);
+                        ShopItemData updatedItem = shopItems.Find(item => item.shopItemId == CurrentItem.shopItemId);
                         if (updatedItem != null)
                         {
                             // 실제 ShopManager의 재고로 업데이트
@@ -100,12 +116,6 @@ namespace Nytherion.UI.Shop
                             Debug.Log($"[ShopSlotUI] '{CurrentItem.item.itemName}' 재고 업데이트: {CurrentItem.stock}");
                         }
                     }
-                }
-
-                // 재고 표시 업데이트
-                if (stockText != null)
-                {
-                    stockText.text = CurrentItem.isUnlimited ? "" : $"X {CurrentItem.stock}";
                 }
 
                 // 매진 상태 확인 및 시각적 업데이트

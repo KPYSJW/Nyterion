@@ -19,7 +19,15 @@ namespace Nytherion.Data.ScriptableObjects.Items
         [Header("Stat Modifiers")]
         public List<StatModifier> statModifiers;
 
-        protected void OnEnable()
+        /// <summary>
+        /// 등급별 스탯 및 가격을 보정하기 위한 가상 메소드
+        /// </summary>
+        public virtual void ApplyRarityStats(Rarity targetRarity)
+        {
+            rarity = targetRarity;
+        }
+
+        protected virtual void OnEnable()
         {
             isStackable = false;
             maxStack = 1;

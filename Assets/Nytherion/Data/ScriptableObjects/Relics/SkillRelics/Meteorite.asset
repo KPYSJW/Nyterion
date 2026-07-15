@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: Relic_Meteor_Strike
+  m_Name: Meteorite
   m_EditorClassIdentifier: 
-  relicName: Relic of Meteor_Strike
-  koreanName: "Meteor Strike \uAC01\uC778"
+  relicName: Meteorite
+  koreanName: "\uC6B4\uC11D"
   description_KR: "[Meteor Strike] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Meteor
     Strike] : \uC6B0\uC8FC\uB85C\uBD80\uD130 \uAC70\uB300\uD55C \uC6B4\uC11D\uC744
     \uB099\uD558\uC2DC\uCF1C \uC9C0\uC815 \uBC94\uC704 \uB0B4\uC758 \uBAA8\uB4E0
@@ -22,7 +22,7 @@ MonoBehaviour:
     \uAC70\uB300\uD55C \uC6B4\uC11D\uC744 \uB099\uD558\uC2DC\uCF1C \uC9C0\uC815 \uBC94\uC704
     \uB0B4\uC758 \uBAA8\uB4E0 \uC801\uC5D0\uAC8C \uD3ED\uBC1C\uC801\uC778 \uD30C\uAD34\uB97C
     \uC120\uC0AC\uD569\uB2C8\uB2E4."
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 95e6ae23f702d7a4bae52fd53ddc1055, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

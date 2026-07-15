@@ -2,9 +2,12 @@ using Nytherion.Core.Data;
 using Nytherion.Core.Utils;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Shop;
+using Nytherion.Core.Systems;
+using Nytherion.Core.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using VContainer;
 
 namespace Nytherion.Core.Managers
 {
@@ -17,12 +20,21 @@ namespace Nytherion.Core.Managers
         private Dictionary<string, List<ShopItemData>> runtimeShopInventories = new();
         private bool hasLoadedSaveData = false;
 
-        [Header("Buyback Settings")]
-        [SerializeField] private int maxBuybackItems = 15; 
-        private List<ShopItemData> buybackInventory = new List<ShopItemData>();
+        private CurrencyDataManager currencyDataManager;
+        private SaveLoadManager saveLoadManager;
+        private int rerollCount = 0;
 
-        public event System.Action OnBuybackChanged;
+        public int CurrentRerollCost => 100 + (rerollCount * 50);
+        public int RerollCount => rerollCount;
+
         public event System.Action OnStockChanged;
+
+        [Inject]
+        public void Construct(CurrencyDataManager currencyDataManager, SaveLoadManager saveLoadManager)
+        {
+            this.currencyDataManager = currencyDataManager;
+            this.saveLoadManager = saveLoadManager;
+        }
 
         protected override void OnInitializeInternal()
         {
@@ -50,19 +62,8 @@ namespace Nytherion.Core.Managers
                             continue;
                         }
 
-                        var runtimeItems = shopDataAsset.itemsForSale?.Select(originalItem =>
-                        {
-                            return new ShopItemData
-                            {
-                                shopItemId = originalItem.shopItemId,
-                                item = originalItem.item,
-                                price = originalItem.price,
-                                stock = originalItem.stock,
-                                isUnlimited = originalItem.isUnlimited
-                            };
-                        }).ToList() ?? new List<ShopItemData>();
-
-                        runtimeShopInventories[shopDataAsset.shopName] = runtimeItems;
+                        // 최초 로딩 시 무료(isFree=true)로 5개 장비 무작위 리롤 생성하여 진열
+                        RerollShop(shopDataAsset.shopName, true);
                     }
                 }
                 catch (System.Exception e)
@@ -70,6 +71,124 @@ namespace Nytherion.Core.Managers
                     Debug.LogError($"[ShopManager] Error initializing shop inventories: {e.Message}");
                 }
             }
+        }
+
+        public void ResetRerollCount()
+        {
+            rerollCount = 0;
+            OnStockChanged?.Invoke();
+        }
+
+        public bool RerollShop(string shopName, bool isFree = false)
+        {
+            if (string.IsNullOrEmpty(shopName)) return false;
+
+            if (!isFree)
+            {
+                if (currencyDataManager == null)
+                {
+                    Debug.LogError("[ShopManager] CurrencyDataManager가 주입되지 않았습니다.");
+                    return false;
+                }
+
+                int cost = CurrentRerollCost;
+                if (currencyDataManager.GetCurrency(CurrencyType.Gold) < cost)
+                {
+                    Debug.LogWarning($"[ShopManager] 골드 부족. 현재 골드: {currencyDataManager.GetCurrency(CurrencyType.Gold)}, 필요 골드: {cost}");
+                    return false;
+                }
+
+                currencyDataManager.SpendCurrency(CurrencyType.Gold, cost);
+                rerollCount++;
+            }
+
+            // 장비 아이템 데이터베이스 가져오기
+            List<EquipmentData> equipmentPool = ItemDatabase.GetAllItems()
+                .OfType<EquipmentData>()
+                .ToList();
+
+            if (equipmentPool.Count == 0)
+            {
+                Debug.LogError("[ShopManager] ItemDatabase에 사용 가능한 장비(EquipmentData)가 없습니다.");
+                return false;
+            }
+
+            List<ShopItemData> newItems = new List<ShopItemData>();
+
+            // 등급 확률 가중치 설정 (Common 50%, Uncommon 30%, Rare 13%, Epic 5%, Legendary 2%)
+            Dictionary<Rarity, int> rarityWeights = new Dictionary<Rarity, int>
+            {
+                { Rarity.Common, 50 },
+                { Rarity.Uncommon, 30 },
+                { Rarity.Rare, 13 },
+                { Rarity.Epic, 5 },
+                { Rarity.Legendary, 2 }
+            };
+
+            int totalWeight = 0;
+            foreach (KeyValuePair<Rarity, int> pair in rarityWeights)
+            {
+                totalWeight += pair.Value;
+            }
+
+            // 상품 진열 시 중복 장비를 방지하기 위한 해시셋
+            HashSet<int> selectedIndices = new HashSet<int>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                // 등급 추첨
+                int randomVal = Random.Range(0, totalWeight);
+                Rarity chosenRarity = Rarity.Common;
+                int currentSum = 0;
+                foreach (KeyValuePair<Rarity, int> pair in rarityWeights)
+                {
+                    currentSum += pair.Value;
+                    if (randomVal < currentSum)
+                    {
+                        chosenRarity = pair.Key;
+                        break;
+                    }
+                }
+
+                // 무작위 장비 선택 (중복 제거하되 풀이 부족하면 중복 허용)
+                int poolIndex = -1;
+                int attempts = 0;
+                do
+                {
+                    poolIndex = Random.Range(0, equipmentPool.Count);
+                    attempts++;
+                } while (selectedIndices.Contains(poolIndex) && selectedIndices.Count < equipmentPool.Count && attempts < 100);
+
+                selectedIndices.Add(poolIndex);
+                EquipmentData originalEquipment = equipmentPool[poolIndex];
+
+                // 장비 인스턴스 복제 및 등급별 스탯과 가격 보정 적용
+                EquipmentData clonedEquipment = Instantiate(originalEquipment);
+                clonedEquipment.instanceId = System.Guid.NewGuid().ToString();
+                clonedEquipment.ApplyRarityStats(chosenRarity);
+
+                ShopItemData shopItem = new ShopItemData
+                {
+                    shopItemId = System.Guid.NewGuid().ToString(),
+                    item = clonedEquipment,
+                    price = clonedEquipment.baseValue,
+                    stock = 1,
+                    isUnlimited = false
+                };
+
+                newItems.Add(shopItem);
+            }
+
+            runtimeShopInventories[shopName] = newItems;
+
+            OnStockChanged?.Invoke();
+
+            if (saveLoadManager != null && !isFree)
+            {
+                saveLoadManager.SaveGame();
+            }
+
+            return true;
         }
 
         public List<ShopItemData> GetShopItems(string shopName)
@@ -81,80 +200,7 @@ namespace Nytherion.Core.Managers
             return null;
         }
 
-        /// <summary>
-        /// 판매한 아이템을 재구매 목록에 추가
-        /// </summary>
-        public void AddToBuyback(ItemData item, int amount, int soldPricePerItem)
-        {
-            // 동일한 아이템이 같은 가격으로 존재하는지 확인
-            var existingItem = buybackInventory.FirstOrDefault(i => i.item.ID == item.ID && i.price == soldPricePerItem);
-
-            if (existingItem != null)
-            {
-                existingItem.stock += amount;
-            }
-            else
-            {
-                // 새 항목 생성 
-                ShopItemData newBuybackItem = new ShopItemData
-                {
-                    shopItemId = System.Guid.NewGuid().ToString(), // 재구매용 고유 ID 발급
-                    item = item,
-                    price = soldPricePerItem, // 팔았던 가격을 그대로 구매가로 설정
-                    stock = amount,
-                    isUnlimited = false
-                };
-
-                // 최신 항목이 맨 위에 오도록 삽입
-                buybackInventory.Insert(0, newBuybackItem);
-            }
-
-            // 최대 개수 초과 시 가장 오래된 항목 삭제
-            if (buybackInventory.Count > maxBuybackItems)
-            {
-                buybackInventory.RemoveAt(buybackInventory.Count - 1);
-            }
-
-            OnBuybackChanged?.Invoke();
-        }
-
-        /// <summary>
-        /// 현재 재구매 가능한 아이템 목록을 반환합니다.
-        /// </summary>
-        public List<ShopItemData> GetBuybackItems()
-        {
-            return buybackInventory;
-        }
-
-        /// <summary>
-        /// 유저가 재구매를 완료했을 때 목록에서 수량을 차감하거나 완전히 제거합니다.
-        /// </summary>
-        public void RecordBuybackPurchase(string shopItemId, int amountToBuy = 1)
-        {
-            var item = buybackInventory.FirstOrDefault(i => i.shopItemId == shopItemId);
-            if (item != null)
-            {
-                item.stock -= amountToBuy;
-                if (item.stock <= 0)
-                {
-                    buybackInventory.Remove(item);
-                }
-                OnBuybackChanged?.Invoke();
-            }
-        }
-
-        /// <summary>
-        /// 상점을 닫거나 씬 이동 시 재구매 목록을 비우고 싶을 때 호출
-        /// </summary>
-        public void ClearBuyback()
-        {
-            if (buybackInventory.Count > 0)
-            {
-                buybackInventory.Clear();
-                OnBuybackChanged?.Invoke();
-            }
-        }
-        public void RecordPurchase(string shopName, string shopItemId,int amountToBuy = 1)
+        public void RecordPurchase(string shopName, string shopItemId, int amountToBuy = 1)
         {
             if (runtimeShopInventories.TryGetValue(shopName, out var items))
             {
@@ -171,13 +217,10 @@ namespace Nytherion.Core.Managers
 
                 if (shopItem.stock > 0)
                 {
-                    int oldStock = shopItem.stock;
                     shopItem.stock--;
 
                     OnStockChanged?.Invoke();
 
-                    // 구매 시 자동 저장 트리거
-                    var saveLoadManager = FindObjectOfType<SaveLoadManager>();
                     if (saveLoadManager != null)
                     {
                         saveLoadManager.SaveGame();
@@ -197,14 +240,16 @@ namespace Nytherion.Core.Managers
             {
                 foreach (var item in shopInventoryPair.Value)
                 {
-                    if (!item.isUnlimited)
+                    stockStates.Add(new ShopStockState
                     {
-                        stockStates.Add(new ShopStockState
-                        {
-                            shopItemId = item.shopItemId,
-                            remainingStock = item.stock
-                        });
-                    }
+                        shopName = shopInventoryPair.Key,
+                        shopItemId = item.shopItemId,
+                        itemId = item.item.ID,
+                        rarity = (item.item is EquipmentData eq) ? eq.rarity : Rarity.Common,
+                        price = item.price,
+                        remainingStock = item.stock,
+                        isUnlimited = item.isUnlimited
+                    });
                 }
             }
             return stockStates;
@@ -212,42 +257,52 @@ namespace Nytherion.Core.Managers
 
         private void LoadShopStockFromSave(List<ShopStockState> savedStocks)
         {
-            if (savedStocks == null)
+            if (savedStocks == null || savedStocks.Count == 0)
             {
-                Debug.Log("[ShopManager] LoadShopStockFromSave: savedStocks가 null");
+                Debug.Log("[ShopManager] LoadShopStockFromSave: savedStocks가 비어있음");
                 return;
             }
 
-            int updatedCount = 0;
+            runtimeShopInventories.Clear();
+
             foreach (var savedItem in savedStocks)
             {
-                if (string.IsNullOrEmpty(savedItem.shopItemId))
+                if (string.IsNullOrEmpty(savedItem.shopName) || string.IsNullOrEmpty(savedItem.itemId))
                 {
                     continue;
                 }
 
-                bool found = false;
-                foreach (var shopInventoryPair in runtimeShopInventories)
+                ItemData itemAsset = ItemDatabase.GetItemByID(savedItem.itemId);
+                if (itemAsset == null)
                 {
-                    foreach (var targetItem in shopInventoryPair.Value)
-                    {
-                        // ID 비교를 더 엄격하게 수행
-                        if (!string.IsNullOrEmpty(targetItem.shopItemId) &&
-                            targetItem.shopItemId.Equals(savedItem.shopItemId, System.StringComparison.Ordinal))
-                        {
-                            int oldStock = targetItem.stock;
-                            targetItem.stock = savedItem.remainingStock;
-                            updatedCount++;
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found) break;
+                    Debug.LogWarning($"[ShopManager] 로드 실패: ItemDatabase에 아이템({savedItem.itemId})이 없습니다.");
+                    continue;
                 }
 
-                if (!found)
+                ItemData itemInstance = itemAsset;
+
+                if (itemAsset is EquipmentData equipmentAsset)
                 {
+                    EquipmentData clonedEquipment = Instantiate(equipmentAsset);
+                    clonedEquipment.instanceId = System.Guid.NewGuid().ToString();
+                    clonedEquipment.ApplyRarityStats(savedItem.rarity);
+                    itemInstance = clonedEquipment;
                 }
+
+                ShopItemData restoredItem = new ShopItemData
+                {
+                    shopItemId = savedItem.shopItemId,
+                    item = itemInstance,
+                    price = savedItem.price,
+                    stock = savedItem.remainingStock,
+                    isUnlimited = savedItem.isUnlimited
+                };
+
+                if (!runtimeShopInventories.ContainsKey(savedItem.shopName))
+                {
+                    runtimeShopInventories[savedItem.shopName] = new List<ShopItemData>();
+                }
+                runtimeShopInventories[savedItem.shopName].Add(restoredItem);
             }
 
             OnStockChanged?.Invoke();
@@ -255,6 +310,7 @@ namespace Nytherion.Core.Managers
 
         public override void PopulateSaveData(SaveData saveData)
         {
+            saveData.shopRerollCount = rerollCount;
             var stockData = GetShopStockForSave();
 
             SaveLoadHelper.SafePopulateCollection(
@@ -267,10 +323,13 @@ namespace Nytherion.Core.Managers
 
         public override void LoadFromSaveData(SaveData saveData)
         {
-            // 항상 기본 데이터로 먼저 초기화
+            if (saveData != null)
+            {
+                rerollCount = saveData.shopRerollCount;
+            }
+
             InitializeShopInventories(true);
 
-            // 저장된 데이터가 있다면 적용
             if (saveData?.shopStockData != null && saveData.shopStockData.Count > 0)
             {
                 SaveLoadHelper.SafeLoadCollection(
@@ -283,29 +342,22 @@ namespace Nytherion.Core.Managers
 
             hasLoadedSaveData = true;
         }
+
         public void SetShopState(bool isOpen)
         {
             IsShopOpen = isOpen;
         }
-        /// <summary>
-        /// 특정 상점이 존재하는지 확인합니다.
-        /// </summary>
+
         public bool ShopExists(string shopName)
         {
             return !string.IsNullOrEmpty(shopName) && runtimeShopInventories.ContainsKey(shopName);
         }
 
-        /// <summary>
-        /// 등록된 모든 상점의 이름을 반환합니다.
-        /// </summary>
         public List<string> GetAllShopNames()
         {
             return new List<string>(runtimeShopInventories.Keys);
         }
 
-        /// <summary>
-        /// 특정 아이템이 매진되었는지 확인합니다.
-        /// </summary>
         public bool IsItemSoldOut(string shopName, string shopItemId)
         {
             if (!ShopExists(shopName)) return true;
@@ -316,9 +368,6 @@ namespace Nytherion.Core.Managers
             return shopItem != null && !shopItem.isUnlimited && shopItem.stock <= 0;
         }
 
-        /// <summary>
-        /// 상점 상태 정보를 반환합니다.
-        /// </summary>
         public override string GetStatusInfo()
         {
             int totalShops = runtimeShopInventories.Count;
@@ -327,9 +376,6 @@ namespace Nytherion.Core.Managers
             return $"{base.GetStatusInfo()}, Shops: {totalShops}, Total Items: {totalItems}";
         }
 
-        /// <summary>
-        /// 메모리 정리
-        /// </summary>
         protected override void OnDestroy()
         {
             base.OnDestroy();
