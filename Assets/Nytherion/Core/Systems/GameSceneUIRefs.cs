@@ -43,12 +43,8 @@ public class GameSceneUIRefs : MonoBehaviour
     [Header("Gacha Panels")]
     [SerializeField] private GameObject gachaMainPanel;
     public GameObject GachaMainPanel => gachaMainPanel;
-    [SerializeField] private GameObject weaponResultPanel;
-    public GameObject WeaponResultPanel => weaponResultPanel;
     [SerializeField] private GameObject relicResultPanel;
     public GameObject RelicResultPanel => relicResultPanel;
-    [SerializeField] private GameObject weaponSubPanel;
-    public GameObject WeaponSubPanel => weaponSubPanel;
     [SerializeField] private GameObject relicSubPanel;
     public GameObject RelicSubPanel => relicSubPanel;
 
@@ -61,8 +57,6 @@ public class GameSceneUIRefs : MonoBehaviour
     
     [SerializeField] private Button gachaCloseButton;
     public Button GachaCloseButton => gachaCloseButton;
-    [SerializeField] private Button weaponResultCloseButton;
-    public Button WeaponResultCloseButton => weaponResultCloseButton;
     [SerializeField] private Button relicResultCloseButton;
     public Button RelicResultCloseButton => relicResultCloseButton;
 
@@ -70,15 +64,7 @@ public class GameSceneUIRefs : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gachaTypeTitleText;
     public TextMeshProUGUI GachaTypeTitleText => gachaTypeTitleText;
 
-    [Header("Gacha Navigation Buttons")]
-    [SerializeField] private Button prevGachaButton;
-    public Button PrevGachaButton => prevGachaButton;
-    [SerializeField] private Button nextGachaButton;
-    public Button NextGachaButton => nextGachaButton;
-
     [Header("Gacha Result Panel")]
-    [SerializeField] private Transform weaponResultSlotParent;
-    public Transform WeaponResultSlotParent => weaponResultSlotParent;
     [SerializeField] private Transform relicResultSlotParent;
     public Transform RelicResultSlotParent => relicResultSlotParent;
     [SerializeField] private GameObject resultSlotPrefab;
@@ -125,6 +111,10 @@ public class GameSceneUIRefs : MonoBehaviour
     public Button ShopRerollButton => shopRerollButton;
     [SerializeField] private TextMeshProUGUI shopRerollCostText;
     public TextMeshProUGUI ShopRerollCostText => shopRerollCostText;
+    [SerializeField] private Button shopAdvancedRerollButton;
+    public Button ShopAdvancedRerollButton => shopAdvancedRerollButton;
+    [SerializeField] private TextMeshProUGUI shopAdvancedRerollCostText;
+    public TextMeshProUGUI ShopAdvancedRerollCostText => shopAdvancedRerollCostText;
 
     [Header("Menu UI")]
     [SerializeField] private CanvasGroup menuCanvasGroup;

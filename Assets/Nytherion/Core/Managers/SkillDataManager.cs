@@ -366,6 +366,13 @@ namespace Nytherion.Core.Managers
                         skillStates[id] = new SkillState { level = 1, exp = 0 };
                     }
                 }
+
+                // 장착 스킬 로드 완료 후 씬의 PlayerSkillManager에도 바로 적용
+                Nytherion.GamePlay.Characters.Player.PlayerSkillManager playerSkillManager = UnityEngine.Object.FindObjectOfType<Nytherion.GamePlay.Characters.Player.PlayerSkillManager>();
+                if (playerSkillManager != null)
+                {
+                    playerSkillManager.SetEquippedSkills(equippedSkills);
+                }
             }
 
             // 로드 완료 후 UI 갱신 이벤트 호출

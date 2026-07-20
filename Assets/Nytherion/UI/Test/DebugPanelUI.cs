@@ -68,7 +68,6 @@ namespace Nytherion.UI.Test
             this.gachaUIController = gachaUIController;
             this.relicUIController = relicUIController;
             this.relicManager = relicManager;
-            Debug.Log("[DebugPanelUI] Dependencies Injected Successfully.");
         }
 
         private void Start()

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Flamberge
   m_EditorClassIdentifier: 
   uniqueID: 57190f5d-f20d-4c58-aae9-ac1d2e339bae
-  itemName_KR: "\uAC80"
+  itemName_KR: "\uACE1\uC778\uAC80"
   itemName_EN: Flamberge
   icon: {fileID: 21300000, guid: 55591c58cc4e347498ad7d9f8ec6a2be, type: 3}
   description_KR: 

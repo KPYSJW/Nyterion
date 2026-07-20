@@ -79,9 +79,18 @@ namespace Nytherion.Core.Managers
             OnStockChanged?.Invoke();
         }
 
+        public int AdvancedRerollTokenCost => 1;
+
         public bool RerollShop(string shopName, bool isFree = false)
         {
-            if (string.IsNullOrEmpty(shopName)) return false;
+            Dictionary<Rarity, int> normalWeights = new Dictionary<Rarity, int>
+            {
+                { Rarity.Common, 50 },
+                { Rarity.Uncommon, 30 },
+                { Rarity.Rare, 13 },
+                { Rarity.Epic, 5 },
+                { Rarity.Legendary, 2 }
+            };
 
             if (!isFree)
             {
@@ -102,6 +111,44 @@ namespace Nytherion.Core.Managers
                 rerollCount++;
             }
 
+            return RerollShopWithWeights(shopName, normalWeights, isFree);
+        }
+
+        public bool RerollShopAdvanced(string shopName, int tokenCost = 1)
+        {
+            if (string.IsNullOrEmpty(shopName)) return false;
+
+            if (currencyDataManager == null)
+            {
+                Debug.LogError("[ShopManager] CurrencyDataManager가 주입되지 않았습니다.");
+                return false;
+            }
+
+            if (currencyDataManager.GetCurrency(CurrencyType.Token) < tokenCost)
+            {
+                Debug.LogWarning($"[ShopManager] 가챠 토큰 부족. 현재 토큰: {currencyDataManager.GetCurrency(CurrencyType.Token)}, 필요 토큰: {tokenCost}");
+                return false;
+            }
+
+            currencyDataManager.SpendCurrency(CurrencyType.Token, tokenCost);
+
+            // 고급 리롤 등급 확률 가중치 설정 (Common 0%, Uncommon 20%, Rare 45%, Epic 25%, Legendary 10%)
+            Dictionary<Rarity, int> advancedWeights = new Dictionary<Rarity, int>
+            {
+                { Rarity.Common, 0 },
+                { Rarity.Uncommon, 20 },
+                { Rarity.Rare, 45 },
+                { Rarity.Epic, 25 },
+                { Rarity.Legendary, 10 }
+            };
+
+            return RerollShopWithWeights(shopName, advancedWeights, false);
+        }
+
+        private bool RerollShopWithWeights(string shopName, Dictionary<Rarity, int> rarityWeights, bool isFree)
+        {
+            if (string.IsNullOrEmpty(shopName)) return false;
+
             // 장비 아이템 데이터베이스 가져오기
             List<EquipmentData> equipmentPool = ItemDatabase.GetAllItems()
                 .OfType<EquipmentData>()
@@ -114,16 +161,6 @@ namespace Nytherion.Core.Managers
             }
 
             List<ShopItemData> newItems = new List<ShopItemData>();
-
-            // 등급 확률 가중치 설정 (Common 50%, Uncommon 30%, Rare 13%, Epic 5%, Legendary 2%)
-            Dictionary<Rarity, int> rarityWeights = new Dictionary<Rarity, int>
-            {
-                { Rarity.Common, 50 },
-                { Rarity.Uncommon, 30 },
-                { Rarity.Rare, 13 },
-                { Rarity.Epic, 5 },
-                { Rarity.Legendary, 2 }
-            };
 
             int totalWeight = 0;
             foreach (KeyValuePair<Rarity, int> pair in rarityWeights)

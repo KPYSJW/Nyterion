@@ -25,7 +25,6 @@ namespace Nytherion.Gameplay.Relics.Modules
             if (skillDataManager != null)
             {
                 skillDataManager.GrantSkillFromRelic(skillData, level);
-                Debug.Log($"[GrantSkillEffect] 스킬 부여 완료: {skillData.skillName} (스킬 레벨: {level})");
             }
             else
             {
@@ -41,7 +40,6 @@ namespace Nytherion.Gameplay.Relics.Modules
             if (skillDataManager != null)
             {
                 skillDataManager.RevokeSkillFromRelic(skillData);
-                Debug.Log($"[GrantSkillEffect] 스킬 회수 완료: {skillData.skillName}");
             }
         }
 

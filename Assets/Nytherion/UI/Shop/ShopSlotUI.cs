@@ -9,6 +9,9 @@ using UnityEngine.EventSystems;
 using Nytherion.UI.Components;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Relics;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.Shop
 {
@@ -19,6 +22,14 @@ namespace Nytherion.UI.Shop
         //[SerializeField] private TextMeshProUGUI descriptionText;
         [SerializeField] private Button buyButton;
         [SerializeField] private CanvasGroup canvasGroup;
+
+        [Header("Rarity Slot Visuals")]
+        [SerializeField] private Image slotBackgroundImage;
+        [SerializeField] private Sprite commonSlotSprite;
+        [SerializeField] private Sprite uncommonSlotSprite;
+        [SerializeField] private Sprite rareSlotSprite;
+        [SerializeField] private Sprite epicSlotSprite;
+        [SerializeField] private Sprite legendarySlotSprite;
 
         public ShopItemData CurrentItem { get; private set; }
         private ShopUI shopUI;
@@ -39,7 +50,38 @@ namespace Nytherion.UI.Shop
             {
                 if (iconImage != null)
                 {
-                    iconImage.sprite = CurrentItem.item.icon;
+                    Sprite displaySprite = CurrentItem.item.icon;
+                    if (CurrentItem.item is WeaponData weaponData && weaponData.weaponSprite != null)
+                    {
+                        displaySprite = weaponData.weaponSprite;
+                    }
+                    iconImage.sprite = displaySprite;
+                }
+
+                // 장비 등급에 따른 슬롯 배경 이미지 변경
+                Rarity targetRarity = Rarity.Common;
+                if (CurrentItem.item is EquipmentData equipmentData)
+                {
+                    targetRarity = equipmentData.rarity;
+                }
+
+                Image targetSlotImage = slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>();
+                if (targetSlotImage != null)
+                {
+                    Sprite chosenSlotSprite = targetRarity switch
+                    {
+                        Rarity.Common => commonSlotSprite,
+                        Rarity.Uncommon => uncommonSlotSprite,
+                        Rarity.Rare => rareSlotSprite,
+                        Rarity.Epic => epicSlotSprite,
+                        Rarity.Legendary => legendarySlotSprite,
+                        _ => commonSlotSprite
+                    };
+
+                    if (chosenSlotSprite != null)
+                    {
+                        targetSlotImage.sprite = chosenSlotSprite;
+                    }
                 }
 
                 int displayPrice = CurrentItem.price;

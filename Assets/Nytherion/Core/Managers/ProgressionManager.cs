@@ -193,8 +193,6 @@ namespace Nytherion.Core.Managers
                 return;
             }
 
-            Debug.Log($"[ProgressionManager] InitializeMilestoneLookup 성공. 마일스톤 개수: {milestoneDatabase.allMilestones.Count}");
-
             milestoneLookup.Clear();
             milestonesByType.Clear();
 

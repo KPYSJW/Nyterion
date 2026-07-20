@@ -27,6 +27,8 @@ namespace Nytherion.UI.Controllers
         [Header("Reroll Settings UI")]
         private Button shopRerollButton;
         private TextMeshProUGUI shopRerollCostText;
+        private Button shopAdvancedRerollButton;
+        private TextMeshProUGUI shopAdvancedRerollCostText;
 
         [Header("Player Inventory Display")]
         private Transform inventorySlotParent;
@@ -69,7 +71,9 @@ namespace Nytherion.UI.Controllers
             this.sellPopupUI = gameSceneuiRefs.ShopSellPopupUI;
             this.shopRerollButton = gameSceneuiRefs.ShopRerollButton;
             this.shopRerollCostText = gameSceneuiRefs.ShopRerollCostText;
-            Debug.Log($"[ShopUI] Construct 호출됨. gameSceneuiRefs의 Reroll UI 주입 여부 -> 버튼: {gameSceneuiRefs.ShopRerollButton != null}, 텍스트: {gameSceneuiRefs.ShopRerollCostText != null}");
+            this.shopAdvancedRerollButton = gameSceneuiRefs.ShopAdvancedRerollButton;
+            this.shopAdvancedRerollCostText = gameSceneuiRefs.ShopAdvancedRerollCostText;
+            Debug.Log($"[ShopUI] Construct 호출됨. gameSceneuiRefs의 Reroll UI 주입 여부 -> 일반버튼: {gameSceneuiRefs.ShopRerollButton != null}, 고급버튼: {gameSceneuiRefs.ShopAdvancedRerollButton != null}");
         }
 
         private InventoryDataManager GetInventoryDataManager()
@@ -172,6 +176,11 @@ namespace Nytherion.UI.Controllers
             if (shopRerollButton != null)
             {
                 shopRerollButton.onClick.AddListener(HandleReroll);
+            }
+
+            if (shopAdvancedRerollButton != null)
+            {
+                shopAdvancedRerollButton.onClick.AddListener(HandleAdvancedReroll);
             }
 
             // SellSlotUI 이벤트 구독 처리
@@ -557,7 +566,18 @@ namespace Nytherion.UI.Controllers
                 if (isNormalShop && shopRerollCostText != null)
                 {
                     shopRerollCostText.text = $"{shopMgr.CurrentRerollCost}";
-                    Debug.Log($"[ShopUI] 리롤 비용 텍스트 갱신 완료: {shopMgr.CurrentRerollCost}");
+                    Debug.Log($"[ShopUI] 일반 리롤 비용 텍스트 갱신 완료: {shopMgr.CurrentRerollCost}");
+                }
+
+                if (shopAdvancedRerollButton != null)
+                {
+                    shopAdvancedRerollButton.gameObject.SetActive(isNormalShop);
+                }
+
+                if (isNormalShop && shopAdvancedRerollCostText != null)
+                {
+                    shopAdvancedRerollCostText.text = $"{shopMgr.AdvancedRerollTokenCost}";
+                    Debug.Log($"[ShopUI] 고급 리롤 비용 텍스트 갱신 완료: {shopMgr.AdvancedRerollTokenCost}");
                 }
             }
         }
@@ -571,6 +591,22 @@ namespace Nytherion.UI.Controllers
 
             bool success = shopMgr.RerollShop(currentShopData.shopName, false);
             Debug.Log($"[ShopUI] RerollShop 결과: {success}");
+
+            if (success)
+            {
+                RefreshShopUI();
+            }
+        }
+
+        private void HandleAdvancedReroll()
+        {
+            ShopManager shopMgr = GetShopManager();
+            Debug.Log($"[ShopUI] HandleAdvancedReroll 클릭됨. shopMgr: {shopMgr != null}, currentShopData: {(currentShopData != null ? currentShopData.shopName : "Null")}");
+
+            if (shopMgr == null || currentShopData == null) return;
+
+            bool success = shopMgr.RerollShopAdvanced(currentShopData.shopName, shopMgr.AdvancedRerollTokenCost);
+            Debug.Log($"[ShopUI] RerollShopAdvanced 결과: {success}");
 
             if (success)
             {

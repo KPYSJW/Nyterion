@@ -47,15 +47,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillData: {fileID: 11400000, guid: 16be1c0e405f174488f5be1093f8c9e2, type: 2}
   droneVisual: {fileID: 6317914483464233677}
-  activeDuration: 10
+  activeDuration: 20
   attackInterval: 1
   projectilePoolTag: Arrow
   projectileSpeed: 10
-  orbitRadius: 1.5
-  orbitSpeed: 90
-  bobbingAmount: 0.2
-  bobbingSpeed: 3
-  deathDuration: 1
+  leashRange: 36
+  attackFreezeDuration: 0.5
+  wakeupDistance: 1
+  stopRadius: 0.5
+  minMoveSpeed: 4
+  maxMoveSpeed: 5
+  acceleration: 12
+  stopDelayDuration: 0.2
+  teleportEffectPrefab: {fileID: 0}
+  teleportEffectPoolTag: 
   walkingBoolParam: IsWalking
   attack1TriggerParam: Attack1
   attack2TriggerParam: Attack2
