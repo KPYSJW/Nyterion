@@ -215,7 +215,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
 
             // 마우스 버튼이 유지되고 있을 때 누적 시간 및 차징 판단 업데이트
-            if (isChargeable && isPressing && !isAttacking)
+            if (IsChargingEnabled() && isPressing && !isAttacking)
             {
                 pressTime += Time.deltaTime;
 
@@ -331,7 +331,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     return;
                 }
 
-                if (isChargeable)
+                if (IsChargingEnabled())
                 {
                     // 이미 차징 중이거나 공격 중인 경우 무시
                     if (isCharging || isAttacking)
@@ -584,11 +584,35 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
         }
 
+        private bool IsChargingEnabled()
+        {
+            if (isChargeable) return true;
+
+            string targetRelicId = weaponData != null && !string.IsNullOrEmpty(weaponData.requiredRelicId) ? weaponData.requiredRelicId : "ChargeRelic";
+
+            if (playerController != null)
+            {
+                PlayerRelicManager playerRelicManager = playerController.GetComponent<PlayerRelicManager>();
+                if (playerRelicManager != null && playerRelicManager.IsRelicActive(targetRelicId))
+                {
+                    return true;
+                }
+            }
+
+            RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
+            if (relicManager != null && relicManager.IsRelicActive(targetRelicId))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public override void AttackEnd()
         {
             try
             {
-                if (isChargeable && isPressing)
+                if (IsChargingEnabled() && isPressing)
                 {
                     isPressing = false;
 

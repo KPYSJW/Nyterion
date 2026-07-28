@@ -299,7 +299,6 @@ namespace Nytherion.Core.Managers
                 {
                     unlockedProjectilePrefabs.Add(projectilePrefab);
                 }
-                Debug.Log($"[Progression] 새로운 투사체 기록됨: {projectileTag}");
             }
         }
 

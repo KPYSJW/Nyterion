@@ -18,13 +18,13 @@ namespace Nytherion.UI.Shop
     public class ShopSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         [SerializeField] private Image iconImage;
+        [SerializeField] private GameObject pricePanel;
         [SerializeField] private TextMeshProUGUI priceText;
         //[SerializeField] private TextMeshProUGUI descriptionText;
-        [SerializeField] private Button buyButton;
         [SerializeField] private CanvasGroup canvasGroup;
 
         [Header("Rarity Slot Visuals")]
-        [SerializeField] private Image slotBackgroundImage;
+        [SerializeField] private Sprite defaultSlotSprite;
         [SerializeField] private Sprite commonSlotSprite;
         [SerializeField] private Sprite uncommonSlotSprite;
         [SerializeField] private Sprite rareSlotSprite;
@@ -50,6 +50,7 @@ namespace Nytherion.UI.Shop
             {
                 if (iconImage != null)
                 {
+                    iconImage.raycastTarget = false;
                     Sprite displaySprite = CurrentItem.item.icon;
                     if (CurrentItem.item is WeaponData weaponData && weaponData.weaponSprite != null)
                     {
@@ -65,7 +66,7 @@ namespace Nytherion.UI.Shop
                     targetRarity = equipmentData.rarity;
                 }
 
-                Image targetSlotImage = slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>();
+                Image targetSlotImage = GetComponent<Image>();
                 if (targetSlotImage != null)
                 {
                     Sprite chosenSlotSprite = targetRarity switch
@@ -101,16 +102,16 @@ namespace Nytherion.UI.Shop
                     }
                 }
 
+                if (pricePanel != null)
+                {
+                    pricePanel.SetActive(true);
+                }
+
                 if (priceText != null)
                 {
                     priceText.text = $"{displayPrice}";
                 }
 
-                if (buyButton != null)
-                {
-                    buyButton.onClick.RemoveAllListeners();
-                    buyButton.onClick.AddListener(OnBuyButtonClicked);
-                }
                 gameObject.SetActive(true);
 
                 if (IsSoldOut())
@@ -130,11 +131,15 @@ namespace Nytherion.UI.Shop
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 2)
+            if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount >= 2)
             {
                 if (CurrentItem != null && !IsSoldOut())
                 {
                     OnBuyButtonClicked();
+                }
+                else
+                {
+                    Debug.LogWarning($"[ShopSlotUI] 더블클릭 구매 불가 - Item: {(CurrentItem != null ? CurrentItem.item?.itemName : "Null")}, IsSoldOut: {IsSoldOut()}");
                 }
             }
         }
@@ -155,7 +160,6 @@ namespace Nytherion.UI.Shop
                         {
                             // 실제 ShopManager의 재고로 업데이트
                             CurrentItem.stock = updatedItem.stock;
-                            Debug.Log($"[ShopSlotUI] '{CurrentItem.item.itemName}' 재고 업데이트: {CurrentItem.stock}");
                         }
                     }
                 }
@@ -164,7 +168,6 @@ namespace Nytherion.UI.Shop
                 if (IsSoldOut())
                 {
                     ApplySoldOutVisual();
-                    Debug.Log($"[ShopSlotUI] '{CurrentItem.item.itemName}' 매진 처리");
                 }
                 else
                 {
@@ -175,11 +178,6 @@ namespace Nytherion.UI.Shop
 
         public void SetInteractable(bool interactable)
         {
-            if (buyButton != null)
-            {
-                buyButton.interactable = interactable;
-            }
-
             if (canvasGroup != null)
             {
                 canvasGroup.interactable = interactable;
@@ -189,26 +187,71 @@ namespace Nytherion.UI.Shop
 
         private void OnBuyButtonClicked()
         {
+            if (shopUI == null)
+            {
+                shopUI = GetComponentInParent<ShopUI>();
+                if (shopUI == null)
+                {
+                    shopUI = FindObjectOfType<ShopUI>();
+                }
+            }
+
             if (shopUI != null)
             {
                 shopUI.BuyItem(this);
             }
+            else
+            {
+                Debug.LogError("[ShopSlotUI] shopUI 참조를 찾을 수 없어 구매를 실행하지 못했습니다.");
+            }
         }
         private void ApplySoldOutVisual()
         {
+            if (iconImage != null)
+            {
+                iconImage.enabled = false;
+                iconImage.sprite = null;
+            }
+
+            if (pricePanel != null)
+            {
+                pricePanel.SetActive(false);
+            }
+
+            if (priceText != null)
+            {
+                priceText.text = "";
+            }
+
+            Image targetSlotImage = GetComponent<Image>();
+            if (targetSlotImage != null && defaultSlotSprite != null)
+            {
+                targetSlotImage.sprite = defaultSlotSprite;
+            }
+
             if (canvasGroup != null)
             {
-                canvasGroup.alpha = 0.2f;
+                canvasGroup.alpha = 1f;
                 canvasGroup.interactable = false;
-                canvasGroup.blocksRaycasts = false;
+                canvasGroup.blocksRaycasts = true;
             }
         }
         private bool IsSoldOut()
         {
-            return !CurrentItem.isUnlimited && CurrentItem.stock <= 0;
+            return CurrentItem == null || (!CurrentItem.isUnlimited && CurrentItem.stock <= 0);
         }
         private void ResetVisual()
         {
+            if (iconImage != null)
+            {
+                iconImage.enabled = true;
+            }
+
+            if (pricePanel != null)
+            {
+                pricePanel.SetActive(true);
+            }
+
             if (canvasGroup != null)
             {
                 canvasGroup.alpha = 1f;
@@ -219,9 +262,9 @@ namespace Nytherion.UI.Shop
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if(CurrentItem != null && CurrentItem.item != null)
+            if (CurrentItem != null && CurrentItem.item != null && !IsSoldOut())
             {
-                if(TooltipPanel.Instance != null)
+                if (TooltipPanel.Instance != null)
                 {
                     TooltipPanel.Instance.ShowTooltip(CurrentItem.item);
                 }

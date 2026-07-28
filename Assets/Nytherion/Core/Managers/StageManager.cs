@@ -16,15 +16,10 @@ namespace Nytherion.Core.Managers
 
         public StageData CurrentStage { get; private set; }
 
+        public event System.Action OnChapterChanged;
+
         private SceneTransitionManager sceneTransitionManager;
         private DungeonManager dungeonManager;
-        private ShopManager shopManager;
-
-        [Inject]
-        public void Construct(ShopManager shopManager)
-        {
-            this.shopManager = shopManager;
-        }
 
         public void SetDungeonManager(DungeonManager dungeonManager)
         {
@@ -67,13 +62,16 @@ namespace Nytherion.Core.Managers
                 return;
             }
 
-            if (shopManager != null)
+            StageData nextStage = CurrentStage.nextStageData;
+
+            // 챕터가 전환될 때 이벤트 발생
+            if (CurrentStage.chapterNumber != nextStage.chapterNumber)
             {
-                shopManager.ResetRerollCount();
+                OnChapterChanged?.Invoke();
             }
 
             string sceneToLoad = CurrentStage.victorySceneName;
-            CurrentStage = CurrentStage.nextStageData;
+            CurrentStage = nextStage;
 
             Debug.Log($"다음 스테이지 '{CurrentStage.stageName}'(으)로 진행합니다.");
 

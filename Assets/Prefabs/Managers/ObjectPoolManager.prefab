@@ -64,7 +64,7 @@ MonoBehaviour:
   - tag: Player_Spiral
     prefab: {fileID: 3778041586713616541, guid: bbd39e4bcf80ebf45a37c0077987be40, type: 3}
     size: 10
-  - tag: Player_Explosion
+  - tag: Player_EvilEyeProjectile
     prefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
     size: 30
   - tag: Player_SlowMultiHit

@@ -6,6 +6,7 @@ using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Relics;
 using VContainer;
 using VContainer.Unity;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Nytherion.GamePlay.Characters.NPC
@@ -17,6 +18,7 @@ namespace Nytherion.GamePlay.Characters.NPC
         [SerializeField] private GameObject worldPromptUI; // "1회: X / 10회: C" 월드 UI
         [SerializeField] private GameObject droppedRelicPrefab; // DroppedRelic 프리팹
         [SerializeField] private Animator animator;
+        [SerializeField] private float closeDelay = 1.0f; // 아이템 생성 후 상자가 닫히기까지 대기 시간
 
         private GachaManager gachaManager;
         private RelicManager relicManager;
@@ -24,6 +26,9 @@ namespace Nytherion.GamePlay.Characters.NPC
         private Transform playerTransform;
 
         private bool isPlayerInRange = false;
+        private bool isAnimating = false; // 애니메이션 진행 중 중복 입력 방지
+
+        private List<ScriptableObject> pendingDrawnItems = new List<ScriptableObject>();
 
         [Inject]
         public void Construct(
@@ -87,12 +92,12 @@ namespace Nytherion.GamePlay.Characters.NPC
                 isPlayerInRange = inRange;
                 if (worldPromptUI != null)
                 {
-                    worldPromptUI.SetActive(isPlayerInRange);
+                    worldPromptUI.SetActive(isPlayerInRange && !isAnimating);
                 }
             }
 
-            // 범위 내에 있을 때 키보드 입력 감지
-            if (isPlayerInRange)
+            // 범위 내에 있고 애니메이션 진행 중이 아닐 때 키보드 입력 감지
+            if (isPlayerInRange && !isAnimating)
             {
                 if (Input.GetKeyDown(KeyCode.X))
                 {
@@ -107,7 +112,9 @@ namespace Nytherion.GamePlay.Characters.NPC
 
         private void OnMouseDown()
         {
-            // 마우스 클릭 시 플레이어가 범위 내에 있다면 가이드 UI 활성화 또는 즉시 가챠 유도
+            if (isAnimating) return;
+
+            // 마우스 클릭 시 플레이어가 범위 내에 있다면 가이드 UI 활성화
             if (playerTransform != null)
             {
                 float distance = Vector2.Distance(transform.position, playerTransform.position);
@@ -123,6 +130,8 @@ namespace Nytherion.GamePlay.Characters.NPC
 
         private void TryPerformGacha(int count)
         {
+            if (isAnimating) return;
+
             if (gachaManager == null || currencyDataManager == null || relicManager == null || playerTransform == null)
             {
                 Debug.LogError("[GachaChest] 필수 컴포넌트가 누락되어 가챠를 실행할 수 없습니다.");
@@ -134,16 +143,21 @@ namespace Nytherion.GamePlay.Characters.NPC
             if (currentToken < count)
             {
                 Debug.LogWarning($"[GachaChest] 토큰 부족! 필요 토큰: {count}, 보유 토큰: {currentToken}");
-                // TODO: 플레이어 화면에 토큰 부족 안내 문구 출력 (AudioManager 연동 등도 가능)
                 return;
             }
 
             // 2. 가챠 생성 (TryDrawItemsOnly는 실제 인벤토리에 넣지 않고 목록만 뽑아 토큰을 뺌)
-            List<ScriptableObject> drawnItems = gachaManager.TryDrawItemsOnly(GachaType.Relic, count);
-            if (drawnItems == null || drawnItems.Count == 0)
+            pendingDrawnItems = gachaManager.TryDrawItemsOnly(GachaType.Relic, count);
+            if (pendingDrawnItems == null || pendingDrawnItems.Count == 0)
             {
                 Debug.LogWarning("[GachaChest] 가챠 풀 에러 또는 생성된 아이템 없음.");
                 return;
+            }
+
+            isAnimating = true;
+            if (worldPromptUI != null)
+            {
+                worldPromptUI.SetActive(false);
             }
 
             // 3. 상자 열림 애니메이션 재생
@@ -151,14 +165,54 @@ namespace Nytherion.GamePlay.Characters.NPC
             {
                 animator.SetTrigger("Open");
             }
-
-            // 4. 물리 드롭 유물 스폰
-            foreach (ScriptableObject item in drawnItems)
+            else
             {
-                if (item is RelicData relicData)
+                // Animator가 없는 경우 백업 실행
+                OnOpenAnimationEnd();
+            }
+        }
+
+        /// <summary>
+        /// Open 애니메이션 클립의 마지막 프레임 Animation Event에서 호출할 메서드
+        /// </summary>
+        public void OnOpenAnimationEnd()
+        {
+            // 4. 물리 드롭 유물 스폰
+            if (pendingDrawnItems != null && pendingDrawnItems.Count > 0)
+            {
+                foreach (ScriptableObject item in pendingDrawnItems)
                 {
-                    SpawnDroppedRelic(relicData);
+                    if (item is RelicData relicData)
+                    {
+                        SpawnDroppedRelic(relicData);
+                    }
                 }
+                pendingDrawnItems.Clear();
+            }
+
+            // 대기 후 Close 애니메이션 재생 및 Idle 복귀
+            StartCoroutine(CloseSequenceRoutine());
+        }
+
+        private IEnumerator CloseSequenceRoutine()
+        {
+            if (closeDelay > 0f)
+            {
+                yield return new WaitForSeconds(closeDelay);
+            }
+
+            if (animator != null)
+            {
+                animator.SetTrigger("Close");
+            }
+
+            // Close 애니메이션 동작 후 입력 상태 해제
+            yield return new WaitForSeconds(0.5f);
+            isAnimating = false;
+
+            if (isPlayerInRange && worldPromptUI != null)
+            {
+                worldPromptUI.SetActive(true);
             }
         }
 

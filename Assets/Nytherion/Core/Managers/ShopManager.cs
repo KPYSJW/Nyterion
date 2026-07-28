@@ -22,18 +22,39 @@ namespace Nytherion.Core.Managers
 
         private CurrencyDataManager currencyDataManager;
         private SaveLoadManager saveLoadManager;
+        private StageManager stageManager;
         private int rerollCount = 0;
 
-        public int CurrentRerollCost => 100 + (rerollCount * 50);
+        public int CurrentRerollCost
+        {
+            get
+            {
+                int currentChapter = stageManager != null && stageManager.CurrentStage != null ? stageManager.CurrentStage.chapterNumber : 1;
+                int chapterIndex = Mathf.Clamp(currentChapter - 1, 0, 3);
+                int baseCost = 100 * (int)Mathf.Pow(2, chapterIndex);
+                int increment = 50 * (int)Mathf.Pow(2, chapterIndex);
+                return baseCost + (rerollCount * increment);
+            }
+        }
         public int RerollCount => rerollCount;
 
         public event System.Action OnStockChanged;
 
         [Inject]
-        public void Construct(CurrencyDataManager currencyDataManager, SaveLoadManager saveLoadManager)
+        public void Construct(CurrencyDataManager currencyDataManager, SaveLoadManager saveLoadManager, StageManager stageManager)
         {
             this.currencyDataManager = currencyDataManager;
             this.saveLoadManager = saveLoadManager;
+
+            if (this.stageManager != null)
+            {
+                this.stageManager.OnChapterChanged -= ResetRerollCount;
+            }
+            this.stageManager = stageManager;
+            if (this.stageManager != null)
+            {
+                this.stageManager.OnChapterChanged += ResetRerollCount;
+            }
         }
 
         protected override void OnInitializeInternal()
@@ -55,7 +76,7 @@ namespace Nytherion.Core.Managers
 
                 try
                 {
-                    foreach (var shopDataAsset in allShopDataAssets)
+                    foreach (ShopData shopDataAsset in allShopDataAssets)
                     {
                         if (shopDataAsset == null)
                         {
@@ -81,16 +102,44 @@ namespace Nytherion.Core.Managers
 
         public int AdvancedRerollTokenCost => 1;
 
+        private Dictionary<Rarity, int> GetRarityWeightsForChapter(int chapter)
+        {
+            switch (chapter)
+            {
+                case 1:
+                    return new Dictionary<Rarity, int>
+                    {
+                        { Rarity.Common, 55 },
+                        { Rarity.Uncommon, 31 },
+                        { Rarity.Rare, 10 },
+                        { Rarity.Epic, 3 },
+                        { Rarity.Legendary, 1 }
+                    };
+                case 2:
+                    return new Dictionary<Rarity, int>
+                    {
+                        { Rarity.Common, 47 },
+                        { Rarity.Uncommon, 33 },
+                        { Rarity.Rare, 13 },
+                        { Rarity.Epic, 5 },
+                        { Rarity.Legendary, 2 }
+                    };
+                default:
+                    return new Dictionary<Rarity, int>
+                    {
+                        { Rarity.Common, 40 },
+                        { Rarity.Uncommon, 35 },
+                        { Rarity.Rare, 15 },
+                        { Rarity.Epic, 7 },
+                        { Rarity.Legendary, 3 }
+                    };
+            }
+        }
+
         public bool RerollShop(string shopName, bool isFree = false)
         {
-            Dictionary<Rarity, int> normalWeights = new Dictionary<Rarity, int>
-            {
-                { Rarity.Common, 50 },
-                { Rarity.Uncommon, 30 },
-                { Rarity.Rare, 13 },
-                { Rarity.Epic, 5 },
-                { Rarity.Legendary, 2 }
-            };
+            int currentChapter = stageManager != null && stageManager.CurrentStage != null ? stageManager.CurrentStage.chapterNumber : 1;
+            Dictionary<Rarity, int> normalWeights = GetRarityWeightsForChapter(currentChapter);
 
             if (!isFree)
             {
@@ -416,6 +465,10 @@ namespace Nytherion.Core.Managers
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            if (stageManager != null)
+            {
+                stageManager.OnChapterChanged -= ResetRerollCount;
+            }
             OnStockChanged = null;
             runtimeShopInventories?.Clear();
         }

@@ -93,40 +93,49 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
 
             float damageMultiplier = 1f;
             float cooldownMultiplier = 1f;
-            float priceMultiplier = 1f;
+
+            int minPrice = 135;
+            int maxPrice = 165;
 
             switch (targetRarity)
             {
                 case Rarity.Common:
                     damageMultiplier = 1.0f;
                     cooldownMultiplier = 1.0f;
-                    priceMultiplier = 1.0f;
+                    minPrice = 135;
+                    maxPrice = 165;
                     break;
                 case Rarity.Uncommon:
                     damageMultiplier = 1.2f;
                     cooldownMultiplier = 0.9f;
-                    priceMultiplier = 1.5f;
+                    minPrice = 270;
+                    maxPrice = 330;
                     break;
                 case Rarity.Rare:
                     damageMultiplier = 1.5f;
                     cooldownMultiplier = 0.8f;
-                    priceMultiplier = 2.5f;
+                    minPrice = 540;
+                    maxPrice = 660;
                     break;
                 case Rarity.Epic:
                     damageMultiplier = 2.0f;
                     cooldownMultiplier = 0.7f;
-                    priceMultiplier = 4.0f;
+                    minPrice = 1080;
+                    maxPrice = 1320;
                     break;
                 case Rarity.Legendary:
                     damageMultiplier = 3.0f;
                     cooldownMultiplier = 0.5f;
-                    priceMultiplier = 6.0f;
+                    minPrice = 2250;
+                    maxPrice = 2750;
                     break;
             }
 
             damage = originalDamage * damageMultiplier;
             cooldown = originalCooldown * cooldownMultiplier;
-            baseValue = Mathf.RoundToInt(originalBaseValue * priceMultiplier);
+
+            int rawPrice = UnityEngine.Random.Range(minPrice, maxPrice + 1);
+            baseValue = Mathf.RoundToInt(rawPrice / 10f) * 10;
         }
 
 #if UNITY_EDITOR

@@ -21,7 +21,7 @@ MonoBehaviour:
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 
-  baseValue: 10
+  baseValue: 150
   equipmentType: 0
   rarity: 3
   traits: 04000000
