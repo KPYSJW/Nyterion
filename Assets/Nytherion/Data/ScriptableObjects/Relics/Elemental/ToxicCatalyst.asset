@@ -18,7 +18,7 @@ MonoBehaviour:
     \uB2E8\uCD95, \uB3C5 \uD53C\uD574 +15% \uC99D\uAC00."
   description_EN: Poison damage interval shortened by 30%, Poison damage +15%.
   Image: {fileID: 21300000, guid: e39b228fda8d3ee47af7c67a4f07c065, type: 3}
-  rarity: 3
+  rarity: 0
   level: 1
   isDisabled: 0
   effectModules:

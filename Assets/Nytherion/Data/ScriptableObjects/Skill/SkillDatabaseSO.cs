@@ -10,11 +10,13 @@ namespace Nytherion.Data.ScriptableObjects.Skill
 
         public SkillData GetSkillById(string id)
         {
-            return allSkills.Find(skill => skill.skillID == id);
+            if (allSkills == null) return null;
+            return allSkills.Find(skill => skill != null && skill.skillID == id);
         }
         public SkillData GetSkillByType(Nytherion.Core.Enums.SkillType type)
         {
-            return allSkills.Find(skill => skill.skillType == type);
+            if (allSkills == null) return null;
+            return allSkills.Find(skill => skill != null && skill.skillType == type);
         }
     }
 }

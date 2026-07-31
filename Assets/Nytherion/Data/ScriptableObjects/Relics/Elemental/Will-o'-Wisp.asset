@@ -14,11 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Will-o'-Wisp
   koreanName: "\uB3C4\uAE68\uBE44 \uBD88"
-  description_KR: "\uD654\uC5FC \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uACA9 \uC18D\uB3C4
-    +15%, \uD654\uC5FC \uD53C\uD574 +25% \uC99D\uAC00."
-  description_EN: When Fire equipment is active, attack speed +15%, Fire damage +25%.
+  description_KR: "\uD654\uC5FC \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uACA9 \uC18D\uB3C4 +15% (\uB808\uBCA8\uB2F9 +3%), \uADFC\uC811/\uC6D0\uAC70\uB9AC \uACF5\uACA9 +25% (\uB808\uBCA8\uB2F9 +5%)."
+  description_EN: "With Fire equipment: melee/ranged attack speed +15% (+3% per level), melee/ranged attack +25% (+5% per level)."
   Image: {fileID: 21300000, guid: 9012a6d38b2ce7445b3804826909f752, type: 3}
-  rarity: 4
+  rarity: 3
   level: 1
   isDisabled: 0
   effectModules:
@@ -46,15 +45,19 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 12
+        - stat: 5
           value: 0.15
-          valuePerLevel: 0.04
+          valuePerLevel: 0.03
+          isPercentage: 1
+        - stat: 6
+          value: 0.15
+          valuePerLevel: 0.03
           isPercentage: 1
         - stat: 3
           value: 0.25
-          valuePerLevel: 0.08
+          valuePerLevel: 0.05
           isPercentage: 1
         - stat: 4
           value: 0.25
-          valuePerLevel: 0.08
+          valuePerLevel: 0.05
           isPercentage: 1

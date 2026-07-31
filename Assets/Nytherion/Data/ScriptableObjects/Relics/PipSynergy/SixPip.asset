@@ -14,37 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Six Pip
   koreanName: "\uC5EC\uC12F \uBC88\uC9F8 \uB208"
-  description_KR: 
-  description_EN: 
+  description_KR: "\uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC18D\uB3C4 +10% (\uB808\uBCA8\uB2F9 +2%). \uC5EC\uC12F \uB208\uC744 \uBAA8\uB450 \uC7A5\uCC29\uD558\uBA74 \uBAA8\uB4E0 \uB208\uC758 \uD6A8\uACFC\uAC00 2\uBC30\uAC00 \uB429\uB2C8\uB2E4."
+  description_EN: "Ranged attack speed +10% (+2% per level). Equipping all six eyes doubles every eye effect."
   Image: {fileID: 21300000, guid: b8d4b6792f09858478e2e22095d5a2e8, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0
   effectModules:
   - condition:
-      rid: 6716071425241513990
+      rid: 6001
     effects:
-    - rid: 6716071425241513991
+    - rid: 6002
   - condition:
-      rid: 6716071425241513992
+      rid: 6003
     effects:
-    - rid: 6716071425241513995
-  - condition:
-      rid: 6716071425241513994
-    effects:
-    - rid: 6716071425241513996
-  - condition:
-      rid: 6716071425241513997
-    effects:
-    - rid: 6716071425241513999
-  - condition:
-      rid: 6716071425241513998
-    effects:
-    - rid: 6716071425241514000
-  - condition:
-      rid: 6716071425241514002
-    effects:
-    - rid: 6716071425241514003
+    - rid: 6004
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -55,79 +39,27 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6716071425241513990
+    - rid: 6001
       type: {class: AlwaysTrueCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data: 
-    - rid: 6716071425241513991
+      data:
+    - rid: 6002
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
         - stat: 6
-          value: 0.15
-          valuePerLevel: 0.03
+          value: 0.1
+          valuePerLevel: 0.02
           isPercentage: 1
-    - rid: 6716071425241513992
-      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+    - rid: 6003
+      type: {class: MultiRelicCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        targetSeriesId: AncientStatSeries
-        requiredChainLength: 2
-    - rid: 6716071425241513994
-      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+        requiredRelicIds:
+        - First Pip
+        - Second Pip
+        - Third Pip
+        - Fourth Pip
+        - Fifth Pip
+        - Six Pip
+    - rid: 6004
+      type: {class: PipCompletionEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        targetSeriesId: AncientStatSeries
-        requiredChainLength: 3
-    - rid: 6716071425241513995
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        statModifiers:
-        - stat: 13
-          value: 0.03
-          valuePerLevel: 0.005
-          isPercentage: 1
-    - rid: 6716071425241513996
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        statModifiers:
-        - stat: 13
-          value: 0.06
-          valuePerLevel: 0.008
-          isPercentage: 1
-    - rid: 6716071425241513997
-      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        targetSeriesId: AncientStatSeries
-        requiredChainLength: 4
-    - rid: 6716071425241513998
-      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        targetSeriesId: AncientStatSeries
-        requiredChainLength: 5
-    - rid: 6716071425241513999
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        statModifiers:
-        - stat: 13
-          value: 0.09
-          valuePerLevel: 0.01
-          isPercentage: 1
-    - rid: 6716071425241514000
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        statModifiers:
-        - stat: 13
-          value: 0.12
-          valuePerLevel: 0.012
-          isPercentage: 1
-    - rid: 6716071425241514002
-      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        targetSeriesId: AncientStatSeries
-        requiredChainLength: 6
-    - rid: 6716071425241514003
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
-      data:
-        statModifiers:
-        - stat: 13
-          value: 0.166
-          valuePerLevel: 0.015
-          isPercentage: 1

@@ -386,14 +386,29 @@ namespace Nytherion.Core.Managers
 
         public bool IsRelicActive(string relicId)
         {
-            if (placedBlockPositions == null || logicGrid == null) return false;
+            if (placedBlockPositions == null || logicGrid == null || string.IsNullOrEmpty(relicId)) return false;
 
+            string targetId = relicId.Trim();
             foreach (KeyValuePair<string, Vector2Int> pair in placedBlockPositions)
             {
-                RelicBlock block = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
-                if (block != null && block.RelicId == relicId && !block.SourceData.isDisabled)
+                RelicBlock block = GetBlockByID(pair.Key);
+                if (block == null)
                 {
-                    return true;
+                    block = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
+                }
+
+                if (block != null && block.SourceData != null && !block.SourceData.isDisabled)
+                {
+                    string blockRelicId = block.RelicId != null ? block.RelicId.Trim() : "";
+                    string sourceDataName = block.SourceData.name != null ? block.SourceData.name.Trim() : "";
+                    string sourceRelicName = block.SourceData.relicName != null ? block.SourceData.relicName.Trim() : "";
+
+                    if (string.Equals(blockRelicId, targetId, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(sourceDataName, targetId, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(sourceRelicName, targetId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;

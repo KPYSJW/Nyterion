@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: EvilEye
+  m_EditorClassIdentifier: 
+  uniqueID: 22b2d2b3-bebc-4e36-8ef9-0339e07dd40f
+  itemName_KR: "\uC774\uBE14\uC544\uC774"
+  itemName_EN: Evil Eye
+  icon: {fileID: 21300000, guid: 7e535e51720dae044a25b9d053b6af07, type: 3}
+  description_KR: 
+  description_EN: 
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 150
+  equipmentType: 0
+  rarity: 3
+  traits: 01000000
+  statModifiers:
+  - stat: 4
+    value: -10
+    valuePerLevel: 0
+    isPercentage: 0
+  damage: 20
+  range: 0
+  cooldown: 1.5
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: 9575dfaffdd75884ca0a7aad900e16e4, type: 3}
+  firePointOffset: {x: 0.35, y: 0.35, z: 0}
+  spriteRotationOffset: -45
+  visualPositionOffset: {x: 0, y: 0, z: 0}
+  weaponEffectPrefab: {fileID: 1638640853019598765, guid: dd4a8661b5e3dac43b8d7395a450fcf2, type: 3}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 7099819955533219938, guid: d3d95f8cca20e7340af51e1891f3bd62, type: 3}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
+  projectileSpeed: 8
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  isArchivable: 1

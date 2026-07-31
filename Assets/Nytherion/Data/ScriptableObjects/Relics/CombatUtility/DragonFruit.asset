@@ -19,7 +19,7 @@ MonoBehaviour:
   description_EN: +15% Dash Speed when 3 or more adjacent slots (up, down, left,
     right) are empty.
   Image: {fileID: 21300000, guid: a19926cb327fadf409e6e593edbd6071, type: 3}
-  rarity: 2
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:

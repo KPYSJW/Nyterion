@@ -18,7 +18,7 @@ MonoBehaviour:
     \uC99D\uAC00, \uB3C5 \uD53C\uD574 +10% \uC99D\uAC00."
   description_EN: Poison status duration +50%, Poison damage +10%.
   Image: {fileID: 21300000, guid: 71f7b03ddf287bc4ea7ca194efd467fc, type: 3}
-  rarity: 2
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:

@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uD2B9\uC218 \uD22C\uC0AC\uCCB4 \uD53C\uD574\uB7C9 +20%. "
   description_EN: 'Special projectile dmg +20%. '
   Image: {fileID: 21300000, guid: 7bf1d030a95f72e4a8c26ba4215a8a40, type: 3}
-  rarity: 0
+  rarity: 2
   level: 1
   isDisabled: 0
   effectModules:

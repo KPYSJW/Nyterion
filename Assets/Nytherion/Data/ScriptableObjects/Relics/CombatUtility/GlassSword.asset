@@ -18,7 +18,7 @@ MonoBehaviour:
     \uB300\uC2E0, \uACF5\uACA9\uB825 +50%. "
   description_EN: 'Max HP is locked to 50, but Attack Damage increases by 50%. '
   Image: {fileID: 21300000, guid: c4134c5444bec8b42a09362b5c76e8e9, type: 3}
-  rarity: 4
+  rarity: 2
   level: 1
   isDisabled: 0
   effectModules:

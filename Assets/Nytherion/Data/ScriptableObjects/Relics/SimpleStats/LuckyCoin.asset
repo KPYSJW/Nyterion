@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Lucky Coin
   koreanName: "\uD589\uC6B4\uC758 \uC8FC\uD654"
-  description_KR: "\uACE8\uB4DC \uD68D\uB4DD\uB7C9 +25% (\uB808\uBCA8\uB2F9 +5%)"
-  description_EN: Carrying this coin increases gold gain by 25% (+5% per level).
+  description_KR: "\uACE8\uB4DC \uD68D\uB4DD\uB7C9 +25% (\uB808\uBCA8\uB2F9 +5%, \uCD5C\uB300 +50%)"
+  description_EN: "Gold gain +25% (+5% per level, capped at +50%)."
   Image: {fileID: 21300000, guid: 7899e817078cc864babf440acf33c241, type: 3}
-  rarity: 2
+  rarity: 4
   level: 1
   isDisabled: 0
   effectModules: []

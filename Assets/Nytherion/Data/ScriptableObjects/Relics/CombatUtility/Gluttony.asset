@@ -18,7 +18,7 @@ MonoBehaviour:
     \uB204\uC801. "
   description_EN: 'On kill, Lifesteal +0.2% permanently. '
   Image: {fileID: 21300000, guid: 299b3064269bdf3438b06fa7306dbea3, type: 3}
-  rarity: 3
+  rarity: 4
   level: 1
   isDisabled: 0
   effectModules:

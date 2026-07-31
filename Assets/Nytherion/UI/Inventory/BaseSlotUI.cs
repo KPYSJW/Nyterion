@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.Core.Enums;
 using System;
 using Nytherion.UI.Components;
 
@@ -38,6 +40,15 @@ namespace Nytherion.UI.Inventory
         [SerializeField] protected TextMeshProUGUI countText;
         protected ItemData currentItem;
         protected int currentCount;
+
+        [Header("Rarity Slot Visuals")]
+        [SerializeField] protected Image slotBackgroundImage;
+        [SerializeField] protected Sprite defaultSlotSprite;
+        [SerializeField] protected Sprite commonSlotSprite;
+        [SerializeField] protected Sprite uncommonSlotSprite;
+        [SerializeField] protected Sprite rareSlotSprite;
+        [SerializeField] protected Sprite epicSlotSprite;
+        [SerializeField] protected Sprite legendarySlotSprite;
 
         protected virtual void Awake()
         {
@@ -78,7 +89,12 @@ namespace Nytherion.UI.Inventory
 
             if (hasItem)
             {
-                iconImage.sprite = item.icon;
+                Sprite displaySprite = item.icon;
+                if (item is WeaponData weaponData && weaponData.weaponSprite != null)
+                {
+                    displaySprite = weaponData.weaponSprite;
+                }
+                iconImage.sprite = displaySprite;
                 
                 // 알파값을 항상 1로 복구하여 투명화 버그 방지
                 Color color = iconImage.color;
@@ -97,6 +113,44 @@ namespace Nytherion.UI.Inventory
                 {
                     countText.text = "";
                 }
+            }
+
+            UpdateSlotBackground(item, hasItem);
+        }
+
+        protected virtual void UpdateSlotBackground(ItemData item, bool hasItem)
+        {
+            Image targetSlotImage = slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>();
+            if (targetSlotImage == null) return;
+
+            if (!hasItem)
+            {
+                if (defaultSlotSprite != null)
+                {
+                    targetSlotImage.sprite = defaultSlotSprite;
+                }
+                return;
+            }
+
+            Rarity targetRarity = Rarity.Common;
+            if (item is EquipmentData equipmentData)
+            {
+                targetRarity = equipmentData.rarity;
+            }
+
+            Sprite chosenSlotSprite = targetRarity switch
+            {
+                Rarity.Common => commonSlotSprite != null ? commonSlotSprite : defaultSlotSprite,
+                Rarity.Uncommon => uncommonSlotSprite != null ? uncommonSlotSprite : defaultSlotSprite,
+                Rarity.Rare => rareSlotSprite != null ? rareSlotSprite : defaultSlotSprite,
+                Rarity.Epic => epicSlotSprite != null ? epicSlotSprite : defaultSlotSprite,
+                Rarity.Legendary => legendarySlotSprite != null ? legendarySlotSprite : defaultSlotSprite,
+                _ => defaultSlotSprite
+            };
+
+            if (chosenSlotSprite != null)
+            {
+                targetSlotImage.sprite = chosenSlotSprite;
             }
         }
 

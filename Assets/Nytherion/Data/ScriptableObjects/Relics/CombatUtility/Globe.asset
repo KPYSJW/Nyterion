@@ -18,7 +18,7 @@ MonoBehaviour:
     \uC9C0\uB098\uAC11\uB2C8\uB2E4."
   description_EN: Projectiles pierce through enemies.
   Image: {fileID: 21300000, guid: e701d9dd66b9d6f40a38a1b06f6a2ef8, type: 3}
-  rarity: 3
+  rarity: 2
   level: 1
   isDisabled: 0
   effectModules: []

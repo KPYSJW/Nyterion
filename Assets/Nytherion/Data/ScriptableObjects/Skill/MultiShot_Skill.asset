@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -15,19 +15,20 @@ MonoBehaviour:
   skillID: skill_multishot
   skillType: 7
   skillName: Multi Shot
-  description: 
+  description: "\uD22C\uC0AC\uCCB4 \uBC1C\uC0AC \uC2DC \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB97C
+    \uC5EC\uB7EC \uBC29\uD5A5\uC73C\uB85C \uB3D9\uC2DC \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
   skillLevel: 0
   exp: 0
   coolDown: 30
+  manaCost: 0
   damage: 0
   range: 0
   icon: {fileID: 0}
   skillPrefab: {fileID: 0}
+  unlockMilestoneID: 
   buffDuration: 5
   statModifiers:
   - stat: 10
     value: 1
     valuePerLevel: 0.2
     isPercentage: 0
-
-  unlockMilestoneID: LuckOverdose

@@ -226,6 +226,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 4112530065599958366}
   countText: {fileID: 4427375559483984263}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 21300000, guid: eab493799a49c1f41bf1e3c74b2be57e, type: 3}
+  commonSlotSprite: {fileID: 21300000, guid: b0143f83f648cf947936cc752fdc9ca6, type: 3}
+  uncommonSlotSprite: {fileID: 21300000, guid: 8b0627f583740574fba0c2cb42f1fc15, type: 3}
+  rareSlotSprite: {fileID: 21300000, guid: 87098984b1ba06b4d97a08786adb581b, type: 3}
+  epicSlotSprite: {fileID: 21300000, guid: 6cc99114f5fa86a4dbad731dc3054939, type: 3}
+  legendarySlotSprite: {fileID: 21300000, guid: 0eb5a77b6915e384f94bac854f5385af, type: 3}
 --- !u!1 &6382680229784661248
 GameObject:
   m_ObjectHideFlags: 0

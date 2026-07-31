@@ -18,7 +18,7 @@ MonoBehaviour:
     +6. "
   description_EN: 'When Demonic equipment is active, melee/ranged Atk +6. '
   Image: {fileID: 21300000, guid: 53e4299de8861094bb4181568b1111af, type: 3}
-  rarity: 2
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:

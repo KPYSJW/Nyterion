@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -102,8 +102,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 196
-        height: 176
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,10 +121,10 @@ TextureImporter:
       name: Explosion_1
       rect:
         serializedVersion: 2
-        x: 196
+        x: 32
         y: 0
-        width: 196
-        height: 176
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -142,10 +142,10 @@ TextureImporter:
       name: Explosion_2
       rect:
         serializedVersion: 2
-        x: 392
+        x: 64
         y: 0
-        width: 196
-        height: 176
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -163,10 +163,10 @@ TextureImporter:
       name: Explosion_3
       rect:
         serializedVersion: 2
-        x: 588
+        x: 96
         y: 0
-        width: 196
-        height: 176
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,10 +184,10 @@ TextureImporter:
       name: Explosion_4
       rect:
         serializedVersion: 2
-        x: 784
+        x: 128
         y: 0
-        width: 196
-        height: 176
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -197,69 +197,6 @@ TextureImporter:
       bones: []
       spriteID: 6363cbed77281004c8a9afba47cfb104
       internalID: 67403793
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Explosion_5
-      rect:
-        serializedVersion: 2
-        x: 980
-        y: 0
-        width: 196
-        height: 176
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d1ce1cb4299bf85499e6bfa05ddb5aaa
-      internalID: 930156331
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Explosion_6
-      rect:
-        serializedVersion: 2
-        x: 1176
-        y: 0
-        width: 196
-        height: 176
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c217c20de86c4c446bafe2cfc43e1f29
-      internalID: -261711936
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Explosion_7
-      rect:
-        serializedVersion: 2
-        x: 1372
-        y: 0
-        width: 196
-        height: 176
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1a54edd3192b8f944b39a51b4ca05d9f
-      internalID: 1569304988
       vertices: []
       indices: 
       edges: []
@@ -280,9 +217,6 @@ TextureImporter:
       Explosion_2: 1380121679
       Explosion_3: -137843599
       Explosion_4: 67403793
-      Explosion_5: 930156331
-      Explosion_6: -261711936
-      Explosion_7: 1569304988
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
