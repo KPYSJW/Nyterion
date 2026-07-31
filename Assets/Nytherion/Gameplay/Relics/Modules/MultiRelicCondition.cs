@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Utils;
@@ -24,8 +23,15 @@ namespace Nytherion.Gameplay.Relics.Modules
             if (relicManager == null) return false;
 
             // 보드에 장착된 모든 각인의 ID 목록을 가져옴
-            var placedBlocks = relicManager.GetPlacedBlocks();
-            var placedIds = placedBlocks.Select(kvp => kvp.Key).ToHashSet();
+            var placedIds = new HashSet<string>();
+            foreach (var pair in relicManager.GetPlacedBlocks())
+            {
+                var block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
+                if (block != null && block.SourceData != null)
+                {
+                    placedIds.Add(block.RelicId);
+                }
+            }
 
             // 요구하는 모든 ID가 placedIds에 포함되어 있는지 검사
             foreach (var requiredId in requiredRelicIds)

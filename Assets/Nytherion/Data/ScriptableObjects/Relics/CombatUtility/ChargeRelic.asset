@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "무기의 차징 공격을 활성화합니다."
   description_EN: 'Enables weapon charging attacks.'
   Image: {fileID: 21300000, guid: d8edc57c276626f449084ba691022a1c, type: 3}
-  rarity: 2
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules: []

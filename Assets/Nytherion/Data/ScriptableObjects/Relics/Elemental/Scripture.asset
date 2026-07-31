@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Scripture
   koreanName: "\uC131\uC11C"
-  description_KR: "\uC2E0\uC131\u0020\uC7A5\uBE44\u0020\uC7A5\uCC29\u0020\uC2DC\u0020\uD53C\uD761\u0020\u002B\u0032\u0025\u002C\u0020\uCD5C\uB300\u0020\uCCB4\uB825\u0020\u002B\u0031\u0035\u002C\u0020\uC2E0\uC131\u0020\uD53C\uD574\u0020\u002B\u0031\u0030\u0025\u0020\uC99D\uAC00\u002E"
-  description_EN: 'When Holy equipment is active, lifesteal +2%, max HP +15, Holy damage +10%.'
+  description_KR: "\uC2E0\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uD53C\uD761 +2%,
+    \uCD5C\uB300 \uCCB4\uB825 +15, \uC2E0\uC131 \uD53C\uD574 +10% \uC99D\uAC00."
+  description_EN: When Holy equipment is active, lifesteal +2%, max HP +15, Holy
+    damage +10%.
   Image: {fileID: 21300000, guid: 5ed3e19e25f6b6b4e83b75c398b70550, type: 3}
-  rarity: 2
+  rarity: 0
   level: 1
   isDisabled: 0
   effectModules:

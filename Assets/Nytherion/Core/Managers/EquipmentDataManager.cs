@@ -120,8 +120,8 @@ namespace Nytherion.Core.Managers
         /// <returns></returns>
         private List<EquippedItemEntry> GetEquipmentForSave()
         {
-            var entries = new List<EquippedItemEntry>();
-            foreach (var kvp in equippedItems)
+            List<EquippedItemEntry> entries = new List<EquippedItemEntry>();
+            foreach (KeyValuePair<EquipmentSlotType, EquipmentData> kvp in equippedItems)
             {
                 if (kvp.Value != null)
                 {
@@ -129,7 +129,8 @@ namespace Nytherion.Core.Managers
                     {
                         slotType = kvp.Key,
                         itemId = kvp.Value.ID,
-                        instanceId = kvp.Value.instanceId
+                        instanceId = kvp.Value.instanceId,
+                        rarity = kvp.Value.rarity
                     });
                 }
             }
@@ -144,7 +145,7 @@ namespace Nytherion.Core.Managers
             equippedItems.Clear();
             if (entries == null) return;
 
-            foreach (var entry in entries)
+            foreach (EquippedItemEntry entry in entries)
             {
                 ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
                 if (itemAsset == null || !(itemAsset is EquipmentData))
@@ -154,6 +155,7 @@ namespace Nytherion.Core.Managers
 
                 EquipmentData newEquipment = Instantiate(itemAsset) as EquipmentData;
                 newEquipment.instanceId = entry.instanceId;
+                newEquipment.ApplyRarityStats(entry.rarity);
 
                 // 로드 시에는 인벤토리를 업데이트하지 않음 (중복 방지)
                 SetEquipment(entry.slotType, newEquipment, false);

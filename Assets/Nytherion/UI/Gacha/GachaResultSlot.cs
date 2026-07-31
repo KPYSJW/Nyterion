@@ -43,5 +43,6 @@ namespace Nytherion.UI.Gacha
             { 
             }
         }
+
     }
 }

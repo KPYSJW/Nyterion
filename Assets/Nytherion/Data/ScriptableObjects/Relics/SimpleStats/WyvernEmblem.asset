@@ -18,7 +18,7 @@ MonoBehaviour:
     8% \uB9CC\uD07C \uBE60\uB974\uAC8C \uD569\uB2C8\uB2E4."
   description_EN: 
   Image: {fileID: 21300000, guid: c27ae965c5f1c094693caeccb8cdd709, type: 3}
-  rarity: 1
+  rarity: 2
   level: 1
   isDisabled: 0
   effectModules: []

@@ -1,4 +1,4 @@
-using Nytherion.Data.ScriptableObjects.Dungeon;
+ï»¿using Nytherion.Data.ScriptableObjects.Dungeon;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,14 +19,14 @@ namespace Nytherion.Data.ScriptableObjects.Stage
         public int enemyCount;
         public Sprite stageBackground;
 
-        [Header("½ºÅ×ÀÌÁö Èå¸§ ¼³Á¤")]
-        [Tooltip("ÀÌ ½ºÅ×ÀÌÁö¿¡¼­ »ç¿ëÇÒ ´øÀü »ı¼º µ¥ÀÌÅÍÀÔ´Ï´Ù.")]
-        public DungeonData dungeonData; // ÀÌ ½ºÅ×ÀÌÁö´Â ¾î¶² ´øÀü Áöµµ¸¦ ¾µ °ÍÀÎ°¡?
+        [Header("ìŠ¤í…Œì´ì§€ íë¦„ ì„¤ì •")]
+        [Tooltip("ì´ ìŠ¤í…Œì´ì§€ì—ì„œ ì‚¬ìš©í•  ë˜ì „ ë°ì´í„°ì…ë‹ˆë‹¤.")]
+        public DungeonData dungeonData; 
 
-        [Tooltip("ÀÌ ½ºÅ×ÀÌÁö¸¦ Å¬¸®¾îÇÏ¸é ³Ñ¾î°¥ ´ÙÀ½ ½ºÅ×ÀÌÁö µ¥ÀÌÅÍÀÔ´Ï´Ù.")]
-        public StageData nextStageData; // ÀÌ ½ºÅ×ÀÌÁö¸¦ ±ú¸é ´ÙÀ½ °èÈ¹Àº ¹«¾ùÀÎ°¡?
+        [Tooltip("ì´ ìŠ¤í…Œì´ì§€ë¥¼ í´ë¦¬ì–´í•˜ë©´ ë„˜ì–´ê°ˆ ë‹¤ìŒ ìŠ¤í…Œì´ì§€ ë°ì´í„°ì…ë‹ˆë‹¤.")]
+        public StageData nextStageData;
 
-        [Tooltip("ÀÌ ½ºÅ×ÀÌÁö¸¦ Å¬¸®¾îÇÏ¸é ·ÎµåÇÒ ¾ÀÀÇ ÀÌ¸§ÀÔ´Ï´Ù. (¿¹: Village)")]
-        public string victorySceneName = "GameScene"; // Å¬¸®¾î ÈÄ '¸¶À»' °°Àº Æ¯º°ÇÑ °÷À¸·Î °¡´Â°¡?
+        [Tooltip("ì´ ìŠ¤í…Œì´ì§€ë¥¼ í´ë¦¬ì–´í•˜ë©´ ë¡œë“œí•  ì”¬ ì´ë¦„ì…ë‹ˆë‹¤. (ì˜ˆ: Village)")]
+        public string victorySceneName = "GameScene"; 
     }
 }

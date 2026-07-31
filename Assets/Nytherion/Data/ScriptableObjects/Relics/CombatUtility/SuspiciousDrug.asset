@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uADFC\uACF5 +5, \uC6D0\uACF5 -5. "
   description_EN: 'Melee Atk +5, Ranged Atk -5. '
   Image: {fileID: 21300000, guid: 47d0a558919b301458237331c3a7a4a2, type: 3}
-  rarity: 1
+  rarity: 0
   level: 1
   isDisabled: 0
   effectModules:

@@ -51,3 +51,19 @@ MonoBehaviour:
   OnPanelClosed:
     m_PersistentCalls:
       m_Calls: []
+  mainPanel: {fileID: 0}
+  resultPanel: {fileID: 0}
+  weaponSubPanel: {fileID: 0}
+  relicSubPanel: {fileID: 0}
+  weaponAnimator: {fileID: 0}
+  relicAnimator: {fileID: 0}
+  weaponTabButton: {fileID: 0}
+  relicTabButton: {fileID: 0}
+  drawOnceBtton: {fileID: 0}
+  drawTenBtton: {fileID: 0}
+  closeButton: {fileID: 0}
+  resultCloseButton: {fileID: 0}
+  resultSlotParent: {fileID: 0}
+  resultSlotPrefab: {fileID: 0}
+  useAutoDetectAnimLength: 0
+  gachaAnimDuration: 0.6

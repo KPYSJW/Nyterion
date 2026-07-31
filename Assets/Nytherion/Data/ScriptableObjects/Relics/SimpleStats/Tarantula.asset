@@ -14,20 +14,45 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Tarantula
   koreanName: "\uD0C0\uB780\uD234\uB77C "
-  description_KR: "\uD761\uD608\uB7C9\uC774 4% \uCD94\uAC00\uB418\uACE0 \uCE58\uBA85\uD0C0
-    \uD655\uB960\uC774 10% \uB9CC\uD07C \uD070 \uD3ED\uC73C\uB85C \uC99D\uAC00\uD569\uB2C8\uB2E4."
-  description_EN: 
+  description_KR: "\uD761\uD608 +4% (\uB808\uBCA8\uB2F9 +1%), \uCE58\uBA85\uD0C0 \uD655\uB960 +10%p (\uB808\uBCA8\uB2F9 +1.5%p)"
+  description_EN: "Lifesteal +4% (+1% per level), critical chance +10%p (+1.5%p per level)."
   Image: {fileID: 21300000, guid: 6d6e6c5b325ef6843a4ca3a8efdb6b41, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0
-  effectModules: []
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 7102
   shape:
   - {x: 0, y: 0}
   influenceZones: []
   synergySeriesId: 
   unlockMilestoneID: 
-  simpleStatModifiers: []
+  simpleStatModifiers:
+  - stat: 11
+    value: 0.04
+    valuePerLevel: 0.01
+    isPercentage: 1
+  - stat: 13
+    value: 0.1
+    valuePerLevel: 0.015
+    isPercentage: 1
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7102
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 11
+          value: 0.04
+          valuePerLevel: 0.01
+          isPercentage: 1
+        - stat: 13
+          value: 0.1
+          valuePerLevel: 0.015
+          isPercentage: 1

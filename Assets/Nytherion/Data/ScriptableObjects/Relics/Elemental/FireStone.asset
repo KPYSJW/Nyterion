@@ -19,7 +19,7 @@ MonoBehaviour:
   description_EN: 'When Fire equipment is active, attack speed +10%, Fire damage
     +10%. '
   Image: {fileID: 21300000, guid: 71a4856382bc88242b375f8d00056988, type: 3}
-  rarity: 2
+  rarity: 0
   level: 1
   isDisabled: 0
   effectModules:

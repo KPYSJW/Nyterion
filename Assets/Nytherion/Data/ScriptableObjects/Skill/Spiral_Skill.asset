@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -15,13 +15,15 @@ MonoBehaviour:
   skillID: skill_spiral
   skillType: 4
   skillName: Spiral
-  description: 
+  description: "\uD50C\uB808\uC774\uC5B4 \uC8FC\uC704\uB97C \uB098\uC120\uD615\uC73C\uB85C
+    \uD68C\uC804\uD558\uBA70 \uC9C0\uC18D \uD53C\uD574\uB97C \uC785\uD788\uB294 \uB9C8\uBC95
+    \uAD6C\uCCB4\uB97C \uC0DD\uC131\uD569\uB2C8\uB2E4."
   skillLevel: 0
   exp: 0
   coolDown: 10
+  manaCost: 0
   damage: 1
   range: 1
   icon: {fileID: 21300000, guid: 2641987862f4dbd4da2fef9e117d24b6, type: 3}
   skillPrefab: {fileID: 7263652350845657341, guid: cf1e5270067f8ee469acd38778ec710d, type: 3}
-
-  unlockMilestoneID: Spiral
+  unlockMilestoneID: 

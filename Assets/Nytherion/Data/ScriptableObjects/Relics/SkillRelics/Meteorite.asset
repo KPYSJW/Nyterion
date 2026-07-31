@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Meteorite
+  m_EditorClassIdentifier: 
+  relicName: Meteorite
+  koreanName: "\uC6B4\uC11D"
+  description_KR: "[Meteor Strike] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Meteor
+    Strike] : \uC6B0\uC8FC\uB85C\uBD80\uD130 \uAC70\uB300\uD55C \uC6B4\uC11D\uC744
+    \uB099\uD558\uC2DC\uCF1C \uC9C0\uC815 \uBC94\uC704 \uB0B4\uC758 \uBAA8\uB4E0
+    \uC801\uC5D0\uAC8C \uD3ED\uBC1C\uC801\uC778 \uD30C\uAD34\uB97C \uC120\uC0AC\uD569\uB2C8\uB2E4."
+  description_EN: "Obtain [Meteor Strike] skill.\n[Meteor Strike] : \uC6B0\uC8FC\uB85C\uBD80\uD130
+    \uAC70\uB300\uD55C \uC6B4\uC11D\uC744 \uB099\uD558\uC2DC\uCF1C \uC9C0\uC815 \uBC94\uC704
+    \uB0B4\uC758 \uBAA8\uB4E0 \uC801\uC5D0\uAC8C \uD3ED\uBC1C\uC801\uC778 \uD30C\uAD34\uB97C
+    \uC120\uC0AC\uD569\uB2C8\uB2E4."
+  Image: {fileID: 21300000, guid: 95e6ae23f702d7a4bae52fd53ddc1055, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 2313383513706201105
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  synergySeriesId: 
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2313383513706201105
+      type: {class: GrantSkillEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        skillData: {fileID: 11400000, guid: f490c741e6c38da4c8efef123f11daef, type: 2}
