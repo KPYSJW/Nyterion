@@ -33,6 +33,10 @@ namespace Nytherion.GamePlay.Combat.Weapons
         private Animator swingEffectAnimator;
         private Animator swingUpEffectAnimator;
 
+        private Collider2D thrustEffectCollider;
+        private Collider2D swingEffectCollider;
+        private Collider2D swingUpEffectCollider;
+
         private Vector3 thrustEffectInitialPos;
         private Quaternion thrustEffectInitialRot;
         private Vector3 thrustEffectInitialScale;
@@ -113,6 +117,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 thrustEffectAnimator = thrustEffectObject.GetComponent<Animator>();
                 if (thrustEffectAnimator == null) thrustEffectAnimator = thrustEffectObject.GetComponentInChildren<Animator>();
                 if (thrustEffectAnimator != null) thrustEffectAnimator.keepAnimatorStateOnDisable = false;
+                thrustEffectCollider = thrustEffectObject.GetComponent<Collider2D>();
                 thrustEffectObject.SetActive(false);
             }
             if (swingEffectObject != null)
@@ -120,6 +125,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 swingEffectAnimator = swingEffectObject.GetComponent<Animator>();
                 if (swingEffectAnimator == null) swingEffectAnimator = swingEffectObject.GetComponentInChildren<Animator>();
                 if (swingEffectAnimator != null) swingEffectAnimator.keepAnimatorStateOnDisable = false;
+                swingEffectCollider = swingEffectObject.GetComponent<Collider2D>();
                 swingEffectObject.SetActive(false);
             }
             if (swingUpEffectObject != null)
@@ -127,6 +133,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 swingUpEffectAnimator = swingUpEffectObject.GetComponent<Animator>();
                 if (swingUpEffectAnimator == null) swingUpEffectAnimator = swingUpEffectObject.GetComponentInChildren<Animator>();
                 if (swingUpEffectAnimator != null) swingUpEffectAnimator.keepAnimatorStateOnDisable = false;
+                swingUpEffectCollider = swingUpEffectObject.GetComponent<Collider2D>();
                 swingUpEffectObject.SetActive(false);
             }
         }
@@ -174,6 +181,23 @@ namespace Nytherion.GamePlay.Combat.Weapons
             if (swingUpEffectObject != null) swingUpEffectObject.SetActive(false);
 
             DisableHitbox();
+        }
+
+        public override void EnableHitbox()
+        {
+            base.EnableHitbox();
+            if (thrustEffectCollider != null) thrustEffectCollider.enabled = true;
+            if (swingEffectCollider != null) swingEffectCollider.enabled = true;
+            if (swingUpEffectCollider != null) swingUpEffectCollider.enabled = true;
+        }
+
+        public override void DisableHitbox()
+        {
+            base.DisableHitbox();
+            if (thrustEffectCollider != null) thrustEffectCollider.enabled = false;
+            if (swingEffectCollider != null) swingEffectCollider.enabled = false;
+            if (swingUpEffectCollider != null) swingUpEffectCollider.enabled = false;
+            ResetHitTargets();
         }
 
         public override void Start()
@@ -518,7 +542,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 // 찌르기 공격 동작 시간 동안 피격 판정 검사 실행
                 if (normalizedTime < 0.75f)
                 {
-                    CheckManualCollision();
+                    CheckManualCollision(thrustEffectCollider);
                 }
                 else
                 {
@@ -577,7 +601,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 // 휘두르는 공격 동작 시간 동안 피격 판정 검사 실행
                 if (normalizedTime < 0.75f)
                 {
-                    CheckManualCollision();
+                    CheckManualCollision(swingEffectCollider);
                 }
                 else
                 {
@@ -635,7 +659,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 // 올려베는 공격 동작 시간 동안 피격 판정 검사 실행
                 if (normalizedTime < 0.75f)
                 {
-                    CheckManualCollision();
+                    CheckManualCollision(swingUpEffectCollider);
                 }
                 else
                 {
@@ -657,15 +681,16 @@ namespace Nytherion.GamePlay.Combat.Weapons
             attackCoroutine = null;
         }
 
-        private void CheckManualCollision()
+        private void CheckManualCollision(Collider2D targetCol)
         {
-            if (col == null) return;
+            if (targetCol == null) targetCol = col;
+            if (targetCol == null) return;
 
             ContactFilter2D filter = new ContactFilter2D();
             filter.useTriggers = true;
 
             Collider2D[] results = new Collider2D[15];
-            int count = col.OverlapCollider(filter, results);
+            int count = targetCol.OverlapCollider(filter, results);
 
             for (int i = 0; i < count; i++)
             {

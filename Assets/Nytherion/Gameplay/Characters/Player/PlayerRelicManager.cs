@@ -138,5 +138,37 @@ namespace Nytherion.GamePlay.Characters.Player
         }
 
         public List<RelicData> GetCurrentRelics() => equippedRelics;
+
+        public bool IsRelicActive(string relicId)
+        {
+            if (string.IsNullOrEmpty(relicId)) return false;
+
+            if (relicManager == null)
+            {
+                relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
+            }
+
+            if (relicManager != null && relicManager.IsRelicActive(relicId))
+            {
+                return true;
+            }
+
+            string targetId = relicId.Trim();
+            foreach (RelicData data in equippedRelics)
+            {
+                if (data != null && !data.isDisabled)
+                {
+                    string dataName = data.name != null ? data.name.Trim() : "";
+                    string relicName = data.relicName != null ? data.relicName.Trim() : "";
+
+                    if (string.Equals(dataName, targetId, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(relicName, targetId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

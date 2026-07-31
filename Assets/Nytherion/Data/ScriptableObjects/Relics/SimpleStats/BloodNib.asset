@@ -18,10 +18,14 @@ MonoBehaviour:
     \uACF5\uACA9\uB825 +4 (\uB808\uBCA8\uB2F9 +1)"
   description_EN: Increases melee and ranged damage.
   Image: {fileID: 21300000, guid: 4a28827c899a71741a7b0d6deff20e65, type: 3}
-  rarity: 2
+  rarity: 0
   level: 3
   isDisabled: 0
-  effectModules: []
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 2313384106650501123
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -42,4 +46,18 @@ MonoBehaviour:
     isPercentage: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2313384106650501123
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 3
+          value: 4
+          valuePerLevel: 1
+          isPercentage: 0
+        - stat: 4
+          value: 4
+          valuePerLevel: 1
+          isPercentage: 0

@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uCDA9\uC804 \uC18D\uB3C4 +10% \uB2E8\uCD95. "
   description_EN: 'Skill charge speed +10%. '
   Image: {fileID: 21300000, guid: 666b6474eba4c824291a2178b59150a0, type: 3}
-  rarity: 2
+  rarity: 0
   level: 3
   isDisabled: 0
   effectModules:

@@ -18,7 +18,7 @@ MonoBehaviour:
     +20%. "
   description_EN: 'At 50% HP or below, Atk +5, AtkSpeed +20%. '
   Image: {fileID: 21300000, guid: bf2fb19f66f4c3948919a58e95b0f69b, type: 3}
-  rarity: 2
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:

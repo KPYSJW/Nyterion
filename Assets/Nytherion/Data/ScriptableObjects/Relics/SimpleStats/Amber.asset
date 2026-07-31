@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Amber
   koreanName: "\uD638\uBC15\uC11D"
-  description_KR: "\uCD5C\uB300 \uCCB4\uB825 +30 (\uB808\uBCA8\uB2F9 +6), \uBC29\uC5B4\uB825 +5 (\uB808\uBCA8\uB2F9 +1)"
+  description_KR: "\uCD5C\uB300 \uCCB4\uB825 +30 (\uB808\uBCA8\uB2F9 +6), \uBC29\uC5B4\uB825
+    +5 (\uB808\uBCA8\uB2F9 +1)"
   description_EN: An amber gemstone carrying aura energy, steadily boosting basic
     health and defense.
   Image: {fileID: 21300000, guid: a3c683cf808146e47bf8f560000fd147, type: 3}
-  rarity: 3
+  rarity: 0
   level: 1
   isDisabled: 0
   effectModules:

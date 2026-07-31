@@ -65,7 +65,78 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Header("Archive System")]
         [Tooltip("이 무기의 투사체가 랜덤 아카이브 무기의 풀에 포함될지 여부")]
         public bool isArchivable = true;
-       
+
+        [System.NonSerialized] private float originalDamage;
+        [System.NonSerialized] private float originalCooldown;
+        [System.NonSerialized] private int originalBaseValue;
+        [System.NonSerialized] private bool isStatsCached = false;
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            CacheOriginalStats();
+        }
+
+        private void CacheOriginalStats()
+        {
+            if (isStatsCached) return;
+            originalDamage = damage;
+            originalCooldown = cooldown;
+            originalBaseValue = baseValue;
+            isStatsCached = true;
+        }
+
+        public override void ApplyRarityStats(Rarity targetRarity)
+        {
+            base.ApplyRarityStats(targetRarity);
+            CacheOriginalStats();
+
+            float damageMultiplier = 1f;
+            float cooldownMultiplier = 1f;
+
+            int minPrice = 135;
+            int maxPrice = 165;
+
+            switch (targetRarity)
+            {
+                case Rarity.Common:
+                    damageMultiplier = 1.0f;
+                    cooldownMultiplier = 1.0f;
+                    minPrice = 135;
+                    maxPrice = 165;
+                    break;
+                case Rarity.Uncommon:
+                    damageMultiplier = 1.2f;
+                    cooldownMultiplier = 0.9f;
+                    minPrice = 270;
+                    maxPrice = 330;
+                    break;
+                case Rarity.Rare:
+                    damageMultiplier = 1.5f;
+                    cooldownMultiplier = 0.8f;
+                    minPrice = 540;
+                    maxPrice = 660;
+                    break;
+                case Rarity.Epic:
+                    damageMultiplier = 2.0f;
+                    cooldownMultiplier = 0.7f;
+                    minPrice = 1080;
+                    maxPrice = 1320;
+                    break;
+                case Rarity.Legendary:
+                    damageMultiplier = 3.0f;
+                    cooldownMultiplier = 0.5f;
+                    minPrice = 2250;
+                    maxPrice = 2750;
+                    break;
+            }
+
+            damage = originalDamage * damageMultiplier;
+            cooldown = originalCooldown * cooldownMultiplier;
+
+            int rawPrice = UnityEngine.Random.Range(minPrice, maxPrice + 1);
+            baseValue = Mathf.RoundToInt(rawPrice / 10f) * 10;
+        }
 
 #if UNITY_EDITOR
         protected override void OnValidate()

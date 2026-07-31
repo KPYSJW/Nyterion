@@ -6,6 +6,7 @@ using Nytherion.Core.Systems;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Utils;
+using Nytherion.Core.Enums;
 using VContainer;
 
 namespace Nytherion.Core.Managers
@@ -370,9 +371,9 @@ namespace Nytherion.Core.Managers
             InventoryModel = new InventoryModel(maxSlotCount);
 
             int loadedCount = 0;
-            foreach (var entry in saveData.inventoryData)
+            foreach (ItemEntry entry in saveData.inventoryData)
             {
-                var itemData = ItemDatabase.GetItemByID(entry.itemId);
+                ItemData itemData = ItemDatabase.GetItemByID(entry.itemId);
                 if (itemData != null && entry.slotIndex >= 0 && entry.slotIndex < maxSlotCount)
                 {
                     ItemData itemToLoad = itemData;
@@ -381,6 +382,7 @@ namespace Nytherion.Core.Managers
                     {
                         EquipmentData clonedEquipment = Instantiate(equipmentAsset) as EquipmentData;
                         clonedEquipment.instanceId = entry.instanceId;
+                        clonedEquipment.ApplyRarityStats(entry.rarity);
                         itemToLoad = clonedEquipment;
                     }
 
@@ -408,21 +410,52 @@ namespace Nytherion.Core.Managers
         }
 
         /// <summary>
+        /// 이미 등급과 스탯이 결정되어 생성된 장비 인스턴스를 그대로 인벤토리에 추가
+        /// </summary>
+        public bool AddEquipmentInstance(EquipmentData equipmentInstance)
+        {
+            if (!IsInitialized || equipmentInstance == null) return false;
+            if (string.IsNullOrEmpty(equipmentInstance.instanceId))
+            {
+                equipmentInstance.instanceId = System.Guid.NewGuid().ToString();
+            }
+
+            bool result = InventoryModel.AddItem(equipmentInstance, 1);
+            if (result)
+            {
+                NotifyDataChanged(new InventoryChangeData
+                {
+                    slotIndex = -1,
+                    itemId = equipmentInstance.ID,
+                    newCount = 1,
+                    changeType = InventoryChangeType.ItemAdded
+                });
+                if (saveLoadManager != null) saveLoadManager.SaveGame();
+            }
+            return result;
+        }
+
+        /// <summary>
         /// 세이브 시스템에 전달하기 위해 현재 인벤토리 상태를 리스트로 변환
         /// </summary>
         private List<ItemEntry> GetItemEntriesForSave()
         {
-            var entries = new List<ItemEntry>();
+            List<ItemEntry> entries = new List<ItemEntry>();
 
             for (int i = 0; i < maxSlotCount; i++)
             {
-                var slot = InventoryModel.GetItemAt(i);
+                (ItemData item, int count) slot = InventoryModel.GetItemAt(i);
                 if (slot.item != null)
                 {
                     string savedInstanceId = "";
-                    if (slot.item is EquipmentData equipmentData && !string.IsNullOrEmpty(equipmentData.instanceId))
+                    Rarity savedRarity = Rarity.Common;
+                    if (slot.item is EquipmentData equipmentData)
                     {
-                        savedInstanceId = equipmentData.instanceId;
+                        if (!string.IsNullOrEmpty(equipmentData.instanceId))
+                        {
+                            savedInstanceId = equipmentData.instanceId;
+                        }
+                        savedRarity = equipmentData.rarity;
                     }
 
                     entries.Add(new ItemEntry
@@ -430,7 +463,8 @@ namespace Nytherion.Core.Managers
                         slotIndex = i,
                         itemId = slot.item.ID,
                         count = slot.count,
-                        instanceId = savedInstanceId
+                        instanceId = savedInstanceId,
+                        rarity = savedRarity
                     });
                 }
             }

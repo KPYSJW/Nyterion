@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -15,14 +15,18 @@ MonoBehaviour:
   skillID: skill_all_stat_up
   skillType: 7
   skillName: All Stat Up
-  description: 
+  description: "\uD50C\uB808\uC774\uC5B4\uC758 \uACF5\uACA9\uB825, \uC774\uB3D9 \uC18D\uB3C4,
+    \uBC29\uC5B4\uB825 \uB4F1 \uBAA8\uB4E0 \uB2A5\uB825\uCE58\uB97C \uC804\uBC18\uC801\uC73C\uB85C
+    \uD5A5\uC0C1\uC2DC\uD0B5\uB2C8\uB2E4."
   skillLevel: 0
   exp: 0
   coolDown: 60
+  manaCost: 0
   damage: 0
   range: 0
   icon: {fileID: 0}
   skillPrefab: {fileID: 1840660677181398565, guid: 4ac06976c636ab4479172aa18a139294, type: 3}
+  unlockMilestoneID: 
   buffDuration: 5
   statModifiers:
   - stat: 0
@@ -65,5 +69,3 @@ MonoBehaviour:
     value: 0.05
     valuePerLevel: 0.01
     isPercentage: 1
-
-  unlockMilestoneID: All_Stat

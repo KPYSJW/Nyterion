@@ -18,7 +18,7 @@ MonoBehaviour:
     +5%. "
   description_EN: 'If no adjacent relics, all stats +5%. '
   Image: {fileID: 21300000, guid: 9af93a38a1d58d34b96c1ee47c4b8db1, type: 3}
-  rarity: 0
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:

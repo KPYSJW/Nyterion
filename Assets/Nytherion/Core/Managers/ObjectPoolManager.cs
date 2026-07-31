@@ -59,6 +59,11 @@ namespace Nytherion.Core.Managers
 
         public GameObject SpawnFromPool(GameObject prefab, Vector3 position, Quaternion rotation)
         {
+            return SpawnFromPool(prefab, position, rotation, 10);
+        }
+
+        public GameObject SpawnFromPool(GameObject prefab, Vector3 position, Quaternion rotation, int initialSize)
+        {
             if (prefab == null) return null;
 
             if (poolDictionary == null)
@@ -70,7 +75,7 @@ namespace Nytherion.Core.Managers
 
             if (!poolDictionary.ContainsKey(tag))
             {
-                CreateNewPool(tag, prefab, 10);
+                CreateNewPool(tag, prefab, Mathf.Max(1, initialSize));
             }
 
             return SpawnFromPool(tag, position, rotation);

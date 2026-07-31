@@ -102,7 +102,8 @@ namespace Nytherion.Core.Managers
                         RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
                         if (block != null && block.RelicId == "LuckyCoin" && !block.SourceData.isDisabled)
                         {
-                            float multiplier = 1f + 0.25f + (block.SourceData.level - 1) * 0.05f;
+                            float goldBonus = 0.25f + (block.SourceData.level - 1) * 0.05f;
+                            float multiplier = 1f + Mathf.Min(goldBonus, 0.5f);
                             amount = Mathf.RoundToInt(amount * multiplier);
                             Debug.Log($"[CurrencyDataManager] 행운의 주화(LuckyCoin) 효과 발동! 획득 골드 {multiplier * 100}%로 증가!");
                             break;

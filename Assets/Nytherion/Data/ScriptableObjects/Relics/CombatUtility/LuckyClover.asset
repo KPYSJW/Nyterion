@@ -18,7 +18,7 @@ MonoBehaviour:
     \uCFE8\uD0C0\uC784 \uCD08\uAE30\uD654. "
   description_EN: '5% chance to reset dash cooldown on a critical hit. '
   Image: {fileID: 21300000, guid: d8edc57c276626f449084ba691022a1c, type: 3}
-  rarity: 2
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules: []

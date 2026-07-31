@@ -7,8 +7,13 @@ namespace Nytherion.Core.Data
     [Serializable]
     public class ShopStockState
     {
+        public string shopName; // 추가: 상점 이름
         public string shopItemId;
+        public string itemId; // 추가: 원본 아이템 ID
+        public Rarity rarity; // 추가: 등급
+        public int price; // 추가: 결정된 가격
         public int remainingStock;
+        public bool isUnlimited; // 추가: 무제한 여부
     }
 
     [Serializable]
@@ -23,6 +28,7 @@ namespace Nytherion.Core.Data
         public List<EquippedItemEntry> equippedItemsData = new List<EquippedItemEntry>();
         public List<SkillEntry> ownedSkills = new List<SkillEntry>();
         public List<string> equippedSkillIds = new List<string>();
+        public int shopRerollCount = 0; // 추가: 상점 누적 리롤 횟수
 
         public ProgressionState progressionState;
 
@@ -39,6 +45,7 @@ namespace Nytherion.Core.Data
             equippedItemsData = new List<EquippedItemEntry>();
             ownedSkills = new List<SkillEntry>();
             equippedSkillIds = new List<string>();
+            shopRerollCount = 0;
             progressionState = new ProgressionState();
             dungeonMapData = new DungeonMapSaveData();
             // puzzleAttempts = new Dictionary<string, PuzzleAttemptData>(); // 나중에 사용 예정
@@ -52,6 +59,7 @@ namespace Nytherion.Core.Data
         public string itemId;
         public int count;
         public string instanceId;
+        public Rarity rarity; // 추가: 등급
     }
 
     [Serializable]
@@ -60,6 +68,7 @@ namespace Nytherion.Core.Data
         public EquipmentSlotType slotType;
         public string itemId;
         public string instanceId;
+        public Rarity rarity; // 추가: 등급
     }
 
     [Serializable]
@@ -69,6 +78,7 @@ namespace Nytherion.Core.Data
         public string itemId;
         public int count;
         public string instanceId;
+        public Rarity rarity; // 추가: 등급
     }
 
     [Serializable]

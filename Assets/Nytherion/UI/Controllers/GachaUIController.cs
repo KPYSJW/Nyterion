@@ -11,6 +11,7 @@ using UnityEngine.InputSystem;
 using Nytherion.Core.Enums;
 using VContainer;
 using Nytherion.Core.Interfaces;
+using TMPro;
 
 namespace Nytherion.UI.Controllers
 {
@@ -20,21 +21,14 @@ namespace Nytherion.UI.Controllers
 
         [Header("Main Panels")]
         [SerializeField] private GameObject mainPanel;
-        [SerializeField] private GameObject resultPanel;
-        //[SerializeField] private Button drawWeaponOnceButton;
-        //[SerializeField] private Button drawWeaponTenTimesButton;
-        //[SerializeField] private Button drawRelicOnceButton;
-        //[SerializeField] private Button drawRelicTenTimesButton;
+        [SerializeField] private GameObject relicResultPanel;
 
-        [Header("Gacha Sub Panels")]
-        [SerializeField] private GameObject weaponSubPanel;
+        [Header("Gacha Sub Panels & Animators")]
         [SerializeField] private GameObject relicSubPanel;
-        [SerializeField] private GameObject skillSubPanel;
+        [SerializeField] private Animator relicAnimator;
 
-        [Header("Tab Buttons")]
-        [SerializeField] private Button weaponTabButton;
-        [SerializeField] private Button relicTabButton;
-        [SerializeField] private Button skillTabButton;
+        [Header("Gacha Type Indicator Text")]
+        [SerializeField] private TextMeshProUGUI gachaTypeTitleText;
 
         [Header("Action Buttons")]
         [SerializeField] private Button drawOnceBtton;
@@ -42,8 +36,8 @@ namespace Nytherion.UI.Controllers
 
         [Header("Other UI")]
         [SerializeField] private Button closeButton;
-        [SerializeField] private Button resultCloseButton;
-        [SerializeField] private Transform resultSlotParent;
+        [SerializeField] private Button relicResultCloseButton;
+        [SerializeField] private Transform relicResultSlotParent;
         [SerializeField] private GameObject resultSlotPrefab;
 
         private PlayerAction playerAction;
@@ -52,7 +46,9 @@ namespace Nytherion.UI.Controllers
         private GachaManager gachaManager;
         private EventManager eventManager;
 
-        private GachaType currentSelectedType = GachaType.Weapon;
+        private GachaType currentSelectedType = GachaType.Relic;
+        private bool isDrawing = false;
+        private static readonly int DrawTriggerHash = Animator.StringToHash("Draw");
 
         [Inject]
         public void Construct(
@@ -68,23 +64,25 @@ namespace Nytherion.UI.Controllers
             this.eventManager = eventManager;
             this.gameSceneuiRefs = gameSceneuiRefs;
 
-            this.resultPanel = gameSceneuiRefs.GachaResultPanel;
+            this.relicResultPanel = gameSceneuiRefs.RelicResultPanel;
             this.mainPanel = gameSceneuiRefs.GachaMainPanel;
-            this.weaponSubPanel = gameSceneuiRefs.WeaponSubPanel;
             this.relicSubPanel = gameSceneuiRefs.RelicSubPanel;
-            this.skillSubPanel = gameSceneuiRefs.SkillSubPanel;
 
-            this.resultCloseButton = gameSceneuiRefs.ResultCloseButton;
+            this.relicResultCloseButton = gameSceneuiRefs.RelicResultCloseButton;
             this.drawOnceBtton = gameSceneuiRefs.DrawOnceButton;
             this.drawTenBtton = gameSceneuiRefs.DrawTenButton;
             this.closeButton = gameSceneuiRefs.GachaCloseButton;
-            this.weaponTabButton = gameSceneuiRefs.WeaponTabButton;
-            this.relicTabButton = gameSceneuiRefs.RelicTabButton;
-            this.skillTabButton = gameSceneuiRefs.SkillTabButton;
 
-            this.resultSlotParent = gameSceneuiRefs.ResultSlotParent;
+            this.gachaTypeTitleText = gameSceneuiRefs.GachaTypeTitleText;
+
+            this.relicResultSlotParent = gameSceneuiRefs.RelicResultSlotParent;
             this.resultSlotPrefab = gameSceneuiRefs.ResultSlotPrefab;
             this.controlledCanvasGroup = gameSceneuiRefs.GachaCanvasGroup;
+
+            if (relicSubPanel != null && relicAnimator == null)
+            {
+                relicAnimator = relicSubPanel.GetComponentInChildren<Animator>();
+            }
         }
 
         protected override void Awake()
@@ -94,10 +92,6 @@ namespace Nytherion.UI.Controllers
 
         private void Start()
         {
-            if (weaponTabButton != null) weaponTabButton.onClick.AddListener(() => SwitchTab(GachaType.Weapon));
-            if (relicTabButton != null) relicTabButton.onClick.AddListener(() => SwitchTab(GachaType.Relic));
-            if (skillTabButton != null) skillTabButton.onClick.AddListener(() => SwitchTab(GachaType.Skill));
-
             if (drawOnceBtton != null)
                 drawOnceBtton.onClick.AddListener(() => Draw(currentSelectedType, 1));
 
@@ -107,37 +101,48 @@ namespace Nytherion.UI.Controllers
             if (closeButton != null)
                 closeButton.onClick.AddListener(Close);
 
-            if (resultCloseButton != null)
-                resultCloseButton.onClick.AddListener(CloseResultPanel);
+            if (relicResultCloseButton != null)
+                relicResultCloseButton.onClick.AddListener(CloseResultPanel);
 
-            if (resultPanel != null)
-                resultPanel.SetActive(false);
+            if (relicResultPanel != null)
+                relicResultPanel.SetActive(false);
             else
-                Debug.LogError("'resultPanel'이 GachaUIController에 할당되지 않았습니다.", this);
+                Debug.LogError("'relicResultPanel'이 GachaUIController에 할당되지 않았습니다.", this);
 
-            SwitchTab(GachaType.Weapon);
+            SwitchTab(GachaType.Relic);
         }
+
+        public void ToggleGachaType()
+        {
+            // 더 이상 무기/유물 탭 전환을 지원하지 않고 유물 가챠 전용으로 유지합니다.
+        }
+
         public void SwitchTab(GachaType type)
         {
-            currentSelectedType = type;
+            if (isDrawing) return;
 
-            if (weaponSubPanel != null) weaponSubPanel.SetActive(type == GachaType.Weapon);
-            if (relicSubPanel != null) relicSubPanel.SetActive(type == GachaType.Relic);
-            if (skillSubPanel != null) skillSubPanel.SetActive(type == GachaType.Skill);
+            currentSelectedType = GachaType.Relic;
 
-            SetButtonAlpha(weaponTabButton, type == GachaType.Weapon ? 1f : 0.5f);
-            SetButtonAlpha(relicTabButton, type == GachaType.Relic ? 1f : 0.5f);
-            SetButtonAlpha(skillTabButton, type == GachaType.Skill ? 1f : 0.5f);
+            ResetAnimators();
+
+            if (relicSubPanel != null) relicSubPanel.SetActive(true);
+
+            if (gachaTypeTitleText != null)
+            {
+                gachaTypeTitleText.text = "Relic";
+            }
         }
+
         private void SetButtonAlpha(Button btn, float alpha)
         {
             if (btn == null) return;
-            var colors = btn.colors;
-            var normalColor = colors.normalColor;
+            ColorBlock colors = btn.colors;
+            Color normalColor = colors.normalColor;
             normalColor.a = alpha;
             colors.normalColor = normalColor;
             btn.colors = colors;
         }
+
         private void OnEnable()
         {
             if (currencyDataManager != null) currencyDataManager.OnDataChanged += UpdateTokenUI;
@@ -148,6 +153,7 @@ namespace Nytherion.UI.Controllers
 
             if (eventManager != null) eventManager.OnInteraction += HandleInteraction;
         }
+
         private void OnDisable()
         {
             if (currencyDataManager != null) currencyDataManager.OnDataChanged -= UpdateTokenUI;
@@ -162,20 +168,25 @@ namespace Nytherion.UI.Controllers
 
         private void OnCloseInput(InputAction.CallbackContext context)
         {
-            if (IsOpen) Close();
+            if (IsOpen && !isDrawing) Close();
         }
+
         private void HandleInteraction(InteractableType type)
         {
-            if (IsOpen && type != InteractableType.GachaNPC) Close();
+            if (IsOpen && type != InteractableType.GachaNPC && !isDrawing) Close();
         }
+
         public override void Close()
         {
-            if (resultPanel != null && resultPanel.activeSelf)
+            if (isDrawing) return;
+
+            if (relicResultPanel != null && relicResultPanel.activeSelf)
             {
                 CloseResultPanel();
             }
             base.Close();
         }
+
         protected override void OnPanelStateChanged(bool isOpen)
         {
             if (isOpen && currencyDataManager != null)
@@ -194,66 +205,157 @@ namespace Nytherion.UI.Controllers
             }
         }
 
+        private List<ScriptableObject> pendingDrawnItems;
+
         private void Draw(GachaType type, int count)
         {
-            List<ScriptableObject> drawnItems = gachaManager.TryDrawItems(type, count);
-            if (drawnItems != null && drawnItems.Count > 0)
+            if (isDrawing) return;
+
+            // 1. 가챠 추첨 시도 (유물 가챠 실행)
+            List<ScriptableObject> drawnItems = gachaManager.TryDrawItems(GachaType.Relic, count);
+            if (drawnItems == null || drawnItems.Count == 0)
             {
-                ShowResultPanel(drawnItems);
+                return;
             }
+
+            pendingDrawnItems = drawnItems;
+            ResetAnimators();
+
+            // 2. 가챠 연출 발동 및 이벤트 수신 시퀀스 실행
+            StartCoroutine(Co_PlayGachaSequence(GachaType.Relic));
         }
 
-        private void ShowResultPanel(List<ScriptableObject> drawnItems)
+        [Header("Gacha Animation Settings")]
+        [Tooltip("가챠 연출 대기 시간 (초 단위, 원하시는 연출 시간에 맞춰 자유롭게 조절 가능)")]
+        [SerializeField] private float gachaAnimDuration = 0.8f;
+
+        private System.Collections.IEnumerator Co_PlayGachaSequence(GachaType type)
         {
-            if (mainPanel != null) mainPanel.SetActive(false);
-            resultPanel.SetActive(true);
+            isDrawing = true;
+            SetButtonsInteractable(false);
 
-            // 기존 슬롯들을 풀로 반환
-            foreach (Transform child in resultSlotParent)
+            Animator targetAnimator = relicAnimator;
+            if (targetAnimator == null && relicSubPanel != null)
             {
-                ObjectPoolManager.Instance.ReturnToPool(resultSlotPrefab.name, child.gameObject);
+                targetAnimator = relicSubPanel.GetComponentInChildren<Animator>();
             }
 
-            foreach (ScriptableObject item in drawnItems)
+            if (targetAnimator != null && targetAnimator.gameObject.activeInHierarchy)
             {
-                // 오브젝트 풀에서 슬롯 가져오기
-                GameObject slotGO = ObjectPoolManager.Instance.SpawnFromPool(resultSlotPrefab, Vector3.zero, Quaternion.identity);
-                slotGO.transform.SetParent(resultSlotParent, false);
+                targetAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+                targetAnimator.enabled = true;
+                targetAnimator.SetTrigger(DrawTriggerHash);
+            }
 
-                Transform iconTransform = slotGO.transform.Find("Icon");
-                if (iconTransform == null) continue;
+            yield return new WaitForSecondsRealtime(gachaAnimDuration);
 
-                Image itemIcon = iconTransform.GetComponent<Image>();
-                if (itemIcon == null) continue;
-
-                GachaResultSlot resultSlot = slotGO.GetComponent<GachaResultSlot>();
-
-                if (item is ItemData itemData)
-                {
-                    itemIcon.sprite = itemData.icon;
-                    if (resultSlot != null) resultSlot.Setup(itemData);
-                }
-                else if (item is RelicData relicData)
-                {
-                    itemIcon.sprite = relicData.Image;
-                    if (resultSlot != null)
-                    {
-                        var tempRelicBlock = new RelicBlock(relicData);
-                        resultSlot.Setup(tempRelicBlock);
-                    }
-                }
-                else if (item is SkillData skillData)
-                {
-                    itemIcon.sprite = skillData.icon;
-                }
-
-                iconTransform.SetAsLastSibling();
+            if (isDrawing)
+            {
+                OnGachaAnimationFinished();
             }
         }
+
+        public void OnGachaAnimationFinished()
+        {
+            if (!isDrawing) return;
+
+            StopAllCoroutines();
+
+            if (pendingDrawnItems != null && pendingDrawnItems.Count > 0)
+            {
+                ShowResultPanel(pendingDrawnItems, GachaType.Relic);
+                pendingDrawnItems = null;
+            }
+
+            SetButtonsInteractable(true);
+            isDrawing = false;
+        }
+
+        private void SetButtonsInteractable(bool interactable)
+        {
+            if (drawOnceBtton != null) drawOnceBtton.interactable = interactable;
+            if (drawTenBtton != null) drawTenBtton.interactable = interactable;
+            if (closeButton != null) closeButton.interactable = interactable;
+        }
+
+        private void ShowResultPanel(List<ScriptableObject> drawnItems, GachaType type)
+        {
+            ResetAnimators();
+
+            if (mainPanel != null) mainPanel.SetActive(false);
+
+            if (relicResultPanel != null) relicResultPanel.SetActive(true);
+
+            if (relicResultSlotParent != null && resultSlotPrefab != null)
+            {
+                foreach (Transform child in relicResultSlotParent)
+                {
+                    ObjectPoolManager.Instance.ReturnToPool(resultSlotPrefab.name, child.gameObject);
+                }
+
+                foreach (ScriptableObject item in drawnItems)
+                {
+                    GameObject slotGO = ObjectPoolManager.Instance.SpawnFromPool(resultSlotPrefab, Vector3.zero, Quaternion.identity);
+                    slotGO.transform.SetParent(relicResultSlotParent, false);
+
+                    Transform iconTransform = slotGO.transform.Find("Icon");
+                    if (iconTransform == null) continue;
+
+                    Image itemIcon = iconTransform.GetComponent<Image>();
+                    if (itemIcon == null) continue;
+
+                    GachaResultSlot resultSlot = slotGO.GetComponent<GachaResultSlot>();
+
+                    if (item is ItemData itemData)
+                    {
+                        itemIcon.sprite = itemData.icon;
+                        if (resultSlot != null) resultSlot.Setup(itemData);
+                    }
+                    else if (item is RelicData relicData)
+                    {
+                        itemIcon.sprite = relicData.Image;
+                        if (resultSlot != null)
+                        {
+                            RelicBlock tempRelicBlock = new RelicBlock(relicData);
+                            resultSlot.Setup(tempRelicBlock);
+                        }
+                    }
+                    else if (item is SkillData skillData)
+                    {
+                        itemIcon.sprite = skillData.icon;
+                    }
+
+                    iconTransform.SetAsLastSibling();
+                }
+            }
+
+        }
+
         private void CloseResultPanel()
         {
-            resultPanel.SetActive(false);
+            if (relicResultPanel != null) relicResultPanel.SetActive(false);
             if (mainPanel != null) mainPanel.SetActive(true);
+
+            ResetAnimators();
+        }
+
+        private void ResetAnimators()
+        {
+            ResetAnimator(relicAnimator, relicSubPanel);
+        }
+
+        private void ResetAnimator(Animator anim, GameObject subPanel)
+        {
+            if (anim == null && subPanel != null)
+            {
+                anim = subPanel.GetComponentInChildren<Animator>();
+            }
+
+            if (anim != null && anim.gameObject.activeInHierarchy)
+            {
+                anim.Rebind();
+                anim.Update(0f);
+            }
         }
 
         private void UpdateTokenUI(CurrencyChangeData data)
