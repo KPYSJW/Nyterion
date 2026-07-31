@@ -508,6 +508,10 @@ MonoBehaviour:
   worldPromptUI: {fileID: 5440849141089196055}
   droppedRelicPrefab: {fileID: 856826060757629303, guid: 5831febf48721aa4aafea6b9b09a5668, type: 3}
   animator: {fileID: 8600147374344743192}
+  relicLandingClearance: 0.65
+  relicFirstLandingRadius: 0.85
+  relicMaxLandingRadius: 1.45
+  relicLandingSearchRingCount: 8
 --- !u!95 &8600147374344743192
 Animator:
   serializedVersion: 5

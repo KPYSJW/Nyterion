@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: Talisman
+  m_Name: LargeBattery
   m_EditorClassIdentifier: 
-  relicName: Talisman
-  koreanName: "\uC131\uBB3C"
-  description_KR: "\uC2E0\uC131 \uC57D\uD654 +10%p, \uD68C\uBCF5 +1, \uC2E0\uC131
-    \uD53C\uD574 +15% \uC99D\uAC00."
-  description_EN: Holy debuff outgoing damage reduction +10%p, heal amount +1, Holy
-    damage +15%.
-  Image: {fileID: 21300000, guid: 274f34a3ae8a51642adaaf8108210799, type: 3}
-  rarity: 3
+  relicName: Large Battery
+  koreanName: "\uAD6C\uB9AC \uCF54\uC77C"
+  description_KR: "\uC804\uAE30 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uCDA9\uC804 \uC18D\uB3C4
+    +12% \uB2E8\uCD95, \uC804\uAE30 \uD53C\uD574 +10% \uC99D\uAC00."
+  description_EN: When Lightning equipment is active, skill charge speed +12%, Lightning
+    damage +10%.
+  Image: {fileID: 21300000, guid: 044a115a2ebbd85458f73d2844501849, type: 3}
+  rarity: 0
   level: 1
   isDisabled: 0
   effectModules:
   - condition:
-      rid: 6716071130084147280
+      rid: 6716071130084147230
     effects:
-    - rid: 6716071130084147281
+    - rid: 6716071130084147231
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -39,19 +39,23 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6716071130084147280
+    - rid: 6716071130084147230
       type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        requiredTrait: 6
-    - rid: 6716071130084147281
+        requiredTrait: 5
+    - rid: 6716071130084147231
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
+        - stat: 12
+          value: 0.12
+          valuePerLevel: 0.03
+          isPercentage: 1
         - stat: 3
-          value: 0.15
-          valuePerLevel: 0.05
+          value: 0.1
+          valuePerLevel: 0.03
           isPercentage: 1
         - stat: 4
-          value: 0.15
-          valuePerLevel: 0.05
+          value: 0.1
+          valuePerLevel: 0.03
           isPercentage: 1

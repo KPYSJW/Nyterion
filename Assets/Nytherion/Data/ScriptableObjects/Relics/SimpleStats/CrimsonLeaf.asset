@@ -18,7 +18,7 @@ MonoBehaviour:
   description_EN: The sharp tooth of a beast. Absorbs a very small amount of life
     when attacking.
   Image: {fileID: 21300000, guid: 4848d38a5cd7a8a48b9c8ea86d3aa491, type: 3}
-  rarity: 2
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:

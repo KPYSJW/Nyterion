@@ -22,13 +22,8 @@ namespace Nytherion.GamePlay.Relics
         [SerializeField] private float outlineThickness = 1f;
         [SerializeField] private Color outlineColor = Color.white;
 
-        [Header("Debug Info (Inspector)")]
-        [SerializeField] private Texture currentSpriteTexture;
-        [SerializeField] private Texture currentPropertyBlockTexture;
-        [SerializeField] private Texture currentSharedMaterialTexture;
-        [SerializeField] private bool hasPropertyBlock;
-
         private static RelicPickupDetector currentTarget;
+        private static int lastCollectionFrame = -1;
 
         private Transform playerTransform;
         private Action collectAction;
@@ -91,8 +86,6 @@ namespace Nytherion.GamePlay.Relics
 
             if (spriteRenderer.sprite != null)
             {
-                currentSpriteTexture = spriteRenderer.sprite.texture;
-
                 // 머티리얼 인스턴스의 _MainTex에 직접 텍스처 할당
                 if (spriteRenderer.material != null)
                 {
@@ -103,25 +96,6 @@ namespace Nytherion.GamePlay.Relics
                 propertyBlock.SetTexture(MainTexProperty, spriteRenderer.sprite.texture);
                 propertyBlock.SetVector(MainTexSTProperty, new Vector4(1f, 1f, 0f, 0f));
                 spriteRenderer.SetPropertyBlock(propertyBlock);
-
-                currentPropertyBlockTexture = propertyBlock.GetTexture(MainTexProperty);
-                hasPropertyBlock = spriteRenderer.HasPropertyBlock();
-                if (spriteRenderer.material != null)
-                {
-                    currentSharedMaterialTexture = spriteRenderer.material.mainTexture;
-                }
-
-                Debug.Log($"[RelicPickupDetector Debug] GameObj: '{gameObject.name}' | Sprite: '{spriteRenderer.sprite.name}' | SpriteTexture: '{(currentSpriteTexture != null ? currentSpriteTexture.name : "null")}' | PropertyBlock_MainTex: '{(currentPropertyBlockTexture != null ? currentPropertyBlockTexture.name : "null")}' | Material_MainTex: '{(currentSharedMaterialTexture != null ? currentSharedMaterialTexture.name : "null")}' | HasPropertyBlock: {hasPropertyBlock}", this);
-            }
-            else
-            {
-                currentSpriteTexture = null;
-                currentPropertyBlockTexture = null;
-                if (spriteRenderer.material != null)
-                {
-                    currentSharedMaterialTexture = spriteRenderer.material.mainTexture;
-                }
-                Debug.LogWarning($"[RelicPickupDetector Debug] GameObj: '{gameObject.name}' | SpriteRenderer.sprite가 null입니다! Material_MainTex: '{(currentSharedMaterialTexture != null ? currentSharedMaterialTexture.name : "null")}'", this);
             }
         }
 
@@ -177,11 +151,14 @@ namespace Nytherion.GamePlay.Relics
 
         private void TryCollectCurrentTarget()
         {
-            if (currentTarget != this || !isInitialized)
+            if (currentTarget != this || !isInitialized || lastCollectionFrame == Time.frameCount)
             {
                 return;
             }
 
+            // 첫 유물이 풀로 돌아가며 다음 유물이 같은 입력 이벤트 안에서
+            // 새 currentTarget이 되는 경우를 막는다.
+            lastCollectionFrame = Time.frameCount;
             collectAction.Invoke();
         }
 
@@ -257,8 +234,6 @@ namespace Nytherion.GamePlay.Relics
 
             if (spriteRenderer.sprite != null)
             {
-                currentSpriteTexture = spriteRenderer.sprite.texture;
-
                 if (spriteRenderer.material != null)
                 {
                     spriteRenderer.material.SetTexture(MainTexProperty, spriteRenderer.sprite.texture);
@@ -283,15 +258,6 @@ namespace Nytherion.GamePlay.Relics
             }
 
             spriteRenderer.SetPropertyBlock(propertyBlock);
-
-            currentPropertyBlockTexture = propertyBlock.GetTexture(MainTexProperty);
-            hasPropertyBlock = spriteRenderer.HasPropertyBlock();
-            if (spriteRenderer.material != null)
-            {
-                currentSharedMaterialTexture = spriteRenderer.material.mainTexture;
-            }
-
-            Debug.Log($"[RelicPickupDetector Highlight] GameObj: '{gameObject.name}' | Highlighted: {highlighted} | SpriteTexture: '{(currentSpriteTexture != null ? currentSpriteTexture.name : "null")}' | PropertyBlock_MainTex: '{(currentPropertyBlockTexture != null ? currentPropertyBlockTexture.name : "null")}' | Material_MainTex: '{(currentSharedMaterialTexture != null ? currentSharedMaterialTexture.name : "null")}'", this);
         }
     }
 }

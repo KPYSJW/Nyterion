@@ -18,10 +18,14 @@ MonoBehaviour:
     +2%)"
   description_EN: Increases ranged attack speed.
   Image: {fileID: 21300000, guid: 63daafdc1df1cac408e7ed7e4d25eb86, type: 3}
-  rarity: 0
+  rarity: 1
   level: 1
   isDisabled: 0
-  effectModules: []
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 2313384106650501122
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -36,4 +40,14 @@ MonoBehaviour:
     isPercentage: 1
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2313384106650501122
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 6
+          value: 0.08
+          valuePerLevel: 0.02
+          isPercentage: 1

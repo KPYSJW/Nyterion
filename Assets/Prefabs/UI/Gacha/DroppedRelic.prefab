@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 38a52872e5cbd7145a0d20b806ac5c55, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -162,6 +162,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 311cbcccfe525b24a8f4037c2c180815, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  normalizeSpriteSize: 0
+  targetWorldSize: 0.5
+  ambientParticleSprite: {fileID: 1620481160, guid: 0aec26ce4ff2094478ae13cfd7a88430, type: 3}
+  ambientParticleSpeed: 0.5
+  ambientParticleTravelDuration: 1.5
+  ambientParticleVisualScale: 3.5
+  ambientParticleStartDistance: 0.4
+  ambientParticleEndDistance: 1.5
+  ambientParticleRepeatDelay: 0.05
+  launchDuration: 0.42
+  launchMinDistance: 0.9
+  launchMaxDistance: 1.45
+  launchArcHeight: 0.75
+  meteorHeadSprite: {fileID: 21300000, guid: 5812cd92db00eb844a65f07de22b842a, type: 3}
+  meteorHeadScale: 1.4
+  meteorTailLength: 1.05
+  dropRelicEffectPrefab: {fileID: 6160440840800972896, guid: ea30b173e00586045bc1839b4caa50ba, type: 3}
+  enableRelicSeparation: 1
+  relicSeparationDistance: 0.6
+  relicSeparationForce: 5
+  autoCollectMoveSpeed: 8
+  autoCollectArrivalDistance: 0.08
 --- !u!114 &6611779210445074386
 MonoBehaviour:
   m_ObjectHideFlags: 0

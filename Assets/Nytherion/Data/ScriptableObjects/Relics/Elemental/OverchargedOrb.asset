@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Overcharged Orb
   koreanName: "\uACFC\uCDA9\uC804\uB41C \uC624\uBE0C"
-  description_KR: "\uC804\uAE30 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uACA9 \uC18D\uB3C4 +15%, \uC804\uAE30 \uD53C\uD574 +15% \uC99D\uAC00."
+  description_KR: "\uC804\uAE30 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uACA9 \uC18D\uB3C4
+    +15%, \uC804\uAE30 \uD53C\uD574 +15% \uC99D\uAC00."
   description_EN: 'When Lightning equipment is active, attack speed +15%, Lightning
     damage +15%. '
   Image: {fileID: 21300000, guid: 52689bc7a07dca244bb09bd5d9a270e9, type: 3}
-  rarity: 3
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:

@@ -21,7 +21,7 @@ MonoBehaviour:
     \uC601\uD63C\uC744 \uD761\uC218\uD558\uC5EC \uCCB4\uB825\uC744 \uD68C\uBCF5\uD558\uACE0
     \uC7A0\uC2DC \uB3D9\uC548 \uB2A5\uB825\uC744 \uAC15\uD654\uD569\uB2C8\uB2E4."
   Image: {fileID: 21300000, guid: 605854ef5826a5e4ba9bcbc7341e1d55, type: 3}
-  rarity: 2
+  rarity: 3
   level: 1
   isDisabled: 0
   effectModules:

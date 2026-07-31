@@ -19,7 +19,7 @@ MonoBehaviour:
   description_EN: When Lightning equipment is active, attack speed +20%, Lightning
     damage +25%.
   Image: {fileID: 21300000, guid: b142c67487db98740b4c0c81e29a8b00, type: 3}
-  rarity: 4
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:

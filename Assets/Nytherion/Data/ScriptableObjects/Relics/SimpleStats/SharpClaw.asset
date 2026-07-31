@@ -21,7 +21,11 @@ MonoBehaviour:
   rarity: 0
   level: 1
   isDisabled: 0
-  effectModules: []
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 2313384106650501120
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -42,4 +46,18 @@ MonoBehaviour:
     isPercentage: 1
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2313384106650501120
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 3
+          value: 2
+          valuePerLevel: 0.5
+          isPercentage: 0
+        - stat: 5
+          value: 0.05
+          valuePerLevel: 0.01
+          isPercentage: 1

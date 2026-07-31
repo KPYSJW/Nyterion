@@ -21,7 +21,7 @@ MonoBehaviour:
     \uBC1C\uC0AC \uC2DC \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB97C \uC5EC\uB7EC \uBC29\uD5A5\uC73C\uB85C
     \uB3D9\uC2DC \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
   Image: {fileID: 21300000, guid: bc3c0c78e6b8ae5489adcb9af4f85980, type: 3}
-  rarity: 2
+  rarity: 3
   level: 1
   isDisabled: 0
   effectModules:

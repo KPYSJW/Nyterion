@@ -22,7 +22,7 @@ MonoBehaviour:
     \uAC15\uB825\uD55C \uAD00\uD1B5 \uB808\uC774\uC800\uB97C \uBC1C\uC0AC\uD558\uC5EC
     \uADA4\uC801 \uC0C1\uC758 \uBAA8\uB4E0 \uC801\uC744 \uD30C\uAD34\uD569\uB2C8\uB2E4."
   Image: {fileID: 1557350834, guid: 2af3bd9a622f59848a16b41c4dd0dae3, type: 3}
-  rarity: 2
+  rarity: 3
   level: 1
   isDisabled: 0
   effectModules:

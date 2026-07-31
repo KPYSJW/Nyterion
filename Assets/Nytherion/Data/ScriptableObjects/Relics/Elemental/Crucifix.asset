@@ -10,28 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: Sacramentals
+  m_Name: Crucifix
   m_EditorClassIdentifier: 
-  relicName: Sacramentals
-  koreanName: "\uC131\uBB3C"
-  description_KR: "\uC2E0\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uC62C\uC2A4\uD0EF
-    +4%. "
-  description_EN: 'When Holy equipment is active, all stats +4%. '
-  Image: {fileID: 21300000, guid: ccfb8ed0df93f164d8a8e1dccecb4a7f, type: 3}
-  rarity: 3
+  relicName: Crucifix
+  koreanName: "\uC2ED\uC790\uAC00"
+  description_KR: "\uC2E0\uC131 \uC57D\uD654 +10%p, \uD68C\uBCF5 +1, \uC2E0\uC131
+    \uD53C\uD574 +15% \uC99D\uAC00."
+  description_EN: Holy debuff outgoing damage reduction +10%p, heal amount +1, Holy
+    damage +15%.
+  Image: {fileID: 21300000, guid: 274f34a3ae8a51642adaaf8108210799, type: 3}
+  rarity: 1
   level: 1
   isDisabled: 0
   effectModules:
   - condition:
-      rid: 6716071130084147234
+      rid: 6716071130084147280
     effects:
-    - rid: 6716071130084147235
+    - rid: 6716071130084147281
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: 0, y: 1}
-    type: 1
-  - offset: {x: 0, y: -1}
+  - offset: {x: -1, y: 0}
     type: 1
   - offset: {x: 1, y: 0}
     type: 1
@@ -40,15 +39,19 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6716071130084147234
+    - rid: 6716071130084147280
       type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         requiredTrait: 6
-    - rid: 6716071130084147235
+    - rid: 6716071130084147281
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 17
-          value: 0.04
-          valuePerLevel: 0.01
+        - stat: 3
+          value: 0.15
+          valuePerLevel: 0.05
+          isPercentage: 1
+        - stat: 4
+          value: 0.15
+          valuePerLevel: 0.05
           isPercentage: 1

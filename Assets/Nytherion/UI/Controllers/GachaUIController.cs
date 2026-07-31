@@ -328,6 +328,7 @@ namespace Nytherion.UI.Controllers
                     iconTransform.SetAsLastSibling();
                 }
             }
+
         }
 
         private void CloseResultPanel()

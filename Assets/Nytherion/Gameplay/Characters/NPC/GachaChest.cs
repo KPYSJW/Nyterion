@@ -17,12 +17,25 @@ namespace Nytherion.GamePlay.Characters.NPC
         [SerializeField] private float interactionDistance = 2.0f;
         [SerializeField] private GameObject worldPromptUI; // "1회: X / 10회: C" 월드 UI
         [SerializeField] private GameObject droppedRelicPrefab; // DroppedRelic 프리팹
+        [SerializeField, Min(10), Tooltip("첫 가챠 때 미리 생성할 드롭 유물 수입니다.")]
+        private int droppedRelicPoolSize = 30;
         [SerializeField] private Animator animator;
         [SerializeField] private float closeDelay = 1.0f; // 아이템 생성 후 상자가 닫히기까지 대기 시간
+
+        [Header("드롭 유물 착지 간격")]
+        [SerializeField, Min(0.1f), Tooltip("드롭 유물끼리 확보할 최소 중심 간격입니다.")]
+        private float relicLandingClearance = 0.65f;
+        [SerializeField, Min(0.1f), Tooltip("첫 번째 착지 고리의 반지름입니다.")]
+        private float relicFirstLandingRadius = 0.85f;
+        [SerializeField, Min(0.1f), Tooltip("유물이 날아갈 수 있는 최대 착지 반경입니다.")]
+        private float relicMaxLandingRadius = 1.45f;
+        [SerializeField, Min(1), Tooltip("비어 있는 위치를 찾기 위해 검사할 최대 착지 고리 수입니다.")]
+        private int relicLandingSearchRingCount = 8;
 
         private GachaManager gachaManager;
         private RelicManager relicManager;
         private CurrencyDataManager currencyDataManager;
+        private ObjectPoolManager objectPoolManager;
         private Transform playerTransform;
 
         private bool isPlayerInRange = false;
@@ -35,11 +48,13 @@ namespace Nytherion.GamePlay.Characters.NPC
             GachaManager gachaManager,
             RelicManager relicManager,
             CurrencyDataManager currencyDataManager,
+            ObjectPoolManager objectPoolManager,
             PlayerController playerController)
         {
             this.gachaManager = gachaManager;
             this.relicManager = relicManager;
             this.currencyDataManager = currencyDataManager;
+            this.objectPoolManager = objectPoolManager;
             if (playerController != null)
             {
                 this.playerTransform = playerController.transform;
@@ -49,7 +64,7 @@ namespace Nytherion.GamePlay.Characters.NPC
         private void Start()
         {
             // VContainer 의존성 해결 보완 (Inject 누락 대비)
-            if (gachaManager == null || relicManager == null || currencyDataManager == null || playerTransform == null)
+            if (gachaManager == null || relicManager == null || currencyDataManager == null || objectPoolManager == null || playerTransform == null)
             {
                 LifetimeScope lifetimeScope = LifetimeScope.Find<GameSceneLifetimeScope>();
                 if (lifetimeScope != null)
@@ -57,6 +72,7 @@ namespace Nytherion.GamePlay.Characters.NPC
                     if (gachaManager == null) lifetimeScope.Container.TryResolve<GachaManager>(out gachaManager);
                     if (relicManager == null) lifetimeScope.Container.TryResolve<RelicManager>(out relicManager);
                     if (currencyDataManager == null) lifetimeScope.Container.TryResolve<CurrencyDataManager>(out currencyDataManager);
+                    if (objectPoolManager == null) lifetimeScope.Container.TryResolve<ObjectPoolManager>(out objectPoolManager);
                     if (playerTransform == null)
                     {
                         PlayerController playerController;
@@ -73,10 +89,7 @@ namespace Nytherion.GamePlay.Characters.NPC
                 animator = GetComponent<Animator>();
             }
 
-            if (worldPromptUI != null)
-            {
-                worldPromptUI.SetActive(false);
-            }
+            RefreshWorldPromptUI();
         }
 
         private void Update()
@@ -90,10 +103,7 @@ namespace Nytherion.GamePlay.Characters.NPC
             if (inRange != isPlayerInRange)
             {
                 isPlayerInRange = inRange;
-                if (worldPromptUI != null)
-                {
-                    worldPromptUI.SetActive(isPlayerInRange && !isAnimating);
-                }
+                RefreshWorldPromptUI();
             }
 
             // 범위 내에 있고 애니메이션 진행 중이 아닐 때 키보드 입력 감지
@@ -120,10 +130,7 @@ namespace Nytherion.GamePlay.Characters.NPC
                 float distance = Vector2.Distance(transform.position, playerTransform.position);
                 if (distance <= interactionDistance)
                 {
-                    if (worldPromptUI != null)
-                    {
-                        worldPromptUI.SetActive(true);
-                    }
+                    RefreshWorldPromptUI();
                 }
             }
         }
@@ -135,15 +142,46 @@ namespace Nytherion.GamePlay.Characters.NPC
             if (gachaManager == null || currencyDataManager == null || relicManager == null || playerTransform == null)
             {
                 Debug.LogError("[GachaChest] 필수 컴포넌트가 누락되어 가챠를 실행할 수 없습니다.");
+                RefreshWorldPromptUI();
                 return;
             }
+
+            if (DroppedRelic.HasUncollectedRelics())
+            {
+                StartCoroutine(CollectRemainingRelicsThenPerformGacha(count));
+                return;
+            }
+
+            if (!PerformGacha(count))
+            {
+                RefreshWorldPromptUI();
+            }
+        }
+
+        private IEnumerator CollectRemainingRelicsThenPerformGacha(int count)
+        {
+            isAnimating = true;
+            RefreshWorldPromptUI();
+
+            DroppedRelic.BeginAutoCollectAll(playerTransform);
+            while (DroppedRelic.HasUncollectedRelics())
+            {
+                yield return null;
+            }
+
+            isAnimating = false;
+            TryPerformGacha(count);
+        }
+
+        private bool PerformGacha(int count)
+        {
 
             // 1. 토큰 보유량 검사 (10회 시 10개 검사 필수)
             int currentToken = currencyDataManager.GetCurrency(CurrencyType.Token);
             if (currentToken < count)
             {
                 Debug.LogWarning($"[GachaChest] 토큰 부족! 필요 토큰: {count}, 보유 토큰: {currentToken}");
-                return;
+                return false;
             }
 
             // 2. 가챠 생성 (TryDrawItemsOnly는 실제 인벤토리에 넣지 않고 목록만 뽑아 토큰을 뺌)
@@ -151,14 +189,11 @@ namespace Nytherion.GamePlay.Characters.NPC
             if (pendingDrawnItems == null || pendingDrawnItems.Count == 0)
             {
                 Debug.LogWarning("[GachaChest] 가챠 풀 에러 또는 생성된 아이템 없음.");
-                return;
+                return false;
             }
 
             isAnimating = true;
-            if (worldPromptUI != null)
-            {
-                worldPromptUI.SetActive(false);
-            }
+            RefreshWorldPromptUI();
 
             // 3. 상자 열림 애니메이션 재생
             if (animator != null)
@@ -170,6 +205,8 @@ namespace Nytherion.GamePlay.Characters.NPC
                 // Animator가 없는 경우 백업 실행
                 OnOpenAnimationEnd();
             }
+
+            return true;
         }
 
         /// <summary>
@@ -180,11 +217,14 @@ namespace Nytherion.GamePlay.Characters.NPC
             // 4. 물리 드롭 유물 스폰
             if (pendingDrawnItems != null && pendingDrawnItems.Count > 0)
             {
+                List<Vector2> reservedLandingPositions = new List<Vector2>();
+                float landingAngleOffset = Random.Range(0f, 360f);
+
                 foreach (ScriptableObject item in pendingDrawnItems)
                 {
                     if (item is RelicData relicData)
                     {
-                        SpawnDroppedRelic(relicData);
+                        SpawnDroppedRelic(relicData, reservedLandingPositions, landingAngleOffset);
                     }
                 }
                 pendingDrawnItems.Clear();
@@ -209,14 +249,27 @@ namespace Nytherion.GamePlay.Characters.NPC
             // Close 애니메이션 동작 후 입력 상태 해제
             yield return new WaitForSeconds(0.5f);
             isAnimating = false;
+            RefreshWorldPromptUI();
+        }
 
-            if (isPlayerInRange && worldPromptUI != null)
+        private void RefreshWorldPromptUI()
+        {
+            if (worldPromptUI == null)
             {
-                worldPromptUI.SetActive(true);
+                return;
+            }
+
+            bool shouldShow = isPlayerInRange && !isAnimating;
+            if (worldPromptUI.activeSelf != shouldShow)
+            {
+                worldPromptUI.SetActive(shouldShow);
             }
         }
 
-        private void SpawnDroppedRelic(RelicData relicData)
+        private void SpawnDroppedRelic(
+            RelicData relicData,
+            List<Vector2> reservedLandingPositions,
+            float landingAngleOffset)
         {
             if (droppedRelicPrefab == null)
             {
@@ -230,21 +283,108 @@ namespace Nytherion.GamePlay.Characters.NPC
 
             // 상자 위치 근처에서 스폰
             Vector3 spawnPos = transform.position + new Vector3(0, 0.2f, 0);
-            GameObject obj = Instantiate(droppedRelicPrefab, spawnPos, Quaternion.identity);
+            Vector2 landingPosition = FindAvailableLandingPosition(reservedLandingPositions, landingAngleOffset);
+            GameObject obj = objectPoolManager != null
+                ? objectPoolManager.SpawnFromPool(droppedRelicPrefab, spawnPos, Quaternion.identity, droppedRelicPoolSize)
+                : Instantiate(droppedRelicPrefab, spawnPos, Quaternion.identity);
+
+            if (obj == null)
+            {
+                Debug.LogError("[GachaChest] 드롭 유물 풀에서 오브젝트를 가져오지 못했습니다. 유물을 보관함에 추가합니다.");
+                relicManager?.AddNewRelicToStorage(relicData);
+                return;
+            }
+
             DroppedRelic dropped = obj.GetComponent<DroppedRelic>();
             if (dropped != null)
             {
+                dropped.SetPool(objectPoolManager, objectPoolManager != null ? droppedRelicPrefab.name : null);
+                dropped.SetLaunchTarget(landingPosition);
                 dropped.Init(relicData, playerTransform, relicManager);
+                reservedLandingPositions.Add(landingPosition);
             }
             else
             {
                 Debug.LogError("[GachaChest] 생성된 프리팹에 DroppedRelic 컴포넌트가 없습니다!");
-                Destroy(obj);
+                if (objectPoolManager != null)
+                {
+                    objectPoolManager.ReturnToPool(droppedRelicPrefab.name, obj);
+                }
+                else
+                {
+                    Destroy(obj);
+                }
                 if (relicManager != null)
                 {
                     relicManager.AddNewRelicToStorage(relicData);
                 }
             }
+        }
+
+        private Vector2 FindAvailableLandingPosition(List<Vector2> reservedLandingPositions, float angleOffset)
+        {
+            Vector2 chestPosition = transform.position;
+
+            for (int ring = 1; ring <= relicLandingSearchRingCount; ring++)
+            {
+                float radius = Mathf.Min(
+                    relicMaxLandingRadius,
+                    relicFirstLandingRadius + relicLandingClearance * (ring - 1));
+                int slotCount = Mathf.Max(6, Mathf.FloorToInt(2f * Mathf.PI * radius / relicLandingClearance));
+
+                for (int slot = 0; slot < slotCount; slot++)
+                {
+                    float angle = angleOffset + 360f * slot / slotCount;
+                    Vector2 direction = new Vector2(
+                        Mathf.Cos(angle * Mathf.Deg2Rad),
+                        Mathf.Sin(angle * Mathf.Deg2Rad));
+                    Vector2 candidate = chestPosition + direction * radius;
+
+                    if (IsLandingPositionAvailable(candidate, reservedLandingPositions))
+                    {
+                        return candidate;
+                    }
+                }
+            }
+
+            // 공간이 모두 찬 경우에도 최대 반경은 넘기지 않는다.
+            // 이 경우에는 드롭 유물의 밀어내기가 최종 간격을 정리한다.
+            float fallbackRadius = relicMaxLandingRadius;
+            Vector2 fallbackDirection = new Vector2(
+                Mathf.Cos(angleOffset * Mathf.Deg2Rad),
+                Mathf.Sin(angleOffset * Mathf.Deg2Rad));
+            return chestPosition + fallbackDirection * fallbackRadius;
+        }
+
+        private bool IsLandingPositionAvailable(Vector2 candidate, List<Vector2> reservedLandingPositions)
+        {
+            float clearanceSqr = relicLandingClearance * relicLandingClearance;
+            for (int i = 0; i < reservedLandingPositions.Count; i++)
+            {
+                if ((reservedLandingPositions[i] - candidate).sqrMagnitude < clearanceSqr)
+                {
+                    return false;
+                }
+            }
+
+            Collider2D[] overlaps = Physics2D.OverlapCircleAll(candidate, relicLandingClearance * 0.5f);
+            for (int i = 0; i < overlaps.Length; i++)
+            {
+                if (overlaps[i] != null && overlaps[i].GetComponent<DroppedRelic>() != null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void OnValidate()
+        {
+            relicLandingClearance = Mathf.Max(0.1f, relicLandingClearance);
+            relicFirstLandingRadius = Mathf.Max(0.1f, relicFirstLandingRadius);
+            relicMaxLandingRadius = Mathf.Max(relicFirstLandingRadius, relicMaxLandingRadius);
+            relicLandingSearchRingCount = Mathf.Max(1, relicLandingSearchRingCount);
         }
 
         private void OnDrawGizmosSelected()

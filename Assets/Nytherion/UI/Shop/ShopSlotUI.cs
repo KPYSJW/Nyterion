@@ -34,6 +34,7 @@ namespace Nytherion.UI.Shop
         public ShopItemData CurrentItem { get; private set; }
         private ShopUI shopUI;
         private string currentShopName;
+        private RarityLightEffect rarityLightEffect;
 
         [Inject]
         public void Construct(ShopUI shopUI)
@@ -65,6 +66,8 @@ namespace Nytherion.UI.Shop
                 {
                     targetRarity = equipmentData.rarity;
                 }
+
+                PlayRarityEffect(targetRarity);
 
                 Image targetSlotImage = GetComponent<Image>();
                 if (targetSlotImage != null)
@@ -125,7 +128,26 @@ namespace Nytherion.UI.Shop
             }
             else
             {
+                ClearRarityEffect();
                 gameObject.SetActive(false);
+            }
+        }
+
+        private void PlayRarityEffect(Rarity rarity)
+        {
+            if (rarityLightEffect == null)
+            {
+                rarityLightEffect = RarityLightEffect.GetOrAdd(gameObject);
+            }
+
+            rarityLightEffect?.Play(rarity, iconImage != null ? iconImage.rectTransform : null, false);
+        }
+
+        private void ClearRarityEffect()
+        {
+            if (rarityLightEffect != null)
+            {
+                rarityLightEffect.Clear();
             }
         }
 
@@ -207,6 +229,8 @@ namespace Nytherion.UI.Shop
         }
         private void ApplySoldOutVisual()
         {
+            ClearRarityEffect();
+
             if (iconImage != null)
             {
                 iconImage.enabled = false;
@@ -279,6 +303,8 @@ namespace Nytherion.UI.Shop
         }
         private void OnDisable()
         {
+            ClearRarityEffect();
+
             if(TooltipPanel.Instance != null && TooltipPanel.Instance.gameObject.activeSelf)
             {
                 TooltipPanel.Instance.HideTooltip();

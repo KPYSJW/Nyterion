@@ -19,7 +19,7 @@ MonoBehaviour:
   description_EN: Poison damage +25%, Poison status duration +30%, Poison damage
     interval shortened by 10%.
   Image: {fileID: 21300000, guid: 1b361797ad5c5d145bd29c2018ac3c17, type: 3}
-  rarity: 4
+  rarity: 2
   level: 1
   isDisabled: 0
   effectModules:
