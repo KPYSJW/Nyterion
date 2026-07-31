@@ -12,8 +12,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
 {
     public class EnemyAIController : MonoBehaviour
     {
-        public float detectRange = 8f;
-        public float moveSpeed = 2f;
+        public float detectRange;
+        public float moveSpeed;
 
         public Transform player;
         public NavMeshAgent agent; 
@@ -25,6 +25,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public bool HasMeleeAttack=>meleeAttack!=null;
         public bool HasRangedAttack=>rangedAttack!=null;
+
+        private bool movementAllowed = true;
 
         private EnemyBaseState currentState;
         public EnemyIdleState idleState;
@@ -118,6 +120,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void MoveTowardsPlayer()
         {
+            if (!movementAllowed) return;
             if (player == null || !agent.isOnNavMesh) return;
 
             agent.isStopped = false;
@@ -129,6 +132,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void MoveToTarget(Vector2 targetPosition)
         {
+            if (!movementAllowed) return;
             if (!agent.isOnNavMesh) return;
 
             agent.isStopped = false;
@@ -145,6 +149,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void MoveInDirection(Vector2 direction, float distance = 1.5f)
         {
+            if (!movementAllowed) return;
             if (!agent.isOnNavMesh) return;
 
             if (direction.sqrMagnitude < 0.001f)
@@ -294,6 +299,16 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
         }
 
+        public void SetMovementAllowed(bool allowed)
+        {
+            movementAllowed = allowed;
+
+            if (!movementAllowed)
+            {
+                StopMovement();
+            }
+        }
+
         public void ApplyEnemyData(EnemyData data)
         {
             if(data==null)return;
@@ -394,6 +409,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void MoveAwayFromPlayer(float retreatDistance = 4f)
         {
+            if (!movementAllowed) return;
             if (player == null || !agent.isOnNavMesh) return;
 
             Vector2 direction = ((Vector2)transform.position - (Vector2)player.position).normalized;
