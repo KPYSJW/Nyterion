@@ -288,11 +288,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void StopMovement()
         {
-            if (agent == null) return;
-
-            agent.isStopped = true;
-            agent.ResetPath();
-
+             if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
             if (rb != null)
             {
                 rb.velocity = Vector2.zero;
