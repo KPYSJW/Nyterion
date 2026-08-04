@@ -106,7 +106,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
             StatusEffectManager effectManager = targetObj.GetComponent<StatusEffectManager>();
             if (effectManager == null)
             {
-                effectManager = targetObj.AddComponent<StatusEffectManager>();
+                return;
             }
 
             if (traits.Contains(EquipmentTrait.Fire))

@@ -36,13 +36,10 @@ namespace Nytherion.GamePlay.Combat.Weapons
             // 2. RelicManager에서 해당 유물이 활성화되어 있고
             // 3. 실제로 차징을 시도해서 쏜 경우 (chargePercent > 0f)
             bool isRelicActive = false;
-            if (weaponData != null && !string.IsNullOrEmpty(weaponData.requiredRelicId))
+            if (weaponData != null && !string.IsNullOrEmpty(weaponData.requiredRelicId) &&
+                playerManager != null && playerManager.playerRelicManager != null)
             {
-                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-                if (relicManager != null)
-                {
-                    isRelicActive = relicManager.IsRelicActive(weaponData.requiredRelicId);
-                }
+                isRelicActive = playerManager.playerRelicManager.IsRelicActive(weaponData.requiredRelicId);
             }
 
             if (isRelicActive && chargePercent > 0f)
@@ -120,11 +117,8 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 }
 
                 // 3. 풀 차징 추가 혜택 (관통 활성화, 크기 확대, 연두색 강화)
-                PiercingEffect piercingEffect;
-                if (!projObj.TryGetComponent<PiercingEffect>(out piercingEffect))
-                {
-                    piercingEffect = projObj.AddComponent<PiercingEffect>();
-                }
+                PiercingEffect piercingEffect = projObj.GetComponent<PiercingEffect>();
+                if (piercingEffect == null) return;
 
                 if (IsChargingEnabled() && chargePercent >= pierceThreshold)
                 {

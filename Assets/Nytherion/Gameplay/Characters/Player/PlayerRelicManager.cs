@@ -18,13 +18,26 @@ namespace Nytherion.GamePlay.Characters.Player
         private PlayerManager playerManager;
         private RelicManager relicManager;
         private EventManager eventManager;
+        private bool hasStarted;
 
         public event Action OnRelicsChanged;
+        public CombatModifierSnapshot CombatModifiers { get; private set; } = CombatModifierSnapshot.Empty;
 
         [Inject]
-        public void Construct(EventManager eventManager)
+        public void Construct(EventManager eventManager, RelicManager relicManager)
         {
+            if (this.relicManager != null && this.relicManager != relicManager)
+            {
+                UnsubscribeRelicEvents(this.relicManager);
+            }
+
             this.eventManager = eventManager;
+            this.relicManager = relicManager;
+
+            if (hasStarted)
+            {
+                InitializeRuntimeDependencies();
+            }
         }
 
         private void Awake()
@@ -34,31 +47,41 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void Start()
         {
-            synergyEvaluator = new SynergyEvaluator(synergyTable, eventManager);
-
+            hasStarted = true;
             if (playerManager == null) playerManager = GetComponent<PlayerManager>();
-            if (relicManager == null) relicManager = FindObjectOfType<RelicManager>();
-
-            if (relicManager != null)
-            {
-                relicManager.OnRelicEquippedStateChanged -= HandleRelicStateFromGrid;
-                relicManager.OnRelicEquippedStateChanged += HandleRelicStateFromGrid;
-
-
-                SyncWithGrid();
-            }
-            else
-            {
-                Debug.LogError(" [디버그] RelicManager를 찾을 수 없어 이벤트 구독에 실패했습니다.");
-            }
+            InitializeRuntimeDependencies();
         }
 
         private void OnDestroy()
         {
             if (relicManager != null)
             {
-                relicManager.OnRelicEquippedStateChanged -= HandleRelicStateFromGrid;
+                UnsubscribeRelicEvents(relicManager);
             }
+        }
+
+        private void InitializeRuntimeDependencies()
+        {
+            if (eventManager != null)
+            {
+                synergyEvaluator = new SynergyEvaluator(synergyTable, eventManager);
+            }
+
+            if (relicManager == null) return;
+
+            relicManager.OnRelicEquippedStateChanged -= HandleRelicStateFromGrid;
+            relicManager.OnRelicEquippedStateChanged += HandleRelicStateFromGrid;
+            relicManager.OnRelicStateChanged -= HandleRelicStateChanged;
+            relicManager.OnRelicStateChanged += HandleRelicStateChanged;
+
+            SyncWithGrid();
+            RebuildCombatModifiers();
+        }
+
+        private void UnsubscribeRelicEvents(RelicManager targetRelicManager)
+        {
+            targetRelicManager.OnRelicEquippedStateChanged -= HandleRelicStateFromGrid;
+            targetRelicManager.OnRelicStateChanged -= HandleRelicStateChanged;
         }
 
         /// <summary>
@@ -104,6 +127,11 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
+        private void HandleRelicStateChanged()
+        {
+            RebuildCombatModifiers();
+        }
+
         public void AddRelic(RelicData relic)
         {
             if (equippedRelics.Count >= 25)
@@ -113,9 +141,10 @@ namespace Nytherion.GamePlay.Characters.Player
             }
 
             equippedRelics.Add(relic);
+            RebuildCombatModifiers();
 
             var currentWeaponData = playerManager?.PlayerCombat?.currentWeapon?.weaponData;
-            if (currentWeaponData != null)
+            if (currentWeaponData != null && synergyEvaluator != null)
             {
                 WeaponRelicSynergyData SynergyData = synergyEvaluator.EvaluateSynergy(currentWeaponData, GetCurrentRelics());
                 if (SynergyData != null)
@@ -132,6 +161,7 @@ namespace Nytherion.GamePlay.Characters.Player
             if (index >= 0 && index < equippedRelics.Count)
             {
                 equippedRelics.RemoveAt(index);
+                RebuildCombatModifiers();
 
                 OnRelicsChanged?.Invoke();
             }
@@ -141,34 +171,12 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public bool IsRelicActive(string relicId)
         {
-            if (string.IsNullOrEmpty(relicId)) return false;
+            return CombatModifiers.IsActive(relicId);
+        }
 
-            if (relicManager == null)
-            {
-                relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
-            }
-
-            if (relicManager != null && relicManager.IsRelicActive(relicId))
-            {
-                return true;
-            }
-
-            string targetId = relicId.Trim();
-            foreach (RelicData data in equippedRelics)
-            {
-                if (data != null && !data.isDisabled)
-                {
-                    string dataName = data.name != null ? data.name.Trim() : "";
-                    string relicName = data.relicName != null ? data.relicName.Trim() : "";
-
-                    if (string.Equals(dataName, targetId, StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(relicName, targetId, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+        private void RebuildCombatModifiers()
+        {
+            CombatModifiers = CombatModifierSnapshot.Create(equippedRelics);
         }
     }
 }

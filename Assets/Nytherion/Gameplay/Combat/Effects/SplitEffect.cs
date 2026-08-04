@@ -54,11 +54,7 @@ namespace Nytherion.GamePlay.Combat
                     {
                         if (myCol != null) fragCol.damage = myCol.damage * splitDamageMultiplier;
 
-                        var effects = fragment.GetComponents<IProjectileEffect>();
-                        foreach (var effect in effects)
-                        {
-                            if (effect is MonoBehaviour mb) mb.enabled = false;
-                        }
+                        fragCol.DisableAllProjectileEffects();
                     }
                 }
             }

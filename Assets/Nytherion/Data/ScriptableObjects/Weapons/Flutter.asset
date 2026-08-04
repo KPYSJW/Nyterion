@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
   m_Name: Flutter
   m_EditorClassIdentifier: 
-  uniqueID: 59224cfd-7372-43bd-8077-b491374912dd
+  uniqueID: f72a2b4d-65f9-48e4-a9f8-f17d7e80e3c6
   itemName_KR: "\uB098\uBE44\uD65C"
   itemName_EN: Flutter
   icon: {fileID: 21300000, guid: 0ec1ad0ea9a600e4f86545fb2b45d4fc, type: 3}
@@ -23,7 +23,6 @@ MonoBehaviour:
   unlockMilestoneID: 
   baseValue: 150
   equipmentType: 0
-  rarity: 0
   traits: 00000000
   statModifiers: []
   damage: 0
@@ -31,14 +30,20 @@ MonoBehaviour:
   cooldown: 0.1
   weaponType: 0
   weaponSprite: {fileID: 1796707948, guid: 5b6e7fe923b72a64999141beed4f7858, type: 3}
-  firePointOffset: {x: 0, y: 0, z: 0}
-  spriteRotationOffset: 45
+  firePointOffset: {x: 0.25, y: 0, z: 0}
+  spriteRotationOffset: 0
   visualPositionOffset: {x: 0, y: 0, z: 0}
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
   animatorController: {fileID: 22100000, guid: f25e5d3b4b992ad4fb5133667b54a2e8, type: 2}
-  projectilePrefab: {fileID: 3778041586713616541, guid: 2eaf7d6fe073aef4caa6d4099d63f3a9, type: 3}
+  projectilePrefab: {fileID: 1453523852295367759, guid: 5b4064264cfa50342b19e873092d595e, type: 3}
   projectileSpeed: 10
+  projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
+  chargeThresholdTime: 0.15
+  requiredRelicId: ChargeRelic
   hitEffectPrefab: {fileID: 0}
-  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  weaponPrefab: {fileID: -2914722070659980993, guid: d36f87945e7b4c38b4e8509f92f0e61a, type: 3}
   isArchivable: 1

@@ -36,6 +36,18 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private float currentAngle = 0f;
         private bool isAttackHeld = false;
+        private bool isGenericCharging;
+        private float genericChargeTime;
+
+        public bool IsGenericCharging => isGenericCharging;
+        public float GenericChargePercent
+        {
+            get
+            {
+                float maxChargeTime = GetGenericMaxChargeTime();
+                return maxChargeTime > 0f ? Mathf.Clamp01(genericChargeTime / maxChargeTime) : 1f;
+            }
+        }
 
         [Inject]
         public void Construct(InputManager inputManager)
@@ -61,17 +73,32 @@ namespace Nytherion.GamePlay.Characters.Player
         private void HandleAttackDown()
         {
             isAttackHeld = true;
-            Attack();
+            if (ShouldUseGenericCharging())
+            {
+                BeginGenericCharge();
+            }
+            else
+            {
+                Attack();
+            }
         }
 
         private void HandleAttackUp()
         {
             isAttackHeld = false;
-            AttackEnd();
+            if (isGenericCharging)
+            {
+                ReleaseGenericCharge();
+            }
+            else
+            {
+                AttackEnd();
+            }
         }
 
         public void EquipWeapon(WeaponBase weaponPrefab, WeaponData data = null)
         {
+            CancelGenericCharge();
             if (currentWeapon != null)
             {
                 Destroy(currentWeapon.gameObject);
@@ -189,6 +216,19 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             RotateWeaponToMouse();
 
+            if (isGenericCharging)
+            {
+                if (!ShouldUseGenericCharging())
+                {
+                    CancelGenericCharge();
+                }
+                else
+                {
+                    genericChargeTime = Mathf.Min(genericChargeTime + Time.deltaTime, GetGenericMaxChargeTime());
+                }
+                return;
+            }
+
             if (isAttackHeld && currentWeapon != null)
             {
                 // 차징 무기가 아닌 경우 꾹 누르고 있으면 쿨다운에 맞춰 자동 연사 (Auto-fire)
@@ -268,6 +308,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (currentWeapon != null)
             {
+                currentWeapon.ResetGenericChargeMultiplier();
                 Vector2 fireDirection = weaponPoint.right;
                 Vector2 mouseScreenPos = inputManager.MousePosition;
                 Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
@@ -287,8 +328,60 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
+        private bool ShouldUseGenericCharging()
+        {
+            return currentWeapon != null &&
+                   !(currentWeapon is IChargeableWeapon) &&
+                   playerManager != null &&
+                   playerManager.playerRelicManager != null &&
+                   playerManager.playerRelicManager.IsRelicActive("ChargeRelic");
+        }
+
+        private void BeginGenericCharge()
+        {
+            isGenericCharging = true;
+            genericChargeTime = 0f;
+        }
+
+        private void ReleaseGenericCharge()
+        {
+            if (currentWeapon == null)
+            {
+                CancelGenericCharge();
+                return;
+            }
+
+            float chargePercent = GenericChargePercent;
+            isGenericCharging = false;
+            genericChargeTime = 0f;
+
+            Vector2 fireDirection = weaponPoint.right;
+            Vector2 mouseScreenPos = inputManager.MousePosition;
+            Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
+            targetWorldPos.z = 0f;
+
+            currentWeapon.AttackWithGenericCharge(fireDirection, targetWorldPos, chargePercent);
+            currentWeapon.AttackEnd();
+            OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);
+            OnPlayerAttackEnd?.Invoke();
+        }
+
+        private float GetGenericMaxChargeTime()
+        {
+            if (currentWeapon == null || currentWeapon.weaponData == null) return 1f;
+            return Mathf.Max(0.01f, currentWeapon.weaponData.maxChargeTime);
+        }
+
+        private void CancelGenericCharge()
+        {
+            isGenericCharging = false;
+            genericChargeTime = 0f;
+            currentWeapon?.ResetGenericChargeMultiplier();
+        }
+
         private void OnDisable()
         {
+            CancelGenericCharge();
             if (inputManager != null)
             {
                 inputManager.onAttackDown -= HandleAttackDown;

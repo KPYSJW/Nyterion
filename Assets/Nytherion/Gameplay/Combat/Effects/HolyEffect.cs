@@ -1,8 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
 using Nytherion.Core.Managers;
-using Nytherion.Core.Data;
-using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -24,43 +21,29 @@ namespace Nytherion.GamePlay.Combat
 
         public override void OnApply()
         {
-            AdjustHolyStats();
             if (manager != null)
             {
                 manager.PlayVFX(EffectId);
             }
         }
 
-        private void AdjustHolyStats()
+        public override void ApplyRelicModifiers(CombatModifierSnapshot modifiers)
         {
-            Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-            if (relicManager != null)
+            int level = modifiers.GetActiveLevel("Sacred Grail");
+            if (level > 0)
             {
-                foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
-                {
-                    RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                    if (block != null && !block.SourceData.isDisabled)
-                    {
-                        if (block.RelicId == "Sacred Grail")
-                        {
-                            float bonusReduction = 0.1f + (block.SourceData.level - 1) * 0.02f;
-                            outgoingDamageMultiplier = Mathf.Max(0.5f, 0.9f - bonusReduction);
+                float bonusReduction = 0.1f + (level - 1) * 0.02f;
+                outgoingDamageMultiplier = Mathf.Max(0.5f, 0.9f - bonusReduction);
+                healAmount += 1f + (level - 1) * 0.5f;
+                return;
+            }
 
-                            float bonusHeal = 1.0f + (block.SourceData.level - 1) * 0.5f;
-                            healAmount += bonusHeal;
-                            break;
-                        }
-                        else if (block.RelicId == "Archangel's Halo")
-                        {
-                            float bonusReduction = 0.25f + (block.SourceData.level - 1) * 0.05f;
-                            outgoingDamageMultiplier = Mathf.Max(0.4f, 0.9f - bonusReduction);
-
-                            float bonusHeal = 2.0f + (block.SourceData.level - 1) * 1.0f;
-                            healAmount += bonusHeal;
-                            break;
-                        }
-                    }
-                }
+            level = modifiers.GetActiveLevel("Archangel's Halo");
+            if (level > 0)
+            {
+                float bonusReduction = 0.25f + (level - 1) * 0.05f;
+                outgoingDamageMultiplier = Mathf.Max(0.4f, 0.9f - bonusReduction);
+                healAmount += 2f + (level - 1);
             }
         }
 
@@ -80,7 +63,7 @@ namespace Nytherion.GamePlay.Combat
         {
             if (Random.value <= healChance)
             {
-                PlayerManager playerManager = Object.FindObjectOfType<PlayerManager>();
+                PlayerManager playerManager = manager != null ? manager.PlayerManager : null;
                 if (playerManager != null && playerManager.playerHealth != null)
                 {
                     playerManager.playerHealth.Heal(healAmount);

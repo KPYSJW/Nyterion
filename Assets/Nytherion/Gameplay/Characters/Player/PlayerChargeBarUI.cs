@@ -26,7 +26,16 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (playerCombat == null || chargeSlider == null) return;
 
-            // 현재 장착된 무기가 차징 무기인지 확인
+            if (playerCombat.IsGenericCharging)
+            {
+                if (!chargeSlider.gameObject.activeSelf)
+                {
+                    chargeSlider.gameObject.SetActive(true);
+                }
+                chargeSlider.value = playerCombat.GenericChargePercent;
+                return;
+            }
+
             IChargeableWeapon chargeWeapon = playerCombat.currentWeapon as IChargeableWeapon;
 
             if (chargeWeapon != null && chargeWeapon.IsCharging)

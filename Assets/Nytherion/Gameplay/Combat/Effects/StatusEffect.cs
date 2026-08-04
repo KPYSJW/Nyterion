@@ -38,6 +38,10 @@ namespace Nytherion.GamePlay.Combat
             // 스택 중첩 시 처리할 동작을 하위 클래스에서 오버라이드
         }
 
+        public virtual void ApplyRelicModifiers(CombatModifierSnapshot modifiers)
+        {
+        }
+
         public virtual void UpdateTimer(float deltaTime)
         {
             Timer -= deltaTime;

@@ -83,12 +83,10 @@ namespace Nytherion.GamePlay.Combat
                     {
                         nextEnemy.TakeDamage(chainDamage, true);
 
-                        StatusEffectManager effectManager = nextEnemy.GetComponent<StatusEffectManager>();
-                        if (effectManager == null)
+                        if (nextEnemy.TryGetComponent<StatusEffectManager>(out StatusEffectManager effectManager))
                         {
-                            effectManager = nextEnemy.gameObject.AddComponent<StatusEffectManager>();
+                            effectManager.ApplyEffect(new LightningEffect(this.Duration));
                         }
-                        effectManager.ApplyEffect(new LightningEffect(this.Duration));
                     }
                 }
             }

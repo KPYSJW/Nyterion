@@ -34,7 +34,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             // 데미지 주입
             if (meteor.TryGetComponent<CollisionObject>(out var col))
             {
-                col.damage = weaponData.damage * damageMultiplier;
+                col.damage = weaponData.damage * EffectiveDamageMultiplier;
             }
         }
 

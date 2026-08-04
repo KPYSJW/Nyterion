@@ -126,16 +126,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             {
                 if (playerManager != null && playerManager.playerRelicManager != null)
                 {
-                    if (playerManager.playerRelicManager.IsRelicActive(weaponData.requiredRelicId))
-                    {
-                        return true;
-                    }
-                }
-
-                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-                if (relicManager != null)
-                {
-                    return relicManager.IsRelicActive(weaponData.requiredRelicId);
+                    return playerManager.playerRelicManager.IsRelicActive(weaponData.requiredRelicId);
                 }
                 return false;
             }

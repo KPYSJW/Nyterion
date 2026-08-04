@@ -309,7 +309,6 @@ namespace Nytherion.UI.Test
             if (statusText != null)
             {
                 statusText.text = $"[DEBUG] {message}";
-                Debug.Log($"[DebugPanel] {message}");
             }
         }
 

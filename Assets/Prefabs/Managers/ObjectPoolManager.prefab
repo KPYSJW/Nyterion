@@ -61,6 +61,9 @@ MonoBehaviour:
   - tag: Player_Arrow
     prefab: {fileID: 3778041586713616541, guid: 2eaf7d6fe073aef4caa6d4099d63f3a9, type: 3}
     size: 30
+  - tag: FlutterProj
+    prefab: {fileID: 1453523852295367759, guid: 5b4064264cfa50342b19e873092d595e, type: 3}
+    size: 30
   - tag: Player_Spiral
     prefab: {fileID: 3778041586713616541, guid: bbd39e4bcf80ebf45a37c0077987be40, type: 3}
     size: 10

@@ -22,7 +22,6 @@ MonoBehaviour:
   maxStack: 1
   baseValue: 10
   equipmentType: 1
-  rarity: 0
   traits: 
   statModifiers:
   - stat: 2

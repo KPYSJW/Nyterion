@@ -183,7 +183,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
                     Debug.LogWarning("[BlackSword Debug] BlackSwordCollision component was missing on the effect prefab. Added dynamically.");
                 }
 
-                collisionComp.damage = weaponData.damage * damageMultiplier;
+                collisionComp.damage = weaponData.damage * EffectiveDamageMultiplier;
                 collisionComp.traits = GetTraits();
                 if (collisionComp.hitEffectPrefab == null)
                 {

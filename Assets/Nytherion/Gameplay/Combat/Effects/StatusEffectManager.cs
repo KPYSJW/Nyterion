@@ -2,19 +2,21 @@ using UnityEngine;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.Data.ScriptableObjects;
-using Nytherion.Core.Data;
-using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Managers;
 using VContainer;
 
 namespace Nytherion.GamePlay.Combat
 {
     public class StatusEffectManager : MonoBehaviour
     {
-        private List<StatusEffect> activeEffects = new List<StatusEffect>();
+        private readonly List<StatusEffect> activeEffects = new List<StatusEffect>();
         private EnemyBase owner;
-        private Dictionary<string, GameObject> vfxDictionary = new Dictionary<string, GameObject>();
+        private readonly Dictionary<string, GameObject> vfxDictionary = new Dictionary<string, GameObject>();
         private EnemyStatusDisplayUI statusDisplay;
         private StatusEffectDatabase database;
+        private PlayerManager playerManager;
+
+        public PlayerManager PlayerManager => playerManager;
 
         [Inject]
         public void Construct(StatusEffectDatabase database)
@@ -41,8 +43,18 @@ namespace Nytherion.GamePlay.Combat
         private void Start()
         {
             SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
-            statusDisplay = gameObject.AddComponent<EnemyStatusDisplayUI>();
+            statusDisplay = GetComponent<EnemyStatusDisplayUI>();
+            if (statusDisplay == null)
+            {
+                statusDisplay = gameObject.AddComponent<EnemyStatusDisplayUI>();
+            }
             statusDisplay.Initialize(sr);
+            enabled = activeEffects.Count > 0;
+        }
+
+        public void ConfigureCombatContext(PlayerManager currentPlayerManager)
+        {
+            playerManager = currentPlayerManager;
         }
 
         private void CacheVFX()
@@ -136,68 +148,32 @@ namespace Nytherion.GamePlay.Combat
             }
             if (newEffect == null) return;
 
-            if (newEffect is FireEffect)
-            {
-                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-                if (relicManager != null)
-                {
-                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
-                    {
-                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                        if (block != null && block.RelicId == "Sulphur Hourglass" && !block.SourceData.isDisabled)
-                        {
-                            float multiplier = 1.5f + (block.SourceData.level - 1) * 0.1f;
-                            newEffect.ModifyDuration(newEffect.Duration * multiplier);
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (newEffect is PoisonEffect)
-            {
-                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-                if (relicManager != null)
-                {
-                    float durationMultiplier = 1.0f;
-                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
-                    {
-                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                        if (block != null && !block.SourceData.isDisabled)
-                        {
-                            if (block.RelicId == "Venom Hourglass")
-                            {
-                                float bonus = 0.5f + (block.SourceData.level - 1) * 0.1f;
-                                durationMultiplier += bonus;
-                            }
-                            else if (block.RelicId == "Hydra's Fang")
-                            {
-                                float bonus = 0.3f + (block.SourceData.level - 1) * 0.05f;
-                                durationMultiplier += bonus;
-                            }
-                        }
-                    }
-                    if (durationMultiplier > 1.0f)
-                    {
-                        newEffect.ModifyDuration(newEffect.Duration * durationMultiplier);
-                    }
-                }
-            }
+            if (!enabled) enabled = true;
+
+            CombatModifierSnapshot currentSnapshot = playerManager != null && playerManager.playerRelicManager != null
+                ? playerManager.playerRelicManager.CombatModifiers
+                : CombatModifierSnapshot.Empty;
+            newEffect.ApplyRelicModifiers(currentSnapshot);
 
             if (database != null)
             {
                 newEffect.EffectIcon = database.GetIcon(newEffect.EffectId);
             }
 
-            StatusEffect existing = activeEffects.Find(e => e.EffectId == newEffect.EffectId);
+            StatusEffect existing = null;
+            for (int i = 0; i < activeEffects.Count; i++)
+            {
+                if (activeEffects[i].EffectId == newEffect.EffectId)
+                {
+                    existing = activeEffects[i];
+                    break;
+                }
+            }
             if (existing != null)
             {
                 existing.ResetDuration();
                 existing.OnStack(newEffect);
                 existing.EffectIcon = newEffect.EffectIcon;
-                if (statusDisplay != null)
-                {
-                    statusDisplay.UpdateDisplay(activeEffects);
-                }
                 return;
             }
 
@@ -243,6 +219,10 @@ namespace Nytherion.GamePlay.Combat
                 if (statusDisplay != null)
                 {
                     statusDisplay.UpdateDisplay(activeEffects);
+                }
+                if (activeEffects.Count == 0)
+                {
+                    enabled = false;
                 }
             }
         }
@@ -314,7 +294,11 @@ namespace Nytherion.GamePlay.Combat
 
         public bool HasEffect(string effectId)
         {
-            return activeEffects.Exists(e => e.EffectId == effectId);
+            for (int i = 0; i < activeEffects.Count; i++)
+            {
+                if (activeEffects[i].EffectId == effectId) return true;
+            }
+            return false;
         }
 
         public Color GetStatusEffectColor()
@@ -360,6 +344,10 @@ namespace Nytherion.GamePlay.Combat
             if (statusDisplay != null)
             {
                 statusDisplay.UpdateDisplay(activeEffects);
+            }
+            if (enabled && activeEffects.Count == 0)
+            {
+                enabled = false;
             }
         }
 

@@ -707,7 +707,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     {
                         daggerHitTargets.Add(target);
                         
-                        float baseDmg = weaponData != null ? weaponData.damage : 8f;
+                        float baseDmg = weaponData != null ? weaponData.damage * EffectiveDamageMultiplier : 8f;
                         target.TakeDamage(baseDmg);
                         ApplyStatusEffects(target);
 

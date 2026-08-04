@@ -23,6 +23,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public EnemyAIController aiController;
         private EventManager eventManager;
         private StatusEffectManager statusEffectManager;
+        private PlayerManager playerManager;
 
         [Header("Hit Flash")]
         [SerializeField] private SpriteRenderer spriteRenderer;
@@ -31,11 +32,21 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private Color originalColor = Color.white;
         private Coroutine hitFlashCoroutine;
 
+        private void Awake()
+        {
+            statusEffectManager = GetComponent<StatusEffectManager>();
+            if (statusEffectManager == null)
+            {
+                statusEffectManager = gameObject.AddComponent<StatusEffectManager>();
+            }
+        }
+
         [Inject]
-        public void Construct(EventManager eventManager,CurrencyDataManager currencyDataManager)
+        public void Construct(EventManager eventManager, CurrencyDataManager currencyDataManager, PlayerManager playerManager)
         {
             this.eventManager = eventManager;
-            this.currencyDataManager=currencyDataManager;
+            this.currencyDataManager = currencyDataManager;
+            this.playerManager = playerManager;
         }
         public void Initialize(EnemyData data)
         {
@@ -51,14 +62,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
     
             }
 
-            statusEffectManager = GetComponent<StatusEffectManager>();
-            if (statusEffectManager == null)
-            {
-                statusEffectManager = gameObject.AddComponent<StatusEffectManager>();
-            }
-            else
+            if (statusEffectManager != null)
             {
                 statusEffectManager.ClearAllEffects();
+                statusEffectManager.ConfigureCombatContext(playerManager);
             }
             UpdateStatusColor();
         }
@@ -74,7 +81,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             bool isCritical = false;
-            PlayerManager playerManager = UnityEngine.Object.FindObjectOfType<PlayerManager>();
             if (playerManager != null && playerManager.currentPlayerData != null)
             {
                 float chance = playerManager.currentPlayerData.critChance;
