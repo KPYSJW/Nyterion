@@ -20,6 +20,9 @@ namespace Nytherion.GamePlay.Characters.Player
 
         [SerializeField] private Vector3 centerOffset = new Vector3(0, 0.5f, 0);
 
+        [Header("Render Settings")]
+        [SerializeField] private int weaponSortingOrderOffset = -1;
+
         [Header("Aim Settings")]
         private bool useAngleLimit = false; // 360도 회전을 위해 인스펙터 오버라이드를 무시하고 항상 false로 고정
         [SerializeField] private float aimAngleLimit = 45f; // 중심각 기준 좌우 45도 (합 90도 부채꼴)
@@ -33,6 +36,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private InputManager inputManager;
         private PlayerManager playerManager;
         private PlayerController playerController;
+        private SpriteRenderer playerSpriteRenderer;
 
         private float currentAngle = 0f;
         private bool isAttackHeld = false;
@@ -59,6 +63,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             playerManager = GetComponent<PlayerManager>();
             playerController = GetComponent<PlayerController>();
+            playerSpriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         private void Start()
@@ -242,6 +247,42 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
+        private void LateUpdate()
+        {
+            UpdateWeaponSortingOrder();
+        }
+
+        private void UpdateWeaponSortingOrder()
+        {
+            if (currentWeapon == null)
+            {
+                return;
+            }
+
+            if (playerSpriteRenderer == null)
+            {
+                playerSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+            if (playerSpriteRenderer == null)
+            {
+                return;
+            }
+
+            SpriteRenderer[] weaponRenderers = currentWeapon.GetComponentsInChildren<SpriteRenderer>(true);
+            if (weaponRenderers.Length == 0)
+            {
+                return;
+            }
+
+            int targetBaseOrder = playerSpriteRenderer.sortingOrder + weaponSortingOrderOffset;
+            for (int i = 0; i < weaponRenderers.Length; i++)
+            {
+                SpriteRenderer weaponRenderer = weaponRenderers[i];
+                weaponRenderer.sortingLayerID = playerSpriteRenderer.sortingLayerID;
+                weaponRenderer.sortingOrder = targetBaseOrder;
+            }
+        }
+
         private void RotateWeaponToMouse()
         {
             if (inputManager == null || weaponPoint == null) return;
@@ -306,7 +347,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void Attack()
         {
-            if (currentWeapon != null)
+            if (currentWeapon != null && currentWeapon.CanAttack())
             {
                 currentWeapon.ResetGenericChargeMultiplier();
                 Vector2 fireDirection = weaponPoint.right;
@@ -345,7 +386,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void ReleaseGenericCharge()
         {
-            if (currentWeapon == null)
+            if (currentWeapon == null || !currentWeapon.CanAttack())
             {
                 CancelGenericCharge();
                 return;

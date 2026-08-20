@@ -22,6 +22,7 @@ namespace Nytherion.GamePlay.Combat
         private float genericChargeDamageMultiplier = 1.0f;
 
         protected float EffectiveDamageMultiplier => damageMultiplier * genericChargeDamageMultiplier;
+        public float CurrentDamageMultiplier => EffectiveDamageMultiplier;
 
         protected PlayerManager playerManager;
         [SerializeField] protected Animator animator;
@@ -33,6 +34,11 @@ namespace Nytherion.GamePlay.Combat
             if (animator == null)
             {
                 animator = GetComponentInChildren<Animator>();
+            }
+
+            if (GetComponent<WeaponSortingOrderSync>() == null)
+            {
+                gameObject.AddComponent<WeaponSortingOrderSync>();
             }
         }
 

@@ -24,6 +24,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private EventManager eventManager;
         private StatusEffectManager statusEffectManager;
         private PlayerManager playerManager;
+        private string poolTag;
 
         [Header("Hit Flash")]
         [SerializeField] private SpriteRenderer spriteRenderer;
@@ -34,6 +35,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void Awake()
         {
+            if (spriteRenderer == null)
+            {
+                spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+            if (spriteRenderer != null)
+            {
+                originalColor = spriteRenderer.color;
+            }
+
             statusEffectManager = GetComponent<StatusEffectManager>();
             if (statusEffectManager == null)
             {
@@ -50,16 +60,29 @@ namespace Nytherion.GamePlay.Characters.Enemy
         }
         public void Initialize(EnemyData data)
         {
+            if (data == null) return;
+
             enemyData = data;
+            poolTag = data.enemyName;
             currentHealth = data.maxHealth;
             isDead = false;
+            homeRoom = null;
             gameObject.SetActive(true);
-            originalColor=spriteRenderer.color;
+
+            if (hitFlashCoroutine != null)
+            {
+                StopCoroutine(hitFlashCoroutine);
+                hitFlashCoroutine = null;
+            }
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = originalColor;
+            }
+
             aiController = GetComponent<EnemyAIController>();
             if (aiController != null)
             {
-                aiController.ApplyEnemyData(data);
-    
+                aiController.ResetForReuse(data);
             }
 
             if (statusEffectManager != null)
@@ -124,9 +147,32 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             isDead = true;
             DropItems();
-            aiController.agent.enabled=false;
-            eventManager.TriggerEnemyDeathEvent(this);
-            gameObject.SetActive(false);
+
+            if (aiController != null)
+            {
+                aiController.PrepareForPoolReturn();
+            }
+
+            RoomFirstDungeonGenerator.Room deathRoom = homeRoom;
+            if (deathRoom != null)
+            {
+                deathRoom.enemies.Remove(this);
+            }
+
+            eventManager?.TriggerEnemyDeathEvent(this);
+            ReturnToPool();
+        }
+
+        private void ReturnToPool()
+        {
+            if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
+            {
+                ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
         private void PlayHitFlash()
         {
@@ -167,8 +213,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void DropItems()
         {
-            
-            if (Random.value <= enemyData.dropChance)
+            if (enemyData != null && currencyDataManager != null && Random.value <= enemyData.dropChance)
             {
                 currencyDataManager.AddCurrency(Core.Enums.CurrencyType.Gold,10);
             }

@@ -37,6 +37,10 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Header("복합 효과 및 조건 모듈")]
         public List<RelicEffectModule> effectModules = new List<RelicEffectModule>();
 
+        [Header("전투 보정")]
+        [Tooltip("활성화 중인 동안 모든 원거리 투사체에 유도 기능을 부여합니다.")]
+        public bool grantsProjectileHoming;
+
         [Header("각인 모양 (1x1 고정)")]
         public List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };
 
@@ -47,6 +51,9 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Header("시너지 설정")]
         [Tooltip("같은 계열의 시너지 부품임을 식별하는 ID (비어있으면 시너지 없음)")]
         public string synergySeriesId;
+
+        [Tooltip("같은 계열 유물들이 공유하는 세트 보너스 데이터")]
+        public RelicSetBonusData synergySetBonusData;
 
         [Header("해금 설정")]
         [Tooltip("이 유물을 해금하기 위해 필요한 마일스톤 ID (비어있으면 기본 해금)")]

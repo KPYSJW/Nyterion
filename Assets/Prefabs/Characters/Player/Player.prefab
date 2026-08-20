@@ -218,10 +218,12 @@ GameObject:
   - component: {fileID: 2180091910043822190}
   - component: {fileID: 6852058077325633452}
   - component: {fileID: 7562096975272180810}
+  - component: {fileID: 4367693792231427975}
   - component: {fileID: -2891475838477974602}
   - component: {fileID: -2633095540676331646}
   - component: {fileID: 5387959611554575142}
   - component: {fileID: 6875944264814812150}
+  - component: {fileID: -1890013820121428733}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -372,7 +374,7 @@ Animator:
   m_GameObject: {fileID: 5097942217742227509}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ebfd1b8a995dfc9448ad1d00b22ab7e9, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8d89458a6a3b4c05a3130a5b1e44e009, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -450,6 +452,20 @@ MonoBehaviour:
   rb: {fileID: 4926970481670371563}
   spriteRenderer: {fileID: 7144026513014664610}
   animator: {fileID: 4850890469495388231}
+--- !u!114 &4367693792231427975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5097942217742227509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76f5a5dde7894d2ba46d72f591689857, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  sourceRenderer: {fileID: 7144026513014664610}
+  afterimageMaterial: {fileID: 2100000, guid: e6e769a9417b49a3b83fad8eb7ab813e, type: 2}
 --- !u!114 &-2891475838477974602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -502,6 +518,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chargeSlider: {fileID: 3457027639552196742}
+--- !u!114 &-1890013820121428733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5097942217742227509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a1b6b9e3f3a432d8472947e4c1680b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 7144026513014664610}
+  animator: {fileID: 4850890469495388231}
+  rb: {fileID: 4926970481670371563}
+  playerController: {fileID: 7562096975272180810}
 --- !u!1 &5200688149237149439
 GameObject:
   m_ObjectHideFlags: 0

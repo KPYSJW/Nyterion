@@ -101,5 +101,11 @@ namespace Nytherion.GamePlay.Combat.Behaviors
 
             return dmg;
         }
+
+        public void ResetForReuse()
+        {
+            lastAttackTime = -999f;
+            player = null;
+        }
     }
 }

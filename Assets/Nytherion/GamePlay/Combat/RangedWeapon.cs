@@ -3,6 +3,7 @@ using Nytherion.Core.Managers;
 using System.Collections;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Interfaces;
+using Nytherion.GamePlay.Skills;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -42,10 +43,17 @@ namespace Nytherion.GamePlay.Combat
         public float projectileSpeed = 8f;
 
         private WaitForSeconds burstWait;
+        private WeaponCrossbowRecoil crossbowRecoil;
 
         public override void Initialize(WeaponData data)
         {
             base.Initialize(data);
+
+            if (crossbowRecoil == null)
+            {
+                crossbowRecoil = GetComponent<WeaponCrossbowRecoil>();
+            }
+            crossbowRecoil?.CacheRestPose();
 
             if (data != null)
             {
@@ -109,15 +117,29 @@ namespace Nytherion.GamePlay.Combat
             {
                 iProj.SetSpeed(projectileSpeed);
             }
-            
+
+            CombatModifierSnapshot currentSnapshot = playerManager != null && playerManager.playerRelicManager != null
+                ? playerManager.playerRelicManager.CombatModifiers
+                : CombatModifierSnapshot.Empty;
+
+            bool shouldUseHoming = weaponData != null && weaponData.hasHomingProjectiles;
+            shouldUseHoming |= currentSnapshot.HasProjectileHoming;
+
+            HomingProjectile homingProjectile;
+            if (!projectile.TryGetComponent(out homingProjectile) && shouldUseHoming)
+            {
+                homingProjectile = projectile.AddComponent<HomingProjectile>();
+            }
+
+            if (homingProjectile != null)
+            {
+                homingProjectile.SetHomingEnabled(shouldUseHoming, projectileSpeed);
+            }
             
             if (projectile.TryGetComponent<CollisionObject>(out CollisionObject collisionObj))
             {
                 if (weaponData != null)
                 {
-                    CombatModifierSnapshot currentSnapshot = playerManager != null && playerManager.playerRelicManager != null
-                        ? playerManager.playerRelicManager.CombatModifiers
-                        : CombatModifierSnapshot.Empty;
                     collisionObj.Configure(
                         weaponData.damage * EffectiveDamageMultiplier * projectileDamageMultiplier,
                         GetTraits(),
@@ -222,6 +244,18 @@ namespace Nytherion.GamePlay.Combat
                 float baseDamage = weaponData.damage * EffectiveDamageMultiplier * projectileDamageMultiplier;
                 eventManager.TriggerPlayerRangedAttack(direction, totalCount, baseDamage, firePoint, projectilePoolTag);
             }
+
+            PlayWeaponRecoil(direction);
+        }
+
+        protected void PlayWeaponRecoil(Vector2 direction, float strength = 1f)
+        {
+            if (crossbowRecoil == null)
+            {
+                crossbowRecoil = GetComponent<WeaponCrossbowRecoil>();
+            }
+
+            crossbowRecoil?.Play(direction, strength);
         }
 
         private IEnumerator FireBurstRoutine(

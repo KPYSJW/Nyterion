@@ -430,6 +430,14 @@ namespace Nytherion.Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space(10);
+            selectedRelic.synergySeriesId = EditorGUILayout.TextField("Synergy Series ID", selectedRelic.synergySeriesId);
+            selectedRelic.synergySetBonusData = (RelicSetBonusData)EditorGUILayout.ObjectField(
+                "Set Bonus Data",
+                selectedRelic.synergySetBonusData,
+                typeof(RelicSetBonusData),
+                false);
+
+            EditorGUILayout.Space(10);
             selectedRelic.unlockMilestoneID = EditorGUILayout.TextField("Unlock Milestone ID", selectedRelic.unlockMilestoneID);
 
             EditorGUILayout.Space(10);

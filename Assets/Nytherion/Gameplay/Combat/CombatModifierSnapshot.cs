@@ -11,23 +11,26 @@ namespace Nytherion.GamePlay.Combat
     public sealed class CombatModifierSnapshot
     {
         public static readonly CombatModifierSnapshot Empty =
-            new CombatModifierSnapshot(new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase));
+            new CombatModifierSnapshot(new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase), false);
 
         private readonly Dictionary<string, int> activeRelicLevels;
 
         public bool HasProjectilePiercing { get; }
         public bool HasProjectileBounce { get; }
+        public bool HasProjectileHoming { get; }
 
-        private CombatModifierSnapshot(Dictionary<string, int> activeRelicLevels)
+        private CombatModifierSnapshot(Dictionary<string, int> activeRelicLevels, bool hasProjectileHoming)
         {
             this.activeRelicLevels = activeRelicLevels;
             HasProjectilePiercing = IsAnyActive("Piercing", "관통", "TangledYarn", "꼬인 실타래");
             HasProjectileBounce = IsAnyActive("Bounce", "튕김", "SqueakyGear", "삐걱이는 톱니");
+            HasProjectileHoming = hasProjectileHoming;
         }
 
         public static CombatModifierSnapshot Create(IReadOnlyList<RelicData> relics)
         {
             Dictionary<string, int> levels = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            bool hasProjectileHoming = false;
             if (relics != null)
             {
                 for (int i = 0; i < relics.Count; i++)
@@ -38,10 +41,11 @@ namespace Nytherion.GamePlay.Combat
                     AddLevel(levels, relic.name, relic.level);
                     AddLevel(levels, relic.relicName, relic.level);
                     AddLevel(levels, relic.koreanName, relic.level);
+                    hasProjectileHoming |= relic.grantsProjectileHoming;
                 }
             }
 
-            return new CombatModifierSnapshot(levels);
+            return new CombatModifierSnapshot(levels, hasProjectileHoming);
         }
 
         public bool IsActive(string relicId)

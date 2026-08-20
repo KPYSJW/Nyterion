@@ -356,7 +356,7 @@ namespace Nytherion.GamePlay.Dungeon
                 return true;
             }
 
-            return room.enemies.Count > 0 && room.enemies.All(monster => monster.isDead);
+            return room.enemies.All(monster => monster == null || monster.isDead);
         }
 
         public void SaveDungeonCheckpoint(RoomFirstDungeonGenerator.Room room, Vector2 playerPosition, bool forceSave)
@@ -727,7 +727,6 @@ namespace Nytherion.GamePlay.Dungeon
             if (bossObj != null && bossObj.TryGetComponent<EnemyBase>(out var bossEnemy))
             {
                 bossEnemy.Initialize(dungeonData.bossMonsterData);
-                bossEnemy.aiController.agent.enabled = true;
                 bossEnemy.homeRoom = bossRoom;
                 bossRoom.enemies.Add(bossEnemy);
                 hasBossSpawned = true;

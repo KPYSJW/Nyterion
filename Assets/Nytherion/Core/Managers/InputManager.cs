@@ -10,6 +10,10 @@ namespace Nytherion.Core.Managers
         public static InputManager Instance { get; private set; }
         private PlayerAction playerActions;
 
+        [Header("유물 UI 입력")]
+        [SerializeField, Tooltip("유물 창을 열고 닫는 키")]
+        private Key relicUIToggleKey = Key.U;
+
         public Vector2 MoveInput { get; private set; }
         public bool Dash { get; private set; }
         public bool IsControlPressed { get; private set; }
@@ -163,7 +167,8 @@ namespace Nytherion.Core.Managers
 
         private void Update()
         {
-            if (Keyboard.current != null && Keyboard.current.uKey.wasPressedThisFrame)
+            if (Keyboard.current != null && relicUIToggleKey != Key.None &&
+                Keyboard.current[relicUIToggleKey].wasPressedThisFrame)
             {
                 onToggleRelicUI?.Invoke();
             }

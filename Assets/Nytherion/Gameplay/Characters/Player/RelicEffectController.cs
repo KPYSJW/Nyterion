@@ -14,9 +14,24 @@ namespace Nytherion.GamePlay.Characters.Player
     {
         private PlayerManager playerManager;
         private PlayerRelicManager relicManager;
+        private RelicManager globalRelicManager;
 
         // 현재 장착된 각인 모듈들 중 활성화(조건 만족)된 모듈과 그 레벨을 추적
         private Dictionary<RelicEffectModule, int> activeModuleLevels = new Dictionary<RelicEffectModule, int>();
+
+        private readonly struct EquippedModuleData
+        {
+            public readonly Object Owner;
+            public readonly int Level;
+            public readonly bool IsDisabled;
+
+            public EquippedModuleData(Object owner, int level, bool isDisabled)
+            {
+                Owner = owner;
+                Level = level;
+                IsDisabled = isDisabled;
+            }
+        }
 
         private bool isEvaluating = false;
 
@@ -34,7 +49,7 @@ namespace Nytherion.GamePlay.Characters.Player
             }
             
             // 전역 이벤트(OnRelicStateChanged 등)를 통해 레벨 변동 감지
-            var globalRelicManager = FindObjectOfType<RelicManager>();
+            globalRelicManager = FindObjectOfType<RelicManager>();
             if (globalRelicManager != null)
             {
                 globalRelicManager.OnRelicStateChanged += HandleRelicsChanged;
@@ -55,7 +70,6 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 relicManager.OnRelicsChanged -= HandleRelicsChanged;
             }
-            var globalRelicManager = FindObjectOfType<RelicManager>();
             if (globalRelicManager != null)
             {
                 globalRelicManager.OnRelicStateChanged -= HandleRelicsChanged;
@@ -98,38 +112,89 @@ namespace Nytherion.GamePlay.Characters.Player
                 isEvaluating = true;
 
                 // 현재 장착된 모든 각인의 모든 모듈과 해당 각인의 레벨을 수집
-                Dictionary<RelicEffectModule, (RelicData relic, int level)> currentlyEquippedModules = new Dictionary<RelicEffectModule, (RelicData, int)>();
+                Dictionary<RelicEffectModule, EquippedModuleData> currentlyEquippedModules =
+                    new Dictionary<RelicEffectModule, EquippedModuleData>();
+                HashSet<RelicSetBonusData> equippedSetBonuses = new HashSet<RelicSetBonusData>();
+                HashSet<RelicTranscendenceData> linkedTranscendenceEffects =
+                    new HashSet<RelicTranscendenceData>();
                 
-                // 각 유물별로 동일한 targetSeriesId를 가진 ChainSynergyCondition 중 만족하는 최대 requiredChainLength를 구함
-                Dictionary<RelicData, Dictionary<string, int>> relicMaxSatisfiedChains = new Dictionary<RelicData, Dictionary<string, int>>();
-
                 foreach (RelicData relic in relicManager.GetCurrentRelics())
                 {
                     if (relic != null && relic.effectModules != null)
                     {
                         foreach (RelicEffectModule module in relic.effectModules)
                         {
-                            currentlyEquippedModules[module] = (relic, relic.level);
-
-                            if (module.condition is ChainSynergyCondition chainCond)
-                            {
-                                bool isConditionMet = chainCond.IsConditionMet(playerManager, relic.level);
-                                if (isConditionMet)
-                                {
-                                    if (!relicMaxSatisfiedChains.ContainsKey(relic))
-                                    {
-                                        relicMaxSatisfiedChains[relic] = new Dictionary<string, int>();
-                                    }
-
-                                    string seriesId = chainCond.targetSeriesId;
-                                    if (!relicMaxSatisfiedChains[relic].ContainsKey(seriesId) ||
-                                        chainCond.requiredChainLength > relicMaxSatisfiedChains[relic][seriesId])
-                                    {
-                                        relicMaxSatisfiedChains[relic][seriesId] = chainCond.requiredChainLength;
-                                    }
-                                }
-                            }
+                            if (module == null) continue;
+                            currentlyEquippedModules[module] = new EquippedModuleData(relic, relic.level, relic.isDisabled);
                         }
+                    }
+
+                    if (relic != null && relic.synergySetBonusData != null &&
+                        relic.synergySeriesId == relic.synergySetBonusData.synergySeriesId)
+                    {
+                        equippedSetBonuses.Add(relic.synergySetBonusData);
+                    }
+                }
+
+                // 공유 세트 모듈은 여러 유물이 참조해도 세트당 한 번만 등록한다.
+                foreach (RelicSetBonusData setBonus in equippedSetBonuses)
+                {
+                    if (setBonus == null || setBonus.bonusModules == null) continue;
+
+                    foreach (RelicEffectModule module in setBonus.bonusModules)
+                    {
+                        if (module == null) continue;
+                        currentlyEquippedModules[module] = new EquippedModuleData(setBonus, 1, false);
+                    }
+
+                    if (setBonus.linkedTranscendenceEffects == null) continue;
+                    foreach (RelicTranscendenceData transcendence in setBonus.linkedTranscendenceEffects)
+                    {
+                        if (transcendence != null)
+                        {
+                            linkedTranscendenceEffects.Add(transcendence);
+                        }
+                    }
+                }
+
+                // 초월 효과는 모든 하위 세트의 요구 수량을 만족한 동안만 효과 모듈을 등록한다.
+                foreach (RelicTranscendenceData transcendence in linkedTranscendenceEffects)
+                {
+                    if (transcendence == null || !transcendence.IsActive(globalRelicManager) ||
+                        transcendence.effectModules == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (RelicEffectModule module in transcendence.effectModules)
+                    {
+                        if (module == null) continue;
+                        currentlyEquippedModules[module] = new EquippedModuleData(transcendence, 1, false);
+                    }
+                }
+
+                // 유물 또는 공유 세트별로 조건을 만족한 가장 높은 단계만 활성화한다.
+                Dictionary<Object, Dictionary<string, int>> maxSatisfiedChains =
+                    new Dictionary<Object, Dictionary<string, int>>();
+                foreach (KeyValuePair<RelicEffectModule, EquippedModuleData> pair in currentlyEquippedModules)
+                {
+                    if (!(pair.Key.condition is ChainSynergyCondition chainCondition) ||
+                        !chainCondition.IsConditionMet(playerManager, pair.Value.Level))
+                    {
+                        continue;
+                    }
+
+                    if (!maxSatisfiedChains.TryGetValue(pair.Value.Owner, out Dictionary<string, int> ownerTiers))
+                    {
+                        ownerTiers = new Dictionary<string, int>();
+                        maxSatisfiedChains[pair.Value.Owner] = ownerTiers;
+                    }
+
+                    string tierGroup = GetChainTierGroup(chainCondition);
+                    if (!ownerTiers.TryGetValue(tierGroup, out int currentMaximum) ||
+                        chainCondition.requiredChainLength > currentMaximum)
+                    {
+                        ownerTiers[tierGroup] = chainCondition.requiredChainLength;
                     }
                 }
 
@@ -140,33 +205,15 @@ namespace Nytherion.GamePlay.Characters.Player
                 {
                     int oldLevel = activeModuleLevels[activeModule];
 
-                    bool isStillEquipped = currentlyEquippedModules.TryGetValue(activeModule, out (RelicData relic, int level) data);
+                    bool isStillEquipped = currentlyEquippedModules.TryGetValue(activeModule, out EquippedModuleData data);
                     // 장착 해제, 레벨 변경, 혹은 비활성화 상태가 된 경우 제거 대상으로 지정
-                    if (!isStillEquipped || oldLevel != data.level || data.relic.isDisabled)
+                    if (!isStillEquipped || oldLevel != data.Level || data.IsDisabled)
                     {
                         DeactivateModule(activeModule, oldLevel);
                     }
                     else
                     {
-                        bool isConditionMet = false;
-                        if (activeModule.condition == null)
-                        {
-                            isConditionMet = true;
-                        }
-                        else if (activeModule.condition is ChainSynergyCondition chainCond)
-                        {
-                            string seriesId = chainCond.targetSeriesId;
-                            bool hasMaxMet = relicMaxSatisfiedChains.TryGetValue(data.relic, out Dictionary<string, int> seriesDict) &&
-                                             seriesDict.TryGetValue(seriesId, out int maxReq) &&
-                                             chainCond.requiredChainLength == maxReq;
-                            isConditionMet = hasMaxMet;
-                        }
-                        else
-                        {
-                            isConditionMet = activeModule.condition.IsConditionMet(playerManager, data.level);
-                        }
-
-                        if (!isConditionMet)
+                        if (!IsModuleConditionMet(activeModule, data, maxSatisfiedChains))
                         {
                             DeactivateModule(activeModule, oldLevel);
                         }
@@ -174,33 +221,15 @@ namespace Nytherion.GamePlay.Characters.Player
                 }
 
                 // 2. 현재 장착된 모듈 중, 새롭게 조건이 충족되었거나 레벨이 갱신되어 활성화해야 할 모듈 처리 (Apply)
-                foreach (KeyValuePair<RelicEffectModule, (RelicData relic, int level)> kvp in currentlyEquippedModules)
+                foreach (KeyValuePair<RelicEffectModule, EquippedModuleData> kvp in currentlyEquippedModules)
                 {
                     RelicEffectModule module = kvp.Key;
-                    RelicData relic = kvp.Value.relic;
-                    int currentLevel = kvp.Value.level;
+                    EquippedModuleData data = kvp.Value;
+                    int currentLevel = data.Level;
 
-                    if (!activeModuleLevels.ContainsKey(module) && !relic.isDisabled)
+                    if (!activeModuleLevels.ContainsKey(module) && !data.IsDisabled)
                     {
-                        bool isConditionMet = false;
-                        if (module.condition == null)
-                        {
-                            isConditionMet = true;
-                        }
-                        else if (module.condition is ChainSynergyCondition chainCond)
-                        {
-                            string seriesId = chainCond.targetSeriesId;
-                            bool hasMaxMet = relicMaxSatisfiedChains.TryGetValue(relic, out Dictionary<string, int> seriesDict) &&
-                                             seriesDict.TryGetValue(seriesId, out int maxReq) &&
-                                             chainCond.requiredChainLength == maxReq;
-                            isConditionMet = hasMaxMet;
-                        }
-                        else
-                        {
-                            isConditionMet = module.condition.IsConditionMet(playerManager, currentLevel);
-                        }
-
-                        if (isConditionMet)
+                        if (IsModuleConditionMet(module, data, maxSatisfiedChains))
                         {
                             ActivateModule(module, currentLevel);
                         }
@@ -211,6 +240,28 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 isEvaluating = false;
             }
+        }
+
+        private bool IsModuleConditionMet(
+            RelicEffectModule module,
+            EquippedModuleData data,
+            Dictionary<Object, Dictionary<string, int>> maxSatisfiedChains)
+        {
+            if (module.condition == null) return true;
+
+            if (module.condition is ChainSynergyCondition chainCondition)
+            {
+                return maxSatisfiedChains.TryGetValue(data.Owner, out Dictionary<string, int> ownerTiers) &&
+                       ownerTiers.TryGetValue(GetChainTierGroup(chainCondition), out int maximumRequirement) &&
+                       chainCondition.requiredChainLength == maximumRequirement;
+            }
+
+            return module.condition.IsConditionMet(playerManager, data.Level);
+        }
+
+        private static string GetChainTierGroup(ChainSynergyCondition condition)
+        {
+            return $"{(int)condition.measure}:{condition.targetSeriesId}";
         }
 
         private void ActivateModule(RelicEffectModule module, int level)

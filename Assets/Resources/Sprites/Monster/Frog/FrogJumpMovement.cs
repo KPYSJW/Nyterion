@@ -58,6 +58,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             enemyAIController?.SetMovementAllowed(false);
             landingAttack?.DeactivateCollider();
             attackRangePreview?.SetActive(false);
+            landingEffect?.SetActive(false);
 
             if (animator != null)
             {
@@ -73,7 +74,27 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 landingRoutine = null;
             }
             attackRangePreview?.SetActive(false);
+            landingEffect?.SetActive(false);
             landingAttack?.DeactivateCollider();
+        }
+
+        public void ResetForReuse()
+        {
+            if (landingRoutine != null)
+            {
+                StopCoroutine(landingRoutine);
+                landingRoutine = null;
+            }
+
+            enemyAIController?.SetMovementAllowed(false);
+            landingAttack?.ResetForReuse();
+            attackRangePreview?.SetActive(false);
+            landingEffect?.SetActive(false);
+
+            if (animator != null)
+            {
+                animator.Play("Idle", 0, 0f);
+            }
         }
 
         // Run 애니메이션의 점프 시작 프레임에서 호출

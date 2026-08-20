@@ -17,6 +17,23 @@ namespace Nytherion.UI.Components
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI descriptionText;
         [SerializeField] private Image itemImage;
+        [SerializeField] private Image itemImageBackground;
+
+        private Sprite defaultItemImageBackgroundSprite;
+        private Color defaultNameTextColor;
+        private Image nameTextBackground;
+        private Texture2D nameTextBackgroundTexture;
+        private Sprite nameTextBackgroundSprite;
+
+        private const float NameBackgroundHorizontalPadding = 28f;
+        private const float NameBackgroundVerticalPadding = 10f;
+        private const int NameBackgroundTextureSize = 32;
+        private const float NameBackgroundCornerRadius = 8f;
+
+        private static readonly Color32 DescriptionBaseColor = new Color32(46, 24, 20, 255);
+        private const string DescriptionDefaultColorHex = "#2E1814";
+        private const string DescriptionCurseColorHex = "#A02A2A";
+        private const string DescriptionInvertedColorHex = "#7A2E87";
 
         private void Awake()
         {
@@ -24,6 +41,26 @@ namespace Nytherion.UI.Components
                 Instance = this;
             else 
                 Destroy(gameObject);
+
+            if (itemImageBackground == null && panel != null)
+            {
+                Transform backgroundTransform = panel.transform.Find("ItemImageBackground");
+                if (backgroundTransform != null)
+                {
+                    itemImageBackground = backgroundTransform.GetComponent<Image>();
+                }
+            }
+
+            if (itemImageBackground != null)
+            {
+                defaultItemImageBackgroundSprite = itemImageBackground.sprite;
+            }
+
+            if (nameText != null)
+            {
+                defaultNameTextColor = nameText.color;
+                InitializeNameTextBackground();
+            }
 
             canvasGroup.blocksRaycasts = false;
             
@@ -44,6 +81,16 @@ namespace Nytherion.UI.Components
         private void OnDestroy()
         {
             Canvas.willRenderCanvases -= OnCanvasRender;
+
+            if (nameTextBackgroundSprite != null)
+            {
+                Destroy(nameTextBackgroundSprite);
+            }
+
+            if (nameTextBackgroundTexture != null)
+            {
+                Destroy(nameTextBackgroundTexture);
+            }
         }
 
         private void OnCanvasRender()
@@ -99,10 +146,13 @@ namespace Nytherion.UI.Components
             panelRect.position = finalPos;
         }
 
-        public void ShowTooltip(ItemData item)
+        public void ShowTooltip(ItemData item, Sprite slotBackgroundSprite = null)
         {
             if (item == null) 
                 return;
+
+            SetItemImageBackground(slotBackgroundSprite);
+            SetItemNameColor(item);
                 
             string finalDesc = item.description;
 
@@ -156,8 +206,8 @@ namespace Nytherion.UI.Components
                     finalDamage = Mathf.Max(0, finalDamage);
                     finalCooldown = Mathf.Max(0.1f, finalCooldown);
 
-                    string weaponStats = $"<color=#FFD700>[공격력: {finalDamage:F1}]</color>\n";
-                    weaponStats += $"<color=#00FFFF>[공격 속도: {finalCooldown:F1}초]</color>\n\n";
+                    string weaponStats = $"<color={DescriptionDefaultColorHex}>[공격력: {finalDamage:F1}]</color>\n";
+                    weaponStats += $"<color={DescriptionDefaultColorHex}>[공격 속도: {finalCooldown:F1}초]</color>\n\n";
 
                     finalDesc = weaponStats + finalDesc;
                 }
@@ -165,7 +215,7 @@ namespace Nytherion.UI.Components
                 // 모디파이어 텍스트 생성
                 if (equipData.statModifiers != null && equipData.statModifiers.Count > 0)
                 {
-                    finalDesc += "\n\n<color=#AAAAAA><추가 능력치></color>";
+                    finalDesc += $"\n\n<color={DescriptionDefaultColorHex}><추가 능력치></color>";
                     foreach (var mod in equipData.statModifiers)
                     {
                         float displayValue = mod.value;
@@ -179,16 +229,17 @@ namespace Nytherion.UI.Components
 
                         string sign = displayValue > 0 ? "+" : "";
                         string percent = mod.isPercentage ? "%" : "";
-                        string color = displayValue > 0 ? "#00FF00" : "#FF0000";
-                        if (inverted) color = "#FF00FF"; // 반전 시 특별한 색상
+                        string color = displayValue > 0 ? DescriptionDefaultColorHex : DescriptionCurseColorHex;
+                        if (inverted) color = DescriptionInvertedColorHex; // 반전 시 특별한 색상
 
                         finalDesc += $"\n<color={color}>{mod.stat} {sign}{displayValue}{percent}</color>";
-                        if (inverted) finalDesc += " <color=#FF00FF>(반전됨!)</color>";
+                        if (inverted) finalDesc += $" <color={DescriptionInvertedColorHex}>(반전됨!)</color>";
                     }
                 }
             }
             
             SetContent(item.itemName, finalDesc);
+            ShowNameTextBackground();
             
             if (itemImage != null)
             {
@@ -210,6 +261,9 @@ namespace Nytherion.UI.Components
         {
             if (skill == null)
                 return;
+
+            SetItemImageBackground(null);
+            ResetNameTextColor();
 
             string skillStats = $"[Lv.{level}] 경험치: {currentExp} / {requiredExp}\n\n" +
                                 $"데미지: {skill.damage}\n" +
@@ -240,7 +294,12 @@ namespace Nytherion.UI.Components
         {
             if (milestone == null) return;
 
-            string statusText = isCompleted ? "<color=#00FF00>달성 완료</color>" : $"<color=#FFB400>진행 중 ({currentVal} / {targetVal})</color>";
+            SetItemImageBackground(null);
+            ResetNameTextColor();
+
+            string statusText = isCompleted
+                ? $"<color={DescriptionDefaultColorHex}>달성 완료</color>"
+                : $"<color={DescriptionDefaultColorHex}>진행 중 ({currentVal} / {targetVal})</color>";
 
             string content = $"{milestone.description}\n\n상태: {statusText}";
 
@@ -284,10 +343,205 @@ namespace Nytherion.UI.Components
         public void HideTooltip()
         {
             panel.SetActive(false);
+            SetItemImageBackground(null);
+            ResetNameTextColor();
             if (itemImage != null)
             {
                 itemImage.gameObject.SetActive(false);
             }
+        }
+
+        private void SetItemImageBackground(Sprite backgroundSprite)
+        {
+            if (itemImageBackground != null)
+            {
+                itemImageBackground.sprite = backgroundSprite != null
+                    ? backgroundSprite
+                    : defaultItemImageBackgroundSprite;
+            }
+        }
+
+        private void SetItemNameColor(ItemData item)
+        {
+            if (nameText == null)
+            {
+                return;
+            }
+
+            Rarity rarity = item is EquipmentData equipmentData
+                ? equipmentData.rarity
+                : Rarity.Common;
+
+            nameText.color = rarity switch
+            {
+                Rarity.Common => new Color32(170, 170, 170, 255),
+                Rarity.Uncommon => new Color32(39, 232, 106, 255),
+                Rarity.Rare => new Color32(21, 154, 232, 255),
+                Rarity.Epic => new Color32(181, 65, 238, 255),
+                Rarity.Legendary => new Color32(255, 196, 0, 255),
+                _ => defaultNameTextColor
+            };
+
+            if (nameTextBackground != null)
+            {
+                nameTextBackground.color = GetItemNameBackgroundColor(rarity);
+            }
+        }
+
+        private void ResetNameTextColor()
+        {
+            if (nameText != null)
+            {
+                nameText.color = defaultNameTextColor;
+            }
+
+            if (nameTextBackground != null)
+            {
+                nameTextBackground.gameObject.SetActive(false);
+            }
+        }
+
+        private void InitializeNameTextBackground()
+        {
+            Transform parent = nameText.transform.parent;
+            if (parent == null)
+            {
+                return;
+            }
+
+            Transform existingBackground = parent.Find("ItemNameTextBackground");
+            if (existingBackground != null)
+            {
+                nameTextBackground = existingBackground.GetComponent<Image>();
+            }
+
+            if (nameTextBackground == null)
+            {
+                GameObject backgroundObject = new GameObject(
+                    "ItemNameTextBackground",
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(Image));
+
+                backgroundObject.layer = nameText.gameObject.layer;
+                backgroundObject.transform.SetParent(parent, false);
+                backgroundObject.transform.SetSiblingIndex(nameText.transform.GetSiblingIndex());
+                nameTextBackground = backgroundObject.GetComponent<Image>();
+            }
+
+            nameTextBackgroundSprite = CreateRoundedBackgroundSprite();
+            nameTextBackground.sprite = nameTextBackgroundSprite;
+            nameTextBackground.type = Image.Type.Sliced;
+            nameTextBackground.raycastTarget = false;
+            nameTextBackground.gameObject.SetActive(false);
+        }
+
+        private Sprite CreateRoundedBackgroundSprite()
+        {
+            nameTextBackgroundTexture = new Texture2D(
+                NameBackgroundTextureSize,
+                NameBackgroundTextureSize,
+                TextureFormat.RGBA32,
+                false)
+            {
+                name = "RuntimeTooltipNameBackground",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+                hideFlags = HideFlags.HideAndDontSave
+            };
+
+            Color32[] pixels = new Color32[NameBackgroundTextureSize * NameBackgroundTextureSize];
+            float halfSize = NameBackgroundTextureSize * 0.5f;
+            Vector2 boxSize = new Vector2(halfSize, halfSize);
+
+            for (int y = 0; y < NameBackgroundTextureSize; y++)
+            {
+                for (int x = 0; x < NameBackgroundTextureSize; x++)
+                {
+                    Vector2 point = new Vector2(x + 0.5f - halfSize, y + 0.5f - halfSize);
+                    Vector2 distanceToEdge = new Vector2(
+                        Mathf.Abs(point.x),
+                        Mathf.Abs(point.y)) - boxSize + Vector2.one * NameBackgroundCornerRadius;
+
+                    Vector2 outsideDistance = new Vector2(
+                        Mathf.Max(distanceToEdge.x, 0f),
+                        Mathf.Max(distanceToEdge.y, 0f));
+                    float signedDistance = outsideDistance.magnitude
+                        + Mathf.Min(Mathf.Max(distanceToEdge.x, distanceToEdge.y), 0f)
+                        - NameBackgroundCornerRadius;
+                    byte alpha = (byte)Mathf.RoundToInt(Mathf.Clamp01(0.5f - signedDistance) * 255f);
+
+                    pixels[y * NameBackgroundTextureSize + x] = new Color32(255, 255, 255, alpha);
+                }
+            }
+
+            nameTextBackgroundTexture.SetPixels32(pixels);
+            nameTextBackgroundTexture.Apply(false, true);
+
+            Sprite roundedSprite = Sprite.Create(
+                nameTextBackgroundTexture,
+                new Rect(0f, 0f, NameBackgroundTextureSize, NameBackgroundTextureSize),
+                new Vector2(0.5f, 0.5f),
+                100f,
+                0,
+                SpriteMeshType.FullRect,
+                Vector4.one * NameBackgroundCornerRadius);
+            roundedSprite.name = "RuntimeTooltipNameBackgroundSprite";
+            roundedSprite.hideFlags = HideFlags.HideAndDontSave;
+            return roundedSprite;
+        }
+
+        private static Color32 GetItemNameBackgroundColor(Rarity rarity)
+        {
+            return rarity switch
+            {
+                Rarity.Common => new Color32(36, 36, 36, 235),
+                Rarity.Uncommon => new Color32(12, 49, 28, 235),
+                Rarity.Rare => new Color32(9, 30, 52, 235),
+                Rarity.Epic => new Color32(31, 10, 43, 235),
+                Rarity.Legendary => new Color32(55, 34, 3, 235),
+                _ => new Color32(36, 36, 36, 235)
+            };
+        }
+
+        private void ShowNameTextBackground()
+        {
+            if (nameText == null || nameTextBackground == null)
+            {
+                return;
+            }
+
+            RectTransform nameRect = nameText.rectTransform;
+            RectTransform backgroundRect = nameTextBackground.rectTransform;
+            RectTransform parentRect = nameRect.parent as RectTransform;
+
+            Vector2 preferredSize = nameText.GetPreferredValues(nameText.text, 10000f, 10000f);
+            float backgroundWidth = preferredSize.x + NameBackgroundHorizontalPadding;
+            float backgroundHeight = preferredSize.y + NameBackgroundVerticalPadding;
+
+            if (parentRect != null)
+            {
+                if (parentRect.rect.width > 0f)
+                {
+                    backgroundWidth = Mathf.Min(backgroundWidth, Mathf.Max(48f, parentRect.rect.width - 8f));
+                }
+
+                if (parentRect.rect.height > 0f)
+                {
+                    backgroundHeight = Mathf.Min(backgroundHeight, Mathf.Max(24f, parentRect.rect.height - 4f));
+                }
+            }
+
+            Vector2 centerAnchor = (nameRect.anchorMin + nameRect.anchorMax) * 0.5f;
+            backgroundRect.anchorMin = centerAnchor;
+            backgroundRect.anchorMax = centerAnchor;
+            backgroundRect.pivot = nameRect.pivot;
+            backgroundRect.anchoredPosition = nameRect.anchoredPosition;
+            backgroundRect.sizeDelta = new Vector2(backgroundWidth, backgroundHeight);
+            backgroundRect.localRotation = nameRect.localRotation;
+            backgroundRect.localScale = nameRect.localScale;
+
+            nameTextBackground.gameObject.SetActive(true);
         }
 
         private void SetContent(string name, string desc)
@@ -296,7 +550,10 @@ namespace Nytherion.UI.Components
                 nameText.text = name;
                 
             if (descriptionText != null)
+            {
+                descriptionText.color = DescriptionBaseColor;
                 descriptionText.text = desc;
+            }
         }
     }
 }

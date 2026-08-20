@@ -13,20 +13,26 @@ namespace Nytherion.UI.Controllers
         private InputManager inputManager;
         private GameSceneUIRefs gameSceneUIRefs;
         private RelicGridUI relicGridUI;
+        private RelicManager relicManager;
+        private RelicEffectStatusUI effectStatusUI;
 
         [Inject]
         public void Construct(
             GameSceneUIRefs gameSceneUIRefs,
             EventManager eventManager,
             InputManager inputManager,
-            RelicGridUI relicGridUI
+            RelicGridUI relicGridUI,
+            RelicManager relicManager
             )
         {
             this.gameSceneUIRefs = gameSceneUIRefs;
             this.eventManager = eventManager;
             this.inputManager = inputManager;
             this.relicGridUI = relicGridUI;
+            this.relicManager = relicManager;
             this.controlledCanvasGroup = gameSceneUIRefs.RelicCanvasGroup;
+
+            EnsureEffectStatusUI();
 
             if (relicGridUI != null && controlledCanvasGroup != null)
             {
@@ -101,6 +107,8 @@ namespace Nytherion.UI.Controllers
                     controlledCanvasGroup.blocksRaycasts = false;
                 }
             }
+
+            EnsureEffectStatusUI();
         }
 
         protected override void OnPanelStateChanged(bool isOpen)
@@ -121,10 +129,35 @@ namespace Nytherion.UI.Controllers
                 {
                     Debug.LogWarning("[RelicUIController] RelicGridUI가 null이어서 새로고침할 수 없습니다");
                 }
+
+                effectStatusUI?.Refresh();
             }
             else
             {
                 inputManager.EnableMovement();
+            }
+        }
+
+        private void EnsureEffectStatusUI()
+        {
+            if (effectStatusUI == null)
+            {
+                effectStatusUI = GetComponent<RelicEffectStatusUI>();
+                if (effectStatusUI == null)
+                {
+                    effectStatusUI = gameObject.AddComponent<RelicEffectStatusUI>();
+                }
+            }
+
+            if (gameSceneUIRefs != null && relicManager != null)
+            {
+                effectStatusUI.Initialize(
+                    relicManager,
+                    gameSceneUIRefs.RelicSetEffectStatusPanel,
+                    gameSceneUIRefs.RelicTranscendenceEffectStatusPanel,
+                    gameSceneUIRefs.RelicSetEffectStatusEntryPrefab,
+                    gameSceneUIRefs.RelicTranscendenceEffectStatusEntryPrefab,
+                    gameSceneUIRefs.RelicTooltip);
             }
         }
     }

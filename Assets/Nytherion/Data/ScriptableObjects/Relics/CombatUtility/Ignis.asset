@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Ignis
+  m_EditorClassIdentifier: 
+  relicName: Ignis
+  koreanName: "\uC774\uADF8\uB2C8\uC2A4"
+  description_KR: "플레이어 곁에 이그니스가 고정되어, 공격할 때마다 화염 투사체를 발사합니다.\n\n(2) 소환물 투사체 피해 +15%\n(4) 소환물 투사체 피해 +30%, 1발 추가 발사\n(6) 소환물 투사체 피해 +50%, 1발 추가 발사"
+  description_EN: "Ignis stays beside you and fires a fire projectile whenever you attack.\n\n(2) Summon projectile damage +15%\n(4) Summon projectile damage +30%, fire 1 additional projectile\n(6) Summon projectile damage +50%, fire 1 additional projectile"
+  Image: {fileID: 21300000, guid: d81cc6ef79c8b794a861cd2a26d50dc9, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 7025403621137746612
+  grantsProjectileHoming: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  synergySeriesId: ElementalCompanionSeries
+  synergySetBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7025403621137746612
+      type: {class: IgnisRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        companionSprite: {fileID: 21300000, guid: d81cc6ef79c8b794a861cd2a26d50dc9, type: 3}
+        localOffset: {x: 0.35, y: 0.3, z: 0}
+        companionScale: {x: 0.3, y: 0.3, z: 0.3}
+        floatingHeight: 0.08
+        floatingSpeed: 2
+        orbitRadius: 0.45
+        orbitSpeed: 0.45
+        orbitRadiusVariance: 0.12
+        orbitVerticalRatio: 0.6
+        sortingOrderOffset: 2
+        projectilePrefab: {fileID: 1453523852295367759, guid: 3d845e37073890e47ae75e572ae873dd, type: 3}
+        projectileScale: {x: 0.8, y: 0.8, z: 0.8}
+        projectileForwardOffset: 0.2
+        projectileSpeed: 8
+        projectileLifetime: 1.5
+        damageRatio: 0.5
+        damageRatioPerLevel: 0.1

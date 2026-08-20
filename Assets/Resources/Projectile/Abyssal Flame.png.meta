@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CorruptedBullet_0
+      name: Abyssal Flame_0
       rect:
         serializedVersion: 2
         x: 0
@@ -111,14 +111,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 62ff9a1c3ec0c614cb4d65dd9cc64bcc
-      internalID: -1216604968
+      spriteID: b2abffac1c17c4147bb5fb7bd82691d8
+      internalID: -1157201504
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CorruptedBullet_1
+      name: Abyssal Flame_1
       rect:
         serializedVersion: 2
         x: 32
@@ -132,14 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9c8443b0eecc9a74b98068fa6f66bd4c
-      internalID: -1857352126
+      spriteID: c669a095a1c22164e8fd6a618d8a363e
+      internalID: -264102664
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CorruptedBullet_2
+      name: Abyssal Flame_2
       rect:
         serializedVersion: 2
         x: 64
@@ -153,14 +153,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 957389098b956f941af23e3aabdde365
-      internalID: -1637650718
+      spriteID: b8aea2b2375834940b4400a152c6c3e2
+      internalID: -584256919
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CorruptedBullet_3
+      name: Abyssal Flame_3
       rect:
         serializedVersion: 2
         x: 96
@@ -174,8 +174,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0b1e8ece5ffb040478aba11ec5ab947d
-      internalID: -1778077230
+      spriteID: a4acf2b6907fd0e489bece33decb9345
+      internalID: -1268616186
       vertices: []
       indices: 
       edges: []
@@ -191,10 +191,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      CorruptedBullet_0: -1216604968
-      CorruptedBullet_1: -1857352126
-      CorruptedBullet_2: -1637650718
-      CorruptedBullet_3: -1778077230
+      Abyssal Flame_0: -1157201504
+      Abyssal Flame_1: -264102664
+      Abyssal Flame_2: -584256919
+      Abyssal Flame_3: -1268616186
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

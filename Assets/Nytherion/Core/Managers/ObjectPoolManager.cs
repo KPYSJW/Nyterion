@@ -166,10 +166,10 @@ namespace Nytherion.Core.Managers
             }
 
             GameObject obj = poolDictionary[tag].Dequeue();
-            obj.SetActive(true);
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             obj.transform.localScale = originalScale;
+            obj.SetActive(true);
             return obj;
         }
 

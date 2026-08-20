@@ -52,6 +52,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float projectileRotationOffset = 0f;
         public ExtraProjectileMode extraProjectileMode = ExtraProjectileMode.Spread;
         public float maxChargeTime = 1.0f;
+        [Tooltip("이 무기가 발사하는 투사체는 유도 유물이 없어도 기본 유도를 사용합니다.")]
+        public bool hasHomingProjectiles;
         [Tooltip("차징 판정이 시작되기까지 누르고 있어야 하는 최소 시간(초)")]
         public float chargeThresholdTime = 0.15f;
         [Tooltip("이 무기가 차징 무기로 활성화되기 위해 필요한 유물 ID (비어 있으면 항상 차징 가능)")]

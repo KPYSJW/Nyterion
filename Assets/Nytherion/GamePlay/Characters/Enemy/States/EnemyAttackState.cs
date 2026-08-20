@@ -18,6 +18,13 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public EnemyAttackState(EnemyAIController enemyAIController) : base(enemyAIController) { }
 
+        public void ResetForReuse()
+        {
+            attackCommitUntil = 0f;
+            nextActionTime = 0f;
+            returnToChaseAfterCommit = false;
+        }
+
         public override void EnterState(EnemyAIController enemy)
         {
             enemy.StopMovement();
