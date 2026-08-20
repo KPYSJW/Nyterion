@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Nytherion.Core.Managers;
 using Nytherion.Gameplay.Relics.Modules;
+using Nytherion.Core.Utils;
 using UnityEngine;
 
 namespace Nytherion.Data.ScriptableObjects.Relics
@@ -41,11 +42,17 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         public List<RelicTranscendenceData> linkedTranscendenceEffects =
             new List<RelicTranscendenceData>();
 
-        public string DisplayName => !string.IsNullOrEmpty(setName_KR)
-            ? setName_KR
-            : (!string.IsNullOrEmpty(setName_EN) ? setName_EN : name);
+        public string DisplayName => LocalizationText.Get(
+            LocalizationTables.Relics,
+            LocalizationKeys.RelicSetName(synergySeriesId),
+            setName_KR,
+            !string.IsNullOrEmpty(setName_EN) ? setName_EN : name);
 
-        public string Description => !string.IsNullOrEmpty(description_KR) ? description_KR : description_EN;
+        public string Description => LocalizationText.Get(
+            LocalizationTables.Relics,
+            LocalizationKeys.RelicSetDescription(synergySeriesId),
+            description_KR,
+            description_EN);
 
         public int GetEquippedCount(RelicManager relicManager)
         {
@@ -98,7 +105,11 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                     ChainSynergyCondition condition = (ChainSynergyCondition)module.condition;
                     string effectDescription = !string.IsNullOrEmpty(module.Description)
                         ? module.Description
-                        : "효과 설명이 설정되지 않았습니다.";
+                        : LocalizationText.Get(
+                            LocalizationTables.UI,
+                            "ui.relic.effect_description_missing",
+                            "효과 설명이 설정되지 않았습니다.",
+                            "No effect description has been configured.");
                     builder.Append('(')
                         .Append(condition.requiredChainLength)
                         .Append(") ")

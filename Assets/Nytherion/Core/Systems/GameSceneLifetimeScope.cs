@@ -167,6 +167,11 @@ public class GameSceneLifetimeScope : LifetimeScope
             {
                 builder.RegisterInstance(sceneTransitionManager);
             }
+
+            if (Parent.Container.TryResolve<ILocalizationService>(out var localizationService))
+            {
+                builder.RegisterInstance(localizationService);
+            }
         }
 
         // DataLifetimeScope에서 데이터 매니저들 가져오기

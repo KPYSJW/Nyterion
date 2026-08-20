@@ -4,6 +4,9 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.GamePlay.Relics;
+using Nytherion.Core.Utils;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace Nytherion.UI.RelicBoard
 {
@@ -30,6 +33,30 @@ namespace Nytherion.UI.RelicBoard
     private RectTransform rectTransform;
     private Canvas canvas;
     private readonly List<EffectBadgeView> effectBadgeViews = new List<EffectBadgeView>();
+    private RelicBlock currentBlock;
+    private bool isLocalizationSubscribed;
+
+    private void OnEnable()
+    {
+        LocalizationText.LanguageChanged += OnTemporaryLanguageChanged;
+
+        if (LocalizationText.IsConfigured)
+        {
+            LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+            isLocalizationSubscribed = true;
+        }
+    }
+
+    private void OnDisable()
+    {
+        LocalizationText.LanguageChanged -= OnTemporaryLanguageChanged;
+
+        if (isLocalizationSubscribed)
+        {
+            LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            isLocalizationSubscribed = false;
+        }
+    }
 
     private void Awake()
     {
@@ -94,10 +121,11 @@ namespace Nytherion.UI.RelicBoard
     {
         if (block == null) return;
 
+        currentBlock = block;
+
         SetInfluenceGridVisible(true);
 
-        string name = !string.IsNullOrEmpty(block.SourceData.koreanName) ? block.SourceData.koreanName : block.SourceData.relicName;
-        nameText.text = name;
+        nameText.text = block.SourceData.DisplayName;
         if (levelText != null)
         {
             levelText.text = $"Lv. {block.SourceData.level}";
@@ -113,6 +141,7 @@ namespace Nytherion.UI.RelicBoard
 
     public void ShowStatus(string title, string description)
     {
+        currentBlock = null;
         SetInfluenceGridVisible(false);
         nameText.text = title;
         if (levelText != null)
@@ -126,7 +155,21 @@ namespace Nytherion.UI.RelicBoard
 
     public void Hide()
     {
+        currentBlock = null;
         tooltipPanel.SetActive(false);
+    }
+
+    private void OnLocaleChanged(Locale _)
+    {
+        if (tooltipPanel.activeSelf && currentBlock != null)
+        {
+            Show(currentBlock);
+        }
+    }
+
+    private void OnTemporaryLanguageChanged()
+    {
+        OnLocaleChanged(null);
     }
 
     private void UpdateInfluenceGrid(RelicBlock block)

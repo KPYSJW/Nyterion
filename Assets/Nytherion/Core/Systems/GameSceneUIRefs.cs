@@ -81,6 +81,8 @@ public class GameSceneUIRefs : MonoBehaviour
     public Toggle FullscreenToggle => fullscreenToggle;
     [SerializeField] private TMP_Dropdown resolutionDropdown;
     public TMP_Dropdown ResolutionDropdown => resolutionDropdown;
+    [SerializeField] private TMP_Dropdown languageDropdown;
+    public TMP_Dropdown LanguageDropdown => languageDropdown;
 
     [Header("Shop UI")]
     [SerializeField] private GameObject shopUIPrefab;

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Nytherion.Core.Enums;
+using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using TMPro;
 using VContainer;
@@ -16,6 +18,8 @@ namespace Nytherion.UI.Controllers
         private Slider sfxSlider;
         private Toggle fullscreenToggle;
         private TMP_Dropdown resolutionDropdown;
+        private TMP_Dropdown languageDropdown;
+        private ILocalizationService localizationService;
 
         [Header("Volume Input Fields")]
         [SerializeField] private TMP_InputField masterInputField;
@@ -39,9 +43,10 @@ namespace Nytherion.UI.Controllers
         };
 
         [Inject]
-        public void Construct(AudioManager audioManager)
+        public void Construct(AudioManager audioManager, ILocalizationService localizationService)
         {
             this.audioManager = audioManager;
+            this.localizationService = localizationService;
         }
 
         private void Awake()
@@ -53,6 +58,7 @@ namespace Nytherion.UI.Controllers
                 this.sfxSlider = gameSceneuiRefs.SfxSlider;
                 this.fullscreenToggle = gameSceneuiRefs.FullscreenToggle;
                 this.resolutionDropdown = gameSceneuiRefs.ResolutionDropdown;
+                this.languageDropdown = gameSceneuiRefs.LanguageDropdown;
             }
         }
 
@@ -76,11 +82,75 @@ namespace Nytherion.UI.Controllers
                 resolutionDropdown.onValueChanged.AddListener(SetResolution);
             }
 
+            InitializeLanguageDropdown();
+
             // 초기 BGM 볼륨값으로 세팅
             if (audioManager != null && bgmSlider != null)
             {
                 bgmSlider.value = audioManager.GetBGMVolume();
             }
+        }
+
+        private void OnDestroy()
+        {
+            if (fullscreenToggle != null)
+            {
+                fullscreenToggle.onValueChanged.RemoveListener(SetFullscreen);
+            }
+
+            if (resolutionDropdown != null)
+            {
+                resolutionDropdown.onValueChanged.RemoveListener(SetResolution);
+            }
+
+            if (languageDropdown != null)
+            {
+                languageDropdown.onValueChanged.RemoveListener(SetLanguage);
+            }
+
+            if (localizationService != null)
+            {
+                localizationService.LanguageChanged -= OnLanguageChanged;
+            }
+        }
+
+        private void InitializeLanguageDropdown()
+        {
+            if (languageDropdown == null || localizationService == null)
+            {
+                return;
+            }
+
+            languageDropdown.ClearOptions();
+            languageDropdown.AddOptions(new List<string> { "한국어", "English" });
+            languageDropdown.SetValueWithoutNotify((int)localizationService.CurrentLanguage);
+            languageDropdown.RefreshShownValue();
+            languageDropdown.onValueChanged.AddListener(SetLanguage);
+            localizationService.LanguageChanged += OnLanguageChanged;
+        }
+
+        private void SetLanguage(int index)
+        {
+            if (localizationService == null)
+            {
+                return;
+            }
+
+            SupportedLanguage language = index == (int)SupportedLanguage.English
+                ? SupportedLanguage.English
+                : SupportedLanguage.Korean;
+            localizationService.SetLanguage(language);
+        }
+
+        private void OnLanguageChanged(SupportedLanguage language)
+        {
+            if (languageDropdown == null)
+            {
+                return;
+            }
+
+            languageDropdown.SetValueWithoutNotify((int)language);
+            languageDropdown.RefreshShownValue();
         }
 
         /// <summary>

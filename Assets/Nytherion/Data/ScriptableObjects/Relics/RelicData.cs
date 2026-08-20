@@ -4,6 +4,7 @@ using Nytherion.Core.Enums;
 using Nytherion.GamePlay.Relics;
 using Nytherion.Core.Data;
 using Nytherion.Gameplay.Relics.Modules;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.Data.ScriptableObjects.Relics
 {
@@ -25,7 +26,16 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [TextArea] public string description_KR;
         [TextArea] public string description_EN;
 
-        public string Description => !string.IsNullOrEmpty(description_KR) ? description_KR : description_EN;
+        public string DisplayName => LocalizationText.Get(
+            LocalizationTables.Relics,
+            LocalizationKeys.RelicName(relicName),
+            koreanName,
+            relicName);
+        public string Description => LocalizationText.Get(
+            LocalizationTables.Relics,
+            LocalizationKeys.RelicDescription(relicName),
+            description_KR,
+            description_EN);
 
         public Sprite Image;
         public Rarity rarity;

@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Utils;
 using Nytherion.Data.ScriptableObjects.Relics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace Nytherion.UI.RelicBoard
 {
@@ -93,6 +96,7 @@ namespace Nytherion.UI.RelicBoard
         private GameObject transcendenceEntryPrefab;
         private RelicTooltip tooltip;
         private bool initialized;
+        private bool isLocalizationSubscribed;
 
         public void Initialize(
             RelicManager manager,
@@ -121,12 +125,27 @@ namespace Nytherion.UI.RelicBoard
             tooltip = assignedTooltip;
 
             relicManager.OnRelicStateChanged += Refresh;
+            LocalizationText.LanguageChanged += OnTemporaryLanguageChanged;
+
+            if (LocalizationText.IsConfigured)
+            {
+                LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+                isLocalizationSubscribed = true;
+            }
             initialized = true;
             Refresh();
         }
 
         private void OnDestroy()
         {
+            LocalizationText.LanguageChanged -= OnTemporaryLanguageChanged;
+
+            if (isLocalizationSubscribed)
+            {
+                LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+                isLocalizationSubscribed = false;
+            }
+
             if (relicManager != null)
             {
                 relicManager.OnRelicStateChanged -= Refresh;
@@ -134,6 +153,16 @@ namespace Nytherion.UI.RelicBoard
 
             RemoveSetEntries();
             RemoveTranscendenceEntries();
+        }
+
+        private void OnLocaleChanged(Locale _)
+        {
+            Refresh();
+        }
+
+        private void OnTemporaryLanguageChanged()
+        {
+            Refresh();
         }
 
         public void Refresh()

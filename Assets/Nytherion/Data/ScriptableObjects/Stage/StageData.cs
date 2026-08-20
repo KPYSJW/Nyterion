@@ -3,6 +3,7 @@ using Nytherion.Data.ScriptableObjects.Enemy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.Data.ScriptableObjects.Stage
 {
@@ -10,6 +11,11 @@ namespace Nytherion.Data.ScriptableObjects.Stage
     public class StageData : ScriptableObject
     {
         public string stageName;
+        public string DisplayName => LocalizationText.Get(
+            LocalizationTables.World,
+            LocalizationKeys.StageName(name),
+            stageName,
+            stageName);
         public int chapterNumber;
         public int stageNumber;
         public bool isBossStage;

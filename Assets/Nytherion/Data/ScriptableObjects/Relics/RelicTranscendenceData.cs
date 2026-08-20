@@ -5,6 +5,7 @@ using System.Text;
 using Nytherion.Core.Managers;
 using Nytherion.Gameplay.Relics.Modules;
 using UnityEngine;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.Data.ScriptableObjects.Relics
 {
@@ -49,11 +50,17 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Tooltip("모든 하위 세트 요구치를 만족했을 때 적용할 효과 모듈")]
         public List<RelicEffectModule> effectModules = new List<RelicEffectModule>();
 
-        public string DisplayName => !string.IsNullOrEmpty(effectName_KR)
-            ? effectName_KR
-            : (!string.IsNullOrEmpty(effectName_EN) ? effectName_EN : name);
+        public string DisplayName => LocalizationText.Get(
+            LocalizationTables.Relics,
+            LocalizationKeys.RelicTranscendenceName(name),
+            effectName_KR,
+            !string.IsNullOrEmpty(effectName_EN) ? effectName_EN : name);
 
-        public string Description => !string.IsNullOrEmpty(description_KR) ? description_KR : description_EN;
+        public string Description => LocalizationText.Get(
+            LocalizationTables.Relics,
+            LocalizationKeys.RelicTranscendenceDescription(name),
+            description_KR,
+            description_EN);
 
         public bool HasVisibleProgress(RelicManager relicManager)
         {
@@ -117,7 +124,17 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                 }
             }
 
-            builder.Append(IsActive(relicManager) ? "\n활성화됨" : "\n활성 조건 미달");
+            builder.Append(IsActive(relicManager)
+                ? LocalizationText.Get(
+                    LocalizationTables.UI,
+                    "ui.relic.transcendence.active",
+                    "\n활성화됨",
+                    "\nActive")
+                : LocalizationText.Get(
+                    LocalizationTables.UI,
+                    "ui.relic.transcendence.inactive",
+                    "\n활성 조건 미달",
+                    "\nActivation requirements not met"));
             return builder.ToString().TrimEnd();
         }
 

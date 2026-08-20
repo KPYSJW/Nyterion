@@ -5,6 +5,9 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Data.ScriptableObjects.Progression;
 using Nytherion.Core.Enums;
+using Nytherion.Core.Utils;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace Nytherion.UI.Components
 {
@@ -24,6 +27,17 @@ namespace Nytherion.UI.Components
         private Image nameTextBackground;
         private Texture2D nameTextBackgroundTexture;
         private Sprite nameTextBackgroundSprite;
+        private ItemData currentItem;
+        private Sprite currentSlotBackgroundSprite;
+        private SkillData currentSkill;
+        private int currentSkillLevel;
+        private int currentSkillExp;
+        private int currentSkillRequiredExp;
+        private MilestoneData currentMilestone;
+        private bool currentMilestoneCompleted;
+        private int currentMilestoneValue;
+        private int currentMilestoneTarget;
+        private bool isLocalizationSubscribed;
 
         private const float NameBackgroundHorizontalPadding = 28f;
         private const float NameBackgroundVerticalPadding = 10f;
@@ -65,6 +79,33 @@ namespace Nytherion.UI.Components
             canvasGroup.blocksRaycasts = false;
             
             HideTooltip();
+        }
+
+        private void OnEnable()
+        {
+            LocalizationText.LanguageChanged += OnTemporaryLanguageChanged;
+
+            if (LocalizationText.IsConfigured)
+            {
+                LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+                isLocalizationSubscribed = true;
+            }
+        }
+
+        private void OnDisable()
+        {
+            LocalizationText.LanguageChanged -= OnTemporaryLanguageChanged;
+
+            if (isLocalizationSubscribed)
+            {
+                LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+                isLocalizationSubscribed = false;
+            }
+        }
+
+        private void OnTemporaryLanguageChanged()
+        {
+            OnLocaleChanged(null);
         }
 
         private RectTransform rectTransform;
@@ -151,6 +192,11 @@ namespace Nytherion.UI.Components
             if (item == null) 
                 return;
 
+            currentItem = item;
+            currentSlotBackgroundSprite = slotBackgroundSprite;
+            currentSkill = null;
+            currentMilestone = null;
+
             SetItemImageBackground(slotBackgroundSprite);
             SetItemNameColor(item);
                 
@@ -205,9 +251,22 @@ namespace Nytherion.UI.Components
                     // 0 이하로 떨어지지 않게 보정
                     finalDamage = Mathf.Max(0, finalDamage);
                     finalCooldown = Mathf.Max(0.1f, finalCooldown);
+                    float attacksPerSecond = 1f / finalCooldown;
 
-                    string weaponStats = $"<color={DescriptionDefaultColorHex}>[공격력: {finalDamage:F1}]</color>\n";
-                    weaponStats += $"<color={DescriptionDefaultColorHex}>[공격 속도: {finalCooldown:F1}초]</color>\n\n";
+                    string attackText = LocalizationText.Get(
+                        LocalizationTables.UI,
+                        "ui.tooltip.attack",
+                        "공격력: {0:F1}",
+                        "Attack: {0:F1}",
+                        finalDamage);
+                    string attackSpeedText = LocalizationText.Get(
+                        LocalizationTables.UI,
+                        "ui.tooltip.attack_speed",
+                        "공격 속도: {0:0.##}",
+                        "Attack Speed: {0:0.##}",
+                        attacksPerSecond);
+                    string weaponStats = $"<color={DescriptionDefaultColorHex}>[{attackText}]</color>\n";
+                    weaponStats += $"<color={DescriptionDefaultColorHex}>[{attackSpeedText}]</color>\n\n";
 
                     finalDesc = weaponStats + finalDesc;
                 }
@@ -215,7 +274,12 @@ namespace Nytherion.UI.Components
                 // 모디파이어 텍스트 생성
                 if (equipData.statModifiers != null && equipData.statModifiers.Count > 0)
                 {
-                    finalDesc += $"\n\n<color={DescriptionDefaultColorHex}><추가 능력치></color>";
+                    string additionalStats = LocalizationText.Get(
+                        LocalizationTables.UI,
+                        "ui.tooltip.additional_stats",
+                        "추가 능력치",
+                        "Additional Stats");
+                    finalDesc += $"\n\n<color={DescriptionDefaultColorHex}><{additionalStats}></color>";
                     foreach (var mod in equipData.statModifiers)
                     {
                         float displayValue = mod.value;
@@ -233,7 +297,15 @@ namespace Nytherion.UI.Components
                         if (inverted) color = DescriptionInvertedColorHex; // 반전 시 특별한 색상
 
                         finalDesc += $"\n<color={color}>{mod.stat} {sign}{displayValue}{percent}</color>";
-                        if (inverted) finalDesc += $" <color={DescriptionInvertedColorHex}>(반전됨!)</color>";
+                        if (inverted)
+                        {
+                            string invertedText = LocalizationText.Get(
+                                LocalizationTables.UI,
+                                "ui.tooltip.inverted",
+                                "반전됨!",
+                                "Inverted!");
+                            finalDesc += $" <color={DescriptionInvertedColorHex}>({invertedText})</color>";
+                        }
                     }
                 }
             }
@@ -262,16 +334,30 @@ namespace Nytherion.UI.Components
             if (skill == null)
                 return;
 
+            currentItem = null;
+            currentSkill = skill;
+            currentSkillLevel = level;
+            currentSkillExp = currentExp;
+            currentSkillRequiredExp = requiredExp;
+            currentMilestone = null;
+
             SetItemImageBackground(null);
             ResetNameTextColor();
 
-            string skillStats = $"[Lv.{level}] 경험치: {currentExp} / {requiredExp}\n\n" +
-                                $"데미지: {skill.damage}\n" +
-                                $"쿨타임: {skill.coolDown}초\n" +
-                                $"사거리: {skill.range}\n\n" +
-                                $"{skill.description}";
+            string skillStats = LocalizationText.Get(
+                LocalizationTables.UI,
+                "ui.tooltip.skill_stats",
+                "[Lv.{0}] 경험치: {1} / {2}\n\n데미지: {3}\n쿨타임: {4}초\n사거리: {5}\n\n{6}",
+                "[Lv.{0}] EXP: {1} / {2}\n\nDamage: {3}\nCooldown: {4}s\nRange: {5}\n\n{6}",
+                level,
+                currentExp,
+                requiredExp,
+                skill.damage,
+                skill.coolDown,
+                skill.range,
+                skill.Description);
 
-            SetContent(skill.skillName, skillStats);
+            SetContent(skill.DisplayName, skillStats);
 
             if (itemImage != null)
             {
@@ -294,14 +380,38 @@ namespace Nytherion.UI.Components
         {
             if (milestone == null) return;
 
+            currentItem = null;
+            currentSkill = null;
+            currentMilestone = milestone;
+            currentMilestoneCompleted = isCompleted;
+            currentMilestoneValue = currentVal;
+            currentMilestoneTarget = targetVal;
+
             SetItemImageBackground(null);
             ResetNameTextColor();
 
-            string statusText = isCompleted
-                ? $"<color={DescriptionDefaultColorHex}>달성 완료</color>"
-                : $"<color={DescriptionDefaultColorHex}>진행 중 ({currentVal} / {targetVal})</color>";
+            string status = isCompleted
+                ? LocalizationText.Get(
+                    LocalizationTables.UI,
+                    "ui.tooltip.milestone.completed",
+                    "달성 완료",
+                    "Completed")
+                : LocalizationText.Get(
+                    LocalizationTables.UI,
+                    "ui.tooltip.milestone.in_progress",
+                    "진행 중 ({0} / {1})",
+                    "In progress ({0} / {1})",
+                    currentVal,
+                    targetVal);
+            string statusText = $"<color={DescriptionDefaultColorHex}>{status}</color>";
 
-            string content = $"{milestone.description}\n\n상태: {statusText}";
+            string content = LocalizationText.Get(
+                LocalizationTables.UI,
+                "ui.tooltip.milestone.content",
+                "{0}\n\n상태: {1}",
+                "{0}\n\nStatus: {1}",
+                milestone.Description,
+                statusText);
 
             if (milestone.rewards != null && milestone.rewards.Count > 0)
             {
@@ -309,20 +419,35 @@ namespace Nytherion.UI.Components
                 {
                     if (reward.rewardType == RewardType.Skill && reward.skillData != null)
                     {
-                        content += $"\n보상: {reward.skillData.skillName} 스킬 획득";
+                        content += LocalizationText.Get(
+                            LocalizationTables.UI,
+                            "ui.tooltip.reward.skill",
+                            "\n보상: {0} 스킬 획득",
+                            "\nReward: Unlock {0}",
+                            reward.skillData.DisplayName);
                     }
                     else if (reward.rewardType == RewardType.Gold)
                     {
-                        content += $"\n보상: 골드 {reward.amount}";
+                        content += LocalizationText.Get(
+                            LocalizationTables.UI,
+                            "ui.tooltip.reward.gold",
+                            "\n보상: 골드 {0}",
+                            "\nReward: {0} Gold",
+                            reward.amount);
                     }
                     else if (reward.rewardType == RewardType.Token)
                     {
-                        content += $"\n보상: 토큰 {reward.amount}";
+                        content += LocalizationText.Get(
+                            LocalizationTables.UI,
+                            "ui.tooltip.reward.token",
+                            "\n보상: 토큰 {0}",
+                            "\nReward: {0} Tokens",
+                            reward.amount);
                     }
                 }
             }
 
-            SetContent(milestone.title, content);
+            SetContent(milestone.DisplayTitle, content);
 
             if (itemImage != null)
             {
@@ -342,12 +467,41 @@ namespace Nytherion.UI.Components
         }
         public void HideTooltip()
         {
+            currentItem = null;
+            currentSkill = null;
+            currentMilestone = null;
             panel.SetActive(false);
             SetItemImageBackground(null);
             ResetNameTextColor();
             if (itemImage != null)
             {
                 itemImage.gameObject.SetActive(false);
+            }
+
+        }
+
+        private void OnLocaleChanged(Locale _)
+        {
+            if (!panel.activeSelf)
+            {
+                return;
+            }
+
+            if (currentItem != null)
+            {
+                ShowTooltip(currentItem, currentSlotBackgroundSprite);
+            }
+            else if (currentSkill != null)
+            {
+                ShowTooltip(currentSkill, currentSkillLevel, currentSkillExp, currentSkillRequiredExp);
+            }
+            else if (currentMilestone != null)
+            {
+                ShowTooltip(
+                    currentMilestone,
+                    currentMilestoneCompleted,
+                    currentMilestoneValue,
+                    currentMilestoneTarget);
             }
         }
 

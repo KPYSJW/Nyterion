@@ -1,4 +1,5 @@
 using UnityEngine;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.Data.ScriptableObjects.Enemy
 {
@@ -14,6 +15,11 @@ namespace Nytherion.Data.ScriptableObjects.Enemy
     {
         [Header("Identity")]
         public string enemyName;
+        public string DisplayName => LocalizationText.Get(
+            LocalizationTables.World,
+            LocalizationKeys.EnemyName(name),
+            enemyName,
+            enemyName);
         public GameObject enemyPrefab;
 
         [Header("Base Stats")]

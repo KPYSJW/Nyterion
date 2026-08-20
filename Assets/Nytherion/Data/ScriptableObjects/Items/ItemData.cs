@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Serialization;
+using Nytherion.Core.Utils;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,14 +34,20 @@ namespace Nytherion.Data.ScriptableObjects.Items
 
         private string GetLocalizedName()
         {
-            // 나중에 LocalizationManager와 연동하여 현재 언어에 맞는 이름을 반환하도록 확장 가능
-            // 현재는 한국어를 기본으로 하며, 비어있을 경우 영어를 반환합니다.
-            return !string.IsNullOrEmpty(itemName_KR) ? itemName_KR : itemName_EN;
+            return LocalizationText.Get(
+                LocalizationTables.Items,
+                LocalizationKeys.ItemName(ID),
+                itemName_KR,
+                itemName_EN);
         }
 
         private string GetLocalizedDescription()
         {
-            return !string.IsNullOrEmpty(description_KR) ? description_KR : description_EN;
+            return LocalizationText.Get(
+                LocalizationTables.Items,
+                LocalizationKeys.ItemDescription(ID),
+                description_KR,
+                description_EN);
         }
 
         [Header("Inventory Settings")]
