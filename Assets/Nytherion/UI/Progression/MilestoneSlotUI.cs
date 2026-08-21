@@ -79,10 +79,12 @@ namespace Nytherion.UI.Progression
                 if (titleText != null)
                     titleText.text = milestoneData.DisplayTitle;
 
-                if (iconImage != null && milestoneData.icon != null)
+                if (iconImage != null)
                 {
-                    iconImage.sprite = milestoneData.icon;
-                    iconImage.gameObject.SetActive(true);
+                    Sprite displayIcon = milestoneData.DisplayIcon;
+                    iconImage.sprite = displayIcon;
+                    iconImage.preserveAspect = true;
+                    iconImage.gameObject.SetActive(displayIcon != null);
                 }
             }
             else

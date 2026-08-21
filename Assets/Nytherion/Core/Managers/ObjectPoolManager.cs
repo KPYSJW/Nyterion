@@ -22,6 +22,7 @@ namespace Nytherion.Core.Managers
 
         private Dictionary<string, Transform> poolRoots;
         private Dictionary<string, Transform> categoryRoots;
+        private Dictionary<GameObject, string> instancePoolTags;
 
         private IObjectResolver container;
 
@@ -44,6 +45,7 @@ namespace Nytherion.Core.Managers
             poolDictionary = new Dictionary<string, Queue<GameObject>>();
             poolRoots = new Dictionary<string, Transform>();
             categoryRoots = new Dictionary<string, Transform>();
+            instancePoolTags = new Dictionary<GameObject, string>();
 
             if (pools == null)
             {
@@ -87,7 +89,7 @@ namespace Nytherion.Core.Managers
             
             if (prefabName.StartsWith("Player_")) category = "Player";
             else if (prefabName.StartsWith("Enemy_")) category = "Enemy";
-            else if (prefabName.StartsWith("Effect_")) category = "Effect";
+            else if (prefabName.StartsWith("Effect_") || prefabName.EndsWith("VFX")) category = "VFX";
             else if (prefabName.StartsWith("UI_")) category = "UI";
             else if (prefabName.StartsWith("Item_")) category = "Item";
 
@@ -118,6 +120,7 @@ namespace Nytherion.Core.Managers
                 GameObject obj = container != null ? container.Instantiate(prefab) : Instantiate(prefab);
                 obj.transform.SetParent(rootObj.transform);
                 obj.SetActive(false);
+                instancePoolTags[obj] = tag;
                 objectPool.Enqueue(obj);
             }
 
@@ -150,6 +153,7 @@ namespace Nytherion.Core.Managers
                 if (pool != null && pool.prefab != null)
                 {
                     GameObject newObj = container != null ? container.Instantiate(pool.prefab) : Instantiate(pool.prefab);
+                    instancePoolTags[newObj] = tag;
                     
                     if (poolRoots.TryGetValue(tag, out Transform root))
                     {
@@ -175,6 +179,13 @@ namespace Nytherion.Core.Managers
 
         public void ReturnToPool(string tag, GameObject objectToReturn)
         {
+            if (objectToReturn == null) return;
+
+            if (instancePoolTags != null && instancePoolTags.TryGetValue(objectToReturn, out string registeredTag))
+            {
+                tag = registeredTag;
+            }
+
             if (!poolDictionary.ContainsKey(tag))
             {
                 Destroy(objectToReturn);

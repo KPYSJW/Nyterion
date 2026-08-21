@@ -38,7 +38,7 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         
         /// <summary> 오브젝트 풀에서 꺼내올 투사체의 식별 태그 </summary>
         [Tooltip("오브젝트 풀에서 사용할 투사체의 태그")]
-        public string projectilePoolTag = "TurretProjectile";
+        public string projectilePoolTag = "Player_Arrow";
         
         /// <summary> 터렛이 발사하는 투사체의 이동 속도 </summary>
         [Tooltip("발사된 투사체의 이동 속도")]
