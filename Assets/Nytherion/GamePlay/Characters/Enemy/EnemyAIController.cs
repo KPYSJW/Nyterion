@@ -14,7 +14,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
     {
         public float detectRange;
         public float moveSpeed;
-
+        private bool hasForcedDestination;
+        private Vector3 forcedDestination;
         public Transform player;
         public NavMeshAgent agent; 
        // public NavMeshObstacle Obstacle;
@@ -97,7 +98,16 @@ namespace Nytherion.GamePlay.Characters.Enemy
             currentState = newState;
             currentState.EnterState(this);
         }
+        public void SetForcedDestination(Vector3 destination)
+        {
+            forcedDestination = destination;
+            hasForcedDestination = true;
+        }
 
+        public void ClearForcedDestination()
+        {
+            hasForcedDestination = false;
+        }
         private void UpdateDirection()
         {
             if (Root == null || agent == null) return;
@@ -122,13 +132,22 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public void MoveTowardsPlayer()
         {
             if (!movementAllowed) return;
-            if (player == null || !agent.isOnNavMesh) return;
+            if (agent == null || !agent.isOnNavMesh) return;
 
             agent.isStopped = false;
-            agent.SetDestination(player.position);
+
+            if (hasForcedDestination)
+            {
+                agent.SetDestination(forcedDestination);
+            }
+            else
+            {
+                if (player == null) return;
+
+                agent.SetDestination(player.position);
+            }
 
             UpdateDirection();
-            
         }
 
         public void MoveToTarget(Vector2 targetPosition)
