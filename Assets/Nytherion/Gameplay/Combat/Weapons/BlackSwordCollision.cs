@@ -1,46 +1,206 @@
-using UnityEngine;
-using Nytherion.Core.Interfaces;
-using Nytherion.Core.Managers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nytherion.Core.Enums;
+using Nytherion.Core.Interfaces;
+using Nytherion.Core.Managers;
+using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat.Weapon
 {
+    /// <summary>
+    /// BlackSword 검기의 시각 효과, 콜라이더 타격 판정과 풀 수명을 관리합니다.
+    /// </summary>
+    [RequireComponent(typeof(Rigidbody2D))]
     public class BlackSwordCollision : MonoBehaviour
     {
-        [HideInInspector] public float damage;
-        [HideInInspector] public List<EquipmentTrait> traits = new List<EquipmentTrait>();
-        public GameObject hitEffectPrefab;
-        
-        [Header("Collision & Event Settings")]
-        [SerializeField] private Collider2D col;
-        [Tooltip("애니메이션 이벤트가 실패할 경우를 대비한 최대 생존 시간(안전 장치)")]
-        [SerializeField] private float maxLifetime = 2.0f;
+        [Header("Slash Visual Settings")]
+        [SerializeField] private SpriteRenderer coreRenderer;
+        [SerializeField] private SpriteRenderer slashSpriteRenderer;
+        [Tooltip("64x64 검기 스프라이트 애니메이션의 표시 크기")]
+        [SerializeField, Min(0.1f)] private float slashSpriteScale = 2f;
+        [Tooltip("스프라이트 검기가 완전히 선명하게 유지되는 시간")]
+        [SerializeField, Min(0f)] private float slashSpriteHoldDuration = 0.42f;
+        [Tooltip("스프라이트 검기가 서서히 사라지는 시간")]
+        [SerializeField, Min(0f)] private float slashSpriteFadeDuration = 0f;
+
+        [Header("Hitbox Settings")]
+        [SerializeField] private Collider2D hitboxCollider;
+
+        [Header("Lifecycle Settings")]
+        [Tooltip("애니메이션 이벤트가 실패할 경우를 대비한 최대 생존 시간")]
+        [SerializeField] private float maxLifetime = 2f;
         [SerializeField] private string poolTag = "BlackSword_Slash_Effect";
 
         private Coroutine safetyReturnCoroutine;
+        private Coroutine visualReturnCoroutine;
+        private Vector3 baseScale;
+        private float visualStartTime;
+        private bool isVisualConfigured;
+        private Color activeSlashSpriteColor = Color.white;
+        private Vector3 baseHitboxLocalScale = Vector3.one;
+        private LayerMask targetLayerMask;
+        private Action<Collider2D, IDamageable> hitCallback;
+        private readonly HashSet<IDamageable> hitTargets = new HashSet<IDamageable>();
+        private Transform followTarget;
+        private Vector3 followWorldOffset;
+
+        private float TotalSlashSpriteLifetime => slashSpriteHoldDuration + slashSpriteFadeDuration;
+        private float TotalVisualLifetime => TotalSlashSpriteLifetime;
 
         private void Awake()
         {
-            poolTag = gameObject.name.Replace("(Clone)", "").Trim();
-            if (col == null)
+            poolTag = gameObject.name.Replace("(Clone)", string.Empty).Trim();
+            coreRenderer ??= GetComponent<SpriteRenderer>();
+            hitboxCollider ??= GetComponentInChildren<Collider2D>(true);
+            EnsureRigidbody();
+            baseScale = transform.localScale;
+            if (hitboxCollider != null)
             {
-                col = GetComponent<Collider2D>();
+                hitboxCollider.isTrigger = true;
+                baseHitboxLocalScale = hitboxCollider.transform.localScale;
             }
+
+            EnsureSlashSpriteRenderer();
         }
 
         private void OnEnable()
         {
-            // 초기 상태는 콜라이더 비활성화
+            transform.localScale = baseScale;
+            isVisualConfigured = false;
+            followTarget = null;
+            followWorldOffset = Vector3.zero;
+            hitCallback = null;
+            hitTargets.Clear();
+            ResetHitboxTransform();
             DisableHitbox();
 
-            // 애니메이션 이벤트 누락 대비 안전 장치 코루틴 구동
+            if (coreRenderer != null)
+            {
+                coreRenderer.flipY = false;
+                coreRenderer.enabled = false;
+                coreRenderer.color = Color.white;
+            }
+
+            if (slashSpriteRenderer != null)
+            {
+                slashSpriteRenderer.flipY = false;
+                slashSpriteRenderer.enabled = false;
+                slashSpriteRenderer.color = Color.white;
+            }
+
             if (safetyReturnCoroutine != null)
             {
                 StopCoroutine(safetyReturnCoroutine);
             }
+            if (visualReturnCoroutine != null)
+            {
+                StopCoroutine(visualReturnCoroutine);
+                visualReturnCoroutine = null;
+            }
             safetyReturnCoroutine = StartCoroutine(SafetyReturnRoutine());
+        }
+
+        private void LateUpdate()
+        {
+            UpdateFollowPosition();
+            if (!isVisualConfigured) return;
+
+            float elapsedTime = Time.time - visualStartTime;
+            float slashSpriteAlpha = elapsedTime <= slashSpriteHoldDuration
+                ? 1f
+                : slashSpriteFadeDuration > 0f
+                    ? 1f - Mathf.Clamp01(
+                        (elapsedTime - slashSpriteHoldDuration) / slashSpriteFadeDuration)
+                    : 0f;
+
+            UpdateSlashSpriteRenderer(slashSpriteAlpha);
+
+        }
+
+        public void ConfigureVisual(
+            int comboStep,
+            float thirdSlashScale,
+            float swingDirectionSign)
+        {
+            bool isContextReversed = swingDirectionSign < 0f;
+            bool isReverseSwing = (comboStep == 1) ^ isContextReversed;
+            bool isThirdSwing = comboStep == 2;
+
+            transform.localScale = baseScale * (isThirdSwing ? thirdSlashScale : 1f);
+            ApplyHitboxFlip(isReverseSwing);
+            visualStartTime = Time.time;
+            isVisualConfigured = true;
+
+            if (coreRenderer != null)
+            {
+                coreRenderer.flipY = isReverseSwing;
+                coreRenderer.enabled = false;
+                activeSlashSpriteColor = isThirdSwing
+                    ? new Color(1f, 0.82f, 1f, 1f)
+                    : Color.white;
+            }
+
+            UpdateSlashSpriteRenderer(1f);
+
+        }
+
+        public void ConfigureFollowTarget(Transform target, Vector3 worldOffset)
+        {
+            followTarget = target;
+            followWorldOffset = worldOffset;
+            UpdateFollowPosition();
+        }
+
+        private void UpdateFollowPosition()
+        {
+            if (followTarget != null)
+            {
+                transform.position = followTarget.position + followWorldOffset;
+            }
+        }
+
+        public void ConfigureHitbox(
+            LayerMask targetLayers,
+            Action<Collider2D, IDamageable> onHit)
+        {
+            targetLayerMask = targetLayers;
+            hitCallback = onHit;
+            hitTargets.Clear();
+        }
+
+        private void EnsureSlashSpriteRenderer()
+        {
+            if (coreRenderer == null) return;
+
+            if (slashSpriteRenderer == null)
+            {
+                GameObject slashObject = new GameObject("AnimatedSlash");
+                slashObject.transform.SetParent(transform, false);
+                slashSpriteRenderer = slashObject.AddComponent<SpriteRenderer>();
+            }
+
+            slashSpriteRenderer.transform.localScale = Vector3.one * slashSpriteScale;
+            slashSpriteRenderer.sprite = coreRenderer.sprite;
+            slashSpriteRenderer.sharedMaterial = coreRenderer.sharedMaterial;
+            slashSpriteRenderer.sortingLayerID = coreRenderer.sortingLayerID;
+            slashSpriteRenderer.sortingOrder = coreRenderer.sortingOrder;
+            coreRenderer.enabled = false;
+        }
+
+        private void UpdateSlashSpriteRenderer(float alpha)
+        {
+            if (coreRenderer == null || slashSpriteRenderer == null) return;
+
+            slashSpriteRenderer.sprite = coreRenderer.sprite;
+            slashSpriteRenderer.flipX = coreRenderer.flipX;
+            slashSpriteRenderer.flipY = coreRenderer.flipY;
+            slashSpriteRenderer.sortingLayerID = coreRenderer.sortingLayerID;
+            slashSpriteRenderer.sortingOrder = coreRenderer.sortingOrder;
+
+            Color spriteColor = activeSlashSpriteColor;
+            spriteColor.a *= alpha;
+            slashSpriteRenderer.color = spriteColor;
+            slashSpriteRenderer.enabled = alpha > 0f;
         }
 
         private IEnumerator SafetyReturnRoutine()
@@ -49,103 +209,125 @@ namespace Nytherion.GamePlay.Combat.Weapon
             ReturnToPool();
         }
 
-        // ==========================================
-        // 애니메이션 이벤트(Animation Event) 수신용 메서드
-        // ==========================================
-
-        /// <summary>
-        /// 애니메이션의 타격 시작 프레임에서 호출하여 콜라이더를 활성화합니다.
-        /// </summary>
         public void EnableHitbox()
         {
-            if (col != null)
+            hitTargets.Clear();
+            if (hitboxCollider != null)
             {
-                col.enabled = true;
+                hitboxCollider.enabled = hitCallback != null;
             }
         }
 
-        /// <summary>
-        /// 애니메이션의 타격 종료 프레임에서 호출하여 콜라이더를 비활성화합니다.
-        /// </summary>
         public void DisableHitbox()
         {
-            if (col != null)
+            if (hitboxCollider != null)
             {
-                col.enabled = false;
+                hitboxCollider.enabled = false;
             }
         }
-
-        /// <summary>
-        /// 애니메이션이 끝나는 프레임에서 호출하여 이펙트를 풀로 반환합니다.
-        /// </summary>
-        public void OnAnimationEnd()
-        {
-            ReturnToPool();
-        }
-
-        // ==========================================
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.CompareTag("Enemy"))
-            {
-                IDamageable target = collision.GetComponent<IDamageable>();
-                if (target != null)
-                {
-                    target.TakeDamage(damage);
-                    ApplyStatusEffects(collision.gameObject);
-                    
-                    Vector2 hitPoint = collision.ClosestPoint(transform.position);
-                    WeaponEffectHelper.PlayHitEffect(hitEffectPrefab, hitPoint);
-                }
-            }
+            ProcessHit(collision);
         }
 
-        private void ApplyStatusEffects(GameObject targetObj)
+        private void OnTriggerStay2D(Collider2D collision)
         {
-            StatusEffectManager effectManager = targetObj.GetComponent<StatusEffectManager>();
-            if (effectManager == null)
+            ProcessHit(collision);
+        }
+
+        private void ProcessHit(Collider2D collision)
+        {
+            if (collision == null
+                || hitCallback == null
+                || hitboxCollider == null
+                || !hitboxCollider.enabled)
             {
                 return;
             }
+            if ((targetLayerMask.value & (1 << collision.gameObject.layer)) == 0) return;
 
-            if (traits.Contains(EquipmentTrait.Fire))
+            IDamageable target = collision.GetComponent<IDamageable>();
+            if (target == null)
             {
-                float burnDamage = Mathf.Max(1f, damage * 0.2f);
-                effectManager.ApplyEffect(new FireEffect(burnDamage, 5f));
+                target = collision.GetComponentInParent<IDamageable>();
             }
-            if (traits.Contains(EquipmentTrait.Curse))
+
+            if (target == null || !hitTargets.Add(target)) return;
+            hitCallback.Invoke(collision, target);
+        }
+
+        private void EnsureRigidbody()
+        {
+            Rigidbody2D hitboxBody = GetComponent<Rigidbody2D>();
+            if (hitboxBody == null)
             {
-                effectManager.ApplyEffect(new CurseEffect(1.1f, 5f));
+                hitboxBody = gameObject.AddComponent<Rigidbody2D>();
             }
-            if (traits.Contains(EquipmentTrait.Ice))
+
+            hitboxBody.bodyType = RigidbodyType2D.Kinematic;
+            hitboxBody.gravityScale = 0f;
+            hitboxBody.simulated = true;
+        }
+
+        private void ApplyHitboxFlip(bool flipY)
+        {
+            if (hitboxCollider == null) return;
+
+            Vector3 hitboxScale = baseHitboxLocalScale;
+            hitboxScale.y = Mathf.Abs(hitboxScale.y) * (flipY ? -1f : 1f);
+            hitboxCollider.transform.localScale = hitboxScale;
+        }
+
+        private void ResetHitboxTransform()
+        {
+            if (hitboxCollider != null)
             {
-                effectManager.ApplyEffect(new IceEffect(5f));
+                hitboxCollider.transform.localScale = baseHitboxLocalScale;
             }
-            if (traits.Contains(EquipmentTrait.Lightning))
+        }
+
+        public void OnAnimationEnd()
+        {
+            float remainingVisualTime = TotalVisualLifetime - (Time.time - visualStartTime);
+            if (isVisualConfigured && remainingVisualTime > 0f)
             {
-                effectManager.ApplyEffect(new LightningEffect(5f));
+                if (visualReturnCoroutine != null)
+                {
+                    StopCoroutine(visualReturnCoroutine);
+                }
+                visualReturnCoroutine = StartCoroutine(ReturnAfterVisualRoutine(remainingVisualTime));
+                return;
             }
-            if (traits.Contains(EquipmentTrait.Holy))
-            {
-                effectManager.ApplyEffect(new HolyEffect(5f));
-            }
-            if (traits.Contains(EquipmentTrait.Demonic))
-            {
-                effectManager.ApplyEffect(new DemonicEffect(5f));
-            }
-            if (traits.Contains(EquipmentTrait.Poison))
-            {
-                effectManager.ApplyEffect(new PoisonEffect(3f, 5f));
-            }
+
+            ReturnToPool();
+        }
+
+        private IEnumerator ReturnAfterVisualRoutine(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            visualReturnCoroutine = null;
+            ReturnToPool();
         }
 
         public void ReturnToPool()
         {
+            isVisualConfigured = false;
+            followTarget = null;
+            followWorldOffset = Vector3.zero;
+            DisableHitbox();
+            hitCallback = null;
+            hitTargets.Clear();
+
             if (safetyReturnCoroutine != null)
             {
                 StopCoroutine(safetyReturnCoroutine);
                 safetyReturnCoroutine = null;
+            }
+            if (visualReturnCoroutine != null)
+            {
+                StopCoroutine(visualReturnCoroutine);
+                visualReturnCoroutine = null;
             }
 
             if (ObjectPoolManager.Instance != null)
