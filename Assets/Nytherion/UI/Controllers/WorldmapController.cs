@@ -8,6 +8,9 @@ using VContainer;
 using Nytherion.Data.ScriptableObjects.Dungeon;
 using TMPro;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Utils;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace Nytherion.UI.Map
 {
@@ -35,6 +38,47 @@ namespace Nytherion.UI.Map
         // --- 의존성 주입 ---
         private DungeonManager dungeonManager;
         private StageManager stageManager;
+        private bool isLocalizationSubscribed;
+
+        private void OnEnable()
+        {
+            LocalizationText.LanguageChanged += OnTemporaryLanguageChanged;
+
+            if (LocalizationText.IsConfigured)
+            {
+                LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+                isLocalizationSubscribed = true;
+            }
+
+            // 월드맵이 활성화될 때 플레이어 아이콘을 맵 컨텐츠의 자식으로 설정
+            if (dungeonManager != null && dungeonManager.playerObject != null && playerIcon != null)
+            {
+                playerIcon.gameObject.SetActive(true);
+                playerIcon.SetParent(mapContent, false);
+                playerIcon.transform.SetAsLastSibling(); // 항상 맨 위에 보이도록
+            }
+            // 맵이 이미 그려져 있다면 화면에 맞게 크기를 조절
+            if (roomIconMap.Count > 0)
+            {
+                FitMapToView();
+            }
+        }
+
+        private void OnDisable()
+        {
+            LocalizationText.LanguageChanged -= OnTemporaryLanguageChanged;
+
+            if (isLocalizationSubscribed)
+            {
+                LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+                isLocalizationSubscribed = false;
+            }
+        }
+
+        private void OnTemporaryLanguageChanged()
+        {
+            OnLocaleChanged(null);
+        }
 
         [Inject]
         public void Construct(DungeonManager dungeonManager,StageManager stageManager )
@@ -50,22 +94,6 @@ namespace Nytherion.UI.Map
         {
             viewPort = transform as RectTransform;
             Hide(); // 처음에는 숨겨진 상태로 시작
-        }
-
-        private void OnEnable()
-        {
-            // 월드맵이 활성화될 때 플레이어 아이콘을 맵 컨텐츠의 자식으로 설정
-            if (dungeonManager != null && dungeonManager.playerObject != null && playerIcon != null)
-            {
-                playerIcon.gameObject.SetActive(true);
-                playerIcon.SetParent(mapContent, false);
-                playerIcon.transform.SetAsLastSibling(); // 항상 맨 위에 보이도록
-            }
-            // 맵이 이미 그려져 있다면 화면에 맞게 크기를 조절
-            if (roomIconMap.Count > 0)
-            {
-                FitMapToView();
-            }
         }
 
         private void LateUpdate()
@@ -257,7 +285,15 @@ namespace Nytherion.UI.Map
 
         private void StageNumberChange()
         {
-            StageNumber.text=stageManager.CurrentStage.stageName;
+            if (StageNumber != null && stageManager?.CurrentStage != null)
+            {
+                StageNumber.text = stageManager.CurrentStage.DisplayName;
+            }
+        }
+
+        private void OnLocaleChanged(Locale _)
+        {
+            StageNumberChange();
         }
     }
 }

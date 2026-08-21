@@ -50,6 +50,15 @@ namespace Nytherion.UI.Inventory
         [SerializeField] protected Sprite epicSlotSprite;
         [SerializeField] protected Sprite legendarySlotSprite;
 
+        public Sprite CurrentSlotBackgroundSprite
+        {
+            get
+            {
+                Image targetSlotImage = slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>();
+                return targetSlotImage != null ? targetSlotImage.sprite : null;
+            }
+        }
+
         protected virtual void Awake()
         {
             if (iconImage == null)
@@ -234,7 +243,7 @@ namespace Nytherion.UI.Inventory
             
             // 기본 툴팁 동작 (이벤트 핸들러가 없을 때의 폴백)
             if (OnPointerEnterEvent == null && currentItem != null && TooltipPanel.Instance != null)
-                TooltipPanel.Instance.ShowTooltip(currentItem);
+                TooltipPanel.Instance.ShowTooltip(currentItem, CurrentSlotBackgroundSprite);
         }
 
         public virtual void OnPointerExit(PointerEventData eventData)

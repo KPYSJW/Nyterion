@@ -31,7 +31,6 @@ namespace Nytherion.Editor
         private string description_KR = "";
         private string description_EN = "";
         private WeaponType weaponType = WeaponType.Ranged;
-        private Rarity rarity = Rarity.Common;
         private int defaultGachaWeight = 100;
         private float damage = 10f;
         private float range = 5f;
@@ -142,7 +141,6 @@ namespace Nytherion.Editor
             description_EN = EditorGUILayout.TextArea(description_EN, GUILayout.Height(60));
 
             EditorGUILayout.Space(10);
-            rarity = (Rarity)EditorGUILayout.EnumPopup("Rarity", rarity);
             defaultGachaWeight = EditorGUILayout.IntField("Gacha Weight", defaultGachaWeight);
             baseValue = EditorGUILayout.IntField("Base Value (Price)", baseValue);
             weaponType = (WeaponType)EditorGUILayout.EnumPopup("Weapon Type", weaponType);
@@ -271,7 +269,7 @@ namespace Nytherion.Editor
                 EditorGUILayout.BeginHorizontal("box");
                 
                 GUILayout.Label(displayName, GUILayout.Width(150));
-                GUILayout.Label(weapon.rarity.ToString(), GUILayout.Width(80));
+                GUILayout.Label("Dynamic", GUILayout.Width(80));
                 GUILayout.Label(weapon.damage.ToString("F1"), GUILayout.Width(40));
                 
                 float dps = weapon.cooldown > 0 ? weapon.damage / weapon.cooldown : 0;
@@ -335,7 +333,7 @@ namespace Nytherion.Editor
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.BeginVertical();
-            selectedWeapon.rarity = (Rarity)EditorGUILayout.EnumPopup("Rarity", selectedWeapon.rarity);
+            EditorGUILayout.LabelField("Rarity", "Determined at runtime");
             selectedWeapon.baseValue = EditorGUILayout.IntField("Base Price", selectedWeapon.baseValue);
             selectedWeapon.damage = EditorGUILayout.FloatField("Damage", selectedWeapon.damage);
             selectedWeapon.cooldown = EditorGUILayout.FloatField("Cooldown", selectedWeapon.cooldown);
@@ -379,7 +377,6 @@ namespace Nytherion.Editor
             newData.itemName_EN = weaponName_EN;
             newData.description_KR = description_KR;
             newData.description_EN = description_EN;
-            newData.rarity = rarity;
             newData.damage = damage;
             newData.range = range;
             newData.cooldown = cooldown;
@@ -523,10 +520,12 @@ namespace Nytherion.Editor
 
         private void AddToGachaPool(WeaponData weapon)
         {
-            string poolPath = $"{GACHA_POOL_BASE_PATH}/{weapon.rarity}_Weapon.asset";
-            GachaPoolSO pool = AssetDatabase.LoadAssetAtPath<GachaPoolSO>(poolPath);
-            if (pool != null)
+            foreach (Rarity targetRarity in System.Enum.GetValues(typeof(Rarity)))
             {
+                string poolPath = $"{GACHA_POOL_BASE_PATH}/{targetRarity}_Weapon.asset";
+                GachaPoolSO pool = AssetDatabase.LoadAssetAtPath<GachaPoolSO>(poolPath);
+                if (pool == null) continue;
+
                 if (pool.items == null) pool.items = new List<GachaItemRate>();
                 if (!pool.items.Any(r => r.item == weapon))
                 {
@@ -555,7 +554,7 @@ namespace Nytherion.Editor
             string path = EditorUtility.SaveFilePanel("Export Weapons to CSV", "", "WeaponData.csv", "csv");
             if (string.IsNullOrEmpty(path)) return;
 
-            string[] headers = new string[] { "EN_Name", "KR_Name", "Rarity", "Damage", "Range", "Cooldown", "Price" };
+            string[] headers = new string[] { "EN_Name", "KR_Name", "Damage", "Range", "Cooldown", "Price" };
             List<string[]> rows = new List<string[]>();
 
             foreach (WeaponData w in allWeapons)
@@ -563,7 +562,6 @@ namespace Nytherion.Editor
                 rows.Add(new string[] {
                     w.itemName_EN,
                     w.itemName_KR,
-                    w.rarity.ToString(),
                     w.damage.ToString(),
                     w.range.ToString(),
                     w.cooldown.ToString(),
@@ -593,10 +591,6 @@ namespace Nytherion.Editor
                 {
                     Undo.RecordObject(weapon, "Update Weapon from CSV");
                     if (entry.ContainsKey("KR_Name")) weapon.itemName_KR = entry["KR_Name"];
-                    if (entry.ContainsKey("Rarity"))
-                    {
-                        if (System.Enum.TryParse(entry["Rarity"], out Rarity r)) weapon.rarity = r;
-                    }
                     if (entry.ContainsKey("Damage"))
                     {
                         if (float.TryParse(entry["Damage"], out float dmg)) weapon.damage = dmg;

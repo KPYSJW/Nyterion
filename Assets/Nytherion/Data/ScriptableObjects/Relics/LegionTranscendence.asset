@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
+  m_Name: LegionTranscendence
+  m_EditorClassIdentifier: 
+  effectName_KR: "군단"
+  effectName_EN: Legion
+  statusIcon: {fileID: 21300000, guid: 869b965e4ae74f2d85871b0246ec1f25, type: 3}
+  badgeBackgroundColor: {r: 0.35686275, g: 0.24705882, b: 0.50980395, a: 0.9607843}
+  badgeTextColor: {r: 0.9529412, g: 0.9137255, b: 1, a: 1}
+  description_KR: "모든 소환물과 소환수 유물을 장착하면 활성화되는 초월 효과입니다. 실제 전투 효과는 아직 설정되지 않았습니다."
+  description_EN: A transcendence effect activated by equipping every Summon and Servant relic. Its combat effect is not configured yet.
+  requirements:
+  - setBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
+    requiredEquippedCount: 8
+  - setBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
+    requiredEquippedCount: 2
+  effectModules: []

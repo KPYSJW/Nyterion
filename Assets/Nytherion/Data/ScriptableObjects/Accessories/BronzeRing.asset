@@ -26,7 +26,6 @@ MonoBehaviour:
   unlockMilestoneID: 
   baseValue: 70
   equipmentType: 1
-  rarity: 0
   traits: 
   statModifiers:
   - stat: 0

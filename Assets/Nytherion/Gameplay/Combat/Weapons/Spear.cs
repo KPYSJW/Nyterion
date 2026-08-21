@@ -599,12 +599,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 }
             }
 
-            RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
-            if (relicManager != null && relicManager.IsRelicActive(targetRelicId))
-            {
-                return true;
-            }
-
             return false;
         }
 

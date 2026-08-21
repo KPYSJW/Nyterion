@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: CatEyes
+  m_EditorClassIdentifier: 
+  relicName: CatEyes
+  koreanName: "\uACE0\uC591\uC774 \uB208"
+  description_KR: "플레이어 곁에 고양이 눈이 고정되어, 공격할 때마다 함께 투사체를 발사합니다.\n\n(2) 소환물 투사체 피해 +15%\n(4) 소환물 투사체 피해 +30%, 1발 추가 발사\n(6) 소환물 투사체 피해 +50%, 1발 추가 발사"
+  description_EN: "Cat eyes stay beside you and fire a projectile whenever you attack.\n\n(2) Summon projectile damage +15%\n(4) Summon projectile damage +30%, fire 1 additional projectile\n(6) Summon projectile damage +50%, fire 1 additional projectile"
+  Image: {fileID: 21300000, guid: daffafd6edf9be14b84d6519c9e85831, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 4130249087503114321
+  grantsProjectileHoming: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  synergySeriesId: ElementalCompanionSeries
+  synergySetBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 4130249087503114321
+      type: {class: CatEyesRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        companionSprite: {fileID: 21300000, guid: daffafd6edf9be14b84d6519c9e85831, type: 3}
+        localOffset: {x: 0.35, y: 0.3, z: 0}
+        companionScale: {x: 0.3, y: 0.3, z: 0.3}
+        floatingHeight: 0.08
+        floatingSpeed: 2
+        orbitRadius: 0.45
+        orbitSpeed: 0.45
+        orbitRadiusVariance: 0.12
+        orbitVerticalRatio: 0.6
+        sortingOrderOffset: 2
+        projectilePrefab: {fileID: 7065046155421467275, guid: e2fbe94e3eb14337afd7387063485e97, type: 3}
+        projectileScale: {x: 0.5, y: 0.5, z: 0.5}
+        projectileForwardOffset: 0.2
+        projectileSpeed: 12
+        projectileLifetime: 1.5
+        damageRatio: 0.5
+        damageRatioPerLevel: 0.1

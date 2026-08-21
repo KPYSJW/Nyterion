@@ -1,7 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-using Nytherion.Core.Data;
-using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -22,7 +19,6 @@ namespace Nytherion.GamePlay.Combat
 
         public override void OnApply()
         {
-            AdjustTickInterval();
             nextTickTime = Time.time + tickInterval;
             if (manager != null)
             {
@@ -30,32 +26,36 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        private void AdjustTickInterval()
+        public override void ApplyRelicModifiers(CombatModifierSnapshot modifiers)
         {
-            Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-            if (relicManager != null)
+            float durationMultiplier = 1f;
+            int venomHourglassLevel = modifiers.GetActiveLevel("Venom Hourglass");
+            if (venomHourglassLevel > 0)
             {
-                foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
-                {
-                    RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                    if (block != null && !block.SourceData.isDisabled)
-                    {
-                        if (block.RelicId == "Toxic Catalyst")
-                        {
-                            float reduction = 0.3f + (block.SourceData.level - 1) * 0.05f;
-                            reduction = Mathf.Clamp(reduction, 0f, 0.6f);
-                            tickInterval = 1.0f * (1f - reduction);
-                            break;
-                        }
-                        else if (block.RelicId == "Hydra's Fang")
-                        {
-                            float reduction = 0.1f + (block.SourceData.level - 1) * 0.02f;
-                            reduction = Mathf.Clamp(reduction, 0f, 0.3f);
-                            tickInterval = 1.0f * (1f - reduction);
-                            break;
-                        }
-                    }
-                }
+                durationMultiplier += 0.5f + (venomHourglassLevel - 1) * 0.1f;
+            }
+
+            int hydraLevel = modifiers.GetActiveLevel("Hydra's Fang");
+            if (hydraLevel > 0)
+            {
+                durationMultiplier += 0.3f + (hydraLevel - 1) * 0.05f;
+            }
+
+            if (durationMultiplier > 1f)
+            {
+                ModifyDuration(Duration * durationMultiplier);
+            }
+
+            int catalystLevel = modifiers.GetActiveLevel("Toxic Catalyst");
+            if (catalystLevel > 0)
+            {
+                float reduction = 0.3f + (catalystLevel - 1) * 0.05f;
+                tickInterval = 1f * (1f - Mathf.Clamp(reduction, 0f, 0.6f));
+            }
+            else if (hydraLevel > 0)
+            {
+                float reduction = 0.1f + (hydraLevel - 1) * 0.02f;
+                tickInterval = 1f * (1f - Mathf.Clamp(reduction, 0f, 0.3f));
             }
         }
 

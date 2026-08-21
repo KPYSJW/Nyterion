@@ -270,7 +270,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
                         {
                             collisionComp = effectInstance.AddComponent<AbaddonCollision>();
                         }
-                        collisionComp.damage = weaponData.damage * damageMultiplier;
+                        collisionComp.damage = weaponData.damage * EffectiveDamageMultiplier;
                         collisionComp.traits = GetTraits();
                         if (collisionComp.hitEffectPrefab == null)
                         {
@@ -297,7 +297,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
                 AbaddonCollision localCollisionComp = targetEffectObj.GetComponent<AbaddonCollision>();
                 if (localCollisionComp != null)
                 {
-                    localCollisionComp.damage = weaponData.damage * damageMultiplier;
+                    localCollisionComp.damage = weaponData.damage * EffectiveDamageMultiplier;
                     localCollisionComp.traits = GetTraits();
                     if (localCollisionComp.hitEffectPrefab == null)
                     {

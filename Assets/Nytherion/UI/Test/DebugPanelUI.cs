@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.Core.Interfaces;
 
 namespace Nytherion.UI.Test
 {
@@ -46,6 +47,8 @@ namespace Nytherion.UI.Test
         private GachaUIController gachaUIController;
         private RelicUIController relicUIController;
         private RelicManager relicManager;
+        private ILocalizationService localizationService;
+        private Button languageToggleButton;
 
         [Inject]
         public void Construct(
@@ -57,7 +60,8 @@ namespace Nytherion.UI.Test
             ShopUI shopUI,
             GachaUIController gachaUIController,
             RelicUIController relicUIController,
-            RelicManager relicManager)
+            RelicManager relicManager,
+            ILocalizationService localizationService)
         {
             this.inventoryDataManager = inventoryDataManager;
             this.currencyDataManager = currencyDataManager;
@@ -68,6 +72,7 @@ namespace Nytherion.UI.Test
             this.gachaUIController = gachaUIController;
             this.relicUIController = relicUIController;
             this.relicManager = relicManager;
+            this.localizationService = localizationService;
         }
 
         private void Start()
@@ -78,8 +83,13 @@ namespace Nytherion.UI.Test
                 TryManualInject();
             }
 
-            // 몬스터 소환 버튼들 런타임 동적 생성
-            CreateMonsterSpawnButtons();
+            // 디버그용 언어 전환 및 몬스터 소환 버튼을 런타임에 생성
+            CreateRuntimeDebugButtons();
+
+            if (localizationService != null)
+            {
+                localizationService.LanguageChanged += OnLanguageChanged;
+            }
         }
 
         /// <summary>
@@ -118,6 +128,14 @@ namespace Nytherion.UI.Test
             if (Input.GetKeyDown(KeyCode.F12))
             {
                 Toggle();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (localizationService != null)
+            {
+                localizationService.LanguageChanged -= OnLanguageChanged;
             }
         }
 
@@ -309,7 +327,6 @@ namespace Nytherion.UI.Test
             if (statusText != null)
             {
                 statusText.text = $"[DEBUG] {message}";
-                Debug.Log($"[DebugPanel] {message}");
             }
         }
 
@@ -317,32 +334,50 @@ namespace Nytherion.UI.Test
          * Monster Spawn (몬스터 소환) 관련 기능
          * ========================================================== */
 
-        private void CreateMonsterSpawnButtons()
+        private void CreateRuntimeDebugButtons()
         {
             if (contentPanel == null) return;
 
-            // contentPanel 하위에서 Button 컴포넌트를 가진 자식을 템플릿으로 확보
-            Button templateButton = contentPanel.GetComponentInChildren<Button>();
+            Transform buttonsContainer = contentPanel.transform.Find("Buttons");
+
+            // 패널은 시작 시 비활성 상태이므로 비활성 자식까지 포함해 템플릿을 찾는다.
+            Button templateButton = buttonsContainer != null
+                ? buttonsContainer.GetComponentInChildren<Button>(true)
+                : contentPanel.GetComponentInChildren<Button>(true);
             if (templateButton == null)
             {
                 Debug.LogWarning("[DebugPanelUI] 복제 템플릿으로 쓸 버튼을 찾을 수 없습니다.");
                 return;
             }
 
-            Transform parentTransform = templateButton.transform.parent;
+            Transform parentTransform = buttonsContainer != null
+                ? buttonsContainer
+                : templateButton.transform.parent;
+
+            languageToggleButton = CreateRuntimeButton(
+                templateButton,
+                parentTransform,
+                "LanguageToggleButton",
+                GetLanguageButtonLabel(),
+                ToggleLanguage);
 
             // 근접 몬스터 소환 버튼 생성
-            CreateSingleSpawnButton(templateButton, parentTransform, "몬스터 (근접)", SpawnEnemyMelee);
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnButton_Melee", "몬스터 (근접)", SpawnEnemyMelee);
             // 원거리 몬스터 소환 버튼 생성
-            CreateSingleSpawnButton(templateButton, parentTransform, "몬스터 (원거리)", SpawnEnemyRanged);
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnButton_Ranged", "몬스터 (원거리)", SpawnEnemyRanged);
             // 하이브리드 몬스터 소환 버튼 생성
-            CreateSingleSpawnButton(templateButton, parentTransform, "몬스터 (하이브리드)", SpawnEnemyHybrid);
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnButton_Hybrid", "몬스터 (하이브리드)", SpawnEnemyHybrid);
         }
 
-        private void CreateSingleSpawnButton(Button template, Transform parent, string label, UnityEngine.Events.UnityAction action)
+        private Button CreateRuntimeButton(
+            Button template,
+            Transform parent,
+            string objectName,
+            string label,
+            UnityEngine.Events.UnityAction action)
         {
             Button newButton = Instantiate(template, parent);
-            newButton.name = $"SpawnButton_{label}";
+            newButton.name = objectName;
 
             // 버튼의 텍스트(TMP_Text) 변경
             TMP_Text buttonText = newButton.GetComponentInChildren<TMP_Text>();
@@ -363,6 +398,60 @@ namespace Nytherion.UI.Test
             // 이벤트 재바인딩
             newButton.onClick.RemoveAllListeners();
             newButton.onClick.AddListener(action);
+            return newButton;
+        }
+
+        public void ToggleLanguage()
+        {
+            if (localizationService == null)
+            {
+                UpdateStatusText("LocalizationService를 찾을 수 없습니다.");
+                return;
+            }
+
+            SupportedLanguage nextLanguage = localizationService.CurrentLanguage == SupportedLanguage.Korean
+                ? SupportedLanguage.English
+                : SupportedLanguage.Korean;
+
+            localizationService.SetLanguage(nextLanguage);
+            UpdateLanguageButtonLabel();
+            UpdateStatusText(nextLanguage == SupportedLanguage.Korean
+                ? "임시 언어: 한국어"
+                : "Temporary language: English");
+        }
+
+        private void OnLanguageChanged(SupportedLanguage _)
+        {
+            UpdateLanguageButtonLabel();
+        }
+
+        private void UpdateLanguageButtonLabel()
+        {
+            if (languageToggleButton == null)
+            {
+                return;
+            }
+
+            TMP_Text buttonText = languageToggleButton.GetComponentInChildren<TMP_Text>();
+            if (buttonText != null)
+            {
+                buttonText.text = GetLanguageButtonLabel();
+                return;
+            }
+
+            Text legacyText = languageToggleButton.GetComponentInChildren<Text>();
+            if (legacyText != null)
+            {
+                legacyText.text = GetLanguageButtonLabel();
+            }
+        }
+
+        private string GetLanguageButtonLabel()
+        {
+            return localizationService != null &&
+                   localizationService.CurrentLanguage == SupportedLanguage.English
+                ? "Language: English → 한국어"
+                : "언어: 한국어 → English";
         }
 
         public void SpawnEnemyMelee()

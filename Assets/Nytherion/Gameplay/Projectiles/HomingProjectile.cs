@@ -7,66 +7,141 @@ namespace Nytherion.GamePlay.Skills
     public class HomingProjectile : MonoBehaviour
     {
         [Header("Movement")]
-        public float maxSpeed = 12f;      
-        public float acceleration = 15f;  
-        public float rotateSpeed = 400f;  
+        [SerializeField] private float maxSpeed = 12f;
+        [SerializeField] private float acceleration = 15f;
+        [SerializeField] private float rotateSpeed = 400f;
 
         [Header("Tracking")]
-        public float trackingRadius = 10f;
-        public LayerMask enemyLayer;
+        [SerializeField] private float initialStraightDuration = 0.2f;
+        [SerializeField] private float trackingRadius = 10f;
+        [SerializeField] private float targetRefreshInterval = 0.1f;
+        [SerializeField] private float closeRangeSteeringDistance = 1f;
+        [SerializeField] private LayerMask enemyLayer;
 
         private Rigidbody2D rb;
         private Transform target;
+        private Collider2D targetCollider;
         private float currentSpeed;
-        private static readonly Collider2D[] homingBuffer = new Collider2D[10];
+        private float currentMaxSpeed;
+        private float homingStartTime;
+        private float nextTargetRefreshTime;
+        private Vector2 launchDirection;
+
+        private static readonly Collider2D[] homingBuffer = new Collider2D[16];
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+            if (enemyLayer.value == 0)
+            {
+                enemyLayer = LayerMask.GetMask("Enemy");
+            }
         }
 
-        private void Start()
+        public void SetHomingEnabled(bool isEnabled, float launchSpeed)
         {
-            currentSpeed = rb.velocity.magnitude;
-            FindClosestEnemy();
+            if (rb == null)
+            {
+                rb = GetComponent<Rigidbody2D>();
+            }
+
+            target = null;
+            targetCollider = null;
+            currentSpeed = Mathf.Max(0f, launchSpeed);
+            currentMaxSpeed = Mathf.Max(maxSpeed, currentSpeed);
+            homingStartTime = Time.time + Mathf.Max(0f, initialStraightDuration);
+            nextTargetRefreshTime = homingStartTime;
+
+            if (rb != null && rb.velocity.sqrMagnitude > 0.0001f)
+            {
+                launchDirection = rb.velocity.normalized;
+            }
+            else
+            {
+                launchDirection = transform.right;
+            }
+
+            if (!isEnabled)
+            {
+                if (rb != null)
+                {
+                    rb.angularVelocity = 0f;
+                }
+
+                enabled = false;
+                return;
+            }
+
+            enabled = true;
         }
 
         private void FixedUpdate()
         {
-            if (target != null && target.gameObject.activeInHierarchy)
-            {
-                Vector2 direction = (Vector2)target.position - rb.position;
-                direction.Normalize();
+            if (rb == null) return;
 
-                float rotateAmount = Vector3.Cross(direction, transform.right).z;
-                rb.angularVelocity = -rotateAmount * rotateSpeed;
+            currentSpeed = Mathf.MoveTowards(currentSpeed, currentMaxSpeed, acceleration * Time.fixedDeltaTime);
+
+            if (Time.time < homingStartTime)
+            {
+                rb.angularVelocity = 0f;
+                rb.velocity = launchDirection * currentSpeed;
+                return;
+            }
+
+            if (!HasValidTarget() || Time.time >= nextTargetRefreshTime)
+            {
+                FindClosestEnemy();
+                nextTargetRefreshTime = Time.time + Mathf.Max(0.01f, targetRefreshInterval);
+            }
+
+            if (target != null)
+            {
+                Vector2 targetPosition = targetCollider != null
+                    ? targetCollider.ClosestPoint(rb.position)
+                    : target.position;
+                Vector2 direction = targetPosition - rb.position;
+                if (direction.sqrMagnitude > 0.0001f)
+                {
+                    float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    float distance = direction.magnitude;
+                    float steeringSpeed = distance <= closeRangeSteeringDistance
+                        ? Mathf.Infinity
+                        : rotateSpeed;
+                    rb.rotation = Mathf.MoveTowardsAngle(rb.rotation, targetAngle, steeringSpeed * Time.fixedDeltaTime);
+                }
             }
             else
             {
-                rb.angularVelocity = 0f; 
+                rb.angularVelocity = 0f;
             }
 
-            currentSpeed = Mathf.MoveTowards(currentSpeed, maxSpeed, acceleration * Time.fixedDeltaTime);
-
             rb.velocity = transform.right * currentSpeed;
+        }
+
+        private bool HasValidTarget()
+        {
+            return target != null && target.gameObject.activeInHierarchy &&
+                   ((Vector2)target.position - rb.position).sqrMagnitude <= trackingRadius * trackingRadius;
         }
 
         private void FindClosestEnemy()
         {
             int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, trackingRadius, homingBuffer, enemyLayer);
             float closestDistanceSqr = Mathf.Infinity;
+            target = null;
+            targetCollider = null;
 
             for (int i = 0; i < hitCount; i++)
             {
                 Collider2D hit = homingBuffer[i];
-                if (hit.GetComponent<IDamageable>() != null)
+                if (hit == null || hit.GetComponent<IDamageable>() == null) continue;
+
+                float distanceSqr = ((Vector2)transform.position - (Vector2)hit.transform.position).sqrMagnitude;
+                if (distanceSqr < closestDistanceSqr)
                 {
-                    float distanceSqr = (transform.position - hit.transform.position).sqrMagnitude;
-                    if (distanceSqr < closestDistanceSqr)
-                    {
-                        closestDistanceSqr = distanceSqr;
-                        target = hit.transform;
-                    }
+                    closestDistanceSqr = distanceSqr;
+                    target = hit.transform;
+                    targetCollider = hit;
                 }
             }
         }

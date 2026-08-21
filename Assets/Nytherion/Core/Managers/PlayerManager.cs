@@ -9,7 +9,6 @@ using Nytherion.Core.Interfaces;
 using System;
 using VContainer;
 using System.Collections.Generic;
-using Nytherion.GamePlay.Relics;
 using Nytherion.Core.Systems;
 
 
@@ -24,7 +23,9 @@ namespace Nytherion.Core.Managers
         private EquipmentDataManager equipmentDataManager;
         private InputManager inputManager;
         private EventManager eventManager;
+        private RelicManager relicManager;
         private PlayerController playerController;
+        public EventManager EventManager => eventManager;
 
         [Header("Player Data")]
         [SerializeField] private PlayerData basePlayerData;
@@ -41,11 +42,16 @@ namespace Nytherion.Core.Managers
         }
 
         [Inject]
-        public void Construct(EquipmentDataManager equipmentDataManager, InputManager inputManager, EventManager eventManager)
+        public void Construct(
+            EquipmentDataManager equipmentDataManager,
+            InputManager inputManager,
+            EventManager eventManager,
+            RelicManager relicManager)
         {
             this.equipmentDataManager = equipmentDataManager;
             this.inputManager = inputManager;
             this.eventManager = eventManager;
+            this.relicManager = relicManager;
         }
 
         protected override void OnInitializeInternal()
@@ -58,6 +64,7 @@ namespace Nytherion.Core.Managers
 
             if (playerRelicManager != null)
             {
+                playerRelicManager.Construct(eventManager, relicManager);
                 playerRelicManager.OnRelicsChanged += RecalculateStats;
             }
 
@@ -110,35 +117,23 @@ namespace Nytherion.Core.Managers
             }
 
             // 네잎클로버 (LuckyClover) 유물 효과 적용: 치명타 적중 시 5% 확률로 대쉬 쿨타임 초기화
-            if (isCritical)
+            if (isCritical && playerRelicManager != null && playerRelicManager.IsRelicActive("LuckyClover"))
             {
-                RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
-                if (relicManager != null)
+                if (UnityEngine.Random.Range(0, 100) < 5)
                 {
-                    foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
+                    if (playerController != null)
                     {
-                        RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                        if (block != null && block.RelicId == "LuckyClover" && !block.SourceData.isDisabled)
-                        {
-                            if (UnityEngine.Random.Range(0, 100) < 5)
-                            {
-                                if (playerController != null)
-                                {
-                                    playerController.LastDashTime = -999f;
-                                    Debug.Log("[PlayerManager] 치명타 적중! 네잎클로버(LuckyClover) 효과 발동! 대쉬 쿨타임 초기화!");
+                        playerController.LastDashTime = -999f;
+                        Debug.Log("[PlayerManager] 치명타 적중! 네잎클로버(LuckyClover) 효과 발동! 대쉬 쿨타임 초기화!");
 
-                                    luckyCloverResetCountInBattle++;
-                                    if (luckyCloverResetCountInBattle >= 3)
-                                    {
-                                        ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
-                                        if (progressionManager != null)
-                                        {
-                                            progressionManager.ProcessAction(ProgressionType.LuckyCloverResetInOneBattle, 1);
-                                        }
-                                    }
-                                }
+                        luckyCloverResetCountInBattle++;
+                        if (luckyCloverResetCountInBattle >= 3)
+                        {
+                            ProgressionManager progressionManager = DataLifetimeScope.Instance != null ? DataLifetimeScope.Instance.GetDataManager<ProgressionManager>() : null;
+                            if (progressionManager != null)
+                            {
+                                progressionManager.ProcessAction(ProgressionType.LuckyCloverResetInOneBattle, 1);
                             }
-                            break;
                         }
                     }
                 }
@@ -356,18 +351,9 @@ namespace Nytherion.Core.Managers
             }
 
             // 유리 칼 (Glass Sword) 유물 효과 적용: 최대 체력 50 고정
-            RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
-            if (relicManager != null)
+            if (playerRelicManager != null && playerRelicManager.IsRelicActive("Glass Sword"))
             {
-                foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
-                {
-                    RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                    if (block != null && block.RelicId == "Glass Sword" && !block.SourceData.isDisabled)
-                    {
-                        currentPlayerData.maxHealth = 50f;
-                        break;
-                    }
-                }
+                currentPlayerData.maxHealth = 50f;
             }
 
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);

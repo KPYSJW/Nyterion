@@ -3,7 +3,7 @@ using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Combat.Weapons
 {
-    public class FrenzyWeapon : RangedWeapon
+    public class FrenzyWeapon : RangedWeapon, IChargeableWeapon
     {
         [Header("Frenzy Spin-up Settings")]
         [Tooltip("스핀업 완료에 걸리는 시간")]
@@ -23,6 +23,9 @@ namespace Nytherion.GamePlay.Combat.Weapons
         private GameObject activeFireEffectInstance = null;
         private float lastProjectileFireTime = 0f;
         private Vector2 lastAimDirection = Vector2.right;
+
+        public bool IsCharging => isAttacking && HasChargeRelic();
+        public float ChargePercent => currentSpinUpProgress;
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
@@ -80,6 +83,11 @@ namespace Nytherion.GamePlay.Combat.Weapons
         {
             if (isAttacking)
             {
+                if (firePoint != null)
+                {
+                    lastAimDirection = firePoint.right;
+                }
+
                 // 플레이어가 조준하는 마우스 방향에 따라 지속형 머즐 플래시 회전값 갱신
                 if (activeFireEffectInstance != null && firePoint != null)
                 {
@@ -103,6 +111,10 @@ namespace Nytherion.GamePlay.Combat.Weapons
                         }
                     }
                 }
+
+                damageMultiplier = HasChargeRelic()
+                    ? Mathf.Lerp(1f, 2f, currentSpinUpProgress)
+                    : 1f;
 
                 // 스핀업 임계치 도달 후 연사 쿨다운마다 투사체 발사
                 if (currentSpinUpProgress >= fireThreshold)
@@ -135,10 +147,18 @@ namespace Nytherion.GamePlay.Combat.Weapons
             return false;
         }
 
+        private bool HasChargeRelic()
+        {
+            return playerManager != null &&
+                   playerManager.playerRelicManager != null &&
+                   playerManager.playerRelicManager.IsRelicActive("ChargeRelic");
+        }
+
         private void ResetFrenzyState()
         {
             isAttacking = false;
             currentSpinUpProgress = 0f;
+            damageMultiplier = 1f;
 
             if (activeFireEffectInstance != null)
             {

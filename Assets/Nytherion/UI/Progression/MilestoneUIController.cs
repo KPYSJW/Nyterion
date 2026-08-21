@@ -7,6 +7,9 @@ using Nytherion.Data.ScriptableObjects.Progression;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Systems;
 using Nytherion.UI.Components;
+using Nytherion.Core.Utils;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace Nytherion.UI.Progression
 {
@@ -30,6 +33,7 @@ namespace Nytherion.UI.Progression
         // private bool isPanelActive = false; // IsOpen으로 대체
 
         private List<MilestoneSlotUI> spawnedSlots = new List<MilestoneSlotUI>();
+        private bool isLocalizationSubscribed;
         [Inject]
         public void Construct(
             IObjectResolver container,
@@ -70,7 +74,14 @@ namespace Nytherion.UI.Progression
                 return;
             }
 
-            if (titleText != null) titleText.text = unifiedTitle;
+            RefreshTitle();
+            LocalizationText.LanguageChanged += OnTemporaryLanguageChanged;
+
+            if (LocalizationText.IsConfigured)
+            {
+                LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+                isLocalizationSubscribed = true;
+            }
 
             if (slotPrefab == null) Debug.LogError(" slotPrefab이 할당되지 않았습니다! (MilestoneUIController 인스펙터 확인)");
             if (slotParent == null) Debug.LogError(" slotParent가 null입니다! (GameSceneUIRefs의 ProgressionSlotParent 할당 확인)");
@@ -111,6 +122,14 @@ namespace Nytherion.UI.Progression
         }
         private void OnDestroy()
         {
+            LocalizationText.LanguageChanged -= OnTemporaryLanguageChanged;
+
+            if (isLocalizationSubscribed)
+            {
+                LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+                isLocalizationSubscribed = false;
+            }
+
             if (InputManager.Instance != null)
             {
                 InputManager.Instance.onToggleProgressionUI -= TogglePanel;
@@ -118,6 +137,28 @@ namespace Nytherion.UI.Progression
             if (progressionManager is ProgressionManager pManager)
             {
                 pManager.OnProgressionDataLoaded -= RefreshUI;
+            }
+        }
+
+        private void OnLocaleChanged(Locale _)
+        {
+            RefreshTitle();
+        }
+
+        private void OnTemporaryLanguageChanged()
+        {
+            RefreshTitle();
+        }
+
+        private void RefreshTitle()
+        {
+            if (titleText != null)
+            {
+                titleText.text = LocalizationText.Get(
+                    LocalizationTables.UI,
+                    "ui.progression.milestone",
+                    "마일스톤",
+                    unifiedTitle);
             }
         }
 

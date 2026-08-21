@@ -184,6 +184,49 @@ namespace Nytherion.Core.Managers
             return 0;
         }
 
+        /// <summary>
+        /// 보드에 장착된 각인 중 같은 시너지 시리즈에 속하는 개수를 반환한다.
+        /// 배치 위치나 SynergyLink 연결 방향은 영향을 주지 않는다.
+        /// </summary>
+        public int GetEquippedSeriesRelicCount(string seriesId)
+        {
+            if (string.IsNullOrEmpty(seriesId) || placedBlockPositions == null || logicGrid == null)
+            {
+                return 0;
+            }
+
+            int count = 0;
+            foreach (KeyValuePair<string, Vector2Int> pair in placedBlockPositions)
+            {
+                RelicBlock block = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
+                if (block != null && block.SourceData != null &&
+                    string.Equals(block.SourceData.synergySeriesId, seriesId, StringComparison.Ordinal))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// 현재 유물 보드에 장착된 유물 데이터를 반환한다.
+        /// 현황 UI와 초월 효과는 저장 상태를 추가하지 않고 이 목록에서 실시간으로 계산한다.
+        /// </summary>
+        public IEnumerable<RelicData> GetEquippedRelics()
+        {
+            if (placedBlockPositions == null || logicGrid == null) yield break;
+
+            foreach (KeyValuePair<string, Vector2Int> pair in placedBlockPositions)
+            {
+                RelicBlock block = logicGrid.GetBlockAt(pair.Value.y, pair.Value.x);
+                if (block?.SourceData != null)
+                {
+                    yield return block.SourceData;
+                }
+            }
+        }
+
         public void UpdateSynergyChains(Dictionary<string, int> newChainData)
         {
             maxChainLengthPerSeries = newChainData ?? new Dictionary<string, int>();

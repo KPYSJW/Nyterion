@@ -67,7 +67,6 @@ namespace Nytherion.GamePlay.Dungeon
                 {
                     if (enemy != null && !enemy.isDead)
                     {
-                        enemy.aiController.agent.enabled = true;
                         enemy.gameObject.SetActive(true);
                     }
                 }

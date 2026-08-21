@@ -49,7 +49,7 @@ namespace Nytherion.GamePlay.Combat
                 
                 if (target != null)
                 {
-                    target.TakeDamage(weaponData.damage);
+                    target.TakeDamage(weaponData.damage * EffectiveDamageMultiplier);
                     ApplyStatusEffects(target);
                     if (weaponData != null)
                     {
@@ -79,7 +79,7 @@ namespace Nytherion.GamePlay.Combat
             
             if (hitTargets.Contains(target)) return;
             hitTargets.Add(target);
-            target.TakeDamage(weaponData.damage);
+            target.TakeDamage(weaponData.damage * EffectiveDamageMultiplier);
             ApplyStatusEffects(target);
 
             if (weaponData != null)

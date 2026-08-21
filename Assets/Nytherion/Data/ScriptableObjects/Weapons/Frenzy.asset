@@ -23,7 +23,6 @@ MonoBehaviour:
   unlockMilestoneID: 
   baseValue: 150
   equipmentType: 0
-  rarity: 0
   traits: 
   statModifiers: []
   damage: 2
@@ -33,15 +32,19 @@ MonoBehaviour:
   weaponSprite: {fileID: 21300000, guid: a2be363839160cd40afafb32a1a61761, type: 3}
   firePointOffset: {x: 0.4, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: -0.2, y: 0, z: 0}
+  visualPositionOffset: {x: -0.25, y: -0.1, z: 0}
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 3595441880066981771, guid: e10ed0cbe39f5c2439290de4b9e8a95c, type: 3}
+  chargeEffectPrefab: {fileID: 0}
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 4388211735977503658, guid: 8fae2d79634426a44af06f51afb709b1, type: 3}
   projectileSpeed: 7
   projectileRotationOffset: 0
   extraProjectileMode: 1
   maxChargeTime: 1
+  hasHomingProjectiles: 0
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
   hitEffectPrefab: {fileID: 2773623504146537913, guid: 02e616b90ff8cd04dbdabd600df6f382, type: 3}
   weaponPrefab: {fileID: -2914722070659980993, guid: f2b0acf08dec30a44b07ddd1938a737a, type: 3}
   isArchivable: 1

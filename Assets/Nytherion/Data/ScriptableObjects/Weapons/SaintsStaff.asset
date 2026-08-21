@@ -26,7 +26,6 @@ MonoBehaviour:
   unlockMilestoneID: 
   baseValue: 150
   equipmentType: 0
-  rarity: 2
   traits: 06000000
   statModifiers: []
   damage: 20
@@ -34,9 +33,9 @@ MonoBehaviour:
   cooldown: 0.8
   weaponType: 0
   weaponSprite: {fileID: 21300000, guid: c3e562dc8fd1a0942b9bbcc6cba5cc59, type: 3}
-  firePointOffset: {x: 0.3, y: 0.3, z: 0}
-  spriteRotationOffset: -45
-  visualPositionOffset: {x: 0, y: 0, z: 0}
+  firePointOffset: {x: 0.3, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: 0.3, y: 0, z: 0}
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
   chargeEffectPrefab: {fileID: 0}

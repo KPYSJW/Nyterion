@@ -48,6 +48,11 @@ namespace Nytherion.UI.RelicBoard
             {
                 levelText = GetComponentInChildren<TextMeshProUGUI>();
             }
+
+            if (levelText != null)
+            {
+                levelText.gameObject.SetActive(false);
+            }
         }
         private void OnEnable()
         {
@@ -71,11 +76,6 @@ namespace Nytherion.UI.RelicBoard
                 if (relicGridUI != null)
                 {
                     relicGridUI.ShowPlacementPreview(blockData, relicGridUI.CurrentGridPos);
-                }
-
-                if (levelText != null)
-                {
-                    levelText.transform.rotation = Quaternion.identity;
                 }
 
                 if (iconImage != null)
@@ -165,15 +165,7 @@ namespace Nytherion.UI.RelicBoard
 
             if (levelText != null)
             {
-                if (blockData != null)
-                {
-                    levelText.text = blockData.SourceData.level.ToString();
-                    levelText.gameObject.SetActive(true);
-                }
-                else
-                {
-                    levelText.gameObject.SetActive(false);
-                }
+                levelText.gameObject.SetActive(false);
             }
         }
 

@@ -19,6 +19,10 @@ namespace Nytherion.GamePlay.Combat
         protected float lastAttackTime;
 
         public float damageMultiplier = 1.0f;
+        private float genericChargeDamageMultiplier = 1.0f;
+
+        protected float EffectiveDamageMultiplier => damageMultiplier * genericChargeDamageMultiplier;
+        public float CurrentDamageMultiplier => EffectiveDamageMultiplier;
 
         protected PlayerManager playerManager;
         [SerializeField] protected Animator animator;
@@ -30,6 +34,11 @@ namespace Nytherion.GamePlay.Combat
             if (animator == null)
             {
                 animator = GetComponentInChildren<Animator>();
+            }
+
+            if (GetComponent<WeaponSortingOrderSync>() == null)
+            {
+                gameObject.AddComponent<WeaponSortingOrderSync>();
             }
         }
 
@@ -45,6 +54,7 @@ namespace Nytherion.GamePlay.Combat
         {
             weaponData = data;
             lastAttackTime = -data.cooldown;
+            genericChargeDamageMultiplier = 1f;
 
             if (data.weaponSprite != null)
             {
@@ -83,6 +93,17 @@ namespace Nytherion.GamePlay.Combat
         }
         public abstract void AttackEnd();
 
+        public virtual void AttackWithGenericCharge(Vector2 direction, Vector3 targetPosition, float chargePercent)
+        {
+            genericChargeDamageMultiplier = Mathf.Lerp(1f, 2f, Mathf.Clamp01(chargePercent));
+            Attack(direction, targetPosition);
+        }
+
+        public void ResetGenericChargeMultiplier()
+        {
+            genericChargeDamageMultiplier = 1f;
+        }
+
         public virtual List<EquipmentTrait> GetTraits()
         {
             if (weaponData != null && weaponData.traits != null)
@@ -94,43 +115,37 @@ namespace Nytherion.GamePlay.Combat
 
         public void ApplyStatusEffects(IDamageable target)
         {
-            if (target is MonoBehaviour targetMono)
+            if (target is MonoBehaviour targetMono &&
+                targetMono.TryGetComponent<StatusEffectManager>(out StatusEffectManager effectManager))
             {
-                StatusEffectManager effectManager = targetMono.GetComponent<StatusEffectManager>();
-                if (effectManager == null)
-                {
-                    effectManager = targetMono.gameObject.AddComponent<StatusEffectManager>();
-                }
-
                 List<EquipmentTrait> activeTraits = GetTraits();
-                if (activeTraits.Contains(EquipmentTrait.Fire))
+                for (int i = 0; i < activeTraits.Count; i++)
                 {
-                    float burnDamage = weaponData != null ? Mathf.Max(1f, weaponData.damage * damageMultiplier * 0.2f) : 2f;
-                    effectManager.ApplyEffect(new FireEffect(burnDamage, 5f));
-                }
-                if (activeTraits.Contains(EquipmentTrait.Curse))
-                {
-                    effectManager.ApplyEffect(new CurseEffect(1.1f, 5f));
-                }
-                if (activeTraits.Contains(EquipmentTrait.Ice))
-                {
-                    effectManager.ApplyEffect(new IceEffect(5f));
-                }
-                if (activeTraits.Contains(EquipmentTrait.Lightning))
-                {
-                    effectManager.ApplyEffect(new LightningEffect(5f));
-                }
-                if (activeTraits.Contains(EquipmentTrait.Holy))
-                {
-                    effectManager.ApplyEffect(new HolyEffect(5f));
-                }
-                if (activeTraits.Contains(EquipmentTrait.Demonic))
-                {
-                    effectManager.ApplyEffect(new DemonicEffect(5f));
-                }
-                if (activeTraits.Contains(EquipmentTrait.Poison))
-                {
-                    effectManager.ApplyEffect(new PoisonEffect(3f, 5f));
+                    switch (activeTraits[i])
+                    {
+                        case EquipmentTrait.Fire:
+                            float burnDamage = weaponData != null ? Mathf.Max(1f, weaponData.damage * EffectiveDamageMultiplier * 0.2f) : 2f;
+                            effectManager.ApplyEffect(new FireEffect(burnDamage, 5f));
+                            break;
+                        case EquipmentTrait.Curse:
+                            effectManager.ApplyEffect(new CurseEffect(1.1f, 5f));
+                            break;
+                        case EquipmentTrait.Ice:
+                            effectManager.ApplyEffect(new IceEffect(5f));
+                            break;
+                        case EquipmentTrait.Lightning:
+                            effectManager.ApplyEffect(new LightningEffect(5f));
+                            break;
+                        case EquipmentTrait.Holy:
+                            effectManager.ApplyEffect(new HolyEffect(5f));
+                            break;
+                        case EquipmentTrait.Demonic:
+                            effectManager.ApplyEffect(new DemonicEffect(5f));
+                            break;
+                        case EquipmentTrait.Poison:
+                            effectManager.ApplyEffect(new PoisonEffect(3f, 5f));
+                            break;
+                    }
                 }
             }
         }

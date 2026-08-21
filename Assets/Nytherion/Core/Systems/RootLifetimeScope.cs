@@ -84,6 +84,10 @@ public class RootLifetimeScope : LifetimeScope
 
     private void InstallCoreInfrastructure(IContainerBuilder builder)
     {
+        builder.Register<LocalizationService>(Lifetime.Singleton)
+            .AsImplementedInterfaces()
+            .AsSelf();
+
         if (eventManagerPrefab == null)
         {
             Debug.LogError("[RootLifetimeScope] eventManagerPrefab이 할당되지 않았습니다!");

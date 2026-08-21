@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Mystical Crystal
   koreanName: "\uC2E0\uBE44\uB85C\uC6B4 \uC218\uC815"
-  description_KR: "\uD50C\uB808\uC774\uC5B4\uC758 \uBAA8\uB4E0 \uAE30\uBCF8 \uC2A4\uD0EF(\uACF5\uACA9\uB825"
+  description_KR: "플레이어의 모든 기본 스탯(공격력, 방어력, 체력 등)을 6% 증가시킵니다."
   description_EN: 
   Image: {fileID: 21300000, guid: cc676c8f40cd98145a7b3ae8f7584836, type: 3}
   rarity: 2
@@ -24,8 +24,8 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
-  synergySeriesId: " \uBC29\uC5B4\uB825"
-  unlockMilestoneID: " \uCCB4\uB825 \uB4F1)\uC774 6% \uB9CC\uD07C \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  synergySeriesId:
+  unlockMilestoneID:
   simpleStatModifiers: []
   references:
     version: 2

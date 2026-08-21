@@ -6,6 +6,9 @@ using VContainer;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Progression;
 using Nytherion.UI.Components;
+using Nytherion.Core.Utils;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace Nytherion.UI.Progression
 {
@@ -21,6 +24,29 @@ namespace Nytherion.UI.Progression
 
         private bool isCompleted = false;
         private IProgressionManager progressionManager;
+        private bool isLocalizationSubscribed;
+
+        private void OnEnable()
+        {
+            LocalizationText.LanguageChanged += OnTemporaryLanguageChanged;
+
+            if (LocalizationText.IsConfigured)
+            {
+                LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+                isLocalizationSubscribed = true;
+            }
+        }
+
+        private void OnDisable()
+        {
+            LocalizationText.LanguageChanged -= OnTemporaryLanguageChanged;
+
+            if (isLocalizationSubscribed)
+            {
+                LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+                isLocalizationSubscribed = false;
+            }
+        }
 
         [Inject]
         public void Construct(IProgressionManager progressionManager)
@@ -51,7 +77,7 @@ namespace Nytherion.UI.Progression
             if (milestoneData != null)
             {
                 if (titleText != null)
-                    titleText.text = milestoneData.title;
+                    titleText.text = milestoneData.DisplayTitle;
 
                 if (iconImage != null && milestoneData.icon != null)
                 {
@@ -80,6 +106,19 @@ namespace Nytherion.UI.Progression
                 progressionManager.OnMilestoneProgressUpdated -= HandleProgressUpdated;
                 progressionManager.OnMilestoneCompleted -= HandleMilestoneCompleted;
             }
+        }
+
+        private void OnLocaleChanged(Locale _)
+        {
+            if (milestoneData != null && titleText != null)
+            {
+                titleText.text = milestoneData.DisplayTitle;
+            }
+        }
+
+        private void OnTemporaryLanguageChanged()
+        {
+            OnLocaleChanged(null);
         }
 
         private void HandleProgressUpdated(string milestoneId, int currentProgress, int targetValue)

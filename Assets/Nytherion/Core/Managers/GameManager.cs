@@ -35,7 +35,6 @@ namespace Nytherion.Core.Managers
 
         private void HandlePlayerDeath()
         {
-            Debug.Log("[GameManager] 플레이어 사망. 기본 재화를 초기화합니다.");
             if (currencyDataManager != null)
             {
                 currencyDataManager.ResetBasicCurrencies();

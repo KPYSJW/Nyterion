@@ -1,7 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-using Nytherion.Core.Data;
-using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -23,53 +20,40 @@ namespace Nytherion.GamePlay.Combat
 
         public override void OnApply()
         {
-            AdjustDemonicStats();
             if (manager != null)
             {
                 manager.PlayVFX(EffectId);
             }
         }
 
-        private void AdjustDemonicStats()
+        public override void ApplyRelicModifiers(CombatModifierSnapshot modifiers)
         {
-            Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-            if (relicManager != null)
+            int level = modifiers.GetActiveLevel("Demonic Pact");
+            if (level > 0)
             {
-                foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
-                {
-                    RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                    if (block != null && !block.SourceData.isDisabled)
-                    {
-                        if (block.RelicId == "Demonic Pact")
-                        {
-                            float bonusDef = 0.1f + (block.SourceData.level - 1) * 0.03f;
-                            defenseReduction = Mathf.Min(0.8f, 0.10f + bonusDef);
-
-                            float bonusCrit = 0.2f + (block.SourceData.level - 1) * 0.05f;
-                            extraCritDamageMultiplier += bonusCrit;
-                            break;
-                        }
-                        else if (block.RelicId == "Horn of the Abyss")
-                        {
-                            float bonusDef = 0.15f + (block.SourceData.level - 1) * 0.04f;
-                            defenseReduction = Mathf.Min(0.8f, 0.10f + bonusDef);
-
-                            float bonusCrit = 0.3f + (block.SourceData.level - 1) * 0.07f;
-                            extraCritDamageMultiplier += bonusCrit;
-                            break;
-                        }
-                        else if (block.RelicId == "Eye of the Archdemon")
-                        {
-                            float bonusDef = 0.25f + (block.SourceData.level - 1) * 0.05f;
-                            defenseReduction = Mathf.Min(0.8f, 0.10f + bonusDef);
-
-                            float bonusCrit = 0.4f + (block.SourceData.level - 1) * 0.1f;
-                            extraCritDamageMultiplier += bonusCrit;
-                            break;
-                        }
-                    }
-                }
+                ApplyBonuses(level, 0.1f, 0.03f, 0.2f, 0.05f);
+                return;
             }
+
+            level = modifiers.GetActiveLevel("Horn of the Abyss");
+            if (level > 0)
+            {
+                ApplyBonuses(level, 0.15f, 0.04f, 0.3f, 0.07f);
+                return;
+            }
+
+            level = modifiers.GetActiveLevel("Eye of the Archdemon");
+            if (level > 0)
+            {
+                ApplyBonuses(level, 0.25f, 0.05f, 0.4f, 0.1f);
+            }
+        }
+
+        private void ApplyBonuses(int level, float defenseBase, float defensePerLevel, float critBase, float critPerLevel)
+        {
+            float bonusDefense = defenseBase + (level - 1) * defensePerLevel;
+            defenseReduction = Mathf.Min(0.8f, 0.1f + bonusDefense);
+            extraCritDamageMultiplier += critBase + (level - 1) * critPerLevel;
         }
 
         public override void OnUpdate(float deltaTime)

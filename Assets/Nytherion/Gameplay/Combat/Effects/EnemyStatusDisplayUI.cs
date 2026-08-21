@@ -5,8 +5,13 @@ namespace Nytherion.GamePlay.Combat
 {
     public class EnemyStatusDisplayUI : MonoBehaviour
     {
+        private static readonly string[] SupportedEffectIds =
+        {
+            "Fire", "Ice", "Lightning", "Poison", "Curse", "Holy", "Demonic"
+        };
+
         private SpriteRenderer enemySpriteRenderer;
-        private List<GameObject> activeIconObjects = new List<GameObject>();
+        private readonly Dictionary<string, SpriteRenderer> iconRenderers = new Dictionary<string, SpriteRenderer>();
         private float offsetY = 1.0f;
 
         [Header("Icon Display Settings")]
@@ -26,69 +31,76 @@ namespace Nytherion.GamePlay.Combat
             {
                 offsetY = enemySpriteRenderer.bounds.extents.y + heightExtraOffset;
             }
+
+            for (int i = 0; i < SupportedEffectIds.Length; i++)
+            {
+                GetOrCreateIcon(SupportedEffectIds[i]).gameObject.SetActive(false);
+            }
         }
 
         public void UpdateDisplay(List<StatusEffect> activeEffects)
         {
-            // 기존에 생성된 아이콘 오브젝트 제거
-            for (int i = 0; i < activeIconObjects.Count; i++)
+            foreach (KeyValuePair<string, SpriteRenderer> pair in iconRenderers)
             {
-                if (activeIconObjects[i] != null)
+                if (pair.Value != null)
                 {
-                    Destroy(activeIconObjects[i]);
+                    pair.Value.gameObject.SetActive(false);
                 }
             }
-            activeIconObjects.Clear();
 
             if (activeEffects == null || activeEffects.Count == 0)
             {
                 return;
             }
 
-            // 상태이상에 직접 담겨진 스프라이트 참조를 꺼내어 리스트 구성
-            List<Sprite> loadedSprites = new List<Sprite>();
+            int count = 0;
             for (int i = 0; i < activeEffects.Count; i++)
             {
-                Sprite sprite = activeEffects[i].EffectIcon;
-                if (sprite != null)
-                {
-                    loadedSprites.Add(sprite);
-                }
+                if (activeEffects[i].EffectIcon != null) count++;
             }
 
-            int count = loadedSprites.Count;
             if (count == 0) return;
 
-            // 중앙 정렬을 위한 시작 X 좌표 계산
             float startX = -((count - 1) * iconSpacing) / 2f;
-
-            for (int i = 0; i < count; i++)
+            int visibleIndex = 0;
+            for (int i = 0; i < activeEffects.Count; i++)
             {
-                GameObject iconObj = new GameObject("StatusIcon_" + i);
-                iconObj.transform.SetParent(transform);
-                
-                SpriteRenderer sr = iconObj.AddComponent<SpriteRenderer>();
-                sr.sprite = loadedSprites[i];
-                
-                // 정렬 레이어 및 순서 설정 (몬스터보다 앞에 그리도록)
-                if (enemySpriteRenderer != null)
-                {
-                    sr.sortingLayerID = enemySpriteRenderer.sortingLayerID;
-                    sr.sortingOrder = enemySpriteRenderer.sortingOrder + 10;
-                }
-                else
-                {
-                    sr.sortingOrder = 10;
-                }
+                StatusEffect effect = activeEffects[i];
+                if (effect.EffectIcon == null) continue;
 
-                iconObj.transform.localScale = iconScale;
-                
-                // 가로 정렬 위치 계산 및 머리 위 오프셋 적용
-                float posX = startX + (i * iconSpacing);
-                iconObj.transform.localPosition = new Vector3(posX, offsetY, 0f);
-
-                activeIconObjects.Add(iconObj);
+                SpriteRenderer iconRenderer = GetOrCreateIcon(effect.EffectId);
+                iconRenderer.sprite = effect.EffectIcon;
+                iconRenderer.gameObject.SetActive(true);
+                float posX = startX + (visibleIndex * iconSpacing);
+                iconRenderer.transform.localPosition = new Vector3(posX, offsetY, 0f);
+                visibleIndex++;
             }
+        }
+
+        private SpriteRenderer GetOrCreateIcon(string effectId)
+        {
+            if (iconRenderers.TryGetValue(effectId, out SpriteRenderer cachedRenderer) && cachedRenderer != null)
+            {
+                return cachedRenderer;
+            }
+
+            GameObject iconObject = new GameObject("StatusIcon_" + effectId);
+            iconObject.transform.SetParent(transform, false);
+            iconObject.transform.localScale = iconScale;
+
+            SpriteRenderer iconRenderer = iconObject.AddComponent<SpriteRenderer>();
+            if (enemySpriteRenderer != null)
+            {
+                iconRenderer.sortingLayerID = enemySpriteRenderer.sortingLayerID;
+                iconRenderer.sortingOrder = enemySpriteRenderer.sortingOrder + 10;
+            }
+            else
+            {
+                iconRenderer.sortingOrder = 10;
+            }
+
+            iconRenderers[effectId] = iconRenderer;
+            return iconRenderer;
         }
     }
 }

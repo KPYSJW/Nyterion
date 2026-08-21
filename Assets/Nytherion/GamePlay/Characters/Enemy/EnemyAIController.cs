@@ -14,7 +14,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
     {
         public float detectRange;
         public float moveSpeed;
-
+        private bool hasForcedDestination;
+        private Vector3 forcedDestination;
         public Transform player;
         public NavMeshAgent agent; 
        // public NavMeshObstacle Obstacle;
@@ -22,6 +23,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private MeleeAttackBehavior meleeAttack;
 
         private RangedAttackBehavior rangedAttack;
+        private FrogJumpMovement frogJumpMovement;
 
         public bool HasMeleeAttack=>meleeAttack!=null;
         public bool HasRangedAttack=>rangedAttack!=null;
@@ -96,7 +98,16 @@ namespace Nytherion.GamePlay.Characters.Enemy
             currentState = newState;
             currentState.EnterState(this);
         }
+        public void SetForcedDestination(Vector3 destination)
+        {
+            forcedDestination = destination;
+            hasForcedDestination = true;
+        }
 
+        public void ClearForcedDestination()
+        {
+            hasForcedDestination = false;
+        }
         private void UpdateDirection()
         {
             if (Root == null || agent == null) return;
@@ -121,13 +132,22 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public void MoveTowardsPlayer()
         {
             if (!movementAllowed) return;
-            if (player == null || !agent.isOnNavMesh) return;
+            if (agent == null || !agent.isOnNavMesh) return;
 
             agent.isStopped = false;
-            agent.SetDestination(player.position);
+
+            if (hasForcedDestination)
+            {
+                agent.SetDestination(forcedDestination);
+            }
+            else
+            {
+                if (player == null) return;
+
+                agent.SetDestination(player.position);
+            }
 
             UpdateDirection();
-            
         }
 
         public void MoveToTarget(Vector2 targetPosition)
@@ -323,6 +343,75 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
         }
 
+        public void ResetForReuse(EnemyData data)
+        {
+            if (player == null)
+            {
+                GameObject playerInstance = GameObject.FindWithTag(Tags.Player);
+                if (playerInstance != null)
+                {
+                    player = playerInstance.transform;
+                }
+            }
+
+            if (rb == null) rb = GetComponent<Rigidbody2D>();
+            if (agent == null) agent = GetComponent<NavMeshAgent>();
+            if (meleeAttack == null && rangedAttack == null) InitializeAttackSystems();
+
+            if (player == null || rb == null || agent == null || (!HasMeleeAttack && !HasRangedAttack))
+            {
+                enabled = false;
+                return;
+            }
+
+            enabled = true;
+            movementAllowed = true;
+            if (!agent.enabled)
+            {
+                agent.enabled = true;
+            }
+            agent.updateRotation = false;
+            agent.updateUpAxis = false;
+
+            ApplyEnemyData(data);
+            StopMovement();
+            rb.angularVelocity = 0f;
+
+            if (Root != null)
+            {
+                Root.localScale = RootDefaultScale;
+            }
+
+            meleeAttack?.ResetForReuse();
+            rangedAttack?.ResetForReuse();
+
+            if (animator != null)
+            {
+                animator.Rebind();
+                animator.Update(0f);
+            }
+
+            if (idleState == null) idleState = new EnemyIdleState(this);
+            if (chaseState == null) chaseState = new EnemyChaseState(this);
+            if (attackState == null) attackState = new EnemyAttackState(this);
+            attackState.ResetForReuse();
+
+            TransitionToState(idleState);
+            if (frogJumpMovement == null)
+            {
+                frogJumpMovement = GetComponent<FrogJumpMovement>();
+            }
+            frogJumpMovement?.ResetForReuse();
+        }
+
+        public void PrepareForPoolReturn()
+        {
+            movementAllowed = false;
+            StopMovement();
+            meleeAttack?.DeactivateCollider();
+            rangedAttack?.ResetForReuse();
+        }
+
         private void InitializeAttackSystems()
         {
             meleeAttack=GetComponent<MeleeAttackBehavior>();
@@ -403,7 +492,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void PlayAnimation(string stateName)
         {
-            animator.Play(stateName);
+            if (animator != null)
+            {
+                animator.Play(stateName);
+            }
         }
         
 

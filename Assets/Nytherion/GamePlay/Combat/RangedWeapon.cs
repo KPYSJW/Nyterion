@@ -3,6 +3,7 @@ using Nytherion.Core.Managers;
 using System.Collections;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Interfaces;
+using Nytherion.GamePlay.Skills;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -42,10 +43,17 @@ namespace Nytherion.GamePlay.Combat
         public float projectileSpeed = 8f;
 
         private WaitForSeconds burstWait;
+        private WeaponCrossbowRecoil crossbowRecoil;
 
         public override void Initialize(WeaponData data)
         {
             base.Initialize(data);
+
+            if (crossbowRecoil == null)
+            {
+                crossbowRecoil = GetComponent<WeaponCrossbowRecoil>();
+            }
+            crossbowRecoil?.CacheRestPose();
 
             if (data != null)
             {
@@ -68,7 +76,11 @@ namespace Nytherion.GamePlay.Combat
             burstWait = new WaitForSeconds(burstInterval);
         }
 
-        public GameObject Projectile(Vector2 direction, Vector3 spawnOffset = default, float chargePercent = 0f)
+        public GameObject Projectile(
+            Vector2 direction,
+            Vector3 spawnOffset = default,
+            float chargePercent = 0f,
+            float projectileDamageMultiplier = 1f)
         {
             Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f) + spawnOffset;
             
@@ -105,20 +117,35 @@ namespace Nytherion.GamePlay.Combat
             {
                 iProj.SetSpeed(projectileSpeed);
             }
-            
+
+            CombatModifierSnapshot currentSnapshot = playerManager != null && playerManager.playerRelicManager != null
+                ? playerManager.playerRelicManager.CombatModifiers
+                : CombatModifierSnapshot.Empty;
+
+            bool shouldUseHoming = weaponData != null && weaponData.hasHomingProjectiles;
+            shouldUseHoming |= currentSnapshot.HasProjectileHoming;
+
+            HomingProjectile homingProjectile;
+            if (!projectile.TryGetComponent(out homingProjectile) && shouldUseHoming)
+            {
+                homingProjectile = projectile.AddComponent<HomingProjectile>();
+            }
+
+            if (homingProjectile != null)
+            {
+                homingProjectile.SetHomingEnabled(shouldUseHoming, projectileSpeed);
+            }
             
             if (projectile.TryGetComponent<CollisionObject>(out CollisionObject collisionObj))
             {
                 if (weaponData != null)
                 {
-                    collisionObj.damage = weaponData.damage * damageMultiplier;
-                    collisionObj.traits = GetTraits();
-                    collisionObj.chargePercent = chargePercent;
-
-                    if (collisionObj.hitEffectPrefab == null)
-                    {
-                        collisionObj.hitEffectPrefab = weaponData.hitEffectPrefab;
-                    }
+                    collisionObj.Configure(
+                        weaponData.damage * EffectiveDamageMultiplier * projectileDamageMultiplier,
+                        GetTraits(),
+                        chargePercent,
+                        weaponData.hitEffectPrefab,
+                        currentSnapshot);
                 }
             }
 
@@ -140,7 +167,12 @@ namespace Nytherion.GamePlay.Combat
             return projectile; 
         }
 
-        protected void FireProjectiles(Vector2 direction, int baseCount, float spreadAngle = 15f, float chargePercent = 0f)
+        protected void FireProjectiles(
+            Vector2 direction,
+            int baseCount,
+            float spreadAngle = 15f,
+            float chargePercent = 0f,
+            float projectileDamageMultiplier = 1f)
         {
             if (ShouldPlayFireAnimation())
             {
@@ -164,7 +196,7 @@ namespace Nytherion.GamePlay.Combat
 
             if (totalCount <= 1)
             {
-                Projectile(direction, default, chargePercent);
+                Projectile(direction, default, chargePercent, projectileDamageMultiplier);
             }
             else
             {
@@ -179,7 +211,7 @@ namespace Nytherion.GamePlay.Combat
                         {
                             float currentAngle = startAngle + (spreadAngle * i);
                             Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
-                            Projectile(spreadDirection, default, chargePercent);
+                            Projectile(spreadDirection, default, chargePercent, projectileDamageMultiplier);
                         }
                     }
                     else
@@ -191,34 +223,50 @@ namespace Nytherion.GamePlay.Combat
                         {
                             float currentAngle = startAngle + (angleStep * i);
                             Vector2 spreadDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
-                            Projectile(spreadDirection, default, chargePercent);
+                            Projectile(spreadDirection, default, chargePercent, projectileDamageMultiplier);
                         }
                     }
                 }
                 else if (extraProjectileMode == ExtraProjectileMode.Burst)
                 {
-                    StartCoroutine(FireBurstRoutine(direction, totalCount, chargePercent));
+                    StartCoroutine(FireBurstRoutine(direction, totalCount, chargePercent, projectileDamageMultiplier));
                 }
                 else if (extraProjectileMode == ExtraProjectileMode.Parallel)
                 {
-                    FireParallel(direction, totalCount, chargePercent);
+                    FireParallel(direction, totalCount, chargePercent, projectileDamageMultiplier);
                 }
             }
 
             // 이벤트 발생 (쉐도우 클론 각인 등에서 사용)
-            EventManager eventManager = GameObject.FindObjectOfType<EventManager>();
+            EventManager eventManager = playerManager != null ? playerManager.EventManager : null;
             if (eventManager != null && weaponData != null)
             {
-                float baseDamage = weaponData.damage * damageMultiplier;
+                float baseDamage = weaponData.damage * EffectiveDamageMultiplier * projectileDamageMultiplier;
                 eventManager.TriggerPlayerRangedAttack(direction, totalCount, baseDamage, firePoint, projectilePoolTag);
             }
+
+            PlayWeaponRecoil(direction);
         }
 
-        private IEnumerator FireBurstRoutine(Vector2 direction, int totalCount, float chargePercent)
+        protected void PlayWeaponRecoil(Vector2 direction, float strength = 1f)
+        {
+            if (crossbowRecoil == null)
+            {
+                crossbowRecoil = GetComponent<WeaponCrossbowRecoil>();
+            }
+
+            crossbowRecoil?.Play(direction, strength);
+        }
+
+        private IEnumerator FireBurstRoutine(
+            Vector2 direction,
+            int totalCount,
+            float chargePercent,
+            float projectileDamageMultiplier)
         {
             for (int i = 0; i < totalCount; i++)
             {
-                Projectile(direction, default, chargePercent);
+                Projectile(direction, default, chargePercent, projectileDamageMultiplier);
                 if (i < totalCount - 1)
                 {
                     yield return burstWait;
@@ -226,7 +274,11 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        private void FireParallel(Vector2 direction, int totalCount, float chargePercent)
+        private void FireParallel(
+            Vector2 direction,
+            int totalCount,
+            float chargePercent,
+            float projectileDamageMultiplier)
         {
             Vector2 perp = new Vector2(-direction.y, direction.x).normalized;
             float startOffset = -((totalCount - 1) * parallelSpacing) / 2f;
@@ -235,7 +287,7 @@ namespace Nytherion.GamePlay.Combat
             {
                 float currentOffset = startOffset + (i * parallelSpacing);
                 Vector3 spawnOffset = new Vector3(perp.x, perp.y, 0f) * currentOffset;
-                Projectile(direction, spawnOffset, chargePercent);
+                Projectile(direction, spawnOffset, chargePercent, projectileDamageMultiplier);
             }
         }
 

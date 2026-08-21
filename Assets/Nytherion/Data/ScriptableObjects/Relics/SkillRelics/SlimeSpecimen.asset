@@ -14,13 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Slime Specimen
   koreanName: "\uC2AC\uB77C\uC784 \uD45C\uBCF8"
-  description_KR: "[Drone] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Drone]
-    : \uD50C\uB808\uC774\uC5B4 \uC8FC\uBCC0\uC744 \uC120\uD68C\uD558\uBA70 \uC811\uADFC\uD558\uB294
-    \uC801\uB4E4\uC744 \uC790\uB3D9\uC73C\uB85C \uCD94\uACA9 \uACF5\uACA9\uD558\uB294
-    \uC9C0\uC6D0 \uB4DC\uB860\uC744 \uC18C\uD658\uD569\uB2C8\uB2E4."
-  description_EN: "Obtain [Drone] skill.\n[Drone] : \uD50C\uB808\uC774\uC5B4 \uC8FC\uBCC0\uC744
-    \uC120\uD68C\uD558\uBA70 \uC811\uADFC\uD558\uB294 \uC801\uB4E4\uC744 \uC790\uB3D9\uC73C\uB85C
-    \uCD94\uACA9 \uACF5\uACA9\uD558\uB294 \uC9C0\uC6D0 \uB4DC\uB860\uC744 \uC18C\uD658\uD569\uB2C8\uB2E4."
+  description_KR: "플레이어를 따라다니며 적을 자동 공격하는 슬라임 소환수를 부릅니다.\n유물을 장착하는 동안 유지됩니다."
+  description_EN: "Summons a slime servant that follows you and automatically attacks enemies. It remains while equipped."
   Image: {fileID: 21300000, guid: 2b5b64eb0e4c0e548af4a105d60d1001, type: 3}
   rarity: 3
   level: 1
@@ -33,7 +28,8 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones: []
-  synergySeriesId: 
+  synergySeriesId: SummonedCreatureSeries
+  synergySetBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
   unlockMilestoneID: 
   references:
     version: 2
@@ -41,6 +37,7 @@ MonoBehaviour:
     - rid: -2
       type: {class: , ns: , asm: }
     - rid: 2313383513706201099
-      type: {class: GrantSkillEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      type: {class: SummonedCompanionRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        skillData: {fileID: 11400000, guid: 16be1c0e405f174488f5be1093f8c9e2, type: 2}
+        companionPrefab: {fileID: 4812313363314114940, guid: e138f7f50a65d334490f7e769cfb4f4e, type: 3}
+        spawnOffset: {x: -1.2, y: 0.6, z: 0}

@@ -13,13 +13,15 @@ MonoBehaviour:
   m_Name: Drone_Milestone
   m_EditorClassIdentifier: 
   milestoneID: Drone
-  title: Drone
-  description: 
-  icon: {fileID: 21300000, guid: 59c3a398a748c9948b73d0c814cf0edb, type: 3}
+  title: "슬라임 소환수"
+  description: "슬라임 소환수 유물을 획득합니다."
+  icon: {fileID: 21300000, guid: 2b5b64eb0e4c0e548af4a105d60d1001, type: 3}
   progressionType: 9
   requiredMilestones: []
   targetValue: 10
   rewards:
-  - rewardType: 0
-    amount: 0
-    skillData: {fileID: 11400000, guid: 16be1c0e405f174488f5be1093f8c9e2, type: 2}
+  - rewardType: 4
+    amount: 1
+    skillData: {fileID: 0}
+    itemData: {fileID: 0}
+    relicData: {fileID: 11400000, guid: 62b68285693a077438efec2c29e2e999, type: 2}

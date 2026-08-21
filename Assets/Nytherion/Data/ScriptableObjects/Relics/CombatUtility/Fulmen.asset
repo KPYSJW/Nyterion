@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Fulmen
+  m_EditorClassIdentifier: 
+  relicName: Fulmen
+  koreanName: "\uD480\uBA58"
+  description_KR: "플레이어 곁에 풀멘이 고정되어, 공격할 때마다 번개 투사체를 발사합니다.\n\n(2) 소환물 투사체 피해 +15%\n(4) 소환물 투사체 피해 +30%, 1발 추가 발사\n(6) 소환물 투사체 피해 +50%, 1발 추가 발사"
+  description_EN: "Fulmen stays beside you and fires a lightning projectile whenever you attack.\n\n(2) Summon projectile damage +15%\n(4) Summon projectile damage +30%, fire 1 additional projectile\n(6) Summon projectile damage +50%, fire 1 additional projectile"
+  Image: {fileID: 21300000, guid: fa131d733fa44f12b21898ca2168c29f, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 7025403621137746615
+  grantsProjectileHoming: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones: []
+  synergySeriesId: ElementalCompanionSeries
+  synergySetBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7025403621137746615
+      type: {class: FulmenRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        companionSprite: {fileID: 21300000, guid: fa131d733fa44f12b21898ca2168c29f, type: 3}
+        localOffset: {x: 0.35, y: 0.3, z: 0}
+        companionScale: {x: 0.3, y: 0.3, z: 0.3}
+        floatingHeight: 0.08
+        floatingSpeed: 2
+        orbitRadius: 0.45
+        orbitSpeed: 0.45
+        orbitRadiusVariance: 0.12
+        orbitVerticalRatio: 0.6
+        sortingOrderOffset: 2
+        projectilePrefab: {fileID: 7438830687802846269, guid: 703d6e77b94567945b500c27296b1818, type: 3}
+        projectileScale: {x: 0.3, y: 0.3, z: 0.3}
+        projectileForwardOffset: 0.2
+        projectileSpeed: 8
+        projectileLifetime: 1.5
+        damageRatio: 0.5
+        damageRatioPerLevel: 0.1

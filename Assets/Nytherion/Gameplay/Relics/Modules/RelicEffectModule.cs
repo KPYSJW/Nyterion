@@ -8,6 +8,14 @@ namespace Nytherion.Gameplay.Relics.Modules
     [Serializable]
     public class RelicEffectModule
     {
+        [Tooltip("UI에 표시할 한국어 효과 설명")]
+        [TextArea] public string description_KR;
+
+        [Tooltip("UI에 표시할 영어 효과 설명")]
+        [TextArea] public string description_EN;
+
+        public string Description => LocalizationText.GetFallback(description_KR, description_EN);
+
         [Tooltip("효과가 발동되기 위한 조건. 비워두면 항상 발동")]
         [SerializeReference, SubclassSelector] public RelicConditionBase condition;
 

@@ -12,6 +12,7 @@ using Nytherion.Core.Enums;
 using VContainer;
 using Nytherion.Core.Interfaces;
 using TMPro;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.UI.Controllers
 {
@@ -129,7 +130,11 @@ namespace Nytherion.UI.Controllers
 
             if (gachaTypeTitleText != null)
             {
-                gachaTypeTitleText.text = "Relic";
+                gachaTypeTitleText.text = LocalizationText.Get(
+                    LocalizationTables.UI,
+                    "ui.gacha.relic",
+                    "유물",
+                    "Relic");
             }
         }
 
@@ -145,6 +150,8 @@ namespace Nytherion.UI.Controllers
 
         private void OnEnable()
         {
+            LocalizationText.LanguageChanged += RefreshLocalizedTexts;
+
             if (currencyDataManager != null) currencyDataManager.OnDataChanged += UpdateTokenUI;
 
             playerAction = new PlayerAction();
@@ -156,6 +163,8 @@ namespace Nytherion.UI.Controllers
 
         private void OnDisable()
         {
+            LocalizationText.LanguageChanged -= RefreshLocalizedTexts;
+
             if (currencyDataManager != null) currencyDataManager.OnDataChanged -= UpdateTokenUI;
 
             if (playerAction != null)
@@ -164,6 +173,18 @@ namespace Nytherion.UI.Controllers
                 playerAction.GachaUI.Disable();
             }
             if (eventManager != null) eventManager.OnInteraction -= HandleInteraction;
+        }
+
+        private void RefreshLocalizedTexts()
+        {
+            if (gachaTypeTitleText != null)
+            {
+                gachaTypeTitleText.text = LocalizationText.Get(
+                    LocalizationTables.UI,
+                    "ui.gacha.relic",
+                    "유물",
+                    "Relic");
+            }
         }
 
         private void OnCloseInput(InputAction.CallbackContext context)

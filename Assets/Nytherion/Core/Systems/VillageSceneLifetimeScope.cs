@@ -158,6 +158,11 @@ public class VillageSceneLifetimeScope : LifetimeScope
             {
                 builder.RegisterInstance(sceneTransitionManager);
             }
+
+            if (Parent.Container.TryResolve<ILocalizationService>(out var localizationService))
+            {
+                builder.RegisterInstance(localizationService);
+            }
         }
 
         // DataLifetimeScope���� ������ �Ŵ����� ��������

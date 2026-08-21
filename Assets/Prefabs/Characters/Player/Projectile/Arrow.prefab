@@ -142,6 +142,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
+  chargePercent: 0
+  traits: 
+  hitEffectPrefab: {fileID: 0}
   poolTag: Player_Arrow
 --- !u!50 &-1744505625959751428
 Rigidbody2D:
@@ -166,7 +169,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
@@ -185,7 +188,10 @@ MonoBehaviour:
   maxSpeed: 12
   acceleration: 15
   rotateSpeed: 800
+  initialStraightDuration: 0.2
   trackingRadius: 5
+  targetRefreshInterval: 0.1
+  closeRangeSteeringDistance: 1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8

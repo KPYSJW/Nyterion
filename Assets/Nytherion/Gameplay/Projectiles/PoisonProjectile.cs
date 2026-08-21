@@ -53,13 +53,10 @@ namespace Nytherion.GamePlay.Combat
             if (target.CompareTag("Enemy"))
             {
                 // 적 충돌 시 독 상태 이상 부여
-                StatusEffectManager effectManager = target.GetComponent<StatusEffectManager>();
-                if (effectManager == null)
+                if (target.TryGetComponent<StatusEffectManager>(out StatusEffectManager effectManager))
                 {
-                    effectManager = target.gameObject.AddComponent<StatusEffectManager>();
+                    effectManager.ApplyEffect(new PoisonEffect(poisonDamagePerSecond, poisonDuration));
                 }
-
-                effectManager.ApplyEffect(new PoisonEffect(poisonDamagePerSecond, poisonDuration));
 
                 // 관통되도록 true 반환
                 return true;

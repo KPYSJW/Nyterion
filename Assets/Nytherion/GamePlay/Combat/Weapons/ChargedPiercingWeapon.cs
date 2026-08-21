@@ -25,11 +25,8 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 float currentDamageMultiplier = IsChargingEnabled() ? Mathf.Lerp(1.0f, maxDamageMultiplier, chargePercent) : 1.0f;
                 collisionObj.damage = weaponData.damage * currentDamageMultiplier;
 
-                PiercingEffect piercingEffect;
-                if (!projObj.TryGetComponent<PiercingEffect>(out piercingEffect))
-                {
-                    piercingEffect = projObj.AddComponent<PiercingEffect>();
-                }
+                PiercingEffect piercingEffect = projObj.GetComponent<PiercingEffect>();
+                if (piercingEffect == null) return;
 
                 if (IsChargingEnabled() && chargePercent >= pierceThreshold)
                 {

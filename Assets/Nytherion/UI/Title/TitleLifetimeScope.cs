@@ -2,6 +2,7 @@ using UnityEngine;
 using Nytherion.UI.Title;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.UI.Controllers;
 
 namespace Nytherion.UI.Title
 {
@@ -12,6 +13,12 @@ namespace Nytherion.UI.Title
 
         protected override void Configure(IContainerBuilder builder)
         {
+            LanguageDropdownController languageDropdown = FindObjectOfType<LanguageDropdownController>(true);
+            if (languageDropdown != null)
+            {
+                builder.RegisterComponent(languageDropdown);
+            }
+
             var existingTitleMenuManager = FindObjectOfType<TitleMenuManager>();
             if (existingTitleMenuManager != null)
             {

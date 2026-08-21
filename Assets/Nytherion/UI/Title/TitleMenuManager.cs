@@ -14,6 +14,7 @@ namespace Nytherion.UI.Title
         [SerializeField] private Button startButton;
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button quitButton;
+        [SerializeField] private GameObject settingsPanel;
 
         Scene scene;
         private SceneTransitionManager sceneTransitionManager;
@@ -118,6 +119,10 @@ namespace Nytherion.UI.Title
 
         public void OnSettings()
         {
+            if (settingsPanel != null)
+            {
+                settingsPanel.SetActive(!settingsPanel.activeSelf);
+            }
         }
 
         public void OnQuit()

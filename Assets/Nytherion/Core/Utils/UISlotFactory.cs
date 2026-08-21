@@ -160,7 +160,7 @@ namespace Nytherion.Core.Utils
         {
             if (slot?.CurrentItem != null && TooltipPanel.Instance != null)
             {
-                TooltipPanel.Instance.ShowTooltip(slot.CurrentItem);
+                TooltipPanel.Instance.ShowTooltip(slot.CurrentItem, slot.CurrentSlotBackgroundSprite);
             }
         }
 

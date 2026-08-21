@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Interfaces;
 using Nytherion.GamePlay.Combat;
-using Nytherion.GamePlay.Characters.Player;
-using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Combat
@@ -94,31 +91,10 @@ namespace Nytherion.GamePlay.Combat
             // 기본적으로는 유물이 없으므로 false로 초기화
             canSplit = false;
 
-            PlayerManager player = FindObjectOfType<PlayerManager>();
-            if (player != null)
+            if (collisionObj != null)
             {
-                PlayerRelicManager relicManager = player.GetComponent<PlayerRelicManager>();
-                if (relicManager != null)
-                {
-                    List<RelicData> relics = relicManager.GetCurrentRelics();
-                    foreach (RelicData relic in relics)
-                    {
-                        if (relic != null)
-                        {
-                            bool matchesEnglish = !string.IsNullOrEmpty(requiredRelicName) && 
-                                                 string.Equals(relic.relicName, requiredRelicName, System.StringComparison.OrdinalIgnoreCase);
-                            
-                            bool matchesKorean = !string.IsNullOrEmpty(requiredRelicKoreanName) && 
-                                                 string.Equals(relic.koreanName, requiredRelicKoreanName, System.StringComparison.OrdinalIgnoreCase);
-
-                            if (matchesEnglish || matchesKorean)
-                            {
-                                canSplit = true;
-                                break;
-                            }
-                        }
-                    }
-                }
+                CombatModifierSnapshot modifiers = collisionObj.ModifierSnapshot;
+                canSplit = modifiers.IsActive(requiredRelicName) || modifiers.IsActive(requiredRelicKoreanName);
             }
         }
 

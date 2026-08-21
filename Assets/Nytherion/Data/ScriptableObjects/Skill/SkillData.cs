@@ -1,5 +1,6 @@
 using UnityEngine;
 using Nytherion.Core.Enums;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.Data.ScriptableObjects.Skill
 {
@@ -16,6 +17,16 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         public string skillName;
         [TextArea(3, 5)] 
         public string description;
+        public string DisplayName => LocalizationText.Get(
+            LocalizationTables.Skills,
+            LocalizationKeys.SkillName(skillID),
+            skillName,
+            skillName);
+        public string Description => LocalizationText.Get(
+            LocalizationTables.Skills,
+            LocalizationKeys.SkillDescription(skillID),
+            description,
+            description);
         public int skillLevel;
         public int exp;
         public float coolDown;

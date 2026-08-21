@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
+  m_Name: ElementalCompanionSet
+  m_EditorClassIdentifier: 
+  setName_KR: "소환물"
+  setName_EN: Summon
+  statusIcon: {fileID: 21300000, guid: 63867d480efeee249abe248d36b59c33, type: 3}
+  badgeBackgroundColor: {r: 0.20392157, g: 0.30588236, b: 0.54901963, a: 0.9607843}
+  badgeTextColor: {r: 0.9490196, g: 0.9607843, b: 1, a: 1}
+  description_KR: "공격에 맞춰 투사체를 발사하는 소환물 유물 세트입니다."
+  description_EN: A Summon relic set that fires projectiles with your attacks.
+  synergySeriesId: ElementalCompanionSeries
+  bonusModules:
+  - condition:
+      rid: 2001
+    effects:
+    - rid: 2002
+    description_KR: "소환물 투사체 피해 +15%"
+    description_EN: Summon projectile damage +15%
+  - condition:
+      rid: 4001
+    effects:
+    - rid: 4002
+    description_KR: "소환물 투사체 피해 +30%, 1발 추가 발사"
+    description_EN: Summon projectile damage +30%, fire 1 additional projectile
+  - condition:
+      rid: 6001
+    effects:
+    - rid: 6002
+    description_KR: "소환물 투사체 피해 +50%, 1발 추가 발사"
+    description_EN: Summon projectile damage +50%, fire 1 additional projectile
+  linkedTranscendenceEffects:
+  - {fileID: 11400000, guid: a5f059cfede742b6a797ca1c61f3fca9, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 2001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: ElementalCompanionSeries
+        measure: 1
+        requiredChainLength: 2
+    - rid: 2002
+      type: {class: FollowerAttackSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        damageMultiplier: 1.15
+        additionalProjectileCount: 0
+        additionalProjectileSpreadAngle: 12
+    - rid: 4001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: ElementalCompanionSeries
+        measure: 1
+        requiredChainLength: 4
+    - rid: 4002
+      type: {class: FollowerAttackSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        damageMultiplier: 1.3
+        additionalProjectileCount: 1
+        additionalProjectileSpreadAngle: 12
+    - rid: 6001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: ElementalCompanionSeries
+        measure: 1
+        requiredChainLength: 6
+    - rid: 6002
+      type: {class: FollowerAttackSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        damageMultiplier: 1.5
+        additionalProjectileCount: 1
+        additionalProjectileSpreadAngle: 12

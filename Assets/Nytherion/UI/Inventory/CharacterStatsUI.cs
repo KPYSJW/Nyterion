@@ -7,6 +7,9 @@ using Nytherion.Data.ScriptableObjects.Player;
 using Nytherion.Core.Managers;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.Core.Utils;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace Nytherion.UI.Inventory
 {
@@ -19,6 +22,7 @@ namespace Nytherion.UI.Inventory
 
         private readonly List<GameObject> statCells = new List<GameObject>();
         private PlayerManager playerManager;
+        private bool isLocalizationSubscribed;
 
         [Inject]
         public void Construct(PlayerManager playerManager)
@@ -36,6 +40,14 @@ namespace Nytherion.UI.Inventory
         }
         private void OnEnable()
         {
+            LocalizationText.LanguageChanged += OnTemporaryLanguageChanged;
+
+            if (LocalizationText.IsConfigured)
+            {
+                LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+                isLocalizationSubscribed = true;
+            }
+
             if (playerManager != null)
             {
                 playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
@@ -46,10 +58,23 @@ namespace Nytherion.UI.Inventory
 
         private void OnDisable()
         {
+            LocalizationText.LanguageChanged -= OnTemporaryLanguageChanged;
+
+            if (isLocalizationSubscribed)
+            {
+                LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+                isLocalizationSubscribed = false;
+            }
+
             if (playerManager != null)
             {
                 playerManager.OnPlayerStatsChanged -= RefreshStatsUI;
             }
+        }
+
+        private void OnTemporaryLanguageChanged()
+        {
+            RefreshStatsUI();
         }
 
         private bool ValidateReferences()
@@ -102,6 +127,10 @@ namespace Nytherion.UI.Inventory
                     {
                         displayValue = $"{Mathf.RoundToInt(floatValue * 100f)}%";
                     }
+                    else if (field.Name == "meleeSpeed" || field.Name == "rangedSpeed")
+                    {
+                        displayValue = $"{floatValue:0.##}";
+                    }
                     else
                     {
                         displayValue = Mathf.RoundToInt(floatValue).ToString();
@@ -127,7 +156,7 @@ namespace Nytherion.UI.Inventory
                 var text = cell.GetComponentInChildren<TextMeshProUGUI>();
                 if (text != null)
                 {
-                    text.text = $"{GetKoreanStatName(statName)}: {value}";
+                    text.text = $"{GetLocalizedStatName(statName)}: {value}";
                 }
                 return cell;
             }
@@ -152,24 +181,35 @@ namespace Nytherion.UI.Inventory
 
 
 
-        private string GetKoreanStatName(string englishName)
+        private string GetLocalizedStatName(string statName)
         {
-            return englishName switch
+            (string korean, string english) = statName switch
             {
-                "maxHealth" => "최대 체력",
-                "defense" => "방어력",
-                "moveSpeed" => "이동 속도",
-                "meleeDamage" => "근접 공격력",
-                "rangedDamage" => "원거리 공격력",
-                "meleeSpeed" => "근접 공격 속도",
-                "rangedSpeed" => "원거리 공격 속도",
-                "extraProjectiles" => "추가 투사체 수",
-                "lifesteal" => "생명력 흡수",
-                "chargeTimeReduction" => "충전 시간 감소",
-                "critChance" => "치명타 확률",
-                "critDamageMultiplier" => "치명타 피해량",
-                _ => englishName
+                "maxHealth" => ("최대 체력", "Max Health"),
+                "defense" => ("방어력", "Defense"),
+                "moveSpeed" => ("이동 속도", "Move Speed"),
+                "meleeDamage" => ("근접 공격력", "Melee Damage"),
+                "rangedDamage" => ("원거리 공격력", "Ranged Damage"),
+                "meleeSpeed" => ("근접 공격 속도", "Melee Attack Speed"),
+                "rangedSpeed" => ("원거리 공격 속도", "Ranged Attack Speed"),
+                "extraProjectiles" => ("추가 투사체 수", "Extra Projectiles"),
+                "lifesteal" => ("생명력 흡수", "Lifesteal"),
+                "chargeTimeReduction" => ("충전 시간 감소", "Charge Time Reduction"),
+                "critChance" => ("치명타 확률", "Critical Chance"),
+                "critDamageMultiplier" => ("치명타 피해량", "Critical Damage"),
+                _ => (statName, statName)
             };
+
+            return LocalizationText.Get(
+                LocalizationTables.UI,
+                $"ui.stat.{statName}",
+                korean,
+                english);
+        }
+
+        private void OnLocaleChanged(Locale _)
+        {
+            RefreshStatsUI();
         }
     }
 }

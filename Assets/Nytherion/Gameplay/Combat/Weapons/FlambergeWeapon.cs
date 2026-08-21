@@ -440,7 +440,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
 
                         if (effect.TryGetComponent<CollisionObject>(out CollisionObject collisionObj))
                         {
-                            collisionObj.damage = weaponData.damage * damageMultiplier;
+                            collisionObj.damage = weaponData.damage * EffectiveDamageMultiplier;
                             collisionObj.traits = GetTraits();
                             
                             if (collisionObj.hitEffectPrefab == null)
@@ -450,7 +450,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
                         }
                         else if (effect.TryGetComponent<FlambergeCollision>(out FlambergeCollision flambergeCol))
                         {
-                            flambergeCol.damage = weaponData.damage * damageMultiplier;
+                            flambergeCol.damage = weaponData.damage * EffectiveDamageMultiplier;
                             
                             if (flambergeCol.hitEffectPrefab == null)
                             {
@@ -472,16 +472,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
             {
                 if (playerManager != null && playerManager.playerRelicManager != null)
                 {
-                    if (playerManager.playerRelicManager.IsRelicActive(weaponData.requiredRelicId))
-                    {
-                        return true;
-                    }
-                }
-
-                Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-                if (relicManager != null)
-                {
-                    return relicManager.IsRelicActive(weaponData.requiredRelicId);
+                    return playerManager.playerRelicManager.IsRelicActive(weaponData.requiredRelicId);
                 }
             }
             return false;

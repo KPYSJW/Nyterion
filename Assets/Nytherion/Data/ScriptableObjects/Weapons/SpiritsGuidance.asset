@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: SpiritsGuidance
+  m_EditorClassIdentifier: 
+  uniqueID: 914a516c-2838-49ea-807c-1a92bdb592d9
+  itemName_KR: "\uC815\uB839\uC758 \uC778\uB3C4"
+  itemName_EN: Spirits' Guidance
+  icon: {fileID: 21300000, guid: e8b16d3f74a54a69b2fd84bc9ad3c8e1, type: 3}
+  description_KR: "\uC55E\uC73C\uB85C \uBC1C\uC0AC\uB41C \uD22C\uC0AC\uCCB4\uAC00
+    \uC7A0\uC2DC \uD6C4 \uAC00\uC7A5 \uAC00\uAE4C\uC6B4 \uC801\uC744 \uCD94\uC801\uD569\uB2C8\uB2E4."
+  description_EN: Projectiles travel forward briefly, then seek the nearest enemy.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 180
+  equipmentType: 0
+  traits: 00000000
+  statModifiers: []
+  damage: 18
+  range: 10
+  cooldown: 0.45
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: e8b16d3f74a54a69b2fd84bc9ad3c8e1, type: 3}
+  firePointOffset: {x: 0.4, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: -0.3, y: -0.1, z: 0}
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 2677180847099711197, guid: bb249ca1fdaaf1f4ea80f5baf0071f71, type: 3}
+  projectileSpeed: 6
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hasHomingProjectiles: 1
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 522026955719439145, guid: a97d5617a532fdf4cb19ad077940f626, type: 3}
+  weaponPrefab: {fileID: -5549771501177217355, guid: a8d17d78d9ca4b0db48343da29098e1f, type: 3}
+  isArchivable: 1

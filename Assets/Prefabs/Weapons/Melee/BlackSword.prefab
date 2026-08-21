@@ -153,12 +153,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponData: {fileID: 11400000, guid: e128a3f8902d4bda85cc4aef52ef29b8, type: 2}
   damageMultiplier: 1
+  animator: {fileID: 3673308277057953581}
   col: {fileID: 0}
   customSlashEffectPrefab: {fileID: 8832232383757876103, guid: 6bda364e60a7c5a4bbe974590ede56ce, type: 3}
-  spawnDistance: 0
-  animator: {fileID: 3673308277057953581}
+  slashCenterForwardOffset: 0.6
   attackTriggerName: Attack
-  rightIdlePosition: {x: 0.22, y: 0.44, z: 0}
-  rightIdleRotationZ: 90
-  leftIdlePosition: {x: -0.46, y: 0.13, z: 0}
-  leftIdleRotationZ: 45
+  rightHandOffset: {x: 0.2, y: -0.13, z: 0}
+  leftHandOffset: {x: -0.3, y: 0, z: 0}
+  handSideSwitchThreshold: 0.08
+  aimAngleOffset: 0
+  aimFollowSpeed: 24
+  rootScale: 1
+  swingPositionInfluence: 0.15
+  normalSwingHalfAngle: 110
+  swingEndExtensionAngle: -65
+  strikeNormalizedTime: 0.55
+  followupWindupAngle: 15
+  swingDirectionDecisionThreshold: 0.05
+  comboResetDuration: 1.1
+  comboReturnDuration: 0.14
+  finalPoseHoldDuration: 0.12
+  sectorHitAngle: 265
+  sectorHitRadius: 2.7
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  thirdSlashVisualScale: 1.25

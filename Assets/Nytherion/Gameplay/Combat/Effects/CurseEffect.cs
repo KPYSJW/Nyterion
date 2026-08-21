@@ -1,7 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-using Nytherion.Core.Data;
-using Nytherion.GamePlay.Relics;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -22,43 +19,32 @@ namespace Nytherion.GamePlay.Combat
 
         public override void OnApply()
         {
-            AdjustCurseMultiplier();
             if (manager != null)
             {
                 manager.PlayVFX(EffectId);
             }
         }
 
-        private void AdjustCurseMultiplier()
+        public override void ApplyRelicModifiers(CombatModifierSnapshot modifiers)
         {
-            Nytherion.Core.Managers.RelicManager relicManager = UnityEngine.Object.FindObjectOfType<Nytherion.Core.Managers.RelicManager>();
-            if (relicManager != null)
+            int level = modifiers.GetActiveLevel("Seal of the Abyss");
+            if (level > 0)
             {
-                foreach (KeyValuePair<string, Vector2Int> pair in relicManager.GetPlacedBlocks())
-                {
-                    RelicBlock block = relicManager.GetBlockAt(pair.Value.y, pair.Value.x);
-                    if (block != null && !block.SourceData.isDisabled)
-                    {
-                        if (block.RelicId == "Seal of the Abyss")
-                        {
-                            float bonus = 0.1f + (block.SourceData.level - 1) * 0.03f;
-                            damageMultiplier += bonus;
-                            break;
-                        }
-                        else if (block.RelicId == "Shackles of Ruin")
-                        {
-                            float bonus = 0.15f + (block.SourceData.level - 1) * 0.04f;
-                            damageMultiplier += bonus;
-                            break;
-                        }
-                        else if (block.RelicId == "Cursed Crown")
-                        {
-                            float bonus = 0.25f + (block.SourceData.level - 1) * 0.05f;
-                            damageMultiplier += bonus;
-                            break;
-                        }
-                    }
-                }
+                damageMultiplier += 0.1f + (level - 1) * 0.03f;
+                return;
+            }
+
+            level = modifiers.GetActiveLevel("Shackles of Ruin");
+            if (level > 0)
+            {
+                damageMultiplier += 0.15f + (level - 1) * 0.04f;
+                return;
+            }
+
+            level = modifiers.GetActiveLevel("Cursed Crown");
+            if (level > 0)
+            {
+                damageMultiplier += 0.25f + (level - 1) * 0.05f;
             }
         }
 

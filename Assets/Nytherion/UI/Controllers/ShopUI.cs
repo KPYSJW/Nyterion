@@ -6,6 +6,7 @@ using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.UI.Inventory;
 using TMPro;
+using Nytherion.Core.Utils;
 using Nytherion.Core.Enums;
 using Nytherion.UI.Shop;
 using Nytherion.Data.ScriptableObjects.Weapons;
@@ -163,6 +164,8 @@ namespace Nytherion.UI.Controllers
         }
         public void Initialize()
         {
+
+            LocalizationText.LanguageChanged += OnLanguageChanged;
 
             // UI 요소들 찾기
             FindUIElements();
@@ -464,7 +467,11 @@ namespace Nytherion.UI.Controllers
                 TMPro.TextMeshProUGUI textUI = emptyStateUI.GetComponent<TMPro.TextMeshProUGUI>();
                 if (textUI != null)
                 {
-                    textUI.text = "No items on sale.";
+                    textUI.text = LocalizationText.Get(
+                        LocalizationTables.UI,
+                        "ui.shop.no_items",
+                        "판매 중인 아이템이 없습니다.",
+                        "No items on sale.");
                 }
             }
 
@@ -534,6 +541,8 @@ namespace Nytherion.UI.Controllers
 
         private void OnDestroy()
         {
+            LocalizationText.LanguageChanged -= OnLanguageChanged;
+
             CurrencyDataManager currencyMgr = GetCurrencyDataManager();
             if (currencyMgr != null)
             {
@@ -545,6 +554,17 @@ namespace Nytherion.UI.Controllers
             {
                 inventoryMgr.OnDataChanged -= OnInventoryDataChanged;
             }
+        }
+
+        private void OnLanguageChanged()
+        {
+            if (currentShopData == null)
+            {
+                return;
+            }
+
+            RefreshShopUI();
+            RefreshPlayerInventoryUI();
         }
         private void RefreshShopUI()
         {

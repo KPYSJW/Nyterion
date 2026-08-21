@@ -81,6 +81,8 @@ public class GameSceneUIRefs : MonoBehaviour
     public Toggle FullscreenToggle => fullscreenToggle;
     [SerializeField] private TMP_Dropdown resolutionDropdown;
     public TMP_Dropdown ResolutionDropdown => resolutionDropdown;
+    [SerializeField] private TMP_Dropdown languageDropdown;
+    public TMP_Dropdown LanguageDropdown => languageDropdown;
 
     [Header("Shop UI")]
     [SerializeField] private GameObject shopUIPrefab;
@@ -137,6 +139,15 @@ public class GameSceneUIRefs : MonoBehaviour
     [Header("Relic UI")]
     [SerializeField] private CanvasGroup relicCanvasGroup;
     public CanvasGroup RelicCanvasGroup => relicCanvasGroup;
+    [SerializeField] private RectTransform relicSetEffectStatusPanel;
+    public RectTransform RelicSetEffectStatusPanel => relicSetEffectStatusPanel;
+    [SerializeField] private RectTransform relicTranscendenceEffectStatusPanel;
+    public RectTransform RelicTranscendenceEffectStatusPanel => relicTranscendenceEffectStatusPanel;
+    [SerializeField] private GameObject relicEffectStatusEntryPrefab;
+    public GameObject RelicEffectStatusEntryPrefab => relicEffectStatusEntryPrefab;
+    public GameObject RelicSetEffectStatusEntryPrefab => relicEffectStatusEntryPrefab;
+    [SerializeField] private GameObject relicTranscendenceEffectStatusEntryPrefab;
+    public GameObject RelicTranscendenceEffectStatusEntryPrefab => relicTranscendenceEffectStatusEntryPrefab;
 
     [Header("Dungeon UI")]
     [SerializeField] private WorldmapController worldmapController;

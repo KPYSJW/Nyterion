@@ -2,6 +2,7 @@ using UnityEngine;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Data;
 using System.Collections.Generic;
+using Nytherion.Core.Utils;
 
 namespace Nytherion.Data.ScriptableObjects.Progression
 {
@@ -13,6 +14,16 @@ namespace Nytherion.Data.ScriptableObjects.Progression
         public string title;
         [TextArea(3, 5)]
         public string description;
+        public string DisplayTitle => LocalizationText.Get(
+            LocalizationTables.Progression,
+            LocalizationKeys.MilestoneTitle(milestoneID),
+            title,
+            title);
+        public string Description => LocalizationText.Get(
+            LocalizationTables.Progression,
+            LocalizationKeys.MilestoneDescription(milestoneID),
+            description,
+            description);
         public Sprite icon;
 
         [Header("Progress Settings")]

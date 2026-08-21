@@ -20,6 +20,9 @@ namespace Nytherion.GamePlay.Characters.Player
 
         [SerializeField] private Vector3 centerOffset = new Vector3(0, 0.5f, 0);
 
+        [Header("Render Settings")]
+        [SerializeField] private int weaponSortingOrderOffset = -1;
+
         [Header("Aim Settings")]
         private bool useAngleLimit = false; // 360도 회전을 위해 인스펙터 오버라이드를 무시하고 항상 false로 고정
         [SerializeField] private float aimAngleLimit = 45f; // 중심각 기준 좌우 45도 (합 90도 부채꼴)
@@ -33,9 +36,22 @@ namespace Nytherion.GamePlay.Characters.Player
         private InputManager inputManager;
         private PlayerManager playerManager;
         private PlayerController playerController;
+        private SpriteRenderer playerSpriteRenderer;
 
         private float currentAngle = 0f;
         private bool isAttackHeld = false;
+        private bool isGenericCharging;
+        private float genericChargeTime;
+
+        public bool IsGenericCharging => isGenericCharging;
+        public float GenericChargePercent
+        {
+            get
+            {
+                float maxChargeTime = GetGenericMaxChargeTime();
+                return maxChargeTime > 0f ? Mathf.Clamp01(genericChargeTime / maxChargeTime) : 1f;
+            }
+        }
 
         [Inject]
         public void Construct(InputManager inputManager)
@@ -47,6 +63,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             playerManager = GetComponent<PlayerManager>();
             playerController = GetComponent<PlayerController>();
+            playerSpriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         private void Start()
@@ -61,17 +78,32 @@ namespace Nytherion.GamePlay.Characters.Player
         private void HandleAttackDown()
         {
             isAttackHeld = true;
-            Attack();
+            if (ShouldUseGenericCharging())
+            {
+                BeginGenericCharge();
+            }
+            else
+            {
+                Attack();
+            }
         }
 
         private void HandleAttackUp()
         {
             isAttackHeld = false;
-            AttackEnd();
+            if (isGenericCharging)
+            {
+                ReleaseGenericCharge();
+            }
+            else
+            {
+                AttackEnd();
+            }
         }
 
         public void EquipWeapon(WeaponBase weaponPrefab, WeaponData data = null)
         {
+            CancelGenericCharge();
             if (currentWeapon != null)
             {
                 Destroy(currentWeapon.gameObject);
@@ -189,6 +221,19 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             RotateWeaponToMouse();
 
+            if (isGenericCharging)
+            {
+                if (!ShouldUseGenericCharging())
+                {
+                    CancelGenericCharge();
+                }
+                else
+                {
+                    genericChargeTime = Mathf.Min(genericChargeTime + Time.deltaTime, GetGenericMaxChargeTime());
+                }
+                return;
+            }
+
             if (isAttackHeld && currentWeapon != null)
             {
                 // 차징 무기가 아닌 경우 꾹 누르고 있으면 쿨다운에 맞춰 자동 연사 (Auto-fire)
@@ -199,6 +244,42 @@ namespace Nytherion.GamePlay.Characters.Player
                         Attack();
                     }
                 }
+            }
+        }
+
+        private void LateUpdate()
+        {
+            UpdateWeaponSortingOrder();
+        }
+
+        private void UpdateWeaponSortingOrder()
+        {
+            if (currentWeapon == null)
+            {
+                return;
+            }
+
+            if (playerSpriteRenderer == null)
+            {
+                playerSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+            if (playerSpriteRenderer == null)
+            {
+                return;
+            }
+
+            SpriteRenderer[] weaponRenderers = currentWeapon.GetComponentsInChildren<SpriteRenderer>(true);
+            if (weaponRenderers.Length == 0)
+            {
+                return;
+            }
+
+            int targetBaseOrder = playerSpriteRenderer.sortingOrder + weaponSortingOrderOffset;
+            for (int i = 0; i < weaponRenderers.Length; i++)
+            {
+                SpriteRenderer weaponRenderer = weaponRenderers[i];
+                weaponRenderer.sortingLayerID = playerSpriteRenderer.sortingLayerID;
+                weaponRenderer.sortingOrder = targetBaseOrder;
             }
         }
 
@@ -266,8 +347,9 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void Attack()
         {
-            if (currentWeapon != null)
+            if (currentWeapon != null && currentWeapon.CanAttack())
             {
+                currentWeapon.ResetGenericChargeMultiplier();
                 Vector2 fireDirection = weaponPoint.right;
                 Vector2 mouseScreenPos = inputManager.MousePosition;
                 Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
@@ -287,8 +369,60 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
+        private bool ShouldUseGenericCharging()
+        {
+            return currentWeapon != null &&
+                   !(currentWeapon is IChargeableWeapon) &&
+                   playerManager != null &&
+                   playerManager.playerRelicManager != null &&
+                   playerManager.playerRelicManager.IsRelicActive("ChargeRelic");
+        }
+
+        private void BeginGenericCharge()
+        {
+            isGenericCharging = true;
+            genericChargeTime = 0f;
+        }
+
+        private void ReleaseGenericCharge()
+        {
+            if (currentWeapon == null || !currentWeapon.CanAttack())
+            {
+                CancelGenericCharge();
+                return;
+            }
+
+            float chargePercent = GenericChargePercent;
+            isGenericCharging = false;
+            genericChargeTime = 0f;
+
+            Vector2 fireDirection = weaponPoint.right;
+            Vector2 mouseScreenPos = inputManager.MousePosition;
+            Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
+            targetWorldPos.z = 0f;
+
+            currentWeapon.AttackWithGenericCharge(fireDirection, targetWorldPos, chargePercent);
+            currentWeapon.AttackEnd();
+            OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);
+            OnPlayerAttackEnd?.Invoke();
+        }
+
+        private float GetGenericMaxChargeTime()
+        {
+            if (currentWeapon == null || currentWeapon.weaponData == null) return 1f;
+            return Mathf.Max(0.01f, currentWeapon.weaponData.maxChargeTime);
+        }
+
+        private void CancelGenericCharge()
+        {
+            isGenericCharging = false;
+            genericChargeTime = 0f;
+            currentWeapon?.ResetGenericChargeMultiplier();
+        }
+
         private void OnDisable()
         {
+            CancelGenericCharge();
             if (inputManager != null)
             {
                 inputManager.onAttackDown -= HandleAttackDown;

@@ -93,5 +93,11 @@ namespace Nytherion.GamePlay.Combat.Behaviors
             if(meleeAttackCollider==null) return;
             meleeAttackCollider.gameObject.SetActive(false);
         }
+
+        public void ResetForReuse()
+        {
+            lastAttackTime = -999f;
+            DeactivateCollider();
+        }
     }
 }
