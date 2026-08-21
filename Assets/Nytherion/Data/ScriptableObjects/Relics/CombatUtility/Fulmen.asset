@@ -42,7 +42,7 @@ MonoBehaviour:
       data:
         companionSprite: {fileID: 21300000, guid: fa131d733fa44f12b21898ca2168c29f, type: 3}
         localOffset: {x: 0.35, y: 0.3, z: 0}
-        companionScale: {x: 0.3, y: 0.3, z: 0.3}
+        companionScale: {x: 0.32, y: 0.32, z: 0.32}
         floatingHeight: 0.08
         floatingSpeed: 2
         orbitRadius: 0.45
@@ -53,7 +53,7 @@ MonoBehaviour:
         projectilePrefab: {fileID: 7438830687802846269, guid: 703d6e77b94567945b500c27296b1818, type: 3}
         projectileScale: {x: 0.3, y: 0.3, z: 0.3}
         projectileForwardOffset: 0.2
-        projectileSpeed: 8
+        projectileSpeed: 10
         projectileLifetime: 1.5
         damageRatio: 0.5
         damageRatioPerLevel: 0.1
