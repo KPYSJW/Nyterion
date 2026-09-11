@@ -270,18 +270,18 @@ namespace Nytherion.GamePlay.Dungeon
                 result.startRoom
             );
 
+            RegisterPortalLinks(result.portalLinks);
+
+             if (dungeonNavMeshBuilder != null)
+            {
+                yield return StartCoroutine(dungeonNavMeshBuilder.RebuildNavMeshCoroutine());
+            }
+
             SpawnMonstersInRooms(
                 result.rooms.ToDictionary(room => room.gridPos, room => room),
                 result.obstacles,
                 result.roomFloorData
             );
-
-            RegisterPortalLinks(result.portalLinks);
-
-            if (dungeonNavMeshBuilder != null)
-            {
-                yield return StartCoroutine(dungeonNavMeshBuilder.RebuildNavMeshCoroutine());
-            }
 
             FinalizeDungeonData(
                 result.rooms.ToDictionary(room => room.gridPos, room => room),

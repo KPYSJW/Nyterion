@@ -15,6 +15,8 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         [SerializeField] private float attackCoolDown = 1f;
         [SerializeField] private float fallbackDamage = 10;
         [SerializeField] private MeleeAttackCollider meleeAttackCollider;
+        [Tooltip("지정하면 숫자 거리 대신 이 원형 콜라이더와 대상 콜라이더의 실제 범위로 공격 시작을 판정합니다.")]
+        [SerializeField] private CircleCollider2D attackRangeCollider;
         private float lastAttackTime = -999f;
         private EnemyBase enemyBase;
 
@@ -28,6 +30,31 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         public bool IsInAttackRange(Transform target)
         {
             if (target == null) return false;
+
+            if (attackRangeCollider != null)
+            {
+                Vector2 rangeCenter = attackRangeCollider.transform.TransformPoint(
+                    attackRangeCollider.offset);
+                Vector3 lossyScale = attackRangeCollider.transform.lossyScale;
+                float rangeScale = Mathf.Max(
+                    Mathf.Abs(lossyScale.x),
+                    Mathf.Abs(lossyScale.y));
+                float rangeRadius = attackRangeCollider.radius * rangeScale;
+
+                Collider2D targetCollider = target.GetComponent<Collider2D>();
+                if (targetCollider == null)
+                {
+                    targetCollider = target.GetComponentInChildren<Collider2D>();
+                }
+
+                Vector2 targetPoint = targetCollider != null
+                    ? targetCollider.ClosestPoint(rangeCenter)
+                    : (Vector2)target.position;
+
+                return (targetPoint - rangeCenter).sqrMagnitude <=
+                       rangeRadius * rangeRadius;
+            }
+
             return (transform.position - target.position).sqrMagnitude <= attackRange * attackRange;
         }
 

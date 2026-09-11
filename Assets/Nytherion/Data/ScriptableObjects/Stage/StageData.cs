@@ -1,7 +1,4 @@
 ﻿using Nytherion.Data.ScriptableObjects.Dungeon;
-using Nytherion.Data.ScriptableObjects.Enemy;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Nytherion.Core.Utils;
 
@@ -19,10 +16,6 @@ namespace Nytherion.Data.ScriptableObjects.Stage
         public int chapterNumber;
         public int stageNumber;
         public bool isBossStage;
-        public List<EnemyData> enemyList;
-        public List<Transform> fixedSpawnPoints;
-        public bool useRandomSpawn = true;
-        public int enemyCount;
         public Sprite stageBackground;
 
         [Header("스테이지 흐름 설정")]

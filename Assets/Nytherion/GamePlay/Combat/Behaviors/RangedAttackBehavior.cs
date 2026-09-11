@@ -15,11 +15,12 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         [Header("Projectile Visual")]
         [SerializeField] private bool useProjectileVisual = true;
         [SerializeField] private GameObject projectilePrefab;
+        [SerializeField, Min(0f)] private float projectileSpeed = 8f;
+        [SerializeField] private float projectileRotationOffsetDegrees;
         [SerializeField] public Transform firePoint;
         [SerializeField] public Transform player=null;
 
         private float lastAttackTime = -999f;
-        private const float ProjectileSpeed = 8f;
         private EnemyBase enemyBase;
 
         public float AttackCoolDown => Mathf.Clamp01((Time.time - lastAttackTime) / attackCoolDown);
@@ -73,15 +74,22 @@ namespace Nytherion.GamePlay.Combat.Behaviors
 
             Vector2 direction = (player.position - firePoint.position).normalized;
             GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-            if (projectile.TryGetComponent<EnemyProjectiles>(out var enemyProjectile))
+            float damage = GetDamageValue();
+            if (projectile.TryGetComponent<MushroomEnemyProjectile>(out var mushroomProjectile))
             {
-                enemyProjectile.Initialize(GetDamageValue());
+                mushroomProjectile.Initialize(damage, player.position);
+            }
+            else if (projectile.TryGetComponent<EnemyProjectiles>(out var enemyProjectile))
+            {
+                enemyProjectile.Initialize(damage);
             }
             if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
             {
-                rb.velocity = direction * ProjectileSpeed;
+                rb.velocity = direction * projectileSpeed;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                projectile.transform.rotation = Quaternion.AngleAxis(
+                    angle + projectileRotationOffsetDegrees,
+                    Vector3.forward);
             }
         }
 
