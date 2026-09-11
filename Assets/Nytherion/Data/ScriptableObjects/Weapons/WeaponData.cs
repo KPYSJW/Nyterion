@@ -32,6 +32,14 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float spriteRotationOffset = 0f;
         [Tooltip("무기 장착 위치 오프셋 (손잡이 위치 조절용)")]
         public Vector3 visualPositionOffset = Vector3.zero;
+        [Min(0.01f)]
+        [Tooltip("무기 외형의 균일 크기 배율")]
+        public float visualScale = 1f;
+
+        [Header("Staff Recoil Settings")]
+        [Tooltip("발사 시 Frenzy와 동일한 무기 반동을 적용합니다.")]
+        public bool useStaffRecoil;
+
         [Tooltip("무기 자체에 부착할 이펙트 프리팹 (예: 스태프의 파티클 시스템 등)")]
         public GameObject weaponEffectPrefab;
 

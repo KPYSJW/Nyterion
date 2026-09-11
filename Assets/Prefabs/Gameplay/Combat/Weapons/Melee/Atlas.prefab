@@ -26,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3412803626399598195}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.35, y: 0.35, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.49497476, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2574863212788104604}
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!198 &7089748989900054021
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -4855,13 +4855,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6153149357335174470}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2574863212788104604}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!61 &7929239459385970365
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4933,7 +4933,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8742989070986337722}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.38268343, w: 0.92387956}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0.67, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4942,7 +4942,7 @@ Transform:
   - {fileID: 329725422658351488}
   - {fileID: 301071811507065050}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!212 &8413827982290634327
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5011,6 +5011,7 @@ MonoBehaviour:
   damageMultiplier: 1
   col: {fileID: 7929239459385970365}
   maxAimAngle: 180
+  spriteForwardAngle: 90
   idleOffset: {x: 0, y: -0.1, z: 0}
   isChargeable: 1
   maxChargeTime: 1
@@ -5018,7 +5019,7 @@ MonoBehaviour:
   chargingParticle: {fileID: 7089748989900054021}
   chargingMaterial: {fileID: 2100000, guid: 11e9a5e5ec2478d48ab559058031f82c, type: 2}
   chargePropertyName: _FlashAmount
-  thrustDistance: 3
+  thrustDistance: 1.5
   attackDuration: 0.4
   peakTimePercent: 0.25
   slashEffectObject: {fileID: 6019038449650158381}
@@ -5034,23 +5035,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.35
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.35
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.35
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.7
+      value: 0.9899495
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5058,7 +5059,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.92387956
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalRotation.x
@@ -5070,7 +5071,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.38268343
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5082,7 +5083,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 45
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 44539706037568456, guid: 191c8a77a47e8c9439b5d94262c3a20d, type: 3}
       propertyPath: m_ConstrainProportionsScale

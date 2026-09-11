@@ -71,7 +71,16 @@ namespace Nytherion.UI.Presenters
             }
             slotPool.Clear();
 
-            for (int i = 0; i < manager.MaxSlotCount; i++)
+            EnsureSlotPoolCapacity(manager.MaxSlotCount);
+
+            manager.OnDataChanged += OnInventoryDataChanged;
+            UpdateSlotsUI();
+            isInitialized = true;
+        }
+
+        private void EnsureSlotPoolCapacity(int requiredSlots)
+        {
+            for (int i = slotPool.Count; i < requiredSlots; i++)
             {
                 if (slotPrefab != null)
                 {
@@ -88,9 +97,6 @@ namespace Nytherion.UI.Presenters
                 }
             }
 
-            manager.OnDataChanged += OnInventoryDataChanged;
-            UpdateSlotsUI();
-            isInitialized = true;
         }
 
         private void OnDestroy()
@@ -125,6 +131,8 @@ namespace Nytherion.UI.Presenters
                 Debug.LogWarning($"[InventoryPresenter] UpdateSlotsUI 실패 - manager: {manager?.GetType().Name ?? "null"}, slotPool: {slotPool?.Count ?? 0}");
                 return;
             }
+
+            EnsureSlotPoolCapacity(manager.MaxSlotCount);
 
             for (int i = 0; i < slotPool.Count; i++)
             {

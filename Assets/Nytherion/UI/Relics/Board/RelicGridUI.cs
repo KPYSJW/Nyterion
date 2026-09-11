@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using Nytherion.Core.Managers;
+using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.GamePlay.Relics;
 using VContainer;
 using VContainer.Unity;
@@ -12,6 +14,8 @@ namespace Nytherion.UI.RelicBoard
 {
     public class RelicGridUI : MonoBehaviour
     {
+        private const float PreviewInfluenceAmountFontSize = 30f;
+
         private RelicManager relicManager;
         private IObjectResolver container;
 
@@ -29,6 +33,10 @@ namespace Nytherion.UI.RelicBoard
         [SerializeField] public RectTransform blockStorageParent;
         [SerializeField] public GameObject storageSlotPrefab;
 
+        [Header("장착 유물 수")]
+        [Tooltip("현재 장착 유물 수를 표시할 텍스트입니다. 비어 있으면 같은 캔버스의 RelicCountText를 자동으로 찾습니다.")]
+        [SerializeField] private TextMeshProUGUI relicCountText;
+
         [Header("영향 범위 기즈모")]
         [Tooltip("레벨 업 효과를 표시할 프리팹")]
         [SerializeField] private GameObject levelUpGizmoPrefab;
@@ -42,12 +50,13 @@ namespace Nytherion.UI.RelicBoard
 
         private RelicSlotCell[,] slotCells;
         private RelicSlotCell currentPointerOverCell;
+        private readonly List<Image> storageSlotFrames = new List<Image>();
+        private readonly List<Image> equippedSlotFrames = new List<Image>();
+        private float configuredCanvasScale = -1f;
         public Vector2Int? CurrentGridPos => currentPointerOverCell?.GridPosition;
 
         private int rows;
         private int columns;
-
-        private GameObject[,] influenceGizmos;
 
         [Inject]
         public void Construct(RelicManager relicManager, IObjectResolver container)
@@ -90,6 +99,28 @@ namespace Nytherion.UI.RelicBoard
             }
         }
 
+        private void LateUpdate()
+        {
+            Canvas scalingCanvas = rootCanvas != null ? rootCanvas.rootCanvas : null;
+            float canvasScale = scalingCanvas != null ? scalingCanvas.scaleFactor : 1f;
+            if (Mathf.Approximately(configuredCanvasScale, canvasScale))
+            {
+                return;
+            }
+
+            foreach (Image storageSlotFrame in storageSlotFrames)
+            {
+                ConfigureSlotFrame(storageSlotFrame, scalingCanvas, canvasScale);
+            }
+
+            foreach (Image equippedSlotFrame in equippedSlotFrames)
+            {
+                ConfigureSlotFrame(equippedSlotFrame, scalingCanvas, canvasScale);
+            }
+
+            configuredCanvasScale = canvasScale;
+        }
+
         private void HandleRelicStateChanged()
         {
             if (gameObject.activeInHierarchy && relicManager != null)
@@ -126,15 +157,41 @@ namespace Nytherion.UI.RelicBoard
                 }
             }
 
-            DrawInfluenceGizmos();
+            UpdateRelicCountText();
+
+        }
+
+        private void UpdateRelicCountText()
+        {
+            ResolveRelicCountText();
+            if (relicCountText == null || relicManager == null) return;
+
+            relicCountText.text = $"{relicManager.EquippedRelicCount}/{RelicManager.MaxEquippedRelics}";
+        }
+
+        private void ResolveRelicCountText()
+        {
+            if (relicCountText != null) return;
+
+            Canvas searchCanvas = rootCanvas != null ? rootCanvas.rootCanvas : GetComponentInParent<Canvas>(true);
+            if (searchCanvas == null) return;
+
+            foreach (TextMeshProUGUI text in searchCanvas.GetComponentsInChildren<TextMeshProUGUI>(true))
+            {
+                if (text.gameObject.name == "RelicCountText")
+                {
+                    relicCountText = text;
+                    return;
+                }
+            }
         }
 
         private void InitializeGridCells()
         {
             foreach (Transform child in gridRoot) Destroy(child.gameObject);
+            equippedSlotFrames.Clear();
 
             slotCells = new RelicSlotCell[rows, columns];
-            influenceGizmos = new GameObject[rows, columns];
 
             for (int y = 0; y < rows; y++)
             {
@@ -148,6 +205,11 @@ namespace Nytherion.UI.RelicBoard
                         continue;
                     }
                     cell.Initialize(new Vector2Int(x, y));
+                    Image equippedSlotFrame = cell.BackgroundImage;
+                    Canvas scalingCanvas = rootCanvas != null ? rootCanvas.rootCanvas : null;
+                    float canvasScale = scalingCanvas != null ? scalingCanvas.scaleFactor : 1f;
+                    ConfigureSlotFrame(equippedSlotFrame, scalingCanvas, canvasScale);
+                    equippedSlotFrames.Add(equippedSlotFrame);
                     cell.OnCellPointerEnter += OnCellPointerEnter;
                     cell.OnCellPointerExit += OnCellPointerExit;
                     slotCells[y, x] = cell;
@@ -159,64 +221,8 @@ namespace Nytherion.UI.RelicBoard
         {
             foreach (Transform child in placedBlocksContainer) Destroy(child.gameObject);
             foreach (Transform child in blockStorageParent) Destroy(child.gameObject);
-            if (influenceGizmos != null)
-            {
-                for (int y = 0; y < rows; y++)
-                {
-                    for (int x = 0; x < columns; x++)
-                    {
-                        if (influenceGizmos[y, x] != null) Destroy(influenceGizmos[y, x]);
-                    }
-                }
-            }
+            storageSlotFrames.Clear();
             foreach (Transform child in previewContainer) Destroy(child.gameObject);
-        }
-
-
-        private void DrawInfluenceGizmos()
-        {
-            for (int y = 0; y < rows; y++)
-            {
-                for (int x = 0; x < columns; x++)
-                {
-                    InfluenceType influence = relicManager.GetInfluenceAt(y, x);
-                    GameObject prefabToUse = null;
-                    bool isSilence = false;
-
-                    if (influence == InfluenceType.LevelUp)
-                        prefabToUse = levelUpGizmoPrefab;
-                    else if (influence == InfluenceType.LevelDown)
-                        prefabToUse = levelDownGizmoPrefab;
-                    else if (influence == InfluenceType.Silence)
-                    {
-                        prefabToUse = silenceGizmoPrefab != null ? silenceGizmoPrefab : levelDownGizmoPrefab;
-                        isSilence = true;
-                    }
-                    else if (influence == InfluenceType.SynergyLink)
-                    {
-                        prefabToUse = synergyLinkGizmoPrefab != null ? synergyLinkGizmoPrefab : levelUpGizmoPrefab;
-                    }
-
-                    if (prefabToUse != null)
-                    {
-                        Vector2 cellPosition = GetLocalPositionFromGridCell(new Vector2Int(x, y));
-                        GameObject gizmo = Instantiate(prefabToUse, placedBlocksContainer);
-                        gizmo.GetComponent<RectTransform>().anchoredPosition = cellPosition;
-                        influenceGizmos[y, x] = gizmo;
-
-                        if (isSilence && silenceGizmoPrefab == null)
-                        {
-                            Graphic graphic = gizmo.GetComponent<Graphic>();
-                            if (graphic != null) graphic.color = new Color(0.5f, 0, 0.5f, 1f); // 보라색
-                        }
-                        else if (influence == InfluenceType.SynergyLink && synergyLinkGizmoPrefab == null)
-                        {
-                            Graphic graphic = gizmo.GetComponent<Graphic>();
-                            if (graphic != null) graphic.color = new Color(1f, 0.8f, 0f, 1f); // 노란색/금색
-                        }
-                    }
-                }
-            }
         }
 
         private void CreateBlockInStorage(RelicBlock blockData)
@@ -225,6 +231,11 @@ namespace Nytherion.UI.RelicBoard
             try
             {
                 GameObject slotObj = Instantiate(storageSlotPrefab, blockStorageParent);
+                Image storageSlotFrame = slotObj.GetComponent<Image>();
+                Canvas scalingCanvas = rootCanvas != null ? rootCanvas.rootCanvas : null;
+                float canvasScale = scalingCanvas != null ? scalingCanvas.scaleFactor : 1f;
+                ConfigureSlotFrame(storageSlotFrame, scalingCanvas, canvasScale);
+                storageSlotFrames.Add(storageSlotFrame);
 
                 GameObject blockObj = container.Instantiate(draggableBlockPrefab, slotObj.transform);
 
@@ -240,6 +251,32 @@ namespace Nytherion.UI.RelicBoard
             catch (System.Exception e)
             {
                 Debug.LogError($"[RelicGridUI] 블록 생성 중 오류 발생: {e.Message}\n{e.StackTrace}");
+            }
+        }
+
+        private static void ConfigureSlotFrame(
+            Image slotFrame,
+            Canvas scalingCanvas,
+            float canvasScale)
+        {
+            if (slotFrame == null || slotFrame.sprite == null)
+            {
+                return;
+            }
+
+            Sprite slotSprite = slotFrame.sprite;
+            bool hasSlicedBorder = slotSprite.border.sqrMagnitude > 0f;
+            slotFrame.type = hasSlicedBorder ? Image.Type.Sliced : Image.Type.Simple;
+
+            if (hasSlicedBorder && scalingCanvas != null && slotSprite.pixelsPerUnit > 0f)
+            {
+                slotFrame.pixelsPerUnitMultiplier = Mathf.Max(
+                    0.01f,
+                    canvasScale * scalingCanvas.referencePixelsPerUnit / slotSprite.pixelsPerUnit);
+            }
+            else
+            {
+                slotFrame.pixelsPerUnitMultiplier = 1f;
             }
         }
 
@@ -296,9 +333,10 @@ namespace Nytherion.UI.RelicBoard
 
                     if (prefabToUse != null)
                     {
-                        Vector2 cellPosition = GetLocalPositionFromGridCell(new Vector2Int(targetCol, targetRow));
+                        RectTransform targetCellRect = slotCells[targetRow, targetCol].GetComponent<RectTransform>();
                         GameObject gizmo = Instantiate(prefabToUse, previewContainer);
-                        gizmo.GetComponent<RectTransform>().anchoredPosition = cellPosition;
+                        RectTransform gizmoRect = gizmo.GetComponent<RectTransform>();
+                        gizmoRect.anchoredPosition = previewContainer.InverseTransformPoint(targetCellRect.position);
 
                         Graphic graphic = gizmo.GetComponent<Graphic>();
                         if (graphic != null)
@@ -311,10 +349,53 @@ namespace Nytherion.UI.RelicBoard
                             color.a = 0.5f;
                             graphic.color = color;
                         }
+
+                        CreatePreviewInfluenceAmountText(gizmo.transform, zone);
                     }
                 }
             }
         }
+
+        private static void CreatePreviewInfluenceAmountText(Transform parent, InfluenceZone zone)
+        {
+            string amountText = GetInfluenceAmountText(zone);
+            if (string.IsNullOrEmpty(amountText)) return;
+
+            GameObject textObject = new GameObject("InfluenceAmount", typeof(RectTransform), typeof(CanvasRenderer));
+            textObject.transform.SetParent(parent, false);
+
+            RectTransform textTransform = textObject.GetComponent<RectTransform>();
+            textTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            textTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            textTransform.sizeDelta = new Vector2(90f, 90f);
+            textTransform.anchoredPosition = Vector2.zero;
+
+            TextMeshProUGUI label = textObject.AddComponent<TextMeshProUGUI>();
+            label.font = TMP_Settings.defaultFontAsset;
+            label.fontSize = PreviewInfluenceAmountFontSize;
+            label.fontStyle = FontStyles.Bold;
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = Color.white;
+            label.raycastTarget = false;
+            label.enableWordWrapping = false;
+            label.text = amountText;
+        }
+
+        private static string GetInfluenceAmountText(InfluenceZone zone)
+        {
+            if (zone.type == InfluenceType.LevelUp)
+            {
+                return $"+{zone.GetLevelAmount()}";
+            }
+
+            if (zone.type == InfluenceType.LevelDown)
+            {
+                return $"-{zone.GetLevelAmount()}";
+            }
+
+            return null;
+        }
+
         public void ClearPreview()
         {
             foreach (var cell in slotCells) cell.Highlight(false);

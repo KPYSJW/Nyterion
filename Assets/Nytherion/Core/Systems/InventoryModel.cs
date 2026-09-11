@@ -13,7 +13,7 @@ namespace Nytherion.Core.Systems
         public event Action OnInventoryUpdated;
 
         // 아이템 데이터와 수량을 쌍으로 가지는 배열로 인벤토리 슬롯을 관리
-        private readonly (ItemData item, int count)[] slots;
+        private (ItemData item, int count)[] slots;
 
         /// <summary> 인벤토리의 최대 슬롯 개수/// </summary>
         public int MaxSlots => slots.Length;
@@ -31,6 +31,15 @@ namespace Nytherion.Core.Systems
         public InventoryModel(int maxSlots)
         {
             slots = new (ItemData, int)[maxSlots];
+        }
+
+        /// <summary> 기존 아이템과 슬롯 위치를 유지하면서 필요한 만큼 확장한다. </summary>
+        public void EnsureSlotCapacity(int requiredSlots)
+        {
+            if (requiredSlots <= MaxSlots) return;
+
+            Array.Resize(ref slots, requiredSlots);
+            OnInventoryUpdated?.Invoke();
         }
 
         /// <summary>

@@ -1,0 +1,104 @@
+{
+  "width": 1774,
+  "height": 887,
+  "cellSize": 443,
+  "fps": 24,
+  "duration": 0.3333333333333333,
+  "frames": [
+    {
+      "name": "WhiteHwagon_00",
+      "x": 0,
+      "y": 444,
+      "top": 0,
+      "width": 443,
+      "height": 443,
+      "id": 21300000,
+      "spriteId": "5006c39d01644bb5a3d8948657231c8d"
+    },
+    {
+      "name": "WhiteHwagon_01",
+      "x": 444,
+      "y": 444,
+      "top": 0,
+      "width": 443,
+      "height": 443,
+      "id": 21300001,
+      "spriteId": "110156d9b6a34d28a4842877731b78d1"
+    },
+    {
+      "name": "WhiteHwagon_02",
+      "x": 887,
+      "y": 444,
+      "top": 0,
+      "width": 443,
+      "height": 443,
+      "id": 21300002,
+      "spriteId": "005c831e8f2b4198a04c766221d38a55"
+    },
+    {
+      "name": "WhiteHwagon_03",
+      "x": 1330,
+      "y": 444,
+      "top": 0,
+      "width": 443,
+      "height": 443,
+      "id": 21300003,
+      "spriteId": "9702a54ca91e4116aec1f12ab5d7d89f"
+    },
+    {
+      "name": "WhiteHwagon_04",
+      "x": 0,
+      "y": 0,
+      "top": 444,
+      "width": 443,
+      "height": 443,
+      "id": 21300004,
+      "spriteId": "54dee5b96e854f5ba3055c8285c14c1d"
+    },
+    {
+      "name": "WhiteHwagon_05",
+      "x": 444,
+      "y": 0,
+      "top": 444,
+      "width": 443,
+      "height": 443,
+      "id": 21300005,
+      "spriteId": "d6948e1a4f8c4527a6bde977e78d2293"
+    },
+    {
+      "name": "WhiteHwagon_06",
+      "x": 887,
+      "y": 0,
+      "top": 444,
+      "width": 443,
+      "height": 443,
+      "id": 21300006,
+      "spriteId": "f5d77e87613c4f848285428756873f92"
+    },
+    {
+      "name": "WhiteHwagon_07",
+      "x": 1330,
+      "y": 0,
+      "top": 444,
+      "width": 443,
+      "height": 443,
+      "id": 21300007,
+      "spriteId": "4595361db7f44d2e9cc93dce39f7a30b"
+    }
+  ],
+  "guids": {
+    "sheet": "fec8e77eb5e2468d9ff0deeff4039907",
+    "folder": "ca16883256dc4d6f8a6fa2452ebc7273",
+    "clip": "39778525744149a1afdfbb49d62c20c7",
+    "controller": "f6f06976a5fa407fa8b4d08e421a3356",
+    "material": "ba011336676e4fe5925b631bb8deefd9",
+    "prefab": "fb847ce6f19a498087a3e07688400c93"
+  },
+  "files": [
+    "Assets/Nytherion/Art/Combat/VFX/Sprites/SwordEnergy/WhiteHwagon_8F.png",
+    "Assets/Nytherion/Art/Combat/VFX/Animations/WhiteHwagon/WhiteHwagon_Loop.anim",
+    "Assets/Nytherion/Art/Combat/VFX/Animations/WhiteHwagon/WhiteHwagon.controller",
+    "Assets/Nytherion/Art/Common/Materials/WhiteHwagon_Additive.mat",
+    "Assets/Prefabs/Gameplay/Combat/VFX/WhiteHwagonVFX.prefab"
+  ]
+}

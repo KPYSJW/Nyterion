@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
+  m_Name: CorrosiveFlameTranscendence
+  m_EditorClassIdentifier: 
+  effectName_KR: "부식성 화염"
+  effectName_EN: Corrosive Flame
+  statusIcon: {fileID: 21300000, guid: c5f36685c3ffda345a4856ed4b0aa3a8, type: 3}
+  badgeBackgroundColor: {r: 0.38, g: 0.3, b: 0.08, a: 0.96}
+  badgeTextColor: {r: 0.95, g: 1, b: 0.75, a: 1}
+  description_KR: "화상과 중독이 함께 걸린 적이 죽으면 독 중첩에 비례해 강화된 화상을 주변 최대 3명에게 전염시킵니다."
+  description_EN: When an enemy affected by Fire and Poison dies, spread Fire enhanced by its Poison stacks to up to 3 nearby enemies.
+  requirements:
+  - setBonusData: {fileID: 11400000, guid: 3c69e18b6a8e48aca8ff2d1de1568b24, type: 2}
+    requiredEquippedCount: 4
+  - setBonusData: {fileID: 11400000, guid: 6a2c8fbd0e1b4d3da9c7b8e423e56712, type: 2}
+    requiredEquippedCount: 4
+  effectModules:
+  - condition: {rid: -2}
+    effects:
+    - rid: 1001
+    description_KR: "화상+중독 적 처치 시 부식성 화염 전염"
+    description_EN: Fire+Poison kills spread corrosive Fire.
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1001
+      type: {class: CorrosiveFlameEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        spreadFireDamageRatio: 0.5
+        spreadRadius: 5
+        maxTargets: 3
+        fireDuration: 4

@@ -11,15 +11,37 @@ using VContainer.Unity;
 
 namespace Nytherion.Core.Managers
 {
+    public readonly struct PlayerDamageEventData
+    {
+        public EnemyBase Target { get; }
+        public float DamageAmount { get; }
+        public bool IsCritical { get; }
+        public bool IsChainDamage { get; }
+
+        public PlayerDamageEventData(
+            EnemyBase target,
+            float damageAmount,
+            bool isCritical,
+            bool isChainDamage)
+        {
+            Target = target;
+            DamageAmount = damageAmount;
+            IsCritical = isCritical;
+            IsChainDamage = isChainDamage;
+        }
+    }
+
     public class EventManager : BaseManager
     {
         public event Action<EnemyBase> OnEnemyDied;
         public event Action<float> OnEnemyDamagedByPlayer;
         public event Action<float, bool> OnEnemyDamagedByPlayerWithCrit;
+        public event Action<PlayerDamageEventData> OnEnemyDamagedByPlayerDetailed;
         public event Action<StageData> OnBossClearedEvent;
         public event Action<WeaponData, RelicData, WeaponRelicSynergyData> OnSynergyEvaluated;
 
         public event Action<Vector2, int, float, Transform, string> OnPlayerRangedAttack;
+        public event Action OnPlayerDashStarted;
 
         public event Action<InteractableType> OnInteraction;
 
@@ -29,6 +51,11 @@ namespace Nytherion.Core.Managers
         public void TriggerPlayerRangedAttack(Vector2 direction, int projectileCount, float baseDamage, Transform firePoint, string poolTag)
         {
             OnPlayerRangedAttack?.Invoke(direction, projectileCount, baseDamage, firePoint, poolTag);
+        }
+
+        public void TriggerPlayerDashStarted()
+        {
+            OnPlayerDashStarted?.Invoke();
         }
 
         public void TriggerInteractionEvent(InteractableType type)
@@ -43,6 +70,19 @@ namespace Nytherion.Core.Managers
         public void TriggerEnemyDamagedByPlayerWithCrit(float damageAmount, bool isCritical)
         {
             OnEnemyDamagedByPlayerWithCrit?.Invoke(damageAmount, isCritical);
+        }
+        public void TriggerEnemyDamagedByPlayerWithCrit(
+            float damageAmount,
+            bool isCritical,
+            EnemyBase target,
+            bool isChainDamage)
+        {
+            OnEnemyDamagedByPlayerWithCrit?.Invoke(damageAmount, isCritical);
+            OnEnemyDamagedByPlayerDetailed?.Invoke(new PlayerDamageEventData(
+                target,
+                damageAmount,
+                isCritical,
+                isChainDamage));
         }
         public void TriggerOpenInventoryForShop()
         {

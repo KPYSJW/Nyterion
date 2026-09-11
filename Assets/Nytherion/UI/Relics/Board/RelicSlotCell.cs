@@ -11,6 +11,7 @@ namespace Nytherion.UI.RelicBoard
         [SerializeField] private Image relicIcon;
 
         public Vector2Int GridPosition { get; private set; }
+        public Image BackgroundImage => backgroundImage;
         
         public event Action<RelicSlotCell> OnCellPointerEnter;
         public event Action<RelicSlotCell> OnCellPointerExit;

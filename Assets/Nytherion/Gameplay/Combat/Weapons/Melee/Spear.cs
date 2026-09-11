@@ -11,6 +11,9 @@ namespace Nytherion.GamePlay.Combat.Weapons
         [Tooltip("플레이어 기준 위아래 최대 조준 각도 (부채꼴의 절반 크기)")]
         [SerializeField] private float maxAimAngle = 45f;
 
+        [Tooltip("원본 스프라이트에서 창끝이 향하는 로컬 각도 (+X: 0도, +Y: 90도)")]
+        [SerializeField] private float spriteForwardAngle = 45f;
+
         [Tooltip("대기 상태에서 플레이어 중심 대비 무기의 오프셋")]
         [SerializeField] private Vector3 idleOffset = new Vector3(0.3f, -0.1f, 0f);
 
@@ -316,9 +319,9 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
             transform.localPosition = targetLocalPos;
 
-            // 기본 이미지 방향이 우측 대각선(45도)을 가리키고 있으므로 
-            // 우측(0도)일 땐 -45도 회전, 좌측(180도)일 땐 +45도 보정을 적용해 수평을 맞춥니다.
-            float finalRotationZ = finalAimAngle + (facingRight ? -45f : 45f);
+            // 스프라이트 원본의 창끝 방향을 조준 방향에 맞춥니다.
+            // 좌측에서는 Y축 반전이 적용되므로 회전 보정의 부호도 함께 반전합니다.
+            float finalRotationZ = finalAimAngle + (facingRight ? -spriteForwardAngle : spriteForwardAngle);
             transform.localRotation = Quaternion.Euler(0f, 0f, finalRotationZ);
         }
 
@@ -482,7 +485,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             // 1. 공격 시작 각도 및 스케일 고정
             bool facingRight = playerController.IsFacingRight;
             transform.localScale = new Vector3(1f, facingRight ? 1f : -1f, 1f);
-            float finalRotationZ = aimAngle + (facingRight ? -45f : 45f);
+            float finalRotationZ = aimAngle + (facingRight ? -spriteForwardAngle : spriteForwardAngle);
             transform.localRotation = Quaternion.Euler(0f, 0f, finalRotationZ);
 
             // 2. 조준된 최종 각도 방향 벡터

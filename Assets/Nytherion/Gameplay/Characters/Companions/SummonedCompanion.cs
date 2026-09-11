@@ -5,6 +5,7 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Combat;
 using Nytherion.GamePlay.Skills;
+using Nytherion.Gameplay.Relics.Modules;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Characters.Companions
@@ -414,7 +415,13 @@ namespace Nytherion.GamePlay.Characters.Companions
 
             if (TryAttack(target))
             {
-                nextAttackTime = Time.time + Mathf.Max(0.01f, attackInterval);
+                float intervalMultiplier = 1f;
+                if (ownerManager != null &&
+                    ownerManager.TryGetComponent(out LegionCompanionRuntime legionRuntime))
+                {
+                    intervalMultiplier = legionRuntime.AttackIntervalMultiplier;
+                }
+                nextAttackTime = Time.time + Mathf.Max(0.01f, attackInterval * intervalMultiplier);
             }
         }
 
@@ -538,10 +545,20 @@ namespace Nytherion.GamePlay.Characters.Companions
                                damageRatioPerLevel * Mathf.Max(0, level - 1);
             if (currentWeapon != null && currentWeapon.weaponData != null)
             {
-                return currentWeapon.weaponData.damage * currentWeapon.CurrentDamageMultiplier * Mathf.Max(0f, levelRatio);
+                return currentWeapon.weaponData.damage * currentWeapon.CurrentDamageMultiplier *
+                       Mathf.Max(0f, levelRatio) * GetLegionDamageMultiplier();
             }
 
-            return baseDamage + damageRatioPerLevel * Mathf.Max(0, level - 1);
+            return (baseDamage + damageRatioPerLevel * Mathf.Max(0, level - 1)) *
+                   GetLegionDamageMultiplier();
+        }
+
+        private float GetLegionDamageMultiplier()
+        {
+            return ownerManager != null &&
+                   ownerManager.TryGetComponent(out LegionCompanionRuntime legionRuntime)
+                ? legionRuntime.DamageMultiplier
+                : 1f;
         }
 
         protected void TriggerAttackAnimation()

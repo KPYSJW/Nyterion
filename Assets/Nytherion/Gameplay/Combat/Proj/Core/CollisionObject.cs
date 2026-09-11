@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.Gameplay.Relics.Modules;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -27,6 +28,11 @@ namespace Nytherion.GamePlay.Combat
         private bool hasBasePiercingModifier;
         private bool hasBaseBounceModifier;
         private CombatModifierSnapshot modifierSnapshot = CombatModifierSnapshot.Empty;
+        private int trickshotInteractionCount;
+        private bool isSecondaryProjectile;
+        private bool hasEnemyHit;
+        private bool hasSpawnedTrickshotEchoes;
+        private Vector3 lastHitPosition;
 
         public CombatModifierSnapshot ModifierSnapshot => playerManager != null && playerManager.playerRelicManager != null
             ? playerManager.playerRelicManager.CombatModifiers
@@ -63,6 +69,10 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnEnable()
         {
+            trickshotInteractionCount = 0;
+            isSecondaryProjectile = false;
+            hasEnemyHit = false;
+            hasSpawnedTrickshotEchoes = false;
             CombatModifierSnapshot currentSnapshot = playerManager != null && playerManager.playerRelicManager != null
                 ? playerManager.playerRelicManager.CombatModifiers
                 : CombatModifierSnapshot.Empty;
@@ -74,9 +84,20 @@ namespace Nytherion.GamePlay.Combat
             List<EquipmentTrait> projectileTraits,
             float projectileChargePercent,
             GameObject projectileHitEffect,
-            CombatModifierSnapshot currentSnapshot)
+            CombatModifierSnapshot currentSnapshot,
+            bool secondaryProjectile = false)
         {
-            damage = projectileDamage;
+            trickshotInteractionCount = 0;
+            isSecondaryProjectile = secondaryProjectile;
+            hasEnemyHit = false;
+            hasSpawnedTrickshotEchoes = false;
+            float damageMultiplier = 1f;
+            if (!secondaryProjectile && playerManager != null &&
+                playerManager.TryGetComponent(out TrickshotSetBonusRuntime trickshotRuntime))
+            {
+                damageMultiplier = trickshotRuntime.ProjectileDamageMultiplier;
+            }
+            damage = projectileDamage * Mathf.Max(0f, damageMultiplier);
             traits = projectileTraits;
             chargePercent = projectileChargePercent;
             if (hitEffectPrefab == null)
@@ -119,6 +140,8 @@ namespace Nytherion.GamePlay.Combat
             {
                 if (isEnemy)
                 {
+                    hasEnemyHit = true;
+                    lastHitPosition = collision.ClosestPoint(transform.position);
                     IDamageable target = collision.GetComponent<IDamageable>();
                     target?.TakeDamage(damage);
 
@@ -160,19 +183,30 @@ namespace Nytherion.GamePlay.Combat
                 }
 
                 bool shouldSurvive = false;
+                bool triggeredTrickshotInteraction = false;
                 for (int i = 0; i < projModifiers.Count; i++)
                 {
                     IProjModifier effect = projModifiers[i];
                     if (effect is MonoBehaviour mb && !mb.enabled) continue;
 
-                    if (effect.OnHit(collision))
+                    bool modifierSurvives = effect.OnHit(collision);
+                    if (modifierSurvives)
                     {
                         shouldSurvive = true;
                     }
+
+                    if ((modifierSurvives && (effect is PiercingModifier || effect is BounceModifier)) ||
+                        effect is SplitModifier)
+                    {
+                        triggeredTrickshotInteraction = true;
+                    }
                 }
+
+                ApplyTrickshotInteraction(triggeredTrickshotInteraction);
 
                 if (!shouldSurvive)
                 {
+                    SpawnTrickshotEchoes();
                     ReturnToPool();
                 }
             }
@@ -188,6 +222,99 @@ namespace Nytherion.GamePlay.Combat
             {
                 gameObject.SetActive(false);
             }
+        }
+
+        private void ApplyTrickshotInteraction(bool interactionTriggered)
+        {
+            if (!interactionTriggered || isSecondaryProjectile || playerManager == null ||
+                !playerManager.TryGetComponent(out TrickshotSetBonusRuntime trickshotRuntime) ||
+                trickshotInteractionCount >= trickshotRuntime.MaxInteractionStacks)
+            {
+                return;
+            }
+
+            trickshotInteractionCount++;
+            damage *= 1f + Mathf.Max(0f, trickshotRuntime.InteractionDamageBonus);
+            if (trickshotInteractionCount >= trickshotRuntime.MaxInteractionStacks)
+            {
+                SpawnTrickshotEchoes();
+            }
+        }
+
+        private void SpawnTrickshotEchoes()
+        {
+            if (hasSpawnedTrickshotEchoes || isSecondaryProjectile || !hasEnemyHit || playerManager == null ||
+                ObjectPoolManager.Instance == null || string.IsNullOrEmpty(poolTag) ||
+                !playerManager.TryGetComponent(out TrickshotSetBonusRuntime trickshotRuntime) ||
+                trickshotRuntime.EchoProjectileCount <= 0 || trickshotRuntime.EchoDamageRatio <= 0f)
+            {
+                return;
+            }
+
+            hasSpawnedTrickshotEchoes = true;
+
+            Vector2 originalDirection = transform.right;
+            float projectileSpeed = 8f;
+            if (TryGetComponent(out Rigidbody2D sourceRigidbody) && sourceRigidbody.velocity.sqrMagnitude > 0.01f)
+            {
+                originalDirection = sourceRigidbody.velocity.normalized;
+                projectileSpeed = sourceRigidbody.velocity.magnitude;
+            }
+
+            List<Transform> targets = FindEchoTargets(
+                lastHitPosition,
+                trickshotRuntime.EchoSearchRadius,
+                trickshotRuntime.EchoProjectileCount);
+            for (int i = 0; i < trickshotRuntime.EchoProjectileCount; i++)
+            {
+                Vector2 direction = i < targets.Count
+                    ? ((Vector2)targets[i].position - (Vector2)lastHitPosition).normalized
+                    : (Vector2)(Quaternion.Euler(0f, 0f, (i == 0 ? -1f : 1f) * 18f) * originalDirection);
+                GameObject echo = ObjectPoolManager.Instance.SpawnFromPool(
+                    poolTag,
+                    lastHitPosition,
+                    Quaternion.identity);
+                if (echo == null) continue;
+
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                echo.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                if (echo.TryGetComponent(out Rigidbody2D echoRigidbody))
+                {
+                    echoRigidbody.velocity = direction * projectileSpeed;
+                }
+                if (echo.TryGetComponent(out IProj echoProjectile))
+                {
+                    echoProjectile.SetSpeed(projectileSpeed);
+                }
+                if (echo.TryGetComponent(out CollisionObject echoCollision))
+                {
+                    echoCollision.Configure(
+                        damage * trickshotRuntime.EchoDamageRatio,
+                        traits,
+                        chargePercent,
+                        hitEffectPrefab,
+                        ModifierSnapshot,
+                        true);
+                }
+            }
+        }
+
+        private static List<Transform> FindEchoTargets(Vector3 center, float radius, int maxTargets)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(center, Mathf.Max(0.1f, radius));
+            HashSet<Transform> uniqueTargets = new HashSet<Transform>();
+            List<Transform> result = new List<Transform>();
+            foreach (Collider2D hit in hits)
+            {
+                if (hit == null || !hit.CompareTag("Enemy") || !uniqueTargets.Add(hit.transform))
+                {
+                    continue;
+                }
+
+                result.Add(hit.transform);
+                if (result.Count >= maxTargets) break;
+            }
+            return result;
         }
     }
 }

@@ -1,0 +1,9 @@
+{
+    "id": "laser-setup-1",
+    "action": "setup",
+    "success": true,
+    "playing": false,
+    "scene": "Assets/Scenes/GameScene.unity",
+    "dirty": false,
+    "error": ""
+}

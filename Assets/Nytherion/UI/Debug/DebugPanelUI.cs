@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.Core.Interfaces;
+using Nytherion.Core.Systems;
 
 namespace Nytherion.UI.Test
 {
@@ -83,7 +84,7 @@ namespace Nytherion.UI.Test
                 TryManualInject();
             }
 
-            // 디버그용 언어 전환 및 몬스터 소환 버튼을 런타임에 생성
+            // 디버그용 장비 지급, 언어 전환 및 몬스터 소환 버튼을 런타임에 생성
             CreateRuntimeDebugButtons();
 
             if (localizationService != null)
@@ -237,6 +238,58 @@ namespace Nytherion.UI.Test
             }
         }
 
+        public void AddAllEquipment()
+        {
+            if (inventoryDataManager == null)
+            {
+                TryManualInject();
+            }
+
+            if (inventoryDataManager == null || !inventoryDataManager.IsInitialized)
+            {
+                UpdateStatusText("인벤토리가 아직 준비되지 않았습니다.");
+                return;
+            }
+
+            var equipmentAssets = new List<EquipmentData>();
+            foreach (ItemData item in ItemDatabase.GetAllItems())
+            {
+                if (item is EquipmentData equipment)
+                {
+                    equipmentAssets.Add(equipment);
+                }
+            }
+
+            if (equipmentAssets.Count == 0)
+            {
+                UpdateStatusText("아이템 데이터베이스에 등록된 장비가 없습니다.");
+                return;
+            }
+
+            // 기존 아이템을 보존하면서 모든 장비가 들어갈 공간을 확보한다.
+            int requiredSlots = inventoryDataManager.MaxSlotCount
+                - inventoryDataManager.GetEmptySlotCount() + equipmentAssets.Count;
+            inventoryDataManager.EnsureSlotCapacity(requiredSlots);
+
+            int addedCount = 0;
+            foreach (EquipmentData equipmentAsset in equipmentAssets)
+            {
+                EquipmentData instance = Instantiate(equipmentAsset);
+                instance.instanceId = System.Guid.NewGuid().ToString();
+                instance.ApplyRarityStats(Rarity.Common);
+                if (inventoryDataManager.AddEquipmentInstance(instance))
+                {
+                    addedCount++;
+                }
+                else
+                {
+                    Destroy(instance);
+                }
+            }
+
+            UpdateStatusText($"일반 등급 장비 {addedCount}/{equipmentAssets.Count}개 지급 완료");
+        }
+
         public void ClearInventory()
         {
             if (inventoryDataManager != null)
@@ -354,6 +407,9 @@ namespace Nytherion.UI.Test
                 ? buttonsContainer
                 : templateButton.transform.parent;
 
+            CreateRuntimeButton(templateButton, parentTransform,
+                "AddAllEquipmentButton", "모든 장비 (일반)", AddAllEquipment);
+
             languageToggleButton = CreateRuntimeButton(
                 templateButton,
                 parentTransform,
@@ -396,7 +452,8 @@ namespace Nytherion.UI.Test
             }
 
             // 이벤트 재바인딩
-            newButton.onClick.RemoveAllListeners();
+            // 복제된 버튼의 Inspector 영구 이벤트까지 제거한다.
+            newButton.onClick = new Button.ButtonClickedEvent();
             newButton.onClick.AddListener(action);
             return newButton;
         }

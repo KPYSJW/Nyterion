@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
+  m_Name: MobileWarriorSet
+  m_EditorClassIdentifier: 
+  setName_KR: "기동 전사"
+  setName_EN: Mobile Warrior
+  statusIcon: {fileID: 21300000, guid: 06d9fc9a421e428491e941c67379f89f, type: 3}
+  badgeBackgroundColor: {r: 0.08, g: 0.42, b: 0.38, a: 0.96}
+  badgeTextColor: {r: 0.86, g: 1, b: 0.94, a: 1}
+  description_KR: "빠른 이동과 대시를 공격 기회로 전환하는 기동형 유물 세트입니다."
+  description_EN: A mobile relic set that turns movement and dashes into attack opportunities.
+  synergySeriesId: MobileWarriorSeries
+  bonusModules:
+  - condition:
+      rid: 2001
+    effects:
+    - rid: 2002
+    description_KR: "이동 속도 +6%, 대시 재사용 대기시간 -8%"
+    description_EN: Move speed +6% and dash cooldown -8%
+  - condition:
+      rid: 4001
+    effects:
+    - rid: 4002
+    - rid: 4003
+    description_KR: "이동 속도 +10%, 대시 재사용 대기시간 -12%. 대시 후 3초 동안 근거리·원거리 공격력 +12%"
+    description_EN: Move speed +10% and dash cooldown -12%. Dashing grants +12% melee and ranged damage for 3 seconds.
+  - condition:
+      rid: 6001
+    effects:
+    - rid: 6002
+    - rid: 6003
+    description_KR: "이동 속도 +12%, 대시 재사용 대기시간 -15%. 대시 후 3초 동안 근거리·원거리 공격력 +15%, 치명타 확률 +5%p"
+    description_EN: Move speed +12% and dash cooldown -15%. Dashing grants +15% melee and ranged damage and +5%p critical chance for 3 seconds.
+  linkedTranscendenceEffects:
+  - {fileID: 11400000, guid: a71d5f6c85b449f1b76e2c432a95d038, type: 2}
+  - {fileID: 11400000, guid: d61a1e7a4f5a4514aa12a683bf9cc027, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 2001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: MobileWarriorSeries
+        measure: 1
+        requiredChainLength: 2
+    - rid: 2002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 2
+          value: 0.06
+          valuePerLevel: 0
+          isPercentage: 1
+        - stat: 9
+          value: -0.08
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 4001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: MobileWarriorSeries
+        measure: 1
+        requiredChainLength: 4
+    - rid: 4002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 2
+          value: 0.1
+          valuePerLevel: 0
+          isPercentage: 1
+        - stat: 9
+          value: -0.12
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 4003
+      type: {class: TemporaryStatBuffOnDashEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        duration: 3
+        statModifiers:
+        - stat: 3
+          value: 0.12
+          valuePerLevel: 0
+          isPercentage: 1
+        - stat: 4
+          value: 0.12
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 6001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: MobileWarriorSeries
+        measure: 1
+        requiredChainLength: 6
+    - rid: 6002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 2
+          value: 0.12
+          valuePerLevel: 0
+          isPercentage: 1
+        - stat: 9
+          value: -0.15
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 6003
+      type: {class: TemporaryStatBuffOnDashEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        duration: 3
+        statModifiers:
+        - stat: 3
+          value: 0.15
+          valuePerLevel: 0
+          isPercentage: 1
+        - stat: 4
+          value: 0.15
+          valuePerLevel: 0
+          isPercentage: 1
+        - stat: 13
+          value: 0.05
+          valuePerLevel: 0
+          isPercentage: 0

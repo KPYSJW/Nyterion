@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
+  m_Name: TrickshotEngineerSet
+  m_EditorClassIdentifier: 
+  setName_KR: "도탄 기술자"
+  setName_EN: Trickshot Engineer
+  statusIcon: {fileID: 21300000, guid: 13de074211234cd9bd28cffabdc548a6, type: 3}
+  badgeBackgroundColor: {r: 0.12, g: 0.38, b: 0.42, a: 0.96}
+  badgeTextColor: {r: 0.86, g: 1, b: 0.96, a: 1}
+  description_KR: "관통, 도탄, 분열을 연계해 투사체를 증폭하는 기술 유물 세트입니다."
+  description_EN: A technical relic set that amplifies projectiles through pierce, bounce, and split interactions.
+  synergySeriesId: TrickshotEngineerSeries
+  bonusModules:
+  - condition: {rid: 3001}
+    effects:
+    - rid: 3002
+    description_KR: "투사체 피해 +10%"
+    description_EN: Projectile damage +10%
+  - condition: {rid: 5001}
+    effects:
+    - rid: 5002
+    description_KR: "투사체 피해 +10%. 관통·도탄·분열이 발동할 때 이후 피해 +7%(최대 3회)"
+    description_EN: Projectile damage +10%. Pierce, bounce, or split grants +7% subsequent damage, up to 3 times.
+  - condition: {rid: 7001}
+    effects:
+    - rid: 7002
+    description_KR: "5세트 효과. 마지막 충돌 또는 3번째 상호작용에서 피해 35%의 잔향탄 2발 생성(잔향탄은 재생성 불가)"
+    description_EN: Tier 5 effect. The final collision or third interaction creates 2 echo shots at 35% damage; echoes cannot create more echoes.
+  linkedTranscendenceEffects:
+  - {fileID: 11400000, guid: f2d8c3a9167f4c1aade53b210e8597c4, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 3001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: TrickshotEngineerSeries
+        measure: 1
+        requiredChainLength: 3
+    - rid: 3002
+      type: {class: TrickshotSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        projectileDamageMultiplier: 1.1
+        interactionDamageBonus: 0
+        maxInteractionStacks: 0
+        echoProjectileCount: 0
+        echoDamageRatio: 0
+        echoSearchRadius: 6
+    - rid: 5001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: TrickshotEngineerSeries
+        measure: 1
+        requiredChainLength: 5
+    - rid: 5002
+      type: {class: TrickshotSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        projectileDamageMultiplier: 1.1
+        interactionDamageBonus: 0.07
+        maxInteractionStacks: 3
+        echoProjectileCount: 0
+        echoDamageRatio: 0
+        echoSearchRadius: 6
+    - rid: 7001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: TrickshotEngineerSeries
+        measure: 1
+        requiredChainLength: 7
+    - rid: 7002
+      type: {class: TrickshotSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        projectileDamageMultiplier: 1.1
+        interactionDamageBonus: 0.07
+        maxInteractionStacks: 3
+        echoProjectileCount: 2
+        echoDamageRatio: 0.35
+        echoSearchRadius: 6

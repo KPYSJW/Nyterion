@@ -29,11 +29,20 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: 0, y: 1}
-    type: 1
   - offset: {x: 1, y: 0}
     type: 1
-  synergySeriesId: 
+    levelAmount: 1
+  - offset: {x: 0, y: 1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: MobileWarriorSeries
+  synergySetBonusData: {fileID: 11400000, guid: 7b3d90ce1f2c4e4ebab8c9f534f67823, type: 2}
   unlockMilestoneID: 
   simpleStatModifiers:
   - stat: 8

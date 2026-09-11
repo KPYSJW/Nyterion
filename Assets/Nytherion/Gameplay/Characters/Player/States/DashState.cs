@@ -10,6 +10,7 @@ public class DashState : PlayerState
         playerController.PlayAnimation("Dash");
         playerController.IsDashing = true;
         playerController.LastDashTime = Time.time;
+        playerController.NotifyDashStarted();
 
         DashAfterimageVFX afterimageEffect = playerController.GetComponent<DashAfterimageVFX>();
         if (afterimageEffect == null)

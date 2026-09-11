@@ -165,6 +165,13 @@ namespace Nytherion.GamePlay.Characters.Player
                     currentWeapon.transform.localPosition = posOffset;
                 }
 
+                WeaponData equippedData = data != null ? data : currentWeapon.weaponData;
+                if (equippedData != null)
+                {
+                    float visualScale = equippedData.visualScale > 0f ? equippedData.visualScale : 1f;
+                    currentWeapon.transform.localScale *= visualScale;
+                }
+
                 // Animator Controller 런타임 주입 (원거리 무기만 적용)
                 if (type != WeaponType.Melee)
                 {
@@ -237,7 +244,7 @@ namespace Nytherion.GamePlay.Characters.Player
             if (isAttackHeld && currentWeapon != null)
             {
                 // 차징 무기가 아닌 경우 꾹 누르고 있으면 쿨다운에 맞춰 자동 연사 (Auto-fire)
-                if (!(currentWeapon is IChargeableWeapon))
+                if (!(currentWeapon is IChargeableWeapon) && currentWeapon.AllowAutoFire)
                 {
                     if (currentWeapon.CanAttack())
                     {
@@ -342,7 +349,24 @@ namespace Nytherion.GamePlay.Characters.Player
                 {
                     weaponPoint.localScale = new Vector3(1f, 1f, 1f);
                 }
+
+                AlignLaserFirePointWithAimLine(playerCenter, currentDirection);
             }
+        }
+
+        private void AlignLaserFirePointWithAimLine(Vector3 playerCenter, Vector2 aimDirection)
+        {
+            if (!(currentWeapon is LaserWeapon laserWeapon) || laserWeapon.firePoint == null ||
+                aimDirection.sqrMagnitude <= Mathf.Epsilon)
+            {
+                return;
+            }
+
+            // 발사 방향은 플레이어 중심 기준으로 유지하되, 조준 축의 위치만 실제 총구를 지나게 합니다.
+            Vector2 normal = new Vector2(-aimDirection.y, aimDirection.x).normalized;
+            float lateralOffset = Vector2.Dot(
+                (Vector2)(laserWeapon.firePoint.position - playerCenter), normal);
+            weaponPoint.position -= (Vector3)(normal * lateralOffset);
         }
 
         public void Attack()

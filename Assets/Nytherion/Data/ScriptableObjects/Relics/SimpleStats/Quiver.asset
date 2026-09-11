@@ -30,9 +30,18 @@ MonoBehaviour:
   influenceZones:
   - offset: {x: 0, y: 1}
     type: 1
-  - offset: {x: 0, y: -1}
+    levelAmount: 1
+  - offset: {x: 1, y: 0}
     type: 1
-  synergySeriesId: 
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: StormArcherSeries
+  synergySetBonusData: {fileID: 11400000, guid: 2b58d07a0be049d0ae64c7aad4390f1a, type: 2}
   unlockMilestoneID: 
   simpleStatModifiers:
   - stat: 10

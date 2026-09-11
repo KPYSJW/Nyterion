@@ -4,6 +4,7 @@ using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.Data.ScriptableObjects;
 using Nytherion.Core.Managers;
 using VContainer;
+using Nytherion.Gameplay.Relics.Modules;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -155,6 +156,24 @@ namespace Nytherion.GamePlay.Combat
                 : CombatModifierSnapshot.Empty;
             newEffect.ApplyRelicModifiers(currentSnapshot);
 
+            if (newEffect is FireEffect fireEffect && playerManager != null &&
+                playerManager.TryGetComponent(out FireSetBonusRuntime fireSetBonusRuntime))
+            {
+                fireSetBonusRuntime.ApplyTo(fireEffect);
+            }
+
+            if (newEffect is PoisonEffect poisonEffect && playerManager != null &&
+                playerManager.TryGetComponent(out PoisonSetBonusRuntime poisonSetBonusRuntime))
+            {
+                poisonSetBonusRuntime.ApplyTo(poisonEffect);
+            }
+
+            if (newEffect is IceEffect iceEffect && playerManager != null &&
+                playerManager.TryGetComponent(out FrostSetBonusRuntime frostSetBonusRuntime))
+            {
+                frostSetBonusRuntime.ApplyTo(iceEffect);
+            }
+
             if (database != null)
             {
                 newEffect.EffectIcon = database.GetIcon(newEffect.EffectId);
@@ -190,6 +209,21 @@ namespace Nytherion.GamePlay.Combat
             {
                 statusDisplay.UpdateDisplay(activeEffects);
             }
+        }
+
+        public bool TryGetEffect<T>(out T result) where T : StatusEffect
+        {
+            for (int i = 0; i < activeEffects.Count; i++)
+            {
+                if (activeEffects[i] is T matchingEffect)
+                {
+                    result = matchingEffect;
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
         }
 
         private void Update()

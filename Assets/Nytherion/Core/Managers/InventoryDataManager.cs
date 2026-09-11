@@ -21,7 +21,7 @@ namespace Nytherion.Core.Managers
         [Tooltip("인벤토리의 최대 슬롯 개수를 지정")]
         [SerializeField] private int maxSlotCount = 24;
 
-        public int MaxSlotCount => maxSlotCount;
+        public int MaxSlotCount => InventoryModel?.MaxSlots ?? maxSlotCount;
 
         /// <summary> 실제 인벤토리 데이터가 담겨있는 객체 </summary>
         public InventoryModel InventoryModel { get; private set; }
@@ -346,6 +346,13 @@ namespace Nytherion.Core.Managers
             return GetEmptySlotCount() == 0;
         }
 
+        /// <summary> 테스트용 대량 지급 등에 필요한 인벤토리 공간을 확보한다. </summary>
+        public void EnsureSlotCapacity(int requiredSlots)
+        {
+            if (!IsInitialized) return;
+            InventoryModel.EnsureSlotCapacity(requiredSlots);
+        }
+
 
 
         /* ==========================================================
@@ -367,14 +374,27 @@ namespace Nytherion.Core.Managers
         {
             if(saveData?.inventoryData == null || !IsInitialized) return;
 
-            // 기존 인벤토리 클리어 후 새로 할당 
-            InventoryModel = new InventoryModel(maxSlotCount);
+            // 확장 슬롯에 저장한 장비도 기존 세이브 형식 그대로 복원한다.
+            int requiredSlots = MaxSlotCount;
+            foreach (ItemEntry entry in saveData.inventoryData)
+            {
+                if (entry.slotIndex >= 0 && ItemDatabase.GetItemByID(entry.itemId) != null)
+                {
+                    requiredSlots = Mathf.Max(requiredSlots, entry.slotIndex + 1);
+                }
+            }
+
+            if (InventoryModel != null)
+            {
+                InventoryModel.OnInventoryUpdated -= HandleInventoryModelUpdate;
+            }
+            InventoryModel = new InventoryModel(requiredSlots);
 
             int loadedCount = 0;
             foreach (ItemEntry entry in saveData.inventoryData)
             {
                 ItemData itemData = ItemDatabase.GetItemByID(entry.itemId);
-                if (itemData != null && entry.slotIndex >= 0 && entry.slotIndex < maxSlotCount)
+                if (itemData != null && entry.slotIndex >= 0 && entry.slotIndex < MaxSlotCount)
                 {
                     ItemData itemToLoad = itemData;
 
@@ -397,6 +417,8 @@ namespace Nytherion.Core.Managers
                     Debug.LogWarning($"[InventoryDataManager] 아이템 데이터 없음 또는 잘못된 슬롯: {entry.itemId}, 슬롯 {entry.slotIndex}");
                 }
             }
+
+            InventoryModel.OnInventoryUpdated += HandleInventoryModelUpdate;
 
             // 로드 완료 후 전체 UI 갱신 요청
             NotifyDataChanged(new InventoryChangeData
@@ -442,7 +464,7 @@ namespace Nytherion.Core.Managers
         {
             List<ItemEntry> entries = new List<ItemEntry>();
 
-            for (int i = 0; i < maxSlotCount; i++)
+            for (int i = 0; i < MaxSlotCount; i++)
             {
                 (ItemData item, int count) slot = InventoryModel.GetItemAt(i);
                 if (slot.item != null)

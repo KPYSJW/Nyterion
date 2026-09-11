@@ -11,6 +11,9 @@ namespace Nytherion.GamePlay.Combat
         private int currentStacks = 1;
         private int maxStacks = 5;
         private float slowPerStack = 0.06f;
+        private int freezeRequiredStacks = int.MaxValue;
+        private float freezeDuration;
+        private float freezeTimer;
 
         private EnemyAIController aiController;
         private Animator animator;
@@ -21,6 +24,8 @@ namespace Nytherion.GamePlay.Combat
         private bool isVfxActive = false;
 
         public float SpeedReduction => currentStacks * slowPerStack;
+        public int StackCount => currentStacks;
+        public bool IsFrozen => freezeTimer > 0f;
 
         public IceEffect(float duration)
         {
@@ -52,12 +57,31 @@ namespace Nytherion.GamePlay.Combat
         public override void OnStack(StatusEffect newEffect)
         {
             currentStacks = Mathf.Min(maxStacks, currentStacks + 1);
+            if (currentStacks >= freezeRequiredStacks)
+            {
+                freezeTimer = Mathf.Max(freezeTimer, freezeDuration);
+            }
             ApplyReduction();
+        }
+
+        public void ApplySetBonus(int requiredStacks, float duration)
+        {
+            freezeRequiredStacks = Mathf.Max(1, requiredStacks);
+            freezeDuration = Mathf.Max(0f, duration);
+        }
+
+        public bool ConsumeFreeze()
+        {
+            if (!IsFrozen) return false;
+
+            freezeTimer = 0f;
+            ApplyReduction();
+            return true;
         }
 
         private void ApplyReduction()
         {
-            float reductionMultiplier = 1f - SpeedReduction;
+            float reductionMultiplier = IsFrozen ? 0f : Mathf.Max(0f, 1f - SpeedReduction);
             if (aiController != null && aiController.agent != null)
             {
                 aiController.agent.speed = aiController.moveSpeed * reductionMultiplier;
@@ -70,6 +94,15 @@ namespace Nytherion.GamePlay.Combat
 
         public override void OnUpdate(float deltaTime)
         {
+            if (freezeTimer > 0f)
+            {
+                freezeTimer = Mathf.Max(0f, freezeTimer - deltaTime);
+                if (freezeTimer <= 0f)
+                {
+                    ApplyReduction();
+                }
+            }
+
             vfxTimer -= deltaTime;
             if (vfxTimer <= 0f)
             {

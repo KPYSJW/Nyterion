@@ -14,6 +14,9 @@ namespace Nytherion.GamePlay.Combat
         
         [Tooltip("무기가 자체적으로 회전 및 스케일 제어를 제어할지 여부")]
         public virtual bool OverrideRotation => false;
+
+        /// <summary>공격 버튼을 누르고 있을 때 쿨다운마다 자동으로 재공격할 수 있는지 여부입니다.</summary>
+        public virtual bool AllowAutoFire => true;
         
         [Tooltip("마지막 공격 시간 (Time.time 기준)")]
         protected float lastAttackTime;
@@ -26,6 +29,7 @@ namespace Nytherion.GamePlay.Combat
 
         protected PlayerManager playerManager;
         [SerializeField] protected Animator animator;
+        private WeaponCrossbowRecoil staffRecoil;
 
         protected virtual void Awake()
         {
@@ -40,6 +44,8 @@ namespace Nytherion.GamePlay.Combat
             {
                 gameObject.AddComponent<WeaponSortingOrderSync>();
             }
+
+            ConfigureStaffRecoil(weaponData);
         }
 
         protected void PlayFireAnimation()
@@ -55,6 +61,7 @@ namespace Nytherion.GamePlay.Combat
             weaponData = data;
             lastAttackTime = -data.cooldown;
             genericChargeDamageMultiplier = 1f;
+            ConfigureStaffRecoil(data);
 
             if (data.weaponSprite != null)
             {
@@ -92,6 +99,38 @@ namespace Nytherion.GamePlay.Combat
         {
         }
         public abstract void AttackEnd();
+
+        protected bool PlayStaffRecoil(float strength = 1f)
+        {
+            if (staffRecoil == null || !staffRecoil.enabled)
+            {
+                return false;
+            }
+
+            staffRecoil.PlayLocalBack(strength);
+            return true;
+        }
+
+        private void ConfigureStaffRecoil(WeaponData data)
+        {
+            if (data == null || !data.useStaffRecoil)
+            {
+                staffRecoil = null;
+                return;
+            }
+
+            if (staffRecoil == null)
+            {
+                staffRecoil = GetComponent<WeaponCrossbowRecoil>();
+            }
+
+            if (staffRecoil == null)
+            {
+                staffRecoil = gameObject.AddComponent<WeaponCrossbowRecoil>();
+            }
+
+            staffRecoil.enabled = true;
+        }
 
         public virtual void AttackWithGenericCharge(Vector2 direction, Vector3 targetPosition, float chargePercent)
         {

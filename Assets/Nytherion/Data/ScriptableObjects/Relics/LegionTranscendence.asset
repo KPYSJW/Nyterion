@@ -17,11 +17,33 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: 869b965e4ae74f2d85871b0246ec1f25, type: 3}
   badgeBackgroundColor: {r: 0.35686275, g: 0.24705882, b: 0.50980395, a: 0.9607843}
   badgeTextColor: {r: 0.9529412, g: 0.9137255, b: 1, a: 1}
-  description_KR: "모든 소환물과 소환수 유물을 장착하면 활성화되는 초월 효과입니다. 실제 전투 효과는 아직 설정되지 않았습니다."
-  description_EN: A transcendence effect activated by equipping every Summon and Servant relic. Its combat effect is not configured yet.
+  description_KR: "소환물과 소환수가 군단으로 연계됩니다. 모든 소환 피해 +25%, 소환물 투사체 1발 추가, 소환수 공격 속도 +15%."
+  description_EN: Summons and companions form a legion. All summon damage +25%, Summon relics fire 1 extra projectile, and companions attack 15% faster.
   requirements:
   - setBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
-    requiredEquippedCount: 8
+    requiredEquippedCount: 6
   - setBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
     requiredEquippedCount: 2
-  effectModules: []
+  effectModules:
+  - condition: {rid: -2}
+    effects:
+    - rid: 1001
+    - rid: 1002
+    description_KR: "모든 소환 계열 공격을 함께 강화"
+    description_EN: Strengthen all summon-family attacks together.
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1001
+      type: {class: FollowerAttackSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        damageMultiplier: 1.25
+        additionalProjectileCount: 1
+        additionalProjectileSpreadAngle: 12
+    - rid: 1002
+      type: {class: LegionCompanionEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        damageMultiplier: 1.25
+        attackIntervalMultiplier: 0.85

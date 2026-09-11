@@ -15,6 +15,198 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         public Vector2Int offset;
         [Tooltip("해당 위치에 부여할 효과 종류 (레벨 업/다운)")]
         public InfluenceType type;
+
+        [Range(1, 3)]
+        [Tooltip("레벨 업/다운 변동량입니다. 레벨 영향이 아닌 특수 칸에서는 사용하지 않습니다.")]
+        public int levelAmount = 1;
+
+        public int GetLevelAmount()
+        {
+            return Mathf.Clamp(levelAmount <= 0 ? 1 : levelAmount, 1, 3);
+        }
+    }
+
+    /// <summary>
+    /// 유물 등급별 영향 범위를 한 곳에서 관리합니다.
+    /// 일반 유물은 최대 다섯 칸 안에서 레벨 업/다운을 함께 사용하고,
+    /// 침묵 또는 시너지 연결을 가진 특수 유물은 고유 영향권을 유지합니다.
+    /// </summary>
+    public static class RelicInfluencePolicy
+    {
+        private static readonly InfluenceZone[] CommonZones =
+        {
+            CreateZone(1, 0, InfluenceType.LevelUp, 1),
+            CreateZone(0, 1, InfluenceType.LevelDown, 1),
+            CreateZone(-1, 0, InfluenceType.LevelDown, 1),
+            CreateZone(0, -1, InfluenceType.LevelDown, 1)
+        };
+
+        private static readonly InfluenceZone[] UncommonZones =
+        {
+            CreateZone(1, 0, InfluenceType.LevelUp, 1),
+            CreateZone(0, 1, InfluenceType.LevelDown, 1),
+            CreateZone(-1, 0, InfluenceType.LevelDown, 1)
+        };
+
+        private static readonly InfluenceZone[] RareZones =
+        {
+            CreateZone(0, 1, InfluenceType.LevelUp, 1),
+            CreateZone(1, 0, InfluenceType.LevelUp, 1),
+            CreateZone(0, -1, InfluenceType.LevelDown, 1),
+            CreateZone(-1, 0, InfluenceType.LevelDown, 1)
+        };
+
+        private static readonly InfluenceZone[] EpicZones =
+        {
+            CreateZone(0, 1, InfluenceType.LevelUp, 2),
+            CreateZone(1, 0, InfluenceType.LevelUp, 1),
+            CreateZone(0, -1, InfluenceType.LevelUp, 1),
+            CreateZone(-1, 0, InfluenceType.LevelDown, 1),
+            CreateZone(-1, -1, InfluenceType.LevelDown, 1)
+        };
+
+        private static readonly InfluenceZone[] LegendaryZones =
+        {
+            CreateZone(0, 1, InfluenceType.LevelUp, 3),
+            CreateZone(1, 0, InfluenceType.LevelUp, 2),
+            CreateZone(0, -1, InfluenceType.LevelUp, 1),
+            CreateZone(-1, 0, InfluenceType.LevelDown, 1)
+        };
+
+        private static readonly Vector2Int[] SpecialOffsets =
+        {
+            new Vector2Int(-1, 1),
+            Vector2Int.up,
+            Vector2Int.one,
+            Vector2Int.left,
+            Vector2Int.right,
+            new Vector2Int(-1, -1),
+            Vector2Int.down,
+            new Vector2Int(1, -1)
+        };
+
+        public static IReadOnlyList<InfluenceZone> GetDefaultZones(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Common:
+                    return CommonZones;
+                case Rarity.Uncommon:
+                    return UncommonZones;
+                case Rarity.Rare:
+                    return RareZones;
+                case Rarity.Epic:
+                    return EpicZones;
+                case Rarity.Legendary:
+                    return LegendaryZones;
+                default:
+                    return CommonZones;
+            }
+        }
+
+        public static bool IsSpecialRelic(RelicData relic)
+        {
+            if (relic == null || relic.influenceZones == null) return false;
+
+            foreach (InfluenceZone zone in relic.influenceZones)
+            {
+                if (zone != null &&
+                    (zone.type == InfluenceType.Silence || zone.type == InfluenceType.SynergyLink))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool ContainsOffset(RelicData relic, Rarity rarity, Vector2Int offset)
+        {
+            if (IsSpecialRelic(relic))
+            {
+                for (int i = 0; i < SpecialOffsets.Length; i++)
+                {
+                    if (SpecialOffsets[i] == offset) return true;
+                }
+
+                return false;
+            }
+
+            foreach (InfluenceZone zone in GetDefaultZones(rarity))
+            {
+                if (zone.offset == offset) return true;
+            }
+
+            return false;
+        }
+
+        public static bool Normalize(RelicData relic)
+        {
+            if (relic == null) return false;
+
+            if (relic.influenceZones == null)
+            {
+                relic.influenceZones = new List<InfluenceZone>();
+            }
+
+            if (IsSpecialRelic(relic))
+            {
+                bool changedSpecialAmount = false;
+                foreach (InfluenceZone zone in relic.influenceZones)
+                {
+                    if (zone == null ||
+                        (zone.type != InfluenceType.LevelUp && zone.type != InfluenceType.LevelDown))
+                    {
+                        continue;
+                    }
+
+                    int normalizedAmount = zone.GetLevelAmount();
+                    if (zone.levelAmount != normalizedAmount)
+                    {
+                        zone.levelAmount = normalizedAmount;
+                        changedSpecialAmount = true;
+                    }
+                }
+
+                return changedSpecialAmount;
+            }
+
+            IReadOnlyList<InfluenceZone> defaultZones = GetDefaultZones(relic.rarity);
+            bool isAlreadyNormalized = relic.influenceZones.Count == defaultZones.Count;
+            for (int i = 0; isAlreadyNormalized && i < defaultZones.Count; i++)
+            {
+                InfluenceZone currentZone = relic.influenceZones[i];
+                InfluenceZone normalizedZone = defaultZones[i];
+                isAlreadyNormalized = currentZone != null &&
+                                      currentZone.offset == normalizedZone.offset &&
+                                      currentZone.type == normalizedZone.type &&
+                                      currentZone.GetLevelAmount() == normalizedZone.levelAmount;
+            }
+
+            if (isAlreadyNormalized) return false;
+
+            relic.influenceZones = new List<InfluenceZone>(defaultZones.Count);
+            foreach (InfluenceZone zone in defaultZones)
+            {
+                relic.influenceZones.Add(CreateZone(
+                    zone.offset.x,
+                    zone.offset.y,
+                    zone.type,
+                    zone.levelAmount));
+            }
+
+            return true;
+        }
+
+        private static InfluenceZone CreateZone(int x, int y, InfluenceType type, int levelAmount)
+        {
+            return new InfluenceZone
+            {
+                offset = new Vector2Int(x, y),
+                type = type,
+                levelAmount = levelAmount
+            };
+        }
     }
 
     [CreateAssetMenu(fileName = "NewRelicData", menuName = "Data/Relic")]
@@ -54,8 +246,8 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Header("각인 모양 (1x1 고정)")]
         public List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };
 
-        [Header("영향 범위 설정 (고정)")]
-        [Tooltip("이 각인이 주변에 영향을 미칠 영역의 목록")]
+        [Header("영향 범위 설정 (등급별 고정)")]
+        [Tooltip("일반 유물은 최대 다섯 칸의 레벨 업/다운 조합을 사용합니다. 침묵·시너지 연결 유물은 고유 영향권을 유지합니다.")]
         public List<InfluenceZone> influenceZones = new List<InfluenceZone>();
 
         [Header("시너지 설정")]
@@ -71,21 +263,18 @@ namespace Nytherion.Data.ScriptableObjects.Relics
 
         private void OnValidate()
         {
+            if (shape == null)
+            {
+                shape = new List<Vector2Int>();
+            }
+
             if (shape.Count != 1 || shape[0] != Vector2Int.zero)
             {
                 shape.Clear();
                 shape.Add(Vector2Int.zero);
             }
 
-            foreach (var zone in influenceZones)
-            {
-                zone.offset.x = Mathf.Clamp(zone.offset.x, -1, 1);
-                zone.offset.y = Mathf.Clamp(zone.offset.y, -1, 1);
-                if (zone.offset == Vector2Int.zero)
-                {
-                    Debug.LogWarning($"'{relicName}'의 영향 범위 offset은 (0,0)이 될 수 없습니다.");
-                }
-            }
+            RelicInfluencePolicy.Normalize(this);
         }
     }
 }

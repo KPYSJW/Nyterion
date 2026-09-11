@@ -11,6 +11,7 @@ namespace Nytherion.GamePlay.Relics
         public int Columns { get; private set; }
         private readonly RelicBlock[,] grid;
         private readonly InfluenceType[,] influenceGrid;
+        private readonly int[,] levelAmountGrid;
         private readonly bool[,] silenceGrid;
 
         public RelicGrid(int rows, int columns)
@@ -19,6 +20,7 @@ namespace Nytherion.GamePlay.Relics
             Columns = columns;
             grid = new RelicBlock[rows, columns];
             influenceGrid = new InfluenceType[rows, columns];
+            levelAmountGrid = new int[rows, columns];
             silenceGrid = new bool[rows, columns];
         }
 
@@ -37,6 +39,7 @@ namespace Nytherion.GamePlay.Relics
         public void RecalculateAllInfluences()
         {
             Array.Clear(influenceGrid, 0, influenceGrid.Length);
+            Array.Clear(levelAmountGrid, 0, levelAmountGrid.Length);
             Array.Clear(silenceGrid, 0, silenceGrid.Length);
 
             foreach (var block in grid)
@@ -69,6 +72,7 @@ namespace Nytherion.GamePlay.Relics
                                 else
                                 {
                                     influenceGrid[targetRow, targetCol] = zone.type;
+                                    levelAmountGrid[targetRow, targetCol] = zone.GetLevelAmount();
                                 }
                             }
                         }
@@ -91,8 +95,14 @@ namespace Nytherion.GamePlay.Relics
                         else
                         {
                             InfluenceType effect = influenceGrid[y, x];
-                            if (effect == InfluenceType.LevelUp) targetBlock.ChangeLevel(1);
-                            else if (effect == InfluenceType.LevelDown) targetBlock.ChangeLevel(-1);
+                            if (effect == InfluenceType.LevelUp)
+                            {
+                                targetBlock.ChangeLevel(levelAmountGrid[y, x]);
+                            }
+                            else if (effect == InfluenceType.LevelDown)
+                            {
+                                targetBlock.ChangeLevel(-levelAmountGrid[y, x]);
+                            }
                         }
                     }
                 }
@@ -179,11 +189,13 @@ namespace Nytherion.GamePlay.Relics
             if (silenceGrid[row, col]) return InfluenceType.Silence;
             return influenceGrid[row, col];
         }
+
         private bool IsPositionValid(int row, int col) => row >= 0 && row < Rows && col >= 0 && col < Columns;
         public void Clear()
         {
             Array.Clear(grid, 0, grid.Length);
             Array.Clear(influenceGrid, 0, influenceGrid.Length);
+            Array.Clear(levelAmountGrid, 0, levelAmountGrid.Length);
             Array.Clear(silenceGrid, 0, silenceGrid.Length);
         }
     }

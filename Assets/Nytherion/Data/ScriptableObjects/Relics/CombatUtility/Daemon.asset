@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Daemon
   koreanName: "\uB370\uBAAC"
-  description_KR: "플레이어 곁에 데몬이 고정되어, 공격할 때마다 마성 투사체를 발사합니다.\n\n(2) 소환물 투사체 피해 +15%\n(4) 소환물 투사체 피해 +30%, 1발 추가 발사\n(6) 소환물 투사체 피해 +50%, 1발 추가 발사"
-  description_EN: "Daemon stays beside you and fires a demonic projectile whenever you attack.\n\n(2) Summon projectile damage +15%\n(4) Summon projectile damage +30%, fire 1 additional projectile\n(6) Summon projectile damage +50%, fire 1 additional projectile"
+  description_KR: "플레이어 곁에 데몬이 고정되어, 플레이어 공격에 맞춰 고유 공격 간격마다 마성 투사체를 발사합니다.\n\n(2) 소환물 투사체 피해 +15%\n(4) 소환물 투사체 피해 +30%, 1발 추가 발사\n(6) 소환물 투사체 피해 +50%, 1발 추가 발사"
+  description_EN: "Daemon stays beside you and fires a demonic projectile in sync with your attacks, limited by its own attack interval.\n\n(2) Summon projectile damage +15%\n(4) Summon projectile damage +30%, fire 1 additional projectile\n(6) Summon projectile damage +50%, fire 1 additional projectile"
   Image: {fileID: 21300000, guid: 3fd7d29f3cbb41f19173dbc92263c766, type: 3}
   rarity: 3
   level: 1
@@ -28,7 +28,22 @@ MonoBehaviour:
   grantsProjectileHoming: 0
   shape:
   - {x: 0, y: 0}
-  influenceZones: []
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: -1}
+    type: 2
+    levelAmount: 1
   synergySeriesId: ElementalCompanionSeries
   synergySetBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
   unlockMilestoneID: 
@@ -55,5 +70,6 @@ MonoBehaviour:
         projectileForwardOffset: 0.25
         projectileSpeed: 8
         projectileLifetime: 1.5
-        damageRatio: 0.5
-        damageRatioPerLevel: 0.1
+        attackInterval: 1.6
+        damageRatio: 0.8
+        damageRatioPerLevel: 0.16

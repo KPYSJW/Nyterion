@@ -15,7 +15,7 @@ MonoBehaviour:
   uniqueID: b92f23d3-c667-4578-ac67-c7d25603fb91
   itemName_KR: "\uB3CC\uD48D"
   itemName_EN: Gust
-  icon: {fileID: 21300000, guid: 18a7bffdf622b5e48b2a6b5bb35539bc, type: 3}
+  icon: {fileID: 21300000, guid: 9946b2d8624ef01458b8eb9a7f8b15f3, type: 3}
   description_KR: 
   description_EN: 
   isStackable: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
   range: 1
   cooldown: 0
   weaponType: 1
-  weaponSprite: {fileID: 21300000, guid: 7dfb05d3631893c4293c6a7ed939606a, type: 3}
+  weaponSprite: {fileID: 21300000, guid: 83c7c1357dcd48940b40a9d404c8a75b, type: 3}
   firePointOffset: {x: 0, y: 0, z: 0}
   spriteRotationOffset: 0
   visualPositionOffset: {x: 0.1, y: -0.1, z: 0}

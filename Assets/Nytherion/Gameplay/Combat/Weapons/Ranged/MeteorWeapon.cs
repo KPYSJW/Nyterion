@@ -36,6 +36,8 @@ namespace Nytherion.GamePlay.Combat.Weapons
             {
                 col.damage = weaponData.damage * EffectiveDamageMultiplier;
             }
+
+            PlayStaffRecoil();
         }
 
         public override void AttackEnd()

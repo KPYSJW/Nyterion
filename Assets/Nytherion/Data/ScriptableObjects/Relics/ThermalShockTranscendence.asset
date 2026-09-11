@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
+  m_Name: ThermalShockTranscendence
+  m_EditorClassIdentifier: 
+  effectName_KR: "열충격"
+  effectName_EN: Thermal Shock
+  statusIcon: {fileID: 21300000, guid: bd7b9d5a496e9214f842f2e9eac4da81, type: 3}
+  badgeBackgroundColor: {r: 0.52, g: 0.18, b: 0.28, a: 0.96}
+  badgeTextColor: {r: 1, g: 0.9, b: 0.9, a: 1}
+  description_KR: "화상과 냉기가 함께 걸린 적을 공격하면 1초마다 열충격이 폭발해 주변 최대 4명에게 해당 피해의 80%를 줍니다."
+  description_EN: Hitting an enemy affected by Fire and Ice causes a thermal explosion once per second, dealing 80% damage to up to 4 nearby enemies.
+  requirements:
+  - setBonusData: {fileID: 11400000, guid: 6a2c8fbd0e1b4d3da9c7b8e423e56712, type: 2}
+    requiredEquippedCount: 4
+  - setBonusData: {fileID: 11400000, guid: 8a24e6b5472c42cfbd2e54670dc28ec5, type: 2}
+    requiredEquippedCount: 3
+  effectModules:
+  - condition: {rid: -2}
+    effects:
+    - rid: 1001
+    description_KR: "화상+냉기 대상 공격 시 열충격 폭발"
+    description_EN: Attacks against Fire+Ice targets trigger a thermal explosion.
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1001
+      type: {class: ThermalShockEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        damageRatio: 0.8
+        explosionRadius: 3
+        maxTargets: 4
+        perTargetCooldown: 1

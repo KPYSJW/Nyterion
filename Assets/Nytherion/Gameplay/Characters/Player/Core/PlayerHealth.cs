@@ -9,6 +9,7 @@ namespace Nytherion.GamePlay.Characters.Player
     public class PlayerHealth : MonoBehaviour
     {
         public static event Action<float, float> OnHealthChanged;
+        public static event Action<float> OnPlayerDamaged;
         public static event Action OnPlayerDied;
 
         public float MaxHealth { get; private set; }
@@ -39,13 +40,20 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void TakeDamage(float amount)
         {
-            if (IsInvulnerable) return;
+            if (IsInvulnerable || amount <= 0f) return;
 
+            float previousHealth = CurrentHealth;
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
+            float appliedDamage = previousHealth - CurrentHealth;
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
 
+            if (appliedDamage > 0f)
+            {
+                OnPlayerDamaged?.Invoke(appliedDamage);
+            }
+
             // 받은 데미지 진척도 업데이트
-            progressionManager?.ProcessAction(ProgressionType.TakeDamage, (int)amount);
+            progressionManager?.ProcessAction(ProgressionType.TakeDamage, (int)appliedDamage);
 
             if (CurrentHealth <= 0)
             {

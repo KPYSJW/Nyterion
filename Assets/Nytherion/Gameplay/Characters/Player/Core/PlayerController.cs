@@ -176,6 +176,12 @@ namespace Nytherion.GamePlay.Characters.Player
             }
             rb.velocity = dashDirection * PlayerData.dashSpeed;
         }
+
+        public void NotifyDashStarted()
+        {
+            playerManager?.EventManager?.TriggerPlayerDashStarted();
+        }
+
         public void ChangeState(PlayerState newState)
         {
             currentState?.Exit(this);

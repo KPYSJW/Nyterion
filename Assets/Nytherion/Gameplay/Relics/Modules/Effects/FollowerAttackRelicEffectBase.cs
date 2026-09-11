@@ -51,9 +51,12 @@ namespace Nytherion.Gameplay.Relics.Modules
         public float projectileSpeed = 8f;
         [Tooltip("투사체가 풀로 돌아가기까지의 시간")]
         public float projectileLifetime = 1.5f;
-        [Tooltip("현재 장착 무기 공격력에 적용할 피해 비율")]
+        [Min(0.1f)]
+        [Tooltip("플레이어 공격 속도와 별도로 적용되는 동반체의 최소 공격 간격(초, 0.1초 단위 권장)")]
+        public float attackInterval = 1f;
+        [Tooltip("현재 장착 무기 공격력에 적용할 1회 피해 비율. 공격 간격과 함께 조정합니다.")]
         public float damageRatio = 0.5f;
-        [Tooltip("유물 레벨당 추가 피해 비율")]
+        [Tooltip("유물 레벨당 추가되는 1회 피해 비율. 공격 간격과 함께 조정합니다.")]
         public float damageRatioPerLevel = 0.1f;
 
         private PlayerManager cachedPlayerManager;
@@ -61,6 +64,7 @@ namespace Nytherion.Gameplay.Relics.Modules
         private GameObject companionObject;
         private int currentLevel;
         private bool hasLoggedMissingProjectile;
+        private float nextAttackTime;
 
         protected virtual string CompanionObjectName => "Follower Attack Companion";
 
@@ -146,6 +150,13 @@ namespace Nytherion.Gameplay.Relics.Modules
                 LogMissingProjectileConfiguration();
                 return;
             }
+
+            if (Time.time < nextAttackTime)
+            {
+                return;
+            }
+
+            nextAttackTime = Time.time + Mathf.Max(0.1f, attackInterval);
 
             Vector2 normalizedDirection = direction.normalized;
             FollowerAttackSetBonusRuntime setBonus = cachedPlayerManager != null
@@ -297,6 +308,7 @@ namespace Nytherion.Gameplay.Relics.Modules
             companionObject = null;
             currentLevel = 0;
             hasLoggedMissingProjectile = false;
+            nextAttackTime = 0f;
         }
     }
 

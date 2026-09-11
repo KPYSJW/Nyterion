@@ -7,14 +7,24 @@ namespace Nytherion.GamePlay.Combat
         public override string EffectId => "Poison";
         public override Color EffectColor => new Color(0.2f, 0.8f, 0.2f); // 독성 초록색
 
-        private float tickDamage;
+        private const int MaximumStacks = 5;
+
+        private float baseDamagePerStack;
+        private float setDamageMultiplier = 1f;
+        private int stackCount = 1;
         private float tickInterval = 1.0f;
         private float nextTickTime;
 
-        public PoisonEffect(float damage, float duration)
+        public float BaseDamagePerStack => baseDamagePerStack;
+        public float DamagePerStack => baseDamagePerStack * setDamageMultiplier;
+        public float TickDamage => DamagePerStack * stackCount;
+        public int StackCount => stackCount;
+
+        public PoisonEffect(float damage, float duration, int initialStackCount = 1)
         {
-            this.tickDamage = damage;
+            baseDamagePerStack = Mathf.Max(0f, damage);
             this.Duration = duration;
+            stackCount = Mathf.Clamp(initialStackCount, 1, MaximumStacks);
         }
 
         public override void OnApply()
@@ -59,13 +69,31 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
+        public void ApplySetBonus(float durationMultiplier, float damageMultiplier)
+        {
+            ModifyDuration(Duration * Mathf.Max(0f, durationMultiplier));
+            setDamageMultiplier = Mathf.Max(0f, damageMultiplier);
+        }
+
+        public override void OnStack(StatusEffect newEffect)
+        {
+            if (!(newEffect is PoisonEffect poisonEffect)) return;
+
+            int availableStacks = MaximumStacks - stackCount;
+            stackCount += Mathf.Min(availableStacks, poisonEffect.stackCount);
+            baseDamagePerStack = Mathf.Max(baseDamagePerStack, poisonEffect.baseDamagePerStack);
+            setDamageMultiplier = Mathf.Max(setDamageMultiplier, poisonEffect.setDamageMultiplier);
+            Duration = Mathf.Max(Duration, poisonEffect.Duration);
+            Timer = Duration;
+        }
+
         public override void OnUpdate(float deltaTime)
         {
             if (Time.time >= nextTickTime)
             {
                 if (target != null && !target.isDead)
                 {
-                    target.TakeDamage(tickDamage);
+                    target.TakeDamage(TickDamage);
                 }
                 nextTickTime = Time.time + tickInterval;
             }

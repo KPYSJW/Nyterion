@@ -15,7 +15,7 @@ MonoBehaviour:
   uniqueID: weapon_saints_staff
   itemName_KR: "\uC131\uC790\uC758 \uC9C0\uD321\uC774"
   itemName_EN: Saint's Staff
-  icon: {fileID: 21300000, guid: 0d9595b110364ad4895d4a5315701f70, type: 3}
+  icon: {fileID: 1503601313, guid: 0d9595b110364ad4895d4a5315701f70, type: 3}
   description_KR: "\uC2E0\uC131\uD55C \uAE30\uC6B4\uC774 \uAE43\uB4E0 \uC9C0\uD321\uC774\uC785\uB2C8\uB2E4.
     \uD0C0\uACA9 \uC2DC 15%\uC758 \uD655\uB960\uB85C \uC544\uAD70\uC758 \uCCB4\uB825\uC744
     2\uB9CC\uD07C \uD68C\uBCF5\uC2DC\uD0B5\uB2C8\uB2E4."
@@ -33,9 +33,11 @@ MonoBehaviour:
   cooldown: 0.8
   weaponType: 0
   weaponSprite: {fileID: 21300000, guid: c3e562dc8fd1a0942b9bbcc6cba5cc59, type: 3}
-  firePointOffset: {x: 0.3, y: 0, z: 0}
+  firePointOffset: {x: -0.3, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: 0.3, y: 0, z: 0}
+  visualPositionOffset: {x: 0.5, y: -0.1, z: 0}
+  visualScale: 0.75
+  useStaffRecoil: 1
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
   chargeEffectPrefab: {fileID: 0}
@@ -45,6 +47,7 @@ MonoBehaviour:
   projectileRotationOffset: 180
   extraProjectileMode: 0
   maxChargeTime: 1
+  hasHomingProjectiles: 0
   chargeThresholdTime: 0.15
   requiredRelicId: 
   hitEffectPrefab: {fileID: 3323616655764642522, guid: 6e5b49bf4034d394280ed164e799e605, type: 3}

@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
+  m_Name: FrostWardenSet
+  m_EditorClassIdentifier: 
+  setName_KR: "빙결 파수꾼"
+  setName_EN: Frost Warden
+  statusIcon: {fileID: 21300000, guid: b18d509706164b53b2069555bf259654, type: 3}
+  badgeBackgroundColor: {r: 0.18, g: 0.42, b: 0.62, a: 0.96}
+  badgeTextColor: {r: 0.9, g: 0.98, b: 1, a: 1}
+  description_KR: "냉기 중첩으로 적을 멈추고 파쇄하는 제어형 유물 세트입니다."
+  description_EN: A control relic set that freezes and shatters enemies with Ice stacks.
+  synergySeriesId: FrostWardenSeries
+  bonusModules:
+  - condition: {rid: 3001}
+    effects:
+    - rid: 3002
+    description_KR: "냉기 4중첩 시 0.5초 빙결"
+    description_EN: Freeze for 0.5 seconds at 4 Ice stacks.
+  - condition: {rid: 5001}
+    effects:
+    - rid: 5002
+    description_KR: "3세트 효과. 빙결된 적 공격 시 주변 최대 3명에게 해당 피해의 50% 파쇄 피해"
+    description_EN: Tier 3 effect. Hitting a frozen enemy deals 50% shatter damage to up to 3 nearby enemies.
+  linkedTranscendenceEffects:
+  - {fileID: 11400000, guid: f2d8c3a9167f4c1aade53b210e8597c4, type: 2}
+  - {fileID: 11400000, guid: 4c65b1aa02994e2b86b713fd192e4c08, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 3001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: FrostWardenSeries
+        measure: 1
+        requiredChainLength: 3
+    - rid: 3002
+      type: {class: FrostSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredStacksToFreeze: 4
+        freezeDuration: 0.5
+        enableShatter: 0
+        shatterDamageRatio: 0
+        shatterRadius: 2.5
+        maxShatterTargets: 3
+    - rid: 5001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: FrostWardenSeries
+        measure: 1
+        requiredChainLength: 5
+    - rid: 5002
+      type: {class: FrostSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredStacksToFreeze: 4
+        freezeDuration: 0.5
+        enableShatter: 1
+        shatterDamageRatio: 0.5
+        shatterRadius: 2.5
+        maxShatterTargets: 3

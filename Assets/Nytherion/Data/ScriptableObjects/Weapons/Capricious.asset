@@ -33,6 +33,7 @@ MonoBehaviour:
   firePointOffset: {x: 0, y: 0, z: 0}
   spriteRotationOffset: 0
   visualPositionOffset: {x: 0.3, y: 0, z: 0}
+  useStaffRecoil: 1
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
   chargeEffectPrefab: {fileID: 0}

@@ -245,6 +245,11 @@ namespace Nytherion.GamePlay.Combat
 
         protected void PlayWeaponRecoil(Vector2 direction, float strength = 1f)
         {
+            if (PlayStaffRecoil(strength))
+            {
+                return;
+            }
+
             if (crossbowRecoil == null)
             {
                 crossbowRecoil = GetComponent<WeaponCrossbowRecoil>();

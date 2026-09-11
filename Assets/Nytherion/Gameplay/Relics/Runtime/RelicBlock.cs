@@ -65,7 +65,12 @@ namespace Nytherion.GamePlay.Relics
                 {
                     rotatedOffset = new Vector2Int(-rotatedOffset.y, rotatedOffset.x);
                 }
-                rotatedZones.Add(new InfluenceZone { offset = rotatedOffset, type = zone.type });
+                rotatedZones.Add(new InfluenceZone
+                {
+                    offset = rotatedOffset,
+                    type = zone.type,
+                    levelAmount = zone.GetLevelAmount()
+                });
             }
             return rotatedZones;
         }

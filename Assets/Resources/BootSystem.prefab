@@ -100,6 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3730414827756577153}
   - component: {fileID: 3756991989442853560}
+  - component: {fileID: 6549283147051931642}
   m_Layer: 0
   m_Name: RootLifetimeScope
   m_TagString: Untagged
@@ -145,3 +146,20 @@ MonoBehaviour:
   audioManagerPrefab: {fileID: 4032553791337175984, guid: a4a4b80b1b905474e8ab3602db3af216, type: 3}
   sceneTransitionManagerPrefab: {fileID: 3582742344203591957, guid: e7f174a1dd4b4e9468001f3debdfe3a7, type: 3}
   inputManagerPrefab: {fileID: 178222708281695647, guid: a165060af635a7843a8762e0718dbdf0, type: 3}
+--- !u!114 &6549283147051931642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7238457421155823612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f7a18f523be4fa588729d61e4ca9016, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimCursor: {fileID: 2800000, guid: 2e39f42e0bf443c9a5800f1e012704db, type: 3}
+  uiCursor: {fileID: 2800000, guid: db33c5633f324972bb3ce810b59115ca, type: 3}
+  cursorScale: 1.5
+  cursorMode: 1
+  gameplaySceneName: GameScene

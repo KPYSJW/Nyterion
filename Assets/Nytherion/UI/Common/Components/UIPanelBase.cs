@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using VContainer;
@@ -5,6 +6,8 @@ using Nytherion.UI;
 
 public abstract class UIPanelBase : MonoBehaviour
 {
+    private static readonly HashSet<UIPanelBase> OpenPanels = new HashSet<UIPanelBase>();
+
     [Header("Panel Control")]
     [SerializeField] protected CanvasGroup controlledCanvasGroup;
 
@@ -13,6 +16,15 @@ public abstract class UIPanelBase : MonoBehaviour
 
     public UnityEvent OnPanelOpened;
     public UnityEvent OnPanelClosed;
+
+    public static bool IsAnyPanelOpen
+    {
+        get
+        {
+            OpenPanels.RemoveWhere(panel => panel == null || !panel.isActiveAndEnabled || !panel.IsOpen);
+            return OpenPanels.Count > 0;
+        }
+    }
 
     [Inject]
     public void ConstructParent(GlobalUIManager globalUIManager)
@@ -79,6 +91,7 @@ public abstract class UIPanelBase : MonoBehaviour
         // ------------------------------------
 
         IsOpen = true;
+        OpenPanels.Add(this);
 
         controlledCanvasGroup.alpha = 1f;
         controlledCanvasGroup.interactable = true;
@@ -103,6 +116,7 @@ public abstract class UIPanelBase : MonoBehaviour
         // ------------------------------------
 
         IsOpen = false;
+        OpenPanels.Remove(this);
 
         controlledCanvasGroup.alpha = 0f;
         controlledCanvasGroup.interactable = false;

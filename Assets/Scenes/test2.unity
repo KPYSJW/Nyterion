@@ -13013,7 +13013,7 @@ MonoBehaviour:
   - {fileID: 130058132}
   - {fileID: 1968745858}
   centerColor: {r: 0, g: 0, b: 1, a: 1}
-  levelUpColor: {r: 0, g: 1, b: 0, a: 1}
+  levelUpColor: {r: 0.05, g: 0.38, b: 0.18, a: 1}
   levelDownColor: {r: 1, g: 0, b: 0, a: 1}
   neutralColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0.78431374}
 --- !u!114 &1260613765

@@ -32,13 +32,18 @@ MonoBehaviour:
   influenceZones:
   - offset: {x: 0, y: 1}
     type: 1
+    levelAmount: 1
   - offset: {x: 1, y: 0}
     type: 1
+    levelAmount: 1
   - offset: {x: 0, y: -1}
-    type: 1
+    type: 2
+    levelAmount: 1
   - offset: {x: -1, y: 0}
-    type: 1
-  synergySeriesId: 
+    type: 2
+    levelAmount: 1
+  synergySeriesId: GuardianSeries
+  synergySetBonusData: {fileID: 11400000, guid: 5f1b7eac9d0a4c2c9eb8a7f312d45601, type: 2}
   unlockMilestoneID: 
   simpleStatModifiers:
   - stat: 1

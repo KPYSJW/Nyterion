@@ -14,7 +14,6 @@ namespace Nytherion.UI.RelicBoard
 {
     /// <summary>
     /// 세트와 초월 효과를 각각 전용 프리팹으로 표시한다.
-    /// 초월 효과의 하위 세트는 초월 프리팹 안의 RequirementEntry를 템플릿으로 복제한다.
     /// </summary>
     public sealed class RelicEffectStatusUI : MonoBehaviour
     {
@@ -38,49 +37,23 @@ namespace Nytherion.UI.RelicBoard
             }
         }
 
-        private sealed class RequirementStatusDisplayData
-        {
-            public Sprite Icon { get; }
-            public string Label { get; }
-            public string TooltipTitle { get; }
-            public string TooltipBody { get; }
-            public int EquippedCount { get; }
-
-            public RequirementStatusDisplayData(
-                Sprite icon,
-                string label,
-                string tooltipTitle,
-                string tooltipBody,
-                int equippedCount)
-            {
-                Icon = icon;
-                Label = label;
-                TooltipTitle = tooltipTitle;
-                TooltipBody = tooltipBody;
-                EquippedCount = equippedCount;
-            }
-        }
-
         private sealed class TranscendenceStatusDisplayData
         {
             public Sprite Icon { get; }
             public string Label { get; }
             public string TooltipTitle { get; }
             public string TooltipBody { get; }
-            public IReadOnlyList<RequirementStatusDisplayData> Requirements { get; }
 
             public TranscendenceStatusDisplayData(
                 Sprite icon,
                 string label,
                 string tooltipTitle,
-                string tooltipBody,
-                IReadOnlyList<RequirementStatusDisplayData> requirements)
+                string tooltipBody)
             {
                 Icon = icon;
                 Label = label;
                 TooltipTitle = tooltipTitle;
                 TooltipBody = tooltipBody;
-                Requirements = requirements;
             }
         }
 
@@ -181,7 +154,7 @@ namespace Nytherion.UI.RelicBoard
                     setBonus.statusIcon,
                     $"{setBonus.DisplayName} ({setBonus.GetEquippedCount(relicManager)})",
                     setBonus.DisplayName,
-                    setBonus.BuildTooltipText()))
+                    setBonus.BuildTooltipText(relicManager)))
                 .ToList();
 
             UpdateSetEntries(activeSetDisplays);
@@ -230,31 +203,16 @@ namespace Nytherion.UI.RelicBoard
             IEnumerable<RelicTranscendenceRequirement> requirementSource =
                 transcendence.requirements ?? Enumerable.Empty<RelicTranscendenceRequirement>();
 
-            List<RequirementStatusDisplayData> requirements = requirementSource
+            int totalEquippedCount = requirementSource
                 .Where(requirement => requirement?.setBonusData != null &&
                                       requirement.setBonusData.IsAnyTierActive(relicManager))
-                .Select(requirement =>
-                {
-                    RelicSetBonusData setBonus = requirement.setBonusData;
-                    int equippedCount = setBonus.GetEquippedCount(relicManager);
-                    return new RequirementStatusDisplayData(
-                        setBonus.statusIcon,
-                        $"{setBonus.DisplayName} ({equippedCount})",
-                        setBonus.DisplayName,
-                        setBonus.BuildTooltipText(),
-                        equippedCount);
-                })
-                .ToList();
-
-            int totalEquippedCount = requirements
-                .Sum(requirement => requirement.EquippedCount);
+                .Sum(requirement => requirement.setBonusData.GetEquippedCount(relicManager));
 
             return new TranscendenceStatusDisplayData(
                 transcendence.statusIcon,
                 $"{transcendence.DisplayName} ({totalEquippedCount})",
                 transcendence.DisplayName,
-                transcendence.BuildTooltipText(relicManager),
-                requirements);
+                transcendence.BuildTooltipText(relicManager));
         }
 
         private void UpdateSetEntries(IReadOnlyList<SetStatusDisplayData> displayData)
@@ -321,7 +279,7 @@ namespace Nytherion.UI.RelicBoard
                 {
                     Destroy(entryObject);
                     Debug.LogError(
-                        "[RelicEffectStatusUI] 초월 현황 프리팹의 Header 또는 RequirementContainer 구조가 올바르지 않습니다.");
+                        "[RelicEffectStatusUI] 초월 현황 프리팹의 Header 구조가 올바르지 않습니다.");
                     return;
                 }
 
@@ -339,20 +297,11 @@ namespace Nytherion.UI.RelicBoard
             for (int i = 0; i < displayData.Count; i++)
             {
                 TranscendenceStatusDisplayData data = displayData[i];
-                List<RelicRequirementStatusData> requirements = data.Requirements
-                    .Select(requirement => new RelicRequirementStatusData(
-                        requirement.Icon,
-                        requirement.Label,
-                        requirement.TooltipTitle,
-                        requirement.TooltipBody))
-                    .ToList();
-
                 transcendenceEntries[i].Bind(
                     data.Icon,
                     data.Label,
                     data.TooltipTitle,
-                    data.TooltipBody,
-                    requirements);
+                    data.TooltipBody);
             }
         }
 
@@ -381,26 +330,6 @@ namespace Nytherion.UI.RelicBoard
             if (entry == null) return;
             entry.gameObject.SetActive(false);
             Destroy(entry.gameObject);
-        }
-    }
-
-    public sealed class RelicRequirementStatusData
-    {
-        public Sprite Icon { get; }
-        public string Label { get; }
-        public string TooltipTitle { get; }
-        public string TooltipBody { get; }
-
-        public RelicRequirementStatusData(
-            Sprite icon,
-            string label,
-            string tooltipTitle,
-            string tooltipBody)
-        {
-            Icon = icon;
-            Label = label;
-            TooltipTitle = tooltipTitle;
-            TooltipBody = tooltipBody;
         }
     }
 
@@ -458,13 +387,8 @@ namespace Nytherion.UI.RelicBoard
 
     public sealed class RelicTranscendenceEffectStatusEntryUI : MonoBehaviour
     {
-        private readonly List<RelicRequirementStatusEntryUI> requirementEntries =
-            new List<RelicRequirementStatusEntryUI>();
-
         private Image iconImage;
         private TextMeshProUGUI labelText;
-        private RectTransform requirementContainer;
-        private GameObject requirementTemplate;
         private RelicStatusTooltipTrigger headerTooltipTrigger;
         private RelicTooltip tooltip;
         private bool initialized;
@@ -476,15 +400,11 @@ namespace Nytherion.UI.RelicBoard
             Transform header = transform.Find("Header");
             Transform iconTransform = header?.Find("Icon");
             Transform textTransform = header?.Find("Text (TMP)");
-            Transform containerTransform = transform.Find("RequirementContainer");
-            Transform templateTransform = containerTransform?.Find("RequirementEntry");
 
             iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
             labelText = textTransform != null
                 ? textTransform.GetComponent<TextMeshProUGUI>()
                 : null;
-            requirementContainer = containerTransform as RectTransform;
-            requirementTemplate = templateTransform != null ? templateTransform.gameObject : null;
             tooltip = assignedTooltip;
 
             if (header != null)
@@ -497,14 +417,8 @@ namespace Nytherion.UI.RelicBoard
             }
 
             initialized = iconImage != null && labelText != null &&
-                          requirementContainer != null && requirementTemplate != null &&
                           tooltip != null && headerTooltipTrigger != null &&
                           headerTooltipTrigger.Initialize(tooltip);
-            if (initialized)
-            {
-                requirementTemplate.SetActive(false);
-            }
-
             return initialized;
         }
 
@@ -512,8 +426,7 @@ namespace Nytherion.UI.RelicBoard
             Sprite icon,
             string label,
             string title,
-            string body,
-            IReadOnlyList<RelicRequirementStatusData> requirements)
+            string body)
         {
             if (!initialized) return;
 
@@ -521,7 +434,6 @@ namespace Nytherion.UI.RelicBoard
             labelText.text = label;
             headerTooltipTrigger.Bind(title, body);
 
-            UpdateRequirements(requirements);
             RebuildLayout();
         }
 
@@ -529,60 +441,7 @@ namespace Nytherion.UI.RelicBoard
         {
             if (!initialized) return;
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate(requirementContainer);
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
-        }
-
-        private void UpdateRequirements(IReadOnlyList<RelicRequirementStatusData> requirements)
-        {
-            while (requirementEntries.Count < requirements.Count)
-            {
-                GameObject requirementObject = Instantiate(
-                    requirementTemplate,
-                    requirementContainer,
-                    false);
-                requirementObject.name = "RequirementEntry";
-                requirementObject.SetActive(true);
-
-                RelicRequirementStatusEntryUI requirementEntry =
-                    requirementObject.GetComponent<RelicRequirementStatusEntryUI>();
-                if (requirementEntry == null)
-                {
-                    requirementEntry = requirementObject.AddComponent<RelicRequirementStatusEntryUI>();
-                }
-
-                if (!requirementEntry.Initialize(tooltip))
-                {
-                    Destroy(requirementObject);
-                    Debug.LogError(
-                        "[RelicTranscendenceEffectStatusEntryUI] RequirementEntry의 Icon 또는 Label을 찾을 수 없습니다.");
-                    return;
-                }
-
-                requirementEntries.Add(requirementEntry);
-            }
-
-            while (requirementEntries.Count > requirements.Count)
-            {
-                int lastIndex = requirementEntries.Count - 1;
-                RelicRequirementStatusEntryUI entry = requirementEntries[lastIndex];
-                requirementEntries.RemoveAt(lastIndex);
-                if (entry != null)
-                {
-                    entry.gameObject.SetActive(false);
-                    Destroy(entry.gameObject);
-                }
-            }
-
-            for (int i = 0; i < requirements.Count; i++)
-            {
-                RelicRequirementStatusData requirement = requirements[i];
-                requirementEntries[i].Bind(
-                    requirement.Icon,
-                    requirement.Label,
-                    requirement.TooltipTitle,
-                    requirement.TooltipBody);
-            }
         }
 
         private void OnDisable()
@@ -611,58 +470,6 @@ namespace Nytherion.UI.RelicBoard
 
         public void Bind(string title, string body)
         {
-            tooltipTitle = title;
-            tooltipBody = body;
-        }
-
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            if (initialized) tooltip.ShowStatus(tooltipTitle, tooltipBody);
-        }
-
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            tooltip?.Hide();
-        }
-
-        private void OnDisable()
-        {
-            tooltip?.Hide();
-        }
-    }
-
-    public sealed class RelicRequirementStatusEntryUI : MonoBehaviour,
-        IPointerEnterHandler,
-        IPointerExitHandler
-    {
-        private Image iconImage;
-        private TextMeshProUGUI labelText;
-        private RelicTooltip tooltip;
-        private string tooltipTitle;
-        private string tooltipBody;
-        private bool initialized;
-
-        public bool Initialize(RelicTooltip assignedTooltip)
-        {
-            if (initialized) return true;
-
-            Transform iconTransform = transform.Find("Icon");
-            Transform labelTransform = transform.Find("Label");
-            iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
-            labelText = labelTransform != null
-                ? labelTransform.GetComponent<TextMeshProUGUI>()
-                : null;
-            tooltip = assignedTooltip;
-            initialized = iconImage != null && labelText != null && tooltip != null;
-            return initialized;
-        }
-
-        public void Bind(Sprite icon, string label, string title, string body)
-        {
-            if (!initialized) return;
-
-            RelicStatusIconUtility.Apply(iconImage, icon);
-            labelText.text = label;
             tooltipTitle = title;
             tooltipBody = body;
         }

@@ -8,7 +8,7 @@ using VContainer;
 
 namespace Nytherion.UI.RelicBoard
 {
-    public class RelicBlockDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+    public class RelicBlockDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         private const float MaxIconDisplaySize = 76f;
 
@@ -103,6 +103,8 @@ namespace Nytherion.UI.RelicBoard
         }
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left) return;
+
             relicTooltip?.Hide();
             if (blockData == null || relicManager == null) return;
 
@@ -124,11 +126,15 @@ namespace Nytherion.UI.RelicBoard
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left || !isDragging) return;
+
             rectTransform.position = eventData.position;
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (eventData.button != PointerEventData.InputButton.Left || !isDragging) return;
+
             isDragging = false;
             canvasGroup.blocksRaycasts = true;
 
@@ -148,6 +154,21 @@ namespace Nytherion.UI.RelicBoard
             relicManager.EndDrag(dropGridPosition);
 
             Destroy(gameObject);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Right ||
+                !isPlaced ||
+                isDragging ||
+                blockData == null ||
+                relicManager == null)
+            {
+                return;
+            }
+
+            relicTooltip?.Hide();
+            relicManager.UnequipFromGrid(blockData, gridPosition);
         }
 
         public void BuildVisualFromShape()

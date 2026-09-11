@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6889056352240837443}
@@ -54,8 +54,20 @@ MonoBehaviour:
   col: {fileID: 0}
   maxAimAngle: 60
   idleOffset: {x: 0, y: 0, z: 0}
+  leftFacingOffset: {x: 0.328, y: -0.284, z: 0}
+  leftFacingRotation: 23.5
+  gripOffset: {x: 0, y: -0.625, z: 0}
   thrustDistance: 0.7
   attackDuration: 0.3
+  windupRatio: 0.2
+  swingWindupAngle: 15
+  swingSweepAngle: 340
+  followupWindupAngle: 15
+  comboReturnDuration: 0.14
+  swingArcMaterial: {fileID: 2100000, guid: 061d4410f397cca49a13c4ce3bb8069a, type: 2}
+  swingArcRadius: 1.5
+  swingArcWidth: 0.18
+  swingArcColor: {r: 0.6, g: 1, b: 0.95, a: 0.9}
   thrustEffectObject: {fileID: 4264666880568529908}
   swingEffectObject: {fileID: 2735022152252083869}
   swingUpEffectObject: {fileID: 3801587139488416771}
@@ -63,7 +75,7 @@ MonoBehaviour:
   swingEffectStateName: SwingEffect
   swingUpEffectStateName: SwingUpEffect
   smoothSpeed: 50
-  comboResetTime: 2
+  comboResetTime: 1.1
   swingDistance: 0.5
   weaponAnimator: {fileID: 695112841780054442}
   thrustTriggerName: Thrust
@@ -636,13 +648,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6100679925562808944}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.38268343, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8315841244683716410}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
 --- !u!212 &331813961144354969
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -684,7 +696,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7dfb05d3631893c4293c6a7ed939606a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 83c7c1357dcd48940b40a9d404c8a75b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

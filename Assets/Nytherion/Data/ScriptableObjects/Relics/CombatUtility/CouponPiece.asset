@@ -23,8 +23,24 @@ MonoBehaviour:
   effectModules: []
   shape:
   - {x: 0, y: 0}
-  influenceZones: []
-  synergySeriesId: 
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: GoldHunterSeries
+  synergySetBonusData: {fileID: 11400000, guid: 6c103d9f84564dbca326e8cbecbfb3ad, type: 2}
   unlockMilestoneID: 
   references:
     version: 2

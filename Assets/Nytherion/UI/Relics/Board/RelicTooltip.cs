@@ -12,6 +12,13 @@ namespace Nytherion.UI.RelicBoard
 {
     public class RelicTooltip : MonoBehaviour
 {
+    private const int EffectBadgesPerRow = 2;
+    private const float EffectBadgeHeight = 40f;
+    private const float EffectBadgeMinimumWidth = 56f;
+    private const float EffectBadgeMaximumWidth = 176f;
+    private const float EffectBadgeHorizontalSpacing = 8f;
+    private const float EffectBadgeVerticalSpacing = 8f;
+
     public static RelicTooltip Instance { get; private set; }
 
     [SerializeField] private GameObject tooltipPanel;
@@ -26,13 +33,17 @@ namespace Nytherion.UI.RelicBoard
     [Header("Influence Grid")]
     [SerializeField] private Image[] influenceCells = new Image[9];
     [SerializeField] private Color centerColor = Color.yellow;
-    [SerializeField] private Color levelUpColor = Color.green;
+    [SerializeField] private Color levelUpColor = new Color(0.05f, 0.38f, 0.18f, 1f);
     [SerializeField] private Color levelDownColor = Color.red;
     [SerializeField] private Color neutralColor = new Color(50/255f, 50/255f, 50/255f, 200/255f);
 
+    private const float InfluenceAmountFontSize = 22f;
     private RectTransform rectTransform;
     private Canvas canvas;
     private readonly List<EffectBadgeView> effectBadgeViews = new List<EffectBadgeView>();
+    private readonly TextMeshProUGUI[] influenceAmountTexts = new TextMeshProUGUI[9];
+    private Vector2 descriptionBasePosition;
+    private Vector2 descriptionBaseSize;
     private RelicBlock currentBlock;
     private bool isLocalizationSubscribed;
 
@@ -65,6 +76,7 @@ namespace Nytherion.UI.RelicBoard
 
         rectTransform = tooltipPanel.GetComponent<RectTransform>();
         InitializeEffectBadgeViews();
+        CacheEffectBadgeLayout();
         Hide();
     }
 
@@ -132,6 +144,7 @@ namespace Nytherion.UI.RelicBoard
             levelText.gameObject.SetActive(true);
         }
         UpdateEffectBadges(block);
+        descriptionText.color = Color.white;
         descriptionText.text = block.SourceData.Description;
 
         UpdateInfluenceGrid(block);
@@ -149,6 +162,7 @@ namespace Nytherion.UI.RelicBoard
             levelText.gameObject.SetActive(false);
         }
         SetEffectBadgesVisible(false);
+        descriptionText.color = Color.white;
         descriptionText.text = description;
         tooltipPanel.SetActive(true);
     }
@@ -174,12 +188,15 @@ namespace Nytherion.UI.RelicBoard
 
     private void UpdateInfluenceGrid(RelicBlock block)
     {
-        foreach (var cell in influenceCells)
+        for (int i = 0; i < influenceCells.Length; i++)
         {
+            Image cell = influenceCells[i];
             if (cell != null)
             {
                 cell.color = neutralColor;
             }
+
+            SetInfluenceAmountText(i, null);
         }
 
         if (influenceCells.Length > 4 && influenceCells[4] != null)
@@ -195,9 +212,59 @@ namespace Nytherion.UI.RelicBoard
 
             if (index >= 0 && index < influenceCells.Length && influenceCells[index] != null)
             {
-                influenceCells[index].color = zone.type == InfluenceType.LevelUp ? levelUpColor : levelDownColor;
+                if (zone.type == InfluenceType.LevelUp)
+                {
+                    influenceCells[index].color = levelUpColor;
+                    SetInfluenceAmountText(index, $"+{zone.GetLevelAmount()}");
+                }
+                else if (zone.type == InfluenceType.LevelDown)
+                {
+                    influenceCells[index].color = levelDownColor;
+                    SetInfluenceAmountText(index, $"-{zone.GetLevelAmount()}");
+                }
             }
         }
+    }
+
+    private void SetInfluenceAmountText(int index, string value)
+    {
+        if (index < 0 || index >= influenceCells.Length || influenceCells[index] == null) return;
+
+        TextMeshProUGUI amountText = influenceAmountTexts[index];
+        if (amountText == null)
+        {
+            amountText = CreateInfluenceAmountText(influenceCells[index].transform);
+            influenceAmountTexts[index] = amountText;
+        }
+
+        bool hasValue = !string.IsNullOrEmpty(value);
+        amountText.gameObject.SetActive(hasValue);
+        if (hasValue)
+        {
+            amountText.text = value;
+        }
+    }
+
+    private static TextMeshProUGUI CreateInfluenceAmountText(Transform parent)
+    {
+        GameObject textObject = new GameObject("InfluenceAmount", typeof(RectTransform), typeof(CanvasRenderer));
+        textObject.transform.SetParent(parent, false);
+
+        RectTransform textTransform = textObject.GetComponent<RectTransform>();
+        textTransform.anchorMin = Vector2.zero;
+        textTransform.anchorMax = Vector2.one;
+        textTransform.offsetMin = Vector2.zero;
+        textTransform.offsetMax = Vector2.zero;
+
+        TextMeshProUGUI amountText = textObject.AddComponent<TextMeshProUGUI>();
+        amountText.font = TMP_Settings.defaultFontAsset;
+        amountText.fontSize = InfluenceAmountFontSize;
+        amountText.fontStyle = FontStyles.Bold;
+        amountText.alignment = TextAlignmentOptions.Center;
+        amountText.color = Color.white;
+        amountText.raycastTarget = false;
+        amountText.enableWordWrapping = false;
+        return amountText;
     }
 
     private void SetInfluenceGridVisible(bool isVisible)
@@ -314,8 +381,10 @@ namespace Nytherion.UI.RelicBoard
         setBadgeContainer.gameObject.SetActive(badges.Count > 0);
         if (badges.Count > 0)
         {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(setBadgeContainer);
+            LayoutEffectBadges(badges.Count);
         }
+
+        UpdateContentPositions(badges.Count);
     }
 
     private void SetEffectBadgesVisible(bool isVisible)
@@ -323,6 +392,10 @@ namespace Nytherion.UI.RelicBoard
         if (setBadgeContainer != null)
         {
             setBadgeContainer.gameObject.SetActive(isVisible);
+            if (!isVisible)
+            {
+                UpdateContentPositions(0);
+            }
         }
         else if (setBadgeBackground != null)
         {
@@ -330,15 +403,118 @@ namespace Nytherion.UI.RelicBoard
         }
     }
 
+    private void CacheEffectBadgeLayout()
+    {
+        if (setBadgeContainer != null)
+        {
+            LayoutGroup previousLayoutGroup = setBadgeContainer.GetComponent<LayoutGroup>();
+            if (previousLayoutGroup != null)
+            {
+                previousLayoutGroup.enabled = false;
+            }
+
+            ContentSizeFitter previousSizeFitter = setBadgeContainer.GetComponent<ContentSizeFitter>();
+            if (previousSizeFitter != null)
+            {
+                previousSizeFitter.enabled = false;
+            }
+        }
+
+        if (descriptionText != null)
+        {
+            descriptionBasePosition = descriptionText.rectTransform.anchoredPosition;
+            descriptionBaseSize = descriptionText.rectTransform.sizeDelta;
+        }
+    }
+
+    private void LayoutEffectBadges(int badgeCount)
+    {
+        float[] badgeWidths = new float[badgeCount];
+        for (int i = 0; i < badgeCount; i++)
+        {
+            EffectBadgeView view = effectBadgeViews[i];
+            HorizontalLayoutGroup badgeLayout = view.Root.GetComponent<HorizontalLayoutGroup>();
+            float horizontalPadding = badgeLayout != null ? badgeLayout.padding.horizontal : 0f;
+            float preferredTextWidth = view.Text.GetPreferredValues(view.Text.text).x;
+            badgeWidths[i] = Mathf.Clamp(
+                Mathf.Ceil(preferredTextWidth + horizontalPadding),
+                EffectBadgeMinimumWidth,
+                EffectBadgeMaximumWidth);
+        }
+
+        int rowCount = Mathf.CeilToInt(badgeCount / (float)EffectBadgesPerRow);
+        float widestRow = 0f;
+
+        for (int row = 0; row < rowCount; row++)
+        {
+            int firstIndex = row * EffectBadgesPerRow;
+            int rowItemCount = Mathf.Min(EffectBadgesPerRow, badgeCount - firstIndex);
+            float rowWidth = 0f;
+
+            for (int column = 0; column < rowItemCount; column++)
+            {
+                rowWidth += badgeWidths[firstIndex + column];
+            }
+            rowWidth += EffectBadgeHorizontalSpacing * (rowItemCount - 1);
+            widestRow = Mathf.Max(widestRow, rowWidth);
+
+            float currentX = -rowWidth * 0.5f;
+            for (int column = 0; column < rowItemCount; column++)
+            {
+                int badgeIndex = firstIndex + column;
+                float badgeWidth = badgeWidths[badgeIndex];
+                RectTransform badgeRectTransform = effectBadgeViews[badgeIndex].RectTransform;
+
+                badgeRectTransform.anchorMin = new Vector2(0.5f, 1f);
+                badgeRectTransform.anchorMax = new Vector2(0.5f, 1f);
+                badgeRectTransform.pivot = new Vector2(0.5f, 1f);
+                badgeRectTransform.sizeDelta = new Vector2(badgeWidth, EffectBadgeHeight);
+                badgeRectTransform.anchoredPosition = new Vector2(
+                    currentX + badgeWidth * 0.5f,
+                    -row * (EffectBadgeHeight + EffectBadgeVerticalSpacing));
+
+                LayoutRebuilder.ForceRebuildLayoutImmediate(badgeRectTransform);
+                currentX += badgeWidth + EffectBadgeHorizontalSpacing;
+            }
+        }
+
+        float containerHeight = rowCount * EffectBadgeHeight +
+                                Mathf.Max(0, rowCount - 1) * EffectBadgeVerticalSpacing;
+        setBadgeContainer.sizeDelta = new Vector2(widestRow, containerHeight);
+    }
+
+    private void UpdateContentPositions(int badgeCount)
+    {
+        int rowCount = Mathf.Max(1, Mathf.CeilToInt(badgeCount / (float)EffectBadgesPerRow));
+        float additionalHeight = (rowCount - 1) *
+                                 (EffectBadgeHeight + EffectBadgeVerticalSpacing);
+
+        if (descriptionText != null)
+        {
+            float targetHeight = Mathf.Max(
+                EffectBadgeHeight,
+                descriptionBaseSize.y - additionalHeight);
+            float reducedHeight = descriptionBaseSize.y - targetHeight;
+
+            descriptionText.rectTransform.sizeDelta = new Vector2(
+                descriptionBaseSize.x,
+                targetHeight);
+            descriptionText.rectTransform.anchoredPosition =
+                descriptionBasePosition + Vector2.down * (reducedHeight * 0.5f);
+        }
+    }
+
     private sealed class EffectBadgeView
     {
         public GameObject Root { get; }
+        public RectTransform RectTransform { get; }
         public Image Background { get; }
         public TextMeshProUGUI Text { get; }
 
         public EffectBadgeView(GameObject root, Image background, TextMeshProUGUI text)
         {
             Root = root;
+            RectTransform = root.transform as RectTransform;
             Background = background;
             Text = text;
         }

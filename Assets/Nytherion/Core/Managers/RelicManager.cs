@@ -16,6 +16,8 @@ namespace Nytherion.Core.Managers
 {
     public class RelicManager : BaseManager
     {
+        public const int MaxEquippedRelics = 15;
+
         [Header("Database")]
         [SerializeField] private RelicDatabaseSO relicDatabaseSO;
 
@@ -24,6 +26,7 @@ namespace Nytherion.Core.Managers
         [SerializeField] private int gridColumns = 5;
         public int GridRows => gridRows;
         public int GridColumns => gridColumns;
+        public int EquippedRelicCount => placedBlockPositions?.Count ?? 0;
 
         public event Action OnRelicStateChanged;
 
@@ -90,11 +93,36 @@ namespace Nytherion.Core.Managers
             OnRelicStateChanged?.Invoke();
         }
 
+        public bool UnequipFromGrid(RelicBlock block, Vector2Int gridPosition)
+        {
+            if (block == null || currentlyDraggedBlock != null || logicGrid == null) return false;
+
+            RelicBlock placedBlock = logicGrid.GetBlockAt(gridPosition.y, gridPosition.x);
+            if (placedBlock == null || placedBlock.BlockId != block.BlockId) return false;
+
+            logicGrid.ClearBlockAt(gridPosition.y, gridPosition.x);
+            placedBlockPositions.Remove(block.BlockId);
+
+            block.ResetLevel();
+            MoveToStorage(block);
+            RefreshRelicLogic();
+
+            if (block.SourceData != null)
+            {
+                OnRelicEquippedStateChanged?.Invoke(block.SourceData, false);
+            }
+
+            OnRelicStateChanged?.Invoke();
+            return true;
+        }
+
         public void EndDrag(Vector2Int? dropGridPosition)
         {
             if (currentlyDraggedBlock == null) return;
 
-            if (dropGridPosition.HasValue && logicGrid.CanPlaceBlock(dropGridPosition.Value.y, dropGridPosition.Value.x))
+            if (dropGridPosition.HasValue &&
+                logicGrid.CanPlaceBlock(dropGridPosition.Value.y, dropGridPosition.Value.x) &&
+                EquippedRelicCount < MaxEquippedRelics)
             {
                 PlaceBlockOnGrid(currentlyDraggedBlock, dropGridPosition.Value);
             }
@@ -125,6 +153,14 @@ namespace Nytherion.Core.Managers
 
         private void PlaceBlockOnGrid(RelicBlock block, Vector2Int position)
         {
+            if (block == null || logicGrid == null) return;
+
+            if (EquippedRelicCount >= MaxEquippedRelics)
+            {
+                MoveToStorage(block);
+                return;
+            }
+
             logicGrid.PlaceBlock(block, position.y, position.x);
             placedBlockPositions.Add(block.BlockId, position);
 
