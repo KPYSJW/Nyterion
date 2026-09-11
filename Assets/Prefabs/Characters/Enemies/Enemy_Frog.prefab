@@ -338,7 +338,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6406644339438500767}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -369,6 +369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37fd9ebc2e9baa4798295d06df88b24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  xflip: 0
   detectRange: 8
   moveSpeed: 10
   player: {fileID: 5120804287783034592, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
@@ -527,6 +528,14 @@ MonoBehaviour:
   attackRangePreview: {fileID: 1890039025637439136}
   landingEffect: {fileID: 9041305298369495639}
   landingEffectAnimator: {fileID: 3404303730081710737}
+  jumpPathDistance: 6
+  jumpTravelDuration: 0.46666667
+  jumpMoveCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &9041305298369495639
 GameObject:
   m_ObjectHideFlags: 0

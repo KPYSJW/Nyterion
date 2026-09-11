@@ -7,7 +7,6 @@ using Nytherion.GamePlay.Characters.NPC;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Dungeon;
 using Nytherion.GamePlay.Relics;
-using Nytherion.GamePlay.Systems;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.RelicBoard;
 using Nytherion.UI.Inventory;
@@ -53,7 +52,6 @@ public class VillageSceneLifetimeScope : LifetimeScope
     [SerializeField] private RelicSystemDebugger relicSystemDebuggerPrefab;
 
     [Header("GameScene Only Gameplay")]
-   // [SerializeField] private EnemySpawner enemySpawnerPrefab;
     [SerializeField] private FollowCamera followCameraPrefab;
     [SerializeField] private SettingsManager settingsManagerPrefab;
     [SerializeField] private InventoryPresenter inventoryPresenterPrefab;

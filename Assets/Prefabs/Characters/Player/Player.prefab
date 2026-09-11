@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 5387959611554575142}
   - component: {fileID: 6875944264814812150}
   - component: {fileID: -1890013820121428733}
+  - component: {fileID: 8093471562419037642}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -327,7 +328,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!70 &3558908687109346775
 CapsuleCollider2D:
@@ -466,6 +467,26 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   sourceRenderer: {fileID: 7144026513014664610}
   afterimageMaterial: {fileID: 2100000, guid: e6e769a9417b49a3b83fad8eb7ab813e, type: 2}
+--- !u!114 &8093471562419037642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5097942217742227509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda9f63b6bbb49c183e7c5177fb71e62, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  detectionRadius: 0.9
+  pushDistance: 1.25
+  minimumInputAlignment: 0.1
+  minimumCenterDistance: 0.2
+  crowdDetectionRadius: 2.25
+  enemySpacing: 0.9
+  separationWeight: 0.8
+  chainedPushMultiplier: 0.75
 --- !u!114 &-2891475838477974602
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -46,15 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoInitializeOnAwake: 0
   pools:
-  - tag: Melee
+  - tag: Frog
     prefab: {fileID: 6406644339438500767, guid: 8d651861435092749ba2c150c8722f4b, type: 3}
     size: 50
-  - tag: Ranged
-    prefab: {fileID: 6406644339438500767, guid: 0907f81b069c20d43b5465734854ee52, type: 3}
-    size: 15
-  - tag: Hybrid
-    prefab: {fileID: 6406644339438500767, guid: 3215275927a03af4a837360f213af70e, type: 3}
-    size: 15
   - tag: Player_SoulEater
     prefab: {fileID: 4893586122137001029, guid: 2f39ca2c520200b4bb325ed4c3c87f7c, type: 3}
     size: 5
@@ -109,3 +103,27 @@ MonoBehaviour:
   - tag: IceShotHitEffect
     prefab: {fileID: 8242796725191159463, guid: c499398c197697d42ada936fbdee7862, type: 3}
     size: 40
+  - tag: Night
+    prefab: {fileID: 280546291285116296, guid: cc17836ce7c3fe4439b01ca88e18e382, type: 3}
+    size: 40
+  - tag: Tree_melee
+    prefab: {fileID: 6670211975182853297, guid: c1c5505522bf1e540b1ca3ca6dd7d1f8, type: 3}
+    size: 30
+  - tag: Bat_melee
+    prefab: {fileID: 923678225021840792, guid: ae579fd3953b5194291d40830a558a97, type: 3}
+    size: 30
+  - tag: Goblin
+    prefab: {fileID: 8336639199447205642, guid: 993fbc763c3623140954305b5aad2567, type: 3}
+    size: 30
+  - tag: Tree_ranged
+    prefab: {fileID: 7794986365766312499, guid: c28a6963d72729f4c98e4be76014341a, type: 3}
+    size: 30
+  - tag: Bat_ranged
+    prefab: {fileID: 4562823674490834522, guid: 9598dba6b8cd76e4893c64732476678f, type: 3}
+    size: 30
+  - tag: Mushroom_ranged
+    prefab: {fileID: 8385926958590961589, guid: ca4e9f30d13dc344b8b32787457549f4, type: 3}
+    size: 30
+  - tag: Bag_ranged
+    prefab: {fileID: 5986761678656965167, guid: 2c7fbadb91405c14baa8c7d7cd6ef01c, type: 3}
+    size: 30

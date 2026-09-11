@@ -16,10 +16,6 @@ MonoBehaviour:
   chapterNumber: 1
   stageNumber: 1
   isBossStage: 0
-  enemyList: []
-  fixedSpawnPoints: []
-  useRandomSpawn: 1
-  enemyCount: 1
   stageBackground: {fileID: 0}
   dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
   nextStageData: {fileID: 11400000, guid: ce856ef82b02f804fad9b4988afc82ac, type: 2}

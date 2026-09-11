@@ -9,6 +9,7 @@ public class EnemyAnimationEventRelay : MonoBehaviour
     [SerializeField]MeleeAttackBehavior meleeAttackBehavior;
     [SerializeField]RangedAttackBehavior rangedAttackBehavior;
     [SerializeField] private FrogJumpMovement frogJumpMovement;
+    [SerializeField] private BagBarrageCombatBehavior bagBarrageCombatBehavior;
      public void ActivateCollider()
     {
         if(meleeAttackBehavior!=null)
@@ -25,6 +26,11 @@ public class EnemyAnimationEventRelay : MonoBehaviour
     {
          if(rangedAttackBehavior!=null)
         rangedAttackBehavior.SpawnProjectileVisual();
+    }
+
+    public void FireBagBarrage()
+    {
+        bagBarrageCombatBehavior?.FireBarrage();
     }
 
     public void FrogJumpStart()

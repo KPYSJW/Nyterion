@@ -7,7 +7,8 @@ namespace Nytherion.Data.ScriptableObjects.Enemy
     {
         Melee,
         Ranged,
-        Hybrid
+        Hybrid,
+        MovementAttack
     }
 
     [CreateAssetMenu(fileName = "NewEnemyData", menuName = "Data/Enemy")]

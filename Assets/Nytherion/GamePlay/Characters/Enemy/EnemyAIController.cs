@@ -5,28 +5,28 @@ using Nytherion.GamePlay.Combat;
 using Nytherion.GamePlay.Characters.Enemy.States;
 using System.Collections.Generic;
 using Nytherion.Data.ScriptableObjects.Enemy;
-using Nytherion.GamePlay.Combat.Behaviors;
 using System.Linq;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
     public class EnemyAIController : MonoBehaviour
     {
+        public bool xflip=false;
         public float detectRange;
         public float moveSpeed;
         private bool hasForcedDestination;
         private Vector3 forcedDestination;
+        private bool hasForcedFacingDirection;
+        private Vector2 forcedFacingDirection;
         public Transform player;
         public NavMeshAgent agent; 
        // public NavMeshObstacle Obstacle;
         public Rigidbody2D rb; 
-        private MeleeAttackBehavior meleeAttack;
-
-        private RangedAttackBehavior rangedAttack;
-        private FrogJumpMovement frogJumpMovement;
-
-        public bool HasMeleeAttack=>meleeAttack!=null;
-        public bool HasRangedAttack=>rangedAttack!=null;
+        private IEnemyMovementBehavior movementBehavior;
+        private readonly List<IAttackBehavior> attackBehaviors = new();
+        private IAttackSelector attackSelector;
+        private IEnemyCombatBehavior customCombatBehavior;
+        private IEnemyCombatBehavior combatBehavior;
 
         private bool movementAllowed = true;
 
@@ -64,8 +64,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
              agent.updateRotation = false;
              agent.updateUpAxis = false;
 
-            InitializeAttackSystems();
-            if (!HasMeleeAttack && !HasRangedAttack)
+            InitializeMovementSystem();
+            InitializeCombatSystem();
+            if (movementBehavior == null || combatBehavior == null)
             {
                 enabled = false;
                 return;
@@ -86,6 +87,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private void Update()
         {
             currentState.UpdateState(this);
+
+            if (hasForcedDestination)
+            {
+                TryMoveToForcedDestination();
+            }
+
             UpdateDirection();
         }
 
@@ -108,14 +115,37 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             hasForcedDestination = false;
         }
+        public bool TryMoveToForcedDestination()
+        {
+            if (!movementAllowed || !hasForcedDestination || movementBehavior == null)
+                return false;
+
+            movementBehavior.MoveTowards(forcedDestination);
+            return true;
+        }
+        public void SetForcedFacingDirection(Vector2 direction)
+        {
+            if (direction.sqrMagnitude <= 0.001f) return;
+
+            forcedFacingDirection = direction.normalized;
+            hasForcedFacingDirection = true;
+        }
+
+        public void ClearForcedFacingDirection()
+        {
+            hasForcedFacingDirection = false;
+            forcedFacingDirection = Vector2.zero;
+        }
         private void UpdateDirection()
         {
             if (Root == null || agent == null) return;
 
-            Vector3 velocity = agent.desiredVelocity;
+            Vector3 velocity = hasForcedFacingDirection
+                ? forcedFacingDirection
+                : movementBehavior?.CurrentVelocity ?? agent.desiredVelocity;
             if (velocity.sqrMagnitude <= 0.01f) return;
-
             Vector3 scale = RootDefaultScale;
+           
 
             if (velocity.x > 0f)
             {
@@ -125,27 +155,24 @@ namespace Nytherion.GamePlay.Characters.Enemy
             {
                 scale.x = Mathf.Abs(scale.x);
             }
-
+             if(xflip==true)
+            {
+                scale.x*=-1;
+            }
             Root.localScale = scale;
         }
 
         public void MoveTowardsPlayer()
         {
             if (!movementAllowed) return;
-            if (agent == null || !agent.isOnNavMesh) return;
+            if (movementBehavior == null) return;
+            if (!hasForcedDestination && player == null) return;
 
-            agent.isStopped = false;
+            Vector3 destination = hasForcedDestination
+                ? forcedDestination
+                : player.position;
 
-            if (hasForcedDestination)
-            {
-                agent.SetDestination(forcedDestination);
-            }
-            else
-            {
-                if (player == null) return;
-
-                agent.SetDestination(player.position);
-            }
+            movementBehavior.MoveTowards(destination);
 
             UpdateDirection();
         }
@@ -153,10 +180,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public void MoveToTarget(Vector2 targetPosition)
         {
             if (!movementAllowed) return;
-            if (!agent.isOnNavMesh) return;
+            if (movementBehavior == null) return;
 
-            agent.isStopped = false;
-            agent.SetDestination(targetPosition);
+            movementBehavior.MoveTowards(targetPosition);
 
             UpdateDirection();
         }
@@ -169,8 +195,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void MoveInDirection(Vector2 direction, float distance = 1.5f)
         {
-            if (!movementAllowed) return;
-            if (!agent.isOnNavMesh) return;
+            if (!movementAllowed || movementBehavior == null) return;
 
             if (direction.sqrMagnitude < 0.001f)
             {
@@ -181,8 +206,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             direction.Normalize();
             Vector2 target = (Vector2)transform.position + direction * distance;
 
-            agent.isStopped = false;
-            agent.SetDestination(target);
+            movementBehavior.MoveTowards(target);
 
             UpdateDirection();
         }
@@ -308,15 +332,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void StopMovement()
         {
-             if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
-            {
-                agent.isStopped = true;
-                agent.ResetPath();
-            }
-            if (rb != null)
-            {
-                rb.velocity = Vector2.zero;
-            }
+            movementBehavior?.StopMovement();
         }
 
         public void SetMovementAllowed(bool allowed)
@@ -337,10 +353,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
             HybridSwitchDistance = data.hybridSwitchDistance;
             moveSpeed=data.moveSpeed;
             detectRange=data.detectRange;
-             if (agent != null)
-            {
-                agent.speed = data.moveSpeed;
-            }
+            movementBehavior?.Configure(data);
+            ConfigureCombatBehavior();
         }
 
         public void ResetForReuse(EnemyData data)
@@ -356,9 +370,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             if (rb == null) rb = GetComponent<Rigidbody2D>();
             if (agent == null) agent = GetComponent<NavMeshAgent>();
-            if (meleeAttack == null && rangedAttack == null) InitializeAttackSystems();
+            if (movementBehavior == null) InitializeMovementSystem();
+            if (combatBehavior == null) InitializeCombatSystem();
 
-            if (player == null || rb == null || agent == null || (!HasMeleeAttack && !HasRangedAttack))
+            if (player == null || rb == null || agent == null ||
+                movementBehavior == null || combatBehavior == null)
             {
                 enabled = false;
                 return;
@@ -366,9 +382,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             enabled = true;
             movementAllowed = true;
-            if (!agent.enabled)
+            ClearForcedDestination();
+            ClearForcedFacingDirection();
+            if (movementBehavior.RequiresNavMeshAgent && !agent.enabled)
             {
                 agent.enabled = true;
+            }
+            else if (!movementBehavior.RequiresNavMeshAgent && agent.enabled)
+            {
+                agent.enabled = false;
             }
             agent.updateRotation = false;
             agent.updateUpAxis = false;
@@ -382,10 +404,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 Root.localScale = RootDefaultScale;
             }
 
-            meleeAttack?.ResetForReuse();
-            rangedAttack?.ResetForReuse();
+            foreach (IAttackBehavior attackBehavior in attackBehaviors)
+            {
+                attackBehavior.ResetForReuse();
+            }
+            combatBehavior.ResetForReuse();
 
-            if (animator != null)
+            if (animator != null&&animator.isActiveAndEnabled)
             {
                 animator.Rebind();
                 animator.Update(0f);
@@ -394,97 +419,82 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (idleState == null) idleState = new EnemyIdleState(this);
             if (chaseState == null) chaseState = new EnemyChaseState(this);
             if (attackState == null) attackState = new EnemyAttackState(this);
-            attackState.ResetForReuse();
 
             TransitionToState(idleState);
-            if (frogJumpMovement == null)
-            {
-                frogJumpMovement = GetComponent<FrogJumpMovement>();
-            }
-            frogJumpMovement?.ResetForReuse();
+            movementBehavior.ResetForReuse();
         }
 
         public void PrepareForPoolReturn()
         {
             movementAllowed = false;
+            ClearForcedDestination();
+            ClearForcedFacingDirection();
             StopMovement();
-            meleeAttack?.DeactivateCollider();
-            rangedAttack?.ResetForReuse();
-        }
-
-        private void InitializeAttackSystems()
-        {
-            meleeAttack=GetComponent<MeleeAttackBehavior>();
-            rangedAttack=GetComponent<RangedAttackBehavior>();
-        }
-
-        public bool CanUseMeleeAttack()
-        {
-            return player!=null && meleeAttack!=null && meleeAttack.IsInAttackRange(player);
-        }
-        public bool CanUseRangedAttack()
-        {
-            return player!=null && rangedAttack!=null && rangedAttack.IsInAttackRange(player);
-        }
-
-        public bool IsMeleeAttackReady()
-        {
-            return meleeAttack != null && meleeAttack.AttackCoolDown >= 1f;
-        }
-
-        public bool IsRangedAttackReady()
-        {
-            return rangedAttack != null && rangedAttack.AttackCoolDown >= 1f;
-        }
-
-        public bool TryMeleeAttack()
-        {
-            if (player == null || meleeAttack == null) return false;
-            return meleeAttack.TryAttack(player);
-        }
-
-        public bool TryRangedAttack()
-        {
-            if (player == null || rangedAttack == null) return false;
-            return rangedAttack.TryAttack(player);
-        }
-
-        public bool CanAttackPlayer()
-        {
-            switch (CurrentCombatType)
+            foreach (IAttackBehavior attackBehavior in attackBehaviors)
             {
-                case EnemyCombatType.Melee:
-                    return CanUseMeleeAttack();
+                attackBehavior.ResetForReuse();
+            }
+            combatBehavior?.ResetForReuse();
+        }
 
-                case EnemyCombatType.Ranged:
-                    return CanUseRangedAttack();
+        private void InitializeCombatSystem()
+        {
+            attackBehaviors.Clear();
+            attackBehaviors.AddRange(
+                GetComponents<MonoBehaviour>().OfType<IAttackBehavior>());
 
-                case EnemyCombatType.Hybrid:
-                    return CanUseMeleeAttack() || CanUseRangedAttack();
+            attackSelector = GetComponents<MonoBehaviour>()
+                .OfType<IAttackSelector>()
+                .FirstOrDefault();
 
-                default:
-                    return false;
+            customCombatBehavior = GetComponents<MonoBehaviour>()
+                .OfType<IEnemyCombatBehavior>()
+                .FirstOrDefault();
+
+            ConfigureCombatBehavior();
+        }
+
+        private void ConfigureCombatBehavior()
+        {
+            combatBehavior = customCombatBehavior ??
+                EnemyCombatBehaviorFactory.Create(
+                    CurrentCombatType,
+                    attackBehaviors,
+                    attackSelector,
+                    HybridSwitchDistance);
+        }
+
+        private void InitializeMovementSystem()
+        {
+            movementBehavior = GetComponents<MonoBehaviour>()
+                .OfType<IEnemyMovementBehavior>()
+                .FirstOrDefault();
+
+            if (movementBehavior == null && agent != null)
+            {
+                movementBehavior = new NavMeshChaseMovement(agent, rb);
             }
         }
 
-        public bool TryAttackPlayer()
+        public bool ShouldEnterAttackState()
         {
-            switch (CurrentCombatType)
-            {
-                case EnemyCombatType.Melee:
-                    return TryMeleeAttack();
+            return combatBehavior != null &&
+                   combatBehavior.ShouldEnterAttackState(this);
+        }
 
-                case EnemyCombatType.Ranged:
-                    return TryRangedAttack();
+        public void EnterAttackState()
+        {
+            combatBehavior?.EnterAttackState(this);
+        }
 
-                case EnemyCombatType.Hybrid:
-                    if (CanUseMeleeAttack()) return TryMeleeAttack();
-                    if (CanUseRangedAttack()) return TryRangedAttack();
-                    return false;
+        public void UpdateAttackState()
+        {
+            combatBehavior?.UpdateAttackState(this);
+        }
 
-                default:
-                    return false;
-            }
+        public void ExitAttackState()
+        {
+            combatBehavior?.ExitAttackState(this);
         }
 
 
@@ -492,23 +502,45 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void PlayAnimation(string stateName)
         {
-            if (animator != null)
+            if (animator == null || !animator.isActiveAndEnabled ||
+                animator.layerCount == 0 || string.IsNullOrEmpty(stateName))
+                return;
+
+            int stateHash = Animator.StringToHash(stateName);
+            if (animator.HasState(0, stateHash))
             {
-                animator.Play(stateName);
+                animator.Play(stateHash);
+                return;
             }
+
+            int fullPathHash = Animator.StringToHash($"Base Layer.{stateName}");
+            if (animator.HasState(0, fullPathHash))
+            {
+                animator.Play(fullPathHash);
+            }
+        }
+
+        public bool IsAnimationFinished(string stateName)
+        {
+            if (animator == null || !animator.isActiveAndEnabled)
+                return true;
+
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            return stateInfo.IsName(stateName) &&
+                   stateInfo.normalizedTime >= 1f &&
+                   !animator.IsInTransition(0);
         }
         
 
         public void MoveAwayFromPlayer(float retreatDistance = 4f)
         {
             if (!movementAllowed) return;
-            if (player == null || !agent.isOnNavMesh) return;
+            if (player == null || movementBehavior == null) return;
 
             Vector2 direction = ((Vector2)transform.position - (Vector2)player.position).normalized;
             Vector2 target = (Vector2)transform.position + direction * retreatDistance;
 
-            agent.isStopped = false;
-            agent.SetDestination(target);
+            movementBehavior.MoveTowards(target);
 
             UpdateDirection();
         }

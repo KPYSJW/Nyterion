@@ -30,12 +30,16 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public bool IsFacingRight { get; private set; } = true;
         public bool IsDashing { get; set; } = false;
+        public bool IsKnockedBack { get; private set; } = false;
         public float LastDashTime { get; set; } = -999f;
 
         private InputManager inputManager;
         private PlayerManager playerManager;
         private PlayerState currentState;
         private bool isInitialized = false;
+        private Vector2 knockbackVelocity;
+        private float knockbackDuration;
+        private float knockbackTimeRemaining;
 
 
         public void Construct(InputManager inputManager, PlayerManager playerManager)
@@ -105,6 +109,12 @@ namespace Nytherion.GamePlay.Characters.Player
 
             Vector2 moveInput = MoveInput;
 
+            if (IsKnockedBack)
+            {
+                HandleSpriteFlip();
+                return;
+            }
+
             currentState.Execute(this);
             HandleSpriteFlip();
         }
@@ -121,12 +131,18 @@ namespace Nytherion.GamePlay.Characters.Player
                 return;
             }
 
+            if (IsKnockedBack)
+            {
+                UpdateKnockback();
+                return;
+            }
+
             HandleMovement();
         }
 
         public void HandleMovement()
         {
-            if (IsDashing)
+            if (IsDashing || IsKnockedBack)
             {
                 return;
             }
@@ -148,6 +164,47 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 rb.velocity = Vector2.zero;
             }
+        }
+
+        public void ApplyKnockback(Vector2 direction, float speed, float duration)
+        {
+            if (rb == null || direction.sqrMagnitude <= 0.001f || speed <= 0f)
+            {
+                return;
+            }
+
+            if (IsDashing)
+            {
+               return;
+            }
+
+            knockbackDuration = Mathf.Max(0.01f, duration);
+            knockbackTimeRemaining = knockbackDuration;
+            knockbackVelocity = direction.normalized * speed;
+            IsKnockedBack = true;
+            rb.velocity = knockbackVelocity;
+        }
+
+        private void UpdateKnockback()
+        {
+            if (rb == null)
+            {
+                IsKnockedBack = false;
+                return;
+            }
+
+            knockbackTimeRemaining -= Time.fixedDeltaTime;
+
+            if (knockbackTimeRemaining <= 0f)
+            {
+                IsKnockedBack = false;
+                knockbackVelocity = Vector2.zero;
+                rb.velocity = Vector2.zero;
+                return;
+            }
+
+            float remainingRatio = knockbackTimeRemaining / knockbackDuration;
+            rb.velocity = knockbackVelocity * remainingRatio;
         }
         private void HandleSpriteFlip()
         {
