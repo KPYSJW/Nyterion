@@ -29,10 +29,18 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
   - offset: {x: 0, y: 1}
-    type: 1
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
   - offset: {x: 0, y: -1}
-    type: 1
+    type: 2
+    levelAmount: 1
   synergySeriesId: 
   unlockMilestoneID: 
   simpleStatModifiers:

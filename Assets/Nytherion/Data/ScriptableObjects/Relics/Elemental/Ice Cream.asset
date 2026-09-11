@@ -29,11 +29,20 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: -1, y: 0}
-    type: 1
   - offset: {x: 1, y: 0}
     type: 1
-  synergySeriesId: 
+    levelAmount: 1
+  - offset: {x: 0, y: 1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: FrostWardenSeries
+  synergySetBonusData: {fileID: 11400000, guid: 8a24e6b5472c42cfbd2e54670dc28ec5, type: 2}
   unlockMilestoneID: 
   references:
     version: 2

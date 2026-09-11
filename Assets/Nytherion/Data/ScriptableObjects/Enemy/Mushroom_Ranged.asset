@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86eb6d6bf36610744a559b82bdcf58b5, type: 3}
+  m_Name: Mushroom_Ranged
+  m_EditorClassIdentifier: 
+  enemyName: Mushroom_ranged
+  enemyPrefab: {fileID: 8385926958590961589, guid: ca4e9f30d13dc344b8b32787457549f4, type: 3}
+  maxHealth: 30
+  moveSpeed: 3
+  damageAmount: 1
+  detectRange: 8
+  combatType: 1
+  hybridSwitchDistance: 2.5
+  dropChance: 0
+  goldDropAmount: 0

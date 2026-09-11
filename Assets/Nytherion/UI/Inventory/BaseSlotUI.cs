@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 using Nytherion.Data.ScriptableObjects.Items;
-using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Enums;
 using System;
 using Nytherion.UI.Components;
@@ -98,12 +97,8 @@ namespace Nytherion.UI.Inventory
 
             if (hasItem)
             {
-                Sprite displaySprite = item.icon;
-                if (item is WeaponData weaponData && weaponData.weaponSprite != null)
-                {
-                    displaySprite = weaponData.weaponSprite;
-                }
-                iconImage.sprite = displaySprite;
+                // 드래그 이미지와 툴팁이 사용하는 아이템 아이콘으로 슬롯 표시를 통일합니다.
+                iconImage.sprite = item.icon;
                 
                 // 알파값을 항상 1로 복구하여 투명화 버그 방지
                 Color color = iconImage.color;

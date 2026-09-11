@@ -32,7 +32,22 @@ MonoBehaviour:
   grantsProjectileHoming: 0
   shape:
   - {x: 0, y: 0}
-  influenceZones: []
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: -1}
+    type: 2
+    levelAmount: 1
   synergySeriesId: SummonedCreatureSeries
   synergySetBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
   unlockMilestoneID: 

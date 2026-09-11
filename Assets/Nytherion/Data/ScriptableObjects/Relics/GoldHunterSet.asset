@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
+  m_Name: GoldHunterSet
+  m_EditorClassIdentifier: 
+  setName_KR: "황금 사냥꾼"
+  setName_EN: Gold Hunter
+  statusIcon: {fileID: 21300000, guid: c50ae50928b345eb9edccdefe2f11f0d, type: 3}
+  badgeBackgroundColor: {r: 0.55, g: 0.38, b: 0.06, a: 0.96}
+  badgeTextColor: {r: 1, g: 0.96, b: 0.72, a: 1}
+  description_KR: "골드를 더 많이 획득하고 연속 획득을 보상하는 경제 유물 세트입니다."
+  description_EN: An economy relic set that increases gold gains and rewards consecutive acquisitions.
+  synergySeriesId: GoldHunterSeries
+  bonusModules:
+  - condition: {rid: 3001}
+    effects:
+    - rid: 3002
+    description_KR: "골드 획득량 +10%. 적 처치 시 8% 확률로 골드 10 추가 획득"
+    description_EN: Gold gained +10%. Enemy kills have an 8% chance to grant 10 bonus gold.
+  - condition: {rid: 5001}
+    effects:
+    - rid: 5002
+    description_KR: "3세트 효과. 3초 내 연속 획득마다 골드 +3%(최대 5중첩). 최대 중첩 처치 시 15% 확률로 골드 25 추가"
+    description_EN: Tier 3 effect. Consecutive gains within 3 seconds add +3% gold, up to 5 stacks. At max stacks, kills have a 15% chance to grant 25 gold.
+  linkedTranscendenceEffects:
+  - {fileID: 11400000, guid: a71d5f6c85b449f1b76e2c432a95d038, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 3001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: GoldHunterSeries
+        measure: 1
+        requiredChainLength: 3
+    - rid: 3002
+      type: {class: GoldAcquisitionSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        baseGoldGainBonus: 0.1
+        bonusGoldOnKillChance: 0.08
+        bonusGoldOnKillAmount: 10
+        feverBonusPerStack: 0
+        maxFeverStacks: 0
+        feverWindow: 3
+        jackpotChanceAtMaxStacks: 0
+        jackpotGoldAmount: 0
+    - rid: 5001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: GoldHunterSeries
+        measure: 1
+        requiredChainLength: 5
+    - rid: 5002
+      type: {class: GoldAcquisitionSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        baseGoldGainBonus: 0.1
+        bonusGoldOnKillChance: 0.08
+        bonusGoldOnKillAmount: 10
+        feverBonusPerStack: 0.03
+        maxFeverStacks: 5
+        feverWindow: 3
+        jackpotChanceAtMaxStacks: 0.15
+        jackpotGoldAmount: 25

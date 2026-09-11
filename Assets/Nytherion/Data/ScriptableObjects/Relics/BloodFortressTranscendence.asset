@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
+  m_Name: BloodFortressTranscendence
+  m_EditorClassIdentifier: 
+  effectName_KR: "피의 성채"
+  effectName_EN: Blood Fortress
+  statusIcon: {fileID: 21300000, guid: 7ad29f54970844f8a9b6c09a71f22085, type: 3}
+  badgeBackgroundColor: {r: 0.36, g: 0.08, b: 0.12, a: 0.96}
+  badgeTextColor: {r: 1, g: 0.9, b: 0.86, a: 1}
+  description_KR: "받은 피해의 15%를 즉시 회복하고, 피격 후 4초 동안 방어력과 근거리 공격력이 12% 증가합니다."
+  description_EN: Recover 15% of damage taken and gain 12% defense and melee damage for 4 seconds after being hit.
+  requirements:
+  - setBonusData: {fileID: 11400000, guid: 1a47cf69e43d4aec9e0c1b323806637d, type: 2}
+    requiredEquippedCount: 4
+  - setBonusData: {fileID: 11400000, guid: 5f1b7eac9d0a4c2c9eb8a7f312d45601, type: 2}
+    requiredEquippedCount: 4
+  effectModules:
+  - condition: {rid: -2}
+    effects:
+    - rid: 1001
+    - rid: 1002
+    description_KR: "피해 일부 회복 및 피격 후 공방 강화"
+    description_EN: Recover part of damage taken and gain offense and defense after a hit.
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1001
+      type: {class: BloodFortressEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        recoveredDamageRatio: 0.15
+    - rid: 1002
+      type: {class: TemporaryStatBuffOnDamageEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        duration: 4
+        statModifiers:
+        - stat: 1
+          value: 0.12
+          valuePerLevel: 0
+          isPercentage: 1
+        - stat: 3
+          value: 0.12
+          valuePerLevel: 0
+          isPercentage: 1

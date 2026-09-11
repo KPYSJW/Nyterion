@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
+  m_Name: LightningPursuitTranscendence
+  m_EditorClassIdentifier: 
+  effectName_KR: "뇌광 추적"
+  effectName_EN: Lightning Pursuit
+  statusIcon: {fileID: 21300000, guid: 5e47aa5232424b6dad0ccdfdcc01b6f9, type: 3}
+  badgeBackgroundColor: {r: 0.16, g: 0.28, b: 0.58, a: 0.96}
+  badgeTextColor: {r: 0.88, g: 0.94, b: 1, a: 1}
+  description_KR: "대시 후 첫 원거리 공격이 적중하면 주변 최대 4명에게 적중 피해의 45% 연쇄 번개를 방출합니다."
+  description_EN: The first ranged attack after dashing releases chain lightning for 45% of hit damage to up to 4 nearby enemies.
+  requirements:
+  - setBonusData: {fileID: 11400000, guid: 2b58d07a0be049d0ae64c7aad4390f1a, type: 2}
+    requiredEquippedCount: 4
+  - setBonusData: {fileID: 11400000, guid: 7b3d90ce1f2c4e4ebab8c9f534f67823, type: 2}
+    requiredEquippedCount: 4
+  effectModules:
+  - condition: {rid: -2}
+    effects:
+    - rid: 1001
+    description_KR: "대시 후 첫 원거리 적중에 연쇄 번개"
+    description_EN: Chain lightning on the first ranged hit after a dash.
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1001
+      type: {class: DashChainLightningEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        damageRatio: 0.45
+        searchRadius: 6
+        maxTargets: 4
+        hitWaitDuration: 2

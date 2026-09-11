@@ -25,20 +25,20 @@ MonoBehaviour:
       rid: 2001
     effects:
     - rid: 2002
-    description_KR: "소환물 투사체 피해 +15%"
-    description_EN: Summon projectile damage +15%
+    description_KR: "소환물 투사체 피해 +10%"
+    description_EN: Summon projectile damage +10%
   - condition:
       rid: 4001
     effects:
     - rid: 4002
-    description_KR: "소환물 투사체 피해 +30%, 1발 추가 발사"
-    description_EN: Summon projectile damage +30%, fire 1 additional projectile
+    description_KR: "소환물 투사체 피해 +20%, 1발 추가 발사"
+    description_EN: Summon projectile damage +20%, fire 1 additional projectile
   - condition:
       rid: 6001
     effects:
     - rid: 6002
-    description_KR: "소환물 투사체 피해 +50%, 1발 추가 발사"
-    description_EN: Summon projectile damage +50%, fire 1 additional projectile
+    description_KR: "소환물 투사체 피해 +35%, 1발 추가 발사"
+    description_EN: Summon projectile damage +35%, fire 1 additional projectile
   linkedTranscendenceEffects:
   - {fileID: 11400000, guid: a5f059cfede742b6a797ca1c61f3fca9, type: 2}
   references:
@@ -53,7 +53,7 @@ MonoBehaviour:
     - rid: 2002
       type: {class: FollowerAttackSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        damageMultiplier: 1.15
+        damageMultiplier: 1.1
         additionalProjectileCount: 0
         additionalProjectileSpreadAngle: 12
     - rid: 4001
@@ -65,7 +65,7 @@ MonoBehaviour:
     - rid: 4002
       type: {class: FollowerAttackSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        damageMultiplier: 1.3
+        damageMultiplier: 1.2
         additionalProjectileCount: 1
         additionalProjectileSpreadAngle: 12
     - rid: 6001
@@ -77,6 +77,6 @@ MonoBehaviour:
     - rid: 6002
       type: {class: FollowerAttackSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        damageMultiplier: 1.5
+        damageMultiplier: 1.35
         additionalProjectileCount: 1
         additionalProjectileSpreadAngle: 12

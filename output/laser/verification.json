@@ -1,0 +1,83 @@
+{
+    "utc": "2026-09-10T03:25:38.3801395Z",
+    "unityVersion": "2022.3.62f2",
+    "scene": "GameScene",
+    "playMode": true,
+    "method": "실제 PlayMode의 프리팹, EnemyBase, Physics2D를 사용하고 Advance(deltaTime)를 동기 호출합니다. 쿨다운 경과는 테스트 무기의 lastAttackTime만 조정합니다.",
+    "passed": true,
+    "cleanupComplete": true,
+    "total": 14,
+    "failures": 0,
+    "checks": [
+        {
+            "name": "생성 에셋 기본값 및 연결",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "첫 틱 즉시 적용 및 일시정지",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "1.2초 6틱 및 소멸 중 무피해",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "낮은 프레임률에서도 틱 누락 없음",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "자식/다중 콜라이더 중복 피해 방지",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "뒤쪽/길이 밖/폭 밖 제외",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "벽 뒤 차단 및 시각 길이 축소",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "트리거 벽 통과",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "32개를 넘는 대상 모두 관통",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "발사 중 이동과 회전 추적",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "방향 고정 상태에서 발사 지점 이동",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "무기 비활성화 시 즉시 취소",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "공격 중 중복 발사 차단 및 종료 후 쿨다운",
+            "passed": true,
+            "detail": "통과"
+        },
+        {
+            "name": "동일 풀 객체 재사용 시 틱/외형 초기화",
+            "passed": true,
+            "detail": "통과"
+        }
+    ]
+}

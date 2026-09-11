@@ -16,18 +16,21 @@ public class EnemyProjectiles : MonoBehaviour
    }
    private void OnTriggerEnter2D(Collider2D other) 
    {
-      if(hashit)return;
-      if(other.CompareTag(Tags.Player))
-      {
-         hashit=true;
-          if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
-            {
-                playerHealth.TakeDamage(damage);
-            }
-      }
-      if (other.gameObject.CompareTag(Tags.Player)||other.gameObject.CompareTag(Tags.Wall))
+      if (other.CompareTag(Tags.Wall))
       {
          Destroy(gameObject);
+         return;
+      }
+
+      if(other.CompareTag(Tags.Player))
+      {
+         if(hashit)return;
+
+         hashit=true;
+         if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
+         {
+            playerHealth.TakeDamage(damage);
+         }
       }
    }
     

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ForestThorn
   m_EditorClassIdentifier: 
   uniqueID: 59224cfd-7372-43bd-8077-b491374912dd
-  itemName_KR: "\uB098\uBB34 \uD65C"
-  itemName_EN: Leaf Bow
+  itemName_KR: "\uC232\uC758 \uAC00\uC2DC"
+  itemName_EN: Forest Thorn
   icon: {fileID: 21300000, guid: e65a8eb47d5a1fb4e8ade1f9f50dd735, type: 3}
   description_KR: 
   description_EN: 
@@ -30,9 +30,9 @@ MonoBehaviour:
   cooldown: 0.1
   weaponType: 0
   weaponSprite: {fileID: 21300000, guid: e65a8eb47d5a1fb4e8ade1f9f50dd735, type: 3}
-  firePointOffset: {x: 0.65, y: 0, z: 0}
+  firePointOffset: {x: 0.4, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: -0.3, y: -0.15, z: 0}
+  visualPositionOffset: {x: -0.15, y: -0.05, z: 0}
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 7306622082136586299, guid: c66eebec310444c4796220c745954f62, type: 3}
   chargeEffectPrefab: {fileID: 7306622082136586299, guid: c66eebec310444c4796220c745954f62, type: 3}

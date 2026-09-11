@@ -55,9 +55,23 @@ namespace Nytherion.Core.Managers
 
         public bool AddCurrency(CurrencyType currencyType, int amount)
         {
+            return AddCurrencyInternal(currencyType, amount, true);
+        }
+
+        /// <summary>
+        /// 세트·초월 효과가 이미 계산한 추가 통화를 지급한다.
+        /// 기존 유물의 골드 획득 보정을 다시 적용하지 않아 보너스 재귀를 방지한다.
+        /// </summary>
+        public bool AddUnmodifiedCurrency(CurrencyType currencyType, int amount)
+        {
+            return AddCurrencyInternal(currencyType, amount, false);
+        }
+
+        private bool AddCurrencyInternal(CurrencyType currencyType, int amount, bool applyRelicBonuses)
+        {
             if (!IsInitialized || amount <= 0) return false;
 
-            if (currencyType == CurrencyType.Gold && !isLoadingFromSave)
+            if (applyRelicBonuses && currencyType == CurrencyType.Gold && !isLoadingFromSave)
             {
                 RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
                 if (relicManager != null)

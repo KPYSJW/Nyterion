@@ -25,8 +25,21 @@ MonoBehaviour:
   effectModules: []
   shape:
   - {x: 0, y: 0}
-  influenceZones: []
-  synergySeriesId: 
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 3
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: TrickshotEngineerSeries
+  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
   unlockMilestoneID: 
   simpleStatModifiers: []
   references:

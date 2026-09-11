@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
+  m_Name: BerserkerSet
+  m_EditorClassIdentifier: 
+  setName_KR: "광전사"
+  setName_EN: Berserker
+  statusIcon: {fileID: 21300000, guid: aad697d883498a541bc9e5d494af5d28, type: 3}
+  badgeBackgroundColor: {r: 0.45, g: 0.08, b: 0.08, a: 0.96}
+  badgeTextColor: {r: 1, g: 0.9, b: 0.86, a: 1}
+  description_KR: "상처와 위험을 힘으로 바꾸는 근접 전투 유물 세트입니다."
+  description_EN: A melee relic set that turns wounds and danger into power.
+  synergySeriesId: BerserkerSeries
+  bonusModules:
+  - condition:
+      rid: 2001
+    effects:
+    - rid: 2002
+    description_KR: "근거리 공격력 +8%"
+    description_EN: Melee damage +8%
+  - condition:
+      rid: 4001
+    effects:
+    - rid: 4002
+    - rid: 4003
+    description_KR: "근거리 공격력 +12%. 피격 시 4초 동안 근거리 공격 속도 +15%"
+    description_EN: Melee damage +12%. Taking damage grants +15% melee attack speed for 4 seconds.
+  - condition:
+      rid: 6001
+    effects:
+    - rid: 6002
+    - rid: 6003
+    - rid: 6004
+    description_KR: "근거리 공격력 +15%. 피격 시 4초 동안 근거리 공격 속도 +20%. 체력 40% 이하에서 흡혈 +5%p, 치명타 확률 +6%p"
+    description_EN: Melee damage +15%. Taking damage grants +20% melee attack speed for 4 seconds. At 40% HP or below, lifesteal +5%p and critical chance +6%p.
+  linkedTranscendenceEffects:
+  - {fileID: 11400000, guid: 9e3f23b2189249a6b5ca73fd01fa4d11, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 2001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: BerserkerSeries
+        measure: 1
+        requiredChainLength: 2
+    - rid: 2002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 3
+          value: 0.08
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 4001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: BerserkerSeries
+        measure: 1
+        requiredChainLength: 4
+    - rid: 4002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 3
+          value: 0.12
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 4003
+      type: {class: TemporaryStatBuffOnDamageEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        duration: 4
+        statModifiers:
+        - stat: 5
+          value: 0.15
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 6001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: BerserkerSeries
+        measure: 1
+        requiredChainLength: 6
+    - rid: 6002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 3
+          value: 0.15
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 6003
+      type: {class: TemporaryStatBuffOnDamageEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        duration: 4
+        statModifiers:
+        - stat: 5
+          value: 0.2
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 6004
+      type: {class: HealthThresholdStatEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        thresholdPercent: 40
+        statModifiers:
+        - stat: 11
+          value: 0.05
+          valuePerLevel: 0
+          isPercentage: 0
+        - stat: 13
+          value: 0.06
+          valuePerLevel: 0
+          isPercentage: 0

@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
+  m_Name: PlagueAlchemistSet
+  m_EditorClassIdentifier: 
+  setName_KR: "역병술사"
+  setName_EN: Plague Alchemist
+  statusIcon: {fileID: 21300000, guid: 8aaf48ff6f83e24468edb84bcba417e5, type: 3}
+  badgeBackgroundColor: {r: 0.16, g: 0.38, b: 0.12, a: 0.96}
+  badgeTextColor: {r: 0.9, g: 1, b: 0.82, a: 1}
+  description_KR: "독을 중첩하고 전염시켜 적 무리를 붕괴시키는 상태 이상 유물 세트입니다."
+  description_EN: A status-effect relic set that stacks and spreads poison through enemy groups.
+  synergySeriesId: PlagueAlchemistSeries
+  bonusModules:
+  - condition:
+      rid: 2001
+    effects:
+    - rid: 2002
+    description_KR: "독 지속 시간 +15%, 독 틱 피해 +10%"
+    description_EN: Poison duration +15% and poison tick damage +10%
+  - condition:
+      rid: 4001
+    effects:
+    - rid: 4002
+    description_KR: "독 지속 시간 +25%, 독 틱 피해 +18%. 중독된 적 처치 시 주변 최대 3명의 적에게 65% 위력의 독 전염"
+    description_EN: Poison duration +25% and poison tick damage +18%. Killing a poisoned enemy spreads poison at 65% power to up to 3 nearby enemies.
+  - condition:
+      rid: 6001
+    effects:
+    - rid: 6002
+    description_KR: "독 지속 시간 +35%, 독 틱 피해 +25%. 처치 시 주변 최대 5명에게 80% 위력의 독 전염 및 독 중첩 피해의 150% 폭발"
+    description_EN: Poison duration +35% and poison tick damage +25%. Kills spread poison at 80% power to up to 5 enemies and explode for 150% of stacked poison damage.
+  linkedTranscendenceEffects:
+  - {fileID: 11400000, guid: 12aab72e0d404cc7b837fbb68ce72c58, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 2001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: PlagueAlchemistSeries
+        measure: 1
+        requiredChainLength: 2
+    - rid: 2002
+      type: {class: PoisonSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        durationMultiplier: 1.15
+        tickDamageMultiplier: 1.1
+        spreadOnPoisonedEnemyDeath: 0
+        spreadRadius: 5
+        maxSpreadTargets: 3
+        spreadDamageMultiplier: 0.75
+        spreadDuration: 5
+        maxSpreadStacks: 2
+        explodeOnPoisonedEnemyDeath: 0
+        explosionRadius: 4
+        explosionDamageMultiplier: 2
+    - rid: 4001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: PlagueAlchemistSeries
+        measure: 1
+        requiredChainLength: 4
+    - rid: 4002
+      type: {class: PoisonSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        durationMultiplier: 1.25
+        tickDamageMultiplier: 1.18
+        spreadOnPoisonedEnemyDeath: 1
+        spreadRadius: 5
+        maxSpreadTargets: 3
+        spreadDamageMultiplier: 0.65
+        spreadDuration: 5
+        maxSpreadStacks: 2
+        explodeOnPoisonedEnemyDeath: 0
+        explosionRadius: 4
+        explosionDamageMultiplier: 2
+    - rid: 6001
+      type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetSeriesId: PlagueAlchemistSeries
+        measure: 1
+        requiredChainLength: 6
+    - rid: 6002
+      type: {class: PoisonSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        durationMultiplier: 1.35
+        tickDamageMultiplier: 1.25
+        spreadOnPoisonedEnemyDeath: 1
+        spreadRadius: 6
+        maxSpreadTargets: 5
+        spreadDamageMultiplier: 0.8
+        spreadDuration: 6
+        maxSpreadStacks: 3
+        explodeOnPoisonedEnemyDeath: 1
+        explosionRadius: 4
+        explosionDamageMultiplier: 1.5

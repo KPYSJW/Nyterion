@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53efbc9ed57eeef42a89a3f7d9ba0748, type: 3}
+  m_Name: LaserEmitter
+  m_EditorClassIdentifier: 
+  uniqueID: 5a008fe7-f1e6-48ec-a070-cbc495e4ac7c
+  itemName_KR: "\uB808\uC774\uC800 \uC774\uBBF8\uD130"
+  itemName_EN: Laser Emitter
+  icon: {fileID: 21300000, guid: 45567c5b4587e7e459686c4b2916734f, type: 3}
+  description_KR: "\uBC1C\uC0AC \uC9C0\uC810\uC5D0\uC11C \uC77C\uC815 \uC2DC\uAC04
+    \uB808\uC774\uC800\uB97C \uBC29\uCD9C\uD558\uC5EC \uBC94\uC704 \uC548\uC758 \uC801\uC5D0\uAC8C
+    \uC8FC\uAE30\uC801\uC73C\uB85C \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4. \uBC1C\uC0AC\uAC00
+    \uB05D\uB098\uBA74 \uC7AC\uC0AC\uC6A9 \uB300\uAE30\uC2DC\uAC04\uC774 \uC2DC\uC791\uB429\uB2C8\uB2E4."
+  description_EN: Emits a beam from the muzzle for a fixed duration, dealing periodic
+    damage to enemies in its path. Cooldown begins when firing ends.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 150
+  equipmentType: 0
+  traits: 
+  statModifiers: []
+  damage: 4
+  range: 8
+  cooldown: 0.6
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: f4e67fedc03b7c143a44a1319cdb070b, type: 3}
+  firePointOffset: {x: 1.1, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: -0.4, y: -0.15, z: 0}
+  visualScale: 0.75
+  useStaffRecoil: 0
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 414563227335739938, guid: 01e62c898db558d4aa53f6212b362d74, type: 3}
+  projectileSpeed: 0
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hasHomingProjectiles: 0
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 8809893831550650269, guid: 2d72ff01922f9d646bb6aa8430f71888, type: 3}
+  isArchivable: 0
+  fireDuration: 1.2
+  tickInterval: 0.2
+  damageTickCount: 3
+  beamWidth: 0.55
+  visualBeamWidth: 1
+  fadeDuration: 0.12
+  followAim: 1
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 2560
+  visualSegments: 18
+  jitterMagnitude: 0
+  jitterInterval: 0.035
+  textureTileLength: 1

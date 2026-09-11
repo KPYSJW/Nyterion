@@ -122,7 +122,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
             PlayHitFlash();
             if (eventManager != null)
             {
-                eventManager.TriggerEnemyDamagedByPlayerWithCrit(damageAmount, isCritical);
+                eventManager.TriggerEnemyDamagedByPlayerWithCrit(
+                    damageAmount,
+                    isCritical,
+                    this,
+                    isChain);
             }
 
             // 신성 가호 타격 회복 트리거

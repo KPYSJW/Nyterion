@@ -25,6 +25,27 @@ namespace Nytherion.Data.ScriptableObjects.Progression
             description,
             description);
         public Sprite icon;
+        public Sprite DisplayIcon
+        {
+            get
+            {
+                if (rewards != null)
+                {
+                    foreach (RewardData reward in rewards)
+                    {
+                        if (reward != null &&
+                            reward.rewardType == RewardType.Relic &&
+                            reward.relicData != null &&
+                            reward.relicData.Image != null)
+                        {
+                            return reward.relicData.Image;
+                        }
+                    }
+                }
+
+                return icon;
+            }
+        }
 
         [Header("Progress Settings")]
         public ProgressionType progressionType;

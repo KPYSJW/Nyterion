@@ -10,5 +10,7 @@ namespace Nytherion.GamePlay.Combat
         bool IsInAttackRange(Transform target);
         
         float AttackCoolDown { get; }
+
+        void ResetForReuse();
     }
 }

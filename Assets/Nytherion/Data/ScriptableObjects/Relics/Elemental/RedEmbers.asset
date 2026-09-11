@@ -29,11 +29,17 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: -1, y: 0}
-    type: 1
   - offset: {x: 1, y: 0}
     type: 1
-  synergySeriesId: 
+    levelAmount: 1
+  - offset: {x: 0, y: 1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: PyromancerSeries
+  synergySetBonusData: {fileID: 11400000, guid: 6a2c8fbd0e1b4d3da9c7b8e423e56712, type: 2}
   unlockMilestoneID: 
   references:
     version: 2

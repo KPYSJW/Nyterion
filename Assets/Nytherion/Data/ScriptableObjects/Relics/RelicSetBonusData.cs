@@ -16,6 +16,9 @@ namespace Nytherion.Data.ScriptableObjects.Relics
     [CreateAssetMenu(fileName = "NewRelicSetBonus", menuName = "Data/Relic Set Bonus")]
     public class RelicSetBonusData : ScriptableObject
     {
+        private const string ActiveTierColorHex = "#FFFFFF";
+        private const string InactiveTierColorHex = "#525252";
+
         [Header("UI 표시")]
         public string setName_KR;
         public string setName_EN;
@@ -85,7 +88,7 @@ namespace Nytherion.Data.ScriptableObjects.Relics
             return minimum != int.MaxValue && GetEquippedCount(relicManager) >= minimum;
         }
 
-        public string BuildTooltipText()
+        public string BuildTooltipText(RelicManager relicManager)
         {
             StringBuilder builder = new StringBuilder();
             if (!string.IsNullOrEmpty(Description))
@@ -96,6 +99,7 @@ namespace Nytherion.Data.ScriptableObjects.Relics
 
             if (bonusModules != null)
             {
+                int equippedCount = GetEquippedCount(relicManager);
                 IEnumerable<RelicEffectModule> orderedModules = bonusModules
                     .Where(module => module?.condition is ChainSynergyCondition)
                     .OrderBy(module => ((ChainSynergyCondition)module.condition).requiredChainLength);
@@ -110,10 +114,17 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                             "ui.relic.effect_description_missing",
                             "효과 설명이 설정되지 않았습니다.",
                             "No effect description has been configured.");
-                    builder.Append('(')
+                    string tierColor = equippedCount >= condition.requiredChainLength
+                        ? ActiveTierColorHex
+                        : InactiveTierColorHex;
+
+                    builder.Append("<color=")
+                        .Append(tierColor)
+                        .Append(">(")
                         .Append(condition.requiredChainLength)
                         .Append(") ")
-                        .AppendLine(effectDescription);
+                        .Append(effectDescription)
+                        .AppendLine("</color>");
                 }
             }
 

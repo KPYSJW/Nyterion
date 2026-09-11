@@ -29,11 +29,17 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: -1, y: 0}
-    type: 1
   - offset: {x: 1, y: 0}
     type: 1
-  synergySeriesId: 
+    levelAmount: 1
+  - offset: {x: 0, y: 1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: PlagueAlchemistSeries
+  synergySetBonusData: {fileID: 11400000, guid: 3c69e18b6a8e48aca8ff2d1de1568b24, type: 2}
   unlockMilestoneID: 
   references:
     version: 2
