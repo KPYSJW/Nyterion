@@ -20,7 +20,7 @@ MonoBehaviour:
   Image: {fileID: 21300000, guid: 299b3064269bdf3438b06fa7306dbea3, type: 3}
   rarity: 4
   level: 1
-  isDisabled: 0
+  isDisabled: 1
   effectModules:
   - condition:
       rid: 6716071107867705362

@@ -25,6 +25,12 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float cooldown;
         public WeaponType weaponType;
 
+        /// <summary>
+        /// 근거리 무기 구현이 다시 활성화될 때까지 런타임 등장 후보에서 제외합니다.
+        /// 에셋과 저장 ID는 유지해 기존 참조가 손상되지 않도록 합니다.
+        /// </summary>
+        public bool IsRuntimeAvailable => weaponType != WeaponType.Melee;
+
         [Header("Visual Settings")]
         public Sprite weaponSprite;
         public Vector3 firePointOffset;

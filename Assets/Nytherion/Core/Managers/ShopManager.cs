@@ -4,6 +4,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Shop;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Enums;
+using Nytherion.Data.ScriptableObjects.Weapons;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -201,6 +202,7 @@ namespace Nytherion.Core.Managers
             // 장비 아이템 데이터베이스 가져오기
             List<EquipmentData> equipmentPool = ItemDatabase.GetAllItems()
                 .OfType<EquipmentData>()
+                .Where(equipment => !(equipment is WeaponData weapon) || weapon.IsRuntimeAvailable)
                 .ToList();
 
             if (equipmentPool.Count == 0)
@@ -362,6 +364,11 @@ namespace Nytherion.Core.Managers
                 if (itemAsset == null)
                 {
                     Debug.LogWarning($"[ShopManager] 로드 실패: ItemDatabase에 아이템({savedItem.itemId})이 없습니다.");
+                    continue;
+                }
+
+                if (itemAsset is WeaponData weapon && !weapon.IsRuntimeAvailable)
+                {
                     continue;
                 }
 

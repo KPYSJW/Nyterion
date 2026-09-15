@@ -14,6 +14,16 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField] private string launchTrigger = "Launch";
         [SerializeField] private string hitTrigger = "Hit";
 
+        [Header("Trail Settings")]
+        [SerializeField] private Texture2D trailTexture;
+        [SerializeField, Min(0f)] private float trailParticlesPerUnit = 2.5f;
+        [SerializeField, Min(0.01f)] private float trailLifetime = 0.32f;
+        [SerializeField, Min(0.01f)] private float trailSize = 0.9f;
+        [SerializeField, Min(0f)] private float trailSpread = 0.08f;
+        [SerializeField, Min(0f)] private float trailDriftSpeed = 0.18f;
+        [SerializeField] private Vector2 trailLocalOffset = new Vector2(-0.3f, 0f);
+        [SerializeField] private Color trailColor = new Color(0.8f, 0.95f, 1f, 1f);
+
         [Header("Relic Split Settings")]
         [SerializeField] private string requiredRelicName = "Glacial Prism";
         [SerializeField] private string requiredRelicKoreanName = "빙결 프리즘";
@@ -29,6 +39,9 @@ namespace Nytherion.GamePlay.Combat
         private CollisionObject collisionObj;
         private Collider2D myCollider;
         private Animator animator;
+        private SpriteRenderer projectileRenderer;
+        private ParticleSystem trailParticleSystem;
+        private Material trailMaterial;
 
         private float speed;
         private bool isHit;
@@ -39,11 +52,14 @@ namespace Nytherion.GamePlay.Combat
             rb = GetComponent<Rigidbody2D>();
             collisionObj = GetComponent<CollisionObject>();
             myCollider = GetComponent<Collider2D>();
+            projectileRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponentInChildren<Animator>();
             if (animator == null)
             {
                 animator = GetComponent<Animator>();
             }
+
+            CreateTrailParticleSystem();
         }
 
         private void OnEnable()
@@ -58,6 +74,8 @@ namespace Nytherion.GamePlay.Combat
             {
                 rb.velocity = Vector2.zero;
             }
+
+            StopTrail(true);
             
             // 유물 장착 상태 검사 (분열 여부 실시간 갱신)
             CheckRelicSplit();
@@ -68,6 +86,15 @@ namespace Nytherion.GamePlay.Combat
         {
             // 풀로 반환되어 비활성화될 때 물리적 충돌 무시 설정을 복구
             ResetIgnoredCollider();
+            StopTrail(true);
+        }
+
+        private void OnDestroy()
+        {
+            if (trailMaterial != null)
+            {
+                Destroy(trailMaterial);
+            }
         }
 
         // IProj 구현: RangedWeapon 등에서 호출됨
@@ -128,6 +155,8 @@ namespace Nytherion.GamePlay.Combat
                 rb.velocity = (Vector2)transform.right * speed;
             }
 
+            PlayTrail();
+
             if (animator != null && !string.IsNullOrEmpty(launchTrigger))
             {
                 animator.SetTrigger(launchTrigger);
@@ -146,6 +175,8 @@ namespace Nytherion.GamePlay.Combat
             {
                 rb.velocity = Vector2.zero;
             }
+
+            StopTrail(false);
 
             if (myCollider != null)
             {
@@ -261,6 +292,130 @@ namespace Nytherion.GamePlay.Combat
             {
                 gameObject.SetActive(false);
             }
+        }
+
+        private void CreateTrailParticleSystem()
+        {
+            if (trailTexture == null || trailParticleSystem != null)
+            {
+                return;
+            }
+
+            GameObject trailObject = new GameObject("IceShotTrail");
+            trailObject.layer = gameObject.layer;
+            trailObject.transform.SetParent(transform, false);
+            trailObject.transform.localPosition = trailLocalOffset;
+
+            trailParticleSystem = trailObject.AddComponent<ParticleSystem>();
+            trailParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+            ParticleSystem.MainModule main = trailParticleSystem.main;
+            main.loop = true;
+            main.playOnAwake = false;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(
+                trailLifetime * 0.75f,
+                trailLifetime * 1.15f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(
+                trailDriftSpeed * 0.6f,
+                trailDriftSpeed);
+            main.startSize = trailSize;
+            main.startRotation = 0f;
+            main.startColor = trailColor;
+            main.maxParticles = 64;
+
+            ParticleSystem.EmissionModule emission = trailParticleSystem.emission;
+            emission.rateOverTime = 0f;
+            emission.rateOverDistance = trailParticlesPerUnit;
+
+            ParticleSystem.ShapeModule shape = trailParticleSystem.shape;
+            shape.enabled = trailSpread > 0f;
+            shape.shapeType = ParticleSystemShapeType.Circle;
+            shape.radius = trailSpread;
+            shape.radiusThickness = 1f;
+
+            ParticleSystem.ColorOverLifetimeModule colorOverLifetime = trailParticleSystem.colorOverLifetime;
+            colorOverLifetime.enabled = true;
+            Gradient fadeGradient = new Gradient();
+            fadeGradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(Color.white, 0f),
+                    new GradientColorKey(Color.white, 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(1f, 0f),
+                    new GradientAlphaKey(0.85f, 0.65f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+            colorOverLifetime.color = fadeGradient;
+
+            ParticleSystem.TextureSheetAnimationModule textureAnimation = trailParticleSystem.textureSheetAnimation;
+            textureAnimation.enabled = true;
+            textureAnimation.mode = ParticleSystemAnimationMode.Grid;
+            textureAnimation.numTilesX = 4;
+            textureAnimation.numTilesY = 1;
+            textureAnimation.animation = ParticleSystemAnimationType.WholeSheet;
+            textureAnimation.frameOverTime = new ParticleSystem.MinMaxCurve(
+                1f,
+                AnimationCurve.Linear(0f, 0f, 1f, 0.999f));
+            textureAnimation.cycleCount = 1;
+
+            ParticleSystemRenderer trailRenderer = trailObject.GetComponent<ParticleSystemRenderer>();
+            trailRenderer.renderMode = ParticleSystemRenderMode.Billboard;
+            trailRenderer.alignment = ParticleSystemRenderSpace.View;
+
+            if (projectileRenderer != null)
+            {
+                trailRenderer.sortingLayerID = projectileRenderer.sortingLayerID;
+                trailRenderer.sortingOrder = projectileRenderer.sortingOrder - 1;
+            }
+
+            Shader trailShader = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
+            if (trailShader == null)
+            {
+                trailShader = Shader.Find("Sprites/Default");
+            }
+
+            if (trailShader == null)
+            {
+                Debug.LogWarning("[IceShotProj] IceShotTrail에 사용할 Unlit Sprite 셰이더를 찾지 못했습니다.", this);
+                return;
+            }
+
+            trailMaterial = new Material(trailShader);
+
+            trailMaterial.name = "IceShotTrail (Runtime)";
+            trailMaterial.hideFlags = HideFlags.HideAndDontSave;
+            trailMaterial.mainTexture = trailTexture;
+            trailRenderer.sharedMaterial = trailMaterial;
+        }
+
+        private void PlayTrail()
+        {
+            if (trailParticleSystem == null)
+            {
+                CreateTrailParticleSystem();
+            }
+
+            if (trailParticleSystem != null)
+            {
+                trailParticleSystem.Play(true);
+            }
+        }
+
+        private void StopTrail(bool clearParticles)
+        {
+            if (trailParticleSystem == null)
+            {
+                return;
+            }
+
+            ParticleSystemStopBehavior stopBehavior = clearParticles
+                ? ParticleSystemStopBehavior.StopEmittingAndClear
+                : ParticleSystemStopBehavior.StopEmitting;
+            trailParticleSystem.Stop(true, stopBehavior);
         }
     }
 }

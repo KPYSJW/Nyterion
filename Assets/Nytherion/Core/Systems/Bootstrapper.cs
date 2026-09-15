@@ -1,4 +1,5 @@
 using UnityEngine;
+using Nytherion.Core.Data;
 
 namespace Nytherion.Core.Systems
 {
@@ -7,6 +8,8 @@ namespace Nytherion.Core.Systems
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Execute()
         {
+            UserSettings.ApplyBeforeSceneLoad();
+
             if (Object.FindObjectOfType<RootLifetimeScope>() != null) return;
 
             

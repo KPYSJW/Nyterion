@@ -284,7 +284,7 @@ namespace Nytherion.Core.Managers
 
             foreach (var relic in relicDatabaseSO.allRelics)
             {
-                if (relic != null && !relicDatabase.ContainsKey(relic.relicName))
+                if (relic != null && relic.IsRuntimeAvailable && !relicDatabase.ContainsKey(relic.relicName))
                 {
                     relicDatabase.Add(relic.relicName, relic);
                 }
@@ -340,7 +340,7 @@ namespace Nytherion.Core.Managers
         }
         public void AddNewRelicToStorage(RelicData data)
         {
-            if (data == null) return;
+            if (data == null || !data.IsRuntimeAvailable) return;
 
             // 중복 방지 (선택 사항): 이미 같은 종류의 유물이 보관함이나 그리드에 있는지 확인
             bool isAlreadyInStorage = storageBlocks.Any(b => b.RelicId == data.relicName);
@@ -365,7 +365,7 @@ namespace Nytherion.Core.Managers
 
             foreach (RelicData relic in relicDatabaseSO.allRelics)
             {
-                if (relic != null)
+                if (relic != null && relic.IsRuntimeAvailable)
                 {
                     AddNewRelicToStorage(relic);
                 }

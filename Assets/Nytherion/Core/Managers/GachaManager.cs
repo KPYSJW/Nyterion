@@ -84,7 +84,7 @@ namespace Nytherion.Core.Managers
                 return null;
             }
 
-            System.Func<ScriptableObject, bool> validationCheck = (item) => true;
+            System.Func<ScriptableObject, bool> validationCheck = IsRuntimeAvailable;
 
             if (currentTable.DrawItem(validationCheck) == null)
             {
@@ -134,7 +134,7 @@ namespace Nytherion.Core.Managers
                 return null;
             }
 
-            System.Func<ScriptableObject, bool> validationCheck = (ScriptableObject item) => true;
+            System.Func<ScriptableObject, bool> validationCheck = IsRuntimeAvailable;
 
             if (currentTable.DrawItem(validationCheck) == null)
             {
@@ -169,6 +169,21 @@ namespace Nytherion.Core.Managers
             {
                 relicManager.AddNewRelicToStorage(relic);
             }
+        }
+
+        private static bool IsRuntimeAvailable(ScriptableObject item)
+        {
+            if (item is WeaponData weapon)
+            {
+                return weapon.IsRuntimeAvailable;
+            }
+
+            if (item is RelicData relic)
+            {
+                return relic.IsRuntimeAvailable;
+            }
+
+            return item != null;
         }
     }
 }

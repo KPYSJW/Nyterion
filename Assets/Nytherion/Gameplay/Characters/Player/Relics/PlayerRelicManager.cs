@@ -74,8 +74,12 @@ namespace Nytherion.GamePlay.Characters.Player
             relicManager.OnRelicStateChanged -= HandleRelicStateChanged;
             relicManager.OnRelicStateChanged += HandleRelicStateChanged;
 
-            SyncWithGrid();
+            bool relicListChanged = SyncWithGrid();
             RebuildCombatModifiers();
+            if (relicListChanged)
+            {
+                OnRelicsChanged?.Invoke();
+            }
         }
 
         private void UnsubscribeRelicEvents(RelicManager targetRelicManager)
@@ -87,22 +91,41 @@ namespace Nytherion.GamePlay.Characters.Player
         /// <summary>
         /// 게임 시작 및 로드 시, 그리드에 장착된 각인과 플레이어의 장착 상태를 일치시킨다
         /// </summary>
-        private void SyncWithGrid()
+        private bool SyncWithGrid()
         {
-            if (relicManager == null) return;
+            if (relicManager == null) return false;
 
             var placedBlocks = relicManager.GetPlacedBlocks();
+            List<RelicData> placedRelics = new List<RelicData>();
             foreach (var pair in placedBlocks)
             {
                 var block = relicManager.GetBlockByID(pair.Key);
-                if (block != null && block.SourceData != null)
+                if (block != null && block.SourceData != null && !placedRelics.Contains(block.SourceData))
                 {
-                    if (!equippedRelics.Contains(block.SourceData))
+                    placedRelics.Add(block.SourceData);
+                }
+            }
+
+            bool hasChanged = equippedRelics.Count != placedRelics.Count;
+            if (!hasChanged)
+            {
+                for (int i = 0; i < placedRelics.Count; i++)
+                {
+                    if (!equippedRelics.Contains(placedRelics[i]))
                     {
-                        AddRelic(block.SourceData);
+                        hasChanged = true;
+                        break;
                     }
                 }
             }
+
+            if (!hasChanged) return false;
+
+            // 저장 데이터 로드 시 RelicManager가 기존 그리드를 한 번에 비우므로 개별 해제 이벤트가
+            // 오지 않을 수 있습니다. 현재 그리드를 기준으로 목록을 재구성해 해제된 유물이 남지 않게 합니다.
+            equippedRelics.Clear();
+            equippedRelics.AddRange(placedRelics);
+            return true;
         }
 
         private void HandleRelicStateFromGrid(RelicData data, bool isEquipped)
@@ -129,7 +152,12 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void HandleRelicStateChanged()
         {
+            bool relicListChanged = SyncWithGrid();
             RebuildCombatModifiers();
+            if (relicListChanged)
+            {
+                OnRelicsChanged?.Invoke();
+            }
         }
 
         public void AddRelic(RelicData relic)

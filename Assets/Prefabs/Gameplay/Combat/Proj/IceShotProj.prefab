@@ -203,6 +203,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchTrigger: Launch
   hitTrigger: Hit
+  trailTexture: {fileID: 2800000, guid: 0f4bd7835e9a49a89842dc77ade15c31, type: 3}
+  trailParticlesPerUnit: 2.5
+  trailLifetime: 0.32
+  trailSize: 0.9
+  trailSpread: 0.08
+  trailDriftSpeed: 0.18
+  trailLocalOffset: {x: -0.3, y: 0}
+  trailColor: {r: 0.8, g: 0.95, b: 1, a: 1}
   requiredRelicName: Glacial Prism
   requiredRelicKoreanName: "\uBE59\uACB0 \uD504\uB9AC\uC998"
   canSplit: 1

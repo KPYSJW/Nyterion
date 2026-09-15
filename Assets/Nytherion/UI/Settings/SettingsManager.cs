@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Nytherion.Core.Data;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
@@ -43,13 +44,28 @@ namespace Nytherion.UI.Controllers
         };
 
         [Inject]
-        public void Construct(AudioManager audioManager, ILocalizationService localizationService)
+        public void Construct(
+            AudioManager audioManager,
+            ILocalizationService localizationService,
+            GameSceneUIRefs gameSceneUIRefs)
         {
             this.audioManager = audioManager;
             this.localizationService = localizationService;
+
+            if (this.gameSceneuiRefs == null)
+            {
+                this.gameSceneuiRefs = gameSceneUIRefs;
+            }
+
+            AssignUIReferences();
         }
 
         private void Awake()
+        {
+            AssignUIReferences();
+        }
+
+        private void AssignUIReferences()
         {
             if (gameSceneuiRefs != null)
             {
@@ -64,6 +80,13 @@ namespace Nytherion.UI.Controllers
 
         private void Start()
         {
+            if (audioManager != null)
+            {
+                SetSliderValueWithoutNotify(masterSlider, audioManager.GetMasterVolume());
+                SetSliderValueWithoutNotify(bgmSlider, audioManager.GetBGMVolume());
+                SetSliderValueWithoutNotify(sfxSlider, audioManager.GetSFXVolume());
+            }
+
             // 볼륨 슬라이더, 입력 필드, Up/Down 버튼 제어 연동 초기화
             InitializeVolumeController(masterSlider, masterInputField, masterUpButton, masterDownButton, SetMasterVolume);
             InitializeVolumeController(bgmSlider, bgmInputField, bgmUpButton, bgmDownButton, SetBGMVolume);
@@ -71,7 +94,7 @@ namespace Nytherion.UI.Controllers
 
             if (fullscreenToggle != null)
             {
-                fullscreenToggle.isOn = Screen.fullScreen;
+                fullscreenToggle.SetIsOnWithoutNotify(UserSettings.GetFullscreen(Screen.fullScreen));
                 fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
             }
 
@@ -83,12 +106,11 @@ namespace Nytherion.UI.Controllers
             }
 
             InitializeLanguageDropdown();
+        }
 
-            // 초기 BGM 볼륨값으로 세팅
-            if (audioManager != null && bgmSlider != null)
-            {
-                bgmSlider.value = audioManager.GetBGMVolume();
-            }
+        private void OnDisable()
+        {
+            UserSettings.Save();
         }
 
         private void OnDestroy()
@@ -232,13 +254,16 @@ namespace Nytherion.UI.Controllers
         {
             List<string> options = new List<string>();
             int currentIndex = 0;
+            bool hasSavedResolution = UserSettings.TryGetResolution(out int savedWidth, out int savedHeight);
+            int targetWidth = hasSavedResolution ? savedWidth : Screen.width;
+            int targetHeight = hasSavedResolution ? savedHeight : Screen.height;
 
             for (int i = 0; i < customResolutions.Count; i++)
             {
                 string label = customResolutions[i].width + "x" + customResolutions[i].height;
                 options.Add(label);
 
-                if (Screen.width == customResolutions[i].width && Screen.height == customResolutions[i].height)
+                if (targetWidth == customResolutions[i].width && targetHeight == customResolutions[i].height)
                 {
                     currentIndex = i;
                 }
@@ -248,27 +273,37 @@ namespace Nytherion.UI.Controllers
             {
                 resolutionDropdown.ClearOptions();
                 resolutionDropdown.AddOptions(options);
-                resolutionDropdown.value = currentIndex;
+                resolutionDropdown.SetValueWithoutNotify(currentIndex);
                 resolutionDropdown.RefreshShownValue();
             }
         }
 
         private void SetResolution(int index)
         {
+            if (index < 0 || index >= customResolutions.Count)
+            {
+                return;
+            }
+
             Resolution res = customResolutions[index];
             Screen.SetResolution(res.width, res.height, Screen.fullScreen);
+            UserSettings.SetResolution(res.width, res.height);
+            UserSettings.Save();
             Debug.Log($"해상도 변경: {res.width}x{res.height}");
         }
 
         private void SetFullscreen(bool isFullscreen)
         {
             Screen.fullScreen = isFullscreen;
+            UserSettings.SetFullscreen(isFullscreen);
+            UserSettings.Save();
             Debug.Log("전체화면: " + isFullscreen);
         }
 
         private void SetMasterVolume(float value)
         {
-            AudioListener.volume = value;
+            if (audioManager == null) return;
+            audioManager.SetMasterVolume(value);
         }
 
         private void SetBGMVolume(float value)
@@ -279,7 +314,16 @@ namespace Nytherion.UI.Controllers
 
         private void SetSFXVolume(float value)
         {
-            Debug.Log("SFX Volume: " + value);
+            if (audioManager == null) return;
+            audioManager.SetSFXVolume(value);
+        }
+
+        private static void SetSliderValueWithoutNotify(Slider slider, float value)
+        {
+            if (slider != null)
+            {
+                slider.SetValueWithoutNotify(Mathf.Clamp01(value));
+            }
         }
     }
 }

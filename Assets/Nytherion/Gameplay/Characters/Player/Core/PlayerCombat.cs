@@ -281,12 +281,17 @@ namespace Nytherion.GamePlay.Characters.Player
                 return;
             }
 
+            SpriteRenderer rootWeaponRenderer = currentWeapon.GetComponent<SpriteRenderer>();
+            int currentBaseOrder = rootWeaponRenderer != null
+                ? rootWeaponRenderer.sortingOrder
+                : weaponRenderers[0].sortingOrder;
             int targetBaseOrder = playerSpriteRenderer.sortingOrder + weaponSortingOrderOffset;
             for (int i = 0; i < weaponRenderers.Length; i++)
             {
                 SpriteRenderer weaponRenderer = weaponRenderers[i];
+                int relativeOrder = weaponRenderer.sortingOrder - currentBaseOrder;
                 weaponRenderer.sortingLayerID = playerSpriteRenderer.sortingLayerID;
-                weaponRenderer.sortingOrder = targetBaseOrder;
+                weaponRenderer.sortingOrder = targetBaseOrder + relativeOrder;
             }
         }
 
