@@ -1,6 +1,7 @@
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Player;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 
@@ -40,6 +41,25 @@ namespace Nytherion.GamePlay.Characters.Player
         private Vector2 knockbackVelocity;
         private float knockbackDuration;
         private float knockbackTimeRemaining;
+        private readonly List<DashColliderState> dashColliderStates = new();
+        private readonly Collider2D[] dashOverlapResults = new Collider2D[64];
+        private Coroutine dashCollisionRestoreCoroutine;
+        private PlayerHealth playerHealth;
+        private bool dashProtectionActive;
+        private bool wasInvulnerableBeforeDash;
+        private LayerMask dashEnemyCollisionMask;
+
+        private readonly struct DashColliderState
+        {
+            public readonly Collider2D Collider;
+            public readonly int OriginalExcludeLayers;
+
+            public DashColliderState(Collider2D collider, int originalExcludeLayers)
+            {
+                Collider = collider;
+                OriginalExcludeLayers = originalExcludeLayers;
+            }
+        }
 
 
         public void Construct(InputManager inputManager, PlayerManager playerManager)
@@ -234,6 +254,119 @@ namespace Nytherion.GamePlay.Characters.Player
             rb.velocity = dashDirection * PlayerData.dashSpeed;
         }
 
+        public void BeginDashProtection()
+        {
+            if (!dashProtectionActive)
+            {
+                playerHealth ??= GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    wasInvulnerableBeforeDash = playerHealth.IsInvulnerable;
+                    playerHealth.SetInvulnerable(true);
+                }
+
+                dashProtectionActive = true;
+            }
+
+            if (dashColliderStates.Count > 0)
+                return;
+
+            dashEnemyCollisionMask = LayerMask.GetMask("Enemy", "FlyingBody");
+            Collider2D[] playerColliders = GetComponents<Collider2D>();
+            foreach (Collider2D playerCollider in playerColliders)
+            {
+                if (playerCollider == null || playerCollider.isTrigger)
+                    continue;
+
+                int originalExcludeLayers = playerCollider.excludeLayers;
+                dashColliderStates.Add(
+                    new DashColliderState(playerCollider, originalExcludeLayers));
+                playerCollider.excludeLayers =
+                    originalExcludeLayers | dashEnemyCollisionMask.value;
+            }
+        }
+
+        public void EndDashProtection()
+        {
+            if (dashProtectionActive)
+            {
+                playerHealth ??= GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.SetInvulnerable(wasInvulnerableBeforeDash);
+                }
+
+                dashProtectionActive = false;
+            }
+
+            RestoreSeparatedDashCollisions();
+            if (dashColliderStates.Count > 0 && dashCollisionRestoreCoroutine == null)
+            {
+                dashCollisionRestoreCoroutine =
+                    StartCoroutine(RestoreDashCollisionsWhenSeparated());
+            }
+        }
+
+        private IEnumerator RestoreDashCollisionsWhenSeparated()
+        {
+            WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
+
+            while (dashColliderStates.Count > 0)
+            {
+                yield return waitForFixedUpdate;
+
+                if (dashProtectionActive)
+                    continue;
+
+                RestoreSeparatedDashCollisions();
+            }
+
+            dashCollisionRestoreCoroutine = null;
+        }
+
+        private void RestoreSeparatedDashCollisions()
+        {
+            if (dashProtectionActive || IsOverlappingDashEnemy())
+                return;
+
+            RestoreAllDashCollisions();
+        }
+
+        private bool IsOverlappingDashEnemy()
+        {
+            ContactFilter2D contactFilter = new ContactFilter2D();
+            contactFilter.SetLayerMask(dashEnemyCollisionMask);
+            contactFilter.useTriggers = false;
+
+            foreach (DashColliderState state in dashColliderStates)
+            {
+                Collider2D playerCollider = state.Collider;
+                if (playerCollider == null || !playerCollider.isActiveAndEnabled)
+                    continue;
+
+                if (playerCollider.OverlapCollider(
+                        contactFilter,
+                        dashOverlapResults) > 0)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void RestoreAllDashCollisions()
+        {
+            foreach (DashColliderState state in dashColliderStates)
+            {
+                if (state.Collider != null)
+                {
+                    state.Collider.excludeLayers = state.OriginalExcludeLayers;
+                }
+            }
+
+            dashColliderStates.Clear();
+            dashCollisionRestoreCoroutine = null;
+        }
+
         public void NotifyDashStarted()
         {
             playerManager?.EventManager?.TriggerPlayerDashStarted();
@@ -254,6 +387,22 @@ namespace Nytherion.GamePlay.Characters.Player
         public void HandleSkillInput(int index)
         {
             
+        }
+
+        private void OnDisable()
+        {
+            if (dashProtectionActive)
+            {
+                playerHealth ??= GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.SetInvulnerable(wasInvulnerableBeforeDash);
+                }
+
+                dashProtectionActive = false;
+            }
+
+            RestoreAllDashCollisions();
         }
 
     }

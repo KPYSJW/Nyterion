@@ -13,10 +13,10 @@ GameObject:
   m_Layer: 3
   m_Name: ChargeRangePreview
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7148428337604731935, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6314872951048263074
 Transform:
   m_ObjectHideFlags: 0
@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 6248903175621408365}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.12, y: -0.442, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -47,10 +47,7 @@ MonoBehaviour:
   fillColor: {r: 1, g: 0, b: 0, a: 0.13}
   lineColor: {r: 1, g: 0.08, b: 0.08, a: 0.82}
   outlineThickness: 0.04
-  chevronThickness: 0.14
   arrowHeadLength: 0.42
-  chevronSpacing: 0.8
-  chevronMoveSpeed: 2
   sortingOrder: -1
 --- !u!1 &8336639199447205642
 GameObject:
@@ -219,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chargeRange: 10
-  chargeWaitTime: 2
+  chargeWaitTime: 1.2
   chargeCooldown: 2
   chargeSpeed: 12
   chargeDistance: 7

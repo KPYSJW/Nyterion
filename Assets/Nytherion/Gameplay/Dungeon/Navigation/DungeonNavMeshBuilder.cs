@@ -6,6 +6,7 @@ using NavMeshPlus.Extensions;
 public class DungeonNavMeshBuilder : MonoBehaviour
 {
     [SerializeField] private NavMeshSurface navMeshSurface;
+    [SerializeField] private NavMeshSurface batNavMeshSurface;
     [SerializeField] private CollectSources2d collectSources2D;
 
     private void Reset()
@@ -28,7 +29,7 @@ public class DungeonNavMeshBuilder : MonoBehaviour
         yield return new WaitForFixedUpdate();
         yield return new WaitForEndOfFrame();
         Physics2D.SyncTransforms();
-        navMeshSurface.BuildNavMesh();
+        BuildNavMeshes();
         var triangulation = UnityEngine.AI.NavMesh.CalculateTriangulation();
     Debug.Log($"[DungeonNavMeshBuilder] NavMesh verts={triangulation.vertices.Length}, tris={triangulation.indices.Length / 3}");
 
@@ -42,7 +43,16 @@ public class DungeonNavMeshBuilder : MonoBehaviour
             return;
         }
         Physics2D.SyncTransforms();
-        navMeshSurface.BuildNavMesh();
+        BuildNavMeshes();
     }
 
+    private void BuildNavMeshes()
+    {
+        navMeshSurface.BuildNavMesh();
+
+        if (batNavMeshSurface != null && batNavMeshSurface != navMeshSurface)
+        {
+            batNavMeshSurface.BuildNavMesh();
+        }
+    }
 }

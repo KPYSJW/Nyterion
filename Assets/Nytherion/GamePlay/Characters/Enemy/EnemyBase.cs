@@ -33,6 +33,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private Color originalColor = Color.white;
         private Coroutine hitFlashCoroutine;
 
+        [Header("Death Pixel Dissolve")]
+        [SerializeField, Min(0.01f)] private float deathDissolveDuration = 1.6f;
+        [SerializeField, Min(1f)] private float deathDissolvePixelSize = 3f;
+
+        private EnemyDeathDissolve deathDissolve;
+
         private void Awake()
         {
             if (spriteRenderer == null)
@@ -42,6 +48,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (spriteRenderer != null)
             {
                 originalColor = spriteRenderer.color;
+            }
+
+            deathDissolve = GetComponent<EnemyDeathDissolve>();
+            if (deathDissolve == null)
+            {
+                deathDissolve = gameObject.AddComponent<EnemyDeathDissolve>();
             }
 
             statusEffectManager = GetComponent<StatusEffectManager>();
@@ -68,6 +80,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             isDead = false;
             homeRoom = null;
             gameObject.SetActive(true);
+            deathDissolve?.ResetState(spriteRenderer);
 
             if (hitFlashCoroutine != null)
             {
@@ -164,7 +177,29 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             eventManager?.TriggerEnemyDeathEvent(this);
-            ReturnToPool();
+
+            if (hitFlashCoroutine != null)
+            {
+                StopCoroutine(hitFlashCoroutine);
+                hitFlashCoroutine = null;
+            }
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = originalColor;
+            }
+
+            if (deathDissolve != null)
+            {
+                deathDissolve.Play(
+                    spriteRenderer,
+                    deathDissolveDuration,
+                    deathDissolvePixelSize,
+                    ReturnToPool);
+            }
+            else
+            {
+                ReturnToPool();
+            }
         }
 
         private void ReturnToPool()

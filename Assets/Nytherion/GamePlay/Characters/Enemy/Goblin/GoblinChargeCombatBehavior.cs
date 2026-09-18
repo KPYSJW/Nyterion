@@ -55,6 +55,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private Collider2D bodyCollider;
         private GoblinChargePreview previewController;
         private Transform previewOriginalParent;
+        private Vector3 previewOriginalLocalPosition;
+        private Quaternion previewOriginalLocalRotation;
+        private Vector3 previewOriginalLocalScale;
         private Vector2 chargeDirection;
         private Vector2 blockedCheckPosition;
         private float traveledChargeDistance;
@@ -75,7 +78,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (chargeRangePreview != null)
             {
                 previewController = chargeRangePreview.GetComponent<GoblinChargePreview>();
-                previewOriginalParent = chargeRangePreview.transform.parent;
+                Transform previewTransform = chargeRangePreview.transform;
+                previewOriginalParent = previewTransform.parent;
+                previewOriginalLocalPosition = previewTransform.localPosition;
+                previewOriginalLocalRotation = previewTransform.localRotation;
+                previewOriginalLocalScale = previewTransform.localScale;
                 HideChargeRangePreview();
             }
         }
@@ -367,12 +374,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
             Transform previewTransform = chargeRangePreview.transform;
             previewTransform.SetParent(null, true);
 
-            Vector2 origin = GetCurrentPosition(enemy);
-            previewTransform.position = origin;
-            previewTransform.rotation = Quaternion.Euler(
+            Vector3 origin = GetCurrentPosition(enemy);
+            Quaternion previewRotation = Quaternion.Euler(
                 0f,
                 0f,
                 Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+            previewTransform.position = origin + enemy.transform.TransformVector(previewOriginalLocalPosition);
+            previewTransform.rotation = previewRotation;
 
             previewTransform.localScale = Vector3.one;
             chargeRangePreview.SetActive(true);
@@ -394,7 +402,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             if (previewOriginalParent != null)
             {
-                chargeRangePreview.transform.SetParent(previewOriginalParent, false);
+                Transform previewTransform = chargeRangePreview.transform;
+                previewTransform.SetParent(previewOriginalParent, false);
+                previewTransform.localPosition = previewOriginalLocalPosition;
+                previewTransform.localRotation = previewOriginalLocalRotation;
+                previewTransform.localScale = previewOriginalLocalScale;
             }
         }
 

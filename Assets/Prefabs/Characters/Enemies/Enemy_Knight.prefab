@@ -17,7 +17,8 @@ GameObject:
   - component: {fileID: 8908480456669535072}
   - component: {fileID: 3671000620282556980}
   - component: {fileID: -7055373821229787899}
-  m_Layer: 0
+  - component: {fileID: 8123456789012345678}
+  m_Layer: 3
   m_Name: Enemy_Knight
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -151,8 +152,10 @@ MonoBehaviour:
   enemyData: {fileID: 11400000, guid: a6e2723f0e22fc14185c02b3b07e542b, type: 2}
   aiController: {fileID: -2069670417764568593}
   spriteRenderer: {fileID: 1932627695806784113}
-  hitColor: {r: 1, g: 0, b: 0, a: 1}
+  hitColor: {r: 1, g: 0, b: 0, a: 0.13333334}
   hitFlashDuration: 0.2
+  deathDissolveDuration: 0.5
+  deathDissolvePixelSize: 5
 --- !u!114 &2475580092048304580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,3 +275,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &8123456789012345678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280546291285116296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69a2934a1aac47fa819b81a1e97ff9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceRenderer: {fileID: 1932627695806784113}
+  afterimageMaterial: {fileID: 2100000, guid: e6e769a9417b49a3b83fad8eb7ab813e, type: 2}
+  minimumMoveSpeed: 0.15
+  spawnDistance: 0.42
+  minimumSpawnInterval: 0.045
+  lifetime: 0.22
+  initialAlpha: 0.7
+  sortingOrderOffset: -1
