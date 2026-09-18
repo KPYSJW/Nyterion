@@ -13,7 +13,20 @@ namespace Nytherion.Core.Managers
         [SerializeField] private AudioClip titleBGM;
         [SerializeField] private AudioClip stageBGM;
         [SerializeField] private AudioClip villageBGM;
+        private float sfxVolume = 1f;
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            AudioListener.volume = UserSettings.GetMasterVolume(AudioListener.volume);
+            sfxVolume = UserSettings.GetSfxVolume(sfxVolume);
+
+            if (bgmSource != null)
+            {
+                bgmSource.volume = UserSettings.GetBgmVolume(bgmSource.volume);
+            }
+        }
 
         public override void Initialize()
         {
@@ -28,6 +41,20 @@ namespace Nytherion.Core.Managers
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            UserSettings.Save();
+        }
+
+        private void OnApplicationPause(bool isPaused)
+        {
+            if (isPaused)
+            {
+                UserSettings.Save();
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            UserSettings.Save();
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -72,14 +99,43 @@ namespace Nytherion.Core.Managers
 
         public void SetBGMVolume(float volume)
         {
-            if (bgmSource == null) return;
-            bgmSource.volume = volume;
+            float clampedVolume = Mathf.Clamp01(volume);
+            if (bgmSource != null)
+            {
+                bgmSource.volume = clampedVolume;
+            }
+
+            UserSettings.SetBgmVolume(clampedVolume);
         }
 
         public float GetBGMVolume()
         {
-            if (bgmSource == null) return 0f;
-            return bgmSource.volume;
+            return bgmSource != null
+                ? bgmSource.volume
+                : UserSettings.GetBgmVolume();
+        }
+
+        public void SetMasterVolume(float volume)
+        {
+            float clampedVolume = Mathf.Clamp01(volume);
+            AudioListener.volume = clampedVolume;
+            UserSettings.SetMasterVolume(clampedVolume);
+        }
+
+        public float GetMasterVolume()
+        {
+            return AudioListener.volume;
+        }
+
+        public void SetSFXVolume(float volume)
+        {
+            sfxVolume = Mathf.Clamp01(volume);
+            UserSettings.SetSfxVolume(sfxVolume);
+        }
+
+        public float GetSFXVolume()
+        {
+            return sfxVolume;
         }
     }
 }

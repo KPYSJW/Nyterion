@@ -25,6 +25,12 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float cooldown;
         public WeaponType weaponType;
 
+        /// <summary>
+        /// 근거리 무기 구현이 다시 활성화될 때까지 런타임 등장 후보에서 제외합니다.
+        /// 에셋과 저장 ID는 유지해 기존 참조가 손상되지 않도록 합니다.
+        /// </summary>
+        public bool IsRuntimeAvailable => weaponType != WeaponType.Melee;
+
         [Header("Visual Settings")]
         public Sprite weaponSprite;
         public Vector3 firePointOffset;
@@ -35,6 +41,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Min(0.01f)]
         [Tooltip("무기 외형의 균일 크기 배율")]
         public float visualScale = 1f;
+        [Tooltip("플레이어 SpriteRenderer의 Sorting Order에 더할 무기 표시 순서 오프셋")]
+        public int sortingOrderOffset = -1;
 
         [Header("Staff Recoil Settings")]
         [Tooltip("발사 시 Frenzy와 동일한 무기 반동을 적용합니다.")]

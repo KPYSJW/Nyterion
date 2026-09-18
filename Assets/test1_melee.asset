@@ -22,7 +22,7 @@ MonoBehaviour:
   StartRoomPrefab: {fileID: 2311304213159145408, guid: 152a1a907c2425348957e6d7fc8372ef, type: 3}
   ItemRoomPrefab: {fileID: 2311304213159145408, guid: ecf4718509ffaf846be5b10b50f93dca, type: 3}
   bossRoomPrefab: {fileID: 2311304213159145408, guid: 227752a830facb24a806d9acbf79c15e, type: 3}
-  bossMonsterData: {fileID: 11400000, guid: 291b06cc917da8e41b06980c713ea6a2, type: 2}
+  bossMonsterData: {fileID: 11400000, guid: a6e2723f0e22fc14185c02b3b07e542b, type: 2}
   obstacles:
   - prefab: {fileID: 5617744718106360532, guid: 2b08b76bb574b344fb055530b354cca9, type: 3}
     size: {x: 5, y: 5}
@@ -40,7 +40,7 @@ MonoBehaviour:
   - type: 0
     color: {r: 1, g: 1, b: 1, a: 1}
   dungeonMonsters:
-  - {fileID: 11400000, guid: 13b6a6aa207168649a1cabd842022bd2, type: 2}
+  - {fileID: 11400000, guid: a6e2723f0e22fc14185c02b3b07e542b, type: 2}
   wallThickness: 5
   roomSpacingMultiplier: 2
   placementIterations: 50

@@ -234,7 +234,9 @@ namespace Nytherion.Data.ScriptableObjects.Relics
 
         [Header("레벨 정보")]
         public int level = 1;
-        [HideInInspector] public bool isDisabled = false; 
+        [Tooltip("활성화하면 가챠, 보관함 로드 및 테스트용 전체 지급 대상에서 제외됩니다.")]
+        public bool isDisabled = false;
+        public bool IsRuntimeAvailable => !isDisabled;
 
         [Header("복합 효과 및 조건 모듈")]
         public List<RelicEffectModule> effectModules = new List<RelicEffectModule>();

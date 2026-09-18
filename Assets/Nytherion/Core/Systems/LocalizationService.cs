@@ -1,4 +1,5 @@
 using System;
+using Nytherion.Core.Data;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Utils;
@@ -26,10 +27,15 @@ namespace Nytherion.Core.Systems
                 LocalizationSettings.SelectedLocaleChanged += OnSelectedLocaleChanged;
                 isSubscribed = true;
             }
+
+            SetLanguage(UserSettings.GetLanguage(LocalizationText.CurrentLanguage));
         }
 
         public void SetLanguage(SupportedLanguage language)
         {
+            UserSettings.SetLanguage(language);
+            UserSettings.Save();
+
             if (!LocalizationText.IsConfigured)
             {
                 LocalizationText.SetTemporaryLanguage(language);
@@ -121,6 +127,8 @@ namespace Nytherion.Core.Systems
 
         private void OnSelectedLocaleChanged(Locale locale)
         {
+            UserSettings.SetLanguage(ToSupportedLanguage(locale));
+            UserSettings.Save();
             LocalizationText.NotifyLocaleChanged();
             LanguageChanged?.Invoke(ToSupportedLanguage(locale));
         }

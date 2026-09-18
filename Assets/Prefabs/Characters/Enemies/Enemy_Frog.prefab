@@ -286,6 +286,7 @@ MonoBehaviour:
   meleeAttackBehavior: {fileID: 6679662606424163912}
   rangedAttackBehavior: {fileID: 0}
   frogJumpMovement: {fileID: 6806867161985652481}
+  bagBarrageCombatBehavior: {fileID: 0}
 --- !u!1 &6406644339438500767
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,8 +303,8 @@ GameObject:
   - component: {fileID: -6143210738921888884}
   - component: {fileID: 7432930614068397816}
   - component: {fileID: 6854603731837941282}
-  - component: {fileID: 570057125629022021}
   - component: {fileID: 6806867161985652481}
+  - component: {fileID: 3815081093183209759}
   m_Layer: 3
   m_Name: Enemy_Frog
   m_TagString: Enemy
@@ -397,6 +398,7 @@ MonoBehaviour:
   attackCoolDown: 1
   fallbackDamage: 1
   meleeAttackCollider: {fileID: 5417447989486012054}
+  attackRangeCollider: {fileID: 0}
 --- !u!114 &9174351705613226578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,7 +437,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 6406644339438500767}
   m_Enabled: 0
   m_AgentTypeID: 0
-  m_Radius: 0.73
+  m_Radius: 0.3
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -464,8 +466,44 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: -0.49, z: 0}
   m_TimeToStationary: 0.5
---- !u!61 &570057125629022021
-BoxCollider2D:
+--- !u!114 &6806867161985652481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6406644339438500767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af879bc7ebba61f4882dbfdcbc233173, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyAIController: {fileID: 5678708647950428457}
+  animator: {fileID: 5223034523200152141}
+  landingAttack: {fileID: 6679662606424163912}
+  postAttackIdleDuration: 1
+  movementCooldownDuration: 1
+  movementHopIdleDuration: 0.2
+  movementJumpDistance: 1.5
+  attackJumpDistance: 4
+  maximumLandingOffset: 0.3
+  landingSeparationStartRatio: 0.75
+  attackRangePreview: {fileID: 1890039025637439136}
+  landingEffect: {fileID: 9041305298369495639}
+  landingEffectAnimator: {fileID: 3404303730081710737}
+  attackVisualHeight: 1.5
+  attackApproachEndRatio: 0.5
+  attackSlamStartRatio: 0.8
+  jumpTravelDuration: 0.46666667
+  attackJumpTravelDuration: 0.8666667
+  jumpMoveCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!58 &3815081093183209759
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -496,46 +534,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.51}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_Offset: {x: 0, y: -0.52}
   serializedVersion: 2
-  m_Size: {x: 1.27, y: 0.57}
-  m_EdgeRadius: 0
---- !u!114 &6806867161985652481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6406644339438500767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af879bc7ebba61f4882dbfdcbc233173, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyAIController: {fileID: 5678708647950428457}
-  animator: {fileID: 5223034523200152141}
-  landingAttack: {fileID: 6679662606424163912}
-  landingIdleDuration: 2
-  attackRangePreview: {fileID: 1890039025637439136}
-  landingEffect: {fileID: 9041305298369495639}
-  landingEffectAnimator: {fileID: 3404303730081710737}
-  jumpPathDistance: 6
-  jumpTravelDuration: 0.46666667
-  jumpMoveCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  m_Radius: 0.33
 --- !u!1 &9041305298369495639
 GameObject:
   m_ObjectHideFlags: 0

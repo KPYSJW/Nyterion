@@ -11,6 +11,7 @@ public class DashState : PlayerState
         playerController.IsDashing = true;
         playerController.LastDashTime = Time.time;
         playerController.NotifyDashStarted();
+        playerController.BeginDashProtection();
 
         DashAfterimageVFX afterimageEffect = playerController.GetComponent<DashAfterimageVFX>();
         if (afterimageEffect == null)
@@ -39,6 +40,7 @@ public class DashState : PlayerState
     public override void Exit(PlayerController playerController)
     {
         playerController.IsDashing = false;
+        playerController.EndDashProtection();
         DashAfterimageVFX afterimageEffect = playerController.GetComponent<DashAfterimageVFX>();
         if (afterimageEffect != null)
         {

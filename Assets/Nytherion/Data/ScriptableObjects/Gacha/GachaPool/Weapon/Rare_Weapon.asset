@@ -17,3 +17,9 @@ MonoBehaviour:
   items:
   - item: {fileID: 11400000, guid: 04156ef240e0cef419a073e7efc320de, type: 2}
     weight: 100
+  - item: {fileID: 11400000, guid: 2c29d295f9db42d1b268f018381744f1, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 86b4301486524459a421c2e2929c01c7, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 54a9f112087b46ff97d3902a9ce6aa53, type: 2}
+    weight: 100

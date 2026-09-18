@@ -1,0 +1,83 @@
+{
+    "unityVersion": "2022.3.62f2",
+    "scene": "GameScene",
+    "playMode": true,
+    "passed": true,
+    "checks": [
+        {
+            "name": "데이터베이스, 프리팹, 19/8 스프라이트 연결",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "차징 4/4/4/7 전체 프레임, 경계 및 최대 단계 반복",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "1단계 길이/폭, 판정, 총구 위치 및 렌더링",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "2단계 길이/폭, 판정, 총구 위치 및 렌더링",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "3단계 길이/폭, 판정, 총구 위치 및 렌더링",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "4단계 길이/폭, 판정, 총구 위치 및 렌더링",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "광선 전체 프레임과 2~5 구간의 1회 추가 반복",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "틱 간격, 여러 히트박스 중복 방지, 준비/소멸 무피해",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "낮은 프레임률에서도 틱 4회 유지",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "벽 앞에서 빔 종료 및 트리거 벽 무시",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "좌향/상향 발사, 총구 이동 추적, 발사 방향 고정",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "차징 시간 100% 감소 시 즉시 4단계",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "차징 취소, 발사 중 비활성화, 풀 재사용 초기화",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "실제 Update 차징 및 4단계 도달",
+            "passed": true,
+            "detail": ""
+        },
+        {
+            "name": "실제 프레임 진행: 4틱, 총 피해 16, 발사 종료",
+            "passed": true,
+            "detail": ""
+        }
+    ]
+}

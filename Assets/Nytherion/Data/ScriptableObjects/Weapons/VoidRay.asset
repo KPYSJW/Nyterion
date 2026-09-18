@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0de32b50a9a84c44a5d63b7fe8bc2012, type: 3}
+  m_Name: VoidRay
+  m_EditorClassIdentifier: 
+  uniqueID: d6a3c9fe-6a0e-4b49-9b3d-28c14d5f7a91
+  itemName_KR: "\uBCF4\uC774\uB4DC \uB808\uC774"
+  itemName_EN: Void Ray
+  icon: {fileID: 21300000, guid: 9cb3ff8a231e472489ec43bdc96b1274, type: 3}
+  description_KR: "\uACF5\uACA9 \uBC84\uD2BC\uC744 \uB204\uB974\uB294 \uB3D9\uC548
+    \uC870\uC900 \uBC29\uD5A5\uC73C\uB85C \uBCF4\uC774\uB4DC \uAD11\uC120\uC744 \uBC1C\uC0AC\uD574
+    \uC801\uC5D0\uAC8C \uC9C0\uC18D \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  description_EN: Hold the attack button to fire a continuous void beam that tracks
+    your aim.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 150
+  equipmentType: 0
+  traits: 
+  statModifiers: []
+  damage: 30
+  range: 6
+  cooldown: 0
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: 7a4e1f9433f84eb8b8120c7df090c611, type: 3}
+  firePointOffset: {x: 0.6, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: 0, y: 0, z: 0}
+  visualScale: 0.5
+  useStaffRecoil: 0
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 5723629214273418960, guid: e3d7af8295f947708a9ef1c16e7392bb, type: 3}
+  projectileSpeed: 0
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hasHomingProjectiles: 0
+  chargeThresholdTime: 0
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 651000000000000004, guid: b9ed14c8da534091a8b7ba674fd68c89, type: 3}
+  isArchivable: 0
+  damagePerSecond: 30
+  damageInterval: 0.1
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 2560
+  airOuterWidth: 0.09375
+  airCoreWidth: 0.0625
+  airJitterStrength: 0.32
+  outerWidth: 0.36
+  coreWidth: 0.09375
+  outerColor: {r: 0.02, g: 0.8, b: 0.95, a: 0.9}
+  coreColor: {r: 0.88, g: 1, b: 1, a: 1}
+  connectedStrandCount: 5
+  connectedStrandSpreadMultiplier: 1.2
+  connectedGlowAlpha: 0.24
+  damagePulseStrength: 0.3
+  damagePulseDuration: 0.07
+  bodyAnimationSpeed: 14
+  jitterStrength: 0.24
+  visualSegments: 12
+  pathRefreshInterval: 0.045
+  secondaryArcAlpha: 0.78
+  secondaryArcWidthMultiplier: 0.7
+  impactSparkCount: 6
+  impactSparkLength: 0.32
+  impactSparkWidth: 0.02
+  impactSparkDuration: 0.09
+  startEndFrames:
+  - {fileID: 597464867, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 1029419868, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 1698139964, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: -104647694, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 212373370, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 99685407, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 1799693795, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: -1272494078, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  visualFadeDuration: 0.08

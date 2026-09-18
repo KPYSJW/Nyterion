@@ -15,6 +15,7 @@ namespace Nytherion.Core.Systems
 
         [Header("Cursor Settings")]
         [SerializeField, Min(1f)] private float cursorScale = 1.5f;
+        [SerializeField] private Vector2 uiCursorHotspot = new Vector2(5f, 5f);
         [SerializeField] private CursorMode cursorMode = CursorMode.ForceSoftware;
 
         [Header("Scene Settings")]
@@ -65,14 +66,36 @@ namespace Nytherion.Core.Systems
                 return;
             }
 
-            Vector2 hotspot = targetCursor == scaledAimCursor && targetCursor != null
-                ? new Vector2(targetCursor.width * 0.5f, targetCursor.height * 0.5f)
-                : Vector2.zero;
+            Vector2 hotspot = GetHotspot(targetCursor);
 
             Cursor.SetCursor(targetCursor, hotspot, cursorMode);
             Cursor.visible = true;
             currentCursor = targetCursor;
             cursorApplied = true;
+        }
+
+        private Vector2 GetHotspot(Texture2D targetCursor)
+        {
+            if (targetCursor == null)
+            {
+                return Vector2.zero;
+            }
+
+            if (targetCursor == scaledAimCursor)
+            {
+                return new Vector2(targetCursor.width * 0.5f, targetCursor.height * 0.5f);
+            }
+
+            if (targetCursor != scaledUiCursor || uiCursor == null)
+            {
+                return Vector2.zero;
+            }
+
+            float scaleX = (float)targetCursor.width / uiCursor.width;
+            float scaleY = (float)targetCursor.height / uiCursor.height;
+            return new Vector2(
+                Mathf.RoundToInt(uiCursorHotspot.x * scaleX),
+                Mathf.RoundToInt(uiCursorHotspot.y * scaleY));
         }
 
         private void CreateScaledCursors()

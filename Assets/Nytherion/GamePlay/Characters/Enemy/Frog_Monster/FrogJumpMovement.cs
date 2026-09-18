@@ -8,14 +8,40 @@ namespace Nytherion.GamePlay.Characters.Enemy
 {
     public class FrogJumpMovement : MonoBehaviour, IEnemyMovementBehavior
     {
+        private enum JumpType
+        {
+            Attack,
+            Movement
+        }
+
         [Header("References")]
         [SerializeField] private EnemyAIController enemyAIController;
         [SerializeField] private Animator animator;
         [SerializeField] private MeleeAttackBehavior landingAttack;
 
-        [Header("Landing Settings")]
+        [Header("Attack Rhythm")]
         [Min(0f)]
-        [SerializeField] private float landingIdleDuration = 0.5f;
+        [SerializeField] private float postAttackIdleDuration = 1f;
+        [Min(0f)]
+        [SerializeField] private float movementHopIdleDuration = 0.2f;
+        [Min(0f)]
+        [SerializeField] private float movementHopRandomDelay = 0.15f;
+        [Min(1)]
+        [SerializeField] private int minimumMovementJumps = 1;
+        [Min(1)]
+        [SerializeField] private int maximumMovementJumps = 3;
+
+        [Header("Jump Distance")]
+        [Min(0f)]
+        [SerializeField] private float movementJumpDistance = 1.5f;
+        [Min(0f)]
+        [SerializeField] private float attackJumpDistance = 4f;
+
+        [Header("Landing Offset")]
+        [Min(0f)]
+        [SerializeField] private float maximumLandingOffset = 0.3f;
+        [Range(0f, 1f)]
+        [SerializeField] private float landingSeparationStartRatio = 0.75f;
 
         [Header("Attack Range Preview")]
         [SerializeField] private GameObject attackRangePreview;
@@ -24,13 +50,23 @@ namespace Nytherion.GamePlay.Characters.Enemy
         [SerializeField] private GameObject landingEffect;
         [SerializeField] private Animator landingEffectAnimator;
 
-        [Header("Jump Target Settings")]
-        [SerializeField] private float jumpPathDistance = 6f;
+        [Header("Attack Airborne Visual")]
+        [Min(0f)]
+        [SerializeField] private float attackVisualHeight = 2.5f;
+        [Range(0.1f, 0.8f)]
+        [Tooltip("공격 점프가 목표 지점 위에 도착하는 진행률입니다.")]
+        [SerializeField] private float attackApproachEndRatio = 0.35f;
+        [Range(0.2f, 0.95f)]
+        [Tooltip("목표 지점 위에서 체공한 뒤 급강하를 시작하는 진행률입니다.")]
+        [SerializeField] private float attackSlamStartRatio = 0.8f;
 
         [Header("Jump Timing")]
         [Min(0.01f)]
-        [Tooltip("FrogJumpStart와 FrogLand 애니메이션 이벤트 사이의 시간입니다.")]
+        [Tooltip("MoveJump의 FrogJumpStart와 FrogLand 이벤트 사이의 시간입니다.")]
         [SerializeField] private float jumpTravelDuration = 0.46666667f;
+        [Min(0.01f)]
+        [Tooltip("공격 Run의 FrogJumpStart와 FrogLand 이벤트 사이의 시간입니다.")]
+        [SerializeField] private float attackJumpTravelDuration = 0.8666667f;
         [Tooltip("점프 시간 진행률을 실제 이동 거리 진행률로 변환합니다.")]
         [SerializeField] private AnimationCurve jumpMoveCurve;
 
@@ -42,7 +78,19 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private ObstacleAvoidanceType originalAvoidanceType;
         private bool isJumping;
         private Vector3 currentLandingPosition;
+        private Vector3 currentPathLandingPosition;
+        private Vector3 landingSeparationOffset;
         private bool hasLandingPosition;
+        private JumpType currentJumpType = JumpType.Movement;
+        private int remainingMovementJumps;
+        private Transform visualTransform;
+        private Vector3 originalVisualLocalPosition;
+        private Collider2D bodyCollider;
+        private Vector2 originalBodyColliderOffset;
+        private bool originalBodyColliderIsTrigger;
+        private Collider2D ignoredPlayerBodyCollider;
+        private bool shouldRestorePlayerCollision;
+        private bool attackAirborneStateActive;
 
         public bool RequiresNavMeshAgent => true;
         public bool IsJumping => isJumping;
@@ -87,6 +135,20 @@ namespace Nytherion.GamePlay.Characters.Enemy
             {
                 animator = enemyAIController.animator;
             }
+
+            visualTransform = animator != null ? animator.transform : null;
+            if (visualTransform != null)
+            {
+                originalVisualLocalPosition = visualTransform.localPosition;
+            }
+
+            bodyCollider = GetComponent<Collider2D>();
+            if (bodyCollider != null)
+            {
+                originalBodyColliderOffset = bodyCollider.offset;
+                originalBodyColliderIsTrigger = bodyCollider.isTrigger;
+            }
+
             if (attackRangePreview != null)
             {
                 previewOriginalParent = attackRangePreview.transform.parent;
@@ -101,11 +163,35 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             float elapsedTime = Time.time - jumpStartTime;
-            float timeRatio = Mathf.Clamp01(elapsedTime / jumpTravelDuration);
-            float distanceRatio = Mathf.Clamp01(jumpMoveCurve.Evaluate(timeRatio));
+            float travelDuration = currentJumpType == JumpType.Attack
+                ? attackJumpTravelDuration
+                : jumpTravelDuration;
+            float timeRatio = Mathf.Clamp01(elapsedTime / travelDuration);
+            float distanceRatio;
+            float separationRatio;
+
+            if (currentJumpType == JumpType.Attack)
+            {
+                float approachRatio = Mathf.Clamp01(
+                    timeRatio / Mathf.Max(0.01f, attackApproachEndRatio));
+                distanceRatio = Mathf.SmoothStep(0f, 1f, approachRatio);
+                separationRatio = distanceRatio;
+            }
+            else
+            {
+                distanceRatio = Mathf.Clamp01(jumpMoveCurve.Evaluate(timeRatio));
+                separationRatio = Mathf.InverseLerp(
+                    landingSeparationStartRatio,
+                    1f,
+                    timeRatio);
+                separationRatio = Mathf.SmoothStep(0f, 1f, separationRatio);
+            }
+
             Vector3 nextPosition = GetPositionAlongPath(totalJumpPathLength * distanceRatio);
+            nextPosition += landingSeparationOffset * separationRatio;
 
             ApplyJumpPosition(nextPosition);
+            UpdateAttackAirborneVisual(timeRatio);
 
             if (timeRatio >= 1f)
             {
@@ -151,6 +237,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void OnEnable()
         {
+            currentJumpType = JumpType.Movement;
+            RollMovementJumpCount();
             enemyAIController?.SetMovementAllowed(false);
             landingAttack?.DeactivateCollider();
             HideAttackRangePreview();
@@ -169,6 +257,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 landingRoutine = null;
             }
 
+            RestoreAttackAirborneState();
             RestoreAgentSettings();
             hasLandingPosition = false;
             HideAttackRangePreview();
@@ -183,9 +272,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 landingRoutine = null;
             }
 
+            RestoreAttackAirborneState();
             enemyAIController?.SetMovementAllowed(false);
             RestoreAgentSettings();
             hasLandingPosition = false;
+            currentJumpType = JumpType.Movement;
+            RollMovementJumpCount();
             landingAttack?.ResetForReuse();
             attackRangePreview?.SetActive(false);
             landingEffect?.SetActive(false);
@@ -199,15 +291,24 @@ namespace Nytherion.GamePlay.Characters.Enemy
         // Run 애니메이션의 점프 시작 프레임에서 호출
         public void FrogJumpStart()
         {
-            if (!TryGetLandingPosition(out Vector3 landingPosition))
+            float jumpDistance = currentJumpType == JumpType.Attack
+                ? attackJumpDistance
+                : movementJumpDistance;
+
+            if (!TryGetLandingPosition(jumpDistance, out Vector3 desiredLandingPosition))
             {
                 CancelJumpStart();
                 return;
             }
 
+            Vector3 landingPosition = FindOffsetLandingPosition(
+                desiredLandingPosition);
+
             NavMeshAgent agent = enemyAIController.agent;
 
-            if (!agent.CalculatePath(landingPosition, jumpPath) ||
+            // 공중에서는 원래 목표 경로를 함께 사용하고, 착지 직전에만
+            // 분산 위치로 부드럽게 벌어진다.
+            if (!agent.CalculatePath(desiredLandingPosition, jumpPath) ||
                 jumpPath.status != NavMeshPathStatus.PathComplete)
             {
                 CancelJumpStart();
@@ -241,9 +342,24 @@ namespace Nytherion.GamePlay.Characters.Enemy
             jumpStartTime = Time.time;
             isJumping = true;
             currentLandingPosition = landingPosition;
+            currentPathLandingPosition = desiredLandingPosition;
+            landingSeparationOffset =
+                currentLandingPosition - currentPathLandingPosition;
             hasLandingPosition = true;
 
-            ShowAttackRangePreview(currentLandingPosition);
+            if (currentJumpType == JumpType.Attack)
+            {
+                BeginAttackAirborneState();
+            }
+
+            if (currentJumpType == JumpType.Attack)
+            {
+                ShowAttackRangePreview(currentLandingPosition);
+            }
+            else
+            {
+                HideAttackRangePreview();
+            }
         }
 
         private void CancelJumpStart()
@@ -253,6 +369,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
             jumpCorners = null;
             totalJumpPathLength = 0f;
             jumpStartTime = 0f;
+            currentPathLandingPosition = transform.position;
+            landingSeparationOffset = Vector3.zero;
+            RestoreAttackAirborneState();
 
             enemyAIController?.ClearForcedDestination();
             enemyAIController?.SetMovementAllowed(false);
@@ -303,7 +422,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 remainingDistance -= segmentLength;
             }
 
-            return currentLandingPosition;
+            return currentPathLandingPosition;
         }
 
         private void ApplyJumpPosition(Vector3 position)
@@ -355,9 +474,133 @@ namespace Nytherion.GamePlay.Characters.Enemy
             jumpCorners = null;
             totalJumpPathLength = 0f;
             jumpStartTime = 0f;
+            currentPathLandingPosition = currentPosition;
+            landingSeparationOffset = Vector3.zero;
         }
 
-        private bool TryGetLandingPosition(out Vector3 landingPosition)
+        private void BeginAttackAirborneState()
+        {
+            if (attackAirborneStateActive)
+            {
+                return;
+            }
+
+            attackAirborneStateActive = true;
+
+            if (bodyCollider != null)
+            {
+                originalBodyColliderOffset = bodyCollider.offset;
+                originalBodyColliderIsTrigger = bodyCollider.isTrigger;
+                bodyCollider.isTrigger = true;
+            }
+
+            ignoredPlayerBodyCollider =
+                enemyAIController != null && enemyAIController.player != null
+                    ? enemyAIController.player.GetComponent<Collider2D>()
+                    : null;
+
+            shouldRestorePlayerCollision =
+                bodyCollider != null &&
+                ignoredPlayerBodyCollider != null &&
+                !Physics2D.GetIgnoreCollision(
+                    bodyCollider,
+                    ignoredPlayerBodyCollider);
+
+            if (shouldRestorePlayerCollision)
+            {
+                Physics2D.IgnoreCollision(
+                    bodyCollider,
+                    ignoredPlayerBodyCollider,
+                    true);
+            }
+
+            UpdateAttackAirborneVisual(0f);
+        }
+
+        private void UpdateAttackAirborneVisual(float timeRatio)
+        {
+            if (!attackAirborneStateActive || currentJumpType != JumpType.Attack)
+            {
+                return;
+            }
+
+            float clampedTimeRatio = Mathf.Clamp01(timeRatio);
+            float approachEndRatio = Mathf.Clamp(
+                attackApproachEndRatio,
+                0.01f,
+                0.95f);
+            float slamStartRatio = Mathf.Clamp(
+                attackSlamStartRatio,
+                approachEndRatio,
+                0.99f);
+            float heightRatio;
+
+            if (clampedTimeRatio < approachEndRatio)
+            {
+                heightRatio = Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    clampedTimeRatio / approachEndRatio);
+            }
+            else if (clampedTimeRatio < slamStartRatio)
+            {
+                heightRatio = 1f;
+            }
+            else
+            {
+                float slamRatio = Mathf.InverseLerp(
+                    slamStartRatio,
+                    1f,
+                    clampedTimeRatio);
+                heightRatio = 1f - slamRatio * slamRatio;
+            }
+
+            float height = attackVisualHeight * heightRatio;
+
+            if (visualTransform != null)
+            {
+                visualTransform.localPosition =
+                    originalVisualLocalPosition + Vector3.up * height;
+            }
+
+            if (bodyCollider != null)
+            {
+                bodyCollider.offset =
+                    originalBodyColliderOffset + Vector2.up * height;
+            }
+        }
+
+        private void RestoreAttackAirborneState()
+        {
+            if (visualTransform != null)
+            {
+                visualTransform.localPosition = originalVisualLocalPosition;
+            }
+
+            if (bodyCollider != null)
+            {
+                bodyCollider.offset = originalBodyColliderOffset;
+                bodyCollider.isTrigger = originalBodyColliderIsTrigger;
+            }
+
+            if (shouldRestorePlayerCollision &&
+                bodyCollider != null &&
+                ignoredPlayerBodyCollider != null)
+            {
+                Physics2D.IgnoreCollision(
+                    bodyCollider,
+                    ignoredPlayerBodyCollider,
+                    false);
+            }
+
+            ignoredPlayerBodyCollider = null;
+            shouldRestorePlayerCollision = false;
+            attackAirborneStateActive = false;
+        }
+
+        private bool TryGetLandingPosition(
+            float jumpDistance,
+            out Vector3 landingPosition)
         {
             landingPosition = transform.position;
 
@@ -381,7 +624,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 return false;
             }
 
-            float remainingDistance = jumpPathDistance;
+            float remainingDistance = jumpDistance;
 
             for (int i = 1; i < jumpPath.corners.Length; i++)
             {
@@ -408,14 +651,69 @@ namespace Nytherion.GamePlay.Characters.Enemy
             landingPosition = jumpPath.corners[jumpPath.corners.Length - 1];
             return true;
         }
+
+        private Vector3 FindOffsetLandingPosition(Vector3 desiredPosition)
+        {
+            NavMeshAgent agent = enemyAIController.agent;
+            if (maximumLandingOffset <= 0f)
+            {
+                return desiredPosition;
+            }
+
+            uint hash = unchecked((uint)GetInstanceID());
+            hash ^= hash >> 16;
+            hash *= 0x7feb352d;
+            hash ^= hash >> 15;
+            hash *= 0x846ca68b;
+            hash ^= hash >> 16;
+
+            float angleRatio = (hash & 0xffff) / 65535f;
+            float radiusRatio = ((hash >> 16) & 0xffff) / 65535f;
+            float angle = angleRatio * Mathf.PI * 2f;
+            float radius = maximumLandingOffset * Mathf.Sqrt(radiusRatio);
+            Vector3 offset = new Vector3(
+                Mathf.Cos(angle),
+                Mathf.Sin(angle),
+                0f) * radius;
+
+            if (!NavMesh.SamplePosition(
+                    desiredPosition + offset,
+                    out NavMeshHit navMeshHit,
+                    maximumLandingOffset,
+                    agent.areaMask))
+            {
+                return desiredPosition;
+            }
+
+            Vector3 candidate = navMeshHit.position;
+            if (NavMesh.Raycast(
+                    desiredPosition,
+                    candidate,
+                    out _,
+                    agent.areaMask) ||
+                !agent.CalculatePath(candidate, jumpPath) ||
+                jumpPath.status != NavMeshPathStatus.PathComplete)
+            {
+                return desiredPosition;
+            }
+
+            return candidate;
+        }
         // Run 애니메이션의 착지 프레임에서 호출
        public void FrogLand()
         {
+            bool completedMovementJump =
+                currentJumpType == JumpType.Movement &&
+                isJumping &&
+                hasLandingPosition;
+
             // 수동 경로 이동의 마지막 값을 빨간 원과 동일한 착륙 위치로 확정한다.
             if (isJumping && hasLandingPosition)
             {
                 ApplyJumpPosition(currentLandingPosition);
             }
+
+            UpdateAttackAirborneVisual(1f);
 
             hasLandingPosition = false;
             HideAttackRangePreview();
@@ -427,11 +725,26 @@ namespace Nytherion.GamePlay.Characters.Enemy
             // 현재 위치에서 Agent 내부 좌표만 동기화하고 자동 위치 제어를 복구한다.
             RestoreAgentSettings();
 
-            landingAttack?.ActivateCollider();
-            PlayLandingEffect();
+            if (completedMovementJump)
+            {
+                remainingMovementJumps = Mathf.Max(
+                    0,
+                    remainingMovementJumps - 1);
+            }
+
+            if (currentJumpType == JumpType.Attack)
+            {
+                landingAttack?.ActivateCollider();
+                PlayLandingEffect();
+            }
+            else
+            {
+                landingAttack?.DeactivateCollider();
+            }
         }
         public void FrogStartIdle()
         {
+            RestoreAttackAirborneState();
             HideAttackRangePreview();
 
             if (landingRoutine != null)
@@ -444,18 +757,64 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 animator.Play("Idle", 0, 0f);
             }
 
-            landingRoutine = StartCoroutine(IdleRoutine());
-        }
-
-        private IEnumerator IdleRoutine()
-        {
-            yield return new WaitForSeconds(landingIdleDuration);
-
-            if (animator != null)
+            if (currentJumpType == JumpType.Attack)
             {
-                animator.Play("Run", 0, 0f);
+                landingRoutine = StartCoroutine(PostAttackIdleRoutine());
+                return;
             }
 
+            landingRoutine = StartCoroutine(MovementHopIdleRoutine());
+        }
+
+        private IEnumerator PostAttackIdleRoutine()
+        {
+            yield return new WaitForSeconds(postAttackIdleDuration);
+
+            currentJumpType = JumpType.Movement;
+            RollMovementJumpCount();
+            PlayCurrentJumpAnimation();
+
+            landingRoutine = null;
+        }
+
+        private void ContinueMovementOrAttack()
+        {
+            currentJumpType = remainingMovementJumps <= 0
+                ? JumpType.Attack
+                : JumpType.Movement;
+
+            PlayCurrentJumpAnimation();
+        }
+
+        private void PlayCurrentJumpAnimation()
+        {
+            if (animator == null)
+            {
+                return;
+            }
+
+            string stateName = currentJumpType == JumpType.Attack
+                ? "AttackJump"
+                : "Run";
+            animator.Play(stateName, 0, 0f);
+        }
+
+        private void RollMovementJumpCount()
+        {
+            int minimum = Mathf.Max(1, minimumMovementJumps);
+            int maximum = Mathf.Max(minimum, maximumMovementJumps);
+            remainingMovementJumps = Random.Range(minimum, maximum + 1);
+        }
+
+        private IEnumerator MovementHopIdleRoutine()
+        {
+            float randomDelay = movementHopRandomDelay > 0f
+                ? Random.Range(0f, movementHopRandomDelay)
+                : 0f;
+            yield return new WaitForSeconds(
+                movementHopIdleDuration + randomDelay);
+
+            ContinueMovementOrAttack();
             landingRoutine = null;
         }
         private void PlayLandingEffect()

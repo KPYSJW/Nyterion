@@ -15,6 +15,7 @@ using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Systems;
+using Nytherion.Data.ScriptableObjects.Weapons;
 
 namespace Nytherion.UI.Test
 {
@@ -256,6 +257,11 @@ namespace Nytherion.UI.Test
             {
                 if (item is EquipmentData equipment)
                 {
+                    if (equipment is WeaponData weapon && !weapon.IsRuntimeAvailable)
+                    {
+                        continue;
+                    }
+
                     equipmentAssets.Add(equipment);
                 }
             }

@@ -103,7 +103,7 @@ MonoBehaviour:
   - tag: IceShotHitVFX
     prefab: {fileID: 8242796725191159463, guid: c499398c197697d42ada936fbdee7862, type: 3}
     size: 40
-  - tag: Night
+  - tag: Knight
     prefab: {fileID: 280546291285116296, guid: cc17836ce7c3fe4439b01ca88e18e382, type: 3}
     size: 40
   - tag: Tree_melee

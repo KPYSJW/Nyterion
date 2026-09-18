@@ -9,6 +9,12 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField] private int playerSortingOrderOffset = -1;
 
         private SpriteRenderer playerSpriteRenderer;
+        private WeaponBase weapon;
+
+        private void Awake()
+        {
+            weapon = GetComponent<WeaponBase>();
+        }
 
         private void OnTransformParentChanged()
         {
@@ -28,13 +34,26 @@ namespace Nytherion.GamePlay.Combat
             }
 
             SpriteRenderer[] weaponRenderers = GetComponentsInChildren<SpriteRenderer>(true);
-            int sortingOrder = playerSpriteRenderer.sortingOrder + playerSortingOrderOffset;
+            if (weaponRenderers.Length == 0)
+            {
+                return;
+            }
+
+            SpriteRenderer rootRenderer = GetComponent<SpriteRenderer>();
+            int currentBaseOrder = rootRenderer != null
+                ? rootRenderer.sortingOrder
+                : weaponRenderers[0].sortingOrder;
+            int sortingOrderOffset = weapon != null && weapon.weaponData != null
+                ? weapon.weaponData.sortingOrderOffset
+                : playerSortingOrderOffset;
+            int targetBaseOrder = playerSpriteRenderer.sortingOrder + sortingOrderOffset;
 
             for (int i = 0; i < weaponRenderers.Length; i++)
             {
                 SpriteRenderer weaponRenderer = weaponRenderers[i];
+                int relativeOrder = weaponRenderer.sortingOrder - currentBaseOrder;
                 weaponRenderer.sortingLayerID = playerSpriteRenderer.sortingLayerID;
-                weaponRenderer.sortingOrder = sortingOrder;
+                weaponRenderer.sortingOrder = targetBaseOrder + relativeOrder;
             }
         }
 

@@ -31,6 +31,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void EnterAttackState(EnemyAIController enemy)
         {
+            if (enemy.player != null)
+            {
+                float horizontalDirection = enemy.player.position.x - enemy.transform.position.x;
+                if (Mathf.Abs(horizontalDirection) > 0.01f)
+                {
+                    enemy.SetForcedFacingDirection(new Vector2(horizontalDirection, 0f));
+                }
+            }
+
             enemy.StopMovement();
         }
 
@@ -80,6 +89,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void ExitAttackState(EnemyAIController enemy)
         {
+            enemy.ClearForcedFacingDirection();
         }
 
         public void ResetForReuse()

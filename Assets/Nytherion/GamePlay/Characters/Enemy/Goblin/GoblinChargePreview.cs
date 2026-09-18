@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Characters.Enemy
@@ -12,13 +11,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         [Header("Shape")]
         [SerializeField, Min(0.01f)] private float outlineThickness = 0.04f;
-        [SerializeField, Min(0.01f)] private float chevronThickness = 0.14f;
         [SerializeField, Min(0.05f)] private float arrowHeadLength = 0.42f;
-        [SerializeField, Min(0.1f)] private float chevronSpacing = 0.8f;
-        [SerializeField, Min(0f)] private float chevronMoveSpeed = 2f;
         [SerializeField] private int sortingOrder = -1;
 
-        private readonly List<LineRenderer> chevrons = new();
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
         private LineRenderer outline;
@@ -27,7 +22,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private Mesh fillMesh;
         private float previewLength = 1f;
         private float previewWidth = 0.65f;
-        private float flowOffset;
 
         private void Awake()
         {
@@ -39,17 +33,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             EnsureRenderers();
             RebuildShape();
-        }
-
-        private void Update()
-        {
-            if (chevronSpacing <= 0f)
-                return;
-
-            flowOffset = Mathf.Repeat(
-                flowOffset + chevronMoveSpeed * Time.deltaTime,
-                chevronSpacing);
-            UpdateChevrons();
         }
 
         public void Configure(float length, float width)
@@ -169,64 +152,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             fillMesh.RecalculateBounds();
 
             outline.SetPositions(vertices);
-            EnsureChevronCount(bodyEnd);
-            UpdateChevrons();
-        }
-
-        private void EnsureChevronCount(float bodyEnd)
-        {
-            int requiredCount = Mathf.CeilToInt(bodyEnd / chevronSpacing) + 2;
-            while (chevrons.Count < requiredCount)
-            {
-                GameObject chevronObject = new($"Chevron_{chevrons.Count}");
-                chevronObject.layer = gameObject.layer;
-                chevronObject.transform.SetParent(transform, false);
-
-                LineRenderer chevron = chevronObject.AddComponent<LineRenderer>();
-                ConfigureLineRenderer(chevron, chevronThickness);
-                chevron.positionCount = 3;
-                chevrons.Add(chevron);
-            }
-
-            for (int i = 0; i < chevrons.Count; i++)
-            {
-                chevrons[i].gameObject.SetActive(i < requiredCount);
-            }
-        }
-
-        private void UpdateChevrons()
-        {
-            float headLength = Mathf.Min(arrowHeadLength, previewLength * 0.25f);
-            float bodyEnd = previewLength - headLength;
-            float halfWidth = previewWidth * 0.5f;
-            float chevronHalfHeight = Mathf.Max(
-                0f,
-                halfWidth - chevronThickness * 0.5f);
-            float chevronDepth = previewWidth * 0.55f;
-            float cycleLength = bodyEnd + chevronSpacing;
-
-            for (int i = 0; i < chevrons.Count; i++)
-            {
-                LineRenderer chevron = chevrons[i];
-                float tipX = Mathf.Repeat(
-                    i * chevronSpacing + flowOffset,
-                    cycleLength);
-                bool visible = tipX >= chevronDepth && tipX <= bodyEnd;
-
-                chevron.enabled = visible;
-                if (!visible)
-                    continue;
-
-                chevron.SetPosition(0, new Vector3(
-                    tipX - chevronDepth,
-                    -chevronHalfHeight,
-                    0f));
-                chevron.SetPosition(1, new Vector3(tipX, 0f, 0f));
-                chevron.SetPosition(2, new Vector3(
-                    tipX - chevronDepth,
-                    chevronHalfHeight,
-                    0f));
-            }
         }
 
         private void OnDestroy()
@@ -239,10 +164,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private void OnValidate()
         {
             outlineThickness = Mathf.Max(0.01f, outlineThickness);
-            chevronThickness = Mathf.Max(0.01f, chevronThickness);
             arrowHeadLength = Mathf.Max(0.05f, arrowHeadLength);
-            chevronSpacing = Mathf.Max(0.1f, chevronSpacing);
-            chevronMoveSpeed = Mathf.Max(0f, chevronMoveSpeed);
         }
     }
 }

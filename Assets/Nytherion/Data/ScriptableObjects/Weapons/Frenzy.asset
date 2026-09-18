@@ -30,9 +30,12 @@ MonoBehaviour:
   cooldown: 0.08
   weaponType: 0
   weaponSprite: {fileID: 21300000, guid: a2be363839160cd40afafb32a1a61761, type: 3}
-  firePointOffset: {x: 0.4, y: 0, z: 0}
+  firePointOffset: {x: 0.85, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: -0.25, y: -0.1, z: 0}
+  visualPositionOffset: {x: -0.3, y: -0.2, z: 0}
+  visualScale: 0.5
+  sortingOrderOffset: 4
+  useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 3595441880066981771, guid: e10ed0cbe39f5c2439290de4b9e8a95c, type: 3}
   chargeEffectPrefab: {fileID: 0}

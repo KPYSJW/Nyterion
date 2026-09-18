@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 938e26318b6b38143aa9677c75d55c07, type: 3}
+  m_Name: LayLaser
+  m_EditorClassIdentifier: 
+  uniqueID: 182b467a-119b-430f-b6ab-6c2c873f72f5
+  itemName_KR: "\uB808\uC774 \uB808\uC774\uC800"
+  itemName_EN: Lay Laser
+  icon: {fileID: 21300000, guid: d885d008b96138d4e9fc95f3fd3719f7, type: 3}
+  description_KR: "공격 버튼을 눌러 4단계로 충전합니다. 버튼을 놓으면 단계에 따라 굵어지는 광선을 발사해 적에게 주기적으로 피해를 줍니다."
+  description_EN: Hold to charge through four stages. Release to fire a beam that
+    grows wider with charge and deals periodic damage.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 150
+  equipmentType: 0
+  traits: 
+  statModifiers: []
+  damage: 4
+  range: 10
+  cooldown: 0.6
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: d885d008b96138d4e9fc95f3fd3719f7, type: 3}
+  firePointOffset: {x: 1.15, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: -0.2, y: -0.15, z: 0}
+  visualScale: 1
+  useStaffRecoil: 0
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: acf79f7d8e62fe34d81d75039afa6f87, type: 2}
+  projectilePrefab: {fileID: 5723629214273418960, guid: 8dd94ee0da0ca9d45a7893049484935d, type: 3}
+  projectileSpeed: 0
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1.2
+  hasHomingProjectiles: 0
+  chargeThresholdTime: 0
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 7826317382683610794, guid: 2642a855e8bbd9b49995dff6b11a388c, type: 3}
+  isArchivable: 0
+  chargeFrames:
+  - {fileID: 1076166416, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -971229516, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -24518968, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -1260095958, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: 103841659, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -325912760, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -914848744, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -329878436, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -2062458517, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -1715403857, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: 402733231, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -1829366980, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: 204993963, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -1468613914, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -1766578497, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: 1701067135, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -306660812, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: 1915421911, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  - {fileID: -1721190733, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
+  fullChargeFramesPerSecond: 10
+  widthMultipliers: {x: 0.5, y: 1, z: 1.7, w: 2.6}
+  beamWidth: 0.5
+  firePointStageMultipliers: {x: 0.72, y: 0.78, z: 0.87, w: 1}
+  beamFrames:
+  - {fileID: 597464867, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
+  - {fileID: 1029419868, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
+  - {fileID: 1698139964, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
+  - {fileID: -104647694, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
+  - {fileID: 212373370, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
+  - {fileID: 99685407, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
+  - {fileID: 1799693795, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
+  - {fileID: -1272494078, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
+  startEndFrames:
+  - {fileID: 597464867, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 1029419868, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 1698139964, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: -104647694, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 212373370, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 99685407, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 1799693795, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: -1272494078, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  beamFramesPerSecond: 16
+  tickInterval: 0.2
+  beamOpaqueWidthRatio: 0.625
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 2560

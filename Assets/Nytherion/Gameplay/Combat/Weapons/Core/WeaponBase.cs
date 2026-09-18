@@ -17,6 +17,9 @@ namespace Nytherion.GamePlay.Combat
 
         /// <summary>공격 버튼을 누르고 있을 때 쿨다운마다 자동으로 재공격할 수 있는지 여부입니다.</summary>
         public virtual bool AllowAutoFire => true;
+
+        /// <summary>차징 무기가 공격 불가 중 들어온 누름 상태를 유지했다가 가능해지는 순간 다시 시작할지 여부입니다.</summary>
+        public virtual bool AllowHeldAttackRetry => false;
         
         [Tooltip("마지막 공격 시간 (Time.time 기준)")]
         protected float lastAttackTime;
