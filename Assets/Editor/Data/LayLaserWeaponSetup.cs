@@ -55,8 +55,8 @@ namespace Nytherion.Editor
                 data = ScriptableObject.CreateInstance<LayLaserWeaponData>();
                 data.itemName_KR = "레이 레이저";
                 data.itemName_EN = "Lay Laser";
-                data.description_KR = "공격 버튼을 눌러 4단계로 충전합니다. 버튼을 놓으면 단계에 따라 길고 굵어지는 광선을 발사해 적에게 주기적으로 피해를 줍니다.";
-                data.description_EN = "Hold to charge through four stages. Release to fire a beam that grows longer and wider with charge and deals periodic damage.";
+                data.description_KR = "공격 버튼을 눌러 4단계로 충전합니다. 버튼을 놓으면 단계에 따라 굵어지는 광선을 발사해 적에게 주기적으로 피해를 줍니다.";
+                data.description_EN = "Hold to charge through four stages. Release to fire a beam that grows wider with charge and deals periodic damage.";
                 data.weaponType = WeaponType.Ranged;
                 data.equipmentType = EquipmentType.Weapon;
                 data.weaponSprite = weaponSprite;
@@ -72,6 +72,7 @@ namespace Nytherion.Editor
                 data.visualScale = 0.7f;
                 data.spriteRotationOffset = 0f;
                 data.firePointOffset = new Vector3(1.15f, 0f, 0f);
+                data.firePointStageMultipliers = new Vector4(0.72f, 0.78f, 0.87f, 1f);
                 data.useStaffRecoil = false;
                 data.isArchivable = false;
                 data.projectileSpeed = 0f;

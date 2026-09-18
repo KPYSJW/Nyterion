@@ -37,6 +37,7 @@ namespace Nytherion.Editor
         private float cooldown = 0.5f;
         private int baseValue = 100;
         private Sprite weaponSprite;
+        private int sortingOrderOffset = -1;
         private Vector3 firePointOffset;
         private GameObject projectilePrefab;
         private float projectileSpeed = 10f;
@@ -149,6 +150,7 @@ namespace Nytherion.Editor
             cooldown = EditorGUILayout.FloatField("Cooldown", cooldown);
 
             weaponSprite = (Sprite)EditorGUILayout.ObjectField("Weapon Sprite", weaponSprite, typeof(Sprite), false);
+            sortingOrderOffset = EditorGUILayout.IntField("Sorting Order Offset", sortingOrderOffset);
             firePointOffset = EditorGUILayout.Vector3Field("Fire Point Offset", firePointOffset);
             projectilePrefab = (GameObject)EditorGUILayout.ObjectField("Projectile Prefab", projectilePrefab, typeof(GameObject), false);
             projectileSpeed = EditorGUILayout.FloatField("Projectile Speed", projectileSpeed);
@@ -341,6 +343,7 @@ namespace Nytherion.Editor
             
             EditorGUILayout.Space(5);
             selectedWeapon.weaponSprite = (Sprite)EditorGUILayout.ObjectField("Weapon Sprite", selectedWeapon.weaponSprite, typeof(Sprite), false);
+            selectedWeapon.sortingOrderOffset = EditorGUILayout.IntField("Sorting Order Offset", selectedWeapon.sortingOrderOffset);
             selectedWeapon.weaponPrefab = (WeaponBase)EditorGUILayout.ObjectField("Weapon Prefab", selectedWeapon.weaponPrefab, typeof(WeaponBase), false);
             selectedWeapon.projectilePrefab = (GameObject)EditorGUILayout.ObjectField("Projectile", selectedWeapon.projectilePrefab, typeof(GameObject), false);
             selectedWeapon.animatorController = (RuntimeAnimatorController)EditorGUILayout.ObjectField("Animator Controller", selectedWeapon.animatorController, typeof(RuntimeAnimatorController), false);
@@ -383,6 +386,7 @@ namespace Nytherion.Editor
             newData.baseValue = baseValue;
             newData.weaponType = weaponType;
             newData.weaponSprite = weaponSprite;
+            newData.sortingOrderOffset = sortingOrderOffset;
             newData.firePointOffset = firePointOffset;
             newData.projectilePrefab = projectilePrefab;
             newData.projectileSpeed = projectileSpeed;

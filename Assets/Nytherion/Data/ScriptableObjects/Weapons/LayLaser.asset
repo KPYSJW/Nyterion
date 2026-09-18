@@ -16,12 +16,9 @@ MonoBehaviour:
   itemName_KR: "\uB808\uC774 \uB808\uC774\uC800"
   itemName_EN: Lay Laser
   icon: {fileID: 21300000, guid: d885d008b96138d4e9fc95f3fd3719f7, type: 3}
-  description_KR: "\uACF5\uACA9 \uBC84\uD2BC\uC744 \uB20C\uB7EC 4\uB2E8\uACC4\uB85C
-    \uCDA9\uC804\uD569\uB2C8\uB2E4. \uBC84\uD2BC\uC744 \uB193\uC73C\uBA74 \uB2E8\uACC4\uC5D0
-    \uB530\uB77C \uAE38\uACE0 \uAD75\uC5B4\uC9C0\uB294 \uAD11\uC120\uC744 \uBC1C\uC0AC\uD574
-    \uC801\uC5D0\uAC8C \uC8FC\uAE30\uC801\uC73C\uB85C \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  description_KR: "공격 버튼을 눌러 4단계로 충전합니다. 버튼을 놓으면 단계에 따라 굵어지는 광선을 발사해 적에게 주기적으로 피해를 줍니다."
   description_EN: Hold to charge through four stages. Release to fire a beam that
-    grows longer and wider with charge and deals periodic damage.
+    grows wider with charge and deals periodic damage.
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 
@@ -75,9 +72,9 @@ MonoBehaviour:
   - {fileID: 1915421911, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
   - {fileID: -1721190733, guid: 21d302af38d49524997b1b36ea054bcc, type: 3}
   fullChargeFramesPerSecond: 10
-  lengthMultipliers: {x: 0.2, y: 0.4, z: 0.7, w: 1}
   widthMultipliers: {x: 0.5, y: 1, z: 1.7, w: 2.6}
   beamWidth: 0.5
+  firePointStageMultipliers: {x: 0.72, y: 0.78, z: 0.87, w: 1}
   beamFrames:
   - {fileID: 597464867, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
   - {fileID: 1029419868, guid: 8ff8f9db3d06d994597df7d65eb9658c, type: 3}
@@ -96,7 +93,7 @@ MonoBehaviour:
   - {fileID: 99685407, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
   - {fileID: 1799693795, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
   - {fileID: -1272494078, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
-  beamFramesPerSecond: 10
+  beamFramesPerSecond: 16
   tickInterval: 0.2
   beamOpaqueWidthRatio: 0.625
   targetLayers:

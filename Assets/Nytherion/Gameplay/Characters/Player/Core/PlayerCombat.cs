@@ -243,13 +243,14 @@ namespace Nytherion.GamePlay.Characters.Player
 
             if (isAttackHeld && currentWeapon != null)
             {
-                // 차징 무기가 아닌 경우 꾹 누르고 있으면 쿨다운에 맞춰 자동 연사 (Auto-fire)
-                if (!(currentWeapon is IChargeableWeapon) && currentWeapon.AllowAutoFire)
+                bool shouldRetry = currentWeapon is IChargeableWeapon
+                    ? currentWeapon.AllowHeldAttackRetry
+                    : currentWeapon.AllowAutoFire;
+                // 재시도를 허용한 차징 무기는 대기 중 누른 입력을 유지해
+                // 공격 가능 시점이 되는 첫 프레임에 다음 차징을 시작합니다.
+                if (shouldRetry && currentWeapon.CanAttack())
                 {
-                    if (currentWeapon.CanAttack())
-                    {
-                        Attack();
-                    }
+                    Attack();
                 }
             }
         }
@@ -285,7 +286,10 @@ namespace Nytherion.GamePlay.Characters.Player
             int currentBaseOrder = rootWeaponRenderer != null
                 ? rootWeaponRenderer.sortingOrder
                 : weaponRenderers[0].sortingOrder;
-            int targetBaseOrder = playerSpriteRenderer.sortingOrder + weaponSortingOrderOffset;
+            int sortingOrderOffset = currentWeapon.weaponData != null
+                ? currentWeapon.weaponData.sortingOrderOffset
+                : weaponSortingOrderOffset;
+            int targetBaseOrder = playerSpriteRenderer.sortingOrder + sortingOrderOffset;
             for (int i = 0; i < weaponRenderers.Length; i++)
             {
                 SpriteRenderer weaponRenderer = weaponRenderers[i];
@@ -323,9 +327,13 @@ namespace Nytherion.GamePlay.Characters.Player
 
                 Vector3 playerCenter = transform.position + centerOffset;
                 Vector2 mouseVector = mouseWorldPos - playerCenter;
+                bool keepVoidRayDirection = currentWeapon is VoidRayWeapon voidRay &&
+                    voidRay.firePoint != null &&
+                    ((Vector2)(mouseWorldPos - voidRay.firePoint.position)).sqrMagnitude < 0.0064f;
 
                 float targetAngle = currentAngle;
-                if (mouseVector.magnitude >= deadZoneRadius)
+                // 총구와 조준점이 거의 겹치면 atan2의 불안정한 값 대신 마지막 유효 각도를 유지합니다.
+                if (!keepVoidRayDirection && mouseVector.magnitude >= deadZoneRadius)
                 {
                     targetAngle = Mathf.Atan2(mouseVector.y, mouseVector.x) * Mathf.Rad2Deg;
                 }
@@ -401,6 +409,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private bool ShouldUseGenericCharging()
         {
             return currentWeapon != null &&
+                   !(currentWeapon is VoidRayWeapon) &&
                    !(currentWeapon is IChargeableWeapon) &&
                    playerManager != null &&
                    playerManager.playerRelicManager != null &&

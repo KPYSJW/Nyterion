@@ -41,6 +41,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Min(0.01f)]
         [Tooltip("무기 외형의 균일 크기 배율")]
         public float visualScale = 1f;
+        [Tooltip("플레이어 SpriteRenderer의 Sorting Order에 더할 무기 표시 순서 오프셋")]
+        public int sortingOrderOffset = -1;
 
         [Header("Staff Recoil Settings")]
         [Tooltip("발사 시 Frenzy와 동일한 무기 반동을 적용합니다.")]

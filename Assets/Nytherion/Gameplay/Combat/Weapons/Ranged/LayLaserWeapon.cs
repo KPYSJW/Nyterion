@@ -24,6 +24,7 @@ namespace Nytherion.GamePlay.Combat
         public bool IsCharging { get; private set; }
         public bool IsFiring => activeBeam != null && activeBeam.IsFiring;
         public override bool AllowAutoFire => false;
+        public override bool AllowHeldAttackRetry => true;
         public float ChargePercent => !IsCharging ? 0f : AdjustedChargeTime <= 0f
             ? 1f : Mathf.Clamp01(heldTime / AdjustedChargeTime);
         public int ChargeStage => data != null ? data.GetChargeStage(ChargePercent) + 1 : 1;
@@ -49,6 +50,7 @@ namespace Nytherion.GamePlay.Combat
             base.Initialize(weaponData);
             data = weaponData as LayLaserWeaponData;
             ConfigureChargeAnimator();
+            ResetFirePointPosition();
         }
 
         public override bool CanAttack()
@@ -70,6 +72,7 @@ namespace Nytherion.GamePlay.Combat
 
             heldTime = 0f;
             IsCharging = true;
+            UpdateFirePointForStage(0);
             animator.SetFloat(ChargeSpeedParameterHash,
                 LayLaserWeaponData.ChargeAnimationDuration / Mathf.Max(0.01f, AdjustedChargeTime));
             animator.SetFloat(FullChargeSpeedParameterHash,
@@ -87,6 +90,7 @@ namespace Nytherion.GamePlay.Combat
         {
             if (!IsCharging || deltaTime <= 0f) return;
             heldTime += deltaTime;
+            UpdateFirePointForStage(data.GetChargeStage(ChargePercent));
         }
 
         public override void AttackEnd()
@@ -95,6 +99,7 @@ namespace Nytherion.GamePlay.Combat
             int stage = data.GetChargeStage(ChargePercent);
             IsCharging = false;
             heldTime = 0f;
+            UpdateFirePointForStage(stage);
             ReturnToIdleAnimation();
 
             Vector2 direction = CurrentFireDirection;
@@ -102,7 +107,11 @@ namespace Nytherion.GamePlay.Combat
             GameObject instance = pool != null
                 ? pool.SpawnFromPool(data.projectilePrefab, firePoint.position, Quaternion.identity, 2)
                 : Instantiate(data.projectilePrefab, firePoint.position, Quaternion.identity);
-            if (instance == null) return;
+            if (instance == null)
+            {
+                ResetFirePointPosition();
+                return;
+            }
 
             activeBeam = instance.GetComponent<LayLaserBeam>();
             activeBeam.Initialize(this, firePoint, direction, data, stage,
@@ -115,6 +124,7 @@ namespace Nytherion.GamePlay.Combat
             if (activeBeam != beam) return;
             activeBeam = null;
             lastAttackTime = Time.time;
+            ResetFirePointPosition();
         }
 
         private void CancelAttack()
@@ -124,6 +134,7 @@ namespace Nytherion.GamePlay.Combat
             ReturnToIdleAnimation();
             if (activeBeam != null) activeBeam.StopImmediately();
             activeBeam = null;
+            ResetFirePointPosition();
         }
 
         private void ConfigureChargeAnimator()
@@ -149,6 +160,18 @@ namespace Nytherion.GamePlay.Combat
             }
             if (weaponRenderer != null && data != null && data.weaponSprite != null)
                 weaponRenderer.sprite = data.weaponSprite;
+        }
+
+        private void UpdateFirePointForStage(int stage)
+        {
+            if (firePoint != null && data != null)
+                firePoint.localPosition = data.GetFirePointOffset(stage);
+        }
+
+        private void ResetFirePointPosition()
+        {
+            if (firePoint != null && data != null)
+                firePoint.localPosition = data.firePointOffset;
         }
 
         private void OnDisable()

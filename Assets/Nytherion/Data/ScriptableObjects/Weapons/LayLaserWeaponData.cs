@@ -15,17 +15,18 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public Sprite[] chargeFrames = new Sprite[19];
         [Min(1f)] public float fullChargeFramesPerSecond = 10f;
 
-        [Header("단계별 광선 크기 (1 / 2 / 3 / 4단계)")]
-        public Vector4 lengthMultipliers = new Vector4(0.2f, 0.4f, 0.7f, 1f);
+        [Header("단계별 광선 폭 (1 / 2 / 3 / 4단계)")]
         public Vector4 widthMultipliers = new Vector4(0.5f, 1f, 1.7f, 2.6f);
         [Min(0.01f)] public float beamWidth = 0.5f;
+        [Tooltip("4단계 총구 위치를 기준으로 낮은 단계의 작은 시작 효과를 무기 쪽으로 당깁니다.")]
+        public Vector4 firePointStageMultipliers = new Vector4(0.72f, 0.78f, 0.87f, 1f);
 
         [Header("광선 애니메이션 및 틱 피해")]
         [Tooltip("원본 순서대로 0~7 프레임을 한 번만 재생합니다.")]
         public Sprite[] beamFrames = new Sprite[8];
         [Tooltip("LayLaserEffect와 같은 인덱스로 시작점과 끝점에 재생합니다.")]
         public Sprite[] startEndFrames = new Sprite[8];
-        [Min(1f)] public float beamFramesPerSecond = 10f;
+        [Min(1f)] public float beamFramesPerSecond = 16f;
         [Min(0.01f)] public float tickInterval = 0.2f;
         [Tooltip("원본 프레임에서 광선의 최대 불투명 폭 / 프레임 전체 폭입니다.")]
         [Range(0.01f, 1f)] public float beamOpaqueWidthRatio = 0.625f;
@@ -48,8 +49,14 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
             return Mathf.Min(3, Mathf.FloorToInt(Mathf.Clamp01(chargePercent) * 3f + 0.00001f));
         }
 
-        public float GetLength(int stage) => Mathf.Max(0.01f, range * lengthMultipliers[Mathf.Clamp(stage, 0, 3)]);
+        public float GetLength(int stage) => Mathf.Max(0.01f, range);
         public float GetWidth(int stage) => Mathf.Max(0.01f, beamWidth * widthMultipliers[Mathf.Clamp(stage, 0, 3)]);
+        public Vector3 GetFirePointOffset(int stage)
+        {
+            Vector3 offset = firePointOffset;
+            offset.x *= Mathf.Max(0f, firePointStageMultipliers[Mathf.Clamp(stage, 0, 3)]);
+            return offset;
+        }
 
         public bool HasValidFrames => chargeFrames != null && chargeFrames.Length == 19 &&
             beamFrames != null && beamFrames.Length == 8 &&

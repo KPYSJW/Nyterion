@@ -127,16 +127,20 @@ namespace Nytherion.Editor
                     Require(source.HasValidFrames && source.beamFrames.Length == 8 &&
                         source.startEndFrames.Length == 8, "프레임 연결 누락");
                     Require(source.weaponPrefab is LayLaserWeapon && source.weaponPrefab.weaponData == source, "무기 연결 누락");
+                    Require(source.weaponPrefab.AllowHeldAttackRetry, "공격 대기 중 누름 재시도가 비활성화되어 있습니다.");
                     LayLaserBeam beamPrefab = source.projectilePrefab.GetComponent<LayLaserBeam>();
                     Require(beamPrefab != null, "광선 연결 누락");
                     Require(beamPrefab.transform.Find("StartEffect")?.GetComponent<SpriteRenderer>() != null &&
                         beamPrefab.transform.Find("EndEffect")?.GetComponent<SpriteRenderer>() != null,
                         "광선 시작/끝 렌더러 연결 누락");
                     Require(source.weaponSprite.name == "LayLaser" && source.icon == source.weaponSprite, "외형 연결 오류");
-                    Equal(2f, source.GetLength(0)); Equal(4f, source.GetLength(1));
-                    Equal(7f, source.GetLength(2)); Equal(10f, source.GetLength(3));
+                    Equal(10f, source.GetLength(0)); Equal(10f, source.GetLength(1));
+                    Equal(10f, source.GetLength(2)); Equal(10f, source.GetLength(3));
+                    Equal(16f, source.beamFramesPerSecond); Equal(0.5f, source.BeamDuration);
                     Equal(0.25f, source.GetWidth(0)); Equal(0.5f, source.GetWidth(1));
                     Equal(0.85f, source.GetWidth(2)); Equal(1.3f, source.GetWidth(3));
+                    Equal(0.83f, source.GetFirePointOffset(0).x); Equal(0.9f, source.GetFirePointOffset(1).x);
+                    Equal(1f, source.GetFirePointOffset(2).x); Equal(1.15f, source.GetFirePointOffset(3).x);
                     ItemDatabaseSO database = AssetDatabase.LoadAssetAtPath<ItemDatabaseSO>("Assets/Nytherion/Data/ScriptableObjects/Items/ItemDatabaseSO.asset");
                     Require(database.allItems.FindAll(item => item == source).Count == 1, "데이터베이스 중복/누락");
                 });
@@ -181,10 +185,26 @@ namespace Nytherion.Editor
                     }
                 });
 
+                Record("차징 단계별 총구 위치와 4단계 기준 위치 복원", () =>
+                {
+                    using (Fixture f = new Fixture(source, true))
+                    {
+                        f.Owner.Attack(Vector2.right);
+                        Equal(source.GetFirePointOffset(0).x, f.Owner.firePoint.localPosition.x);
+                        for (int stage = 1; stage < 4; stage++)
+                        {
+                            f.ChargeBy(0.4f);
+                            Equal(source.GetFirePointOffset(stage).x, f.Owner.firePoint.localPosition.x);
+                        }
+                        f.Owner.AttackEnd();
+                        Equal(source.GetFirePointOffset(3).x, f.Owner.firePoint.localPosition.x);
+                    }
+                });
+
                 for (int stage = 0; stage < 4; stage++)
                 {
                     int currentStage = stage;
-                    Record($"{stage + 1}단계 길이/폭, 판정, 총구 위치 및 렌더링", () =>
+                    Record($"{stage + 1}단계 동일 길이/단계별 폭, 판정, 총구 위치 및 렌더링", () =>
                     {
                         using (Fixture f = new Fixture(source))
                         {
@@ -222,7 +242,8 @@ namespace Nytherion.Editor
                         SpriteRenderer endRenderer = f.Beam.transform.Find("EndEffect").GetComponent<SpriteRenderer>();
                         for (int i = 0; i < 8; i++)
                         {
-                            typeof(LayLaserBeam).GetField("elapsed", Private).SetValue(f.Beam, i * 0.1f + 0.001f);
+                            typeof(LayLaserBeam).GetField("elapsed", Private).SetValue(f.Beam,
+                                i / source.beamFramesPerSecond + 0.001f);
                             Invoke(f.Beam, "UpdateVisual");
                             Require(beamRenderer.sprite.name == "LayLaserEffect_" + i,
                                 "광선 프레임 오류: " + i);
@@ -238,11 +259,12 @@ namespace Nytherion.Editor
                     {
                         EnemyBase enemy = f.Enemy(Vector2.right * 2f, 3);
                         f.Fire(0f);
-                        f.AdvanceBeam(0.19f); Equal(1000f, Health(enemy));
+                        f.AdvanceBeam(source.DamageStartTime - 0.01f); Equal(1000f, Health(enemy));
                         f.AdvanceBeam(0.02f); Equal(996f, Health(enemy));
-                        f.AdvanceBeam(0.18f); Equal(996f, Health(enemy));
+                        f.AdvanceBeam(source.tickInterval - 0.02f); Equal(996f, Health(enemy));
                         f.AdvanceBeam(0.02f); Equal(992f, Health(enemy));
-                        f.AdvanceBeam(0.38f); Equal(992f, Health(enemy));
+                        f.AdvanceBeam(source.BeamDuration - source.DamageStartTime -
+                            source.tickInterval - 0.02f); Equal(992f, Health(enemy));
                         f.AdvanceBeam(0.02f); Equal(992f, Health(enemy));
                         Require(!f.Owner.IsFiring && !f.Owner.CanAttack(), "발사 종료 쿨다운 오류");
                     }
@@ -421,10 +443,10 @@ namespace Nytherion.Editor
             private EnemyData enemyData;
             public LayLaserBeam Beam => (LayLaserBeam)typeof(LayLaserWeapon).GetField("activeBeam", Private).GetValue(Owner);
 
-            public Fixture(LayLaserWeaponData source)
+            public Fixture(LayLaserWeaponData source, bool preserveFirePointOffset = false)
             {
                 Data = Object.Instantiate(source);
-                Data.firePointOffset = Vector3.zero;
+                if (!preserveFirePointOffset) Data.firePointOffset = Vector3.zero;
                 Owner = Object.Instantiate(source.weaponPrefab, new Vector3(20000f, 20000f, 0f), Quaternion.identity) as LayLaserWeapon;
                 Owner.Initialize(Data);
                 targets = new GameObject("[LayLaserVerification] 대상");

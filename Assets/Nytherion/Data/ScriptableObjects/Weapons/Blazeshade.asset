@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: Blazeshade
+  m_EditorClassIdentifier: 
+  uniqueID: 124ca32b-f029-46be-9c74-a980f61dddbd
+  itemName_KR: "\uBD88\uADF8\uB298 \uC9C0\uD321\uC774"
+  itemName_EN: Blazeshade Staff
+  icon: {fileID: 21300000, guid: b63b2e1e6b354c9aa9e639776de7a175, type: 3}
+  description_KR: "\uACF5\uACA9\uD558\uC9C0 \uC54A\uB294 \uB300\uC2E0, \uC7A5\uCC29
+    \uC911 \uD50C\uB808\uC774\uC5B4 \uC8FC\uC704\uC5D0 \uBD88\uAF43 \uACE0\uB9AC\uB97C
+    \uD3BC\uCCD0 \uBC94\uC704 \uC548\uC758 \uC801\uC5D0\uAC8C 1\uCD08\uB9C8\uB2E4
+    \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  description_EN: Instead of attacking, surrounds the player with a ring of fire
+    that damages nearby enemies every second.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 180
+  equipmentType: 0
+  traits: 03000000
+  statModifiers: []
+  damage: 10
+  range: 2.75
+  cooldown: 1
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: 106fbf8d69b24c37a40ae4addf5ae310, type: 3}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: 50
+  visualPositionOffset: {x: 0, y: 0.3, z: 0}
+  visualScale: 1
+  useStaffRecoil: 0
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 0
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hasHomingProjectiles: 0
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 551700000000000104, guid: b2b1404db8bc42119757c7e378dd1b08, type: 3}
+  isArchivable: 0

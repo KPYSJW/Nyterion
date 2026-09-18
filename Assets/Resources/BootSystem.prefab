@@ -161,5 +161,6 @@ MonoBehaviour:
   aimCursor: {fileID: 2800000, guid: 2e39f42e0bf443c9a5800f1e012704db, type: 3}
   uiCursor: {fileID: 2800000, guid: db33c5633f324972bb3ce810b59115ca, type: 3}
   cursorScale: 1.5
+  uiCursorHotspot: {x: 5, y: 5}
   cursorMode: 1
   gameplaySceneName: GameScene
