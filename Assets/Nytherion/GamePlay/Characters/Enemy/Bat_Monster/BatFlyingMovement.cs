@@ -7,9 +7,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
     [DisallowMultipleComponent]
     public sealed class BatFlyingMovement : MonoBehaviour, IEnemyMovementBehavior
     {
-        [Header("Flight Settings")]
-        [Min(0f)]
-        [SerializeField] private float roomBoundaryPadding = 0.75f;
+        [Header("Flight Path")]
+        [Min(0.05f)]
+        [SerializeField] private float pathRefreshInterval = 0.25f;
+        [Min(0.01f)]
+        [SerializeField] private float waypointReachDistance = 0.12f;
 
         [Header("Flying Enemy Separation")]
         [Min(0.01f)]
@@ -25,7 +27,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private Rigidbody2D rb;
         private NavMeshAgent navMeshAgent;
-        private EnemyBase enemyBase;
+        private NavMeshPath navMeshPath;
+        private Vector3[] pathCorners;
+        private int nextCornerIndex;
+        private float nextPathRefreshTime;
+        private Vector2 lastPlannedDestination;
         private Vector2 destination;
         private Vector3 currentVelocity;
         private float moveSpeed;
@@ -58,7 +64,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
                     return;
                 }
 
-                Vector2 separationPosition = ClampToHomeRoom(
+                Vector2 separationPosition = KeepOnBatNavMesh(
+                    currentPosition,
                     currentPosition + separationDirection * moveSpeed * Time.fixedDeltaTime);
                 rb.MovePosition(separationPosition);
                 currentVelocity =
@@ -66,7 +73,33 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 return;
             }
 
-            Vector2 targetPosition = ClampToHomeRoom(destination);
+            if (Time.time >= nextPathRefreshTime ||
+                (destination - lastPlannedDestination).sqrMagnitude > 0.25f)
+            {
+                RefreshPath(currentPosition);
+            }
+
+            if (pathCorners == null || nextCornerIndex >= pathCorners.Length)
+            {
+                currentVelocity = Vector3.zero;
+                return;
+            }
+
+            while (nextCornerIndex < pathCorners.Length &&
+                   ((Vector2)pathCorners[nextCornerIndex] - currentPosition).sqrMagnitude <=
+                   waypointReachDistance * waypointReachDistance)
+            {
+                nextCornerIndex++;
+            }
+
+            if (nextCornerIndex >= pathCorners.Length)
+            {
+                isMoving = false;
+                currentVelocity = Vector3.zero;
+                return;
+            }
+
+            Vector2 targetPosition = pathCorners[nextCornerIndex];
             Vector2 toTarget = targetPosition - currentPosition;
 
             if (toTarget.sqrMagnitude <= 0.0001f)
@@ -82,13 +115,16 @@ namespace Nytherion.GamePlay.Characters.Enemy
             float moveDistance = Mathf.Min(
                 moveSpeed * Time.fixedDeltaTime,
                 toTarget.magnitude);
-            Vector2 nextPosition = ClampToHomeRoom(
+            Vector2 nextPosition = KeepOnBatNavMesh(
+                currentPosition,
                 currentPosition + moveDirection * moveDistance);
 
             rb.MovePosition(nextPosition);
             currentVelocity = (nextPosition - currentPosition) / Time.fixedDeltaTime;
 
-            if ((nextPosition - targetPosition).sqrMagnitude <= 0.0001f)
+            if (nextCornerIndex == pathCorners.Length - 1 &&
+                (nextPosition - targetPosition).sqrMagnitude <=
+                waypointReachDistance * waypointReachDistance)
             {
                 isMoving = false;
                 currentVelocity = Vector3.zero;
@@ -104,7 +140,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void MoveTowards(Vector3 target)
         {
-            destination = ClampToHomeRoom(GetAttackAlignedDestination(target));
+            destination = GetAttackAlignedDestination(target);
             isMoving = true;
         }
 
@@ -124,6 +160,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             CacheReferences();
             StopMovement();
+            nextPathRefreshTime = 0f;
+            pathCorners = null;
+            navMeshPath?.ClearCorners();
             DisableGroundNavigation();
         }
 
@@ -136,7 +175,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (rb == null) rb = GetComponent<Rigidbody2D>();
             if (navMeshAgent == null) navMeshAgent = GetComponent<NavMeshAgent>();
-            if (enemyBase == null) enemyBase = GetComponent<EnemyBase>();
+            if (navMeshPath == null) navMeshPath = new NavMeshPath();
         }
 
         private void DisableGroundNavigation()
@@ -224,23 +263,62 @@ namespace Nytherion.GamePlay.Characters.Enemy
             return myId < otherId ? axis : -axis;
         }
 
-        private Vector2 ClampToHomeRoom(Vector2 target)
+        private NavMeshQueryFilter GetBatNavMeshFilter()
         {
-            if (enemyBase == null || enemyBase.homeRoom == null)
-                return target;
+            return new NavMeshQueryFilter
+            {
+                agentTypeID = navMeshAgent != null ? navMeshAgent.agentTypeID : 0,
+                areaMask = NavMesh.AllAreas
+            };
+        }
 
-            BoundsInt roomBounds = enemyBase.homeRoom.Bounds;
-            float minX = roomBounds.xMin + roomBoundaryPadding;
-            float maxX = roomBounds.xMax - roomBoundaryPadding;
-            float minY = roomBounds.yMin + roomBoundaryPadding;
-            float maxY = roomBounds.yMax - roomBoundaryPadding;
+        private void RefreshPath(Vector2 currentPosition)
+        {
+            nextPathRefreshTime = Time.time + pathRefreshInterval;
+            lastPlannedDestination = destination;
+            pathCorners = null;
+            nextCornerIndex = 0;
 
-            if (minX > maxX) minX = maxX = roomBounds.center.x;
-            if (minY > maxY) minY = maxY = roomBounds.center.y;
+            NavMeshQueryFilter filter = GetBatNavMeshFilter();
+            if (!NavMesh.SamplePosition(currentPosition, out NavMeshHit startHit, 0.75f, filter) ||
+                !NavMesh.SamplePosition(destination, out NavMeshHit destinationHit, 1.5f, filter) ||
+                !NavMesh.CalculatePath(
+                    startHit.position,
+                    destinationHit.position,
+                    filter,
+                    navMeshPath))
+            {
+                navMeshPath.ClearCorners();
+                return;
+            }
 
-            return new Vector2(
-                Mathf.Clamp(target.x, minX, maxX),
-                Mathf.Clamp(target.y, minY, maxY));
+            pathCorners = navMeshPath.corners;
+            nextCornerIndex = pathCorners.Length > 1 ? 1 : pathCorners.Length;
+        }
+
+        private Vector2 KeepOnBatNavMesh(Vector2 currentPosition, Vector2 proposedPosition)
+        {
+            NavMeshQueryFilter filter = GetBatNavMeshFilter();
+            if (!NavMesh.SamplePosition(currentPosition, out NavMeshHit currentHit, 0.75f, filter))
+                return currentPosition;
+
+            Vector2 meshPosition = currentHit.position;
+            if ((meshPosition - currentPosition).sqrMagnitude > 0.01f)
+                return meshPosition;
+
+            if (NavMesh.Raycast(meshPosition, proposedPosition, out NavMeshHit boundaryHit, filter))
+            {
+                float safeDistance = Mathf.Max(0f, boundaryHit.distance - 0.02f);
+                proposedPosition = Vector2.MoveTowards(
+                    meshPosition,
+                    proposedPosition,
+                    safeDistance);
+            }
+
+            if (!NavMesh.SamplePosition(proposedPosition, out NavMeshHit nextHit, 0.1f, filter))
+                return currentPosition;
+
+            return nextHit.position;
         }
     }
 }

@@ -15,7 +15,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
         [SerializeField] private Transform explosionPoint;
         [SerializeField] private Transform visual;
         [SerializeField] private SpriteRenderer visualRenderer;
+        [SerializeField] private Sprite fixedVisualSprite;
         [SerializeField] private SpriteRenderer shadowRenderer;
+        [SerializeField] private GameObject attackRangePreview;
+        [SerializeField] private Vector2 attackRangePreviewOffset = new(0f, -0.19f);
         [SerializeField, Min(0.01f)] private float arrivalDistance = 0.1f;
         [SerializeField, Min(0f)] private float arcHeight = 2.4f;
         [SerializeField, Range(0f, 1f)] private float arcScaleBoost = 0.15f;
@@ -49,7 +52,18 @@ namespace Nytherion.GamePlay.Characters.Enemy
             targetDistance = Vector2.Distance(launchPosition, targetPosition);
             flightProgress = 0f;
 
-            AssignRandomSprite();
+            if (fixedVisualSprite != null)
+            {
+                if (visualRenderer == null && visual != null)
+                    visualRenderer = visual.GetComponent<SpriteRenderer>();
+
+                if (visualRenderer != null)
+                    visualRenderer.sprite = fixedVisualSprite;
+            }
+            else
+            {
+                AssignRandomSprite();
+            }
 
             if (visual != null)
             {
@@ -68,6 +82,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             initialized = true;
             exploded = false;
+            UpdateAttackRangePreview(true);
             UpdateFlightVisuals();
         }
 
@@ -148,6 +163,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             float arc = 4f * flightProgress * (1f - flightProgress);
 
+            UpdateAttackRangePreview(true);
+
             if (visual != null)
             {
                 visual.position = transform.position + visualGroundOffset + Vector3.up * (arcHeight * arc);
@@ -171,6 +188,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (exploded) return;
             exploded = true;
+            UpdateAttackRangePreview(false);
 
             if (explosionPrefab != null)
             {
@@ -184,6 +202,18 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             Destroy(gameObject);
+        }
+
+        private void UpdateAttackRangePreview(bool visible)
+        {
+            if (attackRangePreview == null) return;
+
+            Transform previewTransform = attackRangePreview.transform;
+            previewTransform.position = targetPosition + attackRangePreviewOffset;
+            previewTransform.rotation = Quaternion.identity;
+
+            if (attackRangePreview.activeSelf != visible)
+                attackRangePreview.SetActive(visible);
         }
     }
 }

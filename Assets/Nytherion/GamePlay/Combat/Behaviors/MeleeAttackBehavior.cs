@@ -17,6 +17,9 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         [SerializeField] private MeleeAttackCollider meleeAttackCollider;
         [Tooltip("지정하면 숫자 거리 대신 이 원형 콜라이더와 대상 콜라이더의 실제 범위로 공격 시작을 판정합니다.")]
         [SerializeField] private CircleCollider2D attackRangeCollider;
+        [Tooltip("공격 원의 중심에서 공격을 시작할 반경 비율입니다. 1이면 기존처럼 대상 콜라이더의 가장자리로 판정합니다.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float attackStartRadiusRatio = 1f;
         private float lastAttackTime = -999f;
         private EnemyBase enemyBase;
 
@@ -45,6 +48,16 @@ namespace Nytherion.GamePlay.Combat.Behaviors
                 if (targetCollider == null)
                 {
                     targetCollider = target.GetComponentInChildren<Collider2D>();
+                }
+
+                if (attackStartRadiusRatio < 1f)
+                {
+                    Vector2 targetCenter = targetCollider != null
+                        ? targetCollider.bounds.center
+                        : (Vector2)target.position;
+                    float startRadius = rangeRadius * attackStartRadiusRatio;
+                    return (targetCenter - rangeCenter).sqrMagnitude <=
+                           startRadius * startRadius;
                 }
 
                 Vector2 targetPoint = targetCollider != null

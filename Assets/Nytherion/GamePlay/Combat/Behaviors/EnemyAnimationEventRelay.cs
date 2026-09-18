@@ -12,7 +12,11 @@ public class EnemyAnimationEventRelay : MonoBehaviour
     [SerializeField] private BagBarrageCombatBehavior bagBarrageCombatBehavior;
      public void ActivateCollider()
     {
-        if(meleeAttackBehavior!=null)
+        // 개구리는 FrogLand에서 이동 점프와 공격 점프를 구분한 뒤
+        // 공격 점프일 때만 착지 공격 콜라이더를 활성화한다.
+        if (frogJumpMovement != null)
+            return;
+
         meleeAttackBehavior?.ActivateCollider();
     }
 

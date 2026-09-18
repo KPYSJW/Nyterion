@@ -17,7 +17,7 @@ MonoBehaviour:
   maxHealth: 30
   moveSpeed: 2.2
   damageAmount: 1
-  detectRange: 6
+  detectRange: 12
   combatType: 0
   hybridSwitchDistance: 2.5
   dropChance: 1
