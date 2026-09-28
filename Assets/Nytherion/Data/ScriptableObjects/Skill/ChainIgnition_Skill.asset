@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd766695ac23a1c41961a33508755ac6, type: 3}
+  m_Name: ChainIgnition_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_chain_ignition
+  skillType: 12
+  skillName: "\uC5F0\uC1C4 \uC810\uD654"
+  description: "\uC2DC\uC804\uD55C \uC704\uCE58\uB97C \uC911\uC2EC\uC73C\uB85C 8\uBC29\uD5A5
+    \uD654\uC5FC \uD3ED\uBC1C\uC774 \uC138 \uCC28\uB840 \uBC14\uAE65\uC73C\uB85C
+    \uD37C\uC9D1\uB2C8\uB2E4. \uAC01 \uD30C\uB3D9\uC740 \uC801\uC5D0\uAC8C \uD55C
+    \uBC88\uC529 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 1
+  manaCost: 0
+  damage: 10
+  range: 3.6
+  icon: {fileID: 21300000, guid: 2f9eb43b8ebfbac46a1aca9c42d36a58, type: 3}
+  skillPrefab: {fileID: 321789389180959963, guid: 54952d672c03eab46af707e65eeba278, type: 3}
+  unlockMilestoneID: 
+  castCenterOffset: {x: 0, y: 0.5}
+  firstRingRadius: 1.2
+  waveInterval: 0.2
+  explosionRadius: 0.9
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  explosionFrames:
+  - {fileID: -1573681853, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: 1008365816, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: -1257224272, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: -1020992472, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: 30323046, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: -907549472, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  framesPerSecond: 12
+  visualScale: 2.4
+  damageFrame: 1
+  wavePrefab: {fileID: 3381285174121021873, guid: 2ddc16832af540946b1f9eada5181dd5, type: 3}

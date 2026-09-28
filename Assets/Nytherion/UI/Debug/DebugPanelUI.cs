@@ -16,6 +16,7 @@ using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.Data.ScriptableObjects.Skill;
 
 namespace Nytherion.UI.Test
 {
@@ -49,6 +50,7 @@ namespace Nytherion.UI.Test
         private GachaUIController gachaUIController;
         private RelicUIController relicUIController;
         private RelicManager relicManager;
+        private SkillDataManager skillDataManager;
         private ILocalizationService localizationService;
         private Button languageToggleButton;
 
@@ -63,6 +65,7 @@ namespace Nytherion.UI.Test
             GachaUIController gachaUIController,
             RelicUIController relicUIController,
             RelicManager relicManager,
+            SkillDataManager skillDataManager,
             ILocalizationService localizationService)
         {
             this.inventoryDataManager = inventoryDataManager;
@@ -74,6 +77,7 @@ namespace Nytherion.UI.Test
             this.gachaUIController = gachaUIController;
             this.relicUIController = relicUIController;
             this.relicManager = relicManager;
+            this.skillDataManager = skillDataManager;
             this.localizationService = localizationService;
         }
 
@@ -85,7 +89,7 @@ namespace Nytherion.UI.Test
                 TryManualInject();
             }
 
-            // 디버그용 장비 지급, 언어 전환 및 몬스터 소환 버튼을 런타임에 생성
+            // 디버그용 장비/스킬 지급, 언어 전환 및 몬스터 소환 버튼을 런타임에 생성
             CreateRuntimeDebugButtons();
 
             if (localizationService != null)
@@ -107,6 +111,7 @@ namespace Nytherion.UI.Test
                 if (saveLoadManager == null) saveLoadManager = dataScope.GetDataManager<SaveLoadManager>();
                 if (shopManager == null) shopManager = dataScope.GetDataManager<ShopManager>();
                 if (relicManager == null) relicManager = dataScope.GetDataManager<RelicManager>();
+                if (skillDataManager == null) skillDataManager = dataScope.GetDataManager<SkillDataManager>();
                 
                 // UI 컨트롤러들과 PlayerManager는 보통 GameSceneScope에 있으므로 씬에서 직접 찾음
                 if (playerManager == null) playerManager = FindObjectOfType<PlayerManager>();
@@ -296,6 +301,113 @@ namespace Nytherion.UI.Test
             UpdateStatusText($"일반 등급 장비 {addedCount}/{equipmentAssets.Count}개 지급 완료");
         }
 
+        /// <summary>
+        /// 루티 포탑 스킬을 기존 획득 경로로 보관함에 지급합니다.
+        /// </summary>
+        public void AcquireRootiTurretSkill()
+        {
+            if (skillDataManager == null)
+            {
+                TryManualInject();
+            }
+
+            if (skillDataManager == null || skillDataManager.skillDatabase == null)
+            {
+                UpdateStatusText("스킬 매니저 또는 데이터베이스가 준비되지 않았습니다.");
+                return;
+            }
+
+            SkillData skill = skillDataManager.skillDatabase.GetSkillById("skill_turret");
+            if (skill == null)
+            {
+                UpdateStatusText("데이터베이스에서 루티 포탑 스킬을 찾을 수 없습니다.");
+                return;
+            }
+
+            // 반복 클릭으로 레벨이나 경험치가 변경되지 않도록 중복 지급을 막습니다.
+            if (skillDataManager.skillStates.ContainsKey(skill.skillID))
+            {
+                UpdateStatusText("루티 포탑 스킬을 이미 보유하고 있습니다.");
+                return;
+            }
+
+            if (skillDataManager.storageSkills == null ||
+                System.Array.IndexOf(skillDataManager.storageSkills, null) < 0)
+            {
+                UpdateStatusText("스킬 보관함이 가득 찼습니다. 빈 슬롯을 확보해 주세요.");
+                return;
+            }
+
+            skillDataManager.AcquireSkill(skill);
+            UpdateStatusText("루티 포탑 획득 완료! 스킬 UI에서 장착해 주세요.");
+        }
+
+        /// <summary>
+        /// 데이터베이스의 모든 스킬 중 아직 보유하지 않은 스킬을 보관함에 지급합니다.
+        /// </summary>
+        public void AddAllSkills()
+        {
+            if (skillDataManager == null)
+            {
+                TryManualInject();
+            }
+
+            if (skillDataManager == null || skillDataManager.skillDatabase == null)
+            {
+                UpdateStatusText("스킬 매니저 또는 데이터베이스가 준비되지 않았습니다.");
+                return;
+            }
+
+            List<SkillData> allSkills = skillDataManager.skillDatabase.allSkills;
+            if (allSkills == null || allSkills.Count == 0)
+            {
+                UpdateStatusText("스킬 데이터베이스에 등록된 스킬이 없습니다.");
+                return;
+            }
+
+            var pendingSkills = new List<SkillData>();
+            var skillIds = new HashSet<string>();
+            foreach (SkillData skill in allSkills)
+            {
+                if (skill == null || string.IsNullOrEmpty(skill.skillID) || !skillIds.Add(skill.skillID))
+                {
+                    continue;
+                }
+
+                // 장착 중인 스킬도 포함해 중복 지급으로 레벨이나 경험치가 바뀌지 않도록 한다.
+                if (!skillDataManager.skillStates.ContainsKey(skill.skillID))
+                {
+                    pendingSkills.Add(skill);
+                }
+            }
+
+            if (pendingSkills.Count == 0)
+            {
+                UpdateStatusText(skillIds.Count == 0
+                    ? "스킬 데이터베이스에 유효한 스킬이 없습니다."
+                    : "모든 스킬을 이미 보유하고 있습니다.");
+                return;
+            }
+
+            int occupiedSlots = 0;
+            if (skillDataManager.storageSkills != null)
+            {
+                foreach (SkillData skill in skillDataManager.storageSkills)
+                {
+                    if (skill != null) occupiedSlots++;
+                }
+            }
+
+            // 기존 스킬을 보존하면서 전체 지급에 필요한 보관함 공간을 확보한다.
+            skillDataManager.EnsureStorageCapacity(occupiedSlots + pendingSkills.Count);
+            foreach (SkillData skill in pendingSkills)
+            {
+                skillDataManager.AcquireSkill(skill);
+            }
+
+            UpdateStatusText($"모든 스킬 획득 완료! 새 스킬 {pendingSkills.Count}개 지급. 스킬 UI에서 장착해 주세요.");
+        }
+
         public void ClearInventory()
         {
             if (inventoryDataManager != null)
@@ -415,6 +527,12 @@ namespace Nytherion.UI.Test
 
             CreateRuntimeButton(templateButton, parentTransform,
                 "AddAllEquipmentButton", "모든 장비 (일반)", AddAllEquipment);
+
+            CreateRuntimeButton(templateButton, parentTransform,
+                "AcquireRootiTurretSkillButton", "루티 포탑 획득", AcquireRootiTurretSkill);
+
+            CreateRuntimeButton(templateButton, parentTransform,
+                "AddAllSkillsButton", "모든 스킬 획득", AddAllSkills);
 
             languageToggleButton = CreateRuntimeButton(
                 templateButton,

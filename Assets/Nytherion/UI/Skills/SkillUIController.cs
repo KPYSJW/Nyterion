@@ -2,6 +2,7 @@ using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
+using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 using Nytherion.Core.Enums;
@@ -73,6 +74,13 @@ namespace Nytherion.UI.Skill
             {
                 // 자신 또는 부모(SkillRoot)에게서 CanvasGroup을 찾습니다.
                 this.controlledCanvasGroup = uiPanel.GetComponentInParent<CanvasGroup>();
+
+                // 중첩 Canvas의 슬롯도 마우스 이벤트를 받을 수 있도록 해당 Canvas에 레이캐스터를 보장한다.
+                Canvas skillCanvas = uiPanel.GetComponentInParent<Canvas>();
+                if (skillCanvas != null && skillCanvas.GetComponent<GraphicRaycaster>() == null)
+                {
+                    skillCanvas.gameObject.AddComponent<GraphicRaycaster>();
+                }
             }
             // --------------------------------------
         }
@@ -162,6 +170,15 @@ namespace Nytherion.UI.Skill
 
         public override void Close()
         {
+            // CanvasGroup으로 창을 숨길 때도 드래그 아이콘을 슬롯으로 복귀시킨다.
+            if (equipSlots != null)
+            {
+                foreach (var slot in equipSlots) slot?.CancelDrag();
+            }
+            if (storageSlots != null)
+            {
+                foreach (var slot in storageSlots) slot?.CancelDrag();
+            }
             base.Close();
             // UI가 닫힐 때 켜져있을 수 있는 툴팁 강제로 숨김
             if (TooltipPanel.Instance != null)
@@ -171,12 +188,20 @@ namespace Nytherion.UI.Skill
         }
 
         /// <summary>
-        /// 지정된 최대 갯수만큼 보관함 슬롯 프리팹을 생성하고 이벤트를 할당
+        /// 설정된 개수와 실제 보관함 크기에 맞춰 슬롯 프리팹을 생성하고 이벤트를 할당
         /// </summary>
         private void InitializeStorageSlots()
         {
-            storageSlots = new SkillSlotUI[maxStorageSlots];
-            for (int i = 0; i < maxStorageSlots; i++)
+            EnsureStorageSlots(Mathf.Max(maxStorageSlots, skillDataManager.storageSkills.Length));
+        }
+
+        private void EnsureStorageSlots(int requiredSlots)
+        {
+            int currentCount = storageSlots?.Length ?? 0;
+            if (requiredSlots <= currentCount) return;
+
+            System.Array.Resize(ref storageSlots, requiredSlots);
+            for (int i = currentCount; i < requiredSlots; i++)
             {
                 GameObject go = Instantiate(slotPrefab, storageContent);
                 SkillSlotUI newSlot = go.GetComponent<SkillSlotUI>();
@@ -201,6 +226,8 @@ namespace Nytherion.UI.Skill
         {
             if (skillDataManager == null) return;
             if (storageSlots == null || equipSlots == null) return;
+
+            EnsureStorageSlots(skillDataManager.storageSkills.Length);
 
             // 장착 슬롯 갱신
             int equipCount = 0;

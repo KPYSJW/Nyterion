@@ -12,29 +12,71 @@ namespace Nytherion.GamePlay.Combat
         private double nextDamageTime;
         private bool damageScheduleInitialized;
         private bool missingReferenceLogged;
+        private Vector2 aimDirection = Vector2.right;
+        private Vector3 baseLocalScale = Vector3.one;
+        private bool facingRight = true;
 
         public bool IsFiring => activeBeam != null && activeBeam.IsFiring;
+        public override bool OverrideRotation => true;
         public override bool AllowAutoFire => false;
         internal Transform CasterTransform => playerManager != null ? playerManager.transform : transform;
+        internal Vector2 CurrentMuzzleDirection => transform.right;
 
-        internal Vector2 CurrentFireDirection
-        {
-            get
-            {
-                float scaleSign = transform.lossyScale.y < 0f ? -1f : 1f;
-                float rotationOffset = data != null ? data.spriteRotationOffset : 0f;
-                Vector2 direction = Quaternion.Euler(0f, 0f, -rotationOffset * scaleSign) * transform.right;
-                return direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
-            }
-        }
+        internal Vector2 CurrentFireDirection => aimDirection;
 
         public override void Initialize(WeaponData weaponData)
         {
             StopActiveBeam(true);
             base.Initialize(weaponData);
             data = weaponData as VoidRayWeaponData;
+            baseLocalScale = new Vector3(Mathf.Abs(transform.localScale.x),
+                Mathf.Abs(transform.localScale.y), Mathf.Abs(transform.localScale.z));
+            aimDirection = Vector2.right;
+            facingRight = true;
             damageScheduleInitialized = false;
             missingReferenceLogged = false;
+        }
+
+        internal void UpdateAimAndPose(Vector3 mouseWorldPosition, Vector3 playerCenter)
+        {
+            Vector2 centerDirection = mouseWorldPosition - playerCenter;
+            if (centerDirection.sqrMagnitude >= 0.0064f)
+                centerDirection.Normalize();
+            else
+                centerDirection = aimDirection;
+            if (Mathf.Abs(centerDirection.x) > 0.01f)
+                facingRight = centerDirection.x > 0f;
+
+            VoidRayWeaponData poseData = data != null ? data : weaponData as VoidRayWeaponData;
+            Vector3 baseOffset = poseData != null
+                ? poseData.visualPositionOffset
+                : transform.localPosition;
+            float orbitAngle = Mathf.Atan2(centerDirection.y, centerDirection.x) * Mathf.Rad2Deg;
+            Vector2 rotatedOffset = Quaternion.Euler(0f, 0f, orbitAngle) *
+                new Vector2(baseOffset.x, baseOffset.y);
+            transform.localPosition = new Vector3(rotatedOffset.x, rotatedOffset.y, baseOffset.z);
+
+            Vector2 weaponDirection = mouseWorldPosition - transform.position;
+            if (weaponDirection.sqrMagnitude >= 0.0064f)
+                weaponDirection.Normalize();
+            else
+                weaponDirection = centerDirection;
+            float weaponAngle = Mathf.Atan2(weaponDirection.y, weaponDirection.x) * Mathf.Rad2Deg;
+            transform.localRotation = Quaternion.Euler(0f, 0f, weaponAngle);
+            transform.localScale = new Vector3(
+                baseLocalScale.x,
+                facingRight ? baseLocalScale.y : -baseLocalScale.y,
+                baseLocalScale.z);
+
+            if (firePoint == null)
+            {
+                LogMissingReferenceOnce("마우스 조준 자세를 계산할 FirePoint 참조가 없습니다.");
+                return;
+            }
+
+            Vector2 fromMuzzle = mouseWorldPosition - firePoint.position;
+            if (fromMuzzle.sqrMagnitude >= 0.0064f)
+                aimDirection = fromMuzzle.normalized;
         }
 
         public override bool CanAttack()
@@ -45,6 +87,10 @@ namespace Nytherion.GamePlay.Combat
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
             if (!CanAttack()) return;
+
+            Vector2 targetDirection = targetPosition - firePoint.position;
+            if (targetDirection.sqrMagnitude >= 0.0064f)
+                aimDirection = targetDirection.normalized;
 
             ObjectPoolManager pool = ObjectPoolManager.Instance;
             GameObject instance = pool != null

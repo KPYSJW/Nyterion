@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: ComradeBlast
+  m_EditorClassIdentifier: 
+  relicName: Comrade Blast
+  koreanName: "\uBE14\uB798\uC2A4\uD2B8"
+  description_KR: "\uD50C\uB808\uC774\uC5B4\uB97C \uB530\uB77C\uB2E4\uB2C8\uBA70
+    \uAC00\uC7A5 \uAC00\uAE4C\uC6B4 \uC801\uC5D0\uAC8C \uBBF8\uC0AC\uC77C\uC744 \uBC1C\uC0AC\uD558\uB294
+    \uBE14\uB798\uC2A4\uD2B8 \uC18C\uD658\uC218\uB97C \uBD80\uB985\uB2C8\uB2E4.\n\uC720\uBB3C\uC744
+    \uC7A5\uCC29\uD558\uB294 \uB3D9\uC548 \uC720\uC9C0\uB429\uB2C8\uB2E4."
+  description_EN: Summons Blast, a companion that follows the player and fires missiles
+    at the nearest enemy. It remains while equipped.
+  Image: {fileID: -1233655567, guid: a36ecfec883c30348a5a77e3dc98a0cd, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: "\uD50C\uB808\uC774\uC5B4\uB97C \uB530\uB77C\uB2E4\uB2C8\uBA70
+      \uAC00\uAE4C\uC6B4 \uC801\uC5D0\uAC8C \uBBF8\uC0AC\uC77C\uC744 \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+    description_EN: Follows the player and fires missiles at nearby enemies.
+    condition:
+      rid: 7227149827232497664
+    effects:
+    - rid: 7227149827232497665
+  grantsProjectileHoming: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: SummonedCreatureSeries
+  synergySetBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: 7227149827232497664
+      type: {class: AlwaysTrueCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data: 
+    - rid: 7227149827232497665
+      type: {class: SummonedCompanionRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        companionPrefab: {fileID: 5223645402979539207, guid: bcd8153b096f7d5468131271eb8454ed, type: 3}
+        spawnOffset: {x: -1.15, y: 0.55, z: 0}

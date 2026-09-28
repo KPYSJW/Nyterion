@@ -36,8 +36,14 @@ namespace Nytherion.GamePlay.Characters.Companions
         [SerializeField] private float attackRange = 5f;
         [SerializeField] protected float attackInterval = 1f;
         [SerializeField] protected float attackFreezeDuration = 0.5f;
+        [Tooltip("비어 있으면 projectilePoolTag에 등록된 투사체를 사용합니다.")]
+        [SerializeField] private GameObject projectilePrefab;
         [SerializeField] private string projectilePoolTag = "Player_Arrow";
+        [Tooltip("소환수 기준 로컬 발사 위치입니다. 좌우 반전 시 함께 반전됩니다.")]
+        [SerializeField] private Vector3 projectileSpawnOffset;
         [SerializeField] private float projectileSpeed = 10f;
+        [SerializeField] private float projectileRotationOffset;
+        [SerializeField] private float projectileTravelDistance = 10f;
         [SerializeField] private float baseDamage = 5f;
         [SerializeField] private float weaponDamageRatio = 0.5f;
         [SerializeField] private float damageRatioPerLevel = 0.1f;
@@ -85,6 +91,11 @@ namespace Nytherion.GamePlay.Characters.Companions
         protected virtual bool ShouldPursueCombatTarget => false;
         protected virtual float CombatApproachDistance => 0f;
         protected virtual float CombatStopDistance => 0f;
+        protected virtual bool IsUsingCustomMovement => false;
+        protected virtual bool CanAutoAttack => true;
+        protected bool IsMoving => isMoving;
+        protected Rigidbody2D CompanionRigidbody => companionRigidbody;
+        protected float MaxMoveSpeed => maxMoveSpeed;
 
         public void Initialize(PlayerManager playerManager, int companionLevel)
         {
@@ -131,6 +142,7 @@ namespace Nytherion.GamePlay.Characters.Companions
             attackFreezeTimer = 0f;
             nextAttackTime = Time.time;
             nextJumpTime = Time.time;
+            OnInitialized();
         }
 
         private void Awake()
@@ -164,14 +176,31 @@ namespace Nytherion.GamePlay.Characters.Companions
             }
 
             Transform combatTarget = FindPriorityTarget();
-            UpdateMovementTarget(combatTarget);
-            UpdateFlip(combatTarget);
-            AutoAttack(combatTarget);
+            OnCompanionUpdate(combatTarget);
+            if (IsUsingCustomMovement)
+            {
+                SetMoving(false);
+            }
+            else
+            {
+                UpdateMovementTarget(combatTarget);
+                UpdateFlip(combatTarget);
+            }
+
+            if (CanAutoAttack)
+            {
+                AutoAttack(combatTarget);
+            }
         }
 
         private void FixedUpdate()
         {
             if (!isInitialized || owner == null || companionRigidbody == null)
+            {
+                return;
+            }
+
+            if (TryHandleCustomFixedUpdate())
             {
                 return;
             }
@@ -380,6 +409,7 @@ namespace Nytherion.GamePlay.Characters.Companions
             float horizontalDifference;
             if (combatTarget != null)
             {
+                // 플레이어를 따라 이동 중이어도 감지한 적을 계속 바라봅니다.
                 horizontalDifference = combatTarget.position.x - transform.position.x;
             }
             else
@@ -436,6 +466,28 @@ namespace Nytherion.GamePlay.Characters.Companions
             return FindClosestEnemy(transform.position, attackRange);
         }
 
+        /// <summary>
+        /// 초기화 직후 소환수별 런타임 상태를 준비합니다.
+        /// </summary>
+        protected virtual void OnInitialized()
+        {
+        }
+
+        /// <summary>
+        /// 공통 표적 탐색 후 소환수별 상태를 갱신합니다.
+        /// </summary>
+        protected virtual void OnCompanionUpdate(Transform combatTarget)
+        {
+        }
+
+        /// <summary>
+        /// true를 반환하면 해당 물리 프레임의 기본 추적 이동을 건너뜁니다.
+        /// </summary>
+        protected virtual bool TryHandleCustomFixedUpdate()
+        {
+            return false;
+        }
+
         protected Transform FindClosestEnemy(Vector2 searchCenter, float searchRange)
         {
             int hitCount = Physics2D.OverlapCircleNonAlloc(searchCenter, searchRange, EnemyBuffer);
@@ -466,29 +518,51 @@ namespace Nytherion.GamePlay.Characters.Companions
         /// </summary>
         protected void FireAtTarget(Transform target)
         {
-            attackFreezeTimer = attackFreezeDuration;
-            SetMoving(false);
+            LaunchProjectileAtTarget(target);
+            TriggerAttackAnimation();
+        }
 
-            if (ObjectPoolManager.Instance == null || string.IsNullOrEmpty(projectilePoolTag))
+        /// <summary>
+        /// 준비된 표적을 향해 투사체만 발사합니다.
+        /// 공격 애니메이션의 특정 프레임에서 발사해야 하는 소환수가 사용합니다.
+        /// </summary>
+        protected void LaunchProjectileAtTarget(Transform target)
+        {
+            if (target == null)
             {
-                LogMissingProjectilePool();
-                TriggerAttackAnimation();
                 return;
             }
 
-            Vector2 direction = (target.position - transform.position).normalized;
-            GameObject projectile = ObjectPoolManager.Instance.SpawnFromPool(
-                projectilePoolTag,
-                transform.position,
-                Quaternion.identity);
+            attackFreezeTimer = attackFreezeDuration;
+            SetMoving(false);
+
+            if (ObjectPoolManager.Instance == null ||
+                (projectilePrefab == null && string.IsNullOrEmpty(projectilePoolTag)))
+            {
+                LogMissingProjectilePool();
+                return;
+            }
+
+            Vector3 spawnPosition = transform.TransformPoint(projectileSpawnOffset);
+            Vector2 direction = (target.position - spawnPosition).normalized;
+            GameObject projectile = projectilePrefab != null
+                ? ObjectPoolManager.Instance.SpawnFromPool(
+                    projectilePrefab,
+                    spawnPosition,
+                    Quaternion.identity)
+                : ObjectPoolManager.Instance.SpawnFromPool(
+                    projectilePoolTag,
+                    spawnPosition,
+                    Quaternion.identity);
             if (projectile == null)
             {
-                TriggerAttackAnimation();
                 return;
             }
 
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            projectile.transform.rotation = Quaternion.AngleAxis(
+                angle + projectileRotationOffset,
+                Vector3.forward);
 
             if (projectile.TryGetComponent(out Rigidbody2D projectileRigidbody))
             {
@@ -498,6 +572,11 @@ namespace Nytherion.GamePlay.Characters.Companions
             if (projectile.TryGetComponent(out IProj projectileController))
             {
                 projectileController.SetSpeed(projectileSpeed);
+            }
+
+            if (projectile.TryGetComponent(out ProjDistanceLimit distanceLimit))
+            {
+                distanceLimit.Initialize(projectileTravelDistance);
             }
 
             WeaponBase currentWeapon = ownerCombat != null ? ownerCombat.currentWeapon : null;
@@ -536,7 +615,6 @@ namespace Nytherion.GamePlay.Characters.Companions
                 projectileRenderer.sortingOrder = spriteRenderer.sortingOrder + 1;
             }
 
-            TriggerAttackAnimation();
         }
 
         protected float GetProjectileDamage(WeaponBase currentWeapon)
@@ -570,7 +648,7 @@ namespace Nytherion.GamePlay.Characters.Companions
             isAlternateAttackNext = !isAlternateAttackNext;
         }
 
-        private void TriggerAnimation(string parameterName)
+        protected void TriggerAnimation(string parameterName)
         {
             if (animator == null || string.IsNullOrEmpty(parameterName))
             {
@@ -589,6 +667,24 @@ namespace Nytherion.GamePlay.Characters.Companions
                     animator.SetTrigger(parameterName);
                 }
                 return;
+            }
+        }
+
+        protected void ResetAnimationTrigger(string parameterName)
+        {
+            if (animator == null || string.IsNullOrEmpty(parameterName))
+            {
+                return;
+            }
+
+            foreach (AnimatorControllerParameter parameter in animator.parameters)
+            {
+                if (parameter.name == parameterName &&
+                    parameter.type == AnimatorControllerParameterType.Trigger)
+                {
+                    animator.ResetTrigger(parameterName);
+                    return;
+                }
             }
         }
 

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: BoomMaker
+  m_EditorClassIdentifier: 
+  relicName: BoomMaker
+  koreanName: BoomMaker
+  description_KR: "BoomMaker\uB97C \uC18C\uD658\uD569\uB2C8\uB2E4. BoomMaker\uB294
+    \uC801\uC744 \uBC1C\uACAC\uD558\uBA74 \uD68C\uC804\uD558\uBA70 \uD3ED\uBC1C \uB85C\uBD07\uC744
+    \uB0B4\uBCF4\uB0B4\uACE0, \uD3ED\uBC1C \uB85C\uBD07\uC740 \uC801\uC5D0\uAC8C
+    \uB2EC\uB824\uAC00 \uCDA9\uB3CC \uC2DC \uBC94\uC704 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  description_EN: Summons BoomMaker. When it finds an enemy, it spins to deploy an
+    explosive robot that runs into the enemy and deals area damage.
+  Image: {fileID: 21300000, guid: e31cf2cafcb09944187a788605df16e0, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: "\uC801\uC744 \uCD94\uC801\uD574 \uD3ED\uBC1C\uD558\uB294 \uD3ED\uBC1C
+      \uB85C\uBD07\uC744 \uC8FC\uAE30\uC801\uC73C\uB85C \uC18C\uD658\uD569\uB2C8\uB2E4."
+    description_EN: Periodically deploys an explosive robot that chases enemies and
+      explodes.
+    condition:
+      rid: -2
+    effects:
+    - rid: 7227149813345157120
+  grantsProjectileHoming: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: SummonedCreatureSeries
+  synergySetBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7227149813345157120
+      type: {class: SummonedCompanionRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        companionPrefab: {fileID: 8256959947052578764, guid: 1c47c734ff6c80247b9bece144d03dd6, type: 3}
+        spawnOffset: {x: -1, y: 0.45, z: 0}

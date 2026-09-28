@@ -14,23 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: skill_turret
   skillType: 10
-  skillName: Turret
-  description: "\uC9C0\uC815 \uC704\uCE58\uC5D0 \uC790\uB3D9 \uC0AC\uACA9 \uD3EC\uD0D1\uC744
-    \uC124\uCE58\uD558\uC5EC \uC811\uADFC\uD558\uB294 \uC801\uB4E4\uC744 \uACA9\uD1F4\uD569\uB2C8\uB2E4."
+  skillName: "\uB8E8\uD2F0 \uD3EC\uD0D1"
+  description: "루티가 플레이어의 조준 방향으로 날아가 착지한 뒤, 제자리에서 공격 범위 내의 적에게 씨앗을 발사합니다."
   skillLevel: 0
   exp: 0
   coolDown: 5
   manaCost: 0
   damage: 10
   range: 4
-  icon: {fileID: 21300000, guid: 094fafc3a6865ea438ec0eca814508bf, type: 3}
+  icon: {fileID: 21300000, guid: c0cfa8eb448663441811f8c9bd7a6b93, type: 3}
   skillPrefab: {fileID: 7070122076843720504, guid: d5e07efaa793d714db124737e82b5879, type: 3}
   unlockMilestoneID: 
-  turretPrefab: {fileID: 1086257948946426540, guid: ca3d886e3087afb4691b582e25a899df, type: 3}
-  searchRadius: 1
+  turretPrefab: {fileID: 6520110675917699172, guid: d24628c345cf3c54e95f63319f611bf4, type: 3}
+  searchRadius: 3
   floorAreaName: Floor
   maxTurretCount: 3
   duration: 10
   attackInterval: 1
-  projectilePoolTag: Player_Arrow
+  launchAroundCaster: 1
+  minimumDeploymentDistance: 0.6
+  projectilePoolTag: RootiSeedProjectile
+  projectilePrefab: {fileID: 9015685104379156820, guid: caa2cc2a0ba7dcf45a0e70715a5c8246, type: 3}
+  projectileSpawnOffset: {x: 0, y: 0.46, z: 0}
   projectileSpeed: 5

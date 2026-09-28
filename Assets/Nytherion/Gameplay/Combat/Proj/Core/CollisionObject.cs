@@ -17,6 +17,8 @@ namespace Nytherion.GamePlay.Combat
         [Header("Projectile Traits")]
         public List<EquipmentTrait> traits = new List<EquipmentTrait>();
         public GameObject hitEffectPrefab;
+        [Tooltip("벽과 충돌할 때도 피격 이펙트를 재생합니다.")]
+        public bool playHitEffectOnWall;
 
         [Header("Pool Settings")]
         public string poolTag = "PlayerProj";
@@ -177,7 +179,11 @@ namespace Nytherion.GamePlay.Combat
                         }
                     }
 
-                    // 충돌 위치에 피격 이펙트 재생
+                }
+
+                if (isEnemy || (isWall && playHitEffectOnWall))
+                {
+                    // 적 또는 설정된 벽 충돌 위치에 피격 이펙트를 재생합니다.
                     Vector2 hitPoint = collision.ClosestPoint(transform.position);
                     WeaponVFXHelper.PlayHitEffect(hitEffectPrefab, hitPoint, chargePercent);
                 }

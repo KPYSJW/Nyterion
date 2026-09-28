@@ -196,9 +196,11 @@ namespace Nytherion.GamePlay.Characters.Player
                     }
                 }
 
-                if (data != null)
+                // Void Ray는 WeaponItem처럼 프리팹만 전달되는 장착 경로에서도
+                // 프리팹에 연결된 DataAsset으로 반드시 초기화해야 고정 자세 값을 유지합니다.
+                if (equippedData != null && (data != null || currentWeapon is VoidRayWeapon))
                 {
-                    currentWeapon.Initialize(data);
+                    currentWeapon.Initialize(equippedData);
                 }
 
                 if (type != WeaponType.Melee)
@@ -303,21 +305,6 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (inputManager == null || weaponPoint == null) return;
 
-            if (currentWeapon != null && currentWeapon.OverrideRotation)
-            {
-                weaponPoint.localPosition = Vector3.zero;
-                weaponPoint.localRotation = Quaternion.identity;
-                weaponPoint.localScale = Vector3.one;
-
-                if (meleeWeaponPoint != null)
-                {
-                    meleeWeaponPoint.localPosition = Vector3.zero;
-                    meleeWeaponPoint.localRotation = Quaternion.identity;
-                    meleeWeaponPoint.localScale = Vector3.one;
-                }
-                return;
-            }
-
             Vector2 mouseScreenPos = inputManager.MousePosition;
 
             if (Camera.main != null)
@@ -326,6 +313,31 @@ namespace Nytherion.GamePlay.Characters.Player
                 mouseWorldPos.z = 0f;
 
                 Vector3 playerCenter = transform.position + centerOffset;
+
+                if (currentWeapon is VoidRayWeapon voidRayWeapon)
+                {
+                    weaponPoint.localPosition = Vector3.zero;
+                    weaponPoint.localRotation = Quaternion.identity;
+                    weaponPoint.localScale = Vector3.one;
+                    voidRayWeapon.UpdateAimAndPose(mouseWorldPos, playerCenter);
+                    return;
+                }
+
+                if (currentWeapon != null && currentWeapon.OverrideRotation)
+                {
+                    weaponPoint.localPosition = Vector3.zero;
+                    weaponPoint.localRotation = Quaternion.identity;
+                    weaponPoint.localScale = Vector3.one;
+
+                    if (meleeWeaponPoint != null)
+                    {
+                        meleeWeaponPoint.localPosition = Vector3.zero;
+                        meleeWeaponPoint.localRotation = Quaternion.identity;
+                        meleeWeaponPoint.localScale = Vector3.one;
+                    }
+                    return;
+                }
+
                 Vector2 mouseVector = mouseWorldPos - playerCenter;
                 bool keepVoidRayDirection = currentWeapon is VoidRayWeapon voidRay &&
                     voidRay.firePoint != null &&
@@ -387,7 +399,9 @@ namespace Nytherion.GamePlay.Characters.Player
             if (currentWeapon != null && currentWeapon.CanAttack())
             {
                 currentWeapon.ResetGenericChargeMultiplier();
-                Vector2 fireDirection = weaponPoint.right;
+                Vector2 fireDirection = currentWeapon is VoidRayWeapon voidRay
+                    ? voidRay.CurrentFireDirection
+                    : (Vector2)weaponPoint.right;
                 Vector2 mouseScreenPos = inputManager.MousePosition;
                 Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
                 targetWorldPos.z = 0f;

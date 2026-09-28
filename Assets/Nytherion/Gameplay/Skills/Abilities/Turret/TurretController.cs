@@ -18,10 +18,13 @@ namespace Nytherion.GamePlay.Skills
         private float maxCount;
         private float duration;
         private float attackInterval;
-        private float attackRange;
-        private float damage;
+        protected float attackRange;
+        protected float damage;
         private string projectilePoolTag;
         private float projectileSpeed;
+        private GameObject projectilePrefab;
+        private Vector3 projectileSpawnOffset;
+        private bool isInitialized;
 
         private float lifetimeTimer;
         private float attackTimer;
@@ -31,7 +34,7 @@ namespace Nytherion.GamePlay.Skills
         /// 터렛 생성 직후 호출되어 스킬 데이터를 기반으로 내부 스탯 초기화
         /// </summary>
         /// <param name="data">터렛 설정이 담긴 ScriptableObject 데이터</param>
-        public void Initialize(TurretSkillData data)
+        public virtual void Initialize(TurretSkillData data)
         {
             this.maxCount = data.maxTurretCount;
             this.duration = data.duration;
@@ -40,14 +43,29 @@ namespace Nytherion.GamePlay.Skills
             this.damage = data.damage;
             this.projectilePoolTag = data.projectilePoolTag;
             this.projectileSpeed = data.projectileSpeed;
+            this.projectilePrefab = data.projectilePrefab;
+            this.projectileSpawnOffset = data.projectileSpawnOffset;
 
             // 타이머 초기화
             this.lifetimeTimer = duration;
             this.attackTimer = attackInterval;
+            isInitialized = true;
+        }
+
+        /// <summary>
+        /// 기본 포탑은 착지 지점에 즉시 배치하고, 연출이 있는 포탑은 이 메서드를 확장합니다.
+        /// </summary>
+        public virtual void Deploy(Vector3 launchPosition, Vector3 landingPosition)
+        {
+            transform.position = landingPosition;
         }
 
         private void Start()
         {
+            if (!isInitialized)
+            {
+                return;
+            }
             // 생성된 터렛을 '활성화된 터렛 목록'의 마지막에 추가하여 추적 시작
             activeTurrets.Add(this);
 
@@ -65,8 +83,12 @@ namespace Nytherion.GamePlay.Skills
             }
         }
 
-        private void Update()
+        protected virtual void Update()
         {
+            if (!isInitialized)
+            {
+                return;
+            }
             // 수명 타이머를 감소시키고, 0 이하가 되면 터렛 파괴
             lifetimeTimer -= Time.deltaTime;
             if (lifetimeTimer <= 0)
@@ -88,7 +110,7 @@ namespace Nytherion.GamePlay.Skills
         /// <summary>
         /// 탐색 반경 내의 적을 찾아 가장 가까운 적을 향해 투사체 발사
         /// </summary>
-        private void PerformAttack()
+        protected virtual void PerformAttack()
         {
             // 공격 반경(attackRange) 내에 있는 모든 2D 콜라이더 탐색
             int hitCount = Physics2D.OverlapCircleNonAlloc(transform.position, attackRange, turretBuffer);
@@ -120,52 +142,60 @@ namespace Nytherion.GamePlay.Skills
             // 유효한 타겟이 존재한다면 투사체 발사
             if (closestEnemy != null && targetTransform != null)
             {
-                // 적을 향하는 방향 벡터 계산
-                Vector3 direction = (targetTransform.position - transform.position).normalized;
-                
-                // 방향 벡터를 기반으로 Z축 회전값(Quaternion) 계산
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                Quaternion rotation = Quaternion.Euler(0, 0, angle);
+                LaunchProjectileAtTarget(targetTransform);
+            }
+        }
 
-                if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(projectilePoolTag))
+        /// <summary>
+        /// 애니메이션 이벤트에서도 호출할 수 있도록 발사 동작을 분리합니다.
+        /// </summary>
+        protected void LaunchProjectileAtTarget(Transform target)
+        {
+            if (target == null || ObjectPoolManager.Instance == null ||
+                (projectilePrefab == null && string.IsNullOrEmpty(projectilePoolTag)))
+            {
+                return;
+            }
+
+            Vector3 spawnPosition = transform.TransformPoint(projectileSpawnOffset);
+            Vector2 direction = (target.position - spawnPosition).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+            GameObject projectile = projectilePrefab != null
+                ? ObjectPoolManager.Instance.SpawnFromPool(projectilePrefab, spawnPosition, rotation)
+                : ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, spawnPosition, rotation);
+            if (projectile == null)
+            {
+                return;
+            }
+
+            if (projectile.TryGetComponent(out Rigidbody2D rigidbody))
+            {
+                rigidbody.velocity = direction * projectileSpeed;
+            }
+            if (projectile.TryGetComponent(out IProj projectileController))
+            {
+                projectileController.SetSpeed(projectileSpeed);
+            }
+            if (projectile.TryGetComponent(out CollisionObject collisionObject))
+            {
+                collisionObject.damage = damage;
+                if (string.IsNullOrEmpty(collisionObject.poolTag))
                 {
-                    // 오브젝트 풀에서 투사체 호출
-                    GameObject projObj = ObjectPoolManager.Instance.SpawnFromPool(projectilePoolTag, transform.position, rotation);
-                    if (projObj != null)
-                    {
-                        // 투사체 속도 설정 (Rigidbody2D 활용)
-                        if (projObj.TryGetComponent<Rigidbody2D>(out var rb))
-                        {
-                            rb.velocity = direction * projectileSpeed;
-                        }
-
-                        // 투사체 데미지 및 풀 태그 초기화
-                        if (projObj.TryGetComponent<CollisionObject>(out var collisionObj))
-                        {
-                            collisionObj.damage = this.damage;
-                            
-                            if (string.IsNullOrEmpty(collisionObj.poolTag))
-                            {
-                                collisionObj.poolTag = this.projectilePoolTag;
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"[Turret] 투사체 프리팹에 CollisionObject 컴포넌트가 누락되었습니다! Tag: {projectilePoolTag}");
-                        }
-
-                        // 투사체의 최대 사거리 제한 컴포넌트 설정 및 추가
-                        if (!projObj.TryGetComponent<ProjDistanceLimit>(out var distanceLimit))
-                        {
-                            distanceLimit = projObj.AddComponent<ProjDistanceLimit>();
-                        }
-                        distanceLimit.Initialize(attackRange);
-                    }
+                    collisionObject.poolTag = projectilePrefab != null ? projectilePrefab.name : projectilePoolTag;
                 }
-                else
-                {
-                    Debug.LogWarning("[Turret] ObjectPoolManager가 초기화되지 않았거나 투사체 태그가 설정되지 않았습니다.");
-                }
+            }
+            if (!projectile.TryGetComponent(out ProjDistanceLimit distanceLimit))
+            {
+                distanceLimit = projectile.AddComponent<ProjDistanceLimit>();
+            }
+            distanceLimit.Initialize(attackRange);
+
+            SpriteRenderer turretRenderer = GetComponentInChildren<SpriteRenderer>();
+            if (turretRenderer != null && projectile.TryGetComponent(out SpriteRenderer projectileRenderer))
+            {
+                projectileRenderer.sortingLayerID = turretRenderer.sortingLayerID;
+                projectileRenderer.sortingOrder = turretRenderer.sortingOrder + 1;
             }
         }
 

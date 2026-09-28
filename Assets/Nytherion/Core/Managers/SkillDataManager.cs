@@ -70,6 +70,14 @@ namespace Nytherion.Core.Managers
         // 스킬 데이터가 변경되었음을 UI 등에 알리는 이벤트
         public event Action OnSkillDataChanged;
 
+        /// <summary>
+        /// 기존 스킬과 슬롯 순서를 보존하면서 필요한 보관함 공간을 확보합니다.
+        /// </summary>
+        public void EnsureStorageCapacity(int requiredSlots)
+        {
+            if (requiredSlots <= (storageSkills?.Length ?? 0)) return;
+            Array.Resize(ref storageSkills, requiredSlots);
+        }
 
         /// <summary>
         /// 새로운 스킬을 획득하면 이미 보유한 스킬이라면 경험치를 증가, 새로운 스킬이라면 보관함 빈자리에 추가
@@ -306,6 +314,10 @@ namespace Nytherion.Core.Managers
 
             if (skillDatabase == null) return;
 
+            // ownedSkills의 마지막 항목들은 장착 스킬 상태이므로 보관함 슬롯 수에서 제외한다.
+            int savedStorageCount = Mathf.Max(0, saveData.ownedSkills.Count - saveData.equippedSkillIds.Count);
+            EnsureStorageCapacity(savedStorageCount);
+
             // 로드 전 기존 데이터 초기화
             Array.Clear(storageSkills, 0, storageSkills.Length);
             Array.Clear(equippedSkills, 0, equippedSkills.Length);
@@ -331,7 +343,7 @@ namespace Nytherion.Core.Managers
                     SkillEntry entry = saveData.ownedSkills[i];
                     string id = entry.skillId;
 
-                    if (i < storageSkills.Length)
+                    if (i < savedStorageCount)
                     {
                         if (!string.IsNullOrEmpty(id))
                         {
@@ -345,7 +357,7 @@ namespace Nytherion.Core.Managers
                     }
                     else
                     {
-                        // storageSkills 범위를 넘어선 데이터는 장착 스킬의 상태 정보임
+                        // 저장된 보관함 범위를 넘어선 데이터는 장착 스킬의 상태 정보임
                         if (!string.IsNullOrEmpty(id))
                         {
                             skillStates[id] = new SkillState { level = entry.level, exp = entry.exp };

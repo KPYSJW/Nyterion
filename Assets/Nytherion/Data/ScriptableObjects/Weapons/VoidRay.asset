@@ -28,15 +28,16 @@ MonoBehaviour:
   equipmentType: 0
   traits: 
   statModifiers: []
-  damage: 30
-  range: 6
+  damage: 1
+  range: 4.5
   cooldown: 0
   weaponType: 0
   weaponSprite: {fileID: 21300000, guid: 7a4e1f9433f84eb8b8120c7df090c611, type: 3}
-  firePointOffset: {x: 0.6, y: 0, z: 0}
+  firePointOffset: {x: 0.8, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: 0, y: 0, z: 0}
+  visualPositionOffset: {x: 0.3, y: -0.1, z: 0}
   visualScale: 0.5
+  sortingOrderOffset: -1
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
@@ -53,8 +54,10 @@ MonoBehaviour:
   hitEffectPrefab: {fileID: 0}
   weaponPrefab: {fileID: 651000000000000004, guid: b9ed14c8da534091a8b7ba674fd68c89, type: 3}
   isArchivable: 0
-  damagePerSecond: 30
-  damageInterval: 0.1
+  damagePerSecond: 5
+  damageInterval: 0.2
+  maxTargetCount: 3
+  chainRange: 3
   targetLayers:
     serializedVersion: 2
     m_Bits: 8
@@ -63,33 +66,47 @@ MonoBehaviour:
     m_Bits: 2560
   airOuterWidth: 0.09375
   airCoreWidth: 0.0625
-  airJitterStrength: 0.32
+  airJitterStrength: 0.45
+  airVisualSegments: 24
+  airPathRefreshInterval: 0.05
+  airEndpointLengthJitter: 0.65
+  airEndpointSideJitter: 0.28
+  airTipAlpha: 0.12
+  airStrandCount: 2
+  airStrandWidthMultiplier: 0.42
+  airStrandAlpha: 0.34
+  airStrandSpreadMultiplier: 1.15
+  airFlowSpeed: 1.6
+  muzzleBendDistance: 0.5
   outerWidth: 0.36
   coreWidth: 0.09375
   outerColor: {r: 0.02, g: 0.8, b: 0.95, a: 0.9}
   coreColor: {r: 0.88, g: 1, b: 1, a: 1}
   connectedStrandCount: 5
   connectedStrandSpreadMultiplier: 1.2
-  connectedGlowAlpha: 0.24
+  connectedGlowAlpha: 0
   damagePulseStrength: 0.3
   damagePulseDuration: 0.07
+  beamSortingOrder: 30
+  bodyFrameCount: 4
   bodyAnimationSpeed: 14
   jitterStrength: 0.24
   visualSegments: 12
   pathRefreshInterval: 0.045
   secondaryArcAlpha: 0.78
   secondaryArcWidthMultiplier: 0.7
-  impactSparkCount: 6
-  impactSparkLength: 0.32
-  impactSparkWidth: 0.02
-  impactSparkDuration: 0.09
+  impactSparkCount: 8
+  impactSparkLength: 0.48
+  impactSparkWidth: 0.078125
+  impactSparkDuration: 0.22
+  impactSparkColor: {r: 1, g: 0.62, b: 0.08, a: 1}
+  impactSparkSortingOrder: 34
   startEndFrames:
-  - {fileID: 597464867, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
-  - {fileID: 1029419868, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
-  - {fileID: 1698139964, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
-  - {fileID: -104647694, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
-  - {fileID: 212373370, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
-  - {fileID: 99685407, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
-  - {fileID: 1799693795, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
-  - {fileID: -1272494078, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
+  - {fileID: 866637641, guid: 1931ef34a34dd6645815fc9841d26c30, type: 3}
+  - {fileID: 1008973168, guid: 1931ef34a34dd6645815fc9841d26c30, type: 3}
+  - {fileID: 1486677784, guid: 1931ef34a34dd6645815fc9841d26c30, type: 3}
+  - {fileID: 74327028, guid: 1931ef34a34dd6645815fc9841d26c30, type: 3}
+  - {fileID: 650058888, guid: 1931ef34a34dd6645815fc9841d26c30, type: 3}
+  - {fileID: -1971908307, guid: 1931ef34a34dd6645815fc9841d26c30, type: 3}
+  startEffectSizeMultiplier: 4
   visualFadeDuration: 0.08

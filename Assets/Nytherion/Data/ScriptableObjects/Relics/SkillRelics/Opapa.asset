@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Opapa
+  m_EditorClassIdentifier: 
+  relicName: Opapa
+  koreanName: "\uC624\uD30C\uD30C"
+  description_KR: "\uC801\uC744 \uD5A5\uD574 \uB3CC\uC9C4\uD55C \uB4A4 \uBCBD, \uC7A5\uC560\uBB3C\uACFC
+    \uD654\uBA74 \uACBD\uACC4\uC5D0\uC11C \uD295\uAE30\uBA70 \uC801\uC744 \uAD00\uD1B5\uD558\uB294
+    Opapa\uB97C \uC18C\uD658\uD569\uB2C8\uB2E4.\n\uAD6C\uB974\uAE30\uC5D0 \uB2FF\uC740
+    \uC801\uC740 \uD55C \uBC88\uC529 \uD53C\uD574\uB97C \uBC1B\uC2B5\uB2C8\uB2E4."
+  description_EN: Summons Opapa, who charges toward enemies, pierces them, and ricochets
+    from walls, obstacles, and the camera boundary.
+  Image: {fileID: 21300000, guid: a51d104611cfb294ba7a7c1123141e84, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: "\uAD6C\uB974\uAE30 \uB3D9\uC548 \uC801\uC744 \uAD00\uD1B5\uD558\uACE0
+      \uC9C0\uD615\uACFC \uD654\uBA74 \uACBD\uACC4\uC5D0\uC11C \uBC18\uC0AC\uB429\uB2C8\uB2E4."
+    description_EN: Pierces enemies while rolling and ricochets from terrain and
+      screen bounds.
+    condition:
+      rid: 7227149829055971328
+    effects:
+    - rid: 7227149829055971329
+  grantsProjectileHoming: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: SummonedCreatureSeries
+  synergySetBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: 7227149829055971328
+      type: {class: AlwaysTrueCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data: 
+    - rid: 7227149829055971329
+      type: {class: SummonedCompanionRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        companionPrefab: {fileID: 6229201192279560493, guid: fade179d11ef0af4abb7659ca11d4429, type: 3}
+        spawnOffset: {x: -1.2, y: 0.55, z: 0}

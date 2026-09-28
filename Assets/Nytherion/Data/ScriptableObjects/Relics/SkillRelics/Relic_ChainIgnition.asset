@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Relic_ChainIgnition
+  m_EditorClassIdentifier: 
+  relicName: Relic of Chain Ignition
+  koreanName: "\uC5F0\uC1C4 \uC810\uD654 \uAC01\uC778"
+  description_KR: "[\uC5F0\uC1C4 \uC810\uD654] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[\uC5F0\uC1C4
+    \uC810\uD654] : \uC2DC\uC804\uD55C \uC704\uCE58\uB97C \uC911\uC2EC\uC73C\uB85C
+    8\uBC29\uD5A5 \uD654\uC5FC \uD3ED\uBC1C\uC774 \uC138 \uCC28\uB840 \uBC14\uAE65\uC73C\uB85C
+    \uD37C\uC9D1\uB2C8\uB2E4. \uAC01 \uD30C\uB3D9\uC740 \uC801\uC5D0\uAC8C \uD55C
+    \uBC88\uC529 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  description_EN: "Obtain [\uC5F0\uC1C4 \uC810\uD654] skill.\n[\uC5F0\uC1C4 \uC810\uD654]
+    : \uC2DC\uC804\uD55C \uC704\uCE58\uB97C \uC911\uC2EC\uC73C\uB85C 8\uBC29\uD5A5
+    \uD654\uC5FC \uD3ED\uBC1C\uC774 \uC138 \uCC28\uB840 \uBC14\uAE65\uC73C\uB85C
+    \uD37C\uC9D1\uB2C8\uB2E4. \uAC01 \uD30C\uB3D9\uC740 \uC801\uC5D0\uAC8C \uD55C
+    \uBC88\uC529 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  Image: {fileID: 21300000, guid: 2f9eb43b8ebfbac46a1aca9c42d36a58, type: 3}
+  rarity: 0
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: 
+    description_EN: 
+    condition:
+      rid: -2
+    effects:
+    - rid: 7227149948681453568
+  grantsProjectileHoming: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: 1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7227149948681453568
+      type: {class: GrantSkillEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        skillData: {fileID: 11400000, guid: 308999c69e529fc4bb13c6126d33b277, type: 2}

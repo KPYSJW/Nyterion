@@ -34,7 +34,7 @@ namespace Nytherion.Editor
             Directory.CreateDirectory(Output);
             var results = new List<string>();
             int failures = 0;
-            Check("허공: 가는 단일 번개, 최대 거리, 끝 효과 숨김", results, ref failures, () =>
+            Check("허공: 가는 다중 번개, 최대 거리, 끝 효과 숨김", results, ref failures, () =>
             {
                 using (var f = new Fixture(source))
                 {
@@ -42,54 +42,179 @@ namespace Nytherion.Editor
                     Require(!f.Beam.HasHit && !f.Beam.HasTargetHit, "허공에서 명중 상태");
                     Equal(source.MaxRange, f.Beam.CurrentLength);
                     Equal(source.AirCoreWidth, f.Core.startWidth);
-                    Require(!f.Secondary.enabled && !f.Strand(4).enabled && !f.ImpactSpark(0).enabled &&
-                        !f.EndEffect.enabled, "허공에서 연결/명중 효과가 남음");
+                    Require(f.Core.endColor.a < f.Core.startColor.a,
+                        "허공 광선 끝 투명도 그라데이션 누락");
+                    Require(f.Core.positionCount == source.AirVisualSegments,
+                        "허공 광선 마디 수가 적용되지 않음");
+                    Require(source.AirStrandCount == 0 || f.Secondary.enabled,
+                        "허공의 가는 보조 광선 누락");
+                    Require(source.AirStrandCount == 0 ||
+                        f.Secondary.positionCount < f.Core.positionCount,
+                        "허공 보조 광선이 주 광선 전체를 평행하게 따라감");
+                    Require(!f.Strand(source.AirStrandCount).enabled && !f.ImpactSpark(0).enabled &&
+                        !f.EndEffect.enabled, "허공에서 불필요한 연결/명중 효과가 남음");
                     Require(f.Core.sharedMaterial != null &&
                         f.Core.sharedMaterial.shader.name == "Nytherion/Combat/Void Ray Additive",
                         "Void Ray 전용 재질 누락");
+                    Require(f.StartEffect.sprite != null &&
+                        f.StartEffect.sprite.name.StartsWith("VoidRayStart_"),
+                        "총구의 VoidRayStart 효과 누락");
                     Texture bodyTexture = f.Core.sharedMaterial.mainTexture;
                     Require(bodyTexture != null && AssetDatabase.GetAssetPath(bodyTexture) == BodyTexturePath,
                         "VoidRayEffect 몸통 텍스처 누락");
                     Require(bodyTexture.filterMode == FilterMode.Point &&
                         bodyTexture.wrapMode == TextureWrapMode.Repeat,
                         "VoidRayEffect Point/Repeat 임포트 설정 누락");
+                    Object[] bodyAssets = AssetDatabase.LoadAllAssetsAtPath(BodyTexturePath);
+                    int validBodyFrameCount = 0;
+                    for (int i = 0; i < bodyAssets.Length; i++)
+                    {
+                        if (!(bodyAssets[i] is Sprite bodyFrame)) continue;
+                        if (Mathf.Approximately(bodyFrame.rect.width, 32f) &&
+                            Mathf.Approximately(bodyFrame.rect.height, 32f))
+                            validBodyFrameCount++;
+                    }
+                    Require(validBodyFrameCount == source.BodyFrameCount,
+                        "VoidRayEffect 32x32 프레임 수가 설정과 다름");
                     Require(f.Core.textureMode == LineTextureMode.Tile,
                         "VoidRayEffect 길이 방향 반복 설정 누락");
+                    var flowProperties = new MaterialPropertyBlock();
+                    f.Core.GetPropertyBlock(flowProperties);
+                    float firstFlowOffset = flowProperties.GetFloat(
+                        Shader.PropertyToID("_FlowOffset"));
+                    float firstBodyFrame = flowProperties.GetFloat(
+                        Shader.PropertyToID("_FrameIndex"));
+                    Equal(source.BodyFrameCount, Mathf.RoundToInt(flowProperties.GetFloat(
+                        Shader.PropertyToID("_FrameCount"))));
+                    Vector3 firstTracePosition = f.Secondary.GetPosition(0);
                     Require(f.Core.sharedMaterial.HasProperty("_StrokeExpansion") &&
                         f.Core.sharedMaterial.GetFloat("_StrokeExpansion") >= 1f,
                         "VoidRayEffect 선 굵기 확장 설정 누락");
                     Require(f.StartEffect.sharedMaterial != f.Core.sharedMaterial,
                         "몸통 텍스처가 시작/명중 효과 재질에 적용됨");
+                    Vector3 firstVisualEnd = f.Core.GetPosition(f.Core.positionCount - 1);
+                    Require(Vector2.Distance(firstVisualEnd, f.Beam.EndPoint) > 0.01f,
+                        "허공 광선 끝점이 논리 사거리에 고정됨");
+                    f.Capture("air_start");
                     Vector3 before = f.Core.GetPosition(5);
                     f.RenderAt(0.37f);
                     Require(Vector3.Distance(before, f.Core.GetPosition(5)) > 0.001f, "번개 경로가 정지함");
-                    f.VerifyEndpoints();
+                    Require(Vector3.Distance(firstVisualEnd,
+                        f.Core.GetPosition(f.Core.positionCount - 1)) > 0.01f,
+                        "허공 광선 끝점이 움직이지 않음");
+                    f.Core.GetPropertyBlock(flowProperties);
+                    float nextFlowOffset = flowProperties.GetFloat(
+                        Shader.PropertyToID("_FlowOffset"));
+                    float nextBodyFrame = flowProperties.GetFloat(
+                        Shader.PropertyToID("_FrameIndex"));
+                    Require(Mathf.Abs(Mathf.DeltaAngle(firstFlowOffset * 360f,
+                        nextFlowOffset * 360f)) > 1f,
+                        "허공 광선의 텍스처 무늬가 길이 방향으로 흐르지 않음");
+                    Require(!Mathf.Approximately(firstBodyFrame, nextBodyFrame),
+                        "VoidRayEffect 4프레임 애니메이션이 재생되지 않음");
+                    Require(f.Secondary.GetPosition(0).x > firstTracePosition.x + 0.1f,
+                        "허공의 짧은 에너지 조각이 광선을 따라 전진하지 않음");
+                    f.VerifyEndpoints(false);
                     f.Capture("air");
                 }
             });
-            Check("적 Trigger: 굵은 연결, 여러 Collider에도 틱당 피해 1회", results, ref failures, () =>
+            Check("적 Trigger: 선명한 연결, 여러 Collider에도 틱당 피해 1회", results, ref failures, () =>
             {
                 using (var f = new Fixture(source))
                 {
                     var target = f.Target(new Vector2(3f, 0f), 3);
                     f.Start();
-                    Require(f.Beam.HasTargetHit && f.Secondary.enabled && f.EndEffect.enabled, "적 연결 실패");
+                    Require(f.Beam.HasTargetHit && f.Secondary.enabled, "적 연결 실패");
+                    Require(!f.Outer.enabled, "적 연결 중 연하고 굵은 외곽선이 표시됨");
+                    Require(!f.EndEffect.enabled, "적 중심에 이미지 기반 명중 효과가 남음");
+                    Require(f.Core.positionCount == source.VisualSegments,
+                        "적 연결 광선 마디 수가 변경됨");
                     for (int i = 0; i < source.ConnectedStrandCount; i++)
                         Require(f.Strand(i).enabled, "번개 가닥 누락: " + i);
                     Equal(source.CoreWidth, f.Core.startWidth);
-                    Equal(2.8f, f.Beam.CurrentLength);
+                    Equal(f.Core.startColor.a, f.Core.endColor.a);
+                    Require(f.Core.sortingOrder >= source.beamSortingOrder,
+                        "연결 광선이 몬스터보다 낮은 순서에 표시됨");
+                    Equal(3f, f.Beam.CurrentLength);
+                    Equal(0f, Vector2.Distance(target.transform.position, f.Beam.EndPoint));
                     f.Tick(0f);
                     Equal(source.DamagePerTick, target.Damage);
                     Require(f.Core.startWidth > source.CoreWidth * 1.2f, "피해 틱 맥동 누락");
                     Require(f.ImpactSpark(0).enabled &&
                         f.ImpactSpark(0).GetPosition(0) != f.ImpactSpark(0).GetPosition(1),
-                        "피해 틱 명중 스파크 누락");
+                        "피해 틱 사각형 불똥 누락");
+                    Require(f.ImpactSpark(0).sortingOrder >= source.impactSparkSortingOrder,
+                        "사각형 불똥 정렬 순서가 몬스터보다 낮음");
+                    Require(f.ImpactSpark(0).startWidth >= 0.04f,
+                        "사각형 불똥 크기가 픽셀 화면에서 너무 작음");
+                    var sparkProperties = new MaterialPropertyBlock();
+                    f.ImpactSpark(0).GetPropertyBlock(sparkProperties);
+                    Require(sparkProperties.GetTexture(Shader.PropertyToID("_MainTex")) ==
+                        Texture2D.whiteTexture, "사각형 불똥이 이미지 텍스처를 사용함");
+                    Require(sparkProperties.GetFloat(Shader.PropertyToID("_Intensity")) >= 2f,
+                        "사각형 불똥 발광 강도가 부족함");
                     f.Tick(0.05f);
                     Equal(source.DamagePerTick, target.Damage);
                     f.Tick(0.35f);
                     Equal(source.DamagePerTick * 4f, target.Damage);
                     f.VerifyEndpoints();
                     f.Capture("connected");
+                }
+            });
+            Check("적 연쇄: 중심 이펙트와 함께 가까운 다음 적으로 연결", results, ref failures, () =>
+            {
+                using (var f = new Fixture(source))
+                {
+                    var targets = new List<VoidRayVerificationTarget>();
+                    for (int i = 0; i <= source.MaxTargetCount; i++)
+                    {
+                        Vector2 position = i == 0
+                            ? new Vector2(1.2f, 0f)
+                            : new Vector2(1.2f + i * 0.9f, i % 2 == 1 ? 0.65f : -0.65f);
+                        targets.Add(f.Target(position, i == 0 ? 2 : 1));
+                    }
+                    f.Start(); f.Tick(0f);
+                    Require(f.Beam.CurrentTargetCount == source.MaxTargetCount,
+                        "동시 타격 대상 수가 설정값과 다름");
+                    for (int i = 0; i < source.MaxTargetCount; i++)
+                    {
+                        Equal(source.DamagePerTick, targets[i].Damage);
+                        int sparkIndex = i * source.ImpactSparkCount;
+                        LineRenderer spark = f.ImpactSpark(sparkIndex);
+                        Require(spark.enabled, "연쇄 대상 중심의 사각형 불똥 누락: " + i);
+                        Vector2 sparkCenter = (spark.GetPosition(0) + spark.GetPosition(1)) * 0.5f;
+                        float sparkDistance = Vector2.Distance(
+                            targets[i].transform.position, sparkCenter);
+                        Require(sparkDistance >= source.OuterWidth * 0.5f &&
+                            sparkDistance <= source.OuterWidth,
+                            "불똥이 광선 안에 묻히거나 중심에서 너무 멀리 생성됨: " + i);
+                        int anchorIndex = (i + 1) * (source.VisualSegments - 1);
+                        Equal(0f, Vector2.Distance(targets[i].transform.position,
+                            f.Core.GetPosition(anchorIndex)));
+                    }
+                    Equal(0f, targets[source.MaxTargetCount].Damage);
+                    Require(f.Core.positionCount ==
+                        source.MaxTargetCount * (source.VisualSegments - 1) + 1,
+                        "연쇄 구간 수와 광선 마디 수가 다름");
+                    Equal(0f, Vector2.Distance(
+                        targets[source.MaxTargetCount - 1].transform.position, f.Beam.EndPoint));
+                }
+            });
+            Check("근거리 연결: 구간 길이에 맞춰 두께와 흔들림 축소", results, ref failures, () =>
+            {
+                using (var f = new Fixture(source))
+                {
+                    f.Target(new Vector2(0.35f, 0f));
+                    f.Start();
+                    Require(f.Beam.HasTargetHit, "근거리 대상을 찾지 못함");
+                    Require(f.Core.startWidth < source.CoreWidth * 0.7f,
+                        "짧은 광선의 두께가 거리와 무관하게 유지됨");
+                    float maxDeviation = 0f;
+                    for (int i = 0; i < f.Core.positionCount; i++)
+                        maxDeviation = Mathf.Max(maxDeviation,
+                            Mathf.Abs(f.Core.GetPosition(i).y - f.Beam.StartPoint.y));
+                    Require(maxDeviation <= f.Beam.CurrentLength * 0.3f,
+                        "짧은 광선의 흔들림이 구간 길이에 비해 너무 큼");
                 }
             });
             Check("벽/장애물: 가는 방전으로 차단, 뒤의 적은 무피해", results, ref failures, () =>
@@ -100,10 +225,12 @@ namespace Nytherion.Editor
                     f.Wall(new Vector2(1f, 0f), true);
                     f.Wall(new Vector2(2f, 0f), false);
                     f.Start(); f.Tick(0.3f);
-                    Require(f.Beam.HasHit && !f.Beam.HasTargetHit && !f.Secondary.enabled, "벽을 적 연결로 처리함");
+                    Require(f.Beam.HasHit && !f.Beam.HasTargetHit, "벽을 적 연결로 처리함");
+                    Equal(source.AirCoreWidth, f.Core.startWidth);
                     Equal(1.8f, f.Beam.CurrentLength);
                     Equal(0f, target.Damage);
-                    Require(f.EndEffect.enabled, "실제 벽 충돌점 효과 누락");
+                    Require(!f.EndEffect.enabled, "벽 충돌점에 이미지 기반 효과가 남음");
+                    Require(!f.ImpactSpark(0).enabled, "피해 없는 벽에서 불똥이 재생됨");
                     f.VerifyEndpoints();
                 }
             });
@@ -115,7 +242,7 @@ namespace Nytherion.Editor
                     f.Start(); f.Tick(0f);
                     target.transform.position += Vector3.up;
                     f.Refresh();
-                    Require(!f.Beam.HasTargetHit && !f.Secondary.enabled && !f.EndEffect.enabled, "이탈 후 연결 유지");
+                    Require(!f.Beam.HasTargetHit && !f.EndEffect.enabled, "이탈 후 적 연결 유지");
                     Equal(source.AirCoreWidth, f.Core.startWidth);
                     target.transform.position -= Vector3.up;
                     f.Refresh(); f.Tick(0.05f);
@@ -131,22 +258,57 @@ namespace Nytherion.Editor
                     target.DisableOnHit = true;
                     f.Start(); f.Tick(0.3f);
                     Equal(source.DamagePerTick, target.Damage);
-                    Require(!f.Beam.HasTargetHit && !f.Beam.HasHit && !f.Secondary.enabled, "사라진 대상 연결 유지");
+                    Require(!f.Beam.HasTargetHit && !f.Beam.HasHit, "사라진 대상 연결 유지");
+                    Equal(source.AirCoreWidth, f.Core.startWidth);
                 }
             });
-            Check("방출 중 이동/회전: 총구/끝점 일치 및 흔들림 무피해", results, ref failures, () =>
+            Check("마우스 조준 자세: 무기 회전과 좌우 스프라이트 보정", results, ref failures, () =>
+            {
+                using (var f = new Fixture(source))
+                {
+                    Vector2[] directions =
+                    {
+                        Vector2.right,
+                        Vector2.up,
+                        Vector2.left,
+                        Vector2.down
+                    };
+                    for (int i = 0; i < directions.Length; i++)
+                    {
+                        Vector2 target = directions[i] * 3f;
+                        f.Aim(target);
+                        Vector2 expectedDirection =
+                            ((Vector2)f.PlayerCenter + target - (Vector2)f.Owner.transform.position).normalized;
+                        Require(Vector2.Dot(f.Owner.transform.right, expectedDirection) > 0.999f,
+                            "무기가 마우스 방향을 바라보지 않음: " + directions[i]);
+
+                        float angle = Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg;
+                        Vector2 expectedOffset = Quaternion.Euler(0f, 0f, angle) *
+                            (Vector2)source.visualPositionOffset;
+                        Equal(expectedOffset.x, f.Owner.transform.localPosition.x);
+                        Equal(expectedOffset.y, f.Owner.transform.localPosition.y);
+                    }
+
+                    f.Aim(new Vector2(-3f, 0f));
+                    Require(f.Owner.transform.localScale.x > 0f &&
+                        f.Owner.transform.localScale.y < 0f,
+                        "왼쪽 조준에서 무기 스프라이트 상하 반전이 적용되지 않음");
+                }
+            });
+            Check("회전한 총구에서 마우스 방향으로 출발하는 광선", results, ref failures, () =>
             {
                 using (var f = new Fixture(source))
                 {
                     f.Target(new Vector2(0f, 3f));
+                    f.Aim(new Vector2(0f, 3f));
                     f.Start();
-                    f.Owner.transform.rotation = Quaternion.Euler(0f, 0f, 90f);
-                    f.Owner.transform.localScale = new Vector3(1f, -1f, 1f);
-                    f.Refresh();
                     Require(f.Beam.HasTargetHit, "발사 중 조준 변경 실패");
-                    f.Owner.transform.position += Vector3.up * 0.2f;
-                    f.Refresh(); f.VerifyEndpoints();
-                    Equal(2.6f, f.Beam.CurrentLength);
+                    Vector2 firstSegment =
+                        f.Core.GetPosition(1) - f.Core.GetPosition(0);
+                    Require(Vector2.Dot(firstSegment.normalized,
+                        f.Owner.transform.right) > 0.9f,
+                        "광선이 회전한 총구 방향에서 출발하지 않음");
+                    f.VerifyEndpoints();
                     Vector2 end = f.Beam.EndPoint;
                     f.RenderAt(0.73f);
                     Equal(0f, Vector2.Distance(end, f.Beam.EndPoint));
@@ -215,6 +377,8 @@ namespace Nytherion.Editor
             public readonly VoidRayWeapon Owner;
             public VoidRayBeam Beam;
             public double StartTime;
+            public Vector3 PlayerCenter => root.transform.position;
+            public LineRenderer Outer => Beam.transform.Find("OuterLine").GetComponent<LineRenderer>();
             public LineRenderer Core => Beam.transform.Find("CoreLine").GetComponent<LineRenderer>();
             public LineRenderer Secondary => Beam.transform.Find("SecondaryLine").GetComponent<LineRenderer>();
             public SpriteRenderer StartEffect => Beam.transform.Find("StartEffect").GetComponent<SpriteRenderer>();
@@ -246,6 +410,12 @@ namespace Nytherion.Editor
                 Beam = Object.Instantiate(data.projectilePrefab, root.transform).GetComponent<VoidRayBeam>();
                 Physics2D.SyncTransforms();
                 Beam.Initialize(Owner, Owner.firePoint, data, null);
+            }
+
+            public void Aim(Vector2 localTarget)
+            {
+                Vector3 mouseWorldPosition = root.transform.position + (Vector3)localTarget;
+                Invoke(Owner, "UpdateAimAndPose", mouseWorldPosition, root.transform.position);
             }
 
             public VoidRayVerificationTarget Target(Vector2 position, int colliders = 1)
@@ -295,11 +465,12 @@ namespace Nytherion.Editor
                 typeof(VoidRayBeam).GetField("elapsed", Private).SetValue(Beam, elapsed);
                 Invoke(Beam, "UpdateVisual");
             }
-            public void VerifyEndpoints()
+            public void VerifyEndpoints(bool visualEndMatchesLogical = true)
             {
                 Equal(0f, Vector2.Distance(Owner.firePoint.position, Beam.StartPoint));
                 Equal(0f, Vector2.Distance(Core.GetPosition(0), Beam.StartPoint));
-                Equal(0f, Vector2.Distance(Core.GetPosition(Core.positionCount - 1), Beam.EndPoint));
+                if (visualEndMatchesLogical)
+                    Equal(0f, Vector2.Distance(Core.GetPosition(Core.positionCount - 1), Beam.EndPoint));
                 if (EndEffect.enabled) Equal(0f, Vector2.Distance(EndEffect.transform.position, Beam.EndPoint));
             }
 

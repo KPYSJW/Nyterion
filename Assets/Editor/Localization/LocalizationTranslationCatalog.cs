@@ -121,7 +121,7 @@ namespace Nytherion.Editor.Localization
                 ["skill_shadow_clone"] = ("그림자 분신", "Shadow Clone"),
                 ["skill_souleater"] = ("영혼 포식자", "Soul Eater"),
                 ["skill_spiral"] = ("나선", "Spiral"),
-                ["skill_turret"] = ("포탑", "Turret")
+                ["skill_turret"] = ("루티 포탑", "Rooti Turret")
             };
 
         public static readonly IReadOnlyDictionary<string, string> SkillEnglishDescriptions =
@@ -141,7 +141,7 @@ namespace Nytherion.Editor.Localization
                 ["skill_shadow_clone"] = "Summons a shadow clone that mirrors the player's actions and attacks alongside them.",
                 ["skill_souleater"] = "Absorbs the souls of defeated enemies to restore health and temporarily empower the player.",
                 ["skill_spiral"] = "Creates magical orbs that spiral around the player and deal continuous damage.",
-                ["skill_turret"] = "Deploys an automated turret at the target location to attack approaching enemies."
+                ["skill_turret"] = "Rooti flies in the player's aim direction, then stays in place and launches seeds at enemies within range."
             };
 
         public static readonly IReadOnlyDictionary<string, TranslationEntry> Milestones =
