@@ -35,6 +35,8 @@ namespace Nytherion.GamePlay.Combat
         private bool hasEnemyHit;
         private bool hasSpawnedTrickshotEchoes;
         private Vector3 lastHitPosition;
+        private LayerMask obstacleCollisionLayers;
+        private bool useObstacleCollision;
 
         public CombatModifierSnapshot ModifierSnapshot => playerManager != null && playerManager.playerRelicManager != null
             ? playerManager.playerRelicManager.CombatModifiers
@@ -71,6 +73,8 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnEnable()
         {
+            useObstacleCollision = false;
+            obstacleCollisionLayers = 0;
             trickshotInteractionCount = 0;
             isSecondaryProjectile = false;
             hasEnemyHit = false;
@@ -133,10 +137,28 @@ namespace Nytherion.GamePlay.Combat
             bounceModifier.enabled = hasBaseBounceModifier || modifierSnapshot.HasProjectileBounce;
         }
 
+        public void ConfigureObstacleCollision(LayerMask layers)
+        {
+            useObstacleCollision = true;
+            obstacleCollisionLayers = layers;
+        }
+
+        private bool IsObstacleCollision(Collider2D other)
+        {
+            if (!useObstacleCollision || other.isTrigger) return false;
+            for (Transform current = other.transform; current != null; current = current.parent)
+            {
+                if (current.CompareTag("Wall") || (obstacleCollisionLayers.value & (1 << current.gameObject.layer)) != 0)
+                    return true;
+            }
+            return false;
+        }
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
             bool isEnemy = collision.CompareTag("Enemy");
-            bool isWall = collision.CompareTag("Wall");
+            bool isWall = collision.CompareTag("Wall") || IsObstacleCollision(collision);
+            if (isEnemy && bounceModifier.enabled && bounceModifier.ShouldIgnoreHit(collision)) return;
 
             if (isEnemy || isWall)
             {

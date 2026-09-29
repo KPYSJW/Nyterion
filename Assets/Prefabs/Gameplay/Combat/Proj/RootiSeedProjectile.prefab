@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 8809721659095555582}
   - component: {fileID: 194853894390401282}
   - component: {fileID: 5751041622535844488}
-  - component: {fileID: 557439202476802092}
   m_Layer: 0
   m_Name: RootiSeedProjectile
   m_TagString: Weapon
@@ -190,15 +189,3 @@ MonoBehaviour:
   hitEffectPrefab: {fileID: 2999697235449328125, guid: a56e991769996ad4d81aa819eebd7c6a, type: 3}
   playHitEffectOnWall: 1
   poolTag: RootiSeedProjectile
---- !u!114 &557439202476802092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9015685104379156820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1212c0622ba96f342af10c57afe86c3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

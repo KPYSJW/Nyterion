@@ -156,6 +156,8 @@ MonoBehaviour:
   hitFlashDuration: 0.2
   deathDissolveDuration: 0.5
   deathDissolvePixelSize: 5
+  groundBodyCollider: {fileID: 3671000620282556980}
+  groundHitRadiusRatio: 1
 --- !u!114 &2475580092048304580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,7 +237,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0, y: -0.42}
+  m_Offset: {x: 0, y: -0.41666675}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -246,7 +248,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.77, y: 1.48}
+  m_Size: {x: 1.8333334, y: 1.5333333}
   m_EdgeRadius: 0
 --- !u!50 &-7055373821229787899
 Rigidbody2D:

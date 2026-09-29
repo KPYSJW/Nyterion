@@ -1,0 +1,3 @@
+RESULT PASS
+GameScene/DebugPanel/ContentPanel2: UI 생성 및 데이터/패널 참조 연결
+기존 씬 보존 복사본: output/chain-ignition/GameScene-before-debug-panel.unity

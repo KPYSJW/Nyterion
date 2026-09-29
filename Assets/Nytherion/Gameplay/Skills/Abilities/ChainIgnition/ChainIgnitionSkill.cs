@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -17,6 +19,24 @@ namespace Nytherion.GamePlay.Skills
                 return;
             }
 
+            PlayerManager player = caster != null ? caster.GetComponentInParent<PlayerManager>() : GetComponentInParent<PlayerManager>();
+            ChainIgnitionDebugSettings debugSettings = player != null ? player.GetComponent<ChainIgnitionDebugSettings>() : null;
+            bool useDebugSettings = debugSettings != null && debugSettings.useTestSettings;
+            int level = player != null ? player.GetSkillLevel(data) : Mathf.Max(1, data.skillLevel);
+            var playerData = player != null ? player.currentPlayerData : null;
+            int projectileCount = debugSettings != null
+                ? debugSettings.GetProjectileCount(data, level, playerData != null ? playerData.extraProjectiles : 0f)
+                : data.GetProjectileCount(level, playerData != null ? playerData.extraProjectiles : 0f);
+            float size = playerData != null ? playerData.projectileSizeMultiplier : 1f;
+            float range = playerData != null ? playerData.attackRangeMultiplier : 1f;
+            if (useDebugSettings)
+            {
+                size *= Mathf.Max(0.01f, debugSettings.sizeMultiplier);
+                range *= Mathf.Max(0.01f, debugSettings.rangeMultiplier);
+                data = debugSettings.CreateCastData(data);
+            }
+            range = ChainIgnitionSkillData.GetSpreadRangeMultiplier(size, range);
+
             // 무기 발사점 대신 시전 순간의 플레이어 위치를 복사합니다.
             Vector3 castPosition = caster != null ? caster.position : transform.position;
             castPosition += (Vector3)data.castCenterOffset;
@@ -26,7 +46,21 @@ namespace Nytherion.GamePlay.Skills
                 availableWave = Instantiate(data.wavePrefab, castPosition, Quaternion.identity);
                 waves.Add(availableWave);
             }
-            availableWave.Begin(data, castPosition);
+            availableWave.Begin(data, castPosition, GetAimDirection(castPosition),
+                projectileCount, data.GetDamage(level), size, range, useDebugSettings);
+        }
+
+        private Vector2 GetAimDirection(Vector3 center)
+        {
+            Camera camera = Camera.main;
+            if (camera != null && Mouse.current != null)
+            {
+                Vector2 screenPosition = Mouse.current.position.ReadValue();
+                Vector3 worldPosition = camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y,
+                    Mathf.Abs(camera.transform.position.z - center.z)));
+                return (Vector2)(worldPosition - center);
+            }
+            return firePoint != null ? (Vector2)firePoint.right : Vector2.right;
         }
 
         private void OnDisable()

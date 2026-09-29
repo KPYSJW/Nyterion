@@ -10,6 +10,77 @@ namespace Nytherion.GamePlay.Skills
     /// </summary>
     public class TurretSkill : SkillBase
     {
+        private bool chargesInitialized;
+        private int charges;
+        private int chargeCapacity;
+        private float nextRechargeTime = Mathf.Infinity;
+        private float nextSummonTime = -Mathf.Infinity;
+
+        private RootiUpgradeRuntime Upgrades => caster != null ? caster.GetComponent<RootiUpgradeRuntime>() : null;
+        public int CurrentCharges { get { RefreshCharges(); return charges; } }
+        public int MaxCharges { get { RefreshCharges(); return chargeCapacity; } }
+        public float RemainingRechargeTime
+        {
+            get
+            {
+                RefreshCharges();
+                return charges < chargeCapacity ? Mathf.Max(0f, nextRechargeTime - Time.time) : 0f;
+            }
+        }
+
+        private void Update() => RefreshCharges();
+
+        public override bool CanUse()
+        {
+            if (!(skillData is TurretSkillData data) || caster == null || data.turretPrefab == null ||
+                data.turretPrefab.GetComponent<TurretController>() == null) return false;
+            RefreshCharges();
+            return charges > 0 && Time.time >= nextSummonTime;
+        }
+
+        public override bool TryUse()
+        {
+            if (!CanUse()) return false;
+            Activate();
+            charges--;
+            TurretSkillData data = (TurretSkillData)skillData;
+            nextSummonTime = Time.time + Mathf.Max(0.5f, data.minimumSummonInterval);
+            // 두 번째 충전을 사용해도 이미 진행 중인 첫 번째 회복은 초기화하지 않습니다.
+            if (float.IsPositiveInfinity(nextRechargeTime))
+                nextRechargeTime = Time.time + Mathf.Max(0.01f, data.coolDown);
+            return true;
+        }
+
+        public override float GetRemainingCooldown()
+        {
+            RefreshCharges();
+            float recovery = charges > 0 ? 0f : Mathf.Max(0f, nextRechargeTime - Time.time);
+            return Mathf.Max(recovery, nextSummonTime - Time.time, 0f);
+        }
+
+        private void RefreshCharges()
+        {
+            if (!(skillData is TurretSkillData data)) return;
+            RootiUpgradeRuntime upgrades = Upgrades;
+            int capacity = Mathf.Max(1, data.maxCharges) + (upgrades != null ? upgrades.AdditionalCharges : 0);
+            if (!chargesInitialized)
+            {
+                chargesInitialized = true;
+                charges = chargeCapacity = capacity;
+                return;
+            }
+            float rechargeDuration = Mathf.Max(0.01f, data.coolDown);
+            while (charges < chargeCapacity && Time.time >= nextRechargeTime)
+            {
+                charges++;
+                nextRechargeTime += rechargeDuration;
+            }
+            chargeCapacity = capacity;
+            charges = Mathf.Min(charges, chargeCapacity);
+            if (charges >= chargeCapacity) nextRechargeTime = Mathf.Infinity;
+            else if (float.IsPositiveInfinity(nextRechargeTime)) nextRechargeTime = Time.time + rechargeDuration;
+        }
+
         /// <summary>
         /// 스킬 실행 시 호출되는 활성화 메서드.
         /// 목표 위치를 계산하고 내비메시 검사를 통해 터렛 생성
@@ -66,14 +137,28 @@ namespace Nytherion.GamePlay.Skills
                 // 도출된 최종 좌표에 터렛 프리팹 생성 및 초기화
                 if (turretData.turretPrefab != null)
                 {
-                    Vector3 launchPosition = turretData.launchAroundCaster ? playerPosition : finalSpawnPosition;
-                    GameObject turretInstance = Instantiate(turretData.turretPrefab, launchPosition, Quaternion.identity);
-                    
-                    // 터렛 컨트롤러 컴포넌트를 찾아 데이터 주입
-                    if (turretInstance.TryGetComponent(out TurretController controller))
+                    RootiUpgradeRuntime upgrades = Upgrades;
+                    int summonCount = 1 + (upgrades != null ? upgrades.AdditionalSummons : 0);
+                    Vector3 aim = mouseWorldPos - playerPosition;
+                    Vector3 side = aim.sqrMagnitude > 0.0001f
+                        ? new Vector3(-aim.y, aim.x, 0f).normalized : Vector3.up;
+                    for (int i = 0; i < summonCount; i++)
                     {
+                        Vector3 destination = finalSpawnPosition;
+                        if (summonCount > 1)
+                        {
+                            Vector3 candidate = destination + side * ((i - (summonCount - 1) * 0.5f) * turretData.duplicateSpacing);
+                            if (turretData.launchAroundCaster)
+                                destination = FindAimedLandingPosition(playerPosition, candidate, turretData, floorMask);
+                            else if (NavMesh.SamplePosition(candidate, out NavMeshHit duplicateHit, 0.2f, floorMask))
+                                destination = duplicateHit.position;
+                        }
+                        Vector3 launchPosition = turretData.launchAroundCaster ? playerPosition : destination;
+                        GameObject turretInstance = Instantiate(turretData.turretPrefab, launchPosition, Quaternion.identity);
+                        TurretController controller = turretInstance.GetComponent<TurretController>();
                         controller.Initialize(turretData);
-                        controller.Deploy(launchPosition, finalSpawnPosition);
+                        if (controller is RootiTurretController rooti) rooti.SetUpgradeOwner(caster);
+                        controller.Deploy(launchPosition, destination);
                     }
                 }
             }

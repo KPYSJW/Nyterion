@@ -355,6 +355,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 5240824209686866400}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashDuration: 0.1
+  groundBodyCollider: {fileID: 5714412153372374383}
+  groundHitRadiusRatio: 1
 --- !u!114 &6679662606424163912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,6 +459,6 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.12}
-  m_Size: {x: 0.5, y: 1.09}
+  m_Offset: {x: -0.1968751, y: -0.0625}
+  m_Size: {x: 1.125, y: 1.1875}
   m_Direction: 0

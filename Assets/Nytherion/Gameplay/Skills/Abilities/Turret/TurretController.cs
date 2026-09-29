@@ -23,11 +23,14 @@ namespace Nytherion.GamePlay.Skills
         private string projectilePoolTag;
         private float projectileSpeed;
         private GameObject projectilePrefab;
-        private Vector3 projectileSpawnOffset;
+        protected Vector3 projectileSpawnOffset;
         private bool isInitialized;
 
         private float lifetimeTimer;
         private float attackTimer;
+        private float previousAttackInterval;
+        protected virtual float AttackInterval => attackInterval;
+        protected virtual bool LimitProjectileDistance => true;
         private static readonly Collider2D[] turretBuffer = new Collider2D[20];
 
         /// <summary>
@@ -49,6 +52,7 @@ namespace Nytherion.GamePlay.Skills
             // 타이머 초기화
             this.lifetimeTimer = duration;
             this.attackTimer = attackInterval;
+            previousAttackInterval = attackInterval;
             isInitialized = true;
         }
 
@@ -98,12 +102,18 @@ namespace Nytherion.GamePlay.Skills
             }
 
             // 공격 주기 타이머를 감소시키고, 0 이하가 되면 공격 수행
+            float currentInterval = Mathf.Max(0.01f, AttackInterval);
+            if (!Mathf.Approximately(previousAttackInterval, currentInterval))
+            {
+                attackTimer *= currentInterval / Mathf.Max(0.01f, previousAttackInterval);
+                previousAttackInterval = currentInterval;
+            }
             attackTimer -= Time.deltaTime;
             if (attackTimer <= 0)
             {
                 PerformAttack();
                 // 공격 완료 후 타이머를 주기(attackInterval)로 재설정
-                attackTimer = attackInterval;
+                attackTimer = Mathf.Max(0.01f, AttackInterval);
             }
         }
 
@@ -149,16 +159,22 @@ namespace Nytherion.GamePlay.Skills
         /// <summary>
         /// 애니메이션 이벤트에서도 호출할 수 있도록 발사 동작을 분리합니다.
         /// </summary>
-        protected void LaunchProjectileAtTarget(Transform target)
+        protected virtual void LaunchProjectileAtTarget(Transform target)
         {
-            if (target == null || ObjectPoolManager.Instance == null ||
+            if (target == null) return;
+            Vector3 spawnPosition = transform.TransformPoint(projectileSpawnOffset);
+            LaunchProjectile((target.position - spawnPosition).normalized);
+        }
+
+        protected void LaunchProjectile(Vector2 direction)
+        {
+            if (ObjectPoolManager.Instance == null ||
                 (projectilePrefab == null && string.IsNullOrEmpty(projectilePoolTag)))
             {
                 return;
             }
 
             Vector3 spawnPosition = transform.TransformPoint(projectileSpawnOffset);
-            Vector2 direction = (target.position - spawnPosition).normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
             GameObject projectile = projectilePrefab != null
@@ -185,11 +201,16 @@ namespace Nytherion.GamePlay.Skills
                     collisionObject.poolTag = projectilePrefab != null ? projectilePrefab.name : projectilePoolTag;
                 }
             }
-            if (!projectile.TryGetComponent(out ProjDistanceLimit distanceLimit))
+            if (LimitProjectileDistance)
             {
-                distanceLimit = projectile.AddComponent<ProjDistanceLimit>();
+                if (!projectile.TryGetComponent(out ProjDistanceLimit distanceLimit))
+                {
+                    distanceLimit = projectile.AddComponent<ProjDistanceLimit>();
+                }
+                distanceLimit.enabled = true;
+                distanceLimit.Initialize(attackRange);
             }
-            distanceLimit.Initialize(attackRange);
+            ConfigureProjectile(projectile);
 
             SpriteRenderer turretRenderer = GetComponentInChildren<SpriteRenderer>();
             if (turretRenderer != null && projectile.TryGetComponent(out SpriteRenderer projectileRenderer))
@@ -198,6 +219,8 @@ namespace Nytherion.GamePlay.Skills
                 projectileRenderer.sortingOrder = turretRenderer.sortingOrder + 1;
             }
         }
+
+        protected virtual void ConfigureProjectile(GameObject projectile) { }
 
         /// <summary>
         /// 터렛을 전역 리스트에서 제거하고 오브젝트 파괴

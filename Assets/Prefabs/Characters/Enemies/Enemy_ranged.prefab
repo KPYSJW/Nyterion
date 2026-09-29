@@ -143,6 +143,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 6594904688280076281}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashDuration: 0.2
+  groundBodyCollider: {fileID: 8433762912461450098}
+  groundHitRadiusRatio: 1
 --- !u!114 &-2876666219040609769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,8 +230,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.14}
-  m_Size: {x: 0.5, y: 1.08}
+  m_Offset: {x: -0.18874979, y: -0.0625}
+  m_Size: {x: 1.09375, y: 1.1875}
   m_Direction: 0
 --- !u!1 &7678941447603383567
 GameObject:

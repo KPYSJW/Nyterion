@@ -163,6 +163,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3413603889228252919}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashDuration: 0.2
+  groundBodyCollider: {fileID: 4283327800780939384}
+  groundHitRadiusRatio: 1
 --- !u!114 &4796792765230723815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,7 +270,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.12, y: -0.22}
+  m_Offset: {x: -0.100000024, y: -0.19999999}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -279,7 +281,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.93, y: 0.82}
+  m_Size: {x: 1.1, y: 0.9333334}
   m_EdgeRadius: 0
 --- !u!114 &7142648316927559640
 MonoBehaviour:

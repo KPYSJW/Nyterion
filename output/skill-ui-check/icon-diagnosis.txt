@@ -1,0 +1,32 @@
+Time: 2026-09-29T16:20:11.9840991+09:00
+Playing: False
+Active scene: Assets/Scenes/GameScene.unity
+Asset: SkillStorageSlot/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(1.00, 1.00, 1.00)
+Prefab stage: Assets/Prefabs/UI/SkillStorageSlot.prefab
+Stage dirty: False
+Stage: Canvas (Environment)/SkillStorageSlot/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(1.00, 1.00, 1.00)
+Selection asset: 
+Selection: Canvas (Environment)/SkillStorageSlot/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(1.00, 1.00, 1.00)
+Selection source: 
+Controller slot prefab: Assets/Prefabs/UI/SkillStorageSlot.prefab
+Scene slot GameScene: Canvas/SkillCanvas/SkillPanel/EquipArea/SkillEquipSlot/Icon, sizeDelta=(-90.000, -90.000), rect=(110.000, 110.000), anchors=(0.00, 0.00) / (1.00, 1.00), scale=(1.00, 1.00, 1.00), lossyScale=(0.11, 0.11, 0.11)
+Scene slot GameScene: Canvas/SkillCanvas/SkillPanel/EquipArea/SkillEquipSlot 2/Icon, sizeDelta=(-90.000, -90.000), rect=(110.000, 110.000), anchors=(0.00, 0.00) / (1.00, 1.00), scale=(1.00, 1.00, 1.00), lossyScale=(0.11, 0.11, 0.11)
+Scene slot GameScene: Canvas/SkillCanvas/SkillPanel/EquipArea/SkillEquipSlot 1/Icon, sizeDelta=(-90.000, -90.000), rect=(110.000, 110.000), anchors=(0.00, 0.00) / (1.00, 1.00), scale=(1.00, 1.00, 1.00), lossyScale=(0.11, 0.11, 0.11)
+Scene slot SkillStorageSlot: Canvas (Environment)/SkillStorageSlot/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(1.00, 1.00, 1.00)
+Runtime storage slot 15: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 14: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 13: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 12: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 11: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 10: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 9: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 8: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 7: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 6: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 5: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 4: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 3: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 2: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 1: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime storage slot 0: Canvas/SkillCanvas/SkillPanel/StoragePanel/StorageDropArea/Viewport/StorageContent/SkillStorageSlot(Clone)/Icon, sizeDelta=(70.000, 70.000), rect=(70.000, 70.000), anchors=(0.50, 0.50) / (0.50, 0.50), scale=(1.00, 1.00, 1.00), lossyScale=(0.10, 0.10, 0.10)
+Runtime verification: PASS, storage slots=16

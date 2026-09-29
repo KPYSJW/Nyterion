@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using VContainer;
+using VContainer.Unity;
 using Nytherion.Core.Managers;
 using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Items;
@@ -27,6 +28,7 @@ namespace Nytherion.UI.Test
     {
         [Header("Debug UI References")]
         [SerializeField] private GameObject contentPanel;
+        [SerializeField] private GameObject contentPanel2;
         [SerializeField] private TMP_Text statusText;
         
         [Header("Test Assets")]
@@ -39,6 +41,14 @@ namespace Nytherion.UI.Test
         [SerializeField] private EnemyData rangedEnemyData;
         [SerializeField] private EnemyData hybridEnemyData;
         [SerializeField] private float spawnOffsetRange = 3f;
+
+        [Header("허수아비 소환")]
+        [SerializeField] private TrainingDummy trainingDummyPrefab;
+        [SerializeField, Min(0.5f)] private float trainingDummySpawnDistance = 1.5f;
+        private readonly List<TrainingDummy> trainingDummies = new List<TrainingDummy>();
+        private Vector2 trainingDummySpawnDirection = Vector2.right;
+        private InputManager inputManager;
+        private IObjectResolver objectResolver;
 
         // 의존성 주입
         private InventoryDataManager inventoryDataManager;
@@ -53,6 +63,7 @@ namespace Nytherion.UI.Test
         private SkillDataManager skillDataManager;
         private ILocalizationService localizationService;
         private Button languageToggleButton;
+        private ChainIgnitionDebugUI chainIgnitionDebugUI;
 
         [Inject]
         public void Construct(
@@ -66,7 +77,9 @@ namespace Nytherion.UI.Test
             RelicUIController relicUIController,
             RelicManager relicManager,
             SkillDataManager skillDataManager,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            InputManager inputManager,
+            IObjectResolver objectResolver)
         {
             this.inventoryDataManager = inventoryDataManager;
             this.currencyDataManager = currencyDataManager;
@@ -79,6 +92,8 @@ namespace Nytherion.UI.Test
             this.relicManager = relicManager;
             this.skillDataManager = skillDataManager;
             this.localizationService = localizationService;
+            this.inputManager = inputManager;
+            this.objectResolver = objectResolver;
         }
 
         private void Start()
@@ -91,6 +106,11 @@ namespace Nytherion.UI.Test
 
             // 디버그용 장비/스킬 지급, 언어 전환 및 몬스터 소환 버튼을 런타임에 생성
             CreateRuntimeDebugButtons();
+            if (contentPanel2 != null)
+            {
+                chainIgnitionDebugUI = contentPanel2.GetComponent<ChainIgnitionDebugUI>();
+                if (chainIgnitionDebugUI != null) chainIgnitionDebugUI.Initialize(playerManager, this);
+            }
 
             if (localizationService != null)
             {
@@ -127,14 +147,29 @@ namespace Nytherion.UI.Test
         {
             base.Awake();
             if (contentPanel != null) contentPanel.SetActive(false);
+            if (contentPanel2 != null) contentPanel2.SetActive(false);
         }
 
         private void Update()
         {
+            // 패널을 연 뒤 버튼을 클릭해도 열기 직전의 조준 방향 앞에 소환합니다.
+            if (!IsOpen && playerManager != null && inputManager != null && Camera.main != null)
+            {
+                Vector3 mousePosition = inputManager.MousePosition;
+                mousePosition.z = Mathf.Abs(Camera.main.transform.position.z - playerManager.transform.position.z);
+                Vector2 aimDirection = Camera.main.ScreenToWorldPoint(mousePosition) - playerManager.transform.position;
+                if (aimDirection.sqrMagnitude > 0.0001f)
+                    trainingDummySpawnDirection = aimDirection.normalized;
+            }
+
             // F12 키로 디버그 패널 토글
             if (Input.GetKeyDown(KeyCode.F12))
             {
                 Toggle();
+            }
+            if (Input.GetKeyDown(KeyCode.F11) && chainIgnitionDebugUI != null)
+            {
+                chainIgnitionDebugUI.TryCast();
             }
         }
 
@@ -149,6 +184,7 @@ namespace Nytherion.UI.Test
         protected override void OnPanelStateChanged(bool isOpen)
         {
             if (contentPanel != null) contentPanel.SetActive(isOpen);
+            if (contentPanel2 != null) contentPanel2.SetActive(isOpen);
             
             if (isOpen)
             {
@@ -547,6 +583,11 @@ namespace Nytherion.UI.Test
             CreateRuntimeButton(templateButton, parentTransform, "SpawnButton_Ranged", "몬스터 (원거리)", SpawnEnemyRanged);
             // 하이브리드 몬스터 소환 버튼 생성
             CreateRuntimeButton(templateButton, parentTransform, "SpawnButton_Hybrid", "몬스터 (하이브리드)", SpawnEnemyHybrid);
+            // 소환/제거 버튼은 작은 해상도에서도 바로 누를 수 있도록 앞쪽에 배치합니다.
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnTrainingDummyButton", "허수아비 소환", SpawnTrainingDummy)
+                .transform.SetSiblingIndex(1);
+            CreateRuntimeButton(templateButton, parentTransform, "RemoveTrainingDummiesButton", "허수아비 제거", RemoveTrainingDummies)
+                .transform.SetSiblingIndex(2);
         }
 
         private Button CreateRuntimeButton(
@@ -633,6 +674,38 @@ namespace Nytherion.UI.Test
                    localizationService.CurrentLanguage == SupportedLanguage.English
                 ? "Language: English → 한국어"
                 : "언어: 한국어 → English";
+        }
+
+        public void SpawnTrainingDummy()
+        {
+            if (playerManager == null || objectResolver == null)
+            {
+                UpdateStatusText("플레이어 또는 소환 의존성이 준비되지 않았습니다.");
+                return;
+            }
+            if (trainingDummyPrefab == null || trainingDummyPrefab.enemyData == null)
+            {
+                UpdateStatusText("허수아비 프리팹 또는 적 데이터가 없습니다.");
+                return;
+            }
+
+            Vector3 position = playerManager.transform.position
+                + (Vector3)(trainingDummySpawnDirection * trainingDummySpawnDistance);
+            TrainingDummy dummy = objectResolver.Instantiate(trainingDummyPrefab, position, Quaternion.identity);
+            dummy.Initialize(trainingDummyPrefab.enemyData);
+            trainingDummies.RemoveAll(target => target == null);
+            trainingDummies.Add(dummy);
+            UpdateStatusText($"플레이어 앞에 허수아비 소환 완료 ({trainingDummies.Count}개)");
+        }
+
+        public void RemoveTrainingDummies()
+        {
+            foreach (TrainingDummy dummy in trainingDummies)
+            {
+                if (dummy != null) Destroy(dummy.gameObject);
+            }
+            trainingDummies.Clear();
+            UpdateStatusText("소환한 허수아비를 모두 제거했습니다.");
         }
 
         public void SpawnEnemyMelee()

@@ -1,5 +1,7 @@
 using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Skill;
+using Nytherion.GamePlay.Combat;
+using Nytherion.Gameplay.Relics.Modules;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Skills
@@ -29,10 +31,21 @@ namespace Nytherion.GamePlay.Skills
         private DeploymentState deploymentState;
         private Transform pendingTarget;
         private bool isSeedLaunchPending;
+        private Transform upgradeOwner;
+        private float projectileSpreadAngle;
+        private float attackAnimationSpeed = 1f;
+        private LayerMask projectileObstacleLayers;
+        private RootiUpgradeRuntime Upgrades => upgradeOwner != null ? upgradeOwner.GetComponent<RootiUpgradeRuntime>() : null;
+        protected override float AttackInterval => base.AttackInterval / (Upgrades != null ? Upgrades.AttackSpeedMultiplier : 1f);
+        protected override bool LimitProjectileDistance => false;
+
+        public void SetUpgradeOwner(Transform owner) => upgradeOwner = owner;
 
         public override void Initialize(TurretSkillData data)
         {
             base.Initialize(data);
+            projectileSpreadAngle = data.projectileSpreadAngle;
+            projectileObstacleLayers = data.projectileObstacleLayers;
             CacheVisual();
             deploymentState = DeploymentState.Ready;
             pendingTarget = null;
@@ -87,7 +100,11 @@ namespace Nytherion.GamePlay.Skills
             if (deploymentState == DeploymentState.Attacking)
             {
                 if (pendingTarget != null) FacePosition(pendingTarget.position);
-                if (elapsed >= attackAnimationDuration) CompleteAttack();
+                if (elapsed >= attackAnimationDuration / attackAnimationSpeed)
+                {
+                    LaunchSeed();
+                    CompleteAttack();
+                }
             }
             base.Update();
         }
@@ -116,6 +133,7 @@ namespace Nytherion.GamePlay.Skills
             isSeedLaunchPending = true;
             deploymentState = DeploymentState.Attacking;
             phaseStartTime = Time.time;
+            attackAnimationSpeed = Upgrades != null ? Upgrades.AttackSpeedMultiplier : 1f;
             FacePosition(closestTarget.position);
             PlayAnimation("Flower Whip Attack");
         }
@@ -155,6 +173,36 @@ namespace Nytherion.GamePlay.Skills
             PlayAnimation("Idle");
         }
 
+        protected override void LaunchProjectileAtTarget(Transform target)
+        {
+            if (target == null) return;
+            int count = 1 + (Upgrades != null ? Upgrades.AdditionalProjectiles : 0);
+            // 중앙 씨앗은 조준선을 유지하고 추가 씨앗은 좌우로 펼칩니다.
+            Vector2 direction = (target.position - transform.TransformPoint(projectileSpawnOffset)).normalized;
+            for (int i = 0; i < count; i++)
+            {
+                float angle = (i - (count - 1) * 0.5f) * projectileSpreadAngle;
+                LaunchProjectile(Quaternion.Euler(0f, 0f, angle) * direction);
+            }
+        }
+
+        protected override void ConfigureProjectile(GameObject projectile)
+        {
+            if (!projectile.TryGetComponent(out CollisionObject collision)) return;
+            // 루티의 씨앗은 플레이어 무기의 관통·튕김과 독립적으로 설정하며 풀 재사용 때도 초기화합니다.
+            collision.Configure(damage, null, 0f, null, CombatModifierSnapshot.Empty, true);
+            collision.DisableAllProjModifiers();
+            collision.ConfigureObstacleCollision(projectileObstacleLayers);
+            // 오래된 프리팹이나 이미 생성된 풀에도 거리·화면 이탈 반환이 다시 활성화되지 않게 합니다.
+            if (projectile.TryGetComponent(out ProjDistanceLimit distanceLimit)) distanceLimit.enabled = false;
+            if (projectile.TryGetComponent(out ProjCameraBoundsLimit cameraLimit)) cameraLimit.enabled = false;
+            RootiUpgradeRuntime upgrades = Upgrades;
+            BounceModifier bounce = projectile.GetComponent<BounceModifier>();
+            bounce.enabled = upgrades != null && upgrades.MaxBounces > 0;
+            bounce.Configure(upgrades != null ? upgrades.MaxBounces : 0,
+                upgrades != null ? upgrades.BounceRadius : 0f, true, true);
+        }
+
         private void CacheVisual()
         {
             if (visualTransform == null)
@@ -178,7 +226,11 @@ namespace Nytherion.GamePlay.Skills
 
         private void PlayAnimation(string stateName)
         {
-            if (animator != null) animator.Play(stateName, 0, 0f);
+            if (animator != null)
+            {
+                animator.speed = stateName == "Flower Whip Attack" ? attackAnimationSpeed : 1f;
+                animator.Play(stateName, 0, 0f);
+            }
         }
 
         private void ResetVisualPosition()

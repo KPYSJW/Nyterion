@@ -109,8 +109,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -70}
-  m_SizeDelta: {x: 0, y: -60}
+  m_AnchoredPosition: {x: 0, y: -137.5}
+  m_SizeDelta: {x: 0, y: -175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1388995548068192179
 CanvasRenderer:
@@ -222,6 +222,7 @@ GameObject:
   - component: {fileID: 7626360513295631948}
   - component: {fileID: 6550013593118384100}
   - component: {fileID: -1165898564688812044}
+  - component: {fileID: 6807263095078161738}
   m_Layer: 5
   m_Name: SkillEquipSlot 1
   m_TagString: Untagged
@@ -315,3 +316,15 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &6807263095078161738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8498367146274910382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c365e90dd96450ebf872929c909aa1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

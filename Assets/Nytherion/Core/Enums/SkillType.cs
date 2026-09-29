@@ -14,6 +14,7 @@ namespace Nytherion.Core.Enums
         ShadowClone,
         Turret,
         Laser,
-        ChainIgnition
+        ChainIgnition,
+        PyroTank
     }
 }

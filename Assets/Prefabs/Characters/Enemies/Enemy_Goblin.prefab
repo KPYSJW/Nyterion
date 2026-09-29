@@ -66,7 +66,7 @@ GameObject:
   - component: {fileID: 956398306485875313}
   - component: {fileID: 6248118500750698835}
   - component: {fileID: 312391992983031709}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Enemy_Goblin
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -203,6 +203,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 4759487690129869322}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashDuration: 0.2
+  groundBodyCollider: {fileID: 6248118500750698835}
+  groundHitRadiusRatio: 1
 --- !u!114 &7813974616548920301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -290,7 +292,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.08, y: -0.18}
+  m_Offset: {x: 0.06666666, y: -0.14999998}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -301,7 +303,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.88, y: 1.04}
+  m_Size: {x: 0.9333334, y: 1.1000001}
   m_EdgeRadius: 0
 --- !u!50 &312391992983031709
 Rigidbody2D:

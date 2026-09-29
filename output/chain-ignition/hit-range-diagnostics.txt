@@ -1,0 +1,16 @@
+LATE_ENTRY: inside=True visible=True health=100
+MOVED_THIS_FRAME: autoSync=False health=90
+AFTER_SYNC: health=80
+STATIC_DUMMY: bodyInside=True groundOffset=(0.00, 0.00) groundInside=True hits=1
+PREFAB Enemy_Bat_melee: bodyLayer=3 footOffset=(-0.13, -1.02) footRadius=0.3350067 missed=0/8
+PREFAB Enemy_Frog: bodyLayer=3 footOffset=(0.00, -0.52) footRadius=0.1650085 missed=0/8
+PREFAB Enemy_Goblin: bodyLayer=0 footOffset=(0.08, -0.18) footRadius=0.2200012 missed=8/8
+PREFAB Enemy_hybrid: bodyLayer=3 footOffset=(0.00, -0.12) footRadius=0.125 missed=0/8
+PREFAB Enemy_Knight: bodyLayer=3 footOffset=(0.00, -0.42) footRadius=0.3699951 missed=0/8
+PREFAB Enemy_ranged: bodyLayer=3 footOffset=(0.00, -0.14) footRadius=0.125 missed=0/8
+PREFAB Enemy_Tree_melee: bodyLayer=3 footOffset=(-0.18, -0.15) footRadius=0.3925018 missed=0/8
+PREFAB Enemy_Tree_ranged: bodyLayer=3 footOffset=(0.01, -0.08) footRadius=0.1714935 missed=0/8
+PREFAB Enemy_Bag_Ranged: bodyLayer=3 footOffset=(0.00, -0.13) footRadius=0.4550018 missed=0/8
+PREFAB Enemy_Bat_Ranged: bodyLayer=3 footOffset=(0.00, -0.06) footRadius=0.207489 missed=0/8
+PREFAB Enemy_Mushroom_Ranged: bodyLayer=3 footOffset=(-0.12, -0.22) footRadius=0.2050018 missed=0/8
+PREFAB TrainingDummy: bodyLayer=3 footOffset=(0.00, 0.00) footRadius=0.1000061 missed=0/8

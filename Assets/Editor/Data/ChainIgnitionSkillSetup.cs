@@ -25,6 +25,7 @@ namespace Nytherion.Editor
         public const string WavePrefabPath = "Assets/Prefabs/Gameplay/Skills/ChainIgnitionWave.prefab";
         private const string SheetPath = "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition.png";
         private const string IconPath = "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition_Icon.png";
+        public const string SoundPath = "Assets/Nytherion/Audio/ChainIgnitionSound.wav";
         private const string RelicPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Relic_ChainIgnition.asset";
 
         static ChainIgnitionSkillSetup()
@@ -52,6 +53,30 @@ namespace Nytherion.Editor
             {
                 UpdateExplosionAnimation();
             }
+            if (data != null && AssetDatabase.LoadAssetAtPath<AudioClip>(SoundPath) != null &&
+                (data.explosionSound == null || (data.wavePrefab != null && data.wavePrefab.GetComponent<AudioSource>() == null)))
+                UpdateExplosionSound();
+        }
+
+        [MenuItem("Tools/Nytherion/Chain Ignition/Update Explosion Sound")]
+        public static void UpdateExplosionSound()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            ChainIgnitionSkillData data = Require<ChainIgnitionSkillData>(DataPath);
+            if (data.explosionSound == null) data.explosionSound = Require<AudioClip>(SoundPath);
+            GameObject root = PrefabUtility.LoadPrefabContents(WavePrefabPath);
+            try
+            {
+                AudioSource source = root.GetComponent<AudioSource>();
+                if (source == null) source = root.AddComponent<AudioSource>();
+                source.playOnAwake = false;
+                source.loop = false;
+                source.spatialBlend = 0f;
+                PrefabUtility.SaveAsPrefabAsset(root, WavePrefabPath);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+            Save(data);
+            Debug.Log("[ChainIgnitionSkillSetup] 연쇄 점화 각 파동의 효과음 연결 완료.", data);
         }
 
         [MenuItem("Tools/Nytherion/Chain Ignition/Update Explosion Animation")]
@@ -82,11 +107,11 @@ namespace Nytherion.Editor
                 data.skillID = "skill_chain_ignition";
                 data.skillType = SkillType.ChainIgnition;
                 data.skillName = "연쇄 점화";
-                data.description = "시전한 위치를 중심으로 8방향 화염 폭발이 세 차례 바깥으로 퍼집니다. 각 파동은 적에게 한 번씩 피해를 줍니다.";
+                data.description = "마우스와 가까운 방향으로 화염 폭발이 세 차례 퍼집니다. 기본 1방향에서 2레벨마다 1방향씩 증가하며 유물 보정을 포함해 최대 8방향까지 폭발합니다. 레벨마다 기본 피해가 2 증가하고 투사체 수, 크기, 범위 증가 유물이 적용됩니다.";
                 data.skillLevel = 1;
                 data.coolDown = 6f;
                 data.damage = 10f;
-                data.range = 3.6f;
+                data.range = 3f;
                 data.targetLayers = LayerMask.GetMask("Enemy");
                 AssetDatabase.CreateAsset(data, DataPath);
             }
@@ -100,7 +125,9 @@ namespace Nytherion.Editor
             GameObject skillPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SkillPrefabPath);
             if (skillPrefab == null) skillPrefab = CreateSkillPrefab(data);
             data.skillPrefab = skillPrefab;
+            if (data.explosionSound == null) data.explosionSound = AssetDatabase.LoadAssetAtPath<AudioClip>(SoundPath);
             Save(data);
+            if (data.explosionSound != null) UpdateExplosionSound();
 
             if (database.allSkills == null) database.allSkills = new List<SkillData>();
             if (!database.allSkills.Contains(data))
@@ -118,7 +145,7 @@ namespace Nytherion.Editor
                 relic.relicName = "Relic of Chain Ignition";
                 relic.koreanName = "연쇄 점화 각인";
                 relic.description_KR = "[연쇄 점화] 스킬을 얻습니다.\n[연쇄 점화] : " + data.description;
-                relic.description_EN = "Grants Chain Ignition. Eight explosions expand outward from the cast position in three waves.";
+                relic.description_EN = "Grants Chain Ignition. Three waves expand toward the mouse, starting with one direction. Levels and relics increase damage and fill up to eight directions.";
                 relic.Image = icon;
                 relic.rarity = Rarity.Common;
                 relic.effectModules = new List<RelicEffectModule>

@@ -1,0 +1,4 @@
+FAIL System.IO.IOException: The process cannot access the file 'C:\RoguelikePrototype\output\training-dummy\verify.request' because it is being used by another process.
+  at System.IO.FileSystem.DeleteFile (System.String fullPath) [0x0001a] in <1071a2cb0cb3433aae80a793c277a048>:0 
+  at System.IO.File.Delete (System.String path) [0x00014] in <1071a2cb0cb3433aae80a793c277a048>:0 
+  at Nytherion.Editor.TrainingDummySetup.Update () [0x00045] in C:\RoguelikePrototype\Assets\Editor\Data\TrainingDummySetup.cs:64 

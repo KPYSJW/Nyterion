@@ -15,7 +15,10 @@ MonoBehaviour:
   skillID: skill_turret
   skillType: 10
   skillName: "\uB8E8\uD2F0 \uD3EC\uD0D1"
-  description: "루티가 플레이어의 조준 방향으로 날아가 착지한 뒤, 제자리에서 공격 범위 내의 적에게 씨앗을 발사합니다."
+  description: "\uB8E8\uD2F0\uAC00 \uD50C\uB808\uC774\uC5B4\uC758 \uC870\uC900 \uBC29\uD5A5\uC73C\uB85C
+    \uB0A0\uC544\uAC00 \uCC29\uC9C0\uD55C \uB4A4, \uC81C\uC790\uB9AC\uC5D0\uC11C
+    \uACF5\uACA9 \uBC94\uC704 \uB0B4\uC758 \uC801\uC5D0\uAC8C \uC528\uC557\uC744
+    \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
   skillLevel: 0
   exp: 0
   coolDown: 5
@@ -31,9 +34,16 @@ MonoBehaviour:
   maxTurretCount: 3
   duration: 10
   attackInterval: 1
+  maxCharges: 1
+  minimumSummonInterval: 0.5
+  duplicateSpacing: 0.6
+  projectileSpreadAngle: 12
   launchAroundCaster: 1
   minimumDeploymentDistance: 0.6
   projectilePoolTag: RootiSeedProjectile
   projectilePrefab: {fileID: 9015685104379156820, guid: caa2cc2a0ba7dcf45a0e70715a5c8246, type: 3}
   projectileSpawnOffset: {x: 0, y: 0.46, z: 0}
   projectileSpeed: 5
+  projectileObstacleLayers:
+    serializedVersion: 2
+    m_Bits: 2560

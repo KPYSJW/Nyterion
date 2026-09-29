@@ -34,6 +34,18 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         [Tooltip("터렛이 투사체를 발사하는 간격")]
         public float attackInterval = 1f;
 
+        [Header("소환 충전")]
+        [Min(1), Tooltip("기본 저장 개수입니다. 충전 하나마다 스킬의 coolDown만큼 기다립니다.")]
+        public int maxCharges = 1;
+        [Min(0.5f), Tooltip("충전이 남아 있어도 소환 사이에는 최소 이 시간만큼 기다립니다.")]
+        public float minimumSummonInterval = 0.5f;
+
+        [Header("루티 강화 배치·발사")]
+        [Min(0f), Tooltip("복제초로 동시에 소환되는 루티 사이의 거리입니다.")]
+        public float duplicateSpacing = 0.6f;
+        [Range(0f, 90f), Tooltip("벽청 베리로 증가한 투사체 사이의 발사 각도입니다.")]
+        public float projectileSpreadAngle = 12f;
+
         [Header("배치 연출")]
         [Tooltip("시전자 위치에서 조준 방향의 바닥으로 날아가 착지합니다.")]
         public bool launchAroundCaster;
@@ -56,5 +68,9 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         /// <summary> 터렛이 발사하는 투사체의 이동 속도 </summary>
         [Tooltip("발사된 투사체의 이동 속도")]
         public float projectileSpeed = 10f;
+
+        [Header("루티 씨앗 종료 조건")]
+        [Tooltip("씨앗을 막는 벽·구조물 레이어입니다. 바닥·플레이어·감지 트리거는 제외합니다.")]
+        public LayerMask projectileObstacleLayers = (1 << 9) | (1 << 11);
     }
 }
