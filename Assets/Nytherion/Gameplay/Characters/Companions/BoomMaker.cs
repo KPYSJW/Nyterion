@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Characters.Companions
 {
@@ -25,7 +26,7 @@ namespace Nytherion.GamePlay.Characters.Companions
 
         protected override bool TryAttack(Transform target)
         {
-            activeRobots.RemoveAll(robot => robot == null);
+            activeRobots.RemoveAll(robot => robot == null || !robot.isActiveAndEnabled);
             if (target == null || isSummonPending || activeRobots.Count >= Mathf.Max(1, maximumActiveRobots))
             {
                 return false;
@@ -62,22 +63,28 @@ namespace Nytherion.GamePlay.Characters.Companions
             isSummonPending = false;
             Transform target = pendingTarget;
             pendingTarget = null;
-            activeRobots.RemoveAll(robot => robot == null);
+            activeRobots.RemoveAll(robot => robot == null || !robot.isActiveAndEnabled);
             if (explosiveRobotPrefab == null || activeRobots.Count >= Mathf.Max(1, maximumActiveRobots))
             {
                 return;
             }
 
             Vector3 spawnPosition = transform.TransformPoint(explosiveRobotSpawnOffset);
-            GameObject robotObject = Instantiate(explosiveRobotPrefab, spawnPosition, Quaternion.identity);
+            ObjectPoolManager pool = ObjectPoolManager.Instance;
+            GameObject robotObject = pool != null
+                ? pool.SpawnFromPool(explosiveRobotPrefab, spawnPosition, Quaternion.identity, 3)
+                : Instantiate(explosiveRobotPrefab, spawnPosition, Quaternion.identity);
+            if (robotObject == null) return;
             ExplosiveRobot robot = robotObject.GetComponent<ExplosiveRobot>();
             if (robot == null)
             {
                 Debug.LogError("[BoomMaker] 폭발 로봇 프리팹에 ExplosiveRobot 컴포넌트가 없습니다.", this);
-                Destroy(robotObject);
+                if (pool != null) pool.ReturnToPool(explosiveRobotPrefab.name, robotObject);
+                else Destroy(robotObject);
                 return;
             }
 
+            robot.SetPool(pool, explosiveRobotPrefab.name);
             robot.Initialize(
                 transform,
                 target,
@@ -90,6 +97,18 @@ namespace Nytherion.GamePlay.Characters.Companions
         {
             pendingTarget = null;
             isSummonPending = false;
+            // 장착 해제 시 살아 있는 로봇도 회수하여 이전 소환수 참조가 남지 않게 합니다.
+            while (activeRobots.Count > 0)
+            {
+                ExplosiveRobot robot = activeRobots[activeRobots.Count - 1];
+                activeRobots.RemoveAt(activeRobots.Count - 1);
+                if (robot != null) robot.ReturnToPool();
+            }
+        }
+
+        public void ReleaseExplosiveRobot(ExplosiveRobot robot)
+        {
+            activeRobots.Remove(robot);
         }
     }
 }

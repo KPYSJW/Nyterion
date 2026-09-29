@@ -52,6 +52,19 @@ namespace Nytherion.UI.RelicBoard
         private RelicSlotCell currentPointerOverCell;
         private readonly List<Image> storageSlotFrames = new List<Image>();
         private readonly List<Image> equippedSlotFrames = new List<Image>();
+        private sealed class PreviewGizmo
+        {
+            public GameObject prefab;
+            public GameObject instance;
+            public RectTransform rectTransform;
+            public Graphic graphic;
+            public Color originalColor;
+            public TextMeshProUGUI amountLabel;
+        }
+
+        private readonly Dictionary<GameObject, Stack<PreviewGizmo>> previewPools =
+            new Dictionary<GameObject, Stack<PreviewGizmo>>();
+        private readonly List<PreviewGizmo> activePreviewGizmos = new List<PreviewGizmo>();
         private float configuredCanvasScale = -1f;
         public Vector2Int? CurrentGridPos => currentPointerOverCell?.GridPosition;
 
@@ -93,6 +106,7 @@ namespace Nytherion.UI.RelicBoard
 
         private void OnDisable()
         {
+            ClearPreview();
             if (relicManager != null)
             {
                 relicManager.OnRelicStateChanged -= HandleRelicStateChanged;
@@ -222,7 +236,7 @@ namespace Nytherion.UI.RelicBoard
             foreach (Transform child in placedBlocksContainer) Destroy(child.gameObject);
             foreach (Transform child in blockStorageParent) Destroy(child.gameObject);
             storageSlotFrames.Clear();
-            foreach (Transform child in previewContainer) Destroy(child.gameObject);
+            ClearPreview();
         }
 
         private void CreateBlockInStorage(RelicBlock blockData)
@@ -298,10 +312,9 @@ namespace Nytherion.UI.RelicBoard
 
         public void ShowPlacementPreview(RelicBlock block, Vector2Int? gridPos)
         {
-            foreach (Transform child in previewContainer) Destroy(child.gameObject);
             ClearPreview();
 
-            if (block == null || !gridPos.HasValue) return;
+            if (block == null || !gridPos.HasValue || slotCells == null || previewContainer == null) return;
 
             Vector2Int pos = gridPos.Value;
             if (pos.x >= 0 && pos.x < columns && pos.y >= 0 && pos.y < rows)
@@ -334,35 +347,80 @@ namespace Nytherion.UI.RelicBoard
                     if (prefabToUse != null)
                     {
                         RectTransform targetCellRect = slotCells[targetRow, targetCol].GetComponent<RectTransform>();
-                        GameObject gizmo = Instantiate(prefabToUse, previewContainer);
-                        RectTransform gizmoRect = gizmo.GetComponent<RectTransform>();
+                        PreviewGizmo preview = GetPreviewGizmo(prefabToUse);
+                        GameObject gizmo = preview.instance;
+                        RectTransform gizmoRect = preview.rectTransform;
                         gizmoRect.anchoredPosition = previewContainer.InverseTransformPoint(targetCellRect.position);
 
-                        Graphic graphic = gizmo.GetComponent<Graphic>();
+                        Graphic graphic = preview.graphic;
                         if (graphic != null)
                         {
                             Color color;
                             if (isSilence && silenceGizmoPrefab == null) color = new Color(0.5f, 0, 0.5f);
                             else if (zone.type == InfluenceType.SynergyLink && synergyLinkGizmoPrefab == null) color = new Color(1f, 0.8f, 0f);
-                            else color = graphic.color;
+                            else color = preview.originalColor;
 
                             color.a = 0.5f;
                             graphic.color = color;
                         }
 
-                        CreatePreviewInfluenceAmountText(gizmo.transform, zone);
+                        UpdatePreviewInfluenceAmountText(preview, zone);
+                        gizmo.SetActive(true);
                     }
                 }
             }
         }
 
-        private static void CreatePreviewInfluenceAmountText(Transform parent, InfluenceZone zone)
+        private PreviewGizmo GetPreviewGizmo(GameObject prefab)
+        {
+            if (!previewPools.TryGetValue(prefab, out Stack<PreviewGizmo> pool))
+            {
+                pool = new Stack<PreviewGizmo>();
+                previewPools.Add(prefab, pool);
+            }
+
+            PreviewGizmo preview;
+            if (pool.Count > 0)
+            {
+                preview = pool.Pop();
+            }
+            else
+            {
+                GameObject instance = Instantiate(prefab, previewContainer);
+                Graphic graphic = instance.GetComponent<Graphic>();
+                preview = new PreviewGizmo
+                {
+                    prefab = prefab,
+                    instance = instance,
+                    rectTransform = instance.GetComponent<RectTransform>(),
+                    graphic = graphic,
+                    originalColor = graphic != null ? graphic.color : Color.white
+                };
+                instance.SetActive(false);
+            }
+
+            activePreviewGizmos.Add(preview);
+            return preview;
+        }
+
+        private static void UpdatePreviewInfluenceAmountText(PreviewGizmo preview, InfluenceZone zone)
         {
             string amountText = GetInfluenceAmountText(zone);
-            if (string.IsNullOrEmpty(amountText)) return;
+            if (string.IsNullOrEmpty(amountText))
+            {
+                if (preview.amountLabel != null) preview.amountLabel.gameObject.SetActive(false);
+                return;
+            }
+
+            if (preview.amountLabel != null)
+            {
+                preview.amountLabel.text = amountText;
+                preview.amountLabel.gameObject.SetActive(true);
+                return;
+            }
 
             GameObject textObject = new GameObject("InfluenceAmount", typeof(RectTransform), typeof(CanvasRenderer));
-            textObject.transform.SetParent(parent, false);
+            textObject.transform.SetParent(preview.instance.transform, false);
 
             RectTransform textTransform = textObject.GetComponent<RectTransform>();
             textTransform.anchorMin = new Vector2(0.5f, 0.5f);
@@ -379,6 +437,7 @@ namespace Nytherion.UI.RelicBoard
             label.raycastTarget = false;
             label.enableWordWrapping = false;
             label.text = amountText;
+            preview.amountLabel = label;
         }
 
         private static string GetInfluenceAmountText(InfluenceZone zone)
@@ -398,7 +457,18 @@ namespace Nytherion.UI.RelicBoard
 
         public void ClearPreview()
         {
-            foreach (var cell in slotCells) cell.Highlight(false);
+            foreach (PreviewGizmo preview in activePreviewGizmos)
+            {
+                if (preview.instance == null) continue;
+                preview.instance.SetActive(false);
+                previewPools[preview.prefab].Push(preview);
+            }
+            activePreviewGizmos.Clear();
+            if (slotCells == null) return;
+            foreach (var cell in slotCells)
+            {
+                if (cell != null) cell.Highlight(false);
+            }
         }
 
         public Vector2 GetLocalPositionFromGridCell(Vector2Int gridPos)

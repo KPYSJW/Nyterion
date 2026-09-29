@@ -298,7 +298,14 @@ namespace Nytherion.GamePlay.Relics
                 return;
             }
 
-            GameObject effectInstance = Instantiate(dropRelicEffectPrefab, transform.position, Quaternion.identity);
+            GameObject effectInstance = objectPoolManager != null
+                ? objectPoolManager.SpawnFromPool(dropRelicEffectPrefab, transform.position, Quaternion.identity, 3)
+                : Instantiate(dropRelicEffectPrefab, transform.position, Quaternion.identity);
+            if (effectInstance == null) return;
+            if (effectInstance.TryGetComponent(out DropRelicVFXAnimationEvent animationEvent))
+            {
+                animationEvent.SetPool(objectPoolManager, dropRelicEffectPrefab.name);
+            }
             Animator[] animators = effectInstance.GetComponentsInChildren<Animator>(true);
 
             for (int i = 0; i < animators.Length; i++)

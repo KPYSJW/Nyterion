@@ -28,7 +28,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             // 메테오 전용 로직: 낙하 지점 설정
             if (meteor.TryGetComponent<MeteorProj>(out var proj))
             {
-                proj.Initialize(targetPosition);
+                proj.Initialize(targetPosition, ObjectPoolManager.Instance);
             }
 
             // 데미지 주입

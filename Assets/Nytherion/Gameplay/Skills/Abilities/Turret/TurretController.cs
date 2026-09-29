@@ -25,6 +25,16 @@ namespace Nytherion.GamePlay.Skills
         private GameObject projectilePrefab;
         protected Vector3 projectileSpawnOffset;
         private bool isInitialized;
+        protected bool IsInitialized => isInitialized;
+        private ObjectPoolManager returnPool;
+        private string poolTag;
+        private bool isReturning;
+
+        public void SetPool(ObjectPoolManager pool, string tag)
+        {
+            returnPool = pool;
+            poolTag = tag;
+        }
 
         private float lifetimeTimer;
         private float attackTimer;
@@ -54,6 +64,16 @@ namespace Nytherion.GamePlay.Skills
             this.attackTimer = attackInterval;
             previousAttackInterval = attackInterval;
             isInitialized = true;
+            isReturning = false;
+
+            // Start는 재사용 때 호출되지 않으므로 매 배치의 초기화에서 등록합니다.
+            activeTurrets.RemoveAll(turret => turret == null || !turret.isActiveAndEnabled);
+            activeTurrets.Remove(this);
+            activeTurrets.Add(this);
+            while (activeTurrets.Count > Mathf.Max(1, (int)maxCount))
+            {
+                activeTurrets[0].ReturnToPool();
+            }
         }
 
         /// <summary>
@@ -64,27 +84,10 @@ namespace Nytherion.GamePlay.Skills
             transform.position = landingPosition;
         }
 
-        private void Start()
+        protected virtual void OnEnable()
         {
-            if (!isInitialized)
-            {
-                return;
-            }
-            // 생성된 터렛을 '활성화된 터렛 목록'의 마지막에 추가하여 추적 시작
-            activeTurrets.Add(this);
-
-            // 최대 소환 개수(maxCount) 초과 방지 로직
-            if (activeTurrets.Count > maxCount)
-            {
-                // 목록의 첫 번째 요소(가장 오래된 터렛) 파괴
-                TurretController oldestTurret = activeTurrets[0];
-                if (oldestTurret != null)
-                {
-                    Destroy(oldestTurret.gameObject);
-                }
-                // 목록에서 파괴된 터렛 제거
-                activeTurrets.RemoveAt(0);
-            }
+            isInitialized = false;
+            isReturning = false;
         }
 
         protected virtual void Update()
@@ -97,7 +100,7 @@ namespace Nytherion.GamePlay.Skills
             lifetimeTimer -= Time.deltaTime;
             if (lifetimeTimer <= 0)
             {
-                DestroyTurret();
+                ReturnToPool();
                 return;
             }
 
@@ -223,15 +226,33 @@ namespace Nytherion.GamePlay.Skills
         protected virtual void ConfigureProjectile(GameObject projectile) { }
 
         /// <summary>
-        /// 터렛을 전역 리스트에서 제거하고 오브젝트 파괴
+        /// 터렛을 전역 리스트에서 제거하고 풀로 반환합니다.
         /// </summary>
-        private void DestroyTurret()
+        public void ReturnToPool()
         {
-            if (activeTurrets.Contains(this))
+            if (isReturning || !gameObject.activeSelf) return;
+            isReturning = true;
+            isInitialized = false;
+            activeTurrets.Remove(this);
+            if (returnPool != null && !string.IsNullOrEmpty(poolTag))
             {
-                activeTurrets.Remove(this);
+                returnPool.ReturnToPool(poolTag, gameObject);
             }
-            Destroy(gameObject);
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        protected virtual void OnDisable()
+        {
+            isInitialized = false;
+            activeTurrets.Remove(this);
+            if (TryGetComponent(out Rigidbody2D rigidbody))
+            {
+                rigidbody.velocity = Vector2.zero;
+                rigidbody.angularVelocity = 0f;
+            }
         }
 
         /// <summary>

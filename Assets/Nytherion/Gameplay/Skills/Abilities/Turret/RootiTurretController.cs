@@ -47,6 +47,15 @@ namespace Nytherion.GamePlay.Skills
             projectileSpreadAngle = data.projectileSpreadAngle;
             projectileObstacleLayers = data.projectileObstacleLayers;
             CacheVisual();
+            ResetVisualPosition();
+            upgradeOwner = null;
+            attackAnimationSpeed = 1f;
+            if (animator != null)
+            {
+                animator.speed = 1f;
+                animator.Rebind();
+                animator.Update(0f);
+            }
             deploymentState = DeploymentState.Ready;
             pendingTarget = null;
             isSeedLaunchPending = false;
@@ -72,6 +81,7 @@ namespace Nytherion.GamePlay.Skills
 
         protected override void Update()
         {
+            if (!IsInitialized) return;
             float elapsed = Time.time - phaseStartTime;
             if (deploymentState == DeploymentState.Flying)
             {
@@ -241,10 +251,14 @@ namespace Nytherion.GamePlay.Skills
             }
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             pendingTarget = null;
             isSeedLaunchPending = false;
+            upgradeOwner = null;
+            attackAnimationSpeed = 1f;
+            if (animator != null) animator.speed = 1f;
             ResetVisualPosition();
         }
     }

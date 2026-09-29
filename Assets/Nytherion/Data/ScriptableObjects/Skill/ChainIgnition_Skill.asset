@@ -58,6 +58,6 @@ MonoBehaviour:
   wavePrefab: {fileID: 3381285174121021873, guid: 2ddc16832af540946b1f9eada5181dd5, type: 3}
   explosionSound: {fileID: 8300000, guid: 08cfc0fe5678ea14dadea7f689d9f17a, type: 3}
   explosionSoundVolume: 0.25
-  showHitRanges: 1
+  showHitRanges: 0
   hitRangeColor: {r: 0, g: 1, b: 1, a: 0.85}
   hitRangeLineWidth: 0.01

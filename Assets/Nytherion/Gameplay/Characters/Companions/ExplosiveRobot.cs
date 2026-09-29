@@ -42,6 +42,16 @@ namespace Nytherion.GamePlay.Characters.Companions
         private float expireTime;
         private bool isInitialized;
         private bool hasExploded;
+        private ObjectPoolManager returnPool;
+        private string poolTag;
+        private bool isReturning;
+        private bool originalFlipX;
+
+        public void SetPool(ObjectPoolManager pool, string tag)
+        {
+            returnPool = pool;
+            poolTag = tag;
+        }
 
         public void Initialize(
             Transform sourceSummoner,
@@ -54,25 +64,85 @@ namespace Nytherion.GamePlay.Characters.Companions
             damage = Mathf.Max(0f, explosionDamage);
             expireTime = Time.time + Mathf.Max(0.1f, lifetime);
             hasExploded = false;
-            isInitialized = true;
+            isReturning = false;
 
             CacheComponents();
+            damagedTargets.Clear();
+            robotRigidbody.simulated = true;
+            robotRigidbody.velocity = Vector2.zero;
+            robotRigidbody.angularVelocity = 0f;
+            robotCollider.enabled = true;
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.enabled = true;
+                spriteRenderer.flipX = originalFlipX;
+            }
+            if (animator != null)
+            {
+                animator.speed = 1f;
+                animator.Rebind();
+                animator.Update(0f);
+            }
+            SetRunningAnimation(false);
             if (summonerRenderer != null && spriteRenderer != null)
             {
                 spriteRenderer.sortingLayerID = summonerRenderer.sortingLayerID;
                 spriteRenderer.sortingOrder = summonerRenderer.sortingOrder + 1;
             }
+            isInitialized = true;
         }
 
         private void Awake()
         {
             CacheComponents();
+            originalFlipX = spriteRenderer != null && spriteRenderer.flipX;
             robotRigidbody.gravityScale = 0f;
             robotRigidbody.drag = 0f;
             robotRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
             robotRigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
             robotCollider.isTrigger = true;
+        }
+
+        private void OnEnable()
+        {
+            isInitialized = false;
+            isReturning = false;
+            hasExploded = false;
+            robotCollider.enabled = false;
+        }
+
+        private void OnDisable()
+        {
+            isInitialized = false;
+            if (summoner != null && summoner.TryGetComponent(out BoomMaker boomMaker))
+            {
+                boomMaker.ReleaseExplosiveRobot(this);
+            }
+            summoner = null;
+            target = null;
+            damagedTargets.Clear();
+            if (robotRigidbody != null)
+            {
+                robotRigidbody.velocity = Vector2.zero;
+                robotRigidbody.angularVelocity = 0f;
+            }
+            if (robotCollider != null) robotCollider.enabled = false;
+        }
+
+        public void ReturnToPool()
+        {
+            if (isReturning || !gameObject.activeSelf) return;
+            isReturning = true;
+            isInitialized = false;
+            if (returnPool != null && !string.IsNullOrEmpty(poolTag))
+            {
+                returnPool.ReturnToPool(poolTag, gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         private void Update()
@@ -82,9 +152,9 @@ namespace Nytherion.GamePlay.Characters.Companions
                 return;
             }
 
-            if (summoner == null)
+            if (summoner == null || !summoner.gameObject.activeInHierarchy)
             {
-                Destroy(gameObject);
+                ReturnToPool();
                 return;
             }
 
@@ -221,7 +291,7 @@ namespace Nytherion.GamePlay.Characters.Companions
 
         private void TryExplodeFromCollider(Collider2D other)
         {
-            if (!hasExploded && TryResolveEnemy(other, out _, out _))
+            if (isInitialized && !hasExploded && TryResolveEnemy(other, out _, out _))
             {
                 Explode();
             }
@@ -285,7 +355,7 @@ namespace Nytherion.GamePlay.Characters.Companions
 
         private void Explode()
         {
-            if (hasExploded)
+            if (!isInitialized || hasExploded)
             {
                 return;
             }
@@ -306,7 +376,7 @@ namespace Nytherion.GamePlay.Characters.Companions
 
             ApplyExplosionDamage();
             SpawnExplosionVisual();
-            Destroy(gameObject);
+            ReturnToPool();
         }
 
         private void ApplyExplosionDamage()

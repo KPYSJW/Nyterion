@@ -2,6 +2,7 @@ using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -154,8 +155,13 @@ namespace Nytherion.GamePlay.Skills
                                 destination = duplicateHit.position;
                         }
                         Vector3 launchPosition = turretData.launchAroundCaster ? playerPosition : destination;
-                        GameObject turretInstance = Instantiate(turretData.turretPrefab, launchPosition, Quaternion.identity);
+                        ObjectPoolManager pool = ObjectPoolManager.Instance;
+                        GameObject turretInstance = pool != null
+                            ? pool.SpawnFromPool(turretData.turretPrefab, launchPosition, Quaternion.identity, 3)
+                            : Instantiate(turretData.turretPrefab, launchPosition, Quaternion.identity);
+                        if (turretInstance == null) continue;
                         TurretController controller = turretInstance.GetComponent<TurretController>();
+                        controller.SetPool(pool, turretData.turretPrefab.name);
                         controller.Initialize(turretData);
                         if (controller is RootiTurretController rooti) rooti.SetUpgradeOwner(caster);
                         controller.Deploy(launchPosition, destination);
