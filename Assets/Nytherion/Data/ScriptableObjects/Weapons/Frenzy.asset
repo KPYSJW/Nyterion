@@ -41,11 +41,22 @@ MonoBehaviour:
   chargeEffectPrefab: {fileID: 0}
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 4388211735977503658, guid: 8fae2d79634426a44af06f51afb709b1, type: 3}
-  projectileSpeed: 7
+  projectileSpeed: 8
   projectileRotationOffset: 0
   extraProjectileMode: 1
   maxChargeTime: 1
   hasHomingProjectiles: 0
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 120
+  - 60
+  - 0
+  - -60
+  - -120
+  homingTurnSpeed: 180
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
   chargeThresholdTime: 0.15
   requiredRelicId: 
   hitEffectPrefab: {fileID: 2773623504146537913, guid: 02e616b90ff8cd04dbdabd600df6f382, type: 3}

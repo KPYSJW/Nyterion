@@ -43,6 +43,8 @@ namespace Nytherion.GamePlay.Combat
 
                 if (fragment != null)
                 {
+                    float size = myCol != null ? myCol.effectSizeMultiplier : 1f;
+                    fragment.transform.localScale *= size;
                     fragment.transform.rotation = Quaternion.AngleAxis(currentA, Vector3.forward);
 
                     if (fragment.TryGetComponent<Rigidbody2D>(out var fragRb))
@@ -52,6 +54,7 @@ namespace Nytherion.GamePlay.Combat
 
                     if (fragment.TryGetComponent<CollisionObject>(out var fragCol))
                     {
+                        fragCol.effectSizeMultiplier = size;
                         if (myCol != null) fragCol.damage = myCol.damage * splitDamageMultiplier;
 
                         fragCol.DisableAllProjModifiers();

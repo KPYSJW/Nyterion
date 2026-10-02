@@ -581,6 +581,9 @@ namespace Nytherion.GamePlay.Characters.Companions
 
             WeaponBase currentWeapon = ownerCombat != null ? ownerCombat.currentWeapon : null;
             WeaponData weaponData = currentWeapon != null ? currentWeapon.weaponData : null;
+            float size = ownerManager != null && ownerManager.currentPlayerData != null
+                ? Mathf.Max(0.01f, ownerManager.currentPlayerData.projectileSizeMultiplier) : 1f;
+            projectile.transform.localScale *= size;
             CombatModifierSnapshot modifiers = ownerManager != null && ownerManager.playerRelicManager != null
                 ? ownerManager.playerRelicManager.CombatModifiers
                 : CombatModifierSnapshot.Empty;
@@ -596,6 +599,7 @@ namespace Nytherion.GamePlay.Characters.Companions
                     0f,
                     weaponData != null ? weaponData.hitEffectPrefab : null,
                     modifiers);
+                collisionObject.effectSizeMultiplier = size;
             }
 
             bool shouldUseHoming = weaponData != null && weaponData.hasHomingProjectiles;

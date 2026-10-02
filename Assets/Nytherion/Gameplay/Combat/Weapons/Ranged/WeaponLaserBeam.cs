@@ -59,6 +59,9 @@ namespace Nytherion.GamePlay.Combat
         private bool usesBakedFadeFrames;
         private bool initialized;
         private Color beamColor;
+        private Vector3 startEffectBaseScale;
+        private Vector3 endEffectBaseScale;
+        private bool endpointScalesCached;
 
         public bool IsFiring { get; private set; }
         public float CurrentLength { get; private set; }
@@ -69,12 +72,20 @@ namespace Nytherion.GamePlay.Combat
             this.owner = owner;
             this.origin = origin;
             this.pool = pool;
+            if (!endpointScalesCached)
+            {
+                startEffectBaseScale = startEffectRenderer != null ? startEffectRenderer.transform.localScale : Vector3.one;
+                endEffectBaseScale = endEffectRenderer != null ? endEffectRenderer.transform.localScale : Vector3.one;
+                endpointScalesCached = true;
+            }
+            if (startEffectRenderer != null) startEffectRenderer.transform.localScale = startEffectBaseScale * owner.EffectSizeMultiplier;
+            if (endEffectRenderer != null) endEffectRenderer.transform.localScale = endEffectBaseScale * owner.EffectSizeMultiplier;
             poolTag = data.projectilePrefab != null ? data.projectilePrefab.name : string.Empty;
             damage = Mathf.Max(0f, tickDamage);
             duration = Mathf.Max(0.01f, data.fireDuration);
             interval = Mathf.Max(0.01f, data.tickInterval);
-            width = Mathf.Max(0.01f, data.beamWidth);
-            visualWidth = Mathf.Max(0.01f, data.visualBeamWidth);
+            width = Mathf.Max(0.01f, data.beamWidth) * owner.EffectSizeMultiplier;
+            visualWidth = Mathf.Max(0.01f, data.visualBeamWidth) * owner.EffectSizeMultiplier;
             fallbackLength = Mathf.Max(0f, data.range);
             fadeDuration = Mathf.Max(0f, data.fadeDuration);
             followAim = data.followAim;

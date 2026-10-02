@@ -38,10 +38,13 @@ namespace Nytherion.GamePlay.Skills
         private Vector2 jumpStartPosition;
         private float jumpStartedAt;
         private float jumpProgress;
+        private float effectSizeMultiplier = 1f;
+        private Vector3 baseScale;
 
         private void Awake()
         {
             CacheComponents();
+            baseScale = transform.localScale;
         }
 
         private void CacheComponents()
@@ -55,9 +58,12 @@ namespace Nytherion.GamePlay.Skills
             Begin(skill, position, Vector2.zero);
         }
 
-        public void Begin(PyroTankSkillData skill, Vector3 position, Vector2 launchDirection)
+        public void Begin(PyroTankSkillData skill, Vector3 position, Vector2 launchDirection,
+            float sizeMultiplier = 1f)
         {
             CacheComponents();
+            effectSizeMultiplier = Mathf.Max(0.01f, sizeMultiplier);
+            transform.localScale = baseScale * effectSizeMultiplier;
             data = skill;
             hasExploded = false;
             target = null;
@@ -314,7 +320,7 @@ namespace Nytherion.GamePlay.Skills
             overlaps.Clear();
             damagedTargets.Clear();
             damageTargets.Clear();
-            Physics2D.OverlapCircle(body.position, Mathf.Max(0.01f, data.explosionRadius), enemyFilter, overlaps);
+            Physics2D.OverlapCircle(body.position, Mathf.Max(0.01f, data.explosionRadius) * effectSizeMultiplier, enemyFilter, overlaps);
             foreach (Collider2D hit in overlaps)
                 if (TryResolveEnemy(hit, out IDamageable damageable, out _) && damagedTargets.Add(damageable))
                     damageTargets.Add(damageable);

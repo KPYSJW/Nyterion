@@ -10,7 +10,8 @@ namespace Nytherion.UI.RelicBoard
 {
     public class RelicBlockDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        private const float MaxIconDisplaySize = 76f;
+        public const float StorageIconSize = 96f;
+        public const float EquippedIconSize = 64f;
 
         public RelicBlock blockData;
 
@@ -18,6 +19,8 @@ namespace Nytherion.UI.RelicBoard
         public Vector2Int gridPosition;
 
         [SerializeField] private Image iconImage;
+        private Image storageIcon;
+        private TextMeshProUGUI missingIconLabel;
 
         private CanvasGroup canvasGroup;
         private RectTransform rectTransform;
@@ -46,6 +49,10 @@ namespace Nytherion.UI.RelicBoard
             canvasGroup = GetComponent<CanvasGroup>();
             if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
             rectTransform = GetComponent<RectTransform>();
+            Image dragTarget = GetComponent<Image>();
+            if (dragTarget == null) dragTarget = gameObject.AddComponent<Image>();
+            dragTarget.color = Color.clear;
+            dragTarget.raycastTarget = true;
             if (levelText == null)
             {
                 levelText = GetComponentInChildren<TextMeshProUGUI>();
@@ -66,6 +73,7 @@ namespace Nytherion.UI.RelicBoard
 
         private void OnDisable()
         {
+            CancelDrag();
             if (inputManager != null)
             {
                 inputManager.onRelicRotate -= HandleRotation;
@@ -106,7 +114,7 @@ namespace Nytherion.UI.RelicBoard
             if (eventData.button != PointerEventData.InputButton.Left) return;
 
             relicTooltip?.Hide();
-            if (blockData == null || relicManager == null) return;
+            if (blockData == null || relicManager == null || relicGridUI == null || relicGridUI.rootCanvas == null) return;
 
             isDragging = true;
 
@@ -119,16 +127,49 @@ namespace Nytherion.UI.RelicBoard
                 relicManager.StartDraggingFromStorage(blockData);
             }
 
-            transform.SetParent(relicGridUI.rootCanvas.transform, true);
+            if (storageIcon != null) storageIcon.enabled = false;
+            // 유물 캔버스의 표시 순서를 유지해 드래그 아이콘이 패널 뒤로 가려지지 않게 한다.
+            transform.SetParent(relicGridUI.rootCanvas.transform, false);
+            transform.SetAsLastSibling();
+            rectTransform.anchorMin = rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransform.localScale = Vector3.one;
+            rectTransform.sizeDelta = Vector2.one * StorageIconSize;
+            iconImage.sprite = blockData.SourceData.Image;
+            iconImage.enabled = iconImage.sprite != null;
+            ApplyIconSize(iconImage, StorageIconSize);
+            UpdateMissingIcon(StorageIconSize);
             canvasGroup.blocksRaycasts = false;
             rectTransform.rotation = Quaternion.Euler(0, 0, blockData.RotationState * 90);
+            UpdateDragPosition(eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left || !isDragging) return;
 
-            rectTransform.position = eventData.position;
+            UpdateDragPosition(eventData);
+        }
+
+        private void UpdateDragPosition(PointerEventData eventData)
+        {
+            Canvas canvas = relicGridUI.rootCanvas.rootCanvas;
+            Camera eventCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay
+                ? null : canvas.worldCamera != null ? canvas.worldCamera : eventData.pressEventCamera;
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                canvas.transform as RectTransform, eventData.position, eventCamera, out Vector3 position))
+            {
+                rectTransform.position = position;
+            }
+        }
+
+        public void CancelDrag()
+        {
+            if (!isDragging) return;
+            isDragging = false;
+            canvasGroup.blocksRaycasts = true;
+            relicGridUI?.ClearPreview();
+            relicManager?.EndDrag(null);
+            Destroy(gameObject);
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -149,9 +190,9 @@ namespace Nytherion.UI.RelicBoard
                 return;
             }
 
-            Vector2Int? dropGridPosition = relicGridUI.CurrentGridPos;
-
-            relicManager.EndDrag(dropGridPosition);
+            // 마지막 호버 셀 대신 실제 드롭 대상만 인정해 패널 밖 드롭을 취소한다.
+            relicGridUI.GetDropTarget(eventData, out Vector2Int? dropGridPosition, out int? dropStorageIndex);
+            relicManager.EndDrag(dropGridPosition, dropStorageIndex);
 
             Destroy(gameObject);
         }
@@ -173,21 +214,22 @@ namespace Nytherion.UI.RelicBoard
 
         public void BuildVisualFromShape()
         {
-            if (iconImage != null)
+            Image displayIcon = storageIcon != null && !isPlaced ? storageIcon : iconImage;
+            if (displayIcon != null)
             {
                 if (blockData != null && blockData.SourceData != null)
                 {
-                    iconImage.sprite = blockData.SourceData.Image;
-                    iconImage.enabled = (iconImage.sprite != null);
+                    displayIcon.sprite = blockData.SourceData.Image;
+                    displayIcon.enabled = (displayIcon.sprite != null);
 
-                    if (iconImage.sprite != null)
+                    if (displayIcon.sprite != null)
                     {
-                        ApplyPixelPerfectIconSize(iconImage.sprite);
+                        ApplyIconSize(displayIcon, isPlaced ? EquippedIconSize : StorageIconSize);
                     }
                 }
                 else
                 {
-                    iconImage.enabled = false;
+                    displayIcon.enabled = false;
                 }
             }
 
@@ -195,24 +237,50 @@ namespace Nytherion.UI.RelicBoard
             {
                 levelText.gameObject.SetActive(false);
             }
+            UpdateMissingIcon(isPlaced ? EquippedIconSize : StorageIconSize);
         }
 
-        private void ApplyPixelPerfectIconSize(Sprite icon)
+        private void UpdateMissingIcon(float size)
         {
-            Vector2 sourceSize = icon.rect.size;
-            float longestSide = Mathf.Max(sourceSize.x, sourceSize.y);
-            int integerScale = Mathf.Max(1, Mathf.FloorToInt(MaxIconDisplaySize / longestSide));
+            bool missing = blockData != null && blockData.SourceData != null && blockData.SourceData.Image == null;
+            if (missing && missingIconLabel == null)
+            {
+                // 원본 아이콘 참조가 빠진 유물을 빈 슬롯과 구분하고 드래그·툴팁을 유지한다.
+                GameObject label = new GameObject("MissingIcon", typeof(RectTransform), typeof(TextMeshProUGUI));
+                label.transform.SetParent(transform, false);
+                missingIconLabel = label.GetComponent<TextMeshProUGUI>();
+                missingIconLabel.font = TMP_Settings.defaultFontAsset;
+                missingIconLabel.text = "?";
+                missingIconLabel.color = Color.white;
+                missingIconLabel.alignment = TextAlignmentOptions.Center;
+                missingIconLabel.raycastTarget = false;
+            }
+            if (missingIconLabel == null) return;
+            missingIconLabel.gameObject.SetActive(missing);
+            missingIconLabel.rectTransform.sizeDelta = Vector2.one * size;
+            missingIconLabel.fontSize = size * 0.75f;
+        }
 
-            iconImage.rectTransform.sizeDelta = new Vector2(
-                Mathf.Round(sourceSize.x) * integerScale,
-                Mathf.Round(sourceSize.y) * integerScale);
-            iconImage.rectTransform.anchoredPosition = Vector2.zero;
-            iconImage.preserveAspect = true;
+        public void BindStorageIcon(Image image)
+        {
+            storageIcon = image;
+            if (storageIcon != null && iconImage != null) iconImage.enabled = false;
+        }
+
+        private static void ApplyIconSize(Image image, float size)
+        {
+            image.rectTransform.anchorMin = image.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            image.rectTransform.sizeDelta = Vector2.one * size;
+            image.rectTransform.anchoredPosition = Vector2.zero;
+            image.rectTransform.localScale = Vector3.one;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = true;
+            image.raycastTarget = false;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (isDragging || relicTooltip == null) return;
+            if (isDragging || relicTooltip == null || blockData == null || relicManager == null) return;
 
             RelicBlock liveBlockData = null;
 

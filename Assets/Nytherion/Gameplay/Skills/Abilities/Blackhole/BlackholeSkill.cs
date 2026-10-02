@@ -28,7 +28,7 @@ namespace Nytherion.GamePlay.Skills
                     // 블랙홀 투사체 초기화
                     if (skillData is BlackholeSkillData bhData)
                     {
-                        projectile.Initialize(bhData.damage, bhData.range, bhData.pullForce, bhData.duration, bhData.tickRate, bhData.enemyLayer, poolTag);
+                        projectile.Initialize(bhData.damage, bhData.range * EffectSizeMultiplier, bhData.pullForce, bhData.duration, bhData.tickRate, bhData.enemyLayer, poolTag);
                     }
                     else
                     {

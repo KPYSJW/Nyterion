@@ -1,0 +1,3 @@
+FAIL: System.InvalidOperationException: 패널 밖 버튼: IncreaseStat_MaxHealth
+  at Nytherion.Editor.DebugPanelStatsVerification.Verify () [0x0043a] in C:\RoguelikePrototype\Assets\Editor\Data\DebugPanelStatsVerification.cs:125 
+  at Nytherion.Editor.DebugPanelStatsVerification.Update () [0x00086] in C:\RoguelikePrototype\Assets\Editor\Data\DebugPanelStatsVerification.cs:52 

@@ -25,6 +25,8 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
             if (meteor == null) return;
 
+            meteor.transform.localScale *= EffectSizeMultiplier;
+
             // 메테오 전용 로직: 낙하 지점 설정
             if (meteor.TryGetComponent<MeteorProj>(out var proj))
             {

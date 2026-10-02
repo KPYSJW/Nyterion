@@ -20,47 +20,58 @@ namespace Nytherion.GamePlay.Skills
             }
 
             PlayerManager player = caster != null ? caster.GetComponentInParent<PlayerManager>() : GetComponentInParent<PlayerManager>();
-            ChainIgnitionDebugSettings debugSettings = player != null ? player.GetComponent<ChainIgnitionDebugSettings>() : null;
-            bool useDebugSettings = debugSettings != null && debugSettings.useTestSettings;
             int level = player != null ? player.GetSkillLevel(data) : Mathf.Max(1, data.skillLevel);
             var playerData = player != null ? player.currentPlayerData : null;
-            int projectileCount = debugSettings != null
-                ? debugSettings.GetProjectileCount(data, level, playerData != null ? playerData.extraProjectiles : 0f)
-                : data.GetProjectileCount(level, playerData != null ? playerData.extraProjectiles : 0f);
+            int projectileCount = data.GetProjectileCount(level, playerData != null ? playerData.extraProjectiles : 0f);
             float size = playerData != null ? playerData.projectileSizeMultiplier : 1f;
-            float range = playerData != null ? playerData.attackRangeMultiplier : 1f;
-            if (useDebugSettings)
-            {
-                size *= Mathf.Max(0.01f, debugSettings.sizeMultiplier);
-                range *= Mathf.Max(0.01f, debugSettings.rangeMultiplier);
-                data = debugSettings.CreateCastData(data);
-            }
-            range = ChainIgnitionSkillData.GetSpreadRangeMultiplier(size, range);
+            float range = ChainIgnitionSkillData.GetSpreadRangeMultiplier(size);
 
-            // 무기 발사점 대신 시전 순간의 플레이어 위치를 복사합니다.
+            // 타겟 메이커는 연쇄 파동 전체를 조준 지점으로 옮기고, 첫 파동에만 중심 폭발을 추가합니다.
+            bool addTargetExplosion = false;
             Vector3 castPosition = caster != null ? caster.position : transform.position;
             castPosition += (Vector3)data.castCenterOffset;
+            Vector2 aimDirection = firePoint != null ? (Vector2)firePoint.right : Vector2.right;
+            if (TryGetMouseWorldPosition(castPosition, out Vector3 mousePosition))
+            {
+                aimDirection = (Vector2)(mousePosition - castPosition);
+                if (player != null && player.playerRelicManager != null &&
+                    player.playerRelicManager.IsRelicActive("TargetMaker"))
+                {
+                    castPosition = mousePosition;
+                    addTargetExplosion = true;
+                }
+            }
+            GetAvailableWave(data, castPosition).Begin(data, castPosition, aimDirection,
+                projectileCount, data.GetDamage(level), size, range);
+            if (addTargetExplosion)
+                GetAvailableWave(data, mousePosition).Begin(data, mousePosition, aimDirection,
+                    1, data.GetDamage(level), size, range, true);
+        }
+
+        private ChainIgnitionWave GetAvailableWave(ChainIgnitionSkillData data, Vector3 position)
+        {
             ChainIgnitionWave availableWave = waves.Find(wave => wave != null && !wave.gameObject.activeSelf);
             if (availableWave == null)
             {
-                availableWave = Instantiate(data.wavePrefab, castPosition, Quaternion.identity);
+                availableWave = Instantiate(data.wavePrefab, position, Quaternion.identity);
                 waves.Add(availableWave);
             }
-            availableWave.Begin(data, castPosition, GetAimDirection(castPosition),
-                projectileCount, data.GetDamage(level), size, range, useDebugSettings);
+            return availableWave;
         }
 
-        private Vector2 GetAimDirection(Vector3 center)
+        private bool TryGetMouseWorldPosition(Vector3 center, out Vector3 worldPosition)
         {
+            worldPosition = center;
             Camera camera = Camera.main;
             if (camera != null && Mouse.current != null)
             {
                 Vector2 screenPosition = Mouse.current.position.ReadValue();
-                Vector3 worldPosition = camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y,
+                worldPosition = camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y,
                     Mathf.Abs(camera.transform.position.z - center.z)));
-                return (Vector2)(worldPosition - center);
+                worldPosition.z = center.z;
+                return true;
             }
-            return firePoint != null ? (Vector2)firePoint.right : Vector2.right;
+            return false;
         }
 
         private void OnDisable()

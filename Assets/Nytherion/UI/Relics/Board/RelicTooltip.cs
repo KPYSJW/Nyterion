@@ -138,6 +138,7 @@ namespace Nytherion.UI.RelicBoard
         SetInfluenceGridVisible(true);
 
         nameText.text = block.SourceData.DisplayName;
+        nameText.color = Color.white;
         if (levelText != null)
         {
             levelText.text = $"Lv. {block.SourceData.level}";
@@ -157,6 +158,7 @@ namespace Nytherion.UI.RelicBoard
         currentBlock = null;
         SetInfluenceGridVisible(false);
         nameText.text = title;
+        nameText.color = Color.white;
         if (levelText != null)
         {
             levelText.gameObject.SetActive(false);

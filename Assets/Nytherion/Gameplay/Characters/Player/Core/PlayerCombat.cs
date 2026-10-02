@@ -28,6 +28,7 @@ namespace Nytherion.GamePlay.Characters.Player
         [SerializeField] private float aimAngleLimit = 45f; // 중심각 기준 좌우 45도 (합 90도 부채꼴)
 
         public WeaponBase currentWeapon;
+        public Vector2 LastAttackDirection { get; private set; } = Vector2.right;
 
         public event System.Action<WeaponBase> OnWeaponEquipped;
         public event System.Action<Vector2, Vector3> OnPlayerAttack;
@@ -229,6 +230,10 @@ namespace Nytherion.GamePlay.Characters.Player
         private void Update()
         {
             RotateWeaponToMouse();
+            // 무기 루트의 애니메이션/좌우 반전을 유지하면서 근접 판정과 궤적을 함께 확대합니다.
+            if (meleeWeaponPoint != null)
+                meleeWeaponPoint.localScale = Vector3.one *
+                    (currentWeapon is MeleeWeapon ? currentWeapon.EffectSizeMultiplier : 1f);
 
             if (isGenericCharging)
             {
@@ -405,6 +410,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 Vector2 mouseScreenPos = inputManager.MousePosition;
                 Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
                 targetWorldPos.z = 0f;
+                LastAttackDirection = fireDirection.normalized;
                 currentWeapon.Attack(fireDirection, targetWorldPos);
 
                 OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);
@@ -453,6 +459,7 @@ namespace Nytherion.GamePlay.Characters.Player
             Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
             targetWorldPos.z = 0f;
 
+            LastAttackDirection = fireDirection.normalized;
             currentWeapon.AttackWithGenericCharge(fireDirection, targetWorldPos, chargePercent);
             currentWeapon.AttackEnd();
             OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);

@@ -79,12 +79,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
-  m_Sprite: {fileID: -1059088878, guid: 5dd70d8c9e4b5e443bcb2d9ccf039bbf, type: 3}
+  m_Sprite: {fileID: 2036515068, guid: 4ae9280bcb367b04694746ac0cd983b5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.5, y: 0.5}
+  m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -100,7 +100,7 @@ Animator:
   m_GameObject: {fileID: 2677180847099711197}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 34657100e99c03b4ba0e777d74013b64, type: 2}
+  m_Controller: {fileID: 9100000, guid: 44a597e9d120f7d4199ff393b2848e3b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -145,7 +145,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.22
 --- !u!114 &-5809257054995049121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160,8 +160,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   chargePercent: 0
+  effectSizeMultiplier: 1
   traits: 00000000
   hitEffectPrefab: {fileID: 0}
+  playHitEffectOnWall: 0
+  isChainDamage: 0
   poolTag: Spirits'GuidanceProj
 --- !u!50 &2262732730235523378
 Rigidbody2D:
@@ -202,13 +205,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34e8c705fc0abf14e9fb991ffdbc567d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 12
-  acceleration: 15
-  rotateSpeed: 540
-  initialStraightDuration: 0.2
+  rotateSpeed: 180
+  initialStraightDuration: 0.15
   trackingRadius: 10
-  targetRefreshInterval: 0.1
-  closeRangeSteeringDistance: 1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -225,4 +224,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolTag: Spirits'GuidanceProj
-  returnDelay: 1.5
+  returnDelay: 4

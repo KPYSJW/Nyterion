@@ -36,6 +36,7 @@ namespace Nytherion.GamePlay.Combat
         private float elapsed;
         private float fadeRemaining;
         private float visualAlpha = 1f;
+        private float effectSizeMultiplier = 1f;
         private bool connectedVisual;
 
         public bool IsFiring { get; private set; }
@@ -132,12 +133,18 @@ namespace Nytherion.GamePlay.Combat
                 muzzleDirection = currentMuzzleDirection.normalized;
 
             startPoint = origin.position;
+            effectSizeMultiplier = owner.EffectSizeMultiplier;
             float obstructionDistance = data.MaxRange;
             Collider2D obstructionCollider = null;
 
             raycastHits.Clear();
             targetCandidates.Clear();
-            Physics2D.Raycast(startPoint, direction, collisionFilter, raycastHits, data.MaxRange);
+            // 크기 1의 기존 중심선 판정을 유지하고, 증가분만큼 광선 양옆의 판정을 넓힙니다.
+            float hitRadius = data.AirCoreWidth * Mathf.Max(0f, effectSizeMultiplier - 1f) * 0.5f;
+            if (hitRadius > 0f)
+                Physics2D.CircleCast(startPoint, hitRadius, direction, collisionFilter, raycastHits, data.MaxRange);
+            else
+                Physics2D.Raycast(startPoint, direction, collisionFilter, raycastHits, data.MaxRange);
             for (int i = 0; i < raycastHits.Count; i++)
             {
                 RaycastHit2D hit = raycastHits[i];
@@ -212,7 +219,7 @@ namespace Nytherion.GamePlay.Combat
             nextTarget = default;
             chainOverlaps.Clear();
             targetCandidates.Clear();
-            Physics2D.OverlapCircle(chainOrigin, data.ChainRange, targetFilter, chainOverlaps);
+            Physics2D.OverlapCircle(chainOrigin, data.ChainRange * effectSizeMultiplier, targetFilter, chainOverlaps);
 
             for (int i = 0; i < chainOverlaps.Count; i++)
             {
@@ -369,7 +376,7 @@ namespace Nytherion.GamePlay.Combat
         {
             if (IsFiring) connectedVisual = HasTargetHit;
             visual.Render(startPoint, endPoint, direction, muzzleDirection, HasHit, connectedVisual,
-                targetPoints, elapsed, visualAlpha, IsFiring);
+                targetPoints, elapsed, visualAlpha, IsFiring, effectSizeMultiplier);
         }
 
         private void EnsureVisual()
@@ -518,7 +525,6 @@ namespace Nytherion.GamePlay.Combat
         private bool hasStartFrames;
         private bool missingReferenceLogged;
         private float lastDamageElapsed = float.NegativeInfinity;
-        private int damageTickSequence;
         private Vector4 bodyTextureTransform = new Vector4(1f, 1f, 0f, 0f);
 
         public VoidRayBeamVisual(Transform root)
@@ -532,7 +538,6 @@ namespace Nytherion.GamePlay.Combat
             this.weaponRenderer = weaponRenderer;
             this.data = data;
             lastDamageElapsed = float.NegativeInfinity;
-            damageTickSequence = 0;
             hasStartFrames = data != null && data.HasStartFrames;
             EnsureReferences();
             CacheBodyTextureTransform();
@@ -545,12 +550,12 @@ namespace Nytherion.GamePlay.Combat
         public void NotifyDamageTick(float elapsed)
         {
             lastDamageElapsed = elapsed;
-            damageTickSequence++;
         }
 
         public void Render(Vector2 startPoint, Vector2 endPoint, Vector2 direction,
             Vector2 muzzleDirection, bool hasHit, bool hasTargetHit,
-            IReadOnlyList<Vector2> targetPoints, float elapsed, float alpha, bool allowJitter)
+            IReadOnlyList<Vector2> targetPoints, float elapsed, float alpha, bool allowJitter,
+            float effectSizeMultiplier = 1f)
         {
             if (data == null || outerLine == null || secondaryLine == null || coreLine == null) return;
             ConfigureSorting(weaponRenderer);
@@ -564,8 +569,8 @@ namespace Nytherion.GamePlay.Combat
                 : 0f;
             float pulse = 1f + Mathf.Sin(phase * Mathf.PI * 2f) * 0.035f +
                 damagePulse * Mathf.Clamp01(data.damagePulseStrength);
-            float outerWidth = hasTargetHit ? data.OuterWidth : data.AirOuterWidth;
-            float coreWidth = hasTargetHit ? data.CoreWidth : data.AirCoreWidth;
+            float outerWidth = (hasTargetHit ? data.OuterWidth : data.AirOuterWidth) * effectSizeMultiplier;
+            float coreWidth = (hasTargetHit ? data.CoreWidth : data.AirCoreWidth) * effectSizeMultiplier;
             float jitter = (hasTargetHit ? data.jitterStrength : data.airJitterStrength) *
                 (allowJitter ? 1f : 0.7f);
             float beamLength = Vector2.Distance(startPoint, endPoint);
@@ -601,7 +606,7 @@ namespace Nytherion.GamePlay.Combat
                     Color strandColor = Color.Lerp(data.outerColor, data.coreColor,
                         0.55f + Hash01(i, 47) * 0.35f);
                     ConfigureLineAppearance(connectedStrands[i],
-                        data.CoreWidth * data.secondaryArcWidthMultiplier * widthVariation,
+                        data.CoreWidth * data.secondaryArcWidthMultiplier * widthVariation * effectSizeMultiplier,
                         strandColor, alpha * data.secondaryArcAlpha, 1f, beamWidthCurve);
                 }
                 else
@@ -610,19 +615,19 @@ namespace Nytherion.GamePlay.Combat
                     Color strandColor = Color.Lerp(data.outerColor, data.coreColor,
                         0.68f + Hash01(i, 83) * 0.22f);
                     ConfigureLineAppearance(connectedStrands[i],
-                        data.AirCoreWidth * data.airStrandWidthMultiplier * widthVariation,
+                        data.AirCoreWidth * data.airStrandWidthMultiplier * widthVariation * effectSizeMultiplier,
                         strandColor, alpha * data.airStrandAlpha, 0.25f, ConstantWidthCurve);
                 }
             }
             ConfigureLineAppearance(coreLine, coreWidth * pulse, data.coreColor,
                 alpha * (hasTargetHit ? 1f : 0.8f), tipAlpha,
                 beamWidthCurve);
-            RenderImpactSparks(targetPoints, alpha, elapsed, hasTargetHit, damagePulse);
+            RenderImpactSparks(targetPoints, alpha, elapsed, hasTargetHit && allowJitter);
 
             int startFrameIndex = GetFrameIndex(data.startEndFrames, hasStartFrames, elapsed);
             Sprite startSprite = startFrameIndex >= 0 ? data.startEndFrames[startFrameIndex] : null;
             float startEffectWidth = data.AirOuterWidth * 2f *
-                Mathf.Max(0.1f, data.startEffectSizeMultiplier);
+                Mathf.Max(0.1f, data.startEffectSizeMultiplier) * effectSizeMultiplier;
             UpdateEndpoint(startEffectRenderer, startSprite, startPoint, muzzleDirection, true, alpha,
                 startEffectWidth, damagePulse);
             if (endEffectRenderer != null) endEffectRenderer.enabled = false;
@@ -1034,16 +1039,13 @@ namespace Nytherion.GamePlay.Combat
         }
 
         private void RenderImpactSparks(IReadOnlyList<Vector2> hitPoints, float alpha,
-            float elapsed, bool connected, float damagePulse)
+            float elapsed, bool connected)
         {
             float duration = Mathf.Max(0.01f, data.impactSparkDuration);
-            float age = elapsed - lastDamageElapsed;
-            float life = connected && age >= 0f ? 1f - Mathf.Clamp01(age / duration) : 0f;
             int sparksPerTarget = data.ImpactSparkCount;
             int targetCount = hitPoints != null ? hitPoints.Count : 0;
-            int visibleSparkCount = life > 0f ? targetCount * sparksPerTarget : 0;
+            int visibleSparkCount = connected && alpha > 0f ? targetCount * sparksPerTarget : 0;
             EnsureImpactSparkCount(visibleSparkCount);
-            float progress = 1f - life;
 
             for (int i = 0; i < impactSparkLines.Count; i++)
             {
@@ -1056,28 +1058,34 @@ namespace Nytherion.GamePlay.Combat
                 int sparkIndex = i % sparksPerTarget;
                 Vector2 hitPoint = hitPoints[targetIndex];
                 int randomIndex = targetIndex * 97 + sparkIndex;
-                float angle = Hash01(damageTickSequence, randomIndex * 19 + 7) * 360f;
+                // 각 조각의 시작 시점을 어긋나게 해 피해 틱 사이에도 불똥이 계속 새로 튑니다.
+                float phase = (sparkIndex + Hash01(targetIndex + 1, 71)) / sparksPerTarget;
+                float sparkElapsed = elapsed + phase * duration;
+                int emissionIndex = Mathf.FloorToInt(sparkElapsed / duration);
+                float progress = Mathf.Repeat(sparkElapsed, duration) / duration;
+                float life = 1f - progress;
+                float angle = Hash01(emissionIndex, randomIndex * 19 + 7) * 360f;
                 Vector2 sparkDirection = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad),
                     Mathf.Sin(angle * Mathf.Deg2Rad));
                 float travelVariation = 0.55f +
-                    Hash01(damageTickSequence, randomIndex * 31 + 11) * 0.65f;
+                    Hash01(emissionIndex, randomIndex * 31 + 11) * 0.65f;
                 float travel = data.impactSparkLength * travelVariation *
                     Mathf.SmoothStep(0f, 1f, progress);
                 float spawnRadius = data.OuterWidth *
-                    (0.58f + Hash01(damageTickSequence, randomIndex * 37 + 13) * 0.18f);
+                    (0.58f + Hash01(emissionIndex, randomIndex * 37 + 13) * 0.18f);
                 Vector2 gravityOffset = Vector2.down *
                     (data.impactSparkLength * 0.2f * progress * progress);
                 Vector2 center = SnapToPixel(hitPoint +
                     sparkDirection * (spawnRadius + travel) + gravityOffset);
                 float sizeVariation = 0.72f +
-                    Hash01(damageTickSequence, randomIndex * 43 + 17) * 0.5f;
+                    Hash01(emissionIndex, randomIndex * 43 + 17) * 0.5f;
                 float size = data.impactSparkWidth * sizeVariation * (0.55f + life * 0.45f);
                 Vector2 halfSize = sparkDirection * (size * 0.5f);
                 spark.SetPosition(0, center - halfSize);
                 spark.SetPosition(1, center + halfSize);
 
                 Color sparkColor = Color.Lerp(data.impactSparkColor, Color.white,
-                    0.28f + damagePulse * 0.42f + life * 0.15f);
+                    0.28f + life * 0.15f);
                 ConfigureLineAppearance(spark, size, sparkColor,
                     alpha * Mathf.Clamp01(life * 1.35f));
             }

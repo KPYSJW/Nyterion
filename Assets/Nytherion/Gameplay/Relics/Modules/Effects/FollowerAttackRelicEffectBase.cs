@@ -43,7 +43,7 @@ namespace Nytherion.Gameplay.Relics.Modules
         [Header("투사체")]
         [Tooltip("동반체가 발사할 전용 투사체 프리팹")]
         public GameObject projectilePrefab;
-        [Tooltip("플레이어 무기 투사체와 별도로 적용할 동반체 투사체 크기 배율")]
+        [Tooltip("동반체 투사체의 기본 크기입니다. 플레이어 효과 범위 증가 배율을 함께 적용합니다.")]
         public Vector3 projectileScale = new Vector3(0.3f, 0.3f, 0.3f);
         [Tooltip("동반체 중심에서 발사 방향으로 떨어진 투사체 생성 위치")]
         public float projectileForwardOffset = 0.35f;
@@ -197,6 +197,9 @@ namespace Nytherion.Gameplay.Relics.Modules
             }
 
             projectile.transform.localScale = Vector3.Scale(projectile.transform.localScale, projectileScale);
+            float size = cachedPlayerManager.currentPlayerData != null
+                ? Mathf.Max(0.01f, cachedPlayerManager.currentPlayerData.projectileSizeMultiplier) : 1f;
+            projectile.transform.localScale *= size;
 
             if (projectile.TryGetComponent(out Rigidbody2D rigidbody))
             {
@@ -229,6 +232,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                     0f,
                     weaponData != null ? weaponData.hitEffectPrefab : null,
                     modifiers);
+                collisionObject.effectSizeMultiplier = size;
             }
 
             if (projectile.TryGetComponent(out SpriteRenderer projectileRenderer))

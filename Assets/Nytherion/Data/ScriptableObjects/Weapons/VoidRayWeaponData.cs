@@ -69,7 +69,7 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Range(0f, 1f)] public float secondaryArcAlpha = 0.78f;
         [Range(0.1f, 1f)] public float secondaryArcWidthMultiplier = 0.7f;
 
-        [Header("명중 불똥 (피해 틱과 동기화, 이미지 미사용)")]
+        [Header("명중 불똥 (적 연결 중 지속 재생, 이미지 미사용)")]
         [Range(0, 8)] public int impactSparkCount = 8;
         [Min(0f), Tooltip("사각형 불똥이 적 중심에서 이동하는 거리입니다.")]
         public float impactSparkLength = 0.48f;

@@ -61,7 +61,7 @@ namespace Nytherion.GamePlay.Skills
             // 스킬 레벨에 따른 최종 데미지 계산 (레벨은 1부터 시작하므로 -1 처리)
             float finalDamage = auraData.damagePerTick + (auraData.damagePerLevel * Mathf.Max(0, auraData.skillLevel - 1));
 
-            auraCollider.radius = auraData.auraRadius;
+            auraCollider.radius = auraData.auraRadius * EffectSizeMultiplier;
             auraObject.SetActive(true);
             enemiesInRange.Clear(); // 범위 초기화
             nextTickTime = Time.time + auraData.tickRate;

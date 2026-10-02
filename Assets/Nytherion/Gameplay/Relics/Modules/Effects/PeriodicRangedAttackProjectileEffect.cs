@@ -108,6 +108,9 @@ namespace Nytherion.Gameplay.Relics.Modules
                     firePoint.position,
                     Quaternion.AngleAxis(currentAngle + rotationOffset, Vector3.forward));
                 if (projectile == null) continue;
+                float size = cachedPlayerManager.currentPlayerData != null
+                    ? Mathf.Max(0.01f, cachedPlayerManager.currentPlayerData.projectileSizeMultiplier) : 1f;
+                projectile.transform.localScale *= size;
 
                 if (projectile.TryGetComponent(out Rigidbody2D rigidbody))
                 {
@@ -126,6 +129,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                         0f,
                         weaponData != null ? weaponData.hitEffectPrefab : null,
                         modifiers);
+                    collisionObject.effectSizeMultiplier = size;
                 }
             }
         }

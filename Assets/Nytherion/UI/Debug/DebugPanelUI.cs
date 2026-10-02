@@ -63,7 +63,28 @@ namespace Nytherion.UI.Test
         private SkillDataManager skillDataManager;
         private ILocalizationService localizationService;
         private Button languageToggleButton;
-        private ChainIgnitionDebugUI chainIgnitionDebugUI;
+        private readonly List<StatModifier> debugStatModifiers = new List<StatModifier>();
+
+        // 비율 능력치는 고정값으로 더한다. 예: 0.05는 5%p 증가입니다.
+        private static readonly (StatType stat, string label, float amount, bool ratio)[] debugStats =
+        {
+            (StatType.MaxHealth, "최대 체력", 10f, false),
+            (StatType.Defense, "방어력", 1f, false),
+            (StatType.MoveSpeed, "이동 속도", 0.5f, false),
+            (StatType.MeleeDamage, "근접 공격력", 5f, false),
+            (StatType.RangedDamage, "원거리 공격력", 5f, false),
+            (StatType.MeleeSpeed, "근접 공격 속도", 0.1f, false),
+            (StatType.RangedSpeed, "원거리 공격 속도", 0.1f, false),
+            (StatType.DashSpeed, "대시 속도", 0.5f, false),
+            (StatType.DashDuration, "대시 지속 시간", 0.1f, false),
+            (StatType.DashCooldown, "대시 쿨타임", 0.1f, false),
+            (StatType.ExtraProjectiles, "추가 투사체 수", 1f, false),
+            (StatType.Lifesteal, "생명력 흡수", 0.05f, true),
+            (StatType.ChargeTimeReduction, "충전 시간 감소", 0.05f, true),
+            (StatType.CritChance, "치명타 확률", 0.05f, true),
+            (StatType.CritDamage, "치명타 피해량", 0.1f, true),
+            (StatType.ProjectileSize, "효과 범위 증가", 0.1f, false)
+        };
 
         [Inject]
         public void Construct(
@@ -106,11 +127,7 @@ namespace Nytherion.UI.Test
 
             // 디버그용 장비/스킬 지급, 언어 전환 및 몬스터 소환 버튼을 런타임에 생성
             CreateRuntimeDebugButtons();
-            if (contentPanel2 != null)
-            {
-                chainIgnitionDebugUI = contentPanel2.GetComponent<ChainIgnitionDebugUI>();
-                if (chainIgnitionDebugUI != null) chainIgnitionDebugUI.Initialize(playerManager, this);
-            }
+            CreateRuntimeStatButtons();
 
             if (localizationService != null)
             {
@@ -167,14 +184,11 @@ namespace Nytherion.UI.Test
             {
                 Toggle();
             }
-            if (Input.GetKeyDown(KeyCode.F11) && chainIgnitionDebugUI != null)
-            {
-                chainIgnitionDebugUI.TryCast();
-            }
         }
 
         private void OnDestroy()
         {
+            ResetDebugStats();
             if (localizationService != null)
             {
                 localizationService.LanguageChanged -= OnLanguageChanged;
@@ -621,6 +635,128 @@ namespace Nytherion.UI.Test
             newButton.onClick = new Button.ButtonClickedEvent();
             newButton.onClick.AddListener(action);
             return newButton;
+        }
+
+        private void CreateRuntimeStatButtons()
+        {
+            if (contentPanel2 == null) return;
+
+            Button template = contentPanel != null
+                ? contentPanel.GetComponentInChildren<Button>(true)
+                : null;
+            if (template == null)
+            {
+                Debug.LogWarning("[DebugPanelUI] 능력치 버튼의 복제 템플릿이 없습니다.", this);
+                return;
+            }
+
+            Transform container = contentPanel2.transform.Find("Buttons");
+            if (container == null)
+            {
+                GameObject buttons = new GameObject("Buttons", typeof(RectTransform));
+                buttons.layer = contentPanel2.layer;
+                buttons.transform.SetParent(contentPanel2.transform, false);
+                container = buttons.transform;
+            }
+
+            // 17개 능력치와 초기화 버튼이 패널 안에 들어가도록 기존 빈 컨테이너를 확장한다.
+            RectTransform rect = (RectTransform)container;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = new Vector2(12f, 12f);
+            rect.offsetMax = new Vector2(-12f, -12f);
+            VerticalLayoutGroup layout = container.GetComponent<VerticalLayoutGroup>();
+            if (layout == null) layout = container.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(0, 0, 0, 0);
+            layout.spacing = 6f;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            foreach (var entry in debugStats)
+            {
+                string increase = entry.ratio ? $"{entry.amount * 100f:0.##}%p" : $"{entry.amount:0.##}";
+                Button button = CreateRuntimeButton(template, container, $"IncreaseStat_{entry.stat}",
+                    $"{entry.label} +{increase}", () => IncreaseDebugStat(entry.stat, entry.amount));
+                ConfigureStatButton(button);
+            }
+
+            ConfigureStatButton(CreateRuntimeButton(template, container,
+                "ResetDebugStatsButton", "테스트 능력치 초기화", ResetDebugStats));
+        }
+
+        private void ConfigureStatButton(Button button)
+        {
+            LayoutElement element = button.GetComponent<LayoutElement>();
+            if (element == null) element = button.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = false;
+            element.minHeight = 32f;
+            element.preferredHeight = 40f;
+            element.flexibleHeight = 0f;
+            button.gameObject.SetActive(true);
+        }
+
+        public void IncreaseDebugStat(StatType stat, float amount)
+        {
+            if (playerManager == null || playerManager.currentPlayerData == null)
+            {
+                UpdateStatusText("플레이어 능력치가 아직 준비되지 않았습니다.");
+                return;
+            }
+
+            foreach (var entry in debugStats)
+            {
+                if (entry.stat != stat) continue;
+                if (amount <= 0f || float.IsNaN(amount) || float.IsInfinity(amount)) return;
+
+                // 원본 데이터 수정 없이 기존 능력치 재계산 및 UI 갱신 경로를 사용한다.
+                StatModifier modifier = new StatModifier { stat = stat, value = amount, isPercentage = false };
+                debugStatModifiers.Add(modifier);
+                playerManager.AddTemporaryStatModifier(modifier);
+                string current = entry.ratio
+                    ? $"{GetDebugStatValue(stat) * 100f:0.##}%"
+                    : $"{GetDebugStatValue(stat):0.##}";
+                UpdateStatusText($"{entry.label} 증가 적용 → 현재 {current}");
+                return;
+            }
+        }
+
+        public void ResetDebugStats()
+        {
+            if (playerManager != null && playerManager.currentPlayerData != null)
+            {
+                foreach (StatModifier modifier in debugStatModifiers)
+                    playerManager.RemoveTemporaryStatModifier(modifier);
+            }
+            debugStatModifiers.Clear();
+            UpdateStatusText("테스트로 추가한 능력치를 초기화했습니다.");
+        }
+
+        private float GetDebugStatValue(StatType stat)
+        {
+            var data = playerManager.currentPlayerData;
+            return stat switch
+            {
+                StatType.MaxHealth => data.maxHealth,
+                StatType.Defense => data.defense,
+                StatType.MoveSpeed => data.moveSpeed,
+                StatType.MeleeDamage => data.meleeDamage,
+                StatType.RangedDamage => data.rangedDamage,
+                StatType.MeleeSpeed => data.meleeSpeed,
+                StatType.RangedSpeed => data.rangedSpeed,
+                StatType.DashSpeed => data.dashSpeed,
+                StatType.DashDuration => data.dashDuration,
+                StatType.DashCooldown => data.dashCooldown,
+                StatType.ExtraProjectiles => data.extraProjectiles,
+                StatType.Lifesteal => data.lifesteal,
+                StatType.ChargeTimeReduction => data.chargeTimeReduction,
+                StatType.CritChance => data.critChance,
+                StatType.CritDamage => data.critDamageMultiplier,
+                StatType.ProjectileSize => data.projectileSizeMultiplier,
+                _ => 0f
+            };
         }
 
         public void ToggleLanguage()

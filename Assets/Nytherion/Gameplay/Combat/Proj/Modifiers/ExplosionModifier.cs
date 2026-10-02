@@ -25,6 +25,9 @@ namespace Nytherion.GamePlay.Combat
             {
                 GameObject explosionVisual = ObjectPoolManager.Instance.SpawnFromPool(explosionVisualPoolTag, transform.position, Quaternion.identity);
 
+                if (explosionVisual == null) return false;
+                explosionVisual.transform.localScale *= col != null ? col.effectSizeMultiplier : 1f;
+
                 if (explosionVisual.TryGetComponent<ExplosionDamage>(out var expDamage))
                 {
                     expDamage.Initialize(finalExplosionDamage);

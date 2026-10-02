@@ -44,6 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cc12fe58b1cd764f8035edafc9cf936, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controlledCanvasGroup: {fileID: 0}
+  OnPanelOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPanelClosed:
+    m_PersistentCalls:
+      m_Calls: []
   uiPanel: {fileID: 0}
   equipSlots:
   - {fileID: 0}
@@ -51,5 +58,5 @@ MonoBehaviour:
   - {fileID: 0}
   storageContent: {fileID: 0}
   slotPrefab: {fileID: 8498367146274910382, guid: 22c598c598dcc544caa3aaf9987a97c9, type: 3}
-  maxStorageSlots: 16
+  maxStorageSlots: 20
   storageDropArea: {fileID: 0}

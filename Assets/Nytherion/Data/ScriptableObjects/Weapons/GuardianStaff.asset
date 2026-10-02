@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: GuardianStaff
+  m_EditorClassIdentifier: 
+  uniqueID: 0cefbfeb-f989-42b1-a035-aa734d32ffc1
+  itemName_KR: "\uC218\uD638\uC790\uC758 \uC9C0\uD321\uC774"
+  itemName_EN: Guardian's Staff
+  icon: {fileID: 21300000, guid: c8a3c06514b4c734dbdc586d4ebd29ef, type: 3}
+  description_KR: "\uACF5\uACA9\uD560 \uB54C\uB9C8\uB2E4 \uC138 \uAC00\uC9C0 \uC218\uD638\uC758
+    \uC6D0\uC744 \uC21C\uC11C\uB300\uB85C \uD3BC\uCCD0 \uD50C\uB808\uC774\uC5B4 \uC8FC\uBCC0
+    \uC6D0\uD615 \uBC94\uC704 \uC548\uC758 \uC801\uC744 \uD55C \uBC88\uC529 \uD0C0\uACA9\uD569\uB2C8\uB2E4."
+  description_EN: Cycles through three guardian circles, striking each enemy within
+    the circle around the player once per attack.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 180
+  equipmentType: 0
+  traits: 
+  statModifiers: []
+  damage: 10
+  range: 2
+  cooldown: 1
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: 67a08258a18fee44b882c70d27baf7af, type: 3}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: 40
+  visualPositionOffset: {x: -0.2, y: 0.3, z: 0}
+  visualScale: 1
+  sortingOrderOffset: -1
+  useStaffRecoil: 0
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 0
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hasHomingProjectiles: 0
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 30
+  - 15
+  - 0
+  - -15
+  - -30
+  homingTurnSpeed: 180
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 2866297254242780613, guid: 27776fc702d3e6a4188da1125c5be6eb, type: 3}
+  weaponPrefab: {fileID: 2218331797748983194, guid: c7f411536c60b1c4b90500de8c4a0411, type: 3}
+  isArchivable: 0

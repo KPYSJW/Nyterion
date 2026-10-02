@@ -28,6 +28,9 @@ namespace Nytherion.Core.Managers
         private SkillDataManager skillDataManager;
         private PlayerController playerController;
         public EventManager EventManager => eventManager;
+        private IObjectResolver objectResolver;
+        public ObjectPoolManager ObjectPool => objectResolver != null &&
+            objectResolver.TryResolve<ObjectPoolManager>(out var pool) ? pool : null;
 
         [Header("Player Data")]
         [SerializeField] private PlayerData basePlayerData;
@@ -49,13 +52,15 @@ namespace Nytherion.Core.Managers
             InputManager inputManager,
             EventManager eventManager,
             RelicManager relicManager,
-            SkillDataManager skillDataManager = null)
+            SkillDataManager skillDataManager = null,
+            IObjectResolver objectResolver = null)
         {
             this.equipmentDataManager = equipmentDataManager;
             this.inputManager = inputManager;
             this.eventManager = eventManager;
             this.relicManager = relicManager;
             this.skillDataManager = skillDataManager;
+            this.objectResolver = objectResolver;
         }
 
         public int GetSkillLevel(SkillData skill)
@@ -80,6 +85,9 @@ namespace Nytherion.Core.Managers
                 playerRelicManager.Construct(eventManager, relicManager);
                 playerRelicManager.OnRelicsChanged += RecalculateStats;
             }
+
+            RelicEffectController relicEffects = GetComponent<RelicEffectController>();
+            if (relicEffects != null) relicEffects.Construct(relicManager);
 
             if (basePlayerData == null)
             {
@@ -429,10 +437,6 @@ namespace Nytherion.Core.Managers
                 case StatType.ProjectileSize:
                     if (isPercentage) currentPlayerData.projectileSizeMultiplier *= (1 + value);
                     else currentPlayerData.projectileSizeMultiplier += value;
-                    break;
-                case StatType.AttackRange:
-                    if (isPercentage) currentPlayerData.attackRangeMultiplier *= (1 + value);
-                    else currentPlayerData.attackRangeMultiplier += value;
                     break;
                 case StatType.ChargeTimeReduction:
                     if (isPercentage) currentPlayerData.chargeTimeReduction *= (1 + value);

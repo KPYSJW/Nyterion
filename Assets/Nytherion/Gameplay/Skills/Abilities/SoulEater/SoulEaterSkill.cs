@@ -29,6 +29,7 @@ namespace Nytherion.GamePlay.Skills
                 if (projectileInstance != null && projectileInstance.TryGetComponent(out SoulEaterProj projectile))
                 {
                     projectileInstance.SetActive(true);
+                    projectileInstance.transform.localScale *= EffectSizeMultiplier;
                     
                     float totalDamage = skillData.damage + permanentBonusDamage;
                     

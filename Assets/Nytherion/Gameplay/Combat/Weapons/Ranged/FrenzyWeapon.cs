@@ -18,6 +18,10 @@ namespace Nytherion.GamePlay.Combat.Weapons
         [Tooltip("투사체 발사를 시작하기 위한 스핀업 진행도 임계값 (0.0 ~ 1.0)")]
         [SerializeField] private float fireThreshold = 0.9f;
 
+        [Header("Frenzy 탄착군 설정")]
+        [Tooltip("조준 방향에서 탄환이 좌우로 벗어날 수 있는 최대 각도. 0이면 정확히 직진합니다.")]
+        [SerializeField, Min(0f)] private float spreadHalfAngle = 4f;
+
         private bool isAttacking = false;
         private float currentSpinUpProgress = 0f;
         private GameObject activeFireEffectInstance = null;
@@ -26,6 +30,19 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         public bool IsCharging => isAttacking && HasChargeRelic();
         public float ChargePercent => currentSpinUpProgress;
+
+        protected override Vector2 GetProjectileDirection(Vector2 direction)
+        {
+            // 추가 연사 탄환에도 매번 별도의 편차를 적용한다.
+            float halfAngle = Mathf.Max(0f, spreadHalfAngle);
+            if (halfAngle > 0f)
+            {
+                float angleOffset = Random.Range(-halfAngle, halfAngle);
+                direction = Quaternion.AngleAxis(angleOffset, Vector3.forward) * direction;
+            }
+
+            return direction;
+        }
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {

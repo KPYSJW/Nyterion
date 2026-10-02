@@ -100,10 +100,10 @@ TextureImporter:
       name: VenenusProj_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 3
-        width: 10
-        height: 10
+        x: 0
+        y: 0
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -113,6 +113,69 @@ TextureImporter:
       bones: []
       spriteID: 660ba982fc90932489731a914ecf15e1
       internalID: -1550202475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VenenusProj_1
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c36cf602f8b8f34d850ec984d05f36f
+      internalID: 1783484984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VenenusProj_2
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19d0cd42f5e1e3e4295c779e9301df04
+      internalID: 705665361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VenenusProj_3
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2520d0ee393fcd943b0f9ebb219e02a0
+      internalID: -1751458740
       vertices: []
       indices: 
       edges: []
@@ -129,6 +192,9 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       VenenusProj_0: -1550202475
+      VenenusProj_1: 1783484984
+      VenenusProj_2: 705665361
+      VenenusProj_3: -1751458740
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

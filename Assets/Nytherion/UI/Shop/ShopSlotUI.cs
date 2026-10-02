@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 using Nytherion.UI.Components;
 using System.Collections.Generic;
 using Nytherion.GamePlay.Relics;
-using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Enums;
 
@@ -52,12 +51,7 @@ namespace Nytherion.UI.Shop
                 if (iconImage != null)
                 {
                     iconImage.raycastTarget = false;
-                    Sprite displaySprite = CurrentItem.item.icon;
-                    if (CurrentItem.item is WeaponData weaponData && weaponData.weaponSprite != null)
-                    {
-                        displaySprite = weaponData.weaponSprite;
-                    }
-                    iconImage.sprite = displaySprite;
+                    iconImage.sprite = CurrentItem.item.icon;
                 }
 
                 // 장비 등급에 따른 슬롯 배경 이미지 변경

@@ -18,18 +18,21 @@ MonoBehaviour:
     \uC801\uC744 \uC790\uB3D9 \uACF5\uACA9\uD558\uB294 \uAC1C\uAD6C\uB9AC \uC18C\uD658\uC218\uB97C
     \uBD80\uB985\uB2C8\uB2E4.\n\uC720\uBB3C\uC744 \uC7A5\uCC29\uD558\uB294 \uB3D9\uC548
     \uC720\uC9C0\uB429\uB2C8\uB2E4."
-  description_EN: "Summons a frog servant that follows you and automatically attacks
-    enemies. It remains while equipped."
-  Image: {fileID: -215441597, guid: 4b6d6040a954d8846bc8c6f06768cafa, type: 3}
+  description_EN: Summons a frog servant that follows you and automatically attacks
+    enemies. It remains while equipped.
+  Image: {fileID: 21300000, guid: 134a9bb39fe59ce4496821bfca2fc5b6, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: 7025403621137746601
     effects:
     - rid: 7025403621137746602
   grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:

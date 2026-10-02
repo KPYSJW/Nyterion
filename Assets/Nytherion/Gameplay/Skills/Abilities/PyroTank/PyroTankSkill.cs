@@ -28,7 +28,7 @@ namespace Nytherion.GamePlay.Skills
                 tank = Instantiate(data.tankPrefab, position, Quaternion.identity);
                 tanks.Add(tank);
             }
-            tank.Begin(data, position, aimDirection);
+            tank.Begin(data, position, aimDirection, EffectSizeMultiplier);
         }
 
         private Vector2 GetAimDirection(Vector3 playerPosition)

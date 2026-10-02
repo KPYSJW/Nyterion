@@ -18,9 +18,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using TMPro;
-using Nytherion.UI.Test;
 using Object = UnityEngine.Object;
 
 namespace Nytherion.Editor
@@ -51,6 +48,7 @@ namespace Nytherion.Editor
         private static ChainIgnitionVerificationTarget offsetTarget, unshiftedTarget;
         private static readonly List<ChainIgnitionVerificationTarget> crowdedTargets = new List<ChainIgnitionVerificationTarget>();
         private static float startTime, previousTimeScale;
+        private static bool previousRunInBackground;
         private static int stage;
         private static double readyAt;
         private static bool exitAfter;
@@ -203,15 +201,14 @@ namespace Nytherion.Editor
                         statModifiers = new List<StatModifier>
                         {
                             new StatModifier { stat = StatType.ExtraProjectiles, value = 7f },
-                            new StatModifier { stat = StatType.ProjectileSize, value = 0.5f, isPercentage = true },
-                            new StatModifier { stat = StatType.AttackRange, value = 0.5f, isPercentage = true }
+                            new StatModifier { stat = StatType.ProjectileSize, value = 0.5f, isPercentage = true }
                         }
                     };
                     growthRelic.ApplyEffect(player, 1);
-                    Require(player.currentPlayerData.extraProjectiles == 7f && Mathf.Approximately(player.currentPlayerData.projectileSizeMultiplier, 1.5f) &&
-                        Mathf.Approximately(player.currentPlayerData.attackRangeMultiplier, 1.5f), "유물 적용으로 투사체 수, 크기, 범위 스탯 증가");
+                    Require(player.currentPlayerData.extraProjectiles == 7f && Mathf.Approximately(player.currentPlayerData.projectileSizeMultiplier, 1.5f),
+                        "유물 적용으로 투사체 수와 크기 스탯 증가");
                     Vector3 shiftedCenter = caster.transform.position + (Vector3)data.castCenterOffset;
-                    float spread = ChainIgnitionSkillData.GetSpreadRangeMultiplier(1.5f, 1.5f);
+                    float spread = ChainIgnitionSkillData.GetSpreadRangeMultiplier(1.5f);
                     offsetTarget = Target("보정된 첫 원", shiftedCenter + Vector3.right * data.GetRingRadius(0) * spread, 0.05f);
                     unshiftedTarget = Target("보정 전 첫 원", caster.transform.position + Vector3.right * data.GetRingRadius(0), 0.05f);
                     growthTargets = Enumerable.Range(0, 8).Select(index =>
@@ -229,13 +226,13 @@ namespace Nytherion.Editor
                         "레벨과 유물로 최대 8방향을 채우고 상한 초과 없음");
                     Require(Mathf.Approximately(boostedRenderers[0].transform.localScale.x, 2.4f) &&
                         Mathf.Abs(Vector3.Distance(GroundPosition(boostedRenderers[0]), shiftedCenter) - data.GetRingRadius(0) * spread) < 0.01f,
-                        "크기 유물의 연출 확대와 50% 거리 보정, 범위 유물의 거리 확대 함께 적용");
+                        "크기 유물의 연출 확대와 50% 거리 보정 적용");
                     RequireHitRanges(8, 0.9f, "유물로 확대된 실제 피해 반경 0.9를 선택한 8방향에 표시");
                     RequireSound(1, "재사용 후 효과음 상태 초기화 및 1차부터 재생");
                     growthRelic.RemoveEffect(player, 1);
                     skillStates.skillStates[data.skillID].level = 1;
-                    Require(player.currentPlayerData.extraProjectiles == 0f && player.currentPlayerData.projectileSizeMultiplier == 1f &&
-                        player.currentPlayerData.attackRangeMultiplier == 1f, "유물 해제 시 보정 스탯 원복");
+                    Require(player.currentPlayerData.extraProjectiles == 0f && player.currentPlayerData.projectileSizeMultiplier == 1f,
+                        "유물 해제 시 보정 스탯 원복");
                     caster.transform.position += Vector3.left * 12f;
                     startTime = Time.time;
                     stage = 4;
@@ -326,6 +323,8 @@ namespace Nytherion.Editor
             Directory.CreateDirectory(Output);
             File.WriteAllText(Output + "/verification-progress.txt", "검증 시작\n");
             previousTimeScale = Time.timeScale;
+            previousRunInBackground = Application.runInBackground;
+            Application.runInBackground = true;
             Time.timeScale = 1f;
             ChainIgnitionSkillData source = AssetDatabase.LoadAssetAtPath<ChainIgnitionSkillData>(ChainIgnitionSkillSetup.DataPath);
             Texture2D sheet = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Nytherion/Art/Skills/Sprites/ChainIgnition.png");
@@ -348,6 +347,7 @@ namespace Nytherion.Editor
             // 원본에서 조절한 피해 범위와 볼륨은 보존하고, 기존 원형 동작은 고정된 복제 데이터로 검증합니다.
             data.explosionRadius = 0.6f;
             data.useEllipticalHitRange = false;
+            data.showHitRanges = true;
             // 기존 파동·밀집 적 회귀 검증은 고정 거리에서 실행하고 새 기본 거리와 성장 보정은 별도로 확인합니다.
             data.firstRingRadius = 0.8f;
             data.range = 2.4f;
@@ -363,7 +363,6 @@ namespace Nytherion.Editor
             runtimeData.Add(baseStats);
             baseStats.maxHealth = 100f;
             baseStats.projectileSizeMultiplier = 1f;
-            baseStats.attackRangeMultiplier = 1f;
             player = caster.AddComponent<PlayerManager>();
             SerializedObject serializedPlayer = new SerializedObject(player);
             serializedPlayer.FindProperty("basePlayerData").objectReferenceValue = baseStats;
@@ -374,7 +373,6 @@ namespace Nytherion.Editor
             player.Initialize();
             runtimeData.Add(player.currentPlayerData);
             data.skillLevel = 8;
-            VerifyDebugPanel(source);
             VerifySizeRangeGrowth(source);
             VerifyDirectionSelection();
             VerifyGroundDamage();
@@ -405,121 +403,19 @@ namespace Nytherion.Editor
             checkedSoundTail = false;
         }
 
-        private static void VerifyDebugPanel(ChainIgnitionSkillData source)
-        {
-            ChainIgnitionDebugUI sceneUI = Object.FindObjectsOfType<ChainIgnitionDebugUI>(true)
-                .Single(ui => ui.gameObject.scene == SceneManager.GetActiveScene());
-            DebugPanelUI scenePanel = sceneUI.GetComponentInParent<DebugPanelUI>();
-            Require(sceneUI.name == "ContentPanel2" && scenePanel != null &&
-                new SerializedObject(scenePanel).FindProperty("contentPanel2").objectReferenceValue == sceneUI.gameObject,
-                "ContentPanel2에 연쇄 점화 UI와 디버그 패널 참조 연결");
-            Require((bool)typeof(ChainIgnitionDebugUI).GetField("initialized", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(sceneUI),
-                "실제 GameScene의 주입된 플레이어로 디버그 UI 초기화");
-            bool wasOpen = scenePanel.IsOpen;
-            scenePanel.Open(false);
-            Require(sceneUI.gameObject.activeInHierarchy && scenePanel.GetComponent<CanvasGroup>().interactable,
-                "F12 디버그 패널 열기 경로로 ContentPanel2 조작 활성화");
-            scenePanel.Close();
-            Require(!sceneUI.gameObject.activeSelf, "디버그 패널 닫기 시 ContentPanel2 숨김");
-            if (wasOpen) scenePanel.Open(false);
-
-            string sourceBefore = EditorJsonUtility.ToJson(source);
-            GameObject fixture = Track(new GameObject("[ChainIgnitionVerification] 디버그 UI", typeof(RectTransform), typeof(Canvas)));
-            fixture.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
-            ChainIgnitionDebugUI ui = Object.Instantiate(sceneUI, fixture.transform);
-            ui.gameObject.SetActive(true);
-            RectTransform uiRect = ui.GetComponent<RectTransform>();
-            uiRect.anchorMin = uiRect.anchorMax = new Vector2(0.5f, 0.5f);
-            uiRect.sizeDelta = new Vector2(800f, 960f);
-            uiRect.anchoredPosition = Vector2.zero;
-            ui.Initialize(player, null);
-            Transform root = ui.transform.Find("ChainIgnitionControls");
-            Transform rows = root.Find("Scroll/Viewport/Rows");
-            ChainIgnitionDebugSettings settings = player.GetComponent<ChainIgnitionDebugSettings>();
-            Require(settings != null && !settings.useTestSettings && !settings.overrideProjectileCount,
-                "디버그 조작 전에는 레벨·유물에 따른 기존 시전 유지");
-            Require(rows.GetComponentsInChildren<Slider>(true).Length == 13 && rows.GetComponentsInChildren<TMP_InputField>(true).Length == 13 &&
-                rows.GetComponentsInChildren<Toggle>(true).Length == 4,
-                "13개 슬라이더/숫자 입력과 4개 표시·판정 토글 생성");
-            Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(rows.GetComponent<RectTransform>());
-            RectTransform viewport = root.Find("Scroll/Viewport").GetComponent<RectTransform>();
-            Require(viewport.rect.height > 0f && viewport.rect.width > 0f &&
-                rows.GetComponent<RectTransform>().rect.height > viewport.rect.height &&
-                root.Find("Scroll").GetComponent<ScrollRect>().content == rows,
-                "컨트롤의 유효한 화면 크기와 스크롤 연결");
-            rows.Find("ProjectileCount/Slider").GetComponent<Slider>().value = 3;
-            Require(settings.projectileCount == 3 && settings.overrideProjectileCount && settings.useTestSettings,
-                "투사체 슬라이더 조절 시 3개 고정 및 테스트 모드 활성화");
-            void Input(string name, string value) => rows.Find(name + "/Value").GetComponent<TMP_InputField>().onEndEdit.Invoke(value);
-            Input("SizeMultiplier", "1.5");
-            Require(Mathf.Approximately(rows.Find("RangeMultiplier/Slider").GetComponent<Slider>().value, 1.25f) &&
-                rows.Find("RangeMultiplier/Value").GetComponent<TMP_InputField>().text == "1.25",
-                "디버그 크기 배율 1.5 입력 시 거리 배율 표시가 1.25로 자동 증가");
-            Input("RangeMultiplier", "2");
-            Input("FirstRingRadius", "1"); Input("LastRingRadius", "3");
-            Input("HorizontalRadius", "0.4"); Input("VerticalRadius", "0.2");
-            Input("VisualScale", "1.2"); Input("CenterX", "-0.25"); Input("CenterY", "-0.5");
-            Input("SoundVolume", "0");
-            rows.Find("UseEllipse").GetComponent<Toggle>().isOn = false;
-            Require(!settings.useEllipse && !rows.Find("VerticalRadius/Value").GetComponent<TMP_InputField>().interactable,
-                "원형 전환 시 세로 반경 입력 비활성화");
-            rows.Find("UseEllipse").GetComponent<Toggle>().isOn = true;
-            rows.Find("ShowHitRanges").GetComponent<Toggle>().isOn = true;
-            root.Find("Actions/Cast").GetComponent<Button>().onClick.Invoke();
-            ChainIgnitionSkill probe = (ChainIgnitionSkill)typeof(ChainIgnitionDebugUI)
-                .GetField("testSkill", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ui);
-            var waves = (List<ChainIgnitionWave>)typeof(ChainIgnitionSkill)
-                .GetField("waves", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(probe);
-            ChainIgnitionWave wave = waves.Single();
-            ChainIgnitionSkillData castData = (ChainIgnitionSkillData)typeof(ChainIgnitionWave)
-                .GetField("data", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(wave);
-            Vector2 radii = (Vector2)typeof(ChainIgnitionWave).GetField("castExplosionRadii", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(wave);
-            Vector3[] positions = (Vector3[])typeof(ChainIgnitionWave).GetField("explosionGroundPositions", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(wave);
-            Require(wave.GetComponentsInChildren<SpriteRenderer>().Count(renderer => renderer.enabled) == 3 && castData != source,
-                "장착 없는 테스트 시전 버튼에서 실제 3방향 폭발과 시전 전용 데이터 사용");
-            Require(Vector2.Distance(radii, new Vector2(0.6f, 0.3f)) < 0.001f &&
-                Mathf.Abs(positions[0].magnitude - 2f) < 0.001f && Mathf.Abs(positions[8].magnitude - 4f) < 0.001f &&
-                Mathf.Abs(positions[16].magnitude - 6f) < 0.001f &&
-                Vector3.Distance(wave.transform.position, player.transform.position + new Vector3(-0.25f, -0.5f)) < 0.001f,
-                "입력한 크기·거리 배율, 타원 반경과 전체 중심 보정을 실제 파동에 적용");
-            Require(Mathf.Approximately(wave.GetComponentsInChildren<SpriteRenderer>()[0].transform.localScale.x, 1.8f),
-                "이펙트 크기와 전체 크기 배율 결합");
-            Input("VerticalRadius", "0.5");
-            Require(Mathf.Approximately(castData.explosionVerticalRadius, 0.2f) && Mathf.Approximately(settings.verticalRadius, 0.5f),
-                "값을 바꿔도 진행 중인 파동의 시전 데이터 유지");
-            Input("ProjectileCount", "99"); Input("HorizontalRadius", "NaN");
-            Require(settings.projectileCount == 8 && Mathf.Approximately(settings.horizontalRadius, 0.4f),
-                "투사체 최대 8개 제한 및 잘못된 숫자 입력 복원");
-            root.Find("Actions/Reset").GetComponent<Button>().onClick.Invoke();
-            Require(!settings.useTestSettings && !settings.overrideProjectileCount &&
-                Mathf.Approximately(settings.horizontalRadius, source.explosionRadius) &&
-                Mathf.Approximately(settings.verticalRadius, source.explosionVerticalRadius) &&
-                settings.GetProjectileCount(source, 5, 2) == source.GetProjectileCount(5, 2),
-                "기본값 복원 버튼과 레벨·유물 투사체 계산 복구");
-            Require(EditorJsonUtility.ToJson(source) == sourceBefore &&
-                Mathf.Approximately(player.currentPlayerData.projectileSizeMultiplier, 1f) &&
-                Mathf.Approximately(player.currentPlayerData.attackRangeMultiplier, 1f),
-                "디버그 조절과 시전 후 원본 스킬 에셋·플레이어 능력치 보호");
-            Object.DestroyImmediate(fixture);
-        }
-
         private static void VerifySizeRangeGrowth(ChainIgnitionSkillData source)
         {
             float oldSize = player.currentPlayerData.projectileSizeMultiplier;
-            float oldRange = player.currentPlayerData.attackRangeMultiplier;
             ChainIgnitionSkillData probeData = Object.Instantiate(source);
             runtimeData.Add(probeData);
             probeData.explosionSoundVolume = 0f;
             float[] sizes = { 1f, 1.5f, 2f, 3f, 2f };
-            float[] ranges = { 1f, 1f, 1f, 1f, 1.4f };
-            float[] expected = { 1f, 1.25f, 1.5f, 2f, 1.9f };
+            float[] expected = { 1f, 1.25f, 1.5f, 2f, 1.5f };
             try
             {
                 for (int test = 0; test < sizes.Length; test++)
                 {
                     player.currentPlayerData.projectileSizeMultiplier = sizes[test];
-                    player.currentPlayerData.attackRangeMultiplier = ranges[test];
                     ChainIgnitionSkill probe = Object.Instantiate(source.skillPrefab, caster.transform).GetComponent<ChainIgnitionSkill>();
                     probe.skillData = probeData;
                     probe.caster = caster.transform;
@@ -534,7 +430,7 @@ namespace Nytherion.Editor
                         Require(Mathf.Abs(positions[0].magnitude - expected[test]) < 0.001f &&
                             Mathf.Abs(positions[8].magnitude - 2f * expected[test]) < 0.001f &&
                             Mathf.Abs(positions[16].magnitude - 3f * expected[test]) < 0.001f,
-                            $"실제 1·2·3차 거리: 크기 {sizes[test]}, 범위 유물 {ranges[test]}이면 거리 배율 {expected[test]}");
+                            $"실제 1·2·3차 거리: 크기 {sizes[test]}이면 거리 배율 {expected[test]}");
                     }
                     finally
                     {
@@ -546,7 +442,6 @@ namespace Nytherion.Editor
             finally
             {
                 player.currentPlayerData.projectileSizeMultiplier = oldSize;
-                player.currentPlayerData.attackRangeMultiplier = oldRange;
             }
         }
 
@@ -1002,6 +897,7 @@ namespace Nytherion.Editor
             data = null;
             crowdedTargets.Clear();
             Time.timeScale = previousTimeScale;
+            Application.runInBackground = previousRunInBackground;
         }
     }
 

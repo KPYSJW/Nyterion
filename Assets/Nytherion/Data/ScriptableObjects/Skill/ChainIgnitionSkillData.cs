@@ -66,10 +66,10 @@ namespace Nytherion.Data.ScriptableObjects.Skill
 
         public static float GetSizeRangeBonus(float sizeMultiplier) => Mathf.Max(0f, sizeMultiplier - 1f) * 0.5f;
 
-        /// <summary>크기 증가분의 절반을 거리 배율에 더합니다. 범위 증가 유물의 배율도 함께 적용합니다.</summary>
-        public static float GetSpreadRangeMultiplier(float sizeMultiplier, float rangeMultiplier = 1f)
+        /// <summary>크기 증가분의 절반을 연쇄 점화의 확산 거리 배율에 더합니다.</summary>
+        public static float GetSpreadRangeMultiplier(float sizeMultiplier)
         {
-            return Mathf.Max(0.01f, rangeMultiplier) + GetSizeRangeBonus(sizeMultiplier);
+            return 1f + GetSizeRangeBonus(sizeMultiplier);
         }
 
         public Vector2 GetExplosionRadii(float sizeMultiplier = 1f)

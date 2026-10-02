@@ -42,26 +42,16 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 isRelicActive = playerManager.playerRelicManager.IsRelicActive(weaponData.requiredRelicId);
             }
 
-            if (isRelicActive && chargePercent > 0f)
+            int extra = playerManager != null && playerManager.currentPlayerData != null
+                ? Mathf.Max(0, Mathf.FloorToInt(playerManager.currentPlayerData.extraProjectiles)) : 0;
+
+            // 차징 정도(0.0 ~ 1.0)에 비례하여 최대 5개의 추가 탄환 개수를 조절
+            int relicExtraCount = isRelicActive && chargePercent > 0f ? Mathf.RoundToInt(chargePercent * 5f) : 0;
+            int totalCount = 1 + extra + relicExtraCount;
+
+            if (totalCount > 1)
             {
-                int extra = 0;
-                if (playerManager != null && playerManager.currentPlayerData != null)
-                {
-                    extra = Mathf.FloorToInt(playerManager.currentPlayerData.extraProjectiles);
-                }
-
-                // 차징 정도(0.0 ~ 1.0)에 비례하여 최대 5개의 추가 탄환 개수를 조절
-                int relicExtraCount = Mathf.RoundToInt(chargePercent * 5f);
-                int totalCount = 1 + extra + relicExtraCount;
-
-                if (totalCount > 1)
-                {
-                    StartCoroutine(FireForestThornBurstRoutine(direction, totalCount, chargePercent));
-                }
-                else
-                {
-                    FireSingleChargedProjectile(direction, chargePercent);
-                }
+                StartCoroutine(FireForestThornBurstRoutine(direction, totalCount, chargePercent));
             }
             else
             {
@@ -88,7 +78,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
         private void FireSingleChargedProjectile(Vector2 direction, float chargePercent)
         {
             // 투사체 생성
-            GameObject projObj = SpawnProj(direction);
+            GameObject projObj = SpawnProj(direction, default, chargePercent);
 
             float recoilStrength = IsChargingEnabled()
                 ? Mathf.Lerp(0.7f, 1.3f, chargePercent)
@@ -102,7 +92,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 if (projObj.TryGetComponent<CollisionObject>(out collisionObj))
                 {
                     float currentDamageMultiplier = IsChargingEnabled() ? Mathf.Lerp(0.5f, maxDamageMultiplier, chargePercent) : 1.0f;
-                    collisionObj.damage = weaponData.damage * currentDamageMultiplier;
+                    collisionObj.damage *= currentDamageMultiplier;
                 }
 
                 // 2. 투사체 속도 배율 적용 (차징 시간에 따라 50% ~ 180% 속도)
@@ -138,10 +128,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     {
                         sr.color = new Color(0.35f, 1.0f, 0.15f, 1.0f);
                     }
-                }
-                else
-                {
-                    piercingModifier.enabled = false;
                 }
             }
         }

@@ -70,6 +70,10 @@ namespace Nytherion.Gameplay.Relics.Modules
                 
                 Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f);
                 GameObject cloneProj = ObjectPoolManager.Instance.SpawnFromPool(poolTag, spawnPos, Quaternion.identity);
+                if (cloneProj == null) continue;
+                float size = cachedPlayerManager != null && cachedPlayerManager.currentPlayerData != null
+                    ? Mathf.Max(0.01f, cachedPlayerManager.currentPlayerData.projectileSizeMultiplier) : 1f;
+                cloneProj.transform.localScale *= size;
                 
                 if (cloneProj.TryGetComponent<Rigidbody2D>(out var rb))
                 {
@@ -80,6 +84,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                 if (cloneProj.TryGetComponent<CollisionObject>(out var collisionObj))
                 {
                     collisionObj.damage = baseDamage * finalDamageRatio;
+                    collisionObj.effectSizeMultiplier = size;
                 }
                 
                 // 시각적으로 트윈스톤임을 알 수 있게 투명도(Alpha)를 50%

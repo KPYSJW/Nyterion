@@ -153,8 +153,14 @@ namespace Nytherion.Editor
                         Texture2D.whiteTexture, "사각형 불똥이 이미지 텍스처를 사용함");
                     Require(sparkProperties.GetFloat(Shader.PropertyToID("_Intensity")) >= 2f,
                         "사각형 불똥 발광 강도가 부족함");
+                    int lateSparkIndex = source.ImpactSparkCount - 1;
+                    float lateSparkAlpha = f.ImpactSpark(lateSparkIndex).startColor.a;
+                    Require(f.ImpactSpark(0).startColor.a > lateSparkAlpha + 0.2f,
+                        "불똥이 같은 시점에 한꺼번에 생성됨");
                     f.Tick(0.05f);
                     Equal(source.DamagePerTick, target.Damage);
+                    Require(f.ImpactSpark(lateSparkIndex).startColor.a > lateSparkAlpha + 0.2f,
+                        "피해 틱 사이에 새 불똥이 생성되지 않음");
                     f.Tick(0.35f);
                     Equal(source.DamagePerTick * 4f, target.Damage);
                     f.VerifyEndpoints();

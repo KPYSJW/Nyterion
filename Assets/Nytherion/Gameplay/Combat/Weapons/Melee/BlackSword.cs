@@ -502,7 +502,8 @@ namespace Nytherion.GamePlay.Combat.Weapon
                 slashEffect.ConfigureVisual(
                     activeComboStep,
                     thirdSlashVisualScale,
-                    activeSwingDirectionSign);
+                    activeSwingDirectionSign,
+                    EffectSizeMultiplier);
             }
         }
 

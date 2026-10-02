@@ -8,23 +8,6 @@ PASS 데이터베이스 등록과 저장 ID 조회
 PASS 기본 폭발 거리 1·2·3과 성장 설정 및 유효한 효과음 볼륨 저장
 PASS Inspector 중심 보정 필드 직렬화
 PASS Inspector 이미지 보정 필드와 바닥 위로 올라가는 기본 정렬 저장
-PASS ContentPanel2에 연쇄 점화 UI와 디버그 패널 참조 연결
-PASS 실제 GameScene의 주입된 플레이어로 디버그 UI 초기화
-PASS F12 디버그 패널 열기 경로로 ContentPanel2 조작 활성화
-PASS 디버그 패널 닫기 시 ContentPanel2 숨김
-PASS 디버그 조작 전에는 레벨·유물에 따른 기존 시전 유지
-PASS 13개 슬라이더/숫자 입력과 4개 표시·판정 토글 생성
-PASS 컨트롤의 유효한 화면 크기와 스크롤 연결
-PASS 투사체 슬라이더 조절 시 3개 고정 및 테스트 모드 활성화
-PASS 디버그 크기 배율 1.5 입력 시 거리 배율 표시가 1.25로 자동 증가
-PASS 원형 전환 시 세로 반경 입력 비활성화
-PASS 장착 없는 테스트 시전 버튼에서 실제 3방향 폭발과 시전 전용 데이터 사용
-PASS 입력한 크기·거리 배율, 타원 반경과 전체 중심 보정을 실제 파동에 적용
-PASS 이펙트 크기와 전체 크기 배율 결합
-PASS 값을 바꿔도 진행 중인 파동의 시전 데이터 유지
-PASS 투사체 최대 8개 제한 및 잘못된 숫자 입력 복원
-PASS 기본값 복원 버튼과 레벨·유물 투사체 계산 복구
-PASS 디버그 조절과 시전 후 원본 스킬 에셋·플레이어 능력치 보호
 PASS 기본 거리·크기 성장 검증 실제 스킬 시전
 PASS 실제 1·2·3차 거리: 크기 1, 범위 유물 1이면 거리 배율 1
 PASS 기본 거리·크기 성장 검증 실제 스킬 시전
@@ -42,24 +25,37 @@ PASS 왼쪽 아래 마우스 방향과 가까운 고정 8방향 중 하나 선�
 PASS 두 개면 마우스에 가장 가까운 방향과 그다음 가까운 방향을 중복 없이 선택
 PASS 거리가 같은 두 방향은 무작위로 양쪽 모두 선택
 PASS 1~8개 모든 단계에서 고정 방향을 중복 없이 채움
-PASS 실제 EnemyBase의 몸체 중심과 지면 피격 영역의 중심 일치
-PASS 몸체 중심의 지면 영역이 닿으면 피격, 몸통·공격 콜라이더만 겹치면 피해 없음
-PASS 발 주변 원의 가장자리 접촉과 범위 밖 구분
+PASS 실제 EnemyBase의 지면 피격 영역은 몸체의 전체 가로·세로 크기와 일치
+PASS 몸체의 중심과 세로 끝 모두 피격, 공격 콜라이더만 겹치면 피해 없음
+PASS 몸체의 가장자리 접촉과 범위 밖 구분
 PASS 이미지 X·Y 보정을 바꿔도 실제 바닥 판정 위치 유지
 PASS Visual Scale과 크기 유물 변경 후에도 불꽃의 바닥 정렬 유지
 PASS 비활성 몸체의 지면 피격 영역 제외
-PASS 적 프리팹 Enemy_Bat_melee의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_Frog의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_Goblin의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_hybrid의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_Knight의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_ranged의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_Tree_melee의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_Tree_ranged의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_Bag_Ranged의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_Bat_Ranged의 Inspector 참조와 평면 판정 중심 확인
-PASS 적 프리팹 Enemy_Mushroom_Ranged의 Inspector 참조와 평면 판정 중심 확인
-PASS 실제 EnemyBase의 가로·세로·대각선 발 영역과 타원 경계 접촉 판정
+PASS 적 프리팹 Enemy_Bat_melee의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Bat_melee의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_Frog의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Frog의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_Goblin의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Goblin의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_hybrid의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_hybrid의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_Knight의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Knight의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_ranged의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_ranged의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_Tree_melee의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Tree_melee의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_Tree_ranged의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Tree_ranged의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_Bag_Ranged의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Bag_Ranged의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_Bat_Ranged의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Bat_Ranged의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 Enemy_Mushroom_Ranged의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 Enemy_Mushroom_Ranged의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 적 프리팹 TrainingDummy의 Inspector 참조, 전체 몸체 판정 및 Enemy 레이어 확인
+PASS 적 프리팹 TrainingDummy의 몸체 세로 끝에서 일반 공격 Physics2D 접촉 확인
+PASS 실제 EnemyBase의 전체 몸체와 타원의 가로·세로·대각선 경계 접촉 판정
 PASS 타원 경계의 정확한 접선과 세로가 더 긴 타원 지원
 PASS 게임 화면의 표시점은 실제 타원 반경 0.6 × 0.2와 일치
 PASS 크기 증가 유물은 타원의 두 축과 실제 피해 영역을 함께 확대

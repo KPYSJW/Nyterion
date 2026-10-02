@@ -192,6 +192,8 @@ namespace Nytherion.UI.Skill
         /// </summary>
         private void InitializeStorageSlots()
         {
+            GridLayoutGroup layout = storageContent.GetComponent<GridLayoutGroup>();
+            if (layout != null) layout.cellSize = Vector2.one * Nytherion.UI.RelicBoard.RelicGridUI.StorageSlotSize;
             EnsureStorageSlots(Mathf.Max(maxStorageSlots, skillDataManager.storageSkills.Length));
         }
 
@@ -246,6 +248,7 @@ namespace Nytherion.UI.Skill
                     storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager);
                     if (skillDataManager.storageSkills[i] != null) storageCount++;
                 }
+                else storageSlots[i].Setup(null, skillDataManager);
             }
 
             if (playerSkillManager != null)
@@ -309,6 +312,9 @@ namespace Nytherion.UI.Skill
         private void SwapSkills(SkillSlotUI slotA, SkillSlotUI slotB)
         {
             if (slotA == null || slotB == null) return;
+
+            slotA.CancelDrag();
+            slotB.CancelDrag();
 
             SkillData skillA = slotA.GetSkill();
             SkillData skillB = slotB.GetSkill();

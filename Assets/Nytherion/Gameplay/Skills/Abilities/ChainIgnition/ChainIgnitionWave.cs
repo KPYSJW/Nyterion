@@ -24,13 +24,13 @@ namespace Nytherion.GamePlay.Skills
         private readonly HashSet<IDamageable> waveTargets = new HashSet<IDamageable>();
         private readonly List<Collider2D> overlapResults = new List<Collider2D>(32);
         private ChainIgnitionSkillData data;
-        private ChainIgnitionSkillData ownedDebugData;
         private ContactFilter2D targetFilter;
         private float startTime;
         private AudioSource explosionAudio;
         private float castDamage;
         private float castExplosionRadius;
         private Vector2 castExplosionRadii;
+        private int castWaveCount;
 
         private void Awake()
         {
@@ -41,20 +41,19 @@ namespace Nytherion.GamePlay.Skills
         }
 
         public void Begin(ChainIgnitionSkillData skill, Vector3 center, Vector2 aimDirection,
-            int projectileCount, float damage, float sizeMultiplier = 1f, float rangeMultiplier = 1f, bool ownsDebugData = false)
+            int projectileCount, float damage, float sizeMultiplier = 1f, float rangeMultiplier = 1f,
+            bool singleExplosion = false)
         {
             if (skill == null || !skill.HasValidAnimation || explosionRenderers == null ||
                 explosionRenderers.Length != ChainIgnitionSkillData.WaveCount * ChainIgnitionSkillData.DirectionCount)
             {
                 Debug.LogError("[ChainIgnitionWave] 폭발 애니메이션 또는 24개 렌더러 연결을 확인해 주세요.", this);
-                if (ownsDebugData && skill != null) Destroy(skill);
                 gameObject.SetActive(false);
                 return;
             }
 
-            if (ownedDebugData != null) Destroy(ownedDebugData);
-            ownedDebugData = ownsDebugData ? skill : null;
             data = skill;
+            castWaveCount = singleExplosion ? 1 : ChainIgnitionSkillData.WaveCount;
             castDamage = Mathf.Max(0f, damage);
             sizeMultiplier = Mathf.Max(0.01f, sizeMultiplier);
             rangeMultiplier = Mathf.Max(0.01f, rangeMultiplier);
@@ -65,7 +64,8 @@ namespace Nytherion.GamePlay.Skills
                 float angle = point * Mathf.PI * 2f / HitRangeSegments;
                 hitRangePoints[point] = new Vector3(Mathf.Cos(angle) * castExplosionRadii.x, Mathf.Sin(angle) * castExplosionRadii.y, 0f);
             }
-            SelectDirections(aimDirection, Mathf.Clamp(projectileCount, 1, ChainIgnitionSkillData.DirectionCount));
+            SelectDirections(singleExplosion ? Vector2.right : aimDirection,
+                singleExplosion ? 1 : Mathf.Clamp(projectileCount, 1, ChainIgnitionSkillData.DirectionCount));
             transform.SetPositionAndRotation(center, Quaternion.identity);
             transform.localScale = Vector3.one;
             targetFilter = new ContactFilter2D { useTriggers = true };
@@ -80,7 +80,8 @@ namespace Nytherion.GamePlay.Skills
                     float angle = direction * Mathf.PI * 2f / ChainIgnitionSkillData.DirectionCount;
                     int index = wave * ChainIgnitionSkillData.DirectionCount + direction;
                     SpriteRenderer renderer = explosionRenderers[index];
-                    explosionGroundPositions[index] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * data.GetRingRadius(wave) * rangeMultiplier;
+                    explosionGroundPositions[index] = singleExplosion ? Vector3.zero :
+                        new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * data.GetRingRadius(wave) * rangeMultiplier;
                     float visualScale = Mathf.Max(0.01f, data.visualScale * sizeMultiplier);
                     renderer.transform.localPosition = explosionGroundPositions[index] + (Vector3)data.explosionVisualOffset * visualScale;
                     renderer.transform.localScale = Vector3.one * visualScale;
@@ -124,7 +125,7 @@ namespace Nytherion.GamePlay.Skills
         {
             if (data == null) return;
             float elapsed = Time.time - startTime;
-            for (int wave = 0; wave < ChainIgnitionSkillData.WaveCount; wave++)
+            for (int wave = 0; wave < castWaveCount; wave++)
             {
                 float waveElapsed = elapsed - wave * data.WaveInterval;
                 if (!playedSoundWaves[wave] && waveElapsed >= 0f)
@@ -155,7 +156,7 @@ namespace Nytherion.GamePlay.Skills
                 }
             }
             // 마지막 효과음의 잔향이 끝난 뒤 반환하여 애니메이션 종료 시 소리가 잘리지 않게 합니다.
-            if (elapsed >= (ChainIgnitionSkillData.WaveCount - 1) * data.WaveInterval + data.AnimationDuration &&
+            if (elapsed >= (castWaveCount - 1) * data.WaveInterval + data.AnimationDuration &&
                 !explosionAudio.isPlaying)
                 gameObject.SetActive(false);
         }
@@ -235,8 +236,6 @@ namespace Nytherion.GamePlay.Skills
         private void OnDisable()
         {
             if (explosionAudio != null) explosionAudio.Stop();
-            if (ownedDebugData != null) Destroy(ownedDebugData);
-            ownedDebugData = null;
             data = null;
             waveTargets.Clear();
             overlapResults.Clear();

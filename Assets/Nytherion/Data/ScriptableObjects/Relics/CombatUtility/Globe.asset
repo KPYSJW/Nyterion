@@ -22,6 +22,8 @@ MonoBehaviour:
   level: 1
   isDisabled: 0
   effectModules: []
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 1
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -38,9 +40,6 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: TrickshotEngineerSeries
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
   synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
   unlockMilestoneID: 
   references:

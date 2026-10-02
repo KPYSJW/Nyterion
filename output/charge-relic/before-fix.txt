@@ -1,0 +1,3 @@
+FAIL: System.InvalidOperationException: 이빌아이 무기/유물 조건/차징 이펙트 Inspector 참조
+  at Nytherion.Editor.ChargeRelicVerification.Verify () [0x00593] in C:\RoguelikePrototype\Assets\Editor\Data\ChargeRelicVerification.cs:159 
+  at Nytherion.Editor.ChargeRelicVerification.Update () [0x00086] in C:\RoguelikePrototype\Assets\Editor\Data\ChargeRelicVerification.cs:52 

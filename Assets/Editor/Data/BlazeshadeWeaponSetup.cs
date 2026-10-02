@@ -19,12 +19,12 @@ namespace Nytherion.Editor
         public const string DataPath = "Assets/Nytherion/Data/ScriptableObjects/Weapons/Blazeshade.asset";
         public const string WeaponPath = "Assets/Prefabs/Gameplay/Combat/Weapons/Generated/Blazeshade.prefab";
         public const string AuraPath = "Assets/Prefabs/Gameplay/Combat/VFX/BlazeshadeAura.prefab";
-        public const string ClipPath = "Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade/FireShieldLoop.anim";
+        public const string ClipPath = "Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade/BlazeShadeAttackLoop.anim";
         public const string ControllerPath = "Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade/BlazeshadeAura.controller";
 
         private const string WeaponSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Sprites/Blazeshade.png";
         private const string IconSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Sprites/Blazeshade_Icon.png";
-        private const string FireShieldPath = "Assets/Nytherion/Art/UI/Legacy/Fire_Shield_0100.png";
+        private const string FireShieldPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeShadeAttackEffect.png";
         private const string DatabasePath = "Assets/Nytherion/Data/ScriptableObjects/Items/ItemDatabaseSO.asset";
         private const string RarePoolPath = "Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Weapon/Rare_Weapon.asset";
         private const string AnimationDirectory = "Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade";
@@ -44,7 +44,7 @@ namespace Nytherion.Editor
             GachaPoolSO rarePool = AssetDatabase.LoadAssetAtPath<GachaPoolSO>(RarePoolPath);
             Material material = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
 
-            if (weaponSprite == null || iconSprite == null || auraFrames.Length != 30 ||
+            if (weaponSprite == null || iconSprite == null || auraFrames.Length == 0 ||
                 database == null || rarePool == null || material == null || LayerMask.NameToLayer("Enemy") < 0)
             {
                 throw new InvalidOperationException("블레이즈셰이드 원본 이미지, 데이터베이스, 뽑기 풀 또는 Enemy 레이어를 확인해 주세요.");
@@ -128,18 +128,10 @@ namespace Nytherion.Editor
 
         private static Sprite[] LoadAuraFrames()
         {
-            Sprite[] sprites = AssetDatabase.LoadAllAssetsAtPath(FireShieldPath)
+            Sprite[] frames = AssetDatabase.LoadAllAssetsAtPath(FireShieldPath)
                 .OfType<Sprite>()
+                .OrderBy(sprite => int.Parse(sprite.name.Substring(sprite.name.LastIndexOf('_') + 1)))
                 .ToArray();
-            Sprite[] frames = new Sprite[30];
-            for (int i = 0; i < frames.Length; i++)
-            {
-                frames[i] = sprites.SingleOrDefault(sprite => sprite.name == $"Fire_Shield_0100_{i}");
-                if (frames[i] == null)
-                {
-                    throw new InvalidOperationException($"Fire_Shield 프레임 누락: Fire_Shield_0100_{i}");
-                }
-            }
             return frames;
         }
 
@@ -153,7 +145,7 @@ namespace Nytherion.Editor
                 AssetDatabase.CreateAsset(clip, ClipPath);
             }
 
-            clip.name = "FireShieldLoop";
+            clip.name = "BlazeShadeAttackLoop";
             clip.frameRate = 12f;
             clip.ClearCurves();
             ObjectReferenceKeyframe[] keys = new ObjectReferenceKeyframe[frames.Length];
@@ -170,6 +162,7 @@ namespace Nytherion.Editor
             AnimationUtility.SetObjectReferenceCurve(clip, binding, keys);
             AnimationClipSettings clipSettings = AnimationUtility.GetAnimationClipSettings(clip);
             clipSettings.loopTime = true;
+            clipSettings.stopTime = frames.Length / clip.frameRate;
             AnimationUtility.SetAnimationClipSettings(clip, clipSettings);
             EditorUtility.SetDirty(clip);
 
@@ -185,7 +178,7 @@ namespace Nytherion.Editor
                 stateMachine.RemoveState(child.state);
             }
 
-            AnimatorState loopState = stateMachine.AddState("FireShieldLoop", new Vector3(300f, 100f));
+            AnimatorState loopState = stateMachine.AddState("BlazeShadeAttackLoop", new Vector3(300f, 100f));
             loopState.motion = clip;
             stateMachine.defaultState = loopState;
             EditorUtility.SetDirty(controller);

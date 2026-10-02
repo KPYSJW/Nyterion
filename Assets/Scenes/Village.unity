@@ -1484,6 +1484,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 86049443}
   nameText: {fileID: 526146093}
+  levelText: {fileID: 0}
+  setText: {fileID: 0}
+  setBadgeBackground: {fileID: 0}
+  setBadgeContainer: {fileID: 0}
   descriptionText: {fileID: 1482413213}
   influenceCells:
   - {fileID: 862471982}
@@ -3214,6 +3218,7 @@ MonoBehaviour:
   nameText: {fileID: 1605756728}
   descriptionText: {fileID: 1750214825}
   itemImage: {fileID: 2127662272}
+  itemImageBackground: {fileID: 0}
 --- !u!114 &333421834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4340,6 +4345,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 2053211707}
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 0
 --- !u!114 &445022173
 MonoBehaviour:
@@ -4871,6 +4883,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 897357141}
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 2
 --- !u!114 &481117324
 MonoBehaviour:
@@ -8955,11 +8974,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1507645552}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 547, y: 547}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &853484746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8980,10 +8999,10 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 240, y: 240}
-  m_Spacing: {x: 10, y: 10}
+  m_CellSize: {x: 128, y: 128}
+  m_Spacing: {x: 5, y: 5}
   m_Constraint: 1
-  m_ConstraintCount: 2
+  m_ConstraintCount: 4
 --- !u!114 &853484747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11580,6 +11599,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1165280337}
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 1
 --- !u!114 &1130005330
 MonoBehaviour:
@@ -13324,7 +13350,7 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 144, y: 144}
+  m_CellSize: {x: 96, y: 96}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 1
   m_ConstraintCount: 5
@@ -13385,6 +13411,7 @@ MonoBehaviour:
   rootCanvas: {fileID: 1695940518}
   blockStorageParent: {fileID: 853484745}
   storageSlotPrefab: {fileID: 6419789725286957115, guid: e2ba06097f52a4f4993b965cae2f6be0, type: 3}
+  relicCountText: {fileID: 0}
   levelUpGizmoPrefab: {fileID: 3142902908754315950, guid: 685e10347cd99754bb8dd5043b88cc6f, type: 3}
   levelDownGizmoPrefab: {fileID: 3142902908754315950, guid: c93654ea3214cf34bbbb393124b691ac, type: 3}
   silenceGizmoPrefab: {fileID: 0}
@@ -13828,6 +13855,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 969461761}
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 4
 --- !u!114 &1337412934
 MonoBehaviour:
@@ -13910,37 +13944,34 @@ MonoBehaviour:
   inventoryCloseButton: {fileID: 438353702}
   gachaCanvasGroup: {fileID: 808918960}
   gachaMainPanel: {fileID: 1562094187}
-  gachaResultPanel: {fileID: 947773327}
-  weaponSubPanel: {fileID: 0}
+  relicResultPanel: {fileID: 0}
   relicSubPanel: {fileID: 0}
-  skillSubPanel: {fileID: 0}
   drawOnceBtton: {fileID: 0}
   drawTenBtton: {fileID: 0}
   gachaCloseButton: {fileID: 866528878}
-  resultCloseButton: {fileID: 1901352306}
-  weaponTabButton: {fileID: 0}
-  relicTabButton: {fileID: 0}
-  skillTabButton: {fileID: 0}
-  resultSlotParent: {fileID: 2095936996}
+  relicResultCloseButton: {fileID: 0}
+  gachaTypeTitleText: {fileID: 0}
+  relicResultSlotParent: {fileID: 0}
   resultSlotPrefab: {fileID: 1133801556008070876, guid: 55eed6146f7338d44ab6fc5a565a32a0, type: 3}
   masterSlider: {fileID: 1654825913}
   bgmSlider: {fileID: 1106939891}
   sfxSlider: {fileID: 1328597620}
   fullscreenToggle: {fileID: 1126998555}
   resolutionDropdown: {fileID: 2125402258}
+  languageDropdown: {fileID: 0}
   shopUIPrefab: {fileID: 6172483716451235044, guid: 64f76ba40056f374d8a12a54fa013056, type: 3}
   shopCanvasGroup: {fileID: 1393492355}
-  shopSlotParent: {fileID: 1000972424}
-  shopSlotPrefab: {fileID: 6342647029431398638, guid: a837b6b876a9ddc4a9b50e0beca1626a, type: 3}
+  shopSlots: []
   shopCloseButton: {fileID: 1389769536}
   shopPlayerGoldText: {fileID: 1244916238}
   shopPlayerInventoryParent: {fileID: 1928356430}
-  sellSlotUI: {fileID: 1924472538}
-  shopBuyTabButton: {fileID: 0}
-  shopBuybackTabButton: {fileID: 0}
   shopEmptyStateUI: {fileID: 0}
   shopBuyPopupUI: {fileID: 0}
   shopSellPopupUI: {fileID: 0}
+  shopRerollButton: {fileID: 0}
+  shopRerollCostText: {fileID: 0}
+  shopAdvancedRerollButton: {fileID: 0}
+  shopAdvancedRerollCostText: {fileID: 0}
   menuCanvasGroup: {fileID: 1552228772}
   menuMainPanel: {fileID: 167900998}
   menuResumeButton: {fileID: 1038091855}
@@ -13950,6 +13981,10 @@ MonoBehaviour:
   menuControlsPanel: {fileID: 2092122151}
   menuMainMenuButton: {fileID: 794940776}
   relicCanvasGroup: {fileID: 1695940519}
+  relicSetEffectStatusPanel: {fileID: 0}
+  relicTranscendenceEffectStatusPanel: {fileID: 0}
+  relicEffectStatusEntryPrefab: {fileID: 0}
+  relicTranscendenceEffectStatusEntryPrefab: {fileID: 0}
   worldmapController: {fileID: 234699054}
   minimapTileGenerator: {fileID: 1514996212}
   currencyDisplays:
@@ -16579,7 +16614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e93e3382e4beb6f49a4e5b145e47e6a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hpSlider: {fileID: 1509394813}
+  hpFillImage: {fileID: 0}
   hpText: {fileID: 675024690}
 --- !u!1 &1562094187
 GameObject:
@@ -18902,6 +18937,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconImage: {fileID: 2132327921}
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 3
 --- !u!114 &1758398907
 MonoBehaviour:
@@ -21200,17 +21242,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3105964096157326149, guid: 819391e7ef2372c4f987fd864182a082, type: 3}
   m_PrefabInstance: {fileID: 1924472536}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1924472538 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -3426222900903197820, guid: 819391e7ef2372c4f987fd864182a082, type: 3}
-  m_PrefabInstance: {fileID: 1924472536}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2365d712b7b83244a957f2df3698fa3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1928356429
 GameObject:
   m_ObjectHideFlags: 0

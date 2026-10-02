@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: TargetMaker
+  m_EditorClassIdentifier: 
+  relicName: TargetMaker
+  koreanName: "\uD0C0\uAC9F \uBA54\uC774\uCEE4"
+  description_KR: "\uBE14\uB808\uC774\uC988\uC170\uC774\uB4DC\uC640 \uC218\uD638\uC790\uC758
+    \uC9C0\uD321\uC774\uC758 \uC6D0\uD615 \uACF5\uACA9 \uC911\uC2EC\uC744 \uB9C8\uC6B0\uC2A4
+    \uC9C0\uC815 \uC704\uCE58\uB85C \uBCC0\uACBD\uD569\uB2C8\uB2E4. \uBE14\uB808\uC774\uC988\uC170\uC774\uB4DC\uB294
+    \uC18C\uD658 \uD6C4 \uBD88\uAF43 \uACE0\uB9AC\uB97C \uD55C \uBC88 \uD3BC\uCE58\uBA70
+    \uC801\uB9C8\uB2E4 \uD55C \uBC88 \uD0C0\uACA9\uD569\uB2C8\uB2E4. \uC5F0\uC1C4
+    \uC810\uD654\uB294 \uC870\uC900 \uC9C0\uC810\uC744 \uC911\uC2EC\uC73C\uB85C 3\uB2E8\uACC4
+    \uD655\uC0B0 \uD3ED\uBC1C\uD558\uBA70, \uCCAB \uB2E8\uACC4\uC5D0\uB9CC \uC911\uC2EC\uC810\uC5D0\uC11C\uB3C4
+    1\uD68C \uCD94\uAC00 \uD3ED\uBC1C\uD569\uB2C8\uB2E4."
+  description_EN: Centers Blazeshade and Guardian's Staff attacks on the selected
+    cursor position. Blazeshade summons a flame circle for one animation, hitting
+    each enemy once. Chain Ignition spreads in three waves around the aimed position,
+    with one additional explosion at its center during the first wave only.
+  Image: {fileID: 21300000, guid: 91fddb5ffd049524ca98a4d4bfcda19d, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules: []
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds: []

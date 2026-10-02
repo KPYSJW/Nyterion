@@ -163,6 +163,7 @@ namespace Nytherion.GamePlay.Skills
                         TurretController controller = turretInstance.GetComponent<TurretController>();
                         controller.SetPool(pool, turretData.turretPrefab.name);
                         controller.Initialize(turretData);
+                        controller.EffectSizeMultiplier = EffectSizeMultiplier;
                         if (controller is RootiTurretController rooti) rooti.SetUpgradeOwner(caster);
                         controller.Deploy(launchPosition, destination);
                     }

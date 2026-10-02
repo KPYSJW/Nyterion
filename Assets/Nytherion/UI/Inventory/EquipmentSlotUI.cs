@@ -24,8 +24,16 @@ namespace Nytherion.UI.Inventory
         [Inject]
         public void Construct(EquipmentDataManager equipmentDataManager, InventoryDataManager inventoryDataManager)
         {
+            if (this.equipmentDataManager != null)
+            {
+                this.equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
+            }
             this.equipmentDataManager = equipmentDataManager;
             this.inventoryDataManager = inventoryDataManager;
+            if (isActiveAndEnabled)
+            {
+                SubscribeAndRefreshEquipment();
+            }
         }
 
         private void Start()
@@ -47,7 +55,7 @@ namespace Nytherion.UI.Inventory
                 }
             }
 
-            InitializeEquipmentState();
+            SubscribeAndRefreshEquipment();
         }
 
         /// <summary>
@@ -58,10 +66,7 @@ namespace Nytherion.UI.Inventory
             if (equipmentDataManager != null)
             {
                 var currentEquipment = equipmentDataManager.GetEquipment(this.slotType);
-                if (currentEquipment != null)
-                {
-                    base.SetItem(currentEquipment, 1);
-                }
+                base.SetItem(currentEquipment, currentEquipment == null ? 0 : 1);
             }
         }
 
@@ -92,15 +97,17 @@ namespace Nytherion.UI.Inventory
 
         public void OnEnable()
         {
+            SubscribeAndRefreshEquipment();
+        }
+
+        private void SubscribeAndRefreshEquipment()
+        {
             if (equipmentDataManager != null)
             {
+                // OnEnable 이후 주입되거나 Start에서 참조를 확보해도 구독을 보장한다.
+                equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
                 equipmentDataManager.OnEquipmentChanged += HandleEquipmentChanged;
-
-                var currentEquipment = equipmentDataManager.GetEquipment(this.slotType);
-                if (currentEquipment != null && base.IsEmpty)
-                {
-                    base.SetItem(currentEquipment, 1);
-                }
+                InitializeEquipmentState();
             }
         }
 

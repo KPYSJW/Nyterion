@@ -134,6 +134,7 @@ namespace Nytherion.UI.Controllers
             }
             else
             {
+                relicGridUI?.CancelActiveDrag();
                 inputManager.EnableMovement();
             }
         }

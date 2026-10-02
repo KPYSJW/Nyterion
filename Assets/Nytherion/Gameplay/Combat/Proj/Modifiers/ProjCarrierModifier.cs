@@ -73,6 +73,8 @@ namespace Nytherion.GamePlay.Combat
 
             if (subProj != null)
             {
+                float size = myCol != null ? myCol.effectSizeMultiplier : 1f;
+                subProj.transform.localScale *= size;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 subProj.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
@@ -83,6 +85,7 @@ namespace Nytherion.GamePlay.Combat
 
                 if (subProj.TryGetComponent<CollisionObject>(out var fragCol))
                 {
+                    fragCol.effectSizeMultiplier = size;
                     fragCol.damage = myCol.damage * subDamageMultiplier;
 
                     if (subProj.TryGetComponent<ProjCarrierModifier>(out var otherCarrier))

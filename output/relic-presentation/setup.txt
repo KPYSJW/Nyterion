@@ -1,0 +1,13 @@
+프리팹 규격 적용: Assets/Prefabs/UI/Relic/StorageSlot.prefab
+프리팹 규격 적용: Assets/Prefabs/UI/Relic/RelicSlotCell.prefab
+프리팹 규격 적용: Assets/Prefabs/UI/Relic/RelicBlockDraggable.prefab
+프리팹 규격 적용: Assets/Prefabs/UI/SkillStorageSlot.prefab
+프리팹 규격 적용: Assets/Prefabs/UI/SkillEquipSlot.prefab
+프리팹 규격 적용: Assets/Prefabs/UI/SkillEquipSlot 1.prefab
+프리팹 규격 적용: Assets/Prefabs/UI/SkillEquipSlot 2.prefab
+씬 참조/규격 적용: Assets/Scenes/GameScene.unity
+씬 참조/규격 적용: Assets/Scenes/Village.unity
+아이콘 참조 누락: Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Relic_Aura.asset
+아이콘 참조 누락: Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Relic_Laser.asset
+아이콘 참조 누락: Assets/Nytherion/Data/ScriptableObjects/Relics/ExtraTrigger.asset
+아이콘 참조 누락: Assets/Nytherion/Data/ScriptableObjects/Relics/CombatUtility/TwinStone.asset

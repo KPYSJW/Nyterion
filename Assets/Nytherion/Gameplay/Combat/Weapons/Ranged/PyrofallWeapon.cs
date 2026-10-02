@@ -116,7 +116,7 @@ namespace Nytherion.GamePlay.Combat
                 fireball.Initialize(
                     destination,
                     weaponData.damage * EffectiveDamageMultiplier,
-                    Mathf.Max(0.1f, weaponData.range),
+                    Mathf.Max(0.1f, weaponData.range) * EffectSizeMultiplier,
                     Mathf.Max(0.1f, weaponData.projectileSpeed),
                     weaponData.projectilePrefab.name,
                     weaponData.hitEffectPrefab,

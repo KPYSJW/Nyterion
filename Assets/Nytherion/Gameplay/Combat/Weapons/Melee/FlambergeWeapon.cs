@@ -430,6 +430,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
                         float scaleMultiplier = (attackCount > 1) 
                             ? Random.Range(minChargeAttackScaleMultiplier, maxChargeAttackScaleMultiplier) 
                             : 1.0f;
+                        scaleMultiplier *= EffectSizeMultiplier;
 
                         Vector3 originalScale = slashEffectPrefab.transform.localScale;
                         effect.transform.localScale = new Vector3(

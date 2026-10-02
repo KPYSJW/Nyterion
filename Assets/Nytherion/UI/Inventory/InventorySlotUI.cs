@@ -273,11 +273,13 @@ namespace Nytherion.UI.Inventory
                         equipment.instanceId = System.Guid.NewGuid().ToString();
                     }
 
-                    equipmentDataManager.SetEquipment(targetSlotType, equipment);
+                    // 보관 슬롯 이동은 여기서 처리하므로 매니저의 자동 반환/제거를 중복 실행하지 않는다.
+                    equipmentDataManager.SetEquipment(targetSlotType, equipment, false);
 
                     if (previouslyEquipped != null)
                     {
-                        inventoryDataManager.AddItem(previouslyEquipped, 1);
+                        // 기존 장비 인스턴스를 클릭했던 보관 슬롯으로 반환한다.
+                        inventoryDataManager.AddItemToSlot(previouslyEquipped, 1, SlotIndex);
                     }
                 }
             }

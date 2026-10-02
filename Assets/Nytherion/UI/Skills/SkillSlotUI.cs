@@ -52,8 +52,21 @@ namespace Nytherion.UI.Skill
         {
             currentSkill = skill;
             skillDataManager = manager;
+            PixelPerfectSlotFrame.Apply(GetComponent<Image>());
 
             if (skillIcon == null) return;
+
+            skillIcon.type = Image.Type.Simple;
+            skillIcon.preserveAspect = true;
+            skillIcon.raycastTarget = false;
+            if (!isDragging)
+            {
+                RectTransform iconRect = skillIcon.rectTransform;
+                iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 0.5f);
+                iconRect.sizeDelta = Vector2.one * (slotType == SkillSlotType.Storage ? 96f : 64f);
+                iconRect.anchoredPosition = Vector2.zero;
+                iconRect.localScale = Vector3.one;
+            }
 
             // 스킬 데이터가 있으면 아이콘 표시
             if (skill != null)
@@ -113,6 +126,7 @@ namespace Nytherion.UI.Skill
             if (eventData.button != PointerEventData.InputButton.Left) return;
             if (currentSkill == null || skillIcon == null || isDragging) return;
 
+            // 스킬 캔버스의 표시 순서를 유지해 드래그 아이콘이 패널 뒤로 가려지지 않게 한다.
             dragCanvas = GetComponentInParent<Canvas>();
             if (dragCanvas == null) return;
 
@@ -133,13 +147,14 @@ namespace Nytherion.UI.Skill
             iconOriginalScale = iconRect.localScale;
             iconOriginalRotation = iconRect.localRotation;
             iconOriginalRaycastTarget = skillIcon.raycastTarget;
-            Vector2 iconSize = iconRect.rect.size;
             isDragging = true;
 
             // 슬롯에 맞춰 늘어나는 앵커를 고정해 Canvas 크기로 아이콘이 확대되지 않도록 한다.
-            iconRect.SetParent(dragCanvas.transform, true);
+            iconRect.SetParent(dragCanvas.transform, false);
             iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 0.5f);
-            iconRect.sizeDelta = iconSize;
+            iconRect.sizeDelta = Vector2.one * 96f;
+            iconRect.localScale = Vector3.one;
+            iconRect.localRotation = Quaternion.identity;
             iconRect.SetAsLastSibling();
 
             // 드래그 중인 아이콘이 마우스 포인터의 Raycast를 막지 않도록 설정 (드롭 판정이 원활하게 이루어지도록)

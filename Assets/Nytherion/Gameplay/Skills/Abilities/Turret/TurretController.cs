@@ -29,6 +29,7 @@ namespace Nytherion.GamePlay.Skills
         private ObjectPoolManager returnPool;
         private string poolTag;
         private bool isReturning;
+        public float EffectSizeMultiplier { get; set; } = 1f;
 
         public void SetPool(ObjectPoolManager pool, string tag)
         {
@@ -214,6 +215,9 @@ namespace Nytherion.GamePlay.Skills
                 distanceLimit.Initialize(attackRange);
             }
             ConfigureProjectile(projectile);
+            projectile.transform.localScale *= Mathf.Max(0.01f, EffectSizeMultiplier);
+            if (projectile.TryGetComponent(out CollisionObject sizedCollision))
+                sizedCollision.effectSizeMultiplier = Mathf.Max(0.01f, EffectSizeMultiplier);
 
             SpriteRenderer turretRenderer = GetComponentInChildren<SpriteRenderer>();
             if (turretRenderer != null && projectile.TryGetComponent(out SpriteRenderer projectileRenderer))

@@ -39,6 +39,9 @@ namespace Nytherion.Core.Managers
         private RelicBlock currentlyDraggedBlock;
         private bool isDraggingFromGrid;
         private Vector2Int dragStartPosition;
+        private int dragStartRotation;
+
+        public bool IsBeingDragged(RelicBlock block) => block == currentlyDraggedBlock;
 
         public event Action<RelicData, bool> OnRelicEquippedStateChanged;
 
@@ -60,10 +63,11 @@ namespace Nytherion.Core.Managers
 
         public void StartDraggingFromGrid(RelicBlock block, Vector2Int gridPosition)
         {
-            if (block == null) return;
+            if (block == null || currentlyDraggedBlock != null) return;
             currentlyDraggedBlock = block;
             isDraggingFromGrid = true;
             dragStartPosition = gridPosition;
+            dragStartRotation = block.RotationState;
 
             logicGrid.ClearBlockAt(gridPosition.y, gridPosition.x);
             placedBlockPositions.Remove(block.BlockId);
@@ -82,10 +86,12 @@ namespace Nytherion.Core.Managers
 
         public void StartDraggingFromStorage(RelicBlock block)
         {
-            if (block == null) return;
+            if (block == null || currentlyDraggedBlock != null || !storageBlocks.Contains(block)) return;
             currentlyDraggedBlock = block;
             isDraggingFromGrid = false;
-            storageBlocks.RemoveAll(b => b.BlockId == block.BlockId);
+            dragStartRotation = block.RotationState;
+
+            // 드롭이 확정될 때까지 목록에 남겨 원래 보관 슬롯과 저장 순서를 유지한다.
 
             // 혹시 남아있을 수 있는 상태 초기화
             block.ResetLevel();
@@ -116,7 +122,7 @@ namespace Nytherion.Core.Managers
             return true;
         }
 
-        public void EndDrag(Vector2Int? dropGridPosition)
+        public void EndDrag(Vector2Int? dropGridPosition, int? dropStorageIndex = null)
         {
             if (currentlyDraggedBlock == null) return;
 
@@ -124,11 +130,15 @@ namespace Nytherion.Core.Managers
                 logicGrid.CanPlaceBlock(dropGridPosition.Value.y, dropGridPosition.Value.x) &&
                 EquippedRelicCount < MaxEquippedRelics)
             {
+                storageBlocks.Remove(currentlyDraggedBlock);
                 PlaceBlockOnGrid(currentlyDraggedBlock, dropGridPosition.Value);
             }
-            else if (!dropGridPosition.HasValue)
+            else if (!dropGridPosition.HasValue && dropStorageIndex.HasValue)
             {
-                MoveToStorage(currentlyDraggedBlock);
+                // 대상 슬롯의 순번에 삽입하고 기존 유물은 뒷순번으로 민다.
+                storageBlocks.Remove(currentlyDraggedBlock);
+                int index = Mathf.Clamp(dropStorageIndex.Value, 0, storageBlocks.Count);
+                storageBlocks.Insert(index, currentlyDraggedBlock);
             }
             else
             {
@@ -187,6 +197,7 @@ namespace Nytherion.Core.Managers
 
         private void ReturnDraggedBlockToOrigin()
         {
+            currentlyDraggedBlock.SetRotationState(dragStartRotation);
             if (isDraggingFromGrid)
             {
                 PlaceBlockOnGrid(currentlyDraggedBlock, dragStartPosition);
@@ -290,26 +301,6 @@ namespace Nytherion.Core.Managers
                 }
             }
 
-            AddTestBlocks();
-        }
-
-        private void AddTestBlocks()
-        {
-            if (relicDatabase.Count == 0)
-            {
-                return;
-            }
-
-            // 첫 번째 각인 데이터로 테스트 블록 생성
-            var firstRelic = relicDatabase.Values.FirstOrDefault();
-            if (firstRelic != null)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    var testBlock = new RelicBlock(firstRelic, i + 1);
-                    storageBlocks.Add(testBlock);
-                }
-            }
         }
 
         public IEnumerable<RelicBlock> GetStorageBlocks()

@@ -245,6 +245,9 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Tooltip("활성화 중인 동안 모든 원거리 투사체에 유도 기능을 부여합니다.")]
         public bool grantsProjectileHoming;
 
+        [Tooltip("활성화 중인 동안 원거리 투사체가 적을 관통합니다.")]
+        public bool grantsProjectilePiercing;
+
         [Header("각인 모양 (1x1 고정)")]
         public List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };
 

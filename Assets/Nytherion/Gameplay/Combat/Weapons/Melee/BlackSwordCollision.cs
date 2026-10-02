@@ -120,13 +120,14 @@ namespace Nytherion.GamePlay.Combat.Weapon
         public void ConfigureVisual(
             int comboStep,
             float thirdSlashScale,
-            float swingDirectionSign)
+            float swingDirectionSign,
+            float effectSizeMultiplier = 1f)
         {
             bool isContextReversed = swingDirectionSign < 0f;
             bool isReverseSwing = (comboStep == 1) ^ isContextReversed;
             bool isThirdSwing = comboStep == 2;
 
-            transform.localScale = baseScale * (isThirdSwing ? thirdSlashScale : 1f);
+            transform.localScale = baseScale * (isThirdSwing ? thirdSlashScale : 1f) * effectSizeMultiplier;
             ApplyHitboxFlip(isReverseSwing);
             visualStartTime = Time.time;
             isVisualConfigured = true;

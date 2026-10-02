@@ -20,6 +20,7 @@ namespace Nytherion.GamePlay.Skills
                 {
                     laserInstance.SetActive(true);
                     
+                    laserInstance.transform.localScale *= EffectSizeMultiplier;
                     laserEffect.Initialize(caster, firePoint, laserData.damage, laserData.fireDuration, laserData.tickRate, poolTag);
                 }
                 else

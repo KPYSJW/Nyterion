@@ -106,3 +106,7 @@ MonoBehaviour:
     m_Bits: 8
   overlapBufferSize: 64
   auraSortingOrderOffset: -2
+  summonVisualPrefab: {fileID: 8283562940581624940, guid: 25888afb05dfe564b97e6ad2cf787c83, type: 3}
+  targetAttackVisualPrefab: {fileID: 5060610604748869780, guid: a4282d38586d3354c811f310b54c97a9, type: 3}
+  summonClip: {fileID: 7400000, guid: 3a28cd2bc529ebf4fb16cbe0e27bad7d, type: 2}
+  targetAttackClip: {fileID: 7400000, guid: 1227dc9e8d4e0c54ca5392d39d5f5a67, type: 2}

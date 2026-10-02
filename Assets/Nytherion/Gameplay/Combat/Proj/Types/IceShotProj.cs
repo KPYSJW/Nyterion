@@ -258,6 +258,8 @@ namespace Nytherion.GamePlay.Combat
 
                 if (fragment != null)
                 {
+                    float size = collisionObj != null ? collisionObj.effectSizeMultiplier : 1f;
+                    fragment.transform.localScale *= size;
                     fragment.transform.rotation = Quaternion.AngleAxis(currentA, Vector3.forward);
 
                     // 자식 IceShotProj 컴포넌트 처리
@@ -275,6 +277,7 @@ namespace Nytherion.GamePlay.Combat
                     // 데미지 배율 적용
                     if (fragment.TryGetComponent<CollisionObject>(out CollisionObject fragCol))
                     {
+                        fragCol.effectSizeMultiplier = size;
                         fragCol.damage = collisionObj.damage * splitDamageMultiplier;
                     }
                 }

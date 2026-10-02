@@ -12,6 +12,17 @@ namespace Nytherion.GamePlay.Skills
         /// <summary> 스킬의 기본 정보와 능력치를 담고 있는 데이터/// </summary>
         public SkillData skillData;
 
+        protected float EffectSizeMultiplier
+        {
+            get
+            {
+                var player = caster != null ? caster.GetComponentInParent<Nytherion.Core.Managers.PlayerManager>()
+                    : GetComponentInParent<Nytherion.Core.Managers.PlayerManager>();
+                return player != null && player.currentPlayerData != null
+                    ? Mathf.Max(0.01f, player.currentPlayerData.projectileSizeMultiplier) : 1f;
+            }
+        }
+
         /// <summary> 스킬을 시전 한 주체의 Transform/// </summary>
         [System.NonSerialized] public Transform caster;
 

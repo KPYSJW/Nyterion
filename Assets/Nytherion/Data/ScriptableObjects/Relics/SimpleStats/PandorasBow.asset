@@ -22,7 +22,15 @@ MonoBehaviour:
   rarity: 4
   level: 1
   isDisabled: 0
-  effectModules: []
+  effectModules:
+  - description_KR: 
+    description_EN: 
+    condition:
+      rid: -2
+    effects:
+    - rid: 7227149995121836033
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -41,7 +49,29 @@ MonoBehaviour:
   synergySeriesId: TrickshotEngineerSeries
   synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
   unlockMilestoneID: 
-  simpleStatModifiers: []
+  simpleStatModifiers:
+  - stat: 10
+    value: 2
+    valuePerLevel: 0
+    isPercentage: 0
+  - stat: 6
+    value: 0.1
+    valuePerLevel: 0.03
+    isPercentage: 1
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7227149995121836033
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 10
+          value: 2
+          valuePerLevel: 0
+          isPercentage: 0
+        - stat: 6
+          value: 0.1
+          valuePerLevel: 0.03
+          isPercentage: 1

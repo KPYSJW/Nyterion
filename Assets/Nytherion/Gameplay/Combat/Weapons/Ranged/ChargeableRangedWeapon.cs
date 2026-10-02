@@ -27,6 +27,14 @@ namespace Nytherion.GamePlay.Combat.Weapons
         public bool IsCharging => isCharging;
         public float ChargePercent => GetAdjustedMaxChargeTime() > 0f ? (currentChargeTime / GetAdjustedMaxChargeTime()) : 0f;
 
+        // 쿨다운 중 누른 입력은 유지하되, 진행 중인 차징은 다시 시작하지 않습니다.
+        public override bool AllowHeldAttackRetry => true;
+
+        public override bool CanAttack()
+        {
+            return !isPressing && !isCharging && base.CanAttack();
+        }
+
         public override void Initialize(Nytherion.Data.ScriptableObjects.Weapons.WeaponData data)
         {
             base.Initialize(data);
@@ -115,6 +123,13 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
                     OnCharging(chargePercent);
                 }
+            }
+
+            if (isCharging && activeChargeEffectInstance != null && weaponData != null)
+            {
+                // 발사 방향은 유지하고 차징 이펙트만 자체 Z축으로 회전합니다.
+                activeChargeEffectInstance.transform.Rotate(0f, 0f,
+                    weaponData.chargeEffectRotationSpeed * Time.deltaTime, Space.Self);
             }
         }
 

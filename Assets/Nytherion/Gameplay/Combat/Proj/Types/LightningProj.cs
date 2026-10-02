@@ -93,7 +93,8 @@ namespace Nytherion.GamePlay.Combat
             // 1. 연쇄 추적 로직 (가장 가까운 미방문 적 탐색)
             for (int i = 1; i < maxChainCount; i++)
             {
-                Collider2D[] chainHits = Physics2D.OverlapCircleAll(currentSource.position, chainRange);
+                Collider2D[] chainHits = Physics2D.OverlapCircleAll(currentSource.position,
+                    chainRange * (collisionObj != null ? collisionObj.effectSizeMultiplier : 1f));
                 Transform nextTarget = null;
                 float closestChainDist = Mathf.Infinity;
 

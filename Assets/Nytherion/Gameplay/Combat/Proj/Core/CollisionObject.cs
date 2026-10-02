@@ -13,12 +13,15 @@ namespace Nytherion.GamePlay.Combat
     {
         [HideInInspector] public float damage;
         [HideInInspector] public float chargePercent = 0f;
+        [HideInInspector] public float effectSizeMultiplier = 1f;
 
         [Header("Projectile Traits")]
         public List<EquipmentTrait> traits = new List<EquipmentTrait>();
         public GameObject hitEffectPrefab;
         [Tooltip("벽과 충돌할 때도 피격 이펙트를 재생합니다.")]
         public bool playHitEffectOnWall;
+        [Tooltip("유물의 추가 피해로 처리해 적중 효과의 재귀 발동을 방지합니다.")]
+        public bool isChainDamage;
 
         [Header("Pool Settings")]
         public string poolTag = "PlayerProj";
@@ -37,6 +40,7 @@ namespace Nytherion.GamePlay.Combat
         private Vector3 lastHitPosition;
         private LayerMask obstacleCollisionLayers;
         private bool useObstacleCollision;
+        private bool hasReturnedToPool;
 
         public CombatModifierSnapshot ModifierSnapshot => playerManager != null && playerManager.playerRelicManager != null
             ? playerManager.playerRelicManager.CombatModifiers
@@ -73,6 +77,8 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnEnable()
         {
+            effectSizeMultiplier = 1f;
+            hasReturnedToPool = false;
             useObstacleCollision = false;
             obstacleCollisionLayers = 0;
             trickshotInteractionCount = 0;
@@ -156,6 +162,8 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
+            // 같은 물리 틱에 여러 충돌체가 진입해도 이미 반환된 탄은 피해를 주지 않습니다.
+            if (hasReturnedToPool || !gameObject.activeInHierarchy) return;
             bool isEnemy = collision.CompareTag("Enemy");
             bool isWall = collision.CompareTag("Wall") || IsObstacleCollision(collision);
             if (isEnemy && bounceModifier.enabled && bounceModifier.ShouldIgnoreHit(collision)) return;
@@ -166,8 +174,8 @@ namespace Nytherion.GamePlay.Combat
                 {
                     hasEnemyHit = true;
                     lastHitPosition = collision.ClosestPoint(transform.position);
-                    IDamageable target = collision.GetComponent<IDamageable>();
-                    target?.TakeDamage(damage);
+                    IDamageable target = collision.GetComponentInParent<IDamageable>();
+                    target?.TakeDamage(damage, isChainDamage);
 
                     if (target != null && traits != null &&
                         collision.TryGetComponent<StatusEffectManager>(out StatusEffectManager effectManager))
@@ -242,6 +250,8 @@ namespace Nytherion.GamePlay.Combat
 
         public void ReturnToPool()
         {
+            if (hasReturnedToPool) return;
+            hasReturnedToPool = true;
             if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
             {
                 ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
@@ -303,6 +313,7 @@ namespace Nytherion.GamePlay.Combat
                     lastHitPosition,
                     Quaternion.identity);
                 if (echo == null) continue;
+                echo.transform.localScale *= effectSizeMultiplier;
 
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 echo.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
@@ -323,6 +334,7 @@ namespace Nytherion.GamePlay.Combat
                         hitEffectPrefab,
                         ModifierSnapshot,
                         true);
+                    echoCollision.effectSizeMultiplier = effectSizeMultiplier;
                 }
             }
         }

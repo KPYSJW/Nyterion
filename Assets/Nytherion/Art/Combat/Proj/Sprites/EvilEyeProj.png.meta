@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: EvilEyeProjectile_0
+      name: EvilEyeProj_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
+        width: 32
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,20 +111,41 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 49e9423d56fd3514983b701a7382a1eb
-      internalID: 1967594019
+      spriteID: c09977d752a82af4e9fb071777426624
+      internalID: 1107370696
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: EvilEyeProjectile_1
+      name: EvilEyeProj_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac3e51e520e6d8a49bb7656e8787f3e8
+      internalID: -23780259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EvilEyeProj_2
       rect:
         serializedVersion: 2
         x: 64
         y: 0
-        width: 64
-        height: 64
+        width: 32
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,29 +153,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 305a2ff8fd662934888fe52a3f2bc79a
-      internalID: 1874269859
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EvilEyeProjectile_2
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 0
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3601435c4b270784c9b93fc57b366c48
-      internalID: -1413485768
+      spriteID: ddfd8eef924889148a2dfa41bc5c3c50
+      internalID: -493881517
       vertices: []
       indices: 
       edges: []
@@ -170,9 +170,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      EvilEyeProjectile_0: 1967594019
-      EvilEyeProjectile_1: 1874269859
-      EvilEyeProjectile_2: -1413485768
+      EvilEyeProj_0: 1107370696
+      EvilEyeProj_1: -23780259
+      EvilEyeProj_2: -493881517
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

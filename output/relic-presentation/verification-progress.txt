@@ -1,0 +1,38 @@
+PASS 새 저장 매니저에서 임의의 테스트 유물 생성 안 함
+PASS 기존 RootLifetimeScope 입력 매니저 사용
+PASS 씬의 비활성 툴팁 Inspector 참조 확인
+PASS 전체 유물 보유 상태에도 보관함은 페이지당 정확히 16칸·4열
+PASS 늘어나는 앵커를 고정하고 4×4 슬롯·여백을 포함한 547×547 규격 적용
+PASS 실제 LayoutRebuild 후 4×4 행렬의 슬롯 좌표 확인
+PASS 유물 장착 칸 96×96 축소·32픽셀 슬롯 배경 3배
+PASS 창 반복 초기화와 같은 프레임 이벤트에서 슬롯 중복 생성 없음
+PASS StorageSlot/Icon 실제 아이콘 96×96·비율 보존
+PASS 보관함 Icon 자식 표시 중에도 마우스 Raycast가 유물 드래그 컴포넌트에 도달
+PASS 중첩 유물 캔버스에서 드래그·UI 갱신 후에도 아이콘 표시 순서 유지
+PASS 유물 드래그 96×96·Canvas 이동 후 배율 유지
+PASS 드래그 중 원래 슬롯은 빈 테두리로 유지하고 나머지 유물 순번 보존
+PASS 드래그 취소 후 원래 보관 슬롯과 전체 순번 복원
+PASS 보관함 5→2 삽입: 대상 슬롯 표시·다른 유물 상대 순서·중복 없음
+PASS 보관함 2→6 삽입: 대상 슬롯 표시·다른 유물 상대 순서·중복 없음
+PASS 보관함 6→6 삽입: 대상 슬롯 표시·다른 유물 상대 순서·중복 없음
+PASS 패널 밖 드롭: 원래 슬롯·순번·회전 복원
+PASS 점유된 장착 슬롯 드롭: 원래 보관 슬롯 복원
+PASS 정상 장착이 확정된 뒤에만 보관함 빈 자리 정리
+PASS 다른 페이지의 슬롯에도 전역 순번으로 삽입
+PASS 기존 저장 형식 JSON 왕복 후 보관함 순서 보존
+PASS 다음 페이지로 16개 초과 유물 접근 가능
+PASS 유물 장착 칸에 EquipedRelic_Slot.png 적용
+PASS SkillStorageSlot: 유물 슬롯과 동일한 배경 이미지·비율 보존
+PASS SkillEquipSlot: 유물 슬롯과 동일한 배경 이미지·비율 보존
+PASS SkillEquipSlot 1: 유물 슬롯과 동일한 배경 이미지·비율 보존
+PASS SkillEquipSlot 2: 유물 슬롯과 동일한 배경 이미지·비율 보존
+PASS 중첩 스킬 캔버스에서 드래그 아이콘 표시 순서 유지
+PASS 스킬 드래그도 96×96·비율 보존
+PASS 스킬 드래그 종료 시 원래 슬롯으로 아이콘 복원
+PASS 스킬 드래그 종료 시 장착 아이콘 64×64 복원
+PASS 유물 툴팁 제목 흰색
+PASS 아이콘 참조가 누락된 유물도 빈 슬롯 대신 ? 표시
+PASS Relic/StorageSlot: 5개 화면 배율에서 좌·우·상·하 선 굵기 동일 (0.24=1px / 0.75=3px / 1=4px / 1.25=5px / 1.5=6px)
+PASS Relic/RelicSlotCell: 5개 화면 배율에서 좌·우·상·하 선 굵기 동일 (0.24=1px / 0.75=2px / 1=3px / 1.25=4px / 1.5=5px)
+PASS SkillStorageSlot: 5개 화면 배율에서 좌·우·상·하 선 굵기 동일 (0.24=1px / 0.75=3px / 1=4px / 1.25=5px / 1.5=6px)
+PASS SkillEquipSlot: 5개 화면 배율에서 좌·우·상·하 선 굵기 동일 (0.24=1px / 0.75=4px / 1=5px / 1.25=6px / 1.5=8px)

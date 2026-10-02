@@ -1,0 +1,1 @@
+playing=False paused=False switching=True

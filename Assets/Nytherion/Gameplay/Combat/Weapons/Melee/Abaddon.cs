@@ -265,6 +265,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
                     // 데미지 설정
                     if (effectInstance != null)
                     {
+                        effectInstance.transform.localScale *= EffectSizeMultiplier;
                         AbaddonCollision collisionComp = effectInstance.GetComponent<AbaddonCollision>();
                         if (collisionComp == null)
                         {

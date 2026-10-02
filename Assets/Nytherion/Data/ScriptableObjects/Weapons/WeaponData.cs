@@ -43,6 +43,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float visualScale = 1f;
         [Tooltip("플레이어 SpriteRenderer의 Sorting Order에 더할 무기 표시 순서 오프셋")]
         public int sortingOrderOffset = -1;
+        [Tooltip("범용 원거리 무기의 착용 위치와 각도를 고정하고 캐릭터 방향에 따라 좌우 반전합니다.")]
+        public bool useFixedFacingPose;
 
         [Header("Staff Recoil Settings")]
         [Tooltip("발사 시 Frenzy와 동일한 무기 반동을 적용합니다.")]
@@ -57,12 +59,17 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Tooltip("차징(충전) 중 지속적으로 발생할 이펙트 프리팹 (예: 차징 기 축적 이펙트 등)")]
         public GameObject chargeEffectPrefab;
 
+        [Tooltip("차징 이펙트의 초당 Z축 회전 각도 (0: 회전 없음, 음수: 반대 방향)")]
+        public float chargeEffectRotationSpeed = 0f;
+
         [Header("Animation Settings")]
         [Tooltip("무기 전용 애니메이터 컨트롤러 (Idle, Fire 애니메이션 연동용)")]
         public RuntimeAnimatorController animatorController;
 
         [Header("Projectile Settings")]
         public GameObject projectilePrefab;
+        [Tooltip("발사된 투사체마다 순환할 애니메이터입니다. 비어 있으면 프리팹의 애니메이션을 사용합니다.")]
+        public RuntimeAnimatorController[] projectileAnimationVariants;
         public float projectileSpeed = 10f;
         [Tooltip("투사체 이미지의 자체 회전 오프셋 (기본 이미지가 왼쪽을 향하면 180)")]
         public float projectileRotationOffset = 0f;
@@ -70,6 +77,19 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float maxChargeTime = 1.0f;
         [Tooltip("이 무기가 발사하는 투사체는 유도 유물이 없어도 기본 유도를 사용합니다.")]
         public bool hasHomingProjectiles;
+        [Header("유도 마법탄")]
+        [Tooltip("목표 방향 기준으로 유도탄의 발사 각도를 배치합니다. 발사 수는 기본 발사 수와 투사체 증가 효과를 따릅니다.")]
+        public bool useHomingLaunchAngles;
+        [Tooltip("추가 탄이 생길 때 중앙부터 넓혀 사용할 각도 배치입니다. 기본 1발은 항상 0도로 출발합니다.")]
+        public float[] homingLaunchAngles = { 30f, 15f, 0f, -15f, -30f };
+        [Min(0f), Tooltip("초당 최대 회전 각도")]
+        public float homingTurnSpeed = 180f;
+        [Min(0f), Tooltip("발사 시 살아 있는 적을 선택할 탐색 반경")]
+        public float homingSearchRadius = 10f;
+        [Min(0f), Tooltip("초기 방향을 유지한 뒤 유도를 시작할 시간")]
+        public float homingLaunchDuration = 0.15f;
+        [Min(0.01f), Tooltip("유도 마법탄의 수명(초)")]
+        public float homingLifetime = 4f;
         [Tooltip("차징 판정이 시작되기까지 누르고 있어야 하는 최소 시간(초)")]
         public float chargeThresholdTime = 0.15f;
         [Tooltip("이 무기가 차징 무기로 활성화되기 위해 필요한 유물 ID (비어 있으면 항상 차징 가능)")]
