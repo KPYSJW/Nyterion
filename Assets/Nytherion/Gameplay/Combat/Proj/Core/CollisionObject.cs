@@ -6,6 +6,7 @@ using UnityEngine;
 using VContainer;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Gameplay.Relics.Modules;
+using Nytherion.GamePlay.Characters.Enemy;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -164,8 +165,8 @@ namespace Nytherion.GamePlay.Combat
         {
             // 같은 물리 틱에 여러 충돌체가 진입해도 이미 반환된 탄은 피해를 주지 않습니다.
             if (hasReturnedToPool || !gameObject.activeInHierarchy) return;
-            bool isEnemy = collision.CompareTag("Enemy");
-            bool isWall = collision.CompareTag("Wall") || IsObstacleCollision(collision);
+            bool isEnemy = IsEnemyCollider(collision);
+            bool isWall = HasTagInParents(collision.transform, "Wall") || IsObstacleCollision(collision);
             if (isEnemy && bounceModifier.enabled && bounceModifier.ShouldIgnoreHit(collision)) return;
 
             if (isEnemy || isWall)
@@ -176,9 +177,11 @@ namespace Nytherion.GamePlay.Combat
                     lastHitPosition = collision.ClosestPoint(transform.position);
                     IDamageable target = collision.GetComponentInParent<IDamageable>();
                     target?.TakeDamage(damage, isChainDamage);
+                    if (TryGetComponent(out HomingProj homingProjectile))
+                        homingProjectile.StopTrackingHitTarget(target);
 
                     if (target != null && traits != null &&
-                        collision.TryGetComponent<StatusEffectManager>(out StatusEffectManager effectManager))
+                        collision.GetComponentInParent<StatusEffectManager>() is StatusEffectManager effectManager)
                     {
                         for (int i = 0; i < traits.Count; i++)
                         {
@@ -246,6 +249,23 @@ namespace Nytherion.GamePlay.Combat
                     ReturnToPool();
                 }
             }
+        }
+
+        public static bool IsEnemyCollider(Collider2D collision)
+        {
+            if (collision == null) return false;
+            IDamageable damageable = collision.GetComponentInParent<IDamageable>();
+            // 자식 감지용 트리거는 적 몸체로 취급하지 않습니다. 명시적인 Enemy 피격 영역은 유지합니다.
+            if (collision.isTrigger && !collision.CompareTag("Enemy") &&
+                damageable is MonoBehaviour owner && owner.transform != collision.transform) return false;
+            return damageable is EnemyBase || HasTagInParents(collision.transform, "Enemy");
+        }
+
+        private static bool HasTagInParents(Transform origin, string tag)
+        {
+            for (Transform current = origin; current != null; current = current.parent)
+                if (current.CompareTag(tag)) return true;
+            return false;
         }
 
         public void ReturnToPool()

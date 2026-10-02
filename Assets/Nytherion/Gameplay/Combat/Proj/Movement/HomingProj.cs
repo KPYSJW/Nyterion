@@ -13,6 +13,7 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField, Min(0f)] private float initialStraightDuration = 0.15f;
         [SerializeField, Min(0f)] private float trackingRadius = 10f;
         [SerializeField] private LayerMask enemyLayer;
+        [SerializeField] private bool useConstantSpeed;
 
         private Rigidbody2D rb;
         private Collider2D targetCollider;
@@ -24,6 +25,7 @@ namespace Nytherion.GamePlay.Combat
         private Vector2 moveDirection;
         private bool homingEnabled;
         private bool initialized;
+        private bool constantSpeed;
         private TrailRenderer[] trails;
         private Animator animator;
 
@@ -57,11 +59,11 @@ namespace Nytherion.GamePlay.Combat
         {
             Vector2 direction = rb.velocity.sqrMagnitude > 0.0001f ? rb.velocity.normalized : (Vector2)transform.right;
             Collider2D selectedTarget = isEnabled ? FindClosestEnemy(rb.position, trackingRadius, enemyLayer) : null;
-            Initialize(isEnabled, launchSpeed, direction, selectedTarget, rotateSpeed, initialStraightDuration, 0f);
+            Initialize(isEnabled, launchSpeed, direction, selectedTarget, rotateSpeed, initialStraightDuration, 0f, useConstantSpeed);
         }
 
         public void Initialize(bool isEnabled, float speed, Vector2 direction, Collider2D selectedTarget,
-            float turnSpeed, float straightDuration, float spriteRotationOffset)
+            float turnSpeed, float straightDuration, float spriteRotationOffset, bool keepSpeed = false)
         {
             enabled = true;
             targetCollider = selectedTarget;
@@ -73,12 +75,21 @@ namespace Nytherion.GamePlay.Combat
             currentTurnSpeed = Mathf.Max(0f, turnSpeed);
             launchTimeRemaining = Mathf.Max(0f, straightDuration);
             rotationOffset = spriteRotationOffset;
+            constantSpeed = keepSpeed;
             moveDirection = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
             initialized = true;
             rb.angularVelocity = 0f;
             rb.velocity = moveDirection * currentSpeed;
             FaceDirection();
             ClearTrails();
+        }
+
+        public void StopTrackingHitTarget(IDamageable hitTarget)
+        {
+            if (!ReferenceEquals(targetDamageable, hitTarget)) return;
+            // 관통 후에도 살아 있는 적(허수아비 등)을 다시 향해 돌아오지 않습니다.
+            targetCollider = null;
+            targetDamageable = null;
         }
 
         private void FixedUpdate()
@@ -104,11 +115,18 @@ namespace Nytherion.GamePlay.Combat
                     {
                         float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
                         float desiredAngle = Mathf.Atan2(desired.y, desired.x) * Mathf.Rad2Deg;
+                        float turnSpeed = currentTurnSpeed;
+                        if (constantSpeed && turnSpeed > 0f)
+                        {
+                            // 일정 속도에서도 가까운 적을 맴돌지 않도록 회전 반경을 목표 거리 안으로 줄입니다.
+                            float distance = Mathf.Max(desired.magnitude, currentSpeed * Time.fixedDeltaTime);
+                            turnSpeed = Mathf.Max(turnSpeed, currentSpeed / (distance * 0.65f) * Mathf.Rad2Deg);
+                        }
                         float nextAngle = Mathf.MoveTowardsAngle(angle, desiredAngle,
-                            currentTurnSpeed * Time.fixedDeltaTime) * Mathf.Deg2Rad;
+                            turnSpeed * Time.fixedDeltaTime) * Mathf.Deg2Rad;
                         moveDirection = new Vector2(Mathf.Cos(nextAngle), Mathf.Sin(nextAngle));
 
-                        if (currentTurnSpeed > 0f)
+                        if (!constantSpeed && currentTurnSpeed > 0f)
                         {
                             // 속도/회전 속도로 정해지는 회전 반경이 목표 거리보다 크면 원운동하게 됩니다.
                             // 방향 차이가 큰 근거리에서만 감속하고, 정렬되면 원래 속도로 접근합니다.
@@ -178,7 +196,7 @@ namespace Nytherion.GamePlay.Combat
             targetDamageable = null;
             moveDirection = Vector2.zero;
             currentSpeed = launchTimeRemaining = rotationOffset = 0f;
-            homingEnabled = initialized = false;
+            homingEnabled = initialized = constantSpeed = false;
             if (rb != null)
             {
                 rb.velocity = Vector2.zero;

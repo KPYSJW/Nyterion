@@ -70,6 +70,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public GameObject projectilePrefab;
         [Tooltip("발사된 투사체마다 순환할 애니메이터입니다. 비어 있으면 프리팹의 애니메이션을 사용합니다.")]
         public RuntimeAnimatorController[] projectileAnimationVariants;
+        [Tooltip("투사체 이미지와 같은 순서로 연결할 시작 이펙트입니다. 원형 발사 시 이펙트를 한 번 재생한 뒤 대응하는 탄을 발사합니다.")]
+        public GameObject[] projectileStartEffectVariants;
         public float projectileSpeed = 10f;
         [Tooltip("투사체 이미지의 자체 회전 오프셋 (기본 이미지가 왼쪽을 향하면 180)")]
         public float projectileRotationOffset = 0f;
@@ -77,6 +79,13 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float maxChargeTime = 1.0f;
         [Tooltip("이 무기가 발사하는 투사체는 유도 유물이 없어도 기본 유도를 사용합니다.")]
         public bool hasHomingProjectiles;
+        [Header("플레이어 주변 원형 발사")]
+        [Tooltip("플레이어 주변 원의 서로 다른 지점을 무작위로 골라 투사체를 발사합니다.")]
+        public bool usePlayerCircleSpawn;
+        [Min(0.01f), Tooltip("플레이어 중심에서 발사 지점까지의 월드 거리")]
+        public float playerCircleSpawnRadius = 0.65f;
+        [Min(1), Tooltip("원 위에 균등하게 배치할 지점 수. 투사체가 더 많으면 해당 공격의 지점 수를 늘립니다.")]
+        public int playerCircleSpawnPointCount = 12;
         [Header("유도 마법탄")]
         [Tooltip("목표 방향 기준으로 유도탄의 발사 각도를 배치합니다. 발사 수는 기본 발사 수와 투사체 증가 효과를 따릅니다.")]
         public bool useHomingLaunchAngles;
@@ -84,6 +93,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float[] homingLaunchAngles = { 30f, 15f, 0f, -15f, -30f };
         [Min(0f), Tooltip("초당 최대 회전 각도")]
         public float homingTurnSpeed = 180f;
+        [Tooltip("유도 중에도 발사 속도를 유지하고 근거리에서는 회전 속도를 보정합니다.")]
+        public bool useConstantHomingSpeed;
         [Min(0f), Tooltip("발사 시 살아 있는 적을 선택할 탐색 반경")]
         public float homingSearchRadius = 10f;
         [Min(0f), Tooltip("초기 방향을 유지한 뒤 유도를 시작할 시간")]

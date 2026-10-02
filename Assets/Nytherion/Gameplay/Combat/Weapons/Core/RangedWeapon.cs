@@ -40,10 +40,13 @@ namespace Nytherion.GamePlay.Combat
         private WaitForSeconds burstWait;
         private WeaponCrossbowRecoil crossbowRecoil;
         private int nextProjectileAnimationIndex;
+        private int[] circleSpawnPointIndices;
+        private int initializationVersion;
 
         public override void Initialize(WeaponData data)
         {
             base.Initialize(data);
+            initializationVersion++;
             nextProjectileAnimationIndex = 0;
 
             if (crossbowRecoil == null)
@@ -79,9 +82,12 @@ namespace Nytherion.GamePlay.Combat
             float chargePercent = 0f,
             float projectileDamageMultiplier = 1f,
             Collider2D homingTarget = null,
-            bool targetSelected = false)
+            bool targetSelected = false,
+            Vector3? spawnPosition = null,
+            int? animationVariantIndex = null,
+            float? effectiveDamageMultiplier = null)
         {
-            Vector3 spawnPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f) + spawnOffset;
+            Vector3 spawnPos = spawnPosition ?? new Vector3(firePoint.position.x, firePoint.position.y, 0f) + spawnOffset;
             
             GameObject projectile;
             if (currentProjectilePrefab != null)
@@ -107,6 +113,10 @@ namespace Nytherion.GamePlay.Combat
             Rigidbody2D rb;
             if (projectile.TryGetComponent<Rigidbody2D>(out rb))
             {
+                // 풀에서 재사용한 물리 위치도 총구 위치와 함께 즉시 초기화합니다.
+                rb.position = spawnPos;
+                rb.rotation = angle;
+                rb.angularVelocity = 0f;
                 rb.velocity = normalizedDir * projectileSpeed;
             }
             
@@ -140,7 +150,8 @@ namespace Nytherion.GamePlay.Combat
                 homingProjectile.Initialize(shouldUseHoming, projectileSpeed, normalizedDir, homingTarget,
                     weaponData != null ? weaponData.homingTurnSpeed : 180f,
                     weaponData != null ? weaponData.homingLaunchDuration : 0.15f,
-                    weaponData != null ? weaponData.projectileRotationOffset : 0f);
+                    weaponData != null ? weaponData.projectileRotationOffset : 0f,
+                    weaponData != null && weaponData.useConstantHomingSpeed);
             }
 
             if (weaponData != null && (shouldUseHoming || weaponData.useHomingLaunchAngles))
@@ -155,7 +166,7 @@ namespace Nytherion.GamePlay.Combat
                 if (weaponData != null)
                 {
                     collisionObj.Configure(
-                        weaponData.damage * EffectiveDamageMultiplier * projectileDamageMultiplier,
+                        weaponData.damage * (effectiveDamageMultiplier ?? EffectiveDamageMultiplier) * projectileDamageMultiplier,
                         GetTraits(),
                         chargePercent,
                         weaponData.hitEffectPrefab,
@@ -179,7 +190,7 @@ namespace Nytherion.GamePlay.Combat
             }
 
             ConfigureSpawnedProjectile(projectile, normalizedDir, chargePercent);
-            ApplyProjectileAnimation(projectile);
+            ApplyProjectileAnimation(projectile, animationVariantIndex);
             // 풀은 발사마다 원본 스케일을 복원합니다. 차징 보정 뒤에 한 번만 적용합니다.
             projectile.transform.localScale *= EffectSizeMultiplier;
             if (collisionObj != null) collisionObj.effectSizeMultiplier = EffectSizeMultiplier;
@@ -215,25 +226,50 @@ namespace Nytherion.GamePlay.Combat
 
             bool useLaunchAngles = weaponData != null && weaponData.useHomingLaunchAngles &&
                 weaponData.homingLaunchAngles != null && weaponData.homingLaunchAngles.Length > 0;
-            if (useLaunchAngles)
+            bool useCircleSpawn = weaponData != null && weaponData.usePlayerCircleSpawn && playerManager != null;
+            if (useLaunchAngles || useCircleSpawn)
             {
                 // 한 발사 묶음의 목표를 한 번 선택하고 모든 탄이 같은 목표를 향해 출발합니다.
-                Collider2D target = HomingProj.FindClosestEnemy(firePoint.position, weaponData.homingSearchRadius);
+                Vector3 origin = useCircleSpawn ? playerManager.transform.position : firePoint.position;
+                origin.z = 0f;
+                Collider2D target = HomingProj.FindClosestEnemy(origin, weaponData.homingSearchRadius);
                 Vector2 basis = target != null
-                    ? (Vector2)target.bounds.center - (Vector2)firePoint.position
+                    ? (Vector2)target.bounds.center - (Vector2)origin
                     : direction;
                 if (basis.sqrMagnitude < 0.0001f) basis = direction;
                 if (basis.sqrMagnitude < 0.0001f) basis = firePoint.right;
                 float baseAngle = Mathf.Atan2(basis.y, basis.x) * Mathf.Rad2Deg;
                 // 각도 배열은 발사 배치만 정의하며 발사 수는 기존 기본 수 + 증가 효과를 따릅니다.
-                totalCount = Mathf.Max(1, baseCount) + Mathf.Max(0, extra);
-                int angleCount = weaponData.homingLaunchAngles.Length;
+                int pointCount = useCircleSpawn ? Mathf.Max(totalCount, weaponData.playerCircleSpawnPointCount) : 0;
+                if (useCircleSpawn)
+                {
+                    if (circleSpawnPointIndices == null || circleSpawnPointIndices.Length < pointCount)
+                        circleSpawnPointIndices = new int[pointCount];
+                    for (int i = 0; i < pointCount; i++) circleSpawnPointIndices[i] = i;
+                }
+                int angleCount = useLaunchAngles ? weaponData.homingLaunchAngles.Length : 1;
                 float centerIndex = (angleCount - 1) * 0.5f;
                 float halfWidth = Mathf.Min((totalCount - 1) * 0.5f, centerIndex);
                 for (int i = 0; i < totalCount; i++)
                 {
+                    Vector3 spawnPos = origin;
+                    float launchAngle = baseAngle;
+                    if (useCircleSpawn)
+                    {
+                        // 부분 섞기로 이번 공격에서 선택한 지점은 다시 뽑지 않습니다.
+                        int selected = Random.Range(i, pointCount);
+                        int pointIndex = circleSpawnPointIndices[selected];
+                        circleSpawnPointIndices[selected] = circleSpawnPointIndices[i];
+                        circleSpawnPointIndices[i] = pointIndex;
+                        float pointAngle = pointIndex * (Mathf.PI * 2f / pointCount);
+                        float radius = Mathf.Max(0.01f, weaponData.playerCircleSpawnRadius);
+                        spawnPos += new Vector3(Mathf.Cos(pointAngle), Mathf.Sin(pointAngle), 0f) * radius;
+                        // 적 유무와 관계없이 바깥 방향으로 출발한 뒤 기존 유도 대기 시간을 적용합니다.
+                        Vector2 outward = spawnPos - origin;
+                        launchAngle = Mathf.Atan2(outward.y, outward.x) * Mathf.Rad2Deg;
+                    }
                     float offset = 0f;
-                    if (totalCount > 1)
+                    if (useLaunchAngles && totalCount > 1 && !useCircleSpawn)
                     {
                         // 탄 수가 늘면 중앙부터 폭을 넓히고, 배열보다 많아도 최대 발사 폭을 유지합니다.
                         float sample = centerIndex + Mathf.Lerp(-halfWidth, halfWidth, i / (float)(totalCount - 1));
@@ -242,9 +278,12 @@ namespace Nytherion.GamePlay.Combat
                         offset = Mathf.Lerp(weaponData.homingLaunchAngles[lower],
                             weaponData.homingLaunchAngles[upper], sample - lower);
                     }
-                    float radians = (baseAngle + offset) * Mathf.Deg2Rad;
-                    SpawnProj(new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)), default,
-                        chargePercent, projectileDamageMultiplier, target, true);
+                    float radians = (launchAngle + offset) * Mathf.Deg2Rad;
+                    Vector2 launchDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
+                    if (useCircleSpawn)
+                        SpawnWithStartEffect(launchDirection, spawnPos, chargePercent, projectileDamageMultiplier, target);
+                    else
+                        SpawnProj(launchDirection, default, chargePercent, projectileDamageMultiplier, target, true, spawnPos);
                 }
             }
 
@@ -351,7 +390,45 @@ namespace Nytherion.GamePlay.Combat
         }
 
         protected virtual Vector2 GetProjectileDirection(Vector2 direction) => direction;
-        private void ApplyProjectileAnimation(GameObject projectile)
+        private void SpawnWithStartEffect(Vector2 direction, Vector3 position, float chargePercent,
+            float projectileDamageMultiplier, Collider2D target)
+        {
+            GameObject[] effects = weaponData.projectileStartEffectVariants;
+            RuntimeAnimatorController[] variants = weaponData.projectileAnimationVariants;
+            int index = nextProjectileAnimationIndex;
+            if (effects == null || index >= effects.Length || effects[index] == null || variants == null || variants.Length == 0)
+            {
+                SpawnProj(direction, default, chargePercent, projectileDamageMultiplier, target, true, position);
+                return;
+            }
+            ObjectPoolManager pool = ObjectPoolManager.Instance;
+            GameObject effect = pool.SpawnFromPool(effects[index], position, Quaternion.identity);
+            if (effect == null) return;
+            if (!effect.TryGetComponent(out ProjectileStartEffect startEffect))
+            {
+                pool.ReturnToPool(effects[index].name, effect);
+                SpawnProj(direction, default, chargePercent, projectileDamageMultiplier, target, true, position);
+                return;
+            }
+            // 이펙트 재생 전에 이미지를 예약해 겹친 공격도 시작 이펙트와 같은 탄을 사용합니다.
+            nextProjectileAnimationIndex = (index + 1) % variants.Length;
+            SpriteRenderer renderer = effect.GetComponent<SpriteRenderer>();
+            SpriteRenderer weaponRenderer = GetComponent<SpriteRenderer>();
+            if (weaponRenderer != null)
+            {
+                renderer.sortingLayerID = weaponRenderer.sortingLayerID;
+                renderer.sortingOrder = weaponRenderer.sortingOrder + 1;
+            }
+            effect.transform.localScale *= EffectSizeMultiplier;
+            int version = initializationVersion;
+            WeaponData data = weaponData;
+            float damage = EffectiveDamageMultiplier;
+            startEffect.Play(pool,
+                () => SpawnProj(direction, default, chargePercent, projectileDamageMultiplier, target, true, position, index, damage),
+                () => this != null && isActiveAndEnabled && initializationVersion == version && weaponData == data);
+        }
+
+        private void ApplyProjectileAnimation(GameObject projectile, int? reservedIndex = null)
         {
             RuntimeAnimatorController[] variants = weaponData != null ? weaponData.projectileAnimationVariants : null;
             if (variants == null || variants.Length == 0) return;
@@ -359,8 +436,9 @@ namespace Nytherion.GamePlay.Combat
             if (projectileAnimator == null) return;
 
             // 공격 묶음이 끝나도 순서를 유지하고 풀에서 재사용한 탄에도 다시 적용합니다.
-            RuntimeAnimatorController selected = variants[nextProjectileAnimationIndex];
-            nextProjectileAnimationIndex = (nextProjectileAnimationIndex + 1) % variants.Length;
+            int index = reservedIndex ?? nextProjectileAnimationIndex;
+            RuntimeAnimatorController selected = variants[index % variants.Length];
+            if (!reservedIndex.HasValue) nextProjectileAnimationIndex = (nextProjectileAnimationIndex + 1) % variants.Length;
             if (selected == null) return;
             projectileAnimator.runtimeAnimatorController = selected;
             projectileAnimator.Rebind();

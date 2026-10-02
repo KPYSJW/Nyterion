@@ -16,10 +16,13 @@ MonoBehaviour:
   itemName_KR: "\uC815\uB839\uC758 \uC778\uB3C4"
   itemName_EN: Spirits' Guidance
   icon: {fileID: 21300000, guid: 4d9574aa037f295409fc44d607d0fee5, type: 3}
-  description_KR: "\uB2E4\uC12F \uB9C8\uBC95\uD0C4\uC774 \uD37C\uC9C4 \uB4A4 \uACE1\uC120\uC744
-    \uADF8\uB9AC\uBA70 \uBC1C\uC0AC \uC2DC \uC120\uD0DD\uD55C \uC801\uC744 \uCD94\uC801\uD569\uB2C8\uB2E4."
-  description_EN: Five magic bolts fan out, then curve toward the enemy selected
-    at launch.
+  description_KR: "\uD50C\uB808\uC774\uC5B4 \uC8FC\uBCC0 \uC6D0\uC758 \uBB34\uC791\uC704
+    \uC9C0\uC810\uC5D0\uC11C \uB9C8\uBC95\uD0C4\uC744 \uBC1C\uC0AC\uD574 \uC120\uD0DD\uD55C
+    \uC801\uC744 \uCD94\uC801\uD569\uB2C8\uB2E4. \uD22C\uC0AC\uCCB4 \uC99D\uAC00
+    \uD6A8\uACFC\uC5D0 \uB530\uB77C \uC11C\uB85C \uB2E4\uB978 \uC9C0\uC810\uC5D0\uC11C
+    \uD55C \uBC1C\uC529 \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  description_EN: Fires a homing magic bolt from a random point on a circle around
+    the player. Extra projectile effects add bolts from distinct points.
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 
@@ -49,11 +52,18 @@ MonoBehaviour:
   - {fileID: 22100000, guid: 5c8cecca900445f7a314df32809e739c, type: 2}
   - {fileID: 22100000, guid: 347a69b43e244d0f8ade40662fb29529, type: 2}
   - {fileID: 22100000, guid: a3cc740fc9044b2580b5be73494caf48, type: 2}
+  projectileStartEffectVariants:
+  - {fileID: 9206949755172105945, guid: 62505aab8d7d07e4caf2118ebc5c495b, type: 3}
+  - {fileID: 8349545576521567147, guid: d8e20f905fccdc043b9e878b23bb0222, type: 3}
+  - {fileID: 1255436255852650076, guid: 1ed5a748a024e474a984dac5de92dd68, type: 3}
   projectileSpeed: 8
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
   hasHomingProjectiles: 1
+  usePlayerCircleSpawn: 1
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
   useHomingLaunchAngles: 1
   homingLaunchAngles:
   - 30
@@ -61,9 +71,10 @@ MonoBehaviour:
   - 0
   - -15
   - -30
-  homingTurnSpeed: 180
+  homingTurnSpeed: 720
+  useConstantHomingSpeed: 1
   homingSearchRadius: 10
-  homingLaunchDuration: 0.15
+  homingLaunchDuration: 0.05
   homingLifetime: 4
   chargeThresholdTime: 0.15
   requiredRelicId: 

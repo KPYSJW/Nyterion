@@ -1,0 +1,1 @@
+PASS: Start/Start1/Start2를 투사체 이미지 1/2/3과 연결, 크기 0.8배, 18fps 단회 재생 종료 Animation Event로 발사

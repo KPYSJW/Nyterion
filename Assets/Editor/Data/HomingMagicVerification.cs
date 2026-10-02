@@ -35,6 +35,7 @@ namespace Nytherion.Editor
         private static float previousTimeScale;
         private static bool previousRunInBackground;
         private static bool previousPause;
+        private static SimulationMode2D previousSimulationMode;
 
         static HomingMagicVerification()
         {
@@ -60,6 +61,9 @@ namespace Nytherion.Editor
             if (File.Exists(HomingMagicSetup.Output + "/verify.request"))
             {
                 File.Delete(HomingMagicSetup.Output + "/verify.request");
+                bool circleOnly = File.Exists(HomingMagicSetup.Output + "/circle-only.request");
+                if (circleOnly) File.Delete(HomingMagicSetup.Output + "/circle-only.request");
+                SessionState.SetBool(Pending + ".CircleOnly", circleOnly);
                 Start();
                 exitAfter = true;
                 SessionState.SetBool(Pending + ".ExitAfter", true);
@@ -74,6 +78,7 @@ namespace Nytherion.Editor
                 previousTimeScale = Time.timeScale;
                 previousRunInBackground = Application.runInBackground;
                 previousPause = EditorApplication.isPaused;
+                previousSimulationMode = Physics2D.simulationMode;
                 Application.runInBackground = true;
                 EditorApplication.isPaused = false;
                 Time.timeScale = 1f;
@@ -105,6 +110,7 @@ namespace Nytherion.Editor
         {
             var target = Target(Origin + new Vector2(0f, 7f));
             var playerRoot = new GameObject("검증용 플레이어 데이터");
+            playerRoot.transform.position = Origin;
             temporary.Add(playerRoot);
             var player = playerRoot.AddComponent<PlayerManager>();
             var events = playerRoot.AddComponent<EventManager>();
@@ -120,6 +126,305 @@ namespace Nytherion.Editor
             events.OnPlayerRangedAttack += (direction, count, damage, point, tag) => reportedCount = count;
             int nextVariant = 0;
             FieldInfo attackTime = typeof(WeaponBase).GetField("lastAttackTime", BindingFlags.Instance | BindingFlags.NonPublic);
+            Require(settings.projectileStartEffectVariants != null && settings.projectileStartEffectVariants.Length == 3,
+                "3종 시작 이펙트 연결");
+            Physics2D.simulationMode = SimulationMode2D.Script;
+            verificationPlayerData.extraProjectiles = 2f;
+            for (int attack = 0; attack < 2; attack++)
+            {
+                target.gameObject.SetActive(attack == 0);
+                Physics2D.SyncTransforms();
+                weapon.Initialize(settings);
+                weapon.Attack(Vector2.up);
+                ProjectileStartEffect[] effects = pool.GetComponentsInChildren<ProjectileStartEffect>()
+                    .Where(effect => effect.gameObject.activeInHierarchy).ToArray();
+                Require(effects.Length == 3 && ActiveBolts().Length == 0, "탄 생성 전에 발사 지점에서 시작 이펙트 3개 재생");
+                Vector3[] positions = new Vector3[3];
+                float duration = effects.Max(effect => effect.Duration);
+                Require(duration > 0f, "시작 애니메이션의 유효한 재생 시간");
+                for (int i = 0; i < 3; i++)
+                {
+                    ProjectileStartEffect effect = effects.Single(value => value.name.Replace("(Clone)", "").Trim() == settings.projectileStartEffectVariants[i].name);
+                    positions[i] = effect.transform.position;
+                    AnimationClip clip = effect.GetComponent<Animator>().runtimeAnimatorController.animationClips[0];
+                    Require(!AnimationUtility.GetAnimationClipSettings(clip).loopTime, "시작 이펙트 단회 재생");
+                    Require(AnimationUtility.GetAnimationEvents(clip).Length == 1 &&
+                        AnimationUtility.GetAnimationEvents(clip)[0].functionName == nameof(ProjectileStartEffect.OnAnimationComplete),
+                        "시작 애니메이션 종료 이벤트 연결");
+                    var keys = AnimationUtility.GetObjectReferenceCurve(clip, EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite"));
+                    Require(keys.Length == 5 && keys[0].value.name.Contains("ProjStart" + (i == 0 ? "_" : i.ToString() + "_")), "시작 이미지 대응 및 마지막 프레임 유지");
+                }
+                if (attack == 0)
+                {
+                    foreach (ProjectileStartEffect effect in effects) effect.GetComponent<Animator>().speed = 0f;
+                    yield return duration + 0.1f;
+                    Require(ActiveBolts().Length == 0, "Animator 일시정지 시 시간이 지나도 발사 없음");
+                    foreach (ProjectileStartEffect effect in effects) effect.GetComponent<Animator>().speed = 2f;
+                }
+                // 실제 프레임이 길어져 대기 중 애니메이션이 끝나는 경우를 피합니다.
+                foreach (ProjectileStartEffect effect in effects) effect.GetComponent<Animator>().Update(duration * 0.1f);
+                Require(ActiveBolts().Length == 0, "시작 이펙트 재생 중 조기 발사 없음");
+                yield return (attack == 0 ? duration * 0.3f : duration * 0.8f) + 0.1f;
+                HomingProj[] startedBolts = ActiveBolts();
+                Require(startedBolts.Length == 3, "시작 이펙트 완료 후 각 지점에서 1발씩 발사");
+                Require(effects.All(effect => !effect.gameObject.activeInHierarchy), "시작 이펙트 풀 반환");
+                foreach (ProjectileStartEffect effect in effects) effect.GetComponent<Animator>().speed = 1f;
+                for (int i = 0; i < 3; i++)
+                {
+                    HomingProj bolt = startedBolts.Single(value => value.GetComponent<Animator>().runtimeAnimatorController == settings.projectileAnimationVariants[i]);
+                    Equal(0f, Vector3.Distance(positions[i], bolt.transform.position), 0.002f);
+                    if (attack == 1)
+                        Equal(0f, Vector2.Angle((Vector2)(positions[i] - playerRoot.transform.position), bolt.GetComponent<Rigidbody2D>().velocity),
+                            0.2f);
+                    bolt.GetComponent<CollisionObject>().ReturnToPool();
+                }
+                yield return duration + 0.05f;
+                Require(ActiveBolts().Length == 0, "시작 이펙트의 반복 발사 없음");
+            }
+            results.Add("PASS 3종 시작 이펙트: Animator 종료 이벤트 발사, Animator 일시정지/속도 변경 반영, 이미지/위치 유지, 단회 발사 및 풀 재사용");
+            target.gameObject.SetActive(true);
+            Physics2D.SyncTransforms();
+            weapon.Initialize(settings);
+            weapon.Attack(Vector2.up);
+            weapon.gameObject.SetActive(false);
+            yield return 0.5f;
+            Require(ActiveBolts().Length == 0 && !pool.GetComponentsInChildren<ProjectileStartEffect>().Any(value => value.gameObject.activeInHierarchy),
+                "무기 해제 시 대기 발사 취소 및 이펙트 반환");
+            weapon.gameObject.SetActive(true);
+            results.Add("PASS 시작 이펙트 재생 중 무기 해제: 지연 발사 취소");
+            Physics2D.simulationMode = previousSimulationMode;
+            // 기존 위치/유도 검증은 시작 연출 검증과 분리해 즉시 발사로 확인합니다.
+            settings.projectileStartEffectVariants = null;
+            weapon.Initialize(settings);
+            verificationPlayerData.extraProjectiles = 2f;
+            weapon.Attack(Vector2.left);
+            HomingProj[] outwardHomingBolts = ActiveBolts();
+            Require(outwardHomingBolts.Length == 3 && settings.homingLaunchDuration > 0f, "바깥 방향 출발 및 유도 대기 시간 설정");
+            bool changedHeading = false;
+            foreach (HomingProj bolt in outwardHomingBolts)
+            {
+                Rigidbody2D outwardBody = bolt.GetComponent<Rigidbody2D>();
+                Vector2 outward = bolt.transform.position - playerRoot.transform.position;
+                Equal(0f, Vector2.Angle(outward, outwardBody.velocity), 0.2f);
+                int straightTicks = Mathf.CeilToInt(settings.homingLaunchDuration / Time.fixedDeltaTime);
+                for (int tick = 0; tick < straightTicks; tick++)
+                {
+                    Tick(bolt);
+                    Equal(0f, Vector2.Angle(outward, outwardBody.velocity), 0.2f);
+                    outwardBody.position += outwardBody.velocity * Time.fixedDeltaTime;
+                }
+                Vector2 desired = (Vector2)target.GetComponent<Collider2D>().bounds.center - outwardBody.position;
+                float beforeHoming = Vector2.Angle(outwardBody.velocity, desired);
+                // 소수점 오차로 남은 대기 시간이 있더라도 다음 두 틱 안에는 유도를 시작합니다.
+                Tick(bolt);
+                Tick(bolt);
+                float afterHoming = Vector2.Angle(outwardBody.velocity, desired);
+                Require(afterHoming <= beforeHoming + 0.2f, "직진 대기 후 선택한 적 방향으로 회전");
+                changedHeading |= afterHoming < beforeHoming - 0.2f;
+                bolt.GetComponent<CollisionObject>().ReturnToPool();
+            }
+            Require(changedHeading, "바깥 방향 직진 이후 실제 적 추적 시작");
+            results.Add("PASS 적이 있는 원형 발사: 중심→발사 지점 방향으로 초기 직진, 유도 대기 시간 후 선택한 적 추적");
+            weapon.Initialize(settings);
+            Require(settings.usePlayerCircleSpawn, "정령의 인도 원형 발사 설정");
+            var selectedPoints = new HashSet<int>();
+            foreach (int circleCount in new[] { 1, 2, 12, 17 })
+            {
+                verificationPlayerData.extraProjectiles = circleCount - 1;
+                int pointCount = Mathf.Max(circleCount, settings.playerCircleSpawnPointCount);
+                for (int attack = 0; attack < 4; attack++)
+                {
+                    // 이동 및 무기 회전 뒤에도 원의 중심은 플레이어를 따라야 합니다.
+                    playerRoot.transform.position = (Vector3)Origin + Vector3.right * (attack * 0.1f);
+                    weapon.transform.rotation = Quaternion.Euler(0f, 0f, attack * 70f);
+                    attackTime.SetValue(weapon, -settings.cooldown);
+                    weapon.Attack(Vector2.up);
+                    HomingProj[] circleBolts = ActiveBolts();
+                    Require(circleBolts.Length == circleCount && reportedCount == circleCount, "원형 발사 수와 이벤트 수 일치");
+                    selectedPoints.Clear();
+                    foreach (HomingProj bolt in circleBolts)
+                    {
+                        Vector2 offset = bolt.transform.position - playerRoot.transform.position;
+                        Equal(settings.playerCircleSpawnRadius, offset.magnitude, 0.002f);
+                        float index = Mathf.Repeat(Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg, 360f) * pointCount / 360f;
+                        int point = Mathf.RoundToInt(index) % pointCount;
+                        Equal(0f, Mathf.Abs(Mathf.DeltaAngle(index * 360f / pointCount, point * 360f / pointCount)), 0.2f);
+                        Require(selectedPoints.Add(point), "동일 공격에서 발사 지점 중복 없음");
+                        Require(Field<Collider2D>(bolt, "targetCollider") == target.GetComponent<Collider2D>(), "원형 발사 목표 유지");
+                        bolt.GetComponent<CollisionObject>().ReturnToPool();
+                    }
+                }
+                results.Add($"PASS 원형 발사 {circleCount}발 × 4회: 반지름, 균등 지점, 중복 방지, 이동/회전, 유도 목표, 공격 이벤트");
+            }
+            target.gameObject.SetActive(false);
+            Physics2D.SyncTransforms();
+            foreach (int circleCount in new[] { 1, 2, 17 })
+            {
+                verificationPlayerData.extraProjectiles = circleCount - 1;
+                for (int attack = 0; attack < 8; attack++)
+                {
+                    attackTime.SetValue(weapon, -settings.cooldown);
+                    weapon.Attack(attack % 2 == 0 ? Vector2.left : Vector2.right);
+                    HomingProj[] circleBolts = ActiveBolts();
+                    Require(circleBolts.Length == circleCount && reportedCount == circleCount, "목표 없는 원형 발사 수");
+                    foreach (HomingProj bolt in circleBolts)
+                    {
+                        Vector2 outward = bolt.transform.position - playerRoot.transform.position;
+                        Vector2 velocity = bolt.GetComponent<Rigidbody2D>().velocity;
+                        float outwardAngle = Vector2.SignedAngle(outward, velocity);
+                        Require(Mathf.Abs(outwardAngle) <= 0.2f && Vector2.Dot(outward, velocity) > 0f,
+                            "목표가 없을 때 플레이어 중심에서 발사 지점으로 향하는 방향");
+                        Require(Field<Collider2D>(bolt, "targetCollider") == null, "목표 없는 탄의 유도 대상 없음");
+                        Tick(bolt);
+                        Equal(0f, Vector2.Angle(outward, bolt.GetComponent<Rigidbody2D>().velocity), 0.2f);
+                        bolt.GetComponent<CollisionObject>().ReturnToPool();
+                    }
+                }
+                results.Add($"PASS 목표 없는 원형 발사 {circleCount}발 × 8회: 플레이어 중심→발사 지점 벡터, 조준 방향 독립 및 직진 유지");
+            }
+            target.gameObject.SetActive(true);
+            Physics2D.SyncTransforms();
+            if (SessionState.GetBool(Pending + ".CircleOnly", false))
+            {
+                target.gameObject.SetActive(false);
+                Physics2D.simulationMode = SimulationMode2D.Script;
+                foreach (float distance in new[] { 0.5f, 2f, 7f })
+                {
+                    EnemyBase speedTarget = Target(Origin + Vector2.right * distance);
+                    foreach (Vector2 launchDirection in new[] { Vector2.left, Vector2.up, Vector2.right })
+                    {
+                        GameObject speedBolt = weapon.SpawnProj(launchDirection, homingTarget: speedTarget.GetComponent<Collider2D>(),
+                            targetSelected: true, spawnPosition: Origin);
+                        HomingProj movement = speedBolt.GetComponent<HomingProj>();
+                        Rigidbody2D speedBody = speedBolt.GetComponent<Rigidbody2D>();
+                        Equal(0f, Vector2.Distance(Origin, speedBody.position), 0.002f);
+                        Equal(settings.projectileSpeed, speedBody.velocity.magnitude, 0.002f);
+                        for (int tick = 0; tick < 20; tick++)
+                        {
+                            Tick(movement);
+                            Equal(settings.projectileSpeed, speedBody.velocity.magnitude, 0.002f);
+                        }
+                        speedBolt.GetComponent<CollisionObject>().ReturnToPool();
+                    }
+                    speedTarget.gameObject.SetActive(false);
+                }
+                results.Add("PASS 발사/유도 속도: 근거리·원거리, 앞/옆/뒤 방향 및 풀 재사용 모두 설정 속도 유지, 물리 위치 초기화");
+                foreach (RigidbodyType2D bodyType in new[] { RigidbodyType2D.Kinematic, RigidbodyType2D.Static })
+                {
+                    EnemyBase victimBody = Target(Origin + Vector2.right * 1.2f);
+                    victimBody.GetComponent<Collider2D>().enabled = false;
+                    victimBody.gameObject.AddComponent<Rigidbody2D>().bodyType = bodyType;
+                    GameObject hurtbox = new GameObject("태그 없는 적 몸체");
+                    hurtbox.transform.SetParent(victimBody.transform, false);
+                    hurtbox.layer = LayerMask.NameToLayer("Enemy");
+                    hurtbox.AddComponent<CircleCollider2D>().radius = 0.12f;
+                    GameObject sensor = new GameObject("태그 없는 적 감지 영역");
+                    sensor.transform.SetParent(victimBody.transform, false);
+                    sensor.layer = LayerMask.NameToLayer("Enemy");
+                    CircleCollider2D sensorCollider = sensor.AddComponent<CircleCollider2D>();
+                    sensorCollider.isTrigger = true;
+                    sensorCollider.radius = 2f;
+                    Require(!CollisionObject.IsEnemyCollider(sensorCollider), "감지용 자식 트리거는 피격 영역에서 제외");
+                    Require(CollisionObject.IsEnemyCollider(hurtbox.GetComponent<Collider2D>()), "태그 없는 적 자식 몸체 인식");
+                    Physics2D.SyncTransforms();
+                    GameObject hitBolt = weapon.SpawnProj(Vector2.right, targetSelected: true, spawnPosition: Origin);
+                    for (int tick = 0; tick < 30 && hitBolt.activeInHierarchy; tick++)
+                    {
+                        Tick(hitBolt.GetComponent<HomingProj>());
+                        Physics2D.Simulate(Time.fixedDeltaTime);
+                    }
+                    Require(!hitBolt.activeInHierarchy, bodyType + " 적 자식 몸체 충돌 후 반환");
+                    Equal(settings.damage, 10000f - Field<float>(victimBody, "currentHealth"), 0.01f);
+                    results.Add("PASS 실제 Physics2D " + bodyType + " 적 자식 몸체: 감지 영역 무시, 피해 1회 및 풀 반환");
+                    victimBody.gameObject.SetActive(false);
+                }
+                foreach (float hitDistance in new[] { 0.6f, 7f })
+                {
+                    EnemyBase trackingVictim = Target(Origin + Vector2.right * hitDistance);
+                    CircleCollider2D victimCollider = trackingVictim.GetComponent<CircleCollider2D>();
+                    victimCollider.radius = 0.12f;
+                    trackingVictim.gameObject.AddComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+                    Physics2D.SyncTransforms();
+                    var trackingBolts = new List<GameObject>();
+                    for (int point = 0; point < 12; point++)
+                    {
+                        float angle = point * Mathf.PI / 6f;
+                        Vector2 outwardDirection = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                        trackingBolts.Add(weapon.SpawnProj(outwardDirection, homingTarget: victimCollider, targetSelected: true,
+                            spawnPosition: Origin + outwardDirection * settings.playerCircleSpawnRadius));
+                    }
+                    for (int tick = 0; tick < 200 && trackingBolts.Any(value => value.activeInHierarchy); tick++)
+                    {
+                        foreach (GameObject bolt in trackingBolts)
+                        {
+                            if (!bolt.activeInHierarchy) continue;
+                            Tick(bolt.GetComponent<HomingProj>());
+                            Equal(settings.projectileSpeed, bolt.GetComponent<Rigidbody2D>().velocity.magnitude, 0.002f);
+                        }
+                        Physics2D.Simulate(Time.fixedDeltaTime);
+                    }
+                    Require(trackingBolts.All(value => !value.activeInHierarchy), "일정 속도 유도탄 12방향 실제 적중 및 반환");
+                    Equal(settings.damage * 12f, 10000f - Field<float>(trackingVictim, "currentHealth"), 0.01f);
+                    results.Add($"PASS 실제 Physics2D 거리 {hitDistance}: 원의 12방향 출발 후 일정 속도로 적중, 피해 12회 및 전부 반환");
+                    trackingVictim.gameObject.SetActive(false);
+                }
+                TrainingDummy actualDummy = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Debug/TrainingDummy.prefab"), (Vector3)Origin + Vector3.right * 1.5f, Quaternion.identity).GetComponent<TrainingDummy>();
+                temporary.Add(actualDummy.gameObject);
+                actualDummy.Construct(events, null, player);
+                actualDummy.Initialize(actualDummy.enemyData);
+                int dummyHitCount = 0;
+                events.OnEnemyDamagedByPlayerDetailed += hit => { if (hit.Target == actualDummy) dummyHitCount++; };
+                Physics2D.SyncTransforms();
+                Collider2D dummyCollider = actualDummy.GetComponent<Collider2D>();
+                GameObject normalDummyBolt = weapon.SpawnProj(Vector2.right, homingTarget: dummyCollider, targetSelected: true, spawnPosition: Origin);
+                for (int tick = 0; tick < 60 && normalDummyBolt.activeInHierarchy; tick++)
+                {
+                    Tick(normalDummyBolt.GetComponent<HomingProj>());
+                    Physics2D.Simulate(Time.fixedDeltaTime);
+                }
+                Require(!normalDummyBolt.activeInHierarchy && dummyHitCount == 1, "실제 허수아비에 기본 탄 피해 1회 후 즉시 반환");
+                results.Add("PASS 실제 TrainingDummy 프리팹: 기본 유도탄 피해 1회 및 풀 반환");
+                GameObject piercingDummyBolt = weapon.SpawnProj(Vector2.right, homingTarget: dummyCollider, targetSelected: true, spawnPosition: Origin);
+                piercingDummyBolt.GetComponent<PiercingModifier>().enabled = true;
+                for (int tick = 0; tick < 100; tick++)
+                {
+                    Tick(piercingDummyBolt.GetComponent<HomingProj>());
+                    Physics2D.Simulate(Time.fixedDeltaTime);
+                }
+                Require(piercingDummyBolt.activeInHierarchy && dummyHitCount == 2,
+                    "허수아비 관통 시 추가 피해 1회, 같은 대상 반복 타격 없음");
+                Require(Field<Collider2D>(piercingDummyBolt.GetComponent<HomingProj>(), "targetCollider") == null &&
+                    Vector2.Distance(piercingDummyBolt.transform.position, actualDummy.transform.position) > 2f,
+                    "허수아비 관통 후 추적 해제 및 이탈, 대상 위치에서 진동 없음");
+                piercingDummyBolt.GetComponent<CollisionObject>().ReturnToPool();
+                actualDummy.gameObject.SetActive(false);
+                results.Add("PASS 실제 TrainingDummy 관통: 같은 대상 재추적/반복 피해 없이 이탈");
+                GameObject wallParent = new GameObject("부모에만 태그가 있는 벽");
+                temporary.Add(wallParent);
+                wallParent.tag = "Wall";
+                wallParent.transform.position = Origin + Vector2.right * 1.2f;
+                GameObject wallChild = new GameObject("태그 없는 벽 충돌체");
+                wallChild.transform.SetParent(wallParent.transform, false);
+                wallChild.AddComponent<BoxCollider2D>().size = Vector2.one * 0.2f;
+                Physics2D.SyncTransforms();
+                GameObject wallBolt = weapon.SpawnProj(Vector2.right, targetSelected: true, spawnPosition: Origin);
+                for (int tick = 0; tick < 30 && wallBolt.activeInHierarchy; tick++)
+                {
+                    Tick(wallBolt.GetComponent<HomingProj>());
+                    Physics2D.Simulate(Time.fixedDeltaTime);
+                }
+                Require(!wallBolt.activeInHierarchy, "태그 없는 자식 벽 충돌 후 반환");
+                results.Add("PASS 실제 Physics2D 자식 벽 충돌: 부모 Wall 태그 인식 및 풀 반환");
+                Physics2D.simulationMode = previousSimulationMode;
+                SessionState.SetBool(Pending + ".CircleOnly", false);
+                yield break;
+            }
+            playerRoot.transform.position = Origin;
+            weapon.transform.rotation = Quaternion.identity;
+            // 기존 총구 발사 각도·유도·풀 재사용 검증도 별도로 유지합니다.
+            settings.usePlayerCircleSpawn = false;
+            weapon.Initialize(settings);
             Require(settings.projectileAnimationVariants != null && settings.projectileAnimationVariants.Length == 3,
                 "3종 투사체 애니메이션 연결");
             // 공격 사이와 발사 수 변경 시 순서를 유지하고 같은 풀 객체를 반복 재사용합니다.
@@ -404,6 +709,7 @@ namespace Nytherion.Editor
             Time.timeScale = previousTimeScale;
             Application.runInBackground = previousRunInBackground;
             EditorApplication.isPaused = previousPause;
+            Physics2D.simulationMode = previousSimulationMode;
             if (settings != null) Object.Destroy(settings);
             if (verificationPlayerData != null) Object.Destroy(verificationPlayerData);
             running = false;

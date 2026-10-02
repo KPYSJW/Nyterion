@@ -176,7 +176,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 2677180847099711197}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
@@ -205,12 +205,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34e8c705fc0abf14e9fb991ffdbc567d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateSpeed: 180
-  initialStraightDuration: 0.15
+  rotateSpeed: 720
+  initialStraightDuration: 0.05
   trackingRadius: 10
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
+  useConstantSpeed: 1
 --- !u!114 &3917050932710338110
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -46,7 +46,7 @@ namespace Nytherion.GamePlay.Combat
 
         public bool OnHit(Collider2D target)
         {
-            if (enemyHitsOnly && !target.CompareTag("Enemy")) return false;
+            if (enemyHitsOnly && !CollisionObject.IsEnemyCollider(target)) return false;
             // 마지막 충돌도 기록하여 한 적의 여러 충돌체가 중복 피해를 만들지 않게 합니다.
             if (enemyHitsOnly) hitTargets.Add(ResolveTarget(target));
             if (currentBounces <= 0) return false;
@@ -64,7 +64,7 @@ namespace Nytherion.GamePlay.Combat
             for (int i = 0; i < hitCount; i++)
             {
                 Collider2D hit = enemyHitsOnly ? enemyHits[i] : bounceBuffer[i];
-                if (hit == null || !hit.CompareTag("Enemy")) continue;
+                if (!CollisionObject.IsEnemyCollider(hit)) continue;
                 Transform candidate = enemyHitsOnly ? ResolveTarget(hit) : hit.transform;
                 if (enemyHitsOnly)
                 {

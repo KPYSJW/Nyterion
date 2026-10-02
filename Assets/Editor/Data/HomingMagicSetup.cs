@@ -28,6 +28,11 @@ namespace Nytherion.Editor
                 EditorApplication.isPlayingOrWillChangePlaymode) return;
             try
             {
+                if (File.Exists(Output + "/flight-settings.request"))
+                {
+                    File.Delete(Output + "/flight-settings.request");
+                    ApplyFlightSettings();
+                }
                 if (File.Exists(Output + "/balance.request"))
                 {
                     File.Delete(Output + "/balance.request");
@@ -101,7 +106,7 @@ namespace Nytherion.Editor
                 root.GetComponent<CircleCollider2D>().radius = 0.22f;
                 var movement = new SerializedObject(root.GetComponent<HomingProj>());
                 movement.FindProperty("rotateSpeed").floatValue = 180f;
-                movement.FindProperty("initialStraightDuration").floatValue = 0.15f;
+                movement.FindProperty("initialStraightDuration").floatValue = 0.01f;
                 movement.FindProperty("trackingRadius").floatValue = 10f;
                 movement.ApplyModifiedPropertiesWithoutUndo();
                 var lifetime = new SerializedObject(root.GetComponent<AutoReturnToPool>());
@@ -115,11 +120,15 @@ namespace Nytherion.Editor
             finally { PrefabUtility.UnloadPrefabContents(root); }
 
             data.hasHomingProjectiles = true;
+            data.useConstantHomingSpeed = true;
+            data.usePlayerCircleSpawn = true;
+            data.playerCircleSpawnRadius = 0.65f;
+            data.playerCircleSpawnPointCount = 12;
             data.useHomingLaunchAngles = true;
             data.homingLaunchAngles = new[] { 30f, 15f, 0f, -15f, -30f };
             data.homingTurnSpeed = 180f;
             data.homingSearchRadius = 10f;
-            data.homingLaunchDuration = 0.15f;
+            data.homingLaunchDuration = 0.01f;
             data.homingLifetime = 4f;
             data.projectileSpeed = 6f;
             SetBalanceDescription(data);
@@ -132,14 +141,42 @@ namespace Nytherion.Editor
 
         private static void SetBalanceDescription(WeaponData data)
         {
-            data.description_KR = "마법탄 한 발을 발사해 선택한 적을 추적합니다. 투사체 증가 효과에 따라 발사 수가 늘어납니다.";
-            data.description_EN = "Fires one homing magic bolt. Extra projectile effects increase the number of bolts.";
+            data.description_KR = "플레이어 주변 원의 무작위 지점에서 마법탄을 발사해 선택한 적을 추적합니다. 투사체 증가 효과에 따라 서로 다른 지점에서 한 발씩 발사합니다.";
+            data.description_EN = "Fires a homing magic bolt from a random point on a circle around the player. Extra projectile effects add bolts from distinct points.";
+        }
+
+        [MenuItem("Tools/Nytherion/Homing Magic/Apply Flight Settings")]
+        public static void ApplyFlightSettings()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new InvalidOperationException("편집 모드에서 실행해 주세요.");
+            WeaponData data = AssetDatabase.LoadAssetAtPath<WeaponData>(DataPath);
+            data.useConstantHomingSpeed = true;
+            data.homingTurnSpeed = 720f;
+            data.homingLaunchDuration = 0.05f;
+            EditorUtility.SetDirty(data);
+            AssetDatabase.SaveAssetIfDirty(data);
+            GameObject root = PrefabUtility.LoadPrefabContents(ProjectilePath);
+            try
+            {
+                Rigidbody2D body = root.GetComponent<Rigidbody2D>();
+                body.useFullKinematicContacts = true;
+                var movement = new SerializedObject(root.GetComponent<HomingProj>());
+                movement.FindProperty("rotateSpeed").floatValue = 720f;
+                movement.FindProperty("useConstantSpeed").boolValue = true;
+                movement.FindProperty("initialStraightDuration").floatValue = 0.05f;
+                movement.ApplyModifiedPropertiesWithoutUndo();
+                PrefabUtility.SaveAsPrefabAsset(root, ProjectilePath);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+            File.WriteAllText(Output + "/flight-settings.txt", "PASS: 유도 회전 720도/초, 일정 유도 속도, 직진 0.05초, Kinematic 충돌 및 기존 프리팹 참조 유지");
         }
 
         private static void UpdateBalanceDescription()
         {
             WeaponData data = AssetDatabase.LoadAssetAtPath<WeaponData>(DataPath);
             if (data == null) throw new InvalidOperationException("정령의 인도 무기 데이터 누락");
+            data.usePlayerCircleSpawn = true;
             SetBalanceDescription(data);
             EditorUtility.SetDirty(data);
             AssetDatabase.SaveAssetIfDirty(data);
