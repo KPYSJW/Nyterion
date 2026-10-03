@@ -14,12 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Comrade Blast
   koreanName: "\uBE14\uB798\uC2A4\uD2B8"
-  description_KR: "\uD50C\uB808\uC774\uC5B4\uB97C \uB530\uB77C\uB2E4\uB2C8\uBA70
-    \uAC00\uC7A5 \uAC00\uAE4C\uC6B4 \uC801\uC5D0\uAC8C \uBBF8\uC0AC\uC77C\uC744 \uBC1C\uC0AC\uD558\uB294
-    \uBE14\uB798\uC2A4\uD2B8 \uC18C\uD658\uC218\uB97C \uBD80\uB985\uB2C8\uB2E4.\n\uC720\uBB3C\uC744
-    \uC7A5\uCC29\uD558\uB294 \uB3D9\uC548 \uC720\uC9C0\uB429\uB2C8\uB2E4."
-  description_EN: Summons Blast, a companion that follows the player and fires missiles
-    at the nearest enemy. It remains while equipped.
+  description_KR: "장착 중 블래스트 소환: 플레이어를 따라다니며 가장 가까운 적에게 미사일 발사."
+  description_EN: "While equipped, summons Blast that follows you and fires missiles at the nearest enemy."
   Image: {fileID: -1233655567, guid: a36ecfec883c30348a5a77e3dc98a0cd, type: 3}
   rarity: 3
   level: 1

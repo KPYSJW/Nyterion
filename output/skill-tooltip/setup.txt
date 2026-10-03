@@ -1,0 +1,1 @@
+PASS: 스킬 전용 프리팹 생성 및 SkillUIController Inspector 참조 연결 완료

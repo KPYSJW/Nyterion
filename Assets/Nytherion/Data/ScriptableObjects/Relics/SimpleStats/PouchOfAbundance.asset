@@ -14,10 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Pouch of Abundance
   koreanName: "\uD48D\uC694\uC758 \uC8FC\uBA38\uB2C8"
-  description_KR: "\uBAA8\uB4E0 \uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC2DC \uD22C\uC0AC\uCCB4\uAC00
-    1\uAC1C \uCD94\uAC00\uB85C \uBC1C\uC0AC\uB429\uB2C8\uB2E4. (\uC6D0\uAC70\uB9AC
-    \uACF5\uACA9\uB825 5% \uC99D\uAC00)"
-  description_EN: 
+  description_KR: "원거리 투사체 +1, 원거리 공격력 +5%."
+  description_EN: "Ranged projectiles +1, ranged attack +5%."
   Image: {fileID: 21300000, guid: 9bec4e2e83844b848ae1772cddde6cec, type: 3}
   rarity: 3
   level: 1

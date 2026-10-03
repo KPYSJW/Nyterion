@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Slime Specimen
   koreanName: "\uC2AC\uB77C\uC784 \uD45C\uBCF8"
-  description_KR: "플레이어를 따라다니며 적을 자동 공격하는 슬라임 소환수를 부릅니다.\n유물을 장착하는 동안 유지됩니다."
-  description_EN: "Summons a slime servant that follows you and automatically attacks enemies. It remains while equipped."
+  description_KR: "장착 중 슬라임 소환: 플레이어를 따라다니며 적 자동 공격."
+  description_EN: "While equipped, summons slime that follows you and automatically attacks enemies."
   Image: {fileID: 21300000, guid: 2b5b64eb0e4c0e548af4a105d60d1001, type: 3}
   rarity: 3
   level: 1

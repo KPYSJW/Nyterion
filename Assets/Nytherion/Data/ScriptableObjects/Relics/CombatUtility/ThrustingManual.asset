@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Thrusting Manual
   koreanName: 찌르기 교본
-  description_KR: Atlas의 스윙 공격이 사라지고 찌르기 공격만 사용합니다. 찌르기 공격 속도가 30% 증가합니다. (추가 레벨당 +10%)
-  description_EN: Replaces Atlas swing attacks with thrusts and increases thrust attack speed by 30%. (+10% per additional level)
+  description_KR: "Atlas를 찌르기 전용으로 변경. 찌르기 속도 +30% (레벨당 +10%)."
+  description_EN: "Atlas uses thrusts only. Thrust speed +30% (+10% per level)."
   Image: {fileID: 21300000, guid: b28c1a753ea74e2d89015933f2b98e1a, type: 3}
   rarity: 4
   level: 1

@@ -14,10 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Golden Chalice
   koreanName: "\uD669\uAE08 \uC131\uBC30"
-  description_KR: "\uC6D0\uAC70\uB9AC \uD22C\uC0AC\uCCB4\uAC00 2\uAC1C \uCD94\uAC00\uB85C
-    \uBC1C\uC0AC\uB418\uBA70 \uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC18D\uB3C4\uAC00 10%
-    \uBE68\uB77C\uC9D1\uB2C8\uB2E4."
-  description_EN: 
+  description_KR: "원거리 투사체 +2, 원거리 공격 속도 +10%."
+  description_EN: "Ranged projectiles +2, ranged attack speed +10%."
   Image: {fileID: 21300000, guid: 66c16444d495ef44b9d8d0b068c92e86, type: 3}
   rarity: 4
   level: 1

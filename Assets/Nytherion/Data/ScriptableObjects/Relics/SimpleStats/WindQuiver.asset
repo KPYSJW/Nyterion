@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Golden Orb
   koreanName: "\uD669\uAE08 \uAD6C\uC2AC"
-  description_KR: "\uC6D0\uAC70\uB9AC \uACF5\uACA9\uB825\uC744 10% \uC99D\uAC00\uC2DC\uD0A4\uACE0
-    \uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC18D\uB3C4\uB97C 5% \uB192\uC785\uB2C8\uB2E4."
-  description_EN: 
+  description_KR: "원거리 공격력 +10%, 원거리 공격 속도 +5%."
+  description_EN: "Ranged attack +10%, ranged attack speed +5%."
   Image: {fileID: 21300000, guid: 38a52872e5cbd7145a0d20b806ac5c55, type: 3}
   rarity: 1
   level: 1

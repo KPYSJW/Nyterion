@@ -15,8 +15,7 @@ MonoBehaviour:
   skillID: skill_multishot
   skillType: 7
   skillName: Multi Shot
-  description: "\uD22C\uC0AC\uCCB4 \uBC1C\uC0AC \uC2DC \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB97C
-    \uC5EC\uB7EC \uBC29\uD5A5\uC73C\uB85C \uB3D9\uC2DC \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  description: "\uCD94\uAC00 \uD22C\uC0AC\uCCB4 \uBC1C\uC0AC"
   skillLevel: 0
   exp: 0
   coolDown: 30

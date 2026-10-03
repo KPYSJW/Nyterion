@@ -16,12 +16,8 @@ MonoBehaviour:
   itemName_KR: "\uB808\uC774\uC800 \uC774\uBBF8\uD130"
   itemName_EN: Laser Emitter
   icon: {fileID: 21300000, guid: 45567c5b4587e7e459686c4b2916734f, type: 3}
-  description_KR: "\uBC1C\uC0AC \uC9C0\uC810\uC5D0\uC11C \uC77C\uC815 \uC2DC\uAC04
-    \uB808\uC774\uC800\uB97C \uBC29\uCD9C\uD558\uC5EC \uBC94\uC704 \uC548\uC758 \uC801\uC5D0\uAC8C
-    \uC8FC\uAE30\uC801\uC73C\uB85C \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4. \uBC1C\uC0AC\uAC00
-    \uB05D\uB098\uBA74 \uC7AC\uC0AC\uC6A9 \uB300\uAE30\uC2DC\uAC04\uC774 \uC2DC\uC791\uB429\uB2C8\uB2E4."
-  description_EN: Emits a beam from the muzzle for a fixed duration, dealing periodic
-    damage to enemies in its path. Cooldown begins when firing ends.
+  description_KR: "일정 시간 레이저로 지속 피해. 발사 종료 후 쿨타임 시작."
+  description_EN: "Channels a laser for continuous damage. Cooldown starts when firing ends."
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 

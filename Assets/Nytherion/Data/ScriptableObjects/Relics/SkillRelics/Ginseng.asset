@@ -14,11 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Ginseng
   koreanName: "\uC778\uC0BC"
-  description_KR: "\uB8E8\uD2F0 \uC18C\uD658\uC758 \uCD5C\uB300 \uC800\uC7A5 \uAC1C\uC218\uAC00
-    1 \uC99D\uAC00\uD569\uB2C8\uB2E4. \uCFE8\uD0C0\uC784\uB9C8\uB2E4 1\uAC1C\uC529
-    \uCDA9\uC804\uD558\uBA70, \uC5F0\uC18D \uC18C\uD658 \uAC04\uACA9\uC740 \uCD5C\uC18C
-    0.5\uCD08\uC785\uB2C8\uB2E4."
-  description_EN: 
+  description_KR: "루티 소환 저장량 +1. 쿨타임마다 1개 충전, 연속 소환 간격 최소 0.5초."
+  description_EN: "Rooti summon capacity +1. Restores 1 charge per cooldown; minimum summon interval 0.5s."
   Image: {fileID: 21300000, guid: ba326743ba151a6458cda90325609914, type: 3}
   rarity: 0
   level: 1

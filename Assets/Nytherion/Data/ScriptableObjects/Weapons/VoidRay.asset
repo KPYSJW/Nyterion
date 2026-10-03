@@ -16,11 +16,8 @@ MonoBehaviour:
   itemName_KR: "\uBCF4\uC774\uB4DC \uB808\uC774"
   itemName_EN: Void Ray
   icon: {fileID: 21300000, guid: 9cb3ff8a231e472489ec43bdc96b1274, type: 3}
-  description_KR: "\uACF5\uACA9 \uBC84\uD2BC\uC744 \uB204\uB974\uB294 \uB3D9\uC548
-    \uC870\uC900 \uBC29\uD5A5\uC73C\uB85C \uBCF4\uC774\uB4DC \uAD11\uC120\uC744 \uBC1C\uC0AC\uD574
-    \uC801\uC5D0\uAC8C \uC9C0\uC18D \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
-  description_EN: Hold the attack button to fire a continuous void beam that tracks
-    your aim.
+  description_KR: "버튼을 누르는 동안 마우스 방향으로 빔을 쏴 지속 피해."
+  description_EN: "Hold to fire a beam toward the cursor, dealing continuous damage."
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 

@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Leather Bracelet
   koreanName: "\uAC00\uC8FD \uD314\uCC0C"
-  description_KR: "\uADFC\uC811 \uBB3C\uB9AC \uB370\uBBF8\uC9C0\uB97C 5% \uB9CC\uD07C
-    \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
-  description_EN: 
+  description_KR: "근접 물리 피해 +5%."
+  description_EN: "Melee physical damage +5%."
   Image: {fileID: 21300000, guid: 8cbcc0bfe41d40246a4cba1d5befb111, type: 3}
   rarity: 0
   level: 1

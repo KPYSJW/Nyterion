@@ -14,22 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Mandrake
   koreanName: "\uB9E8\uB4DC\uB808\uC774\uD06C"
-  description_KR: "[Overdrive] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Overdrive]
-    : \uACFC\uBD80\uD558 \uC0C1\uD0DC\uC5D0 \uC9C4\uC785\uD558\uC5EC \uC77C\uC815
-    \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640 \uB300\uC26C \uC18D\uB3C4\uAC00
-    \uADF9\uB300\uD654\uB429\uB2C8\uB2E4."
-  description_EN: "Obtain [Overdrive] skill.\n[Overdrive] : \uACFC\uBD80\uD558 \uC0C1\uD0DC\uC5D0
-    \uC9C4\uC785\uD558\uC5EC \uC77C\uC815 \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640
-    \uB300\uC26C \uC18D\uB3C4\uAC00 \uADF9\uB300\uD654\uB429\uB2C8\uB2E4."
+  description_KR: "[\uC624\uBC84\uB4DC\uB77C\uC774\uBE0C] \uD68D\uB4DD\n\uC77C\uC815
+    \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640 \uB300\uC2DC \uC18D\uB3C4 \uC99D\uAC00"
+  description_EN: 'Unlocks [Overdrive]
+
+    Temporarily boosts attack speed and dash
+    speed.'
   Image: {fileID: 21300000, guid: 1073be4f7aaa7424fbc413e401329463, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: -2
     effects:
     - rid: 2313383513706201107
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -49,6 +52,7 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
   references:
     version: 2

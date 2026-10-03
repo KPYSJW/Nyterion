@@ -16,11 +16,8 @@ MonoBehaviour:
   itemName_KR: "\uC131\uC790\uC758 \uC9C0\uD321\uC774"
   itemName_EN: Saint's Staff
   icon: {fileID: 1503601313, guid: 0d9595b110364ad4895d4a5315701f70, type: 3}
-  description_KR: "\uC2E0\uC131\uD55C \uAE30\uC6B4\uC774 \uAE43\uB4E0 \uC9C0\uD321\uC774\uC785\uB2C8\uB2E4.
-    \uD0C0\uACA9 \uC2DC 15%\uC758 \uD655\uB960\uB85C \uC544\uAD70\uC758 \uCCB4\uB825\uC744
-    2\uB9CC\uD07C \uD68C\uBCF5\uC2DC\uD0B5\uB2C8\uB2E4."
-  description_EN: A staff imbued with holy energy. Has a 15% chance to restore 2
-    HP to the player upon hit.
+  description_KR: "적중 시 15% 확률로 아군 체력 2 회복."
+  description_EN: "Hits have a 15% chance to heal allies for 2 health."
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 

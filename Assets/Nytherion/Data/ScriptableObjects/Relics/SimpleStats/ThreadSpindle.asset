@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Thread Spindle
   koreanName: "\uC2E4\uD0C0\uB798"
-  description_KR: "\uCC28\uC9D5\uD615 \uBB34\uAE30 \uBC0F \uC2A4\uD0AC\uC758 \uCC28\uC9D5
-    \uC18C\uC694 \uC2DC\uAC04\uC744 15% \uB2E8\uCD95\uC2DC\uD0B5\uB2C8\uB2E4."
-  description_EN: 
+  description_KR: "무기, 스킬 충전 시간 -15%."
+  description_EN: "Weapon and skill charge time -15%."
   Image: {fileID: 21300000, guid: b07291dc1bdce75429aef9039eff1715, type: 3}
   rarity: 0
   level: 1

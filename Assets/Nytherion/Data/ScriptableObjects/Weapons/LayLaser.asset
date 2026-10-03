@@ -16,12 +16,8 @@ MonoBehaviour:
   itemName_KR: "\uB808\uC774 \uB808\uC774\uC800"
   itemName_EN: Lay Laser
   icon: {fileID: 21300000, guid: 4402aec81f1ae2e4a9b00a24e84fdc62, type: 3}
-  description_KR: "\uACF5\uACA9 \uBC84\uD2BC\uC744 \uB20C\uB7EC 4\uB2E8\uACC4\uB85C
-    \uCDA9\uC804\uD569\uB2C8\uB2E4. \uBC84\uD2BC\uC744 \uB193\uC73C\uBA74 \uB2E8\uACC4\uC5D0
-    \uB530\uB77C \uAD75\uC5B4\uC9C0\uB294 \uAD11\uC120\uC744 \uBC1C\uC0AC\uD574 \uC801\uC5D0\uAC8C
-    \uC8FC\uAE30\uC801\uC73C\uB85C \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
-  description_EN: Hold to charge through four stages. Release to fire a beam that
-    grows wider with charge and deals periodic damage.
+  description_KR: "버튼을 눌러 최대 4단계 충전, 놓으면 광선 발사. 단계에 따라 굵기 증가, 지속 피해."
+  description_EN: "Hold to charge up to 4 stages; release to fire. Higher stages widen the beam, which deals continuous damage."
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 

@@ -15,8 +15,7 @@ MonoBehaviour:
   skillID: skill_Atk_buff
   skillType: 7
   skillName: Attack Buff
-  description: "\uC77C\uC815 \uC2DC\uAC04 \uB3D9\uC548 \uD50C\uB808\uC774\uC5B4\uC758
-    \uACF5\uACA9\uB825\uC744 \uB300\uD3ED \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
+  description: "\uC77C\uC815 \uC2DC\uAC04 \uACF5\uACA9\uB825 \uC99D\uAC00"
   skillLevel: 0
   exp: 0
   coolDown: 30

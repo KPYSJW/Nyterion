@@ -14,15 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: WindStone
   koreanName: "\uD48D\uC11D"
-  description_KR: "\uACF5\uACA9 \uC801\uC911 \uC2DC 20% \uD655\uB960\uB85C \uD50C\uB808\uC774\uC5B4
-    \uC8FC\uBCC0\uC5D0\uC11C \uACF5\uACA9 \uBC29\uD5A5\uC73C\uB85C \uD48D\uC11D\uC744
-    \uBC1C\uC0AC\uD569\uB2C8\uB2E4. \uD48D\uC11D\uC740 \uC801\uACFC \uCDA9\uB3CC\uD558\uBA74
-    \uB290\uB824\uC9C0\uBA70 0.25\uCD08\uB9C8\uB2E4 \uBC18\uBCF5 \uD0C0\uACA9\uD569\uB2C8\uB2E4.
-    \uD0C0\uACA9 \uD53C\uD574\uB294 \uC801\uC911 \uD53C\uD574\uC758 50%\uC774\uBA70
-    \uC720\uBB3C \uB808\uBCA8\uB9C8\uB2E4 10%p \uC99D\uAC00\uD569\uB2C8\uB2E4."
-  description_EN: Hits have a 20% chance to launch a Wind Stone around the player
-    in the player's attack direction. It slows on contact and hits every 0.25 seconds, dealing
-    50% of the triggering damage (+10 percentage points per relic level).
+  description_KR: "적중 시 20% 확률로 공격 방향에 풍석 발사. 충돌 후 감속하며 0.25초마다 타격.\n피해: 적중 피해의 50% (레벨당 +10%p)."
+  description_EN: "Hits have a 20% chance to fire a wind stone along the attack direction. Slows on collision and hits every 0.25s.\nDamage: 50% of triggering damage (+10 percentage points per level)."
   Image: {fileID: 21300000, guid: 885d76e122f5ff941aae2431c47098a2, type: 3}
   rarity: 2
   level: 1

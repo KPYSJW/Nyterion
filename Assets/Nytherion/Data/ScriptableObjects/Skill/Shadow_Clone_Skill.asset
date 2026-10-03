@@ -15,8 +15,8 @@ MonoBehaviour:
   skillID: skill_shadow_clone
   skillType: 9
   skillName: Shadow Clone
-  description: "\uD50C\uB808\uC774\uC5B4\uC758 \uD589\uB3D9\uC744 \uBCF8\uB728\uB294
-    \uADF8\uB9BC\uC790 \uBD84\uC2E0\uC744 \uC18C\uD658\uD558\uC5EC \uD568\uAED8 \uACF5\uACA9\uD569\uB2C8\uB2E4."
+  description: "\uD568\uAED8 \uACF5\uACA9\uD558\uB294 \uADF8\uB9BC\uC790 \uBD84\uC2E0
+    \uC18C\uD658"
   skillLevel: 0
   exp: 0
   coolDown: 10

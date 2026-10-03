@@ -49,7 +49,9 @@ namespace Nytherion.Editor.Localization
                 ["ui.tooltip.attack_speed"] = new TranslationEntry("ui.tooltip.attack_speed", "공격 속도: {0:0.##}", "Attack Speed: {0:0.##}"),
                 ["ui.tooltip.additional_stats"] = new TranslationEntry("ui.tooltip.additional_stats", "추가 능력치", "Additional Stats"),
                 ["ui.tooltip.inverted"] = new TranslationEntry("ui.tooltip.inverted", "반전됨!", "Inverted!"),
-                ["ui.tooltip.skill_stats"] = new TranslationEntry("ui.tooltip.skill_stats", "[Lv.{0}] 경험치: {1} / {2}\n\n데미지: {3}\n쿨타임: {4}초\n사거리: {5}\n\n{6}", "[Lv.{0}] EXP: {1} / {2}\n\nDamage: {3}\nCooldown: {4}s\nRange: {5}\n\n{6}"),
+                ["ui.tooltip.skill_stats"] = new TranslationEntry("ui.tooltip.skill_stats", "Lv.{0} / 경험치 {1}/{2}\n피해 {3} / 쿨타임 {4}초 / 사거리 {5}\n\n{6}", "Lv.{0} / EXP {1}/{2}\nDamage {3} / Cooldown {4}s / Range {5}\n\n{6}"),
+                ["ui.skill_tooltip.progress"] = new TranslationEntry("ui.skill_tooltip.progress", "Lv.{0} / 경험치 {1}/{2}", "Lv.{0} / EXP {1}/{2}"),
+                ["ui.skill_tooltip.stats"] = new TranslationEntry("ui.skill_tooltip.stats", "피해  {0}\n쿨타임  {1}초", "Damage  {0}\nCooldown  {1}s"),
                 ["ui.tooltip.milestone.completed"] = new TranslationEntry("ui.tooltip.milestone.completed", "달성 완료", "Completed"),
                 ["ui.tooltip.milestone.in_progress"] = new TranslationEntry("ui.tooltip.milestone.in_progress", "진행 중 ({0} / {1})", "In progress ({0} / {1})"),
                 ["ui.tooltip.milestone.content"] = new TranslationEntry("ui.tooltip.milestone.content", "{0}\n\n상태: {1}", "{0}\n\nStatus: {1}"),
@@ -121,27 +123,53 @@ namespace Nytherion.Editor.Localization
                 ["skill_shadow_clone"] = ("그림자 분신", "Shadow Clone"),
                 ["skill_souleater"] = ("영혼 포식자", "Soul Eater"),
                 ["skill_spiral"] = ("나선", "Spiral"),
-                ["skill_turret"] = ("루티 포탑", "Rooti Turret")
+                ["skill_turret"] = ("루티 포탑", "Rooti Turret"),
+                ["skill_pyro_tank"] = ("폭열 전차", "Pyro Tank"),
+                ["skill_chain_ignition"] = ("연쇄 점화", "Chain Ignition")
+            };
+
+        public static readonly IReadOnlyDictionary<string, string> SkillKoreanDescriptions =
+            new Dictionary<string, string>
+            {
+                ["skill_all_stat_up"] = "일정 시간 모든 능력치 증가",
+                ["skill_attack_speed"] = "일정 시간 공격 속도 증가",
+                ["skill_Atk_buff"] = "일정 시간 공격력 증가",
+                ["skill_aura"] = "주변 적에게 지속 피해를 주는 오라 생성",
+                ["skill_blackhole"] = "적을 끌어당기며 피해를 주는 블랙홀 생성",
+                ["skill_Dash_cooldown"] = "대시 쿨타임 감소",
+                ["skill_laser"] = "적을 관통하는 레이저 발사",
+                ["skill_lifesteal"] = "일정 시간 공격 피해로 체력 회복",
+                ["skill_meteor_strike"] = "운석을 떨어뜨려 주변 적 공격",
+                ["skill_multishot"] = "추가 투사체 발사",
+                ["skill_overdrive"] = "일정 시간 공격 속도와 대시 속도 증가",
+                ["skill_shadow_clone"] = "함께 공격하는 그림자 분신 소환",
+                ["skill_souleater"] = "적을 처치할수록 강해지는 투사체 발사",
+                ["skill_spiral"] = "주변 적을 공격하는 회전 구체 소환",
+                ["skill_turret"] = "적을 자동으로 공격하는 루티 포탑 설치",
+                ["skill_pyro_tank"] = "적에게 돌진해 폭발하는 전차 소환",
+                ["skill_chain_ignition"] = "조준 방향으로 연속 화염 폭발"
             };
 
         public static readonly IReadOnlyDictionary<string, string> SkillEnglishDescriptions =
             new Dictionary<string, string>
             {
-                ["skill_all_stat_up"] = "Improves all of the player's core stats, including attack, move speed, and defense.",
-                ["skill_attack_speed"] = "Greatly increases the player's attack speed for a limited time.",
-                ["skill_Atk_buff"] = "Greatly increases the player's attack power for a limited time.",
-                ["skill_aura"] = "Creates a destructive aura around the player that continuously damages nearby enemies.",
-                ["skill_blackhole"] = "Creates a powerful black hole ahead that pulls enemies in and deals continuous damage.",
-                ["skill_Dash_cooldown"] = "Greatly reduces dash cooldown, allowing the player to move quickly and often.",
-                ["skill_laser"] = "Fires a powerful piercing laser in a straight line, damaging every enemy in its path.",
-                ["skill_lifesteal"] = "Grants a lifesteal buff that restores health based on a portion of damage dealt.",
-                ["skill_meteor_strike"] = "Calls down a massive meteor that deals explosive damage to every enemy in the target area.",
-                ["skill_multishot"] = "Fires additional projectiles in multiple directions whenever a projectile is launched.",
-                ["skill_overdrive"] = "Enters an overdrive state that maximizes attack speed and dash speed for a limited time.",
-                ["skill_shadow_clone"] = "Summons a shadow clone that mirrors the player's actions and attacks alongside them.",
-                ["skill_souleater"] = "Absorbs the souls of defeated enemies to restore health and temporarily empower the player.",
-                ["skill_spiral"] = "Creates magical orbs that spiral around the player and deal continuous damage.",
-                ["skill_turret"] = "Rooti flies in the player's aim direction, then stays in place and launches seeds at enemies within range."
+                ["skill_all_stat_up"] = "Temporarily boosts all stats.",
+                ["skill_attack_speed"] = "Temporarily boosts attack speed.",
+                ["skill_Atk_buff"] = "Temporarily boosts attack.",
+                ["skill_aura"] = "Creates an aura that damages nearby enemies.",
+                ["skill_blackhole"] = "Creates a black hole that pulls in and damages enemies.",
+                ["skill_Dash_cooldown"] = "Reduces dash cooldown.",
+                ["skill_laser"] = "Fires a laser that pierces enemies.",
+                ["skill_lifesteal"] = "Temporarily restores health by dealing damage.",
+                ["skill_meteor_strike"] = "Drops a meteor to strike nearby enemies.",
+                ["skill_multishot"] = "Fires extra projectiles.",
+                ["skill_overdrive"] = "Temporarily boosts attack speed and dash speed.",
+                ["skill_shadow_clone"] = "Summons a shadow clone that attacks alongside you.",
+                ["skill_souleater"] = "Fires a projectile that grows stronger with each kill.",
+                ["skill_spiral"] = "Summons spinning orbs that attack nearby enemies.",
+                ["skill_turret"] = "Deploys a Rooti turret that automatically attacks enemies.",
+                ["skill_pyro_tank"] = "Summons a tank that charges at enemies and explodes.",
+                ["skill_chain_ignition"] = "Unleashes successive fire explosions toward your aim."
             };
 
         public static readonly IReadOnlyDictionary<string, TranslationEntry> Milestones =
@@ -215,22 +243,22 @@ namespace Nytherion.Editor.Localization
         public static readonly IReadOnlyDictionary<string, string> RelicEnglishDescriptions =
             new Dictionary<string, string>
             {
-                ["Blue Mushroom"] = "Increases melee attack by 10% and defense by 5.",
-                ["Fugitive's Flask"] = "Permanently increases move speed by 5%.",
-                ["Leather Bracelet"] = "Increases melee physical damage by 5%.",
-                ["Mysterious Flask"] = "Reduces dash cooldown by 8%.",
-                ["Mystical Crystal"] = "Increases all of the player's core stats, including attack, defense, and health, by 6%.",
-                ["Golden Chalice"] = "Fires 2 additional ranged projectiles and increases ranged attack speed by 10%.",
-                ["WornShield"] = "Slightly increases base defense by a flat amount.",
-                ["Pouch of Abundance"] = "Fires 1 additional projectile with every ranged attack and increases ranged attack by 5%.",
-                ["Skull Ring"] = "Increases critical damage by 25% when dealing a critical hit.",
-                ["Starlight Shard"] = "Increases critical hit chance by 5%.",
+                ["Blue Mushroom"] = "Melee attack +10%, defense +5.",
+                ["Fugitive's Flask"] = "Move speed permanently +5%.",
+                ["Leather Bracelet"] = "Melee physical damage +5%.",
+                ["Mysterious Flask"] = "Dash cooldown -8%.",
+                ["Mystical Crystal"] = "All base stats +6%.",
+                ["Golden Chalice"] = "Ranged projectiles +2, ranged attack speed +10%.",
+                ["WornShield"] = "Slightly boosts base defense.",
+                ["Pouch of Abundance"] = "Ranged projectiles +1, ranged attack +5%.",
+                ["Skull Ring"] = "Critical damage +25%.",
+                ["Starlight Shard"] = "Critical chance +5%.",
                 ["Stone Mask"] = "Maximum health +15 (+5 per level).",
-                ["Thread Spindle"] = "Reduces charge time for charging weapons and skills by 15%.",
-                ["Watcher's Eye"] = "Increases ranged attack speed by 8%.",
-                ["Golden Orb"] = "Increases ranged attack by 10% and ranged attack speed by 5%.",
-                ["Wyvern Emblem"] = "Increases melee attack speed by 8%.",
-                ["Wooden Totem"] = "Increases ranged physical damage by 5%."
+                ["Thread Spindle"] = "Weapon and skill charge time -15%.",
+                ["Watcher's Eye"] = "Ranged attack speed +8%.",
+                ["Golden Orb"] = "Ranged attack +10%, ranged attack speed +5%.",
+                ["Wyvern Emblem"] = "Melee attack speed +8%.",
+                ["Wooden Totem"] = "Ranged physical damage +5%."
             };
 
         public static readonly IReadOnlyDictionary<string, string> ItemKoreanNames =

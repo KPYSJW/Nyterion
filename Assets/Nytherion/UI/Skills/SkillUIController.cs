@@ -40,6 +40,8 @@ namespace Nytherion.UI.Skill
         private SaveLoadManager saveLoadManager;
         private IProgressionManager progressionManager;
 
+        [SerializeField] private SkillTooltip skillTooltipPrefab;
+        private SkillTooltip skillTooltip;
         private SkillSlotUI[] storageSlots;
 
         [Tooltip("스킬 보관함 영역 (드롭 이벤트를 처리하기 위한 참조)")]
@@ -68,6 +70,11 @@ namespace Nytherion.UI.Skill
             this.storageDropArea = uiRefs.storageDropArea;
             this.storageContent = uiRefs.storageContent;
             this.equipSlots = uiRefs.equipSlots;
+            if (skillTooltipPrefab != null && uiPanel != null)
+            {
+                Canvas rootCanvas = uiPanel.GetComponentInParent<Canvas>().rootCanvas;
+                skillTooltip = Instantiate(skillTooltipPrefab, rootCanvas.transform, false);
+            }
 
             // --- UIPanelBase 연동을 위한 설정 추가 ---
             if (uiPanel != null)
@@ -127,6 +134,7 @@ namespace Nytherion.UI.Skill
         }
         private void OnDestroy()
         {
+            if (skillTooltip != null) Destroy(skillTooltip.gameObject);
             // 메모리 누수 방지를 위해 객체 파괴 시 모든 이벤트 구독 해제
             if (skillDataManager != null) skillDataManager.OnSkillDataChanged -= SyncUIFromData;
             if (inputManager != null) inputManager.onToggleSkillUI -= ToggleUI;
@@ -181,10 +189,7 @@ namespace Nytherion.UI.Skill
             }
             base.Close();
             // UI가 닫힐 때 켜져있을 수 있는 툴팁 강제로 숨김
-            if (TooltipPanel.Instance != null)
-            {
-                TooltipPanel.Instance.HideTooltip();
-            }
+            skillTooltip?.Hide();
         }
 
         /// <summary>
@@ -211,7 +216,7 @@ namespace Nytherion.UI.Skill
                 newSlot.slotType = SkillSlotType.Storage;
                 newSlot.slotIndex = i;
 
-                newSlot.Setup(null, skillDataManager);
+                newSlot.Setup(null, skillDataManager, skillTooltip);
 
                 // 상호작용 이벤트 등록 
                 newSlot.OnDoubleClick += HandleDoubleClick;
@@ -235,7 +240,7 @@ namespace Nytherion.UI.Skill
             int equipCount = 0;
             for (int i = 0; i < equipSlots.Length; i++)
             {
-                equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager);
+                equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager, skillTooltip);
                 if (skillDataManager.equippedSkills[i] != null) equipCount++;
             }
 
@@ -245,10 +250,10 @@ namespace Nytherion.UI.Skill
             {
                 if (i < skillDataManager.storageSkills.Length)
                 {
-                    storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager);
+                    storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager, skillTooltip);
                     if (skillDataManager.storageSkills[i] != null) storageCount++;
                 }
-                else storageSlots[i].Setup(null, skillDataManager);
+                else storageSlots[i].Setup(null, skillDataManager, skillTooltip);
             }
 
             if (playerSkillManager != null)
@@ -320,8 +325,8 @@ namespace Nytherion.UI.Skill
             SkillData skillB = slotB.GetSkill();
 
             // 데이터 맞교환
-            slotA.Setup(skillB, skillDataManager);
-            slotB.Setup(skillA, skillDataManager);
+            slotA.Setup(skillB, skillDataManager, skillTooltip);
+            slotB.Setup(skillA, skillDataManager, skillTooltip);
 
             // 교환 후 변경된 상태를 매니저에 전달 및 저장
             UpdatePlayerSkills();

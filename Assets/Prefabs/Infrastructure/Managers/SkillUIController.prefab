@@ -59,4 +59,5 @@ MonoBehaviour:
   storageContent: {fileID: 0}
   slotPrefab: {fileID: 8498367146274910382, guid: 22c598c598dcc544caa3aaf9987a97c9, type: 3}
   maxStorageSlots: 20
+  skillTooltipPrefab: {fileID: 8529682767669512991, guid: a30d42a0d43a32549b3f08a2ae915fa5, type: 3}
   storageDropArea: {fileID: 0}

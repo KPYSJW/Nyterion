@@ -14,12 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Opapa
   koreanName: "\uC624\uD30C\uD30C"
-  description_KR: "\uC801\uC744 \uD5A5\uD574 \uB3CC\uC9C4\uD55C \uB4A4 \uBCBD, \uC7A5\uC560\uBB3C\uACFC
-    \uD654\uBA74 \uACBD\uACC4\uC5D0\uC11C \uD295\uAE30\uBA70 \uC801\uC744 \uAD00\uD1B5\uD558\uB294
-    Opapa\uB97C \uC18C\uD658\uD569\uB2C8\uB2E4.\n\uAD6C\uB974\uAE30\uC5D0 \uB2FF\uC740
-    \uC801\uC740 \uD55C \uBC88\uC529 \uD53C\uD574\uB97C \uBC1B\uC2B5\uB2C8\uB2E4."
-  description_EN: Summons Opapa, who charges toward enemies, pierces them, and ricochets
-    from walls, obstacles, and the camera boundary.
+  description_KR: "돌진 후 벽, 장애물, 화면 경계에서 튕기는 Opapa 소환. 적을 관통하며 구르기에 닿은 적을 1회 타격."
+  description_EN: "Summons Opapa, which charges and ricochets off walls, obstacles, and screen edges. Pierces enemies, hitting each once per roll."
   Image: {fileID: 21300000, guid: a51d104611cfb294ba7a7c1123141e84, type: 3}
   rarity: 3
   level: 1

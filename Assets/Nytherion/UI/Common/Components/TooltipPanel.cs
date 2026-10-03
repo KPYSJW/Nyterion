@@ -275,8 +275,7 @@ namespace Nytherion.UI.Components
                         "공격 속도: {0:0.##}",
                         "Attack Speed: {0:0.##}",
                         attacksPerSecond);
-                    string weaponStats = $"<color={DescriptionDefaultColorHex}>[{attackText}]</color>\n";
-                    weaponStats += $"<color={DescriptionDefaultColorHex}>[{attackSpeedText}]</color>\n\n";
+                    string weaponStats = $"<color={DescriptionDefaultColorHex}>{attackText} / {attackSpeedText}</color>\n\n";
 
                     finalDesc = weaponStats + finalDesc;
                 }
@@ -358,8 +357,8 @@ namespace Nytherion.UI.Components
             string skillStats = LocalizationText.Get(
                 LocalizationTables.UI,
                 "ui.tooltip.skill_stats",
-                "[Lv.{0}] 경험치: {1} / {2}\n\n데미지: {3}\n쿨타임: {4}초\n사거리: {5}\n\n{6}",
-                "[Lv.{0}] EXP: {1} / {2}\n\nDamage: {3}\nCooldown: {4}s\nRange: {5}\n\n{6}",
+                "Lv.{0} / 경험치 {1}/{2}\n피해 {3} / 쿨타임 {4}초 / 사거리 {5}\n\n{6}",
+                "Lv.{0} / EXP {1}/{2}\nDamage {3} / Cooldown {4}s / Range {5}\n\n{6}",
                 level,
                 currentExp,
                 requiredExp,

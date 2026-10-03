@@ -14,21 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Bear Totem
   koreanName: "\uACF0 \uD1A0\uD15C"
-  description_KR: "[Attack Buff] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Attack
-    Buff] : \uC77C\uC815 \uC2DC\uAC04 \uB3D9\uC548 \uD50C\uB808\uC774\uC5B4\uC758
-    \uACF5\uACA9\uB825\uC744 \uB300\uD3ED \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
-  description_EN: "Obtain [Attack Buff] skill.\n[Attack Buff] : \uC77C\uC815 \uC2DC\uAC04
-    \uB3D9\uC548 \uD50C\uB808\uC774\uC5B4\uC758 \uACF5\uACA9\uB825\uC744 \uB300\uD3ED
-    \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
+  description_KR: "[\uACF5\uACA9\uB825 \uAC15\uD654] \uD68D\uB4DD\n\uC77C\uC815 \uC2DC\uAC04
+    \uACF5\uACA9\uB825 \uC99D\uAC00"
+  description_EN: 'Unlocks [Attack Buff]
+
+    Temporarily boosts attack.'
   Image: {fileID: 21300000, guid: 1963ece3e86d1e44da0f066baa311f65, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: -2
     effects:
     - rid: 2313383513706201094
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -45,6 +48,7 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
   references:
     version: 2

@@ -1,4 +1,5 @@
 using UnityEditor;
+using Nytherion.Editor.Localization;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Data.ScriptableObjects.Relics;
@@ -18,25 +19,25 @@ namespace Nytherion.Editor
         // 기본 제공 스킬 설명 딕셔너리
         private static readonly Dictionary<string, string> DefaultSkillDescriptions = new Dictionary<string, string>
         {
-            { "AS_Skill", "일정 시간 동안 플레이어의 공격 속도를 크게 증가시킵니다." },
-            { "All_Stat_Skill", "플레이어의 공격력, 이동 속도, 방어력 등 모든 능력치를 전반적으로 향상시킵니다." },
-            { "Atk_Buff_Skill", "일정 시간 동안 플레이어의 공격력을 대폭 증가시킵니다." },
-            { "Aura_Skill", "플레이어 주변에 지속적인 피해를 입히는 파괴적인 오라 영역을 생성합니다." },
-            { "Blackhole_Skill", "전방에 강한 인력을 가진 블랙홀을 생성하여 적들을 끌어당기고 지속 피해를 입힙니다." },
+            { "AS_Skill", "일정 시간 공격 속도 증가." },
+            { "All_Stat_Skill", "모든 능력치 증가." },
+            { "Atk_Buff_Skill", "일정 시간 공격력 증가." },
+            { "Aura_Skill", "주변 적에게 지속 피해." },
+            { "Blackhole_Skill", "블랙홀로 적을 끌어당기며 지속 피해." },
             { "CallLightning_Skill", "하늘에서 강력한 벼락을 내리쳐 적들에게 고위력의 전기 피해를 입힙니다." },
-            { "Dash_CD_Skill", "대시 스킬의 재사용 대기시간을 대폭 감소시켜 신속하게 이동할 수 있게 합니다." },
+            { "Dash_CD_Skill", "대시 쿨타임 감소." },
             { "FireWave_Skill", "전방으로 번지는 거대한 화염 파도를 발사하여 범위 안의 적들에게 화염 피해를 입힙니다." },
             { "FrostNova_Skill", "주변의 넓은 영역에 냉기 피해를 입히고 잠시 동안 빙결 상태로 만듭니다." },
             { "IceShard_Skill", "날카로운 얼음 파편들을 부채꼴 모양으로 발사하여 적들을 꿰뚫고 피해를 입힙니다." },
-            { "Laser_Skill", "직선 방향으로 강력한 관통 레이저를 발사하여 궤적 상의 모든 적을 파괴합니다." },
-            { "Lifesteal_Skill", "공격 시 일정 비율의 피해량을 체력으로 회복하는 흡혈 버프를 획득합니다." },
-            { "MeteorStrike_Skill", "지정 위치에 거대한 운석을 떨어뜨려 넓은 범위에 파괴적인 화염 피해를 입힙니다." },
-            { "MultiShot_Skill", "투사체 발사 시 추가 투사체를 여러 방향으로 동시 발사합니다." },
-            { "Overdrive_Skill", "한계까지 능력을 끌어올려 이동 속도와 공격 속도를 극대화합니다." },
-            { "Shadow_Clone_Skill", "플레이어의 행동을 본뜨는 그림자 분신을 소환하여 함께 공격합니다." },
-            { "Soul_Eater_Skill", "적 처치 시 영혼을 흡수하여 체력을 회복하고 잠시 동안 능력을 강화합니다." },
-            { "Spiral_Skill", "플레이어 주위를 나선형으로 회전하며 지속 피해를 입히는 마법 구체를 생성합니다." },
-            { "Turret_Skill", "지정 위치에 자동 사격 포탑을 설치하여 접근하는 적들을 격퇴합니다." }
+            { "Laser_Skill", "관통 레이저로 직선상의 적 공격." },
+            { "Lifesteal_Skill", "일정 시간 가한 피해의 일부를 체력으로 회복." },
+            { "MeteorStrike_Skill", "운석을 떨어뜨려 범위 피해." },
+            { "MultiShot_Skill", "투사체 발사 시 추가 투사체 발사." },
+            { "Overdrive_Skill", "일정 시간 공격 속도, 대시 속도 증가." },
+            { "Shadow_Clone_Skill", "함께 공격하는 그림자 분신 소환." },
+            { "Soul_Eater_Skill", "적 처치 시 체력 회복 및 일시적 능력 강화." },
+            { "Spiral_Skill", "회전 구체로 주변 적에게 지속 피해." },
+            { "Turret_Skill", "루티 포탑을 배치해 범위 내 적 공격." }
         };
 
         static GenerateSkillRelics()
@@ -120,16 +121,12 @@ namespace Nytherion.Editor
                 }
 
                 string skillName = string.IsNullOrEmpty(skill.skillName) ? skill.name : skill.skillName;
-                string skillDesc = !string.IsNullOrEmpty(skill.description) ? skill.description.Trim() : "";
 
                 relicData.relicName = $"Relic of {cleanName}";
                 relicData.koreanName = $"{skillName} 각인";
-                relicData.description_KR = string.IsNullOrEmpty(skillDesc) 
-                    ? $"[{skillName}] 스킬을 얻습니다." 
-                    : $"[{skillName}] 스킬을 얻습니다.\n[{skillName}] : {skillDesc}";
-                relicData.description_EN = string.IsNullOrEmpty(skillDesc) 
-                    ? $"Obtain [{skillName}] skill." 
-                    : $"Obtain [{skillName}] skill.\n[{skillName}] : {skillDesc}";
+                GetSkillRelicDescriptions(skill, out string descriptionKR, out string descriptionEN);
+                relicData.description_KR = descriptionKR;
+                relicData.description_EN = descriptionEN;
                 relicData.Image = skill.icon;
                 relicData.rarity = Core.Enums.Rarity.Rare;
                 relicData.level = 1;
@@ -176,6 +173,30 @@ namespace Nytherion.Editor
 
             Debug.Log($"[GenerateSkillRelics] 완료! 신규 생성: {createdCount}개, 갱신: {updatedCount}개. RelicDatabase 등록 완료.");
             EditorUtility.DisplayDialog("완료", $"총 {allSkills.Count}개 스킬에 대한 유물이 생성/업데이트 되었습니다.\n(신규: {createdCount}, 갱신: {updatedCount})", "확인");
+        }
+
+        // 에디터 재로드와 유물 생성 시 같은 간결한 설명을 사용합니다.
+        private static void GetSkillRelicDescriptions(SkillData skill, out string korean, out string english)
+        {
+            string koreanName = string.IsNullOrEmpty(skill.skillName) ? skill.name : skill.skillName;
+            string englishName = koreanName;
+            string englishDescription = "";
+            if (!string.IsNullOrEmpty(skill.skillID))
+            {
+                if (LocalizationTranslationCatalog.Skills.TryGetValue(skill.skillID, out var names))
+                {
+                    koreanName = names.Korean;
+                    englishName = names.English;
+                }
+                LocalizationTranslationCatalog.SkillEnglishDescriptions.TryGetValue(skill.skillID, out englishDescription);
+            }
+
+            korean = $"[{koreanName}] 획득";
+            english = $"Unlocks [{englishName}]";
+            if (!string.IsNullOrWhiteSpace(skill.description))
+                korean += "\n" + skill.description.Trim();
+            if (!string.IsNullOrWhiteSpace(englishDescription))
+                english += "\n" + englishDescription.Trim();
         }
 
         /// <summary>
@@ -244,15 +265,7 @@ namespace Nytherion.Editor
                     {
                         if (effect is GrantSkillEffect grantEffect && grantEffect.skillData != null)
                         {
-                            string skillName = string.IsNullOrEmpty(grantEffect.skillData.skillName) ? grantEffect.skillData.name : grantEffect.skillData.skillName;
-                            string skillDesc = !string.IsNullOrEmpty(grantEffect.skillData.description) ? grantEffect.skillData.description.Trim() : "";
-
-                            string newKR = string.IsNullOrEmpty(skillDesc) 
-                                ? $"[{skillName}] 스킬을 얻습니다." 
-                                : $"[{skillName}] 스킬을 얻습니다.\n[{skillName}] : {skillDesc}";
-                            string newEN = string.IsNullOrEmpty(skillDesc) 
-                                ? $"Obtain [{skillName}] skill." 
-                                : $"Obtain [{skillName}] skill.\n[{skillName}] : {skillDesc}";
+                            GetSkillRelicDescriptions(grantEffect.skillData, out string newKR, out string newEN);
 
                             if (relic.description_KR != newKR || relic.description_EN != newEN)
                             {

@@ -20,6 +20,7 @@ namespace Nytherion.UI.Skill
 
         [SerializeField] private Image skillIcon; 
 
+        private SkillTooltip skillTooltip;
         private SkillData currentSkill;
         private SkillDataManager skillDataManager;
 
@@ -43,13 +44,16 @@ namespace Nytherion.UI.Skill
         private void OnDisable()
         {
             CancelDrag();
+            skillTooltip?.Hide(this);
         }
 
         /// <summary>
         /// 슬롯에 표시될 스킬 데이터와 매니저를 초기화
         /// </summary>
-        public void Setup(SkillData skill, SkillDataManager manager = null)
+        public void Setup(SkillData skill, SkillDataManager manager = null, SkillTooltip tooltip = null)
         {
+            skillTooltip?.Hide(this);
+            skillTooltip = tooltip;
             currentSkill = skill;
             skillDataManager = manager;
             PixelPerfectSlotFrame.Apply(GetComponent<Image>());
@@ -84,7 +88,7 @@ namespace Nytherion.UI.Skill
         // --- 마우스 호버 이벤트 (툴팁 표시/숨김) ---
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (currentSkill != null && TooltipPanel.Instance != null)
+            if (currentSkill != null && skillTooltip != null && !isDragging)
             {
                 int level = 1;
                 int exp = 0;
@@ -97,16 +101,13 @@ namespace Nytherion.UI.Skill
                     reqExp = state.GetRequiredExp(level);
                 }
 
-                TooltipPanel.Instance.ShowTooltip(currentSkill, level, exp, reqExp);
+                skillTooltip.Show(this, currentSkill, level, exp, reqExp);
             }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (TooltipPanel.Instance != null)
-            {
-                TooltipPanel.Instance.HideTooltip();
-            }
+            skillTooltip?.Hide(this);
         }
 
         // --- 클릭 이벤트 ---
@@ -131,10 +132,7 @@ namespace Nytherion.UI.Skill
             if (dragCanvas == null) return;
 
             // 드래그 시작 시 방해되지 않도록 툴팁을 숨긴다
-            if (TooltipPanel.Instance != null)
-            {
-                TooltipPanel.Instance.HideTooltip();
-            }
+            skillTooltip?.Hide(this);
 
             // 아이콘이 다른 UI에 가려지지 않도록 최상단으로 이동
             RectTransform iconRect = skillIcon.rectTransform;
@@ -173,6 +171,7 @@ namespace Nytherion.UI.Skill
         {
             if (eventData.button != PointerEventData.InputButton.Left) return;
             CancelDrag();
+            skillTooltip?.Hide(this);
         }
 
         private void UpdateDragIconPosition(PointerEventData eventData)

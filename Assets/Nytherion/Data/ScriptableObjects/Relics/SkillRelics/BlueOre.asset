@@ -14,21 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Blue Ore
   koreanName: "\uD478\uB978 \uAD11\uC11D"
-  description_KR: "[attack speed boost] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[attack
-    speed boost] : \uC77C\uC815 \uC2DC\uAC04 \uB3D9\uC548 \uD50C\uB808\uC774\uC5B4\uC758
-    \uACF5\uACA9 \uC18D\uB3C4\uB97C \uD06C\uAC8C \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
-  description_EN: "Obtain [attack speed boost] skill.\n[attack speed boost] : \uC77C\uC815
-    \uC2DC\uAC04 \uB3D9\uC548 \uD50C\uB808\uC774\uC5B4\uC758 \uACF5\uACA9 \uC18D\uB3C4\uB97C
-    \uD06C\uAC8C \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
+  description_KR: "[\uACF5\uACA9 \uC18D\uB3C4 \uC99D\uAC00] \uD68D\uB4DD\n\uC77C\uC815
+    \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4 \uC99D\uAC00"
+  description_EN: 'Unlocks [Attack Speed Boost]
+
+    Temporarily boosts attack speed.'
   Image: {fileID: 21300000, guid: 10984910af633214c8f2485941f3b958, type: 3}
   rarity: 2
   level: 3
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: -2
     effects:
     - rid: 2313383513706201093
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -45,6 +48,7 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
   references:
     version: 2

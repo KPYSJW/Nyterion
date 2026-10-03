@@ -15,9 +15,7 @@ MonoBehaviour:
   skillID: skill_all_stat_up
   skillType: 7
   skillName: All Stat Up
-  description: "\uD50C\uB808\uC774\uC5B4\uC758 \uACF5\uACA9\uB825, \uC774\uB3D9 \uC18D\uB3C4,
-    \uBC29\uC5B4\uB825 \uB4F1 \uBAA8\uB4E0 \uB2A5\uB825\uCE58\uB97C \uC804\uBC18\uC801\uC73C\uB85C
-    \uD5A5\uC0C1\uC2DC\uD0B5\uB2C8\uB2E4."
+  description: "\uC77C\uC815 \uC2DC\uAC04 \uBAA8\uB4E0 \uB2A5\uB825\uCE58 \uC99D\uAC00"
   skillLevel: 0
   exp: 0
   coolDown: 60

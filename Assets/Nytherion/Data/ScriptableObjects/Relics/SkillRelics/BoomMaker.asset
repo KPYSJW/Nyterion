@@ -14,12 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: BoomMaker
   koreanName: BoomMaker
-  description_KR: "BoomMaker\uB97C \uC18C\uD658\uD569\uB2C8\uB2E4. BoomMaker\uB294
-    \uC801\uC744 \uBC1C\uACAC\uD558\uBA74 \uD68C\uC804\uD558\uBA70 \uD3ED\uBC1C \uB85C\uBD07\uC744
-    \uB0B4\uBCF4\uB0B4\uACE0, \uD3ED\uBC1C \uB85C\uBD07\uC740 \uC801\uC5D0\uAC8C
-    \uB2EC\uB824\uAC00 \uCDA9\uB3CC \uC2DC \uBC94\uC704 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
-  description_EN: Summons BoomMaker. When it finds an enemy, it spins to deploy an
-    explosive robot that runs into the enemy and deals area damage.
+  description_KR: "적 발견 시 회전하며 폭발 로봇을 내보내는 BoomMaker 소환. 로봇은 적에게 돌진해 충돌 시 범위 폭발."
+  description_EN: "Summons BoomMaker, which spins and releases explosive bots when enemies appear. Bots charge and explode on impact."
   Image: {fileID: 21300000, guid: e31cf2cafcb09944187a788605df16e0, type: 3}
   rarity: 3
   level: 1
