@@ -19,8 +19,7 @@ namespace Nytherion.UI.Inventory.Utils
                 // 드래그 아이콘의 크기를 원본 슬롯 내부의 실제 아이콘(Image) 크기에 정확히 맞춤
                 if (slotBeingDragged.IconImage != null)
                 {
-                    RectTransform iconRect = slotBeingDragged.IconImage.rectTransform;
-                    DragItemIcon.Instance.iconImage.rectTransform.sizeDelta = iconRect.rect.size;
+                    DragItemIcon.Instance.SetSlotIcon(slotBeingDragged.IconImage);
                 }
                 else
                 {

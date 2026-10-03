@@ -27,6 +27,8 @@ namespace Nytherion.Editor
         private static Transform owner;
         private static PlayerController controller;
         private static EnemyBase outside;
+        private static EnemyBase extendedRangeTarget;
+        private static int extendedRangeHits;
         private static float nextCheck;
         private static float sortingCheckAt;
         private static bool sortingCheckPending;
@@ -78,10 +80,11 @@ namespace Nytherion.Editor
                 if (Time.time < nextCheck) return;
                 foreach (EnemyBase target in targets) Equal(10000f - attacks * 15f, (float)Health.GetValue(target), "공격당 한 번 타격");
                 Equal(10000f, (float)Health.GetValue(outside), "원 밖의 적 제외");
+                Equal(10000f - extendedRangeHits * 15f, (float)Health.GetValue(extendedRangeTarget), "이펙트별 배율에 따른 확장 범위 타격");
                 Require(!ActiveEffects().Any(), "애니메이션 종료 후 이펙트 반환");
                 Require(!ActiveHitEffects().Any(), "타격 이펙트 애니메이션 종료 후 풀 반환");
                 results.Add($"PASS 공격 {attacks}: 중복 콜라이더 포함 72명 각 1회 타격, 범위 밖 제외, 이펙트 종료/반환");
-                if (attacks == 4) { Finish(null); return; }
+                if (attacks == 5) { Finish(null); return; }
                 Cast();
             }
             catch (Exception error) { Finish(error); }
@@ -92,6 +95,7 @@ namespace Nytherion.Editor
             results.Clear();
             targets.Clear();
             attacks = 0;
+            extendedRangeHits = 0;
             exitAfter = SessionState.GetBool(Pending + ".Exit", false);
             previousTimeScale = Time.timeScale;
             previousBackground = Application.runInBackground;
@@ -99,6 +103,42 @@ namespace Nytherion.Editor
             Time.timeScale = 1f;
             WeaponData data = AssetDatabase.LoadAssetAtPath<WeaponData>(GuardianStaffWeaponSetup.DataPath);
             Require(data != null && data.weaponPrefab != null, "무기 에셋/프리팹 연결");
+            var weaponSerialized = new SerializedObject(data.weaponPrefab);
+            Require(weaponSerialized.FindProperty("attackEffects").arraySize == 4, "공격 이펙트 4개 연결");
+            for (int number = 1; number <= 4; number++)
+            {
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(GuardianStaffWeaponSetup.EffectPrefix + number + ".prefab");
+                Require(prefab != null && weaponSerialized.FindProperty("attackEffects").GetArrayElementAtIndex(number - 1).objectReferenceValue ==
+                    prefab.GetComponent<GuardianStaffAttackEffect>(), "순서별 공격 프리팹 연결");
+                var animator = prefab.GetComponent<Animator>();
+                Require(animator != null && animator.runtimeAnimatorController != null && animator.cullingMode == AnimatorCullingMode.AlwaysAnimate,
+                    "공격 Animator 연결 및 화면 밖에서도 종료");
+                AnimationClip clip = animator.runtimeAnimatorController.animationClips.Single();
+                var keys = AnimationUtility.GetObjectReferenceCurve(clip,
+                    EditorCurveBinding.PPtrCurve(string.Empty, typeof(SpriteRenderer), "m_Sprite"));
+                int count = number == 1 ? 4 : number == 4 ? 6 : 14;
+                Require(!clip.isLooping && keys.Length == count + 1 && keys[count].value == null, "공격 1회 재생 후 이미지 제거");
+                Require(keys.Take(count).All(key => AssetDatabase.GetAssetPath(key.value).EndsWith($"Guardian'sStaffAttackEffect{number}.png")),
+                    "공격 프레임 원본 연결");
+                GameObject attackSample = Object.Instantiate(prefab);
+                temporary.Add(attackSample);
+                Animator sampleAnimation = attackSample.GetComponent<Animator>();
+                SpriteRenderer sampleSprite = attackSample.GetComponent<SpriteRenderer>();
+                sampleAnimation.Rebind();
+                sampleAnimation.Play(0, 0, 0f);
+                sampleAnimation.Update(0f);
+                Require(sampleSprite.sprite == keys[0].value, "공격 첫 프레임 재생");
+                sampleAnimation.Update((count - 0.75f) / clip.frameRate);
+                Require(sampleSprite.sprite == keys[count - 1].value, "공격 마지막 프레임 재생");
+                sampleAnimation.Update(1f / clip.frameRate);
+                Require(sampleSprite.sprite == null, "공격 재생 종료 후 잔상 없음");
+                attackSample.SetActive(false);
+                attackSample.SetActive(true);
+                attackSample.GetComponent<GuardianStaffAttackEffect>().Play(null, 1f, null, null, null);
+                Require(sampleSprite.sprite == keys[0].value, "비활성화 후 재사용 시 공격 첫 프레임 복구");
+                attackSample.SetActive(false);
+                results.Add($"PASS 공격 이펙트 {number}: Animator {count}프레임, 마지막 이미지 제거, 재사용 시 첫 프레임 복구");
+            }
             Require(data.hitEffectPrefab == AssetDatabase.LoadAssetAtPath<GameObject>(GuardianStaffWeaponSetup.HitEffectPath), "타격 이펙트 프리팹 연결");
             var hitAnimator = data.hitEffectPrefab.GetComponent<Animator>();
             Require(hitAnimator != null && hitAnimator.runtimeAnimatorController != null, "타격 이펙트 애니메이터 연결");
@@ -152,6 +192,7 @@ namespace Nytherion.Editor
             weapon.damageMultiplier = 1.5f;
             for (int i = 0; i < 72; i++) targets.Add(Target(owner.position + Vector3.right * settings.range * 0.5f, i == 0));
             outside = Target(owner.position + Vector3.right * (settings.range * 2f + 1f), false);
+            extendedRangeTarget = Target(owner.position + Vector3.up * settings.range * 1.25f, false);
             Physics2D.SyncTransforms();
             running = true;
             Cast();
@@ -166,26 +207,36 @@ namespace Nytherion.Editor
                 owner.GetComponent<SpriteRenderer>().sortingOrder = 200;
                 typeof(PlayerController).GetField("<IsFacingRight>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(controller, false);
             }
+            var effects = new SerializedObject(weapon).FindProperty("attackEffects");
+            var selectedEffect = (GuardianStaffAttackEffect)effects.GetArrayElementAtIndex((attacks - 1) % 4).objectReferenceValue;
+            float expectedRadius = settings.range * selectedEffect.RadiusMultiplier;
+            bool hitsExtendedTarget = selectedEffect.RadiusMultiplier > 1.25f;
+            int expectedHitCount = targets.Count + (hitsExtendedTarget ? 1 : 0);
+            extendedRangeTarget.transform.position = owner.position + Vector3.up * settings.range * 1.25f;
+            outside.transform.position = owner.position + Vector3.right * (Mathf.Max(settings.range, expectedRadius) + 1f);
+            Physics2D.SyncTransforms();
             weapon.Attack(Vector2.left, owner.position + Vector3.up * 20f);
-            Require(ActiveHitEffects().Count() == targets.Count, "중복 콜라이더를 가진 적도 타격 이펙트 1개만 생성");
+            if (hitsExtendedTarget) extendedRangeHits++;
+            Equal(10000f - extendedRangeHits * 15f, (float)Health.GetValue(extendedRangeTarget), "기본 범위 밖 적은 확장 공격에서만 피격");
+            Require(ActiveHitEffects().Count() == expectedHitCount, "중복 콜라이더를 가진 적도 타격 이펙트 1개만 생성");
             Vector3 expectedHitPosition = targets[0].GetComponent<Collider2D>().bounds.center;
-            Require(ActiveHitEffects().All(effect => Vector3.Distance(effect.transform.position, expectedHitPosition) < 0.01f), "타격 이펙트 적 피격 위치에서 생성");
+            Require(ActiveHitEffects().Count(effect => Vector3.Distance(effect.transform.position, expectedHitPosition) < 0.01f) == targets.Count, "타격 이펙트 적 피격 위치에서 생성");
             GuardianStaffAttackEffect effect = ActiveEffects().Single();
             VerifySorting(effect);
             owner.GetComponent<SpriteRenderer>().sortingOrder += 3;
             sortingCheckAt = Time.time + 0.1f;
             sortingCheckPending = true;
-            int expected = (attacks - 1) % 3 + 1;
-            Require(effect.name.Replace("(Clone)", "").Trim() == "GuardianStaffAttackEffect" + expected, "이펙트 1→2→3→1 순환");
+            int expected = (attacks - 1) % 4 + 1;
+            Require(effect.name.Replace("(Clone)", "").Trim() == "GuardianStaffAttackEffect" + expected, "이펙트 1→2→3→4→1 순환");
             Equal(0f, Vector3.Distance(effect.transform.position, owner.position), "플레이어 중심 생성");
-            Equal(settings.range, effect.NativeRadius * effect.transform.lossyScale.x, "이펙트 크기와 원형 타격 반지름 일치");
+            Equal(expectedRadius, effect.NativeRadius * effect.transform.lossyScale.x, "이펙트 크기와 원형 타격 반지름 일치");
             float before = (float)Health.GetValue(targets[0]);
             weapon.Attack(Vector2.right);
             Equal(before, (float)Health.GetValue(targets[0]), "쿨다운 중 중복 입력 차단");
             Require(ActiveEffects().Count() == 1, "쿨다운 중 이펙트 추가 생성 차단");
-            Require(ActiveHitEffects().Count() == targets.Count, "쿨다운 중 타격 이펙트 추가 생성 차단");
+            Require(ActiveHitEffects().Count() == expectedHitCount, "쿨다운 중 타격 이펙트 추가 생성 차단");
             results.Add("PASS 적 72명 각각 피격 위치에 타격 이펙트 1개 생성, 중복 콜라이더/쿨다운 중 추가 생성 없음");
-            results.Add($"PASS 이펙트 {expected}, 플레이어 중심, 표시/판정 반지름 {settings.range}, 쿨다운 차단");
+            results.Add($"PASS 이펙트 {expected}, 플레이어 중심, 배율 {selectedEffect.RadiusMultiplier}, 표시/판정 반지름 {expectedRadius}, 확장 범위 타격={hitsExtendedTarget}, 쿨다운 차단");
             nextCheck = Time.time + Mathf.Max(settings.cooldown, effect.Duration) + 0.15f;
             File.WriteAllLines(GuardianStaffWeaponSetup.Output + "/verification-progress.txt", results);
         }
@@ -207,7 +258,7 @@ namespace Nytherion.Editor
 
         private static IEnumerable<AutoReturnToPool> ActiveHitEffects() => Object.FindObjectsOfType<AutoReturnToPool>()
             .Where(effect => effect.gameObject.activeInHierarchy && effect.name.Replace("(Clone)", "").Trim() == "GuardianStaffHitEffect" &&
-                Vector3.Distance(effect.transform.position, owner.position) < settings.range + 0.1f);
+                Vector3.Distance(effect.transform.position, owner.position) < settings.range * 1.25f + 0.1f);
 
         private static EnemyBase Target(Vector3 position, bool duplicate)
         {
@@ -234,7 +285,7 @@ namespace Nytherion.Editor
         private static void Finish(Exception error)
         {
             if (error != null) { results.Add("FAIL " + error); Debug.LogException(error); }
-            if (weapon != null && attacks == 4 && error == null)
+            if (weapon != null && attacks == 5 && error == null)
             {
                 Equal(-8f, weapon.transform.localPosition.x, "왼쪽 방향 위치 반전");
                 Require(weapon.transform.localScale.x < 0f, "왼쪽 방향 스프라이트 반전");

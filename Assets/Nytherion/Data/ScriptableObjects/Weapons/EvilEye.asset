@@ -29,6 +29,9 @@ MonoBehaviour:
     value: -10
     valuePerLevel: 0
     isPercentage: 0
+  useDiagonalIcon: 1
+  iconRotationOffset: 0
+  iconSlotScale: 1.8
   damage: 20
   range: 0
   cooldown: 1.5
@@ -36,9 +39,10 @@ MonoBehaviour:
   weaponSprite: {fileID: 21300000, guid: 9575dfaffdd75884ca0a7aad900e16e4, type: 3}
   firePointOffset: {x: 0.1, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: 0.6, y: -0.15, z: 0}
-  visualScale: 1
-  sortingOrderOffset: -1
+  visualPositionOffset: {x: 0.4, y: -0.15, z: 0}
+  visualScale: 0.8
+  sortingOrderOffset: 5
+  useFixedFacingPose: 0
   useStaffRecoil: 1
   weaponEffectPrefab: {fileID: 1638640853019598765, guid: dd4a8661b5e3dac43b8d7395a450fcf2, type: 3}
   fireEffectPrefab: {fileID: 0}
@@ -46,11 +50,16 @@ MonoBehaviour:
   chargeEffectRotationSpeed: 90
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
+  projectileAnimationVariants: []
+  projectileStartEffectVariants: []
   projectileSpeed: 10
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
   hasHomingProjectiles: 0
+  usePlayerCircleSpawn: 0
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
   useHomingLaunchAngles: 0
   homingLaunchAngles:
   - 30
@@ -59,6 +68,7 @@ MonoBehaviour:
   - -15
   - -30
   homingTurnSpeed: 180
+  useConstantHomingSpeed: 0
   homingSearchRadius: 10
   homingLaunchDuration: 0.15
   homingLifetime: 4

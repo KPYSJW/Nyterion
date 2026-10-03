@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Enums;
 using System;
 using Nytherion.UI.Components;
@@ -36,6 +37,8 @@ namespace Nytherion.UI.Inventory
 
         [SerializeField] protected Image iconImage;
         public Image IconImage => iconImage;
+        [Tooltip("무기 이외 아이템의 아이콘 크기입니다. 무기는 WeaponData의 Icon Slot Scale을 사용합니다.")]
+        [SerializeField, Min(0.1f)] protected float iconSlotScale = 1.3f;
         [SerializeField] protected TextMeshProUGUI countText;
         protected ItemData currentItem;
         protected int currentCount;
@@ -99,6 +102,7 @@ namespace Nytherion.UI.Inventory
             {
                 // 드래그 이미지와 툴팁이 사용하는 아이템 아이콘으로 슬롯 표시를 통일합니다.
                 iconImage.sprite = item.icon;
+                ApplyIconLayout();
                 
                 // 알파값을 항상 1로 복구하여 투명화 버그 방지
                 Color color = iconImage.color;
@@ -120,6 +124,34 @@ namespace Nytherion.UI.Inventory
             }
 
             UpdateSlotBackground(item, hasItem);
+        }
+
+        protected virtual void OnRectTransformDimensionsChange()
+        {
+            ApplyIconLayout();
+        }
+
+#if UNITY_EDITOR
+        protected virtual void OnValidate()
+        {
+            ApplyIconLayout();
+        }
+#endif
+
+        private void ApplyIconLayout()
+        {
+            // 슬롯 배경의 사각형 입력 영역은 유지하고 자식 아이콘만 회전합니다.
+            if (iconImage == null || iconImage.sprite == null || iconImage.transform == transform) return;
+
+            RectTransform iconRect = iconImage.rectTransform;
+            Vector2 availableSize = iconRect.rect.size;
+            RectTransform slotRect = transform as RectTransform;
+            Vector2 slotSize = slotRect != null ? slotRect.rect.size : availableSize;
+            WeaponData weaponData = currentItem as WeaponData;
+            bool diagonal = weaponData == null || weaponData.useDiagonalIcon;
+            float itemIconScale = weaponData != null ? weaponData.iconSlotScale : iconSlotScale;
+            float rotationOffset = weaponData != null ? weaponData.iconRotationOffset : 0f;
+            ItemIconLayoutUtility.Apply(iconImage, slotSize, diagonal, itemIconScale, rotationOffset);
         }
 
         protected virtual void UpdateSlotBackground(ItemData item, bool hasItem)

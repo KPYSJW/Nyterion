@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat
 {
-    /// <summary>플레이어 중심의 원형 공격을 펼치고 세 가지 이펙트를 순서대로 사용합니다.</summary>
+    /// <summary>플레이어 중심의 원형 공격을 펼치고 등록된 이펙트를 순서대로 사용합니다.</summary>
     public sealed class GuardianStaffWeapon : WeaponBase
     {
         [SerializeField] private GuardianStaffAttackEffect[] attackEffects;
@@ -48,7 +48,7 @@ namespace Nytherion.GamePlay.Combat
 
         public override bool CanAttack()
         {
-            return weaponData != null && attackEffects != null && attackEffects.Length == 3 &&
+            return weaponData != null && attackEffects != null && attackEffects.Length > 0 &&
                 attackEffects[nextEffectIndex] != null && base.CanAttack();
         }
 
@@ -68,7 +68,7 @@ namespace Nytherion.GamePlay.Combat
 
             lastAttackTime = Time.time;
             nextEffectIndex = (nextEffectIndex + 1) % attackEffects.Length;
-            float radius = Mathf.Max(0.01f, weaponData.range) * EffectSizeMultiplier;
+            float radius = Mathf.Max(0.01f, weaponData.range) * EffectSizeMultiplier * prefab.RadiusMultiplier;
             SpriteRenderer ownerRenderer = owner != null ? owner.GetComponentInChildren<SpriteRenderer>() : null;
             visual.GetComponent<GuardianStaffAttackEffect>().Play(HasTargetMaker ? null : owner, radius, pool, ownerRenderer, GetComponent<SpriteRenderer>());
             DealDamage(center, radius);

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Combat.Weapons
 {
@@ -12,7 +13,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
         [Tooltip("최대 차징 시 투사체 속도 배율 (기본 속도의 1.8배)")]
         [SerializeField] private float maxSpeedMultiplier = 1.8f;
 
-        [Tooltip("관통 및 연두색 이펙트가 발동하는 최소 차징 임계값 (0.0 ~ 1.0)")]
+        [Tooltip("관통 및 크기 확대가 발동하는 최소 차징 임계값 (0.0 ~ 1.0)")]
         [SerializeField] private float pierceThreshold = 0.9f;
 
         private Vector3 originalScale;
@@ -56,6 +57,17 @@ namespace Nytherion.GamePlay.Combat.Weapons
             else
             {
                 FireSingleChargedProjectile(direction, chargePercent);
+            }
+
+            // 연사 탄환별이 아니라 공격 묶음당 한 번 알리고, 차징 피해 배율도 함께 전달합니다.
+            EventManager eventManager = playerManager != null ? playerManager.EventManager : null;
+            if (eventManager != null && weaponData != null)
+            {
+                float chargeDamageMultiplier = IsChargingEnabled()
+                    ? Mathf.Lerp(0.5f, maxDamageMultiplier, chargePercent)
+                    : 1f;
+                float baseDamage = weaponData.damage * EffectiveDamageMultiplier * chargeDamageMultiplier;
+                eventManager.TriggerPlayerRangedAttack(direction, totalCount, baseDamage, firePoint, projectilePoolTag);
             }
 
             // 발사 완료 후 무기 스케일을 원래대로 복원
@@ -111,7 +123,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                     iProj.SetSpeed(finalSpeed);
                 }
 
-                // 3. 풀 차징 추가 혜택 (관통 활성화, 크기 확대, 연두색 강화)
+                // 3. 풀 차징 추가 혜택 (관통 활성화, 크기 확대)
                 PiercingModifier piercingModifier = projObj.GetComponent<PiercingModifier>();
                 if (piercingModifier == null) return;
 
@@ -121,13 +133,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
                     // 화살 비주얼 확대 (1.4배)
                     projObj.transform.localScale *= 1.4f;
-
-                    // 화살 스프라이트 색상을 연두색(Forest/Lime Green)으로 변경
-                    SpriteRenderer sr;
-                    if (projObj.TryGetComponent<SpriteRenderer>(out sr))
-                    {
-                        sr.color = new Color(0.35f, 1.0f, 0.15f, 1.0f);
-                    }
                 }
             }
         }

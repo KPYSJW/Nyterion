@@ -137,6 +137,10 @@ namespace Nytherion.Core.Utils
             if (DragItemIcon.Instance != null)
             {
                 DragItemIcon.Instance.SetIcon(slot.CurrentItem.icon);
+                if (slot.IconImage != null)
+                {
+                    DragItemIcon.Instance.SetSlotIcon(slot.IconImage);
+                }
                 DragItemIcon.Instance.Show();
                 DragItemIcon.Instance.transform.position = Input.mousePosition;
             }

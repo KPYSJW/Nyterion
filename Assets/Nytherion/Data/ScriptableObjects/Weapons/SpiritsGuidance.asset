@@ -30,6 +30,9 @@ MonoBehaviour:
   equipmentType: 0
   traits: 00000000
   statModifiers: []
+  useDiagonalIcon: 1
+  iconRotationOffset: 15
+  iconSlotScale: 1.6
   damage: 1
   range: 10
   cooldown: 0.45

@@ -1,0 +1,1 @@
+Assets\Editor\Data\TrainingDummySetup.cs(241,29): warning CS0252: Possible unintended reference comparison; to get a value comparison, cast the left hand side to type 'Object'

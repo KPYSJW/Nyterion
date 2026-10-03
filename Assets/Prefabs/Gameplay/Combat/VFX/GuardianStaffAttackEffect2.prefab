@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9067181559615169339}
   - component: {fileID: 5151787654000962755}
   - component: {fileID: 2861143261554368789}
+  - component: {fileID: 6624489582017776365}
   m_Layer: 0
   m_Name: GuardianStaffAttackEffect2
   m_TagString: Untagged
@@ -97,22 +98,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2600becb9674a914b9b524148068a8e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frames:
-  - {fileID: 1636889417, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: 2108363680, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: -1746779303, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: -1504804172, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: 497472753, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: -991117256, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: -440990309, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: -211505810, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: -927957628, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: 1128976121, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: -1642738936, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: 205752085, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: 1555146111, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  - {fileID: -213758662, guid: fb17350d160c4044f8ceff2e1d027350, type: 3}
-  framesPerSecond: 28
   nativeRadius: 1
+  radiusMultiplier: 0.7
   minimumSortingOrder: 100
   foregroundSortingOffset: 10
+--- !u!95 &6624489582017776365
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2826235662910807227}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 80960bed76e0b8647ba71b75ce7a22ef, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

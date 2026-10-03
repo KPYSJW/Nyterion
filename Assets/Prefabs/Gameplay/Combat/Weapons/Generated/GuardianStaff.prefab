@@ -104,6 +104,7 @@ MonoBehaviour:
   - {fileID: 900245414247970537, guid: 2fcdcd8186be1104a8ccbc66ff1e4720, type: 3}
   - {fileID: 2861143261554368789, guid: 835d85547d183244182683781ae9a617, type: 3}
   - {fileID: 568459546166553130, guid: a0947adcad01b47479fab1e1efe608ee, type: 3}
+  - {fileID: 1744840259458120962, guid: 74e765016f0fb1140b5582a06a99f9aa, type: 3}
   enemyLayers:
     serializedVersion: 2
     m_Bits: 8

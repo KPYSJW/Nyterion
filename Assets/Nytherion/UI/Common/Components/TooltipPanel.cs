@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Data.ScriptableObjects.Progression;
 using Nytherion.Core.Enums;
@@ -23,6 +24,8 @@ namespace Nytherion.UI.Components
         [SerializeField] private Image itemImageBackground;
 
         private Sprite defaultItemImageBackgroundSprite;
+        private Quaternion defaultItemImageRotation;
+        private Vector3 defaultItemImageScale;
         private Color defaultNameTextColor;
         private Image nameTextBackground;
         private Texture2D nameTextBackgroundTexture;
@@ -68,6 +71,12 @@ namespace Nytherion.UI.Components
             if (itemImageBackground != null)
             {
                 defaultItemImageBackgroundSprite = itemImageBackground.sprite;
+            }
+
+            if (itemImage != null)
+            {
+                defaultItemImageRotation = itemImage.rectTransform.localRotation;
+                defaultItemImageScale = itemImage.rectTransform.localScale;
             }
 
             if (nameText != null)
@@ -137,6 +146,7 @@ namespace Nytherion.UI.Components
         private void OnCanvasRender()
         {
             screenSize = canvas.GetComponent<RectTransform>().sizeDelta;
+            if (panel.activeSelf) ApplyItemIconLayout();
         }
 
         private void LateUpdate()
@@ -328,6 +338,7 @@ namespace Nytherion.UI.Components
             }
             
             panel.SetActive(true);
+            ApplyItemIconLayout();
         }
         public void ShowTooltip(SkillData skill, int level = 1, int currentExp = 0, int requiredExp = 1)
         {
@@ -374,6 +385,7 @@ namespace Nytherion.UI.Components
             }
 
             panel.SetActive(true);
+            ApplyItemIconLayout();
         }
 
         public void ShowTooltip(MilestoneData milestone, bool isCompleted, int currentVal, int targetVal)
@@ -465,7 +477,27 @@ namespace Nytherion.UI.Components
             }
 
             panel.SetActive(true);
+            ApplyItemIconLayout();
         }
+        private void ApplyItemIconLayout()
+        {
+            if (itemImage == null || !itemImage.gameObject.activeSelf) return;
+
+            if (currentItem is WeaponData weaponData)
+            {
+                Vector2 areaSize = itemImageBackground != null
+                    ? itemImageBackground.rectTransform.rect.size
+                    : itemImage.rectTransform.rect.size;
+                ItemIconLayoutUtility.Apply(itemImage, areaSize, weaponData.useDiagonalIcon, weaponData.iconSlotScale, weaponData.iconRotationOffset);
+            }
+            else
+            {
+                // 다른 아이템·스킬·진척도 툴팁으로 전환할 때 무기의 회전과 확대를 복구합니다.
+                itemImage.rectTransform.localRotation = defaultItemImageRotation;
+                itemImage.rectTransform.localScale = defaultItemImageScale;
+            }
+        }
+
         public void HideTooltip()
         {
             currentItem = null;

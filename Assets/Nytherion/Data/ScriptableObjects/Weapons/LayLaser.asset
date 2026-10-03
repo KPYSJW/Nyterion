@@ -15,8 +15,11 @@ MonoBehaviour:
   uniqueID: 182b467a-119b-430f-b6ab-6c2c873f72f5
   itemName_KR: "\uB808\uC774 \uB808\uC774\uC800"
   itemName_EN: Lay Laser
-  icon: {fileID: 21300000, guid: d885d008b96138d4e9fc95f3fd3719f7, type: 3}
-  description_KR: "공격 버튼을 눌러 4단계로 충전합니다. 버튼을 놓으면 단계에 따라 굵어지는 광선을 발사해 적에게 주기적으로 피해를 줍니다."
+  icon: {fileID: 21300000, guid: 4402aec81f1ae2e4a9b00a24e84fdc62, type: 3}
+  description_KR: "\uACF5\uACA9 \uBC84\uD2BC\uC744 \uB20C\uB7EC 4\uB2E8\uACC4\uB85C
+    \uCDA9\uC804\uD569\uB2C8\uB2E4. \uBC84\uD2BC\uC744 \uB193\uC73C\uBA74 \uB2E8\uACC4\uC5D0
+    \uB530\uB77C \uAD75\uC5B4\uC9C0\uB294 \uAD11\uC120\uC744 \uBC1C\uC0AC\uD574 \uC801\uC5D0\uAC8C
+    \uC8FC\uAE30\uC801\uC73C\uB85C \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
   description_EN: Hold to charge through four stages. Release to fire a beam that
     grows wider with charge and deals periodic damage.
   isStackable: 0
@@ -26,6 +29,9 @@ MonoBehaviour:
   equipmentType: 0
   traits: 
   statModifiers: []
+  useDiagonalIcon: 1
+  iconRotationOffset: 0
+  iconSlotScale: 1.8
   damage: 4
   range: 10
   cooldown: 0.6
@@ -35,17 +41,37 @@ MonoBehaviour:
   spriteRotationOffset: 0
   visualPositionOffset: {x: -0.2, y: -0.15, z: 0}
   visualScale: 1
+  sortingOrderOffset: 5
+  useFixedFacingPose: 0
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
   chargeEffectPrefab: {fileID: 0}
+  chargeEffectRotationSpeed: 0
   animatorController: {fileID: 9100000, guid: acf79f7d8e62fe34d81d75039afa6f87, type: 2}
   projectilePrefab: {fileID: 5723629214273418960, guid: 8dd94ee0da0ca9d45a7893049484935d, type: 3}
+  projectileAnimationVariants: []
+  projectileStartEffectVariants: []
   projectileSpeed: 0
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1.2
   hasHomingProjectiles: 0
+  usePlayerCircleSpawn: 0
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 30
+  - 15
+  - 0
+  - -15
+  - -30
+  homingTurnSpeed: 180
+  useConstantHomingSpeed: 0
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
   chargeThresholdTime: 0
   requiredRelicId: 
   hitEffectPrefab: {fileID: 0}

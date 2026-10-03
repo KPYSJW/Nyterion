@@ -24,6 +24,7 @@ namespace Nytherion.Editor
         public const string EffectPrefix = "Assets/Prefabs/Gameplay/Combat/VFX/GuardianStaffAttackEffect";
         public const string HitEffectPath = "Assets/Prefabs/Gameplay/Combat/VFX/GuardianStaffHitEffect.prefab";
         private const string HitAnimationFolder = "Assets/Nytherion/Art/Combat/VFX/Animations/GuardianStaffHitEffect";
+        private const string AttackAnimationFolder = "Assets/Nytherion/Art/Combat/VFX/Animations/GuardianStaffAttackEffect";
         private const string SpriteFolder = "Assets/Nytherion/Art/Combat/Weapons/Sprites/";
         private const string EffectFolder = "Assets/Nytherion/Art/Combat/VFX/Sprites/";
         private const string DatabasePath = "Assets/Nytherion/Data/ScriptableObjects/Items/ItemDatabaseSO.asset";
@@ -33,7 +34,30 @@ namespace Nytherion.Editor
         private static void Update()
         {
             if (EditorApplication.isCompiling || EditorApplication.isUpdating ||
-                EditorApplication.isPlayingOrWillChangePlaymode || !File.Exists(Output + "/setup.request")) return;
+                EditorApplication.isPlayingOrWillChangePlaymode) return;
+            if (File.Exists(Output + "/fourth-radius.request"))
+            {
+                File.Delete(Output + "/fourth-radius.request");
+                try { IncreaseFourthAttackRadius(); }
+                catch (Exception error)
+                {
+                    File.WriteAllText(Output + "/fourth-radius.txt", error.ToString());
+                    Debug.LogException(error);
+                }
+                return;
+            }
+            if (File.Exists(Output + "/attack-setup.request"))
+            {
+                File.Delete(Output + "/attack-setup.request");
+                try { UpdateAttackEffects(); }
+                catch (Exception error)
+                {
+                    File.WriteAllText(Output + "/attack-setup.txt", error.ToString());
+                    Debug.LogException(error);
+                }
+                return;
+            }
+            if (!File.Exists(Output + "/setup.request")) return;
             File.Delete(Output + "/setup.request");
             try { CreateAssets(); }
             catch (Exception error)
@@ -58,7 +82,7 @@ namespace Nytherion.Editor
 
             Sprite weaponSprite = SingleSprite(SpriteFolder + "Guardian'sStaff.png");
             Sprite icon = SingleSprite(SpriteFolder + "Guardian'sStaff_Icon.png");
-            GuardianStaffAttackEffect[] effects = new GuardianStaffAttackEffect[3];
+            GuardianStaffAttackEffect[] effects = new GuardianStaffAttackEffect[4];
             for (int i = 0; i < effects.Length; i++) effects[i] = CreateEffect(i + 1);
             GameObject hitEffect = CreateHitEffect();
 
@@ -79,8 +103,8 @@ namespace Nytherion.Editor
             }
             data.itemName_KR = "수호자의 지팡이";
             data.itemName_EN = "Guardian's Staff";
-            data.description_KR = "공격할 때마다 세 가지 수호의 원을 순서대로 펼쳐 플레이어 주변 원형 범위 안의 적을 한 번씩 타격합니다.";
-            data.description_EN = "Cycles through three guardian circles, striking each enemy within the circle around the player once per attack.";
+            data.description_KR = "공격할 때마다 네 가지 수호의 원을 순서대로 펼쳐 플레이어 주변 원형 범위 안의 적을 한 번씩 타격합니다.";
+            data.description_EN = "Cycles through four guardian circles, striking each enemy within the circle around the player once per attack.";
             data.weaponSprite = weaponSprite;
             data.icon = icon;
             data.weaponType = WeaponType.Ranged;
@@ -169,14 +193,86 @@ namespace Nytherion.Editor
             if (changed) File.WriteAllLines(path, savedLines);
         }
 
+        [MenuItem("Tools/Nytherion/Guardian Staff/Update Attack Animators")]
+        public static void UpdateAttackEffects()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("편집 모드에서 실행해 주세요.");
+            Directory.CreateDirectory(Output);
+            GuardianStaffAttackEffect[] effects = Enumerable.Range(1, 4).Select(CreateEffect).ToArray();
+            SaveObject(WeaponPath, "GuardianStaff", root =>
+            {
+                var serialized = new SerializedObject(root.GetComponent<GuardianStaffWeapon>());
+                SerializedProperty array = serialized.FindProperty("attackEffects");
+                array.arraySize = effects.Length;
+                for (int i = 0; i < effects.Length; i++) array.GetArrayElementAtIndex(i).objectReferenceValue = effects[i];
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            });
+            WeaponData data = AssetDatabase.LoadAssetAtPath<WeaponData>(DataPath);
+            data.description_KR = "공격할 때마다 네 가지 수호의 원을 순서대로 펼쳐 플레이어 주변 원형 범위 안의 적을 한 번씩 타격합니다.";
+            data.description_EN = "Cycles through four guardian circles, striking each enemy within the circle around the player once per attack.";
+            EditorUtility.SetDirty(data);
+            AssetDatabase.SaveAssets();
+            File.WriteAllText(Output + "/attack-setup.txt", "PASS 공격 이펙트 1~4 Animator 연결, 무기 순환 1→2→3→4→1");
+        }
+
+        [MenuItem("Tools/Nytherion/Guardian Staff/Increase Fourth Attack Radius")]
+        public static void IncreaseFourthAttackRadius()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("편집 모드에서 실행해 주세요.");
+            SaveObject(EffectPrefix + "4.prefab", "GuardianStaffAttackEffect4", root =>
+            {
+                var serialized = new SerializedObject(root.GetComponent<GuardianStaffAttackEffect>());
+                serialized.FindProperty("radiusMultiplier").floatValue = 1.5f;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            });
+            Directory.CreateDirectory(Output);
+            File.WriteAllText(Output + "/fourth-radius.txt", "PASS 4번 공격만 표시 크기/판정 반지름 1.5배, 기존 Native Radius 유지");
+        }
+
         private static GuardianStaffAttackEffect CreateEffect(int number)
         {
             string path = EffectFolder + $"Guardian'sStaffAttackEffect{number}.png";
             Sprite[] frames = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>()
                 .OrderBy(sprite => int.Parse(sprite.name.Substring(sprite.name.LastIndexOf('_') + 1))).ToArray();
-            int expected = number == 1 ? 4 : 14;
+            int expected = number == 1 ? 4 : number == 4 ? 6 : 14;
             if (frames.Length != expected) throw new InvalidOperationException($"이펙트 {number} 프레임 누락: {frames.Length}/{expected}");
             float radius = frames.Max(frame => Mathf.Max(frame.bounds.size.x, frame.bounds.size.y) * 0.5f);
+            EnsureFolder(AttackAnimationFolder);
+            string name = "GuardianStaffAttackEffect" + number;
+            string clipPath = AttackAnimationFolder + "/" + name + ".anim";
+            AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+            if (clip == null)
+            {
+                float frameRate = number == 1 ? 14f : 28f;
+                // 기존 Inspector 속도는 Animator 클립의 Samples 값으로 옮깁니다.
+                string prefabPath = EffectPrefix + number + ".prefab";
+                if (File.Exists(prefabPath))
+                {
+                    var match = System.Text.RegularExpressions.Regex.Match(File.ReadAllText(prefabPath), @"framesPerSecond: ([\d.]+)");
+                    if (match.Success) frameRate = float.Parse(match.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                clip = new AnimationClip { name = name, frameRate = frameRate };
+                AssetDatabase.CreateAsset(clip, clipPath);
+            }
+            var keys = new ObjectReferenceKeyframe[frames.Length + 1];
+            for (int i = 0; i < frames.Length; i++)
+                keys[i] = new ObjectReferenceKeyframe { time = i / clip.frameRate, value = frames[i] };
+            keys[frames.Length] = new ObjectReferenceKeyframe { time = frames.Length / clip.frameRate, value = null };
+            AnimationUtility.SetObjectReferenceCurve(clip,
+                EditorCurveBinding.PPtrCurve(string.Empty, typeof(SpriteRenderer), "m_Sprite"), keys);
+            AnimationClipSettings clipSettings = AnimationUtility.GetAnimationClipSettings(clip);
+            clipSettings.loopTime = false;
+            AnimationUtility.SetAnimationClipSettings(clip, clipSettings);
+            EditorUtility.SetDirty(clip);
+            string controllerPath = AttackAnimationFolder + "/" + name + ".controller";
+            AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath);
+            if (controller == null) controller = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+            AnimatorStateMachine machine = controller.layers[0].stateMachine;
+            AnimatorState state = machine.states.FirstOrDefault(child => child.state.name == name).state;
+            if (state == null) state = machine.AddState(name);
+            state.motion = clip;
+            machine.defaultState = state;
+            EditorUtility.SetDirty(controller);
             return SaveObject(EffectPrefix + number + ".prefab", "GuardianStaffAttackEffect" + number, root =>
             {
                 SpriteRenderer renderer = root.GetComponent<SpriteRenderer>();
@@ -185,14 +281,13 @@ namespace Nytherion.Editor
                 renderer.sharedMaterial = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
                 renderer.sortingOrder = 100;
                 var effect = root.GetComponent<GuardianStaffAttackEffect>();
-                bool isNewEffect = effect == null;
-                if (isNewEffect) effect = root.AddComponent<GuardianStaffAttackEffect>();
+                if (effect == null) effect = root.AddComponent<GuardianStaffAttackEffect>();
+                Animator animator = root.GetComponent<Animator>();
+                if (animator == null) animator = root.AddComponent<Animator>();
+                animator.runtimeAnimatorController = controller;
+                animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                animator.applyRootMotion = false;
                 var serialized = new SerializedObject(effect);
-                SerializedProperty array = serialized.FindProperty("frames");
-                array.arraySize = frames.Length;
-                for (int i = 0; i < frames.Length; i++) array.GetArrayElementAtIndex(i).objectReferenceValue = frames[i];
-                // 기존 프리팹의 Inspector에서 조절한 재생 속도는 재생성 시에도 유지합니다.
-                if (isNewEffect) serialized.FindProperty("framesPerSecond").floatValue = number == 1 ? 14f : 28f;
                 serialized.FindProperty("nativeRadius").floatValue = radius;
                 serialized.ApplyModifiedPropertiesWithoutUndo();
             }).GetComponent<GuardianStaffAttackEffect>();

@@ -28,6 +28,9 @@ MonoBehaviour:
   equipmentType: 0
   traits: 03000000
   statModifiers: []
+  useDiagonalIcon: 1
+  iconRotationOffset: 0
+  iconSlotScale: 1.8
   damage: 20
   range: 1
   cooldown: 1.4
@@ -37,17 +40,37 @@ MonoBehaviour:
   spriteRotationOffset: -45
   visualPositionOffset: {x: 0, y: 0, z: 0}
   visualScale: 1
+  sortingOrderOffset: -1
+  useFixedFacingPose: 0
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
   chargeEffectPrefab: {fileID: 0}
+  chargeEffectRotationSpeed: 0
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 781400000000000001, guid: f542c384fb734d7cbcf64ce48598d5b0, type: 3}
+  projectileAnimationVariants: []
+  projectileStartEffectVariants: []
   projectileSpeed: 12
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
   hasHomingProjectiles: 0
+  usePlayerCircleSpawn: 0
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 30
+  - 15
+  - 0
+  - -15
+  - -30
+  homingTurnSpeed: 180
+  useConstantHomingSpeed: 0
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
   chargeThresholdTime: 0.15
   requiredRelicId: 
   hitEffectPrefab: {fileID: 612600000000000001, guid: 7e1517df480b407ba15be0c1cf475202, type: 3}
