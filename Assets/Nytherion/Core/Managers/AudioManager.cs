@@ -24,6 +24,7 @@ namespace Nytherion.Core.Managers
 
             if (bgmSource != null)
             {
+                bgmSource.loop = true;
                 bgmSource.volume = UserSettings.GetBgmVolume(bgmSource.volume);
             }
         }
@@ -90,10 +91,10 @@ namespace Nytherion.Core.Managers
         {
             if (clip == null || bgmSource == null) return;
 
-            if (bgmSource.clip == clip) return;
+            bgmSource.loop = true;
+            if (bgmSource.clip == clip && bgmSource.isPlaying) return;
 
             bgmSource.clip = clip;
-            bgmSource.loop = true;
             bgmSource.Play();
         }
 
