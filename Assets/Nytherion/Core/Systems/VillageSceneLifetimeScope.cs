@@ -26,7 +26,6 @@ public class VillageSceneLifetimeScope : LifetimeScope
 
     [Header("GameScene Only Managers")]
     [SerializeField] private GachaManager gachaManagerPrefab;
-    [SerializeField] private GachaUIController gachaUIControllerPrefab;
     [SerializeField] private InteractionManager interactionManagerPrefab;
     //[SerializeField] private DungeonManager dungeonManagerPrefab;
     [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
@@ -254,10 +253,6 @@ public class VillageSceneLifetimeScope : LifetimeScope
 
     private void InstallGameSceneOnlyUI(IContainerBuilder builder)
     {
-        builder.RegisterComponentInNewPrefab(gachaUIControllerPrefab, Lifetime.Singleton)
-                .AsImplementedInterfaces()
-                .AsSelf();
-
         builder.RegisterComponentInNewPrefab(inventoryUIPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
                 .AsSelf();
@@ -315,11 +310,6 @@ public class VillageSceneLifetimeScope : LifetimeScope
     {
         // ShopDealer���� ������ ã�Ƽ� ���
         builder.RegisterComponentInHierarchy<ShopDealer>()
-                .AsImplementedInterfaces()
-                .AsSelf();
-
-        // GachaNPC���� ������ ã�Ƽ� ���
-        builder.RegisterComponentInHierarchy<GachaNPC>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 

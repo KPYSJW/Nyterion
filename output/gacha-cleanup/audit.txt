@@ -1,0 +1,38 @@
+PASS 열린 씬에 저장되지 않은 변경 없음: Assets/Scenes/GameScene.unity
+PASS 기존 가챠 오브젝트 없음: Assets/Scenes/GameScene.unity
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/ControlsButton
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/CloseButton
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/AddGold
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/HealFull
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/GodMode
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/AddItem
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/SaveGame
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/OpenRelic
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/OpenShop
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/AllRelic
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/GameScene.unity/SpawnEnemy
+PASS GameScene 상자 안내 UI와 드롭 유물 프리팹 유지
+PASS 상자 Animator 참조 유지
+PASS 상자 Open/Close 트리거 유지
+PASS 상자 유물 드롭 Animation Event 유지
+PASS 최신 직렬화 필드로 저장: Assets/Scenes/GameScene.unity
+PASS 기존 가챠 오브젝트 없음: Assets/Scenes/Village.unity
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/Village.unity/ControlsButton
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/Village.unity/CloseButton
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/Village.unity/TestDamageButton
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/Village.unity/SpawnTestBlockButton
+PASS 최신 직렬화 필드로 저장: Assets/Scenes/Village.unity
+PASS 기존 가챠 오브젝트 없음: Assets/Scenes/test2.unity
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/test2.unity/ControlsButton
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/test2.unity/CloseButton
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/test2.unity/TestDamageButton
+PASS 기존 UI 버튼 호출 없음: Assets/Scenes/test2.unity/SpawnTestBlockButton
+PASS 최신 직렬화 필드로 저장: Assets/Scenes/test2.unity
+PASS 사용 종료 자산 없음: Assets/Prefabs/Infrastructure/Managers/GachaUIController.prefab
+PASS 사용 종료 자산 없음: Assets/Prefabs/UI/Gacha/GachaResultSlot.prefab
+PASS 사용 종료 자산 없음: Assets/Prefabs/UI/Gacha/GachaBox.prefab
+PASS 사용 종료 자산 없음: Assets/Prefabs/Gameplay/Characters/NPC/GachaNPC.prefab
+PASS 사용 종료 자산 없음: Assets/Nytherion/UI/Gacha/GachaUIController.cs
+PASS 사용 종료 자산 없음: Assets/Nytherion/UI/Gacha/GachaResultSlot.cs
+PASS 사용 종료 자산 없음: Assets/Nytherion/UI/Gacha/GachaAnimationStateBehaviour.cs
+PASS 사용 종료 자산 없음: Assets/Nytherion/Gameplay/Characters/NPC/GachaNPC.cs

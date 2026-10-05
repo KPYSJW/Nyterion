@@ -19,7 +19,6 @@ namespace Nytherion.Core.Managers
         private InputManager inputManager;
         private EventManager eventManager;
         private ShopUI shopUI;
-        private GachaUIController gachaUIController;
         private RelicUIController relicUIController;
 
         private static readonly Collider2D[] interactionBuffer = new Collider2D[10];
@@ -29,14 +28,12 @@ namespace Nytherion.Core.Managers
             InputManager inputManager,
             EventManager eventManager,
             ShopUI shopUI,
-          GachaUIController gachaUIController,
             RelicUIController relicUIController,
             PlayerController playerController)
         {
             this.inputManager = inputManager;
             this.eventManager = eventManager;
             this.shopUI = shopUI;
-            this.gachaUIController = gachaUIController;
             this.relicUIController = relicUIController;
             playerTransform = playerController.transform;
 
@@ -62,11 +59,6 @@ namespace Nytherion.Core.Managers
             if (shopUI != null && shopUI.IsOpen)
             {
                 shopUI.Close();
-                return;
-            }
-            if (gachaUIController != null && gachaUIController.IsOpen)
-            {
-                gachaUIController.Close();
                 return;
             }
             if (relicUIController != null && relicUIController.IsOpen)

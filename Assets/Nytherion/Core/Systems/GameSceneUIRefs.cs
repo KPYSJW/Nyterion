@@ -36,40 +36,6 @@ public class GameSceneUIRefs : MonoBehaviour
     public Button InventoryCloseButton => inventoryCloseButton;
     
 
-    [Header("Gacha UI References")]
-    [SerializeField] private CanvasGroup gachaCanvasGroup;
-    public CanvasGroup GachaCanvasGroup => gachaCanvasGroup;
-
-    [Header("Gacha Panels")]
-    [SerializeField] private GameObject gachaMainPanel;
-    public GameObject GachaMainPanel => gachaMainPanel;
-    [SerializeField] private GameObject relicResultPanel;
-    public GameObject RelicResultPanel => relicResultPanel;
-    [SerializeField] private GameObject relicSubPanel;
-    public GameObject RelicSubPanel => relicSubPanel;
-
-    [Header("Gacha UI Buttons")]
-    [SerializeField] private Button drawOnceBtton;
-    public Button DrawOnceButton => drawOnceBtton;
-
-    [SerializeField] private Button drawTenBtton;
-    public Button DrawTenButton => drawTenBtton;
-    
-    [SerializeField] private Button gachaCloseButton;
-    public Button GachaCloseButton => gachaCloseButton;
-    [SerializeField] private Button relicResultCloseButton;
-    public Button RelicResultCloseButton => relicResultCloseButton;
-
-    [Header("Gacha Type Indicator Text")]
-    [SerializeField] private TextMeshProUGUI gachaTypeTitleText;
-    public TextMeshProUGUI GachaTypeTitleText => gachaTypeTitleText;
-
-    [Header("Gacha Result Panel")]
-    [SerializeField] private Transform relicResultSlotParent;
-    public Transform RelicResultSlotParent => relicResultSlotParent;
-    [SerializeField] private GameObject resultSlotPrefab;
-    public GameObject ResultSlotPrefab => resultSlotPrefab;
-
     [Header("Settings UI")]
     [SerializeField] private Slider masterSlider;
     public Slider MasterSlider => masterSlider;

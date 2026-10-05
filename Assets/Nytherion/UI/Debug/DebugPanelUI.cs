@@ -57,7 +57,6 @@ namespace Nytherion.UI.Test
         private PlayerManager playerManager;
         private ShopManager shopManager;
         private ShopUI shopUI;
-        private GachaUIController gachaUIController;
         private RelicUIController relicUIController;
         private RelicManager relicManager;
         private SkillDataManager skillDataManager;
@@ -94,7 +93,6 @@ namespace Nytherion.UI.Test
             PlayerManager playerManager,
             ShopManager shopManager,
             ShopUI shopUI,
-            GachaUIController gachaUIController,
             RelicUIController relicUIController,
             RelicManager relicManager,
             SkillDataManager skillDataManager,
@@ -108,7 +106,6 @@ namespace Nytherion.UI.Test
             this.playerManager = playerManager;
             this.shopManager = shopManager;
             this.shopUI = shopUI;
-            this.gachaUIController = gachaUIController;
             this.relicUIController = relicUIController;
             this.relicManager = relicManager;
             this.skillDataManager = skillDataManager;
@@ -153,7 +150,6 @@ namespace Nytherion.UI.Test
                 // UI 컨트롤러들과 PlayerManager는 보통 GameSceneScope에 있으므로 씬에서 직접 찾음
                 if (playerManager == null) playerManager = FindObjectOfType<PlayerManager>();
                 if (shopUI == null) shopUI = FindObjectOfType<ShopUI>();
-                if (gachaUIController == null) gachaUIController = FindObjectOfType<GachaUIController>();
                 if (relicUIController == null) relicUIController = FindObjectOfType<RelicUIController>();
 
                 if (inventoryDataManager != null) Debug.Log("[DebugPanelUI] Manually Injected Dependencies.");
@@ -227,16 +223,6 @@ namespace Nytherion.UI.Test
             else
             {
                 UpdateStatusText("상점 UI 또는 데이터가 없습니다.");
-            }
-        }
-
-        public void OpenGachaUI()
-        {
-            if (gachaUIController != null)
-            {
-                gachaUIController.Toggle();
-                Close();
-                UpdateStatusText("가챠 UI 토글");
             }
         }
 
