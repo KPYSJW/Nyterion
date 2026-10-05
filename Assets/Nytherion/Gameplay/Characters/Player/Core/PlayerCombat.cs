@@ -45,6 +45,12 @@ namespace Nytherion.GamePlay.Characters.Player
         private float genericChargeTime;
 
         public bool IsGenericCharging => isGenericCharging;
+        public bool IsAttackActive => currentWeapon != null &&
+            (isAttackHeld || isGenericCharging ||
+             (currentWeapon is IChargeableWeapon chargeable && chargeable.IsCharging) ||
+             (currentWeapon is LaserWeapon laser && laser.IsFiring) ||
+             (currentWeapon is LayLaserWeapon layLaser && layLaser.IsFiring) ||
+             (currentWeapon is VoidRayWeapon voidRay && voidRay.IsFiring));
         public float GenericChargePercent
         {
             get
@@ -79,6 +85,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private void HandleAttackDown()
         {
             isAttackHeld = true;
+            if (currentWeapon != null) playerController?.NotifyCombatActivity();
             if (ShouldUseGenericCharging())
             {
                 BeginGenericCharge();
@@ -367,6 +374,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
                 Vector2 currentDirection = new Vector2(Mathf.Cos(currentAngle * Mathf.Deg2Rad), Mathf.Sin(currentAngle * Mathf.Deg2Rad));
 
+                // 레이저도 장착 오프셋을 유지합니다. 총구를 중심 조준선으로 옮기면 Y 오프셋이 상쇄됩니다.
                 weaponPoint.position = playerCenter + (Vector3)(currentDirection * orbitRadius);
                 weaponPoint.rotation = Quaternion.Euler(0, 0, currentAngle);
 
@@ -380,33 +388,22 @@ namespace Nytherion.GamePlay.Characters.Player
                     weaponPoint.localScale = new Vector3(1f, 1f, 1f);
                 }
 
-                AlignLaserFirePointWithAimLine(playerCenter, currentDirection);
+                if (currentWeapon is LaserWeapon laserWeapon)
+                    laserWeapon.UpdateAimAndPose(mouseWorldPos);
             }
-        }
-
-        private void AlignLaserFirePointWithAimLine(Vector3 playerCenter, Vector2 aimDirection)
-        {
-            if (!(currentWeapon is LaserWeapon laserWeapon) || laserWeapon.firePoint == null ||
-                aimDirection.sqrMagnitude <= Mathf.Epsilon)
-            {
-                return;
-            }
-
-            // 발사 방향은 플레이어 중심 기준으로 유지하되, 조준 축의 위치만 실제 총구를 지나게 합니다.
-            Vector2 normal = new Vector2(-aimDirection.y, aimDirection.x).normalized;
-            float lateralOffset = Vector2.Dot(
-                (Vector2)(laserWeapon.firePoint.position - playerCenter), normal);
-            weaponPoint.position -= (Vector3)(normal * lateralOffset);
         }
 
         public void Attack()
         {
             if (currentWeapon != null && currentWeapon.CanAttack())
             {
+                playerController?.NotifyCombatActivity();
                 currentWeapon.ResetGenericChargeMultiplier();
                 Vector2 fireDirection = currentWeapon is VoidRayWeapon voidRay
                     ? voidRay.CurrentFireDirection
-                    : (Vector2)weaponPoint.right;
+                    : currentWeapon is LaserWeapon laserWeapon
+                        ? laserWeapon.CurrentFireDirection
+                        : (Vector2)weaponPoint.right;
                 Vector2 mouseScreenPos = inputManager.MousePosition;
                 Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
                 targetWorldPos.z = 0f;
@@ -421,6 +418,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (currentWeapon != null)
             {
+                playerController?.NotifyCombatActivity();
                 currentWeapon.AttackEnd();
                 OnPlayerAttackEnd?.Invoke();
             }
@@ -454,12 +452,14 @@ namespace Nytherion.GamePlay.Characters.Player
             isGenericCharging = false;
             genericChargeTime = 0f;
 
-            Vector2 fireDirection = weaponPoint.right;
+            Vector2 fireDirection = currentWeapon is LaserWeapon laserWeapon
+                ? laserWeapon.CurrentFireDirection : (Vector2)weaponPoint.right;
             Vector2 mouseScreenPos = inputManager.MousePosition;
             Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
             targetWorldPos.z = 0f;
 
             LastAttackDirection = fireDirection.normalized;
+            playerController?.NotifyCombatActivity();
             currentWeapon.AttackWithGenericCharge(fireDirection, targetWorldPos, chargePercent);
             currentWeapon.AttackEnd();
             OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);
@@ -481,6 +481,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void OnDisable()
         {
+            isAttackHeld = false;
             CancelGenericCharge();
             if (inputManager != null)
             {

@@ -77,7 +77,14 @@ namespace Nytherion.GamePlay.Characters.Player
             }
 
             currentAnimationName = animationName;
-            animator.Play(currentAnimationName);
+            if (playerController != null)
+            {
+                playerController.PlayAnimation(currentAnimationName);
+            }
+            else
+            {
+                animator.Play(currentAnimationName);
+            }
         }
 
         private string GetDirectionSuffix(Vector2 aimDirection)

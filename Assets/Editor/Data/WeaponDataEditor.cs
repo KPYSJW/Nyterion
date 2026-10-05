@@ -19,7 +19,8 @@ namespace Nytherion.Editor
                 // 상속된 Icon 바로 아래에 표시하므로 원래 선언 위치에서는 생략합니다.
                 if (property.name == nameof(WeaponData.useDiagonalIcon) ||
                     property.name == nameof(WeaponData.iconRotationOffset) ||
-                    property.name == nameof(WeaponData.iconSlotScale)) continue;
+                    property.name == nameof(WeaponData.iconSlotScale) ||
+                    property.name == nameof(WeaponData.inventoryIconScale)) continue;
 
                 using (new EditorGUI.DisabledScope(property.name == "m_Script"))
                 {
@@ -30,7 +31,7 @@ namespace Nytherion.Editor
                 {
                     EditorGUILayout.PropertyField(
                         serializedObject.FindProperty(nameof(WeaponData.useDiagonalIcon)),
-                        new GUIContent("대각선 배치", "체크: 45도 대각선 배치 / 해제: 원본 방향 배치"));
+                        new GUIContent("대각선 배치", "인벤토리 외 슬롯과 툴팁에 적용됩니다. 인벤토리는 원본 방향을 유지합니다."));
                     using (new EditorGUI.DisabledScope(!serializedObject.FindProperty(nameof(WeaponData.useDiagonalIcon)).boolValue &&
                         !serializedObject.FindProperty(nameof(WeaponData.useDiagonalIcon)).hasMultipleDifferentValues))
                     {
@@ -40,7 +41,10 @@ namespace Nytherion.Editor
                     }
                     EditorGUILayout.PropertyField(
                         serializedObject.FindProperty(nameof(WeaponData.iconSlotScale)),
-                        new GUIContent("Icon Slot Scale", "슬롯과 드래그 이미지에 적용할 아이콘 크기 배율"));
+                        new GUIContent("Icon Slot Scale", "장착·상점 슬롯과 툴팁의 크기입니다. 인벤토리에는 적용되지 않습니다."));
+                    EditorGUILayout.PropertyField(
+                        serializedObject.FindProperty(nameof(WeaponData.inventoryIconScale)),
+                        new GUIContent("인벤토리 아이콘 크기", "1: 현재 기본 크기 / 0.75: 축소. 확대 시 정수 픽셀 배율에 맞춥니다."));
                 }
             }
             serializedObject.ApplyModifiedProperties();

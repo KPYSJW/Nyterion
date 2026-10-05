@@ -20,16 +20,54 @@ namespace Nytherion.GamePlay.Combat
         private float recoilReturnElapsed;
         private bool hasRecoilRestPose;
         private bool isReturningFromRecoil;
+        private Vector3 appliedVisualPositionOffset;
+        private Vector3 aimTargetPosition;
+        private bool hasAimTarget;
 
         public override bool AllowAutoFire => false;
         public bool IsFiring => activeBeam != null && activeBeam.IsFiring;
         internal Transform CasterTransform => playerManager != null ? playerManager.transform : transform;
+        internal Vector2 CurrentFireDirection => firePoint != null
+            ? ((Vector2)firePoint.TransformVector(Vector3.right)).normalized
+            : ((Vector2)transform.TransformVector(Vector3.right)).normalized;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            appliedVisualPositionOffset = weaponData != null ? weaponData.visualPositionOffset : Vector3.zero;
+        }
 
         public override void Initialize(WeaponData data)
         {
             StopBeam();
             RestoreRecoilImmediately();
             base.Initialize(data);
+            appliedVisualPositionOffset = data.visualPositionOffset;
+            hasAimTarget = false;
+        }
+
+        internal void UpdateAimAndPose(Vector3 targetPosition)
+        {
+            aimTargetPosition = targetPosition;
+            hasAimTarget = true;
+            UpdateVisualPositionOffset();
+            ApplyAimPose();
+        }
+
+        private void ApplyAimPose()
+        {
+            if (!hasAimTarget) return;
+
+            Vector3 toTarget = aimTargetPosition - transform.position;
+            if (((Vector2)toTarget).sqrMagnitude < 0.0064f) return;
+
+            // 부모는 플레이어 주위의 장착 위치를 정하고, 무기는 실제 위치에서 조준점을 바라봅니다.
+            // 좌우 반전 스케일까지 역변환해 스프라이트와 총구의 실제 축을 함께 회전합니다.
+            Vector3 localDirection = transform.parent != null
+                ? transform.parent.InverseTransformVector(toTarget)
+                : toTarget;
+            float angle = Mathf.Atan2(localDirection.y, localDirection.x) * Mathf.Rad2Deg;
+            transform.localRotation = Quaternion.Euler(0f, 0f, angle);
         }
 
         public override bool CanAttack()
@@ -58,15 +96,10 @@ namespace Nytherion.GamePlay.Combat
                 : Instantiate(data.projectilePrefab, firePoint.position, Quaternion.identity);
             if (instance == null) return;
 
-            // PlayerCombat이 플레이어 중심을 기준으로 계산한 방향을 그대로 사용합니다.
-            // 레이저의 시작 위치만 firePoint로 두어, 마우스가 플레이어와 총구 사이에 있어도
-            // 총구에서 플레이어 쪽으로 역발사되지 않게 합니다.
-            Vector2 aimDirection = direction.sqrMagnitude > 0.0001f
-                ? direction.normalized
-                : (Vector2)firePoint.right;
-
             activeBeam = instance.GetComponent<WeaponLaserBeam>();
             BeginTickRecoil();
+            // 발사 방향은 무기/총구의 실제 축 하나만 사용합니다.
+            Vector2 aimDirection = CurrentFireDirection;
             activeBeam.Initialize(this, firePoint, aimDirection, data,
                 data.damage * EffectiveDamageMultiplier, pool);
             lastAttackTime = Time.time;
@@ -148,7 +181,18 @@ namespace Nytherion.GamePlay.Combat
 
         private void LateUpdate()
         {
+            UpdateVisualPositionOffset();
             AdvanceRecoil(Time.deltaTime);
+            ApplyAimPose();
+        }
+
+        private void UpdateVisualPositionOffset()
+        {
+            if (weaponData == null || appliedVisualPositionOffset == weaponData.visualPositionOffset) return;
+
+            // 장착/반동이 적용한 위치에 변경분만 더해 플레이 중 조정과 반동 복귀를 함께 유지합니다.
+            transform.localPosition += weaponData.visualPositionOffset - appliedVisualPositionOffset;
+            appliedVisualPositionOffset = weaponData.visualPositionOffset;
         }
 
         private void AdvanceRecoil(float deltaTime)
@@ -174,6 +218,7 @@ namespace Nytherion.GamePlay.Combat
                 transform.localPosition = recoilRestLocalPosition +
                     recoilLocalDirection * currentRecoilDistance;
                 lastAppliedRecoilLocalPosition = transform.localPosition;
+                ApplyAimPose();
             }
         }
 
@@ -199,6 +244,7 @@ namespace Nytherion.GamePlay.Combat
             recoilReturnElapsed = 0f;
             hasRecoilRestPose = false;
             isReturningFromRecoil = false;
+            ApplyAimPose();
         }
 
         private void StopBeam()

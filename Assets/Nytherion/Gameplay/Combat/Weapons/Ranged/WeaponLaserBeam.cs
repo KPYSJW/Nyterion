@@ -7,6 +7,7 @@ using UnityEngine;
 namespace Nytherion.GamePlay.Combat
 {
     /// <summary>레이저의 수명, 화면/장애물 끝점, 번개 외형, 틱 판정과 풀 반환을 담당합니다.</summary>
+    [DefaultExecutionOrder(100)] // 무기의 위치/반동/조준 자세 갱신 뒤 실제 총구 축을 읽습니다.
     public class WeaponLaserBeam : MonoBehaviour
     {
         private static readonly int ColorProperty = Shader.PropertyToID("_Color");
@@ -107,8 +108,8 @@ namespace Nytherion.GamePlay.Combat
             hitTargets.Clear();
 
             initialDirection = aimDirection.sqrMagnitude > 0.0001f
-                ? aimDirection.normalized : (Vector2)origin.right;
-            localAimDirection = origin.InverseTransformDirection(initialDirection);
+                ? aimDirection.normalized : ((Vector2)origin.TransformVector(Vector3.right)).normalized;
+            localAimDirection = origin.InverseTransformVector(initialDirection);
             targetFilter = new ContactFilter2D { useTriggers = true };
             targetFilter.SetLayerMask(data.targetLayers);
             obstructionFilter = new ContactFilter2D { useTriggers = false };
@@ -226,7 +227,7 @@ namespace Nytherion.GamePlay.Combat
         private void UpdateGeometry(float visibility, bool refreshJitter)
         {
             direction = followAim
-                ? ((Vector2)origin.TransformDirection(localAimDirection)).normalized
+                ? ((Vector2)origin.TransformVector(localAimDirection)).normalized
                 : initialDirection;
             if (direction.sqrMagnitude < 0.0001f) direction = Vector2.right;
 

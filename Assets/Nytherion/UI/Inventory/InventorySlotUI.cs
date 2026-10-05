@@ -4,6 +4,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Components;
 using Nytherion.UI.Inventory.Utils;
+using Nytherion.Data.ScriptableObjects.Weapons;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -54,6 +55,20 @@ namespace Nytherion.UI.Inventory
             base.UpdateSlotBackground(item, hasItem);
             // 빈 슬롯과 등급별 슬롯 모두 스프라이트 변경 직후 같은 픽셀 배율을 적용한다.
             PixelPerfectSlotFrame.Apply(slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>());
+        }
+
+        protected override void UpdateVisuals(ItemData item, int count)
+        {
+            if (item != null && count > 0 && iconImage != null && iconImage.transform != transform)
+                PixelPerfectItemIcon.Apply(iconImage, transform as RectTransform,
+                    item is WeaponData weaponData ? weaponData.inventoryIconScale : 1f);
+            base.UpdateVisuals(item, count);
+        }
+
+        protected override void ApplyIconLayout()
+        {
+            // 인벤토리는 원본 방향과 화면의 픽셀 격자를 유지한다.
+            if (iconImage != null) iconImage.GetComponent<PixelPerfectItemIcon>()?.Refresh();
         }
         void OnEnable() => input?.Enable(); 
         void OnDisable() => input?.Disable();

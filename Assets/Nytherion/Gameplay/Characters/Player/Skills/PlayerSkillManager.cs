@@ -54,6 +54,7 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 if (equippedSkills[index].TryUse())
                 {
+                    GetComponent<PlayerController>()?.NotifyCombatActivity();
                     // 스킬 사용 진척도 업데이트
                     progressionManager?.ProcessAction(ProgressionType.UseSkill, 1);
                 }

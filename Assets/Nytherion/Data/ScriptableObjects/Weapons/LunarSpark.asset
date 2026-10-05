@@ -28,6 +28,7 @@ MonoBehaviour:
   useDiagonalIcon: 1
   iconRotationOffset: 0
   iconSlotScale: 2
+  inventoryIconScale: 1
   damage: 1
   range: 6
   cooldown: 0.8
@@ -35,7 +36,7 @@ MonoBehaviour:
   weaponSprite: {fileID: 21300000, guid: ca75fa904d8110345ba81244471e5d7a, type: 3}
   firePointOffset: {x: 0.3, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: 0.55, y: -0.1, z: 0}
+  visualPositionOffset: {x: 0.4, y: -0.14, z: 0}
   visualScale: 0.8
   sortingOrderOffset: 5
   useFixedFacingPose: 0

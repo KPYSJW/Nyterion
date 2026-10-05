@@ -16,8 +16,10 @@ MonoBehaviour:
   itemName_KR: "\uBD88\uADF8\uB298 \uC9C0\uD321\uC774"
   itemName_EN: Blazeshade Staff
   icon: {fileID: 21300000, guid: b63b2e1e6b354c9aa9e639776de7a175, type: 3}
-  description_KR: "직접 공격 대신 주변 불꽃 고리로 1초마다 피해."
-  description_EN: "Replaces direct attacks with a fire ring that damages nearby enemies every second."
+  description_KR: "\uC9C1\uC811 \uACF5\uACA9 \uB300\uC2E0 \uC8FC\uBCC0 \uBD88\uAF43
+    \uACE0\uB9AC\uB85C 1\uCD08\uB9C8\uB2E4 \uD53C\uD574."
+  description_EN: Replaces direct attacks with a fire ring that damages nearby enemies
+    every second.
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 
@@ -28,6 +30,7 @@ MonoBehaviour:
   useDiagonalIcon: 1
   iconRotationOffset: 10
   iconSlotScale: 1.8
+  inventoryIconScale: 1
   damage: 10
   range: 2.75
   cooldown: 1
@@ -35,7 +38,7 @@ MonoBehaviour:
   weaponSprite: {fileID: 21300000, guid: 106fbf8d69b24c37a40ae4addf5ae310, type: 3}
   firePointOffset: {x: 0, y: 0, z: 0}
   spriteRotationOffset: 50
-  visualPositionOffset: {x: 0, y: 0.3, z: 0}
+  visualPositionOffset: {x: -0.03, y: 0.28, z: 0}
   visualScale: 1
   sortingOrderOffset: -1
   useFixedFacingPose: 0

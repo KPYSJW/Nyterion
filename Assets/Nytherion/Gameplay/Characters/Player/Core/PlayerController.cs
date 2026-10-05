@@ -14,6 +14,16 @@ namespace Nytherion.GamePlay.Characters.Player
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Animator animator;
 
+        [Header("전투 후 대기 애니메이션")]
+        [Tooltip("마지막 공격·차징·피격 이후 idle 애니메이션을 다시 재생하기까지의 시간(초)")]
+        [SerializeField, Min(0f)] private float idleAnimationResumeDelay = 3f;
+
+        private PlayerCombat playerCombat;
+        private float lastCombatActivityTime = float.NegativeInfinity;
+        private string requestedAnimationName = "Idle";
+        private bool isIdlePoseFrozen;
+        private float animationSpeedBeforeFreeze = 1f;
+
         public Vector2 MoveInput
         {
             get
@@ -70,7 +80,59 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void Start()
         {
+            playerCombat = GetComponent<PlayerCombat>();
             StartCoroutine(InitializeWhenReady());
+        }
+
+        private void LateUpdate()
+        {
+            if (playerCombat != null && playerCombat.IsAttackActive)
+            {
+                NotifyCombatActivity();
+            }
+
+            UpdateIdleAnimation();
+        }
+
+        public void NotifyCombatActivity()
+        {
+            lastCombatActivityTime = Time.time;
+        }
+
+        private void UpdateIdleAnimation()
+        {
+            if (animator == null) return;
+
+            bool isIdle = requestedAnimationName == "Idle" ||
+                requestedAnimationName.StartsWith("Idle_");
+            bool shouldFreeze = !IsDashing && isIdle &&
+                ((playerCombat != null && playerCombat.IsAttackActive) ||
+                 Time.time - lastCombatActivityTime < idleAnimationResumeDelay);
+
+            if (shouldFreeze && !isIdlePoseFrozen)
+            {
+                animationSpeedBeforeFreeze = animator.speed;
+                isIdlePoseFrozen = true;
+                animator.speed = 0f;
+                // 전투 중 정지 자세는 idle 클립의 첫 프레임으로 고정합니다.
+                animator.Play(requestedAnimationName, 0, 0f);
+                animator.Update(0f);
+            }
+            else if (!shouldFreeze)
+            {
+                RestoreAnimationSpeed();
+            }
+        }
+
+        private void RestoreAnimationSpeed()
+        {
+            if (!isIdlePoseFrozen) return;
+
+            if (animator != null)
+            {
+                animator.speed = animationSpeedBeforeFreeze;
+            }
+            isIdlePoseFrozen = false;
         }
 
         private IEnumerator InitializeWhenReady()
@@ -381,7 +443,10 @@ namespace Nytherion.GamePlay.Characters.Player
         }
         public void PlayAnimation(string animationName)
         {
+            RestoreAnimationSpeed();
+            requestedAnimationName = animationName;
             animator.Play(animationName);
+            UpdateIdleAnimation();
         }
 
         public void HandleSkillInput(int index)
@@ -391,6 +456,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void OnDisable()
         {
+            RestoreAnimationSpeed();
             if (dashProtectionActive)
             {
                 playerHealth ??= GetComponent<PlayerHealth>();

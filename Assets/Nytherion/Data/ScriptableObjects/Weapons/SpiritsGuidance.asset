@@ -16,8 +16,12 @@ MonoBehaviour:
   itemName_KR: "\uC815\uB839\uC758 \uC778\uB3C4"
   itemName_EN: Spirits' Guidance
   icon: {fileID: 21300000, guid: 4d9574aa037f295409fc44d607d0fee5, type: 3}
-  description_KR: "주변 원의 무작위 지점에서 선택한 적을 추적하는 마법탄 발사. 추가 투사체는 서로 다른 지점에서 발사."
-  description_EN: "Fires homing bolts at the selected enemy from random points on a surrounding circle. Extra bolts launch from separate points."
+  description_KR: "\uC8FC\uBCC0 \uC6D0\uC758 \uBB34\uC791\uC704 \uC9C0\uC810\uC5D0\uC11C
+    \uC120\uD0DD\uD55C \uC801\uC744 \uCD94\uC801\uD558\uB294 \uB9C8\uBC95\uD0C4 \uBC1C\uC0AC.
+    \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB294 \uC11C\uB85C \uB2E4\uB978 \uC9C0\uC810\uC5D0\uC11C
+    \uBC1C\uC0AC."
+  description_EN: Fires homing bolts at the selected enemy from random points on
+    a surrounding circle. Extra bolts launch from separate points.
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 
@@ -28,6 +32,7 @@ MonoBehaviour:
   useDiagonalIcon: 1
   iconRotationOffset: 15
   iconSlotScale: 1.6
+  inventoryIconScale: 1
   damage: 1
   range: 10
   cooldown: 0.45
@@ -35,7 +40,7 @@ MonoBehaviour:
   weaponSprite: {fileID: 21300000, guid: 94ebb418afb1a4d489dd9358e2e60bf7, type: 3}
   firePointOffset: {x: 0.4, y: 0, z: 0}
   spriteRotationOffset: 55
-  visualPositionOffset: {x: 0.4, y: 1, z: 0}
+  visualPositionOffset: {x: 0.45, y: 1.1, z: 0}
   visualScale: 1
   sortingOrderOffset: -1
   useFixedFacingPose: 1

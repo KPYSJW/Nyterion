@@ -49,6 +49,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
             if (appliedDamage > 0f)
             {
+                GetComponent<PlayerController>()?.NotifyCombatActivity();
                 OnPlayerDamaged?.Invoke(appliedDamage);
             }
 

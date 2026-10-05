@@ -138,7 +138,7 @@ namespace Nytherion.UI.Inventory
         }
 #endif
 
-        private void ApplyIconLayout()
+        protected virtual void ApplyIconLayout()
         {
             // 슬롯 배경의 사각형 입력 영역은 유지하고 자식 아이콘만 회전합니다.
             if (iconImage == null || iconImage.sprite == null || iconImage.transform == transform) return;

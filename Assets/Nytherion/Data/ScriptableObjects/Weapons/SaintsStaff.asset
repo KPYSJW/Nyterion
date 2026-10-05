@@ -16,8 +16,9 @@ MonoBehaviour:
   itemName_KR: "\uC131\uC790\uC758 \uC9C0\uD321\uC774"
   itemName_EN: Saint's Staff
   icon: {fileID: 1503601313, guid: 0d9595b110364ad4895d4a5315701f70, type: 3}
-  description_KR: "적중 시 15% 확률로 아군 체력 2 회복."
-  description_EN: "Hits have a 15% chance to heal allies for 2 health."
+  description_KR: "\uC801\uC911 \uC2DC 15% \uD655\uB960\uB85C \uC544\uAD70 \uCCB4\uB825
+    2 \uD68C\uBCF5."
+  description_EN: Hits have a 15% chance to heal allies for 2 health.
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 
@@ -28,6 +29,7 @@ MonoBehaviour:
   useDiagonalIcon: 1
   iconRotationOffset: 0
   iconSlotScale: 1.5
+  inventoryIconScale: 0.75
   damage: 20
   range: 7
   cooldown: 0.8
@@ -35,8 +37,8 @@ MonoBehaviour:
   weaponSprite: {fileID: 21300000, guid: c3e562dc8fd1a0942b9bbcc6cba5cc59, type: 3}
   firePointOffset: {x: -0.3, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: 0.5, y: -0.1, z: 0}
-  visualScale: 0.75
+  visualPositionOffset: {x: 0.35, y: -0.15, z: 0}
+  visualScale: 0.7
   sortingOrderOffset: 5
   useFixedFacingPose: 0
   useStaffRecoil: 1

@@ -19,15 +19,19 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
     {
         public string weaponName => itemName;
 
-        [Tooltip("체크하면 인벤토리와 드래그 아이콘을 45도 대각선으로 표시합니다. 해제하면 원본 방향으로 표시합니다.")]
+        [Tooltip("인벤토리 외 슬롯과 툴팁의 대각선 배치입니다. 드래그 아이콘은 출발 슬롯의 표시를 따릅니다.")]
         public bool useDiagonalIcon = true;
 
         [Tooltip("대각선 배치의 -45도에 더할 각도입니다. 5를 입력하면 -40도로 표시합니다. 기본 배치에는 적용되지 않습니다.")]
         public float iconRotationOffset;
 
         [Min(0.1f)]
-        [Tooltip("슬롯을 기준으로 한 아이콘 크기 배율입니다. 슬롯과 드래그 이미지에 함께 적용됩니다.")]
+        [Tooltip("장착·상점 등 인벤토리 외 슬롯과 툴팁의 아이콘 크기 배율입니다. 드래그 아이콘은 출발 슬롯의 표시를 따릅니다.")]
         public float iconSlotScale = 1.5f;
+
+        [Min(0.1f)]
+        [Tooltip("인벤토리 전용 크기 보정입니다. 1은 현재 기본 크기, 0.75는 축소입니다. 확대 시 정수 픽셀 배율에 맞춰 표시됩니다.")]
+        public float inventoryIconScale = 1f;
 
         [Header("Weapon Settings")]
         public float damage;
