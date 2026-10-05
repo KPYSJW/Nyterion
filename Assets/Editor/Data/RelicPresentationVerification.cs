@@ -308,7 +308,7 @@ namespace Nytherion.Editor
             Sprite common = ui.storageSlotPrefab.GetComponent<Image>().sprite;
             foreach (string prefab in new[] { "SkillStorageSlot", "SkillEquipSlot", "SkillEquipSlot 1", "SkillEquipSlot 2" })
             {
-                GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/" + prefab + ".prefab");
+                GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Skills/" + prefab + ".prefab");
                 Require(asset.GetComponent<Image>().sprite == common && asset.GetComponent<Image>().type == Image.Type.Sliced &&
                     asset.GetComponent<PixelPerfectSlotFrame>() != null && asset.GetComponent<RectTransform>().sizeDelta ==
                     Vector2.one * (prefab == "SkillStorageSlot" ? 128f : 160f),
@@ -318,7 +318,7 @@ namespace Nytherion.Editor
             var skill = Track(ScriptableObject.CreateInstance<Nytherion.Data.ScriptableObjects.Skill.SkillData>());
             skill.icon = iconSprite;
             GameObject skillObject = Track(Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
-                "Assets/Prefabs/UI/SkillEquipSlot.prefab"), relicCanvasRoot));
+                "Assets/Prefabs/UI/Skills/SkillEquipSlot.prefab"), relicCanvasRoot));
             var skillSlot = skillObject.GetComponent<SkillSlotUI>();
             skillSlot.Setup(skill);
             skillSlot.OnBeginDrag(pointer);
@@ -378,7 +378,7 @@ namespace Nytherion.Editor
             canvas.worldCamera = camera;
             canvas.planeDistance = 1f;
             Texture2D readback = Track(new Texture2D(640, 640, TextureFormat.RGB24, false));
-            string[] prefabs = { "Relic/StorageSlot", "Relic/RelicSlotCell", "SkillStorageSlot", "SkillEquipSlot" };
+            string[] prefabs = { "Relic/StorageSlot", "Relic/RelicSlotCell", "Skills/SkillStorageSlot", "Skills/SkillEquipSlot" };
             foreach (string path in prefabs)
             {
                 GameObject slot = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/" + path + ".prefab"), root.transform, false);

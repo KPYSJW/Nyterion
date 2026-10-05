@@ -81,7 +81,7 @@ namespace Nytherion.Editor
                 throw new InvalidOperationException("Blazeshade, 아이템 데이터베이스, 뽑기 풀 또는 Enemy 레이어 누락");
 
             Sprite weaponSprite = SingleSprite(SpriteFolder + "Guardian'sStaff.png");
-            Sprite icon = SingleSprite(SpriteFolder + "Guardian'sStaff_Icon.png");
+            Sprite icon = SingleSprite("Assets/Nytherion/Art/Combat/Weapons/Icons/Guardian'sStaff_Icon.png");
             GuardianStaffAttackEffect[] effects = new GuardianStaffAttackEffect[4];
             for (int i = 0; i < effects.Length; i++) effects[i] = CreateEffect(i + 1);
             GameObject hitEffect = CreateHitEffect();

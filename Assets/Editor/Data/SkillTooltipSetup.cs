@@ -19,7 +19,7 @@ namespace Nytherion.Editor
     public static class SkillTooltipSetup
     {
         public const string Output = "output/skill-tooltip";
-        public const string PrefabPath = "Assets/Prefabs/UI/SkillTooltip.prefab";
+        public const string PrefabPath = "Assets/Prefabs/UI/Skills/SkillTooltip.prefab";
         private const string ControllerPath = "Assets/Prefabs/Infrastructure/Managers/SkillUIController.prefab";
 
         static SkillTooltipSetup() { EditorApplication.update += Update; }
@@ -87,7 +87,7 @@ namespace Nytherion.Editor
                 EditorUtility.SetDirty(collection.SharedData);
                 AssetDatabase.SaveAssetIfDirty(collection.SharedData);
             }
-            const string imagePath = "Assets/Nytherion/Art/UI/SkillTooltip.png";
+            const string imagePath = "Assets/Nytherion/Art/UI/Skills/SkillTooltip.png";
             var importer = (TextureImporter)AssetImporter.GetAtPath(imagePath);
             importer.spriteBorder = new Vector4(4f, 4f, 4f, 4f);
             var settings = new TextureImporterSettings();

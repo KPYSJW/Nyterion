@@ -21,7 +21,7 @@ namespace Nytherion.Editor
         public const string HitEffectPath = "Assets/Prefabs/Gameplay/Combat/VFX/PyrofallHitVFX.prefab";
 
         private const string WeaponSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Sprites/Pyrofall.png";
-        private const string IconSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Sprites/Pyrofall_Icon.png";
+        private const string IconSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Icons/Pyrofall_Icon.png";
         private const string FireballSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/FireBall.png";
         private const string ExplosionSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/FireBallExplosion.png";
         private const string CastFlashSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/PyroFallFlash.png";

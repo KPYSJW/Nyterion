@@ -23,7 +23,7 @@ namespace Nytherion.Editor
         public const string ControllerPath = "Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade/BlazeshadeAura.controller";
 
         private const string WeaponSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Sprites/Blazeshade.png";
-        private const string IconSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Sprites/Blazeshade_Icon.png";
+        private const string IconSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Icons/Blazeshade_Icon.png";
         private const string FireShieldPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeShadeAttackEffect.png";
         private const string DatabasePath = "Assets/Nytherion/Data/ScriptableObjects/Items/ItemDatabaseSO.asset";
         private const string RarePoolPath = "Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Weapon/Rare_Weapon.asset";

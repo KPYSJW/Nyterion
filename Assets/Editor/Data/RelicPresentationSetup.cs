@@ -87,9 +87,9 @@ namespace Nytherion.Editor
             foreach (string path in new[]
             {
                 "Assets/Prefabs/UI/Relic/StorageSlot.prefab", "Assets/Prefabs/UI/Relic/RelicSlotCell.prefab",
-                "Assets/Prefabs/UI/Relic/RelicBlockDraggable.prefab", "Assets/Prefabs/UI/SkillStorageSlot.prefab",
-                "Assets/Prefabs/UI/SkillEquipSlot.prefab", "Assets/Prefabs/UI/SkillEquipSlot 1.prefab",
-                "Assets/Prefabs/UI/SkillEquipSlot 2.prefab"
+                "Assets/Prefabs/UI/Relic/RelicBlockDraggable.prefab", "Assets/Prefabs/UI/Skills/SkillStorageSlot.prefab",
+                "Assets/Prefabs/UI/Skills/SkillEquipSlot.prefab", "Assets/Prefabs/UI/Skills/SkillEquipSlot 1.prefab",
+                "Assets/Prefabs/UI/Skills/SkillEquipSlot 2.prefab"
             })
             {
                 if (!File.Exists(path)) continue;

@@ -166,7 +166,7 @@ namespace Nytherion.Editor
             sample.SetActive(false);
             results.Add("PASS 마지막 프레임 한 프레임 표시 후 약 0.286초에 제거, 풀 반환 대기 중 잔상 없음");
             Require(!hitClip.isLooping && data.hitEffectPrefab.GetComponent<AutoReturnToPool>() != null, "타격 애니메이션 1회 재생/풀 반환 설정");
-            Require(data.icon == AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Combat/Weapons/Sprites/Guardian'sStaff_Icon.png"), "아이콘 연결");
+            Require(data.icon == AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Combat/Weapons/Icons/Guardian'sStaff_Icon.png"), "아이콘 연결");
             Require(data.weaponSprite == AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Combat/Weapons/Sprites/Guardian'sStaff.png"), "무기 스프라이트 연결");
             var database = AssetDatabase.LoadAssetAtPath<ItemDatabaseSO>("Assets/Nytherion/Data/ScriptableObjects/Items/ItemDatabaseSO.asset");
             Require(database.allItems.Count(item => item == data) == 1, "데이터베이스 단일 등록");

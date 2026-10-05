@@ -63,7 +63,7 @@ namespace Nytherion.Editor
                 wasOpen = controller.IsOpen;
                 controller.Open(false);
                 slotObject = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
-                    "Assets/Prefabs/UI/SkillStorageSlot.prefab"), tooltip.transform.parent);
+                    "Assets/Prefabs/UI/Skills/SkillStorageSlot.prefab"), tooltip.transform.parent);
                 var slot = slotObject.GetComponent<SkillSlotUI>();
                 slot.Setup(skill, null, tooltip);
                 var pointer = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };

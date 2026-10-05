@@ -19,7 +19,7 @@ namespace Nytherion.Editor
     {
         private const string DEFAULT_DATA_PATH = "Assets/Nytherion/Data/ScriptableObjects/Weapons";
         private const string GACHA_POOL_BASE_PATH = "Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Weapon";
-        private const string WEAPON_PREFAB_PATH = "Assets/Prefabs/Weapons/Generated";
+        private const string WEAPON_PREFAB_PATH = "Assets/Prefabs/Gameplay/Combat/Weapons/Generated";
         private const string DEFAULT_SHOP_PATH = "Assets/Nytherion/Data/ScriptableObjects/Shop/Village Shop.asset";
         private const string MILESTONE_DATA_PATH = "Assets/Nytherion/Data/ScriptableObjects/Progression";
 
@@ -57,9 +57,9 @@ namespace Nytherion.Editor
         private static WeaponBase chargeableTemplate;
         private static WeaponBase chainLightningTemplate;
 
-        private const string RANGED_TEMPLATE_PATH = "Assets/Prefabs/Weapons/RangedWeapon_Template.prefab";
-        private const string METEOR_TEMPLATE_PATH = "Assets/Prefabs/Weapons/MeteorWeapon_Template.prefab";
-        private const string CHARGEABLE_TEMPLATE_PATH = "Assets/Prefabs/Weapons/ChargeableWeapon_Template.prefab";
+        private const string RANGED_TEMPLATE_PATH = "Assets/Prefabs/Gameplay/Combat/Weapons/Templates/RangedWeapon_Template.prefab";
+        private const string METEOR_TEMPLATE_PATH = "Assets/Prefabs/Gameplay/Combat/Weapons/Templates/MeteorWeapon_Template.prefab";
+        private const string CHARGEABLE_TEMPLATE_PATH = "Assets/Prefabs/Gameplay/Combat/Weapons/Templates/ChargeableWeapon_Template.prefab";
         private const string CHAIN_LIGHTNING_TEMPLATE_PATH = "Assets/Prefabs/Weapons/ChainLightningWeapon_Template.prefab";
 
         private List<WeaponData> allWeapons = new List<WeaponData>();
