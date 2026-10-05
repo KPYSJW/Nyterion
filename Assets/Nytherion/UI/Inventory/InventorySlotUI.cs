@@ -2,10 +2,12 @@ using Nytherion.Core.Enums;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.UI.Controllers;
+using Nytherion.UI.Components;
 using Nytherion.UI.Inventory.Utils;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 
@@ -40,10 +42,18 @@ namespace Nytherion.UI.Inventory
         protected override void Awake()
         {
             base.Awake();
+            PixelPerfectSlotFrame.Apply(slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>());
             input = new ShopAction();
             OnBeginDragEvent += (s, e) => DragDropUIHandler.HandleBeginDragShared(s);
             OnEndDragEvent += (s, e) => DragDropUIHandler.HandleEndDragShared(s, e);
             OnPointerClickEvent += HandlePointerClick;
+        }
+
+        protected override void UpdateSlotBackground(ItemData item, bool hasItem)
+        {
+            base.UpdateSlotBackground(item, hasItem);
+            // 빈 슬롯과 등급별 슬롯 모두 스프라이트 변경 직후 같은 픽셀 배율을 적용한다.
+            PixelPerfectSlotFrame.Apply(slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>());
         }
         void OnEnable() => input?.Enable(); 
         void OnDisable() => input?.Disable();

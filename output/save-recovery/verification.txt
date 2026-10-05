@@ -1,0 +1,37 @@
+PASS: 파일 없음은 Missing이며 새 파일을 만들지 않음
+PASS: 저장/로드 왕복 및 기존 데이터 전체 보존
+PASS: 두 번째 저장은 직전 정상 파일을 백업
+PASS: 손상 원본 복구 후 저장해도 정상 백업과 손상 증거 보존
+PASS: 원본 없음/백업 있음은 백업 복구
+PASS: 원본과 백업 손상 시 직접 저장도 거부하고 둘 다 보존
+PASS: 명시적 세이브 삭제는 백업도 제거하여 부활 방지
+PASS: 손상 데이터 거부: 빈 파일
+PASS: 손상 데이터 거부: 빈 파일
+PASS: 손상 데이터 거부: {
+PASS: 손상 데이터 거부: null
+PASS: 손상 데이터 거부: []
+PASS: 손상 데이터 거부: {}
+PASS: 손상 데이터 거부: {"currencyTypes":[0],"currencyAmounts":[]}
+PASS: 손상 데이터 거부: {"currencyTypes":[0],"currencyAmounts":[-1]}
+PASS: 손상 데이터 거부: {"currencyTypes":[0,0],"currencyAmounts":[1,2]}
+PASS: 손상 데이터 거부: {"currencyTypes":[0],"currencyAmounts":["9"]}
+PASS: 손상 데이터 거부: {"currencyTypes":[0],"currencyTypes":[1],"currencyAmounts":[9]}
+PASS: 구버전 선택 필드 없음과 스킬 빈 슬롯 호환
+PASS: 잘못된 슬롯/중복 슬롯/null 항목 거부
+PASS: 읽기 잠금은 ReadError이며 백업으로 숨기지 않음
+PASS: 임시 파일 쓰기 실패는 원본 보존
+PASS: 읽기 전용 원본의 파일 교체 실패는 원본과 정상 백업 보존
+PASS: 최초 초기화: 일시정지 중에도 로드와 차단 해제 완료
+PASS: 첫 강제 저장 및 맵/씬 밖 퀵슬롯 보존
+PASS: 이전 코드의 강제 로드 후 영구 저장 차단 재현
+PASS: 수정 코드: 강제 로드 후 차단 해제 및 다시 저장
+PASS: 초기화 차단/로드 중에는 강제 저장도 원본 보호
+PASS: 종료/일시중지/포커스 상실 저장은 1초 쿨다운 우회
+PASS: 서비스 쓰기 실패 시 성공 시각과 원본 불변, 이후 재시도 가능
+PASS: 수집 예외 시 부분 데이터 저장과 메모리 스냅샷 훼손 방지
+PASS: 로드 적용 예외는 저장 차단, 정상 재로드 후 복구
+PASS: 양쪽 파일 손상은 새 게임 초기화/덮어쓰기 거부, 복구 후 저장 가능
+PASS: 매니저 백업 복구 후 저장 가능
+PASS: 매니저 읽기 오류 후 저장 보호와 정상 재로드
+총 35개 검사, 실패 0개
+Unity 2022.3.62f2; 실제 JsonUtility/파일 I/O/MonoBehaviour/코루틴/VContainer 사용. 데이터 매니저와 UI/스코프는 격리 협력 객체.
