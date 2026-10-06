@@ -453,7 +453,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             if (playerHealth != null || playerController != null)
             {
-                DamagePlayerOnce(playerHealth);
+                Vector2 hitPoint = collision.contactCount > 0
+                    ? collision.GetContact(0).point
+                    : collision.collider.ClosestPoint(transform.position);
+                DamagePlayerOnce(playerHealth, hitPoint);
                 KnockPlayerBack(playerController);
                 if (activeEnemy != null)
                 {
@@ -503,7 +506,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 knockbackDuration);
         }
 
-        private void DamagePlayerOnce(PlayerHealth playerHealth)
+        private void DamagePlayerOnce(PlayerHealth playerHealth, Vector2 hitPoint)
         {
             if (damagedPlayerThisCharge || playerHealth == null)
                 return;
@@ -529,7 +532,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 damage *= statusEffectManager.GetOutgoingDamageMultiplier();
             }
 
-            playerHealth.TakeDamage(damage);
+            playerHealth.TakeDamage(damage, hitPoint);
         }
 
         private void OnValidate()

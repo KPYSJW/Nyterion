@@ -7,6 +7,9 @@ public class DungeonNavMeshBuilder : MonoBehaviour
 {
     [SerializeField] private NavMeshSurface navMeshSurface;
     [SerializeField] private NavMeshSurface batNavMeshSurface;
+    [SerializeField] private NavMeshSurface mediumNavMeshSurface;
+    [SerializeField] private NavMeshSurface largeNavMeshSurface;
+    [SerializeField] private NavMeshSurface bossNavMeshSurface;
     [SerializeField] private CollectSources2d collectSources2D;
 
     private void Reset()
@@ -48,11 +51,20 @@ public class DungeonNavMeshBuilder : MonoBehaviour
 
     private void BuildNavMeshes()
     {
-        navMeshSurface.BuildNavMesh();
+        // Build each size group's navigation once, even if a slot is repeated.
+        var builtSurfaces = new HashSet<NavMeshSurface>();
+        BuildSurface(navMeshSurface, builtSurfaces);
+        BuildSurface(batNavMeshSurface, builtSurfaces);
+        BuildSurface(mediumNavMeshSurface, builtSurfaces);
+        BuildSurface(largeNavMeshSurface, builtSurfaces);
+        BuildSurface(bossNavMeshSurface, builtSurfaces);
+    }
 
-        if (batNavMeshSurface != null && batNavMeshSurface != navMeshSurface)
-        {
-            batNavMeshSurface.BuildNavMesh();
-        }
+    private static void BuildSurface(NavMeshSurface surface, HashSet<NavMeshSurface> builtSurfaces)
+    {
+        if (surface == null || !surface.isActiveAndEnabled || !builtSurfaces.Add(surface))
+            return;
+
+        surface.BuildNavMesh();
     }
 }

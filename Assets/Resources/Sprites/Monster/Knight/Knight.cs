@@ -37,6 +37,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private float nextKnockbackTime;
         private EnemyBase enemyBase;
         private StatusEffectManager statusEffectManager;
+        private BossKnightCombatBehavior bossCombat;
 
         public bool RequiresNavMeshAgent => true;
         public float CurrentSpeed => agent != null
@@ -52,6 +53,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             agent = GetComponent<NavMeshAgent>();
             enemyBase = GetComponent<EnemyBase>();
             statusEffectManager = GetComponent<StatusEffectManager>();
+            bossCombat = GetComponent<BossKnightCombatBehavior>();
         }
 
         public void Configure(EnemyData data)
@@ -170,6 +172,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            // The shield owns attack 3's hits. Charging is telegraph-only,
+            // and pursuing must not also deal the old body-contact damage.
+            if (bossCombat != null && (bossCombat.IsOvercharging || bossCombat.IsCrossingHidden)) return;
             if (Time.time < nextKnockbackTime)
                 return;
 
@@ -183,6 +188,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 return;
 
             Vector2 moveDirection = lastMoveDirection;
+            float impactSpeed = Mathf.Max(lastMoveSpeed, CurrentSpeed);
+            // Boss dash motion is driven by Rigidbody2D, not the agent's
+            // cached chase velocity. Ordinary knights retain their old behavior.
+            if (bossCombat != null && bossCombat.TryGetDashMotion(
+                out Vector2 dashDirection, out float dashSpeed))
+            {
+                moveDirection = dashDirection;
+                impactSpeed = dashSpeed;
+            }
             if (moveDirection.sqrMagnitude <= 0.01f)
             {
                 moveDirection = ((Vector2)playerController.transform.position -
@@ -213,7 +227,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             Vector2 knockbackDirection =
                 (backward * BackwardWeight + side * SideWeight).normalized;
 
-            float impactSpeed = Mathf.Max(lastMoveSpeed, CurrentSpeed);
             float knockbackSpeed = Mathf.Clamp(
                 impactSpeed * KnockbackMultiplier,
                 MinimumKnockback,
@@ -222,10 +235,56 @@ namespace Nytherion.GamePlay.Characters.Enemy
             PlayerHealth playerHealth =
                 collision.collider.GetComponentInParent<PlayerHealth>();
 
+            Vector2 hitPoint = collision.contactCount > 0
+                ? collision.GetContact(0).point
+                : collision.collider.ClosestPoint(transform.position);
+            ApplyPlayerImpact(playerController, playerHealth, hitPoint, knockbackDirection, knockbackSpeed);
+        }
+
+        public bool TryApplyShieldImpact(Collider2D playerCollider, Vector2 shieldCenter, Vector2 hitPoint)
+        {
+            if (bossCombat == null || !bossCombat.IsOverchargePursuing ||
+                Time.time < nextKnockbackTime || playerCollider == null) return false;
+            PlayerController playerController = playerCollider.GetComponentInParent<PlayerController>();
+            PlayerHealth playerHealth = playerCollider.GetComponentInParent<PlayerHealth>();
+            if (playerController == null || playerController.IsDashing || playerHealth == null ||
+                playerHealth.IsInvulnerable || playerHealth.CurrentHealth <= 0f) return false;
+
+            Vector2 away = (Vector2)playerCollider.bounds.center - shieldCenter;
+            if (away.sqrMagnitude <= 0.001f) away = (Vector2)CurrentVelocity;
+            if (away.sqrMagnitude <= 0.001f) away = Vector2.up;
+            float knockbackSpeed = Mathf.Clamp(CurrentSpeed * KnockbackMultiplier,
+                MinimumKnockback, MaximumKnockback);
+            ApplyPlayerImpact(playerController, playerHealth, hitPoint, away.normalized, knockbackSpeed);
+            return true;
+        }
+
+        public bool TryApplyCrossingImpact(Collider2D playerCollider, Vector2 hitPoint)
+        {
+            if (bossCombat == null || bossCombat.CurrentAttack != BossKnightCombatBehavior.BossAttackType.LightningCrossing ||
+                !bossCombat.TryGetDashMotion(out Vector2 direction, out float speed) ||
+                Time.time < nextKnockbackTime || playerCollider == null) return false;
+            PlayerController playerController = playerCollider.GetComponentInParent<PlayerController>();
+            PlayerHealth playerHealth = playerCollider.GetComponentInParent<PlayerHealth>();
+            if (playerController == null || playerController.IsDashing || playerHealth == null ||
+                playerHealth.IsInvulnerable || playerHealth.CurrentHealth <= 0f) return false;
+            Vector2 toPlayer = ((Vector2)playerCollider.bounds.center - (Vector2)transform.position).normalized;
+            float cross = direction.x * toPlayer.y - direction.y * toPlayer.x;
+            float sideSign = Mathf.Abs(cross) > 0.001f ? Mathf.Sign(cross) : (GetInstanceID() % 2 == 0 ? 1f : -1f);
+            Vector2 side = new Vector2(-direction.y, direction.x) * sideSign;
+            Vector2 knockbackDirection = (-direction * BackwardWeight + side * SideWeight).normalized;
+            float knockbackSpeed = Mathf.Clamp(speed * KnockbackMultiplier, MinimumKnockback, MaximumKnockback);
+            ApplyPlayerImpact(playerController, playerHealth, hitPoint, knockbackDirection, knockbackSpeed);
+            return true;
+        }
+
+        private void ApplyPlayerImpact(PlayerController playerController, PlayerHealth playerHealth,
+            Vector2 hitPoint, Vector2 knockbackDirection, float knockbackSpeed)
+        {
             float damage = GetCollisionDamage();
             if (playerHealth != null && damage > 0f)
             {
-                playerHealth.TakeDamage(damage);
+                playerHealth.TakeDamage(damage, hitPoint);
             }
 
             playerController.ApplyKnockback(

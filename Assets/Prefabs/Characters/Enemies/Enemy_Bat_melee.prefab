@@ -135,7 +135,7 @@ MonoBehaviour:
   aiController: {fileID: 4248653114152316753}
   spriteRenderer: {fileID: 4978461596468061478}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
-  hitFlashDuration: 0.2
+  hitFlashDuration: 0.1
 --- !u!114 &4248653114152316753
 MonoBehaviour:
   m_ObjectHideFlags: 0

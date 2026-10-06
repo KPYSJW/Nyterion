@@ -15,10 +15,18 @@ namespace Nytherion.GamePlay.Characters.Enemy
         [SerializeField, Min(0.01f)] private float lifetime = 0.22f;
         [SerializeField, Range(0f, 1f)] private float initialAlpha = 0.7f;
         [SerializeField] private int sortingOrderOffset = -1;
+        [SerializeField] private Color bossDashColor = new Color(0.15f, 0.65f, 1f, 1f);
+
+        [Header("Boss Preparation Convergence")]
+        [SerializeField, Min(1f)] private float preparationStartScale = 1.6f;
+        [SerializeField, Min(0.01f)] private float preparationSpawnInterval = 0.18f;
+        [SerializeField, Min(0.01f)] private float preparationLifetime = 0.35f;
+        private float nextPreparationSpawnTime;
 
         private readonly List<Afterimage> activeAfterimages = new();
         private readonly Stack<Afterimage> inactiveAfterimages = new();
         private Knight knight;
+        private BossKnightCombatBehavior bossCombat;
         private Transform poolRoot;
         private Vector3 lastPosition;
         private float distanceSinceLastSpawn;
@@ -28,6 +36,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private void Awake()
         {
             knight = GetComponent<Knight>();
+            bossCombat = GetComponent<BossKnightCombatBehavior>();
             if (sourceRenderer == null)
                 sourceRenderer = GetComponent<SpriteRenderer>();
         }
@@ -37,6 +46,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             hasLastPosition = false;
             distanceSinceLastSpawn = 0f;
             nextSpawnTime = 0f;
+            nextPreparationSpawnTime = 0f;
         }
 
         private void Update()
@@ -58,7 +68,22 @@ namespace Nytherion.GamePlay.Characters.Enemy
             float movedDistance = Vector3.Distance(lastPosition, currentPosition);
             lastPosition = currentPosition;
 
-            if (knight.CurrentSpeed < minimumMoveSpeed)
+            if (bossCombat != null && bossCombat.IsPreparing)
+            {
+                distanceSinceLastSpawn = 0f;
+                if (Time.time >= nextPreparationSpawnTime)
+                {
+                    SpawnAfterimage(true);
+                    nextPreparationSpawnTime = Time.time + preparationSpawnInterval;
+                }
+                return;
+            }
+            nextPreparationSpawnTime = 0f;
+
+            // Boss dashes use Rigidbody2D while the NavMeshAgent is stopped.
+            // Keep the normal knight speed check, but allow dash movement too.
+            bool isBossDashing = bossCombat != null && bossCombat.IsDashing;
+            if (!isBossDashing && knight.CurrentSpeed < minimumMoveSpeed)
             {
                 distanceSinceLastSpawn = 0f;
                 return;
@@ -73,7 +98,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             nextSpawnTime = Time.time + minimumSpawnInterval;
         }
 
-        private void SpawnAfterimage()
+        private void SpawnAfterimage(bool converging = false)
         {
             Afterimage afterimage = inactiveAfterimages.Count > 0
                 ? inactiveAfterimages.Pop()
@@ -91,8 +116,18 @@ namespace Nytherion.GamePlay.Characters.Enemy
             afterimage.renderer.flipY = sourceRenderer.flipY;
             afterimage.renderer.sortingLayerID = sourceRenderer.sortingLayerID;
             afterimage.renderer.sortingOrder = sourceRenderer.sortingOrder + sortingOrderOffset;
-            afterimage.renderer.color = new Color(1f, 1f, 1f, initialAlpha);
+            // Set the tint on every spawn, including reused ghosts, so a dash
+            // ghost stays blue as it fades and normal movement returns to white.
+            Color color = converging || (bossCombat != null && bossCombat.IsDashing)
+                ? bossDashColor
+                : Color.white;
+            color.a = converging ? initialAlpha * 0.6f : initialAlpha;
+            afterimage.renderer.color = color;
             afterimage.elapsed = 0f;
+            afterimage.converging = converging;
+            afterimage.startingAlpha = color.a;
+            if (converging)
+                UpdateConvergenceTransform(afterimage, preparationStartScale);
             afterimage.root.SetActive(true);
             activeAfterimages.Add(afterimage);
         }
@@ -119,8 +154,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
             for (int i = activeAfterimages.Count - 1; i >= 0; i--)
             {
                 Afterimage afterimage = activeAfterimages[i];
+                if (afterimage.converging && (bossCombat == null || !bossCombat.IsPreparing))
+                {
+                    activeAfterimages.RemoveAt(i);
+                    Recycle(afterimage);
+                    continue;
+                }
                 afterimage.elapsed += Time.deltaTime;
-                float progress = afterimage.elapsed / lifetime;
+                float duration = afterimage.converging ? preparationLifetime : lifetime;
+                float progress = afterimage.elapsed / Mathf.Max(0.01f, duration);
 
                 if (progress >= 1f)
                 {
@@ -130,9 +172,21 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 }
 
                 Color color = afterimage.renderer.color;
-                color.a = Mathf.Lerp(initialAlpha, 0f, progress);
+                color.a = Mathf.Lerp(afterimage.startingAlpha, 0f, progress);
                 afterimage.renderer.color = color;
+                if (afterimage.converging)
+                    UpdateConvergenceTransform(afterimage,
+                        Mathf.Lerp(preparationStartScale, 1f, progress));
             }
+        }
+
+        private void UpdateConvergenceTransform(Afterimage afterimage, float scale)
+        {
+            Transform source = sourceRenderer.transform;
+            Transform ghost = afterimage.root.transform;
+            ghost.SetPositionAndRotation(source.position, source.rotation);
+            Vector3 sourceScale = source.lossyScale;
+            ghost.localScale = new Vector3(sourceScale.x * scale, sourceScale.y * scale, sourceScale.z);
         }
 
         private void Recycle(Afterimage afterimage)
@@ -150,6 +204,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             activeAfterimages.Clear();
             hasLastPosition = false;
             distanceSinceLastSpawn = 0f;
+            nextPreparationSpawnTime = 0f;
         }
 
         private void OnDestroy()
@@ -168,6 +223,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
             minimumSpawnInterval = Mathf.Max(0.01f, minimumSpawnInterval);
             lifetime = Mathf.Max(0.01f, lifetime);
             initialAlpha = Mathf.Clamp01(initialAlpha);
+            preparationStartScale = Mathf.Max(1f, preparationStartScale);
+            preparationSpawnInterval = Mathf.Max(0.01f, preparationSpawnInterval);
+            preparationLifetime = Mathf.Max(0.01f, preparationLifetime);
         }
 
         private sealed class Afterimage
@@ -175,6 +233,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
             public readonly GameObject root;
             public readonly SpriteRenderer renderer;
             public float elapsed;
+            public bool converging;
+            public float startingAlpha;
 
             public Afterimage(GameObject root, SpriteRenderer renderer)
             {

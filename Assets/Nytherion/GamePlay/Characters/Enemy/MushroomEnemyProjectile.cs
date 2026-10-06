@@ -113,8 +113,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (playerHealth == null)
                 return false;
 
-            playerHealth.TakeDamage(damage);
-            Explode(other.ClosestPoint(transform.position));
+            Vector2 hitPoint = other.ClosestPoint(transform.position);
+            playerHealth.TakeDamage(damage, hitPoint);
+            Explode(hitPoint);
             return true;
         }
 
