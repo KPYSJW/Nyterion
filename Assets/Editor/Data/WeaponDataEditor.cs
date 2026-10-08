@@ -27,6 +27,12 @@ namespace Nytherion.Editor
                     EditorGUILayout.PropertyField(property, true);
                 }
 
+                if (property.name == nameof(WeaponData.fireEffectPrefab) && targets.Length == 1)
+                {
+                    if (GUILayout.Button("발사 이미지 설정"))
+                        WeaponFireEffectWindow.OpenFor((WeaponData)target);
+                }
+
                 if (property.name == nameof(WeaponData.icon))
                 {
                     EditorGUILayout.PropertyField(

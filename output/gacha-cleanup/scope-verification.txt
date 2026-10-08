@@ -1,3 +1,0 @@
-PASS Assets/Scenes/GameScene.unity: removed 84 legacy UI documents only; unrelated object fields, IDs and order preserved.
-PASS Assets/Scenes/Village.unity: removed 118 legacy UI documents only; unrelated object fields, IDs and order preserved.
-PASS Assets/Scenes/test2.unity: removed 118 legacy UI documents only; unrelated object fields, IDs and order preserved.

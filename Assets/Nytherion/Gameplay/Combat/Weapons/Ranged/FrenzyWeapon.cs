@@ -1,5 +1,4 @@
 using UnityEngine;
-using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Combat.Weapons
 {
@@ -8,12 +7,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
         [Header("Frenzy Spin-up Settings")]
         [Tooltip("스핀업 완료에 걸리는 시간")]
         [SerializeField] private float spinUpTime = 1.0f;
-
-        [Tooltip("발사 이펙트 애니메이션 시작 속도")]
-        [SerializeField] private float minAnimSpeed = 0.5f;
-
-        [Tooltip("발사 이펙트 애니메이션 최고 속도")]
-        [SerializeField] private float maxAnimSpeed = 3.0f;
 
         [Tooltip("투사체 발사를 시작하기 위한 스핀업 진행도 임계값 (0.0 ~ 1.0)")]
         [SerializeField] private float fireThreshold = 0.9f;
@@ -24,7 +17,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         private bool isAttacking = false;
         private float currentSpinUpProgress = 0f;
-        private GameObject activeFireEffectInstance = null;
         private float lastProjectileFireTime = 0f;
         private Vector2 lastAimDirection = Vector2.right;
 
@@ -46,6 +38,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
+            if (firePoint == null || weaponData == null) return;
             lastAimDirection = direction;
 
             if (!isAttacking)
@@ -53,41 +46,6 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 isAttacking = true;
                 currentSpinUpProgress = 0f;
                 lastProjectileFireTime = 0f;
-
-                // 스핀업 시작 시 이펙트를 firePoint의 자식으로 등록하여 생성
-                if (firePoint != null && weaponData != null && weaponData.fireEffectPrefab != null)
-                {
-                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                    Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
-                    if (ObjectPoolManager.Instance != null)
-                    {
-                        activeFireEffectInstance = ObjectPoolManager.Instance.SpawnFromPool(weaponData.fireEffectPrefab, firePoint.position, rotation);
-                    }
-                    else
-                    {
-                        activeFireEffectInstance = Instantiate(weaponData.fireEffectPrefab, firePoint.position, rotation);
-                    }
-
-                    if (activeFireEffectInstance != null)
-                    {
-                        activeFireEffectInstance.transform.SetParent(firePoint);
-
-                        // 차징 및 연속 발사 도중 이펙트가 임의로 소멸되는 것을 방지하기 위해 자동반환 비활성화
-                        AutoReturnToPool autoReturn;
-                        if (activeFireEffectInstance.TryGetComponent<AutoReturnToPool>(out autoReturn))
-                        {
-                            autoReturn.enabled = false;
-                        }
-
-                        // 이펙트 애니메이터 속도 초기화
-                        Animator animator;
-                        if (activeFireEffectInstance.TryGetComponent<Animator>(out animator))
-                        {
-                            animator.speed = minAnimSpeed;
-                        }
-                    }
-                }
             }
         }
 
@@ -98,35 +56,15 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         private void Update()
         {
-            if (isAttacking)
+            if (isAttacking && firePoint != null && weaponData != null)
             {
-                if (firePoint != null)
-                {
-                    lastAimDirection = firePoint.right;
-                }
-
-                // 플레이어가 조준하는 마우스 방향에 따라 지속형 머즐 플래시 회전값 갱신
-                if (activeFireEffectInstance != null && firePoint != null)
-                {
-                    float angle = Mathf.Atan2(lastAimDirection.y, lastAimDirection.x) * Mathf.Rad2Deg;
-                    activeFireEffectInstance.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-                }
+                lastAimDirection = firePoint.right;
 
                 // 스핀업 진행도 가속
                 if (currentSpinUpProgress < 1f)
                 {
-                    currentSpinUpProgress += Time.deltaTime / spinUpTime;
+                    currentSpinUpProgress += Time.deltaTime / Mathf.Max(0.01f, spinUpTime);
                     currentSpinUpProgress = Mathf.Clamp01(currentSpinUpProgress);
-
-                    // 진행도 보간값에 맞춰 이펙트 애니메이션 속도 제어
-                    if (activeFireEffectInstance != null)
-                    {
-                        Animator animator;
-                        if (activeFireEffectInstance.TryGetComponent<Animator>(out animator))
-                        {
-                            animator.speed = Mathf.Lerp(minAnimSpeed, maxAnimSpeed, currentSpinUpProgress);
-                        }
-                    }
                 }
 
                 damageMultiplier = HasChargeRelic()
@@ -154,8 +92,17 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         protected override bool ShouldSpawnFireEffect()
         {
-            // 연사 과정에서 지속형 이펙트를 쓰고 있으므로 개별 투사체 스폰 시의 1회성 이펙트 생성 방지
+            // 발사 묶음이 아닌 실제 탄환 스폰 시점에 재생하여 추가 연사 탄에도 맞춥니다.
             return false;
+        }
+
+        protected override void ConfigureSpawnedProjectile(GameObject projectile, Vector2 direction, float chargePercent)
+        {
+            base.ConfigureSpawnedProjectile(projectile, direction, chargePercent);
+            if (firePoint == null || weaponData == null || weaponData.fireEffectPrefab == null) return;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            WeaponVFXHelper.PlayFireEffect(weaponData.fireEffectPrefab, firePoint.position,
+                Quaternion.AngleAxis(angle, Vector3.forward), firePoint);
         }
 
         protected override bool ShouldPlayFireAnimation()
@@ -176,26 +123,8 @@ namespace Nytherion.GamePlay.Combat.Weapons
             isAttacking = false;
             currentSpinUpProgress = 0f;
             damageMultiplier = 1f;
-
-            if (activeFireEffectInstance != null)
-            {
-                // AutoReturnToPool 컴포넌트를 복구하여 안전하게 풀 반환되도록 초기화
-                AutoReturnToPool autoReturn;
-                if (activeFireEffectInstance.TryGetComponent<AutoReturnToPool>(out autoReturn))
-                {
-                    autoReturn.enabled = true;
-                }
-
-                if (ObjectPoolManager.Instance != null && weaponData != null && weaponData.fireEffectPrefab != null)
-                {
-                    ObjectPoolManager.Instance.ReturnToPool(weaponData.fireEffectPrefab.name, activeFireEffectInstance);
-                }
-                else
-                {
-                    Destroy(activeFireEffectInstance);
-                }
-                activeFireEffectInstance = null;
-            }
+            // 버튼을 놓거나 무기를 교체하면 아직 대기 중인 추가 연사도 중단합니다.
+            StopAllCoroutines();
         }
 
         private void OnDisable()

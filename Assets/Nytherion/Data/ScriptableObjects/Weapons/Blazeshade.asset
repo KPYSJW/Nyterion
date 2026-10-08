@@ -44,7 +44,7 @@ MonoBehaviour:
   useFixedFacingPose: 0
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
-  fireEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 6331041348785912272, guid: 6904314b7055b274582b6a31e9eaa845, type: 3}
   chargeEffectPrefab: {fileID: 0}
   chargeEffectRotationSpeed: 0
   animatorController: {fileID: 0}

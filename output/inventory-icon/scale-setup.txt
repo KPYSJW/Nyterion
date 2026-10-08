@@ -1,1 +1,0 @@
-Assets/Nytherion/Data/ScriptableObjects/Weapons/SaintsStaff.asset: inventoryIconScale=0.75

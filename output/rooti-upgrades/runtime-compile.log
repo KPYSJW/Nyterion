@@ -1,4 +1,0 @@
-Assets\Nytherion\Gameplay\Combat\Weapons\Melee\ShortDagger.cs(26,40): warning CS0414: The field 'ShortDagger.thrustDistance' is assigned but its value is never used
-Assets\Nytherion\Gameplay\Combat\Weapons\Melee\ShortDagger.cs(79,41): warning CS0414: The field 'ShortDagger.thrustEffectStateName' is assigned but its value is never used
-Assets\Nytherion\Gameplay\Combat\Weapons\Melee\ShortDagger.cs(112,40): warning CS0414: The field 'ShortDagger.swingDistance' is assigned but its value is never used
-Assets\Nytherion\Gameplay\Skills\Abilities\PyroTank\PyroTankController.cs(34,23): warning CS0414: The field 'PyroTankController.explosionEndsAt' is assigned but its value is never used

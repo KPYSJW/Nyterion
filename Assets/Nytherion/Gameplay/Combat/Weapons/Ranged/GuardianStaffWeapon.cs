@@ -11,6 +11,9 @@ namespace Nytherion.GamePlay.Combat
     /// <summary>플레이어 중심의 원형 공격을 펼치고 등록된 이펙트를 순서대로 사용합니다.</summary>
     public sealed class GuardianStaffWeapon : WeaponBase
     {
+        [Header("발사 연출")]
+        public Transform firePoint;
+
         [SerializeField] private GuardianStaffAttackEffect[] attackEffects;
         [SerializeField] private LayerMask enemyLayers;
 
@@ -67,6 +70,8 @@ namespace Nytherion.GamePlay.Combat
             if (visual == null) return;
 
             lastAttackTime = Time.time;
+            if (firePoint != null && weaponData.fireEffectPrefab != null)
+                WeaponVFXHelper.PlayFireEffect(weaponData.fireEffectPrefab, firePoint.position, firePoint.rotation, firePoint);
             nextEffectIndex = (nextEffectIndex + 1) % attackEffects.Length;
             float radius = Mathf.Max(0.01f, weaponData.range) * EffectSizeMultiplier * prefab.RadiusMultiplier;
             SpriteRenderer ownerRenderer = owner != null ? owner.GetComponentInChildren<SpriteRenderer>() : null;

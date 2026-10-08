@@ -1,6 +1,0 @@
-Unity 2022.3.62f2
-PASS 전용 Inspector 등록
-PASS 가로·세로 손잡이 독립 조절과 직렬화
-PASS 두 축의 Undo / Redo
-PASS 원본 에셋 보호
-RESULT: PASS

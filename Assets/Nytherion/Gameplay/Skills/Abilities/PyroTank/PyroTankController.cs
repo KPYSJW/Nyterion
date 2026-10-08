@@ -40,15 +40,21 @@ namespace Nytherion.GamePlay.Skills
         private float jumpProgress;
         private float effectSizeMultiplier = 1f;
         private Vector3 baseScale;
+        private bool hasBaseScale;
 
         private void Awake()
         {
             CacheComponents();
-            baseScale = transform.localScale;
         }
 
         private void CacheComponents()
         {
+            // 비활성 프리팹은 Begin이 Awake보다 먼저 호출될 수 있습니다.
+            if (!hasBaseScale)
+            {
+                baseScale = transform.localScale;
+                hasBaseScale = true;
+            }
             if (body == null) body = GetComponent<Rigidbody2D>();
             if (bodyCollider == null) bodyCollider = GetComponent<CircleCollider2D>();
         }

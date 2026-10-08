@@ -123,6 +123,7 @@ namespace Nytherion.GamePlay.Combat
             if (!CanAttack()) return;
             targetPosition.z = 0f;
             if (auraVisualInstance != null) auraVisualInstance.SetActive(false);
+            WeaponVFXHelper.PlayFireEffect(weaponData.fireEffectPrefab, transform.position, transform.rotation, transform);
             targetAttack = StartCoroutine(AttackAtTarget(targetPosition));
         }
 

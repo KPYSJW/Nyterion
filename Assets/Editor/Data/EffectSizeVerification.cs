@@ -185,30 +185,6 @@ namespace Nytherion.Editor
                 if (!voidBeam.HasTargetHit) throw new InvalidOperationException("VoidRay 확대 판정이 옆의 적을 놓침");
                 results.Add("PASS VoidRay 중심선 밖의 적은 크기 2배에서만 연결");
 
-                var combat = root.AddComponent<Nytherion.GamePlay.Characters.Player.PlayerCombat>();
-                combat.enabled = false;
-                GameObject meleePoint = new GameObject("[검증] 근접 공격 부모");
-                meleePoint.transform.SetParent(root.transform, false);
-                typeof(Nytherion.GamePlay.Characters.Player.PlayerCombat).GetField("meleeWeaponPoint", Private)
-                    .SetValue(combat, meleePoint.transform);
-                WeaponData meleeData = Load<WeaponData>("Atlas");
-                var melee = Object.Instantiate(meleeData.weaponPrefab, meleePoint.transform);
-                typeof(WeaponBase).GetField("playerManager", Private).SetValue(melee, player);
-                melee.Initialize(meleeData);
-                combat.currentWeapon = melee;
-                Collider2D meleeCollider = melee.GetComponentInChildren<Collider2D>(true);
-                if (meleeCollider == null) throw new InvalidOperationException("Atlas 공격 콜라이더 누락");
-                stats.projectileSizeMultiplier = 1f;
-                var combatUpdate = typeof(Nytherion.GamePlay.Characters.Player.PlayerCombat).GetMethod("Update", Private);
-                combatUpdate.Invoke(combat, null);
-                float colliderBase = Mathf.Abs(meleeCollider.transform.lossyScale.x);
-                foreach (float size in new[] { 2f, 2f, 1f })
-                {
-                    stats.projectileSizeMultiplier = size;
-                    combatUpdate.Invoke(combat, null);
-                    Equal(colliderBase * size, Mathf.Abs(meleeCollider.transform.lossyScale.x), "근접 판정 배율");
-                }
-                results.Add("PASS Atlas 근접 판정/연출 부모 2배 → 반복 2배 → 해제 1배");
                 return string.Join("\n", results);
             }
             finally

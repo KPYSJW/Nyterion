@@ -264,7 +264,6 @@ namespace Nytherion.Editor.Localization
         public static readonly IReadOnlyDictionary<string, string> ItemKoreanNames =
             new Dictionary<string, string>
             {
-                ["ChargingSpread"] = "충전 산탄"
             };
 
         public static readonly IReadOnlyDictionary<string, string> EnemyKoreanNames =

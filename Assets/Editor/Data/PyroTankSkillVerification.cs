@@ -118,6 +118,17 @@ namespace Nytherion.Editor
             Require(pool.items.Any(entry => entry.item == source), "스킬 가챠 획득 경로 등록");
 
             ResetCase();
+            tank = Track(Object.Instantiate(data.tankPrefab.gameObject)).GetComponent<PyroTankController>();
+            Require(!tank.gameObject.activeSelf, "비활성 전차 프리팹의 최초 시전 조건");
+            Vector3 prefabScale = data.tankPrefab.transform.localScale;
+            tank.Begin(data, Center, Vector2.right, 2f);
+            Require(tank.transform.localScale == prefabScale * 2f,
+                "Awake 이전 최초 시전에서도 원본 크기와 효과 크기 배율 적용");
+            tank.gameObject.SetActive(false);
+            tank.Begin(data, Center, Vector2.right, 0.5f);
+            Require(tank.transform.localScale == prefabScale * 0.5f,
+                "전차 재사용 시 최초 원본 크기 유지·이전 배율 누적 없음");
+            ResetCase();
             data.lifetime = 10f;
             data.moveSpeed = 3f;
             GameObject caster = Track(new GameObject("PyroTankVerificationCaster"));

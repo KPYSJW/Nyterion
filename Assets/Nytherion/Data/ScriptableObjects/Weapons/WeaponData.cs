@@ -67,7 +67,7 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Tooltip("무기 자체에 부착할 이펙트 프리팹 (예: 스태프의 파티클 시스템 등)")]
         public GameObject weaponEffectPrefab;
 
-        [Tooltip("발사 시 발생할 이펙트 프리팹 (예: 머즐 플래시 등)")]
+        [Tooltip("발사 시 재생할 이펙트 프리팹입니다. 무기 데이터 Inspector의 '발사 이미지 설정'에서 스프라이트 이미지로 생성·연결할 수 있습니다.")]
         public GameObject fireEffectPrefab;
 
         [Tooltip("차징(충전) 중 지속적으로 발생할 이펙트 프리팹 (예: 차징 기 축적 이펙트 등)")]

@@ -26,6 +26,11 @@ namespace Nytherion.UI.Components
         private Sprite defaultItemImageBackgroundSprite;
         private Quaternion defaultItemImageRotation;
         private Vector3 defaultItemImageScale;
+        private Vector2 defaultItemImageAnchorMin;
+        private Vector2 defaultItemImageAnchorMax;
+        private Vector2 defaultItemImagePivot;
+        private Vector2 defaultItemImageSizeDelta;
+        private Vector3 defaultItemImagePosition;
         private Color defaultNameTextColor;
         private Image nameTextBackground;
         private Texture2D nameTextBackgroundTexture;
@@ -77,6 +82,11 @@ namespace Nytherion.UI.Components
             {
                 defaultItemImageRotation = itemImage.rectTransform.localRotation;
                 defaultItemImageScale = itemImage.rectTransform.localScale;
+                defaultItemImageAnchorMin = itemImage.rectTransform.anchorMin;
+                defaultItemImageAnchorMax = itemImage.rectTransform.anchorMax;
+                defaultItemImagePivot = itemImage.rectTransform.pivot;
+                defaultItemImageSizeDelta = itemImage.rectTransform.sizeDelta;
+                defaultItemImagePosition = itemImage.rectTransform.anchoredPosition3D;
             }
 
             if (nameText != null)
@@ -484,16 +494,25 @@ namespace Nytherion.UI.Components
 
             if (currentItem is WeaponData weaponData)
             {
-                Vector2 areaSize = itemImageBackground != null
-                    ? itemImageBackground.rectTransform.rect.size
-                    : itemImage.rectTransform.rect.size;
-                ItemIconLayoutUtility.Apply(itemImage, areaSize, weaponData.useDiagonalIcon, weaponData.iconSlotScale, weaponData.iconRotationOffset);
+                // 보관함과 같은 슬롯 영역 및 무기별 크기 보정으로 표시한다.
+                RectTransform slotRect = itemImageBackground != null
+                    ? itemImageBackground.rectTransform
+                    : itemImage.rectTransform.parent as RectTransform;
+                PixelPerfectItemIcon.Apply(itemImage, slotRect, weaponData.inventoryIconScale);
             }
             else
             {
-                // 다른 아이템·스킬·진척도 툴팁으로 전환할 때 무기의 회전과 확대를 복구합니다.
-                itemImage.rectTransform.localRotation = defaultItemImageRotation;
-                itemImage.rectTransform.localScale = defaultItemImageScale;
+                // 다른 아이템·스킬·진척도에는 무기 전용 정렬을 중지하고 원래 영역을 복구한다.
+                PixelPerfectItemIcon layout = itemImage.GetComponent<PixelPerfectItemIcon>();
+                if (layout != null) layout.enabled = false;
+                RectTransform iconRect = itemImage.rectTransform;
+                iconRect.anchorMin = defaultItemImageAnchorMin;
+                iconRect.anchorMax = defaultItemImageAnchorMax;
+                iconRect.pivot = defaultItemImagePivot;
+                iconRect.sizeDelta = defaultItemImageSizeDelta;
+                iconRect.anchoredPosition3D = defaultItemImagePosition;
+                iconRect.localRotation = defaultItemImageRotation;
+                iconRect.localScale = defaultItemImageScale;
             }
         }
 

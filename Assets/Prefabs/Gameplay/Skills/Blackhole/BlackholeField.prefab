@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6257441541058744273
 Transform:
   m_ObjectHideFlags: 0
@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4695543215931473830}
   - component: {fileID: 8844615420192052735}
+  - component: {fileID: 6565156997469764640}
   m_Layer: 0
   m_Name: BalckholeRange
   m_TagString: Untagged
@@ -111,7 +112,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.3333334, y: 1.3333334, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4941710287889830922}
@@ -157,7 +158,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 18f623c182c6b224f812c8e74326fdc6, type: 3}
+  m_Sprite: {fileID: 1367507278, guid: eec041ec2caeadf49896734136349182, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -168,6 +169,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &6565156997469764640
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5808088687200848959}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 713c0f934f132a445a80724c142cd48d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8075100979062668080
 GameObject:
   m_ObjectHideFlags: 0
@@ -217,3 +239,5 @@ MonoBehaviour:
   centerRadius: 0.5
   rangeVisual: {fileID: 4695543215931473830}
   centerVisual: {fileID: 6257441541058744273}
+  visualAnimator: {fileID: 6565156997469764640}
+  despawnAnimation: {fileID: 7400000, guid: c43c4b19d6d48cb45bad2f32df3d100e, type: 2}

@@ -1,7 +1,0 @@
-PASS Weapons/ArcaneDart.asset: 5개 화면 배율, Canvas 픽셀 보정 켜짐/꺼짐, 원본 방향, 픽셀 블록, 교체/비우기, 이전 렌더링 대비 너비/높이 2배
-PASS Weapons/Frenzy.asset: 5개 화면 배율, Canvas 픽셀 보정 켜짐/꺼짐, 원본 방향, 픽셀 블록, 교체/비우기, 이전 렌더링 대비 너비/높이 2배
-PASS Weapons/ShamanStaff.asset: 5개 화면 배율, Canvas 픽셀 보정 켜짐/꺼짐, 원본 방향, 픽셀 블록, 교체/비우기, 이전 렌더링 대비 너비/높이 2배
-PASS Weapons/SaintsStaff.asset: 5개 화면 배율, Canvas 픽셀 보정 켜짐/꺼짐, 원본 방향, 픽셀 블록, 교체/비우기
-PASS Assets/Nytherion/Art/UI/Legacy/Sprites/Helmet.png: 5개 화면 배율, Canvas 픽셀 보정 켜짐/꺼짐, 원본 방향, 픽셀 블록, 교체/비우기, 이전 렌더링 대비 너비/높이 2배
-PASS Assets/Nytherion/Art/UI/Legacy/Sprites/Boots.png: 5개 화면 배율, Canvas 픽셀 보정 켜짐/꺼짐, 원본 방향, 픽셀 블록, 교체/비우기, 이전 렌더링 대비 너비/높이 2배
-PASS Assets/Nytherion/Art/UI/Legacy/Sprites/ring.png: 5개 화면 배율, Canvas 픽셀 보정 켜짐/꺼짐, 원본 방향, 픽셀 블록, 교체/비우기, 이전 렌더링 대비 너비/높이 2배

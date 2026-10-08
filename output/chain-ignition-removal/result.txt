@@ -1,1 +1,0 @@
-PASS: 테스트 UI와 컴포넌트 제거, 씬 저장, Missing Script 없음, 테스트 스크립트 3개 제거

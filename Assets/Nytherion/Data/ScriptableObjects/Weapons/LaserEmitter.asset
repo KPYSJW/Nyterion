@@ -38,7 +38,7 @@ MonoBehaviour:
   weaponSprite: {fileID: 21300000, guid: f4e67fedc03b7c143a44a1319cdb070b, type: 3}
   firePointOffset: {x: 1.1, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: -0.4, y: -0.15, z: 0}
+  visualPositionOffset: {x: -0.4, y: -0.12, z: 0}
   visualScale: 0.7
   sortingOrderOffset: 5
   useFixedFacingPose: 0

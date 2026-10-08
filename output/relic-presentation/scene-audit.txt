@@ -1,5 +1,0 @@
-PASS GameScene: 유물 보관함 폭=527·4열·고정 앵커·장착 전용 이미지 참조 (높이는 ContentSizeFitter로 슬롯 생성 후 결정)
-PASS GameScene/SkillEquipSlot: 160×160·픽셀 테두리 보정
-PASS GameScene/SkillEquipSlot 1: 160×160·픽셀 테두리 보정
-PASS GameScene/SkillEquipSlot 2: 160×160·픽셀 테두리 보정
-PASS Village: 유물 보관함 폭=547·4열·고정 앵커·장착 전용 이미지 참조 (높이는 ContentSizeFitter로 슬롯 생성 후 결정)

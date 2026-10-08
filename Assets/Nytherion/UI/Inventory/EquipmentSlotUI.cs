@@ -1,6 +1,8 @@
 using Nytherion.Core.Enums;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.UI.Components;
 using Nytherion.UI.Inventory.Utils;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -81,6 +83,20 @@ namespace Nytherion.UI.Inventory
             OnBeginDragEvent += (s, e) => DragDropUIHandler.HandleBeginDragShared(s);
             OnPointerClickEvent += HandlePointerClick;
             OnEndDragEvent += HandleEndDrag;
+        }
+
+        protected override void UpdateVisuals(ItemData item, int count)
+        {
+            if (item != null && count > 0 && iconImage != null && iconImage.transform != transform)
+                PixelPerfectItemIcon.Apply(iconImage, transform as RectTransform,
+                    item is WeaponData weaponData ? weaponData.inventoryIconScale : 1f);
+            base.UpdateVisuals(item, count);
+        }
+
+        protected override void ApplyIconLayout()
+        {
+            // 보관함과 같은 배율, 원본 방향, 픽셀 정렬을 사용한다.
+            if (iconImage != null) iconImage.GetComponent<PixelPerfectItemIcon>()?.Refresh();
         }
 
         protected override void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)

@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: Afterglow
+  m_EditorClassIdentifier: 
+  uniqueID: 9ad74e97-6116-498e-ad2e-ac67c1daa8a4
+  itemName_KR: "\uC794\uD5A5"
+  itemName_EN: Afterglow
+  icon: {fileID: 21300000, guid: 2dd9ef9ec03195b4ea4c9cc45655c953, type: 3}
+  description_KR: 
+  description_EN: 
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 150
+  equipmentType: 0
+  traits: 00000000
+  statModifiers: []
+  useDiagonalIcon: 0
+  iconRotationOffset: 0
+  iconSlotScale: 1.5
+  inventoryIconScale: 1
+  damage: 10
+  range: 5
+  cooldown: 1
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: 2dd9ef9ec03195b4ea4c9cc45655c953, type: 3}
+  firePointOffset: {x: 0.85, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: -0.25, y: -0.05, z: 0}
+  visualScale: 0.4
+  sortingOrderOffset: 5
+  useFixedFacingPose: 0
+  useStaffRecoil: 1
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 8918973414656489158, guid: f90f014aa547f88459163c63e0206047, type: 3}
+  chargeEffectPrefab: {fileID: 0}
+  chargeEffectRotationSpeed: 0
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 3514501862146727550, guid: 5cea63a4e7f60a84996c1b5d3acdb4ac, type: 3}
+  projectileAnimationVariants: []
+  projectileStartEffectVariants: []
+  projectileSpeed: 10
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  hasHomingProjectiles: 0
+  usePlayerCircleSpawn: 0
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 30
+  - 15
+  - 0
+  - -15
+  - -30
+  homingTurnSpeed: 180
+  useConstantHomingSpeed: 0
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 0}
+  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  isArchivable: 1

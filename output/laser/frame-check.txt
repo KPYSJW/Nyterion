@@ -1,1 +1,0 @@
-actualDamage=24, expectedDamage=24, IsFiring=False, passed=True

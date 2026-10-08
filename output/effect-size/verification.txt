@@ -1,8 +1,0 @@
-PASS Blazeshade 기본 범위 밖 제외 → 2배에서 타격 → 해제 후 제외
-PASS GuardianStaff 기본 범위 밖 제외 → 2배에서 타격 → 해제 후 제외
-PASS LaserEmitter 광선 폭 2배
-PASS LayLaser 광선 폭 2배
-PASS 일반 투사체 2배 → 재사용 2배 → 해제 1배, 크기 누적 없음
-PASS VoidRay 지속 광선 2배 및 해제 후 복원
-PASS VoidRay 중심선 밖의 적은 크기 2배에서만 연결
-PASS Atlas 근접 판정/연출 부모 2배 → 반복 2배 → 해제 1배

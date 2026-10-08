@@ -17,7 +17,7 @@ namespace Nytherion.Editor
         private const string WEAPON_PATH = "Assets/Prefabs/Gameplay/Combat/Weapons/LaserEmitter.prefab";
         private const string BEAM_PATH = "Assets/Prefabs/Gameplay/Combat/Proj/Player_WeaponLaser.prefab";
         private const string DATABASE_PATH = "Assets/Nytherion/Data/ScriptableObjects/Items/ItemDatabaseSO.asset";
-        private const string REFERENCE_WEAPON_PATH = "Assets/Nytherion/Data/ScriptableObjects/Weapons/LunarSpark.asset";
+        private const string REFERENCE_WEAPON_PATH = "Assets/Nytherion/Data/ScriptableObjects/Weapons/Stormbringer.asset";
         private const string LASER_MATERIAL_PATH = "Assets/Nytherion/Art/Common/Materials/LaserEmitter.mat";
         private const string ENDPOINT_SPRITE_PATH = "Assets/Nytherion/Art/Combat/VFX/Sprites/LaserStartEnd.png";
         private const string ENDPOINT_CONTROLLER_PATH = "Assets/Nytherion/Art/Combat/VFX/Animations/LaserEffect/LaserStartEnd/LaserStartEnd_0.controller";
@@ -55,7 +55,7 @@ namespace Nytherion.Editor
             if (referenceWeapon.weaponSprite == null || referenceWeapon.icon == null ||
                 referenceRenderer == null || referenceRenderer.sharedMaterial == null)
             {
-                throw new InvalidOperationException("루나 스파크 무기의 외형 참조가 비어 있습니다.");
+                throw new InvalidOperationException("번개부르미 무기의 외형 참조가 비어 있습니다.");
             }
 
             int targetMask = LayerMask.GetMask("Enemy");

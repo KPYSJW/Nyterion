@@ -1,2 +1,0 @@
-playing=False paused=False switching=False time=1.08 scale=1 frame=8
-DebugPanel scene=Assets/Scenes/GameScene.unity

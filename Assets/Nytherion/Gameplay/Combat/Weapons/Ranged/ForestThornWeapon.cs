@@ -87,6 +87,21 @@ namespace Nytherion.GamePlay.Combat.Weapons
             }
         }
 
+        protected override bool ShouldSpawnFireEffect()
+        {
+            // 공통 공격 묶음 대신 실제 화살 생성 시점마다 발사 연출을 재생합니다.
+            return false;
+        }
+
+        protected override void ConfigureSpawnedProjectile(GameObject projectile, Vector2 direction, float chargePercent)
+        {
+            base.ConfigureSpawnedProjectile(projectile, direction, chargePercent);
+            if (firePoint == null || weaponData == null || weaponData.fireEffectPrefab == null) return;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            WeaponVFXHelper.PlayFireEffect(weaponData.fireEffectPrefab, firePoint.position,
+                Quaternion.AngleAxis(angle, Vector3.forward), firePoint);
+        }
+
         private void FireSingleChargedProjectile(Vector2 direction, float chargePercent)
         {
             // 투사체 생성

@@ -19,6 +19,7 @@ namespace Nytherion.UI.Components
             if (image == null || slot == null || image.transform == slot) return;
             PixelPerfectItemIcon layout = image.GetComponent<PixelPerfectItemIcon>();
             if (layout == null) layout = image.gameObject.AddComponent<PixelPerfectItemIcon>();
+            layout.enabled = true;
             layout.image = image;
             layout.slot = slot;
             layout.iconScale = Mathf.Max(0.1f, iconScale);
