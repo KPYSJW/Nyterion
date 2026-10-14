@@ -260,6 +260,7 @@ namespace Nytherion.GamePlay.Dungeon
 
             _dungeonManager?.ClearDungeonData();
             tilemapVisualizer.Clear();
+            tilemapVisualizer.ApplyDungeonTiles(dungeonData);
 
             VisualizeDungeon(
                 result.totalFloorPositions,

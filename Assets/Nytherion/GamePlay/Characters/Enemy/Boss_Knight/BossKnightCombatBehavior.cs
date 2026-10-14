@@ -73,6 +73,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
         [Header("Overcharge Shield / 번개 보호막 표시")]
         [Tooltip("2열 x 2행 보호막 시트입니다. 왼쪽 위부터 4프레임으로 재생합니다.")]
         [SerializeField] private Texture2D overchargeShieldTexture;
+        [Tooltip("연결하면 기존 2x2 텍스처 대신 이 스프라이트를 순서대로 재생합니다.")]
+        [SerializeField] private Sprite[] overchargeShieldSprites;
         [SerializeField, Min(0f)] private float overchargeShieldFramesPerSecond = 12f;
         [Tooltip("몸 크기에 대한 보호막 배율입니다. 원형 비율을 유지하며 과충전 공격 범위도 함께 바뀝니다.")]
         [SerializeField, Min(0.1f)] private float overchargeShieldScale = 1.6f;
@@ -93,6 +95,21 @@ namespace Nytherion.GamePlay.Characters.Enemy
         [SerializeField, Min(1f)] private float crossingFallbackDistance = 15f;
         [Tooltip("비워 두면 Main Camera를 사용합니다. 벽/NavMesh 경계에서는 경로를 방 안으로 제한합니다.")]
         [SerializeField] private Camera crossingCamera;
+        [Header("Crossing Departure / Return Effect")]
+        [SerializeField] private SpriteRenderer crossingEffectRenderer;
+        [SerializeField] private Sprite[] crossingEffectFrames;
+        [SerializeField, Min(0f)] private float crossingDepartureDuration = 1.2f;
+        [SerializeField, Min(0f)] private float crossingReturnDuration = 1.2f;
+        [SerializeField] private Color crossingPixelColor = new Color(0.2f, 0.75f, 1f, 1f);
+        [SerializeField, Min(1f)] private float crossingPixelSize = 5f;
+        private float crossingTransitionStartedAt;
+        private Animator crossingBodyAnimator;
+        private float crossingOriginalAnimatorSpeed;
+        private bool crossingAnimationFrozen;
+        private SpriteRenderer crossingPixelRenderer;
+        private Material crossingPixelMaterial;
+        private MaterialPropertyBlock crossingPixelProperties;
+        private static readonly int CrossingDissolveId = Shader.PropertyToID("_DissolveAmount");
 
         [Header("Dash Range Preview")]
         [SerializeField] private GameObject dashRangePreview;
@@ -103,6 +120,28 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private Vector3 previewOriginalLocalPosition;
         private Quaternion previewOriginalLocalRotation;
         private Vector3 previewOriginalLocalScale;
+
+        [Header("Running Foot Effect")]
+        [SerializeField] private SpriteRenderer runEffectRenderer;
+        [SerializeField] private Animator runEffectAnimator;
+        [SerializeField, Min(0f)] private float runEffectMinimumSpeed = 0.15f;
+        private Vector3 runEffectLastPosition;
+        private bool runEffectHasLastPosition;
+
+        [Header("Pattern Outline")]
+        [SerializeField, InspectorName("1. 뇌진 강습 색상")]
+        private Color patternOutlineColor = new Color(0.35f, 0.85f, 1f, 1f);
+        [SerializeField, InspectorName("2. 연속 돌진 색상")]
+        private Color chainDashOutlineColor = new Color(1f, 0.85f, 0.25f, 1f);
+        [SerializeField, InspectorName("3. 과충전 추적 색상")]
+        private Color overchargeOutlineColor = new Color(0.72f, 0.4f, 1f, 1f);
+        [SerializeField, InspectorName("4. 뇌광 횡단 색상")]
+        private Color crossingOutlineColor = new Color(1f, 0.25f, 0.3f, 1f);
+        [SerializeField, Range(0f, 4f)] private float patternOutlineWidth = 1f;
+        private MaterialPropertyBlock outlineProperties;
+        private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
+        private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
+        private static readonly int OutlineEnabledId = Shader.PropertyToID("_OutlineEnabled");
 
         [Header("Dash End Shockwave")]
         [SerializeField, Min(0.1f)] private float shockwaveRadius = 4f;
@@ -142,6 +181,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private SpriteRenderer overchargeRenderer;
         private Material overchargeMaterial;
         private Sprite[] overchargeShieldFrames;
+        private bool ownsOverchargeShieldFrames;
         private Texture2D loadedOverchargeShieldTexture;
         private Knight overchargeContact;
         private Transform shieldPlayer;
@@ -191,7 +231,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
             Dashing,
             OverchargeCharging,
             OverchargePursuing,
-            CrossingPreparing
+            CrossingPreparing,
+            CrossingDeparting,
+            CrossingReturning
         }
         private AttackPhase currentPhase;
         public bool IsPreparing => isActiveAndEnabled &&
@@ -208,6 +250,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
             currentPhase == AttackPhase.OverchargePursuing;
         public bool IsCrossingHidden => crossingOwnsVisibility &&
             currentPhase == AttackPhase.CrossingPreparing;
+        public bool IsCrossingTransition => currentPhase == AttackPhase.CrossingDeparting ||
+            currentPhase == AttackPhase.CrossingReturning;
 
         public bool TryGetDashMotion(out Vector2 direction, out float speed)
         {
@@ -223,6 +267,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             enemyBase = GetComponent<EnemyBase>();
             overchargeContact = GetComponent<Knight>();
             crossingSprite = GetComponent<SpriteRenderer>();
+            crossingBodyAnimator = GetComponent<Animator>();
             crossingAfterimages = GetComponent<KnightMovementAfterimageVFX>();
             if (dashRangePreview == null) return;
 
@@ -373,6 +418,23 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void UpdateAttackState(EnemyAIController enemy)
         {
+            if (IsCrossingTransition)
+            {
+                HoldPositionDuringPreparation(enemy);
+                UpdateCrossingTransitionEffect();
+                float duration = currentPhase == AttackPhase.CrossingDeparting
+                    ? crossingDepartureDuration : crossingReturnDuration;
+                if (Time.time - crossingTransitionStartedAt >= Mathf.Max(0f, duration))
+                {
+                    HideCrossingTransitionEffect();
+                    if (currentPhase == AttackPhase.CrossingDeparting)
+                    {
+                        if (!PrepareNextCrossing(enemy)) FinishCrossingWithoutPath(enemy);
+                    }
+                    else enemy.TransitionToState(enemy.chaseState);
+                }
+                return;
+            }
             if (currentPhase == AttackPhase.CrossingPreparing)
             {
                 // This telegraph is locked at creation, unlike attacks 1/2.
@@ -436,9 +498,124 @@ namespace Nytherion.GamePlay.Characters.Enemy
             crossingOriginalColliderEnabled = bodyCollider != null && bodyCollider.enabled;
             crossingOriginalAfterimagesEnabled = crossingAfterimages != null && crossingAfterimages.enabled;
             crossingOwnsVisibility = true;
-            currentPhase = AttackPhase.CrossingPreparing;
-            SetCrossingVisible(false);
-            if (!PrepareNextCrossing(enemy)) FinishCrossingWithoutPath(enemy);
+            BeginCrossingTransition(enemy, false);
+        }
+
+        private void BeginCrossingTransition(EnemyAIController enemy, bool returning)
+        {
+            currentPhase = returning ? AttackPhase.CrossingReturning : AttackPhase.CrossingDeparting;
+            crossingTransitionStartedAt = Time.time;
+            activeDashSpeed = 0f;
+            dashTimeRemaining = 0f;
+            finishDashNextFixedUpdate = false;
+            HoldPositionDuringPreparation(enemy);
+            HideDashRangePreview();
+            SetRunEffectVisible(false);
+            SetCrossingVisible(!returning);
+            // Visible departure is cosmetic: neither transition deals contact damage.
+            if (bodyCollider != null) bodyCollider.enabled = false;
+            if (crossingAfterimages != null) crossingAfterimages.enabled = false;
+            BeginCrossingPixelEffect();
+            UpdateCrossingTransitionEffect();
+        }
+
+        private void BeginCrossingPixelEffect()
+        {
+            if (crossingBodyAnimator != null && !crossingAnimationFrozen)
+            {
+                crossingOriginalAnimatorSpeed = crossingBodyAnimator.speed;
+                crossingAnimationFrozen = true;
+                crossingBodyAnimator.speed = 0f;
+            }
+            if (crossingSprite == null || crossingSprite.sprite == null) return;
+            if (crossingPixelMaterial == null)
+            {
+                Shader shader = Resources.Load<Shader>("EnemyPixelDissolve");
+                if (shader == null)
+                {
+                    Debug.LogWarning("[KnightBoss Crossing] EnemyPixelDissolve 셰이더를 찾을 수 없습니다.", this);
+                    return;
+                }
+                // A separate frozen sprite avoids conflicts with hit flashes and actual death.
+                crossingPixelMaterial = new Material(shader) { name = "Knight Boss Crossing Pixels (Runtime)" };
+                GameObject pixelObject = new GameObject("Crossing Frozen Pixels");
+                pixelObject.layer = gameObject.layer;
+                pixelObject.transform.SetParent(crossingSprite.transform, false);
+                crossingPixelRenderer = pixelObject.AddComponent<SpriteRenderer>();
+                crossingPixelRenderer.sharedMaterial = crossingPixelMaterial;
+                crossingPixelProperties = new MaterialPropertyBlock();
+            }
+            Sprite sprite = crossingSprite.sprite;
+            crossingPixelRenderer.sprite = sprite;
+            crossingPixelRenderer.color = crossingSprite.color;
+            crossingPixelRenderer.flipX = crossingSprite.flipX;
+            crossingPixelRenderer.flipY = crossingSprite.flipY;
+            crossingPixelRenderer.sortingLayerID = crossingSprite.sortingLayerID;
+            crossingPixelRenderer.sortingOrder = crossingSprite.sortingOrder;
+            Vector2 uvMin = Vector2.one, uvMax = Vector2.zero;
+            foreach (Vector2 uv in sprite.uv)
+            {
+                uvMin = Vector2.Min(uvMin, uv);
+                uvMax = Vector2.Max(uvMax, uv);
+            }
+            float pixelsPerCell = Mathf.Max(1f, crossingPixelSize * sprite.pixelsPerUnit / 32f);
+            crossingPixelProperties.Clear();
+            crossingPixelProperties.SetTexture("_MainTex", sprite.texture);
+            crossingPixelProperties.SetVector("_SpriteUVRect",
+                new Vector4(uvMin.x, uvMin.y, uvMax.x - uvMin.x, uvMax.y - uvMin.y));
+            crossingPixelProperties.SetVector("_PixelGrid", new Vector4(
+                Mathf.Max(1f, sprite.rect.width / pixelsPerCell),
+                Mathf.Max(1f, sprite.rect.height / pixelsPerCell), 0f, 0f));
+            crossingPixelProperties.SetColor("_FragmentColor", crossingPixelColor);
+            crossingPixelProperties.SetFloat("_Seed", Random.value);
+            crossingPixelProperties.SetFloat(CrossingDissolveId,
+                currentPhase == AttackPhase.CrossingReturning ? 1f : 0f);
+            crossingPixelRenderer.SetPropertyBlock(crossingPixelProperties);
+            crossingPixelRenderer.enabled = true;
+            crossingSprite.enabled = false;
+        }
+
+        private void UpdateCrossingTransitionEffect()
+        {
+            if (IsCrossingTransition && crossingPixelRenderer != null && crossingPixelRenderer.enabled)
+            {
+                bool appearing = currentPhase == AttackPhase.CrossingReturning;
+                float pixelDuration = appearing ? crossingReturnDuration : crossingDepartureDuration;
+                float pixelProgress = Mathf.Clamp01((Time.time - crossingTransitionStartedAt) /
+                    Mathf.Max(0.01f, pixelDuration));
+                crossingPixelProperties.SetFloat(CrossingDissolveId, appearing ? 1f - pixelProgress : pixelProgress);
+                crossingPixelRenderer.SetPropertyBlock(crossingPixelProperties);
+            }
+            if (crossingEffectRenderer == null) return;
+            if (!IsCrossingTransition || crossingEffectFrames == null || crossingEffectFrames.Length == 0)
+            {
+                crossingEffectRenderer.enabled = false;
+                return;
+            }
+            bool returning = currentPhase == AttackPhase.CrossingReturning;
+            float duration = returning ? crossingReturnDuration : crossingDepartureDuration;
+            float progress = Mathf.Clamp01((Time.time - crossingTransitionStartedAt) / Mathf.Max(0.01f, duration));
+            int frame = Mathf.Min(crossingEffectFrames.Length - 1,
+                Mathf.FloorToInt(progress * crossingEffectFrames.Length));
+            if (returning) frame = crossingEffectFrames.Length - 1 - frame;
+            crossingEffectRenderer.sprite = crossingEffectFrames[frame];
+            if (crossingSprite != null)
+            {
+                crossingEffectRenderer.sortingLayerID = crossingSprite.sortingLayerID;
+                crossingEffectRenderer.sortingOrder = crossingSprite.sortingOrder + 1;
+            }
+            crossingEffectRenderer.enabled = true;
+        }
+
+        private void HideCrossingTransitionEffect()
+        {
+            if (crossingEffectRenderer != null) crossingEffectRenderer.enabled = false;
+            if (crossingPixelRenderer != null) crossingPixelRenderer.enabled = false;
+            if (crossingAnimationFrozen)
+            {
+                if (crossingBodyAnimator != null) crossingBodyAnimator.speed = crossingOriginalAnimatorSpeed;
+                crossingAnimationFrozen = false;
+            }
         }
 
         private void SetCrossingVisible(bool visible)
@@ -636,7 +813,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             enemy.transform.position = crossingLastSafeBody;
             Physics2D.SyncTransforms();
             Debug.LogWarning("[KnightBoss Crossing] 유효한 횡단 경로가 없어 이번 패턴을 종료합니다.", this);
-            enemy.TransitionToState(enemy.chaseState);
+            BeginCrossingTransition(enemy, true);
         }
 
         private void BeginOvercharge(EnemyAIController enemy)
@@ -646,9 +823,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
             HoldPositionDuringPreparation(enemy);
             currentPhase = AttackPhase.OverchargeCharging;
             preparationEndTime = Time.time + Mathf.Max(0f, overchargePreparationDuration);
-            overchargeEffectStartedAt = Time.time;
             RefreshPreparationAim(enemy);
             EnsureOverchargeElectricity();
+            if (overchargeRenderer != null) overchargeRenderer.enabled = false;
         }
 
         private void BeginOverchargePursuit(EnemyAIController enemy)
@@ -664,6 +841,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             originalOverchargeSpeed = overchargeAgent.speed;
             originalOverchargeAcceleration = overchargeAgent.acceleration;
             overchargeStartedAt = Time.time;
+            overchargeEffectStartedAt = Time.time;
             overchargeEndsAt = Time.time + Mathf.Max(0.01f, overchargePursuitDuration);
             currentPhase = AttackPhase.OverchargePursuing;
             enemy.ClearForcedFacingDirection();
@@ -693,20 +871,31 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void EnsureOverchargeElectricity()
         {
-            if (overchargeShieldTexture == null || overchargeShieldTexture.width % 2 != 0 ||
-                overchargeShieldTexture.height % 2 != 0)
+            bool hasSpriteFrames = overchargeShieldSprites != null && overchargeShieldSprites.Length > 0;
+            if (!hasSpriteFrames && (overchargeShieldTexture == null || overchargeShieldTexture.width % 2 != 0 ||
+                overchargeShieldTexture.height % 2 != 0))
             {
                 if (overchargeRenderer != null) overchargeRenderer.enabled = false;
                 Debug.LogWarning("[KnightBoss] 유효한 2x2 보호막 이미지를 연결해주세요.", this);
                 return;
             }
 
-            if (overchargeShieldFrames == null || loadedOverchargeShieldTexture != overchargeShieldTexture)
+            if (hasSpriteFrames)
+            {
+                if (overchargeShieldFrames != overchargeShieldSprites)
+                {
+                    ClearOverchargeShieldFrames();
+                    overchargeShieldFrames = overchargeShieldSprites;
+                }
+            }
+            else if (overchargeShieldFrames == null || !ownsOverchargeShieldFrames ||
+                loadedOverchargeShieldTexture != overchargeShieldTexture)
             {
                 ClearOverchargeShieldFrames();
                 int width = overchargeShieldTexture.width / 2;
                 int height = overchargeShieldTexture.height / 2;
                 overchargeShieldFrames = new Sprite[4];
+                ownsOverchargeShieldFrames = true;
                 for (int i = 0; i < overchargeShieldFrames.Length; i++)
                 {
                     int column = i % 2;
@@ -741,20 +930,24 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void ClearOverchargeShieldFrames()
         {
-            if (overchargeShieldFrames != null)
+            if (ownsOverchargeShieldFrames && overchargeShieldFrames != null)
             {
                 foreach (Sprite frame in overchargeShieldFrames)
                     if (frame != null) Destroy(frame);
             }
             overchargeShieldFrames = null;
+            ownsOverchargeShieldFrames = false;
             loadedOverchargeShieldTexture = null;
         }
 
         private void LateUpdate()
         {
-            bool isOvercharging = currentPhase == AttackPhase.OverchargeCharging ||
-                currentPhase == AttackPhase.OverchargePursuing;
-            if (!isOvercharging || activeEnemy == null || !activeEnemy.isActiveAndEnabled ||
+            if (IsCrossingTransition) UpdateCrossingTransitionEffect();
+            UpdateRunEffect();
+            SetPatternOutline(isActiveAndEnabled && currentAttack.HasValue &&
+                currentPhase != AttackPhase.None && activeEnemy != null &&
+                activeEnemy.isActiveAndEnabled && (enemyBase == null || !enemyBase.isDead));
+            if (!IsOverchargePursuing || activeEnemy == null || !activeEnemy.isActiveAndEnabled ||
                 (enemyBase != null && enemyBase.isDead))
             {
                 if (overchargeRenderer != null) overchargeRenderer.enabled = false;
@@ -774,14 +967,64 @@ namespace Nytherion.GamePlay.Characters.Enemy
             // character collider is wider than it is tall. Damage is checked separately.
             overchargeRenderer.transform.localScale = Vector3.one * scale;
             Color color = Color.white;
-            float charge = currentPhase == AttackPhase.OverchargeCharging
-                ? Mathf.Clamp01(1f - (preparationEndTime - Time.time) / Mathf.Max(0.01f, overchargePreparationDuration))
-                : 1f;
-            color.a = overchargeElectricAlpha * Mathf.Lerp(0.35f, 1f, charge);
+            color.a = overchargeElectricAlpha;
             overchargeRenderer.color = color;
             overchargeRenderer.enabled = true;
             if (IsOverchargePursuing)
                 CheckOverchargeShieldHit(center, diameter * 0.5f * overchargeShieldHitRadiusScale);
+        }
+
+        private void UpdateRunEffect()
+        {
+            Vector3 position = transform.position;
+            float distance = runEffectHasLastPosition
+                ? Vector2.Distance(runEffectLastPosition, position) : 0f;
+            runEffectLastPosition = position;
+            runEffectHasLastPosition = true;
+            bool visible = isActiveAndEnabled && crossingSprite != null && crossingSprite.enabled &&
+                (enemyBase == null || !enemyBase.isDead) && !IsPreparing && !IsCrossingHidden && !IsCrossingTransition &&
+                Time.deltaTime > 0f && distance / Time.deltaTime > runEffectMinimumSpeed;
+            SetRunEffectVisible(visible);
+        }
+
+        private void SetRunEffectVisible(bool visible)
+        {
+            if (runEffectRenderer == null) return;
+            if (crossingSprite != null)
+            {
+                runEffectRenderer.sortingLayerID = crossingSprite.sortingLayerID;
+                runEffectRenderer.sortingOrder = crossingSprite.sortingOrder - 1;
+            }
+            if (runEffectAnimator != null && runEffectAnimator.enabled != visible)
+            {
+                runEffectAnimator.enabled = visible;
+                if (visible && runEffectAnimator.runtimeAnimatorController != null)
+                    runEffectAnimator.Play("Boss_knight_runeffect", 0, 0f);
+            }
+            runEffectRenderer.enabled = visible;
+        }
+
+        private void SetPatternOutline(bool enabled)
+        {
+            if (crossingSprite == null) return;
+            if (outlineProperties == null) outlineProperties = new MaterialPropertyBlock();
+            // Preserve hit-flash and other per-renderer properties.
+            crossingSprite.GetPropertyBlock(outlineProperties);
+            outlineProperties.SetColor(OutlineColorId, GetPatternOutlineColor());
+            outlineProperties.SetFloat(OutlineWidthId, patternOutlineWidth);
+            outlineProperties.SetFloat(OutlineEnabledId, enabled ? 1f : 0f);
+            crossingSprite.SetPropertyBlock(outlineProperties);
+        }
+
+        private Color GetPatternOutlineColor()
+        {
+            switch (currentAttack)
+            {
+                case BossAttackType.ChainDash: return chainDashOutlineColor;
+                case BossAttackType.OverchargedPursuit: return overchargeOutlineColor;
+                case BossAttackType.LightningCrossing: return crossingOutlineColor;
+                default: return patternOutlineColor;
+            }
         }
 
         private void GetOverchargeShieldGeometry(out Vector3 center, out float diameter)
@@ -917,7 +1160,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             if (currentPhase == AttackPhase.Preparing || currentPhase == AttackPhase.OverchargeCharging ||
-                currentPhase == AttackPhase.CrossingPreparing)
+                currentPhase == AttackPhase.CrossingPreparing || IsCrossingTransition)
             {
                 HoldPositionDuringPreparation(activeEnemy);
                 return;
@@ -978,7 +1221,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (currentPhase != AttackPhase.Dashing) return;
             if (currentAttack == BossAttackType.LightningCrossing)
             {
-                PlayShockwave(enemy);
                 crossingLastSafeBody = GetBodyWorldPosition(enemy);
                 crossingLastSafeNav = enemy.agent.nextPosition;
                 remainingCrossings--;
@@ -990,6 +1232,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
                     if (!PrepareNextCrossing(enemy)) FinishCrossingWithoutPath(enemy);
                     return;
                 }
+                PlayShockwave(enemy);
+                BeginCrossingTransition(enemy, true);
+                return;
             }
             else if (currentAttack == BossAttackType.ChainDash)
             {
@@ -1180,6 +1425,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void OnDestroy()
         {
+            if (crossingPixelRenderer != null) Destroy(crossingPixelRenderer.gameObject);
+            if (crossingPixelMaterial != null) Destroy(crossingPixelMaterial);
             foreach (ShockwaveInstance wave in shockwaves)
             {
                 if (wave.Line != null) Destroy(wave.Line.gameObject);
@@ -1271,12 +1518,16 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void OnDisable()
         {
+            SetRunEffectVisible(false);
+            runEffectHasLastPosition = false;
             StopShockwave();
             ClearDashState();
         }
 
         private void ClearDashState()
         {
+            HideCrossingTransitionEffect();
+            SetPatternOutline(false);
             StopOvercharge();
             HideDashRangePreview();
             RestoreCrossingVisibility();

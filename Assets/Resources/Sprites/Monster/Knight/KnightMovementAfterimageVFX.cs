@@ -80,9 +80,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
             nextPreparationSpawnTime = 0f;
 
-            // Boss dashes use Rigidbody2D while the NavMeshAgent is stopped.
-            // Keep the normal knight speed check, but allow dash movement too.
+            // Boss idle/chase/contact attacks do not emit movement ghosts.
+            // Keep special-attack effects and ordinary knight movement unchanged.
             bool isBossDashing = bossCombat != null && bossCombat.IsDashing;
+            if (bossCombat != null && !isBossDashing && !bossCombat.IsOverchargePursuing)
+            {
+                distanceSinceLastSpawn = 0f;
+                return;
+            }
+            // Boss dashes use Rigidbody2D while the NavMeshAgent is stopped.
             if (!isBossDashing && knight.CurrentSpeed < minimumMoveSpeed)
             {
                 distanceSinceLastSpawn = 0f;

@@ -34,6 +34,28 @@ namespace Nytherion.GamePlay.Dungeon
         [SerializeField] private TileBase shopRoomTile;
         [SerializeField] private TileBase itemRoomTile;
 
+        private DungeonData activeTileData;
+
+        private TileBase FloorTile => activeTileData != null && activeTileData.floorTile != null
+            ? activeTileData.floorTile : floorTile;
+        private RuleTile WallRuleTile => activeTileData != null && activeTileData.wallRuleTile != null
+            ? activeTileData.wallRuleTile : wallRuleTile;
+        private TileBase PortalTile => activeTileData != null && activeTileData.portalTile != null
+            ? activeTileData.portalTile : portalTile;
+        private TileBase StartRoomTile => activeTileData != null && activeTileData.startRoomTile != null
+            ? activeTileData.startRoomTile : startRoomTile;
+        private TileBase ShopRoomTile => activeTileData != null && activeTileData.shopRoomTile != null
+            ? activeTileData.shopRoomTile : shopRoomTile;
+        private TileBase ItemRoomTile => activeTileData != null && activeTileData.itemRoomTile != null
+            ? activeTileData.itemRoomTile : itemRoomTile;
+
+        // Keep Inspector defaults intact so an unassigned tile never inherits a previous stage's override.
+        public void ApplyDungeonTiles(DungeonData dungeonData)
+        {
+            activeTileData = dungeonData;
+        }
+
+
        
 
         /// <summary>
@@ -119,7 +141,7 @@ namespace Nytherion.GamePlay.Dungeon
         /// </summary>
         public void PaintFloorTiles(IEnumerable<Vector2Int> floorPositions)
         {
-            PaintTiles(floorPositions, floorTilemap, floorTile);
+            PaintTiles(floorPositions, floorTilemap, FloorTile);
         }
 
         /// <summary>
@@ -127,7 +149,7 @@ namespace Nytherion.GamePlay.Dungeon
         /// </summary>
         public void PaintWallsWithRuleTile(IEnumerable<Vector2Int> wallPositions)
         {
-            PaintTiles(wallPositions, wallTilemap, wallRuleTile);
+            PaintTiles(wallPositions, wallTilemap, WallRuleTile);
             Debug.Log("타일완성");
         }
 
@@ -136,7 +158,7 @@ namespace Nytherion.GamePlay.Dungeon
         /// </summary>
         public void PaintPortals(IEnumerable<Vector2Int> portalPositions)
         {
-            PaintTiles(portalPositions, portalTilemap, portalTile);
+            PaintTiles(portalPositions, portalTilemap, PortalTile);
         }
 
         /// <summary>
@@ -216,13 +238,13 @@ namespace Nytherion.GamePlay.Dungeon
             switch (type)
             {
                 case RoomFirstDungeonGenerator.RoomType.Start:
-                    return startRoomTile;
+                    return StartRoomTile;
                 case RoomFirstDungeonGenerator.RoomType.Shop:
-                    return shopRoomTile;
+                    return ShopRoomTile;
                 case RoomFirstDungeonGenerator.RoomType.Item:
-                    return itemRoomTile;
+                    return ItemRoomTile;
                 default:
-                    return floorTile; // 일반 방이나 보스 방은 다른 방식으로 처리되므로 null 반환
+                    return FloorTile; // 일반 방이나 보스 방은 다른 방식으로 처리되므로 null 반환
             }
         }
 
