@@ -6,6 +6,7 @@ using UnityEngine;
 using VContainer;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Gameplay.Relics.Modules;
+using Nytherion.GamePlay.Characters.Enemy;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -13,10 +14,15 @@ namespace Nytherion.GamePlay.Combat
     {
         [HideInInspector] public float damage;
         [HideInInspector] public float chargePercent = 0f;
+        [HideInInspector] public float effectSizeMultiplier = 1f;
 
         [Header("Projectile Traits")]
         public List<EquipmentTrait> traits = new List<EquipmentTrait>();
         public GameObject hitEffectPrefab;
+        [Tooltip("벽과 충돌할 때도 피격 이펙트를 재생합니다.")]
+        public bool playHitEffectOnWall;
+        [Tooltip("유물의 추가 피해로 처리해 적중 효과의 재귀 발동을 방지합니다.")]
+        public bool isChainDamage;
 
         [Header("Pool Settings")]
         public string poolTag = "PlayerProj";
@@ -33,6 +39,9 @@ namespace Nytherion.GamePlay.Combat
         private bool hasEnemyHit;
         private bool hasSpawnedTrickshotEchoes;
         private Vector3 lastHitPosition;
+        private LayerMask obstacleCollisionLayers;
+        private bool useObstacleCollision;
+        private bool hasReturnedToPool;
 
         public CombatModifierSnapshot ModifierSnapshot => playerManager != null && playerManager.playerRelicManager != null
             ? playerManager.playerRelicManager.CombatModifiers
@@ -69,6 +78,10 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnEnable()
         {
+            effectSizeMultiplier = 1f;
+            hasReturnedToPool = false;
+            useObstacleCollision = false;
+            obstacleCollisionLayers = 0;
             trickshotInteractionCount = 0;
             isSecondaryProjectile = false;
             hasEnemyHit = false;
@@ -131,10 +144,30 @@ namespace Nytherion.GamePlay.Combat
             bounceModifier.enabled = hasBaseBounceModifier || modifierSnapshot.HasProjectileBounce;
         }
 
+        public void ConfigureObstacleCollision(LayerMask layers)
+        {
+            useObstacleCollision = true;
+            obstacleCollisionLayers = layers;
+        }
+
+        private bool IsObstacleCollision(Collider2D other)
+        {
+            if (!useObstacleCollision || other.isTrigger) return false;
+            for (Transform current = other.transform; current != null; current = current.parent)
+            {
+                if (current.CompareTag("Wall") || (obstacleCollisionLayers.value & (1 << current.gameObject.layer)) != 0)
+                    return true;
+            }
+            return false;
+        }
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            bool isEnemy = collision.CompareTag("Enemy");
-            bool isWall = collision.CompareTag("Wall");
+            // 같은 물리 틱에 여러 충돌체가 진입해도 이미 반환된 탄은 피해를 주지 않습니다.
+            if (hasReturnedToPool || !gameObject.activeInHierarchy) return;
+            bool isEnemy = IsEnemyCollider(collision);
+            bool isWall = HasTagInParents(collision.transform, "Wall") || IsObstacleCollision(collision);
+            if (isEnemy && bounceModifier.enabled && bounceModifier.ShouldIgnoreHit(collision)) return;
 
             if (isEnemy || isWall)
             {
@@ -142,11 +175,13 @@ namespace Nytherion.GamePlay.Combat
                 {
                     hasEnemyHit = true;
                     lastHitPosition = collision.ClosestPoint(transform.position);
-                    IDamageable target = collision.GetComponent<IDamageable>();
-                    target?.TakeDamage(damage);
+                    IDamageable target = collision.GetComponentInParent<IDamageable>();
+                    target?.TakeDamage(damage, isChainDamage);
+                    if (TryGetComponent(out HomingProj homingProjectile))
+                        homingProjectile.StopTrackingHitTarget(target);
 
                     if (target != null && traits != null &&
-                        collision.TryGetComponent<StatusEffectManager>(out StatusEffectManager effectManager))
+                        collision.GetComponentInParent<StatusEffectManager>() is StatusEffectManager effectManager)
                     {
                         for (int i = 0; i < traits.Count; i++)
                         {
@@ -177,7 +212,11 @@ namespace Nytherion.GamePlay.Combat
                         }
                     }
 
-                    // 충돌 위치에 피격 이펙트 재생
+                }
+
+                if (isEnemy || (isWall && playHitEffectOnWall))
+                {
+                    // 적 또는 설정된 벽 충돌 위치에 피격 이펙트를 재생합니다.
                     Vector2 hitPoint = collision.ClosestPoint(transform.position);
                     WeaponVFXHelper.PlayHitEffect(hitEffectPrefab, hitPoint, chargePercent);
                 }
@@ -212,8 +251,27 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
+        public static bool IsEnemyCollider(Collider2D collision)
+        {
+            if (collision == null) return false;
+            IDamageable damageable = collision.GetComponentInParent<IDamageable>();
+            // 자식 감지용 트리거는 적 몸체로 취급하지 않습니다. 명시적인 Enemy 피격 영역은 유지합니다.
+            if (collision.isTrigger && !collision.CompareTag("Enemy") &&
+                damageable is MonoBehaviour owner && owner.transform != collision.transform) return false;
+            return damageable is EnemyBase || HasTagInParents(collision.transform, "Enemy");
+        }
+
+        private static bool HasTagInParents(Transform origin, string tag)
+        {
+            for (Transform current = origin; current != null; current = current.parent)
+                if (current.CompareTag(tag)) return true;
+            return false;
+        }
+
         public void ReturnToPool()
         {
+            if (hasReturnedToPool) return;
+            hasReturnedToPool = true;
             if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
             {
                 ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
@@ -275,6 +333,7 @@ namespace Nytherion.GamePlay.Combat
                     lastHitPosition,
                     Quaternion.identity);
                 if (echo == null) continue;
+                echo.transform.localScale *= effectSizeMultiplier;
 
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 echo.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
@@ -295,6 +354,7 @@ namespace Nytherion.GamePlay.Combat
                         hitEffectPrefab,
                         ModifierSnapshot,
                         true);
+                    echoCollision.effectSizeMultiplier = effectSizeMultiplier;
                 }
             }
         }

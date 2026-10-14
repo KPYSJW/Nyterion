@@ -17,6 +17,11 @@ public class BlackholeField : MonoBehaviour
     private float currentDuration;
     private float nextTickTime;
     private bool isInitialized = false;
+    private bool isDespawning;
+    private float remainingDespawnTime;
+
+    private static readonly int SummonState = Animator.StringToHash("Base Layer.Summon");
+    private static readonly int DespawnState = Animator.StringToHash("Base Layer.Despawn");
 
     private Collider2D[] hitColliders = new Collider2D[20];
 
@@ -24,6 +29,14 @@ public class BlackholeField : MonoBehaviour
 
     [SerializeField] private Transform rangeVisual;  
     [SerializeField] private Transform centerVisual;
+    [SerializeField] private Animator visualAnimator;
+    [SerializeField] private AnimationClip despawnAnimation;
+
+    private void OnDisable()
+    {
+        isInitialized = false;
+        isDespawning = false;
+    }
 
     public void Initialize(float damage, float range, float pullForce, float duration, float tickRate, LayerMask enemyLayer, string poolTag)
     {
@@ -37,10 +50,23 @@ public class BlackholeField : MonoBehaviour
 
         currentDuration = duration;
         nextTickTime = Time.time + tickRate;
+        isDespawning = false;
+
+        // 풀에서 재사용할 때도 소환 첫 프레임부터 시작합니다.
+        if (visualAnimator != null && visualAnimator.runtimeAnimatorController != null)
+        {
+            visualAnimator.Rebind();
+            visualAnimator.Play(SummonState, 0, 0f);
+            visualAnimator.Update(0f);
+        }
 
         if (rangeVisual != null)
         {
-            rangeVisual.localScale = new Vector3(range * 2, range * 2, 1f);
+            float spriteDiameter = 1f;
+            if (rangeVisual.TryGetComponent(out SpriteRenderer renderer) && renderer.sprite != null)
+                spriteDiameter = Mathf.Max(renderer.sprite.rect.width, renderer.sprite.rect.height) / renderer.sprite.pixelsPerUnit;
+            float scale = range * 2f / spriteDiameter;
+            rangeVisual.localScale = new Vector3(scale, scale, 1f);
         }
         if (centerVisual != null)
         {
@@ -52,6 +78,13 @@ public class BlackholeField : MonoBehaviour
 
     void FixedUpdate()
     {
+        // 소멸 중에는 흡인·피해 없이 마지막 프레임까지 보여줍니다.
+        if (isDespawning)
+        {
+            remainingDespawnTime -= Time.fixedDeltaTime;
+            if (remainingDespawnTime <= 0f) ReturnToPool();
+            return;
+        }
         if (!isInitialized) return;
 
         PullEnemies();
@@ -60,8 +93,23 @@ public class BlackholeField : MonoBehaviour
         currentDuration -= Time.fixedDeltaTime;
         if (currentDuration <= 0)
         {
-            ReturnToPool();
+            BeginDespawn();
         }
+    }
+
+    private void BeginDespawn()
+    {
+        isInitialized = false;
+        if (visualAnimator == null || visualAnimator.runtimeAnimatorController == null || despawnAnimation == null)
+        {
+            ReturnToPool();
+            return;
+        }
+
+        isDespawning = true;
+        remainingDespawnTime = despawnAnimation.length;
+        visualAnimator.Play(DespawnState, 0, 0f);
+        visualAnimator.Update(0f);
     }
 
     private void PullEnemies()
@@ -120,6 +168,7 @@ public class BlackholeField : MonoBehaviour
     private void ReturnToPool()
     {
         isInitialized = false;
+        isDespawning = false;
         if (ObjectPoolManager.Instance != null && !string.IsNullOrEmpty(poolTag))
         {
             ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);

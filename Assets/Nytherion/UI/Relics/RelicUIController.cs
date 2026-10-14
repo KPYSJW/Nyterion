@@ -9,6 +9,7 @@ namespace Nytherion.UI.Controllers
 {
     public class RelicUIController : UIPanelBase, IInitializable
     {
+        protected override bool UsesBookOpenSound => true;
         private EventManager eventManager;
         private InputManager inputManager;
         private GameSceneUIRefs gameSceneUIRefs;
@@ -134,6 +135,7 @@ namespace Nytherion.UI.Controllers
             }
             else
             {
+                relicGridUI?.CancelActiveDrag();
                 inputManager.EnableMovement();
             }
         }

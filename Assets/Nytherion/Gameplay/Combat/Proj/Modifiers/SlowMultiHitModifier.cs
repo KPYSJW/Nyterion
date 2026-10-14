@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Nytherion.Core.Interfaces;
-using UnityEditor.VersionControl;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -12,6 +11,8 @@ namespace Nytherion.GamePlay.Combat
         public float slowSpeed = 2f;
         public float tickRate = 0.5f;
         public float lifeTime = 5f;
+        [Tooltip("반복 타격에도 투사체의 피격 효과를 표시합니다.")]
+        public bool playHitEffectOnTick;
 
         private Rigidbody2D rb;
         private CollisionObject collisionObject;
@@ -34,6 +35,7 @@ namespace Nytherion.GamePlay.Combat
             targetsInRange.Clear();
             removeList.Clear();
             lifeTimer = lifeTime;
+            tickTimer = tickRate;
         }
 
         private void Update()
@@ -64,7 +66,11 @@ namespace Nytherion.GamePlay.Combat
             {
                 if (target != null && target is MonoBehaviour mb && mb.gameObject.activeInHierarchy)
                 {
-                    target.TakeDamage(collisionObject.damage);
+                    target.TakeDamage(collisionObject.damage, collisionObject.isChainDamage);
+                    if (playHitEffectOnTick)
+                    {
+                        WeaponVFXHelper.PlayHitEffect(collisionObject.hitEffectPrefab, mb.transform.position);
+                    }
                 }
                 else
                 {
@@ -81,7 +87,7 @@ namespace Nytherion.GamePlay.Combat
         {
             if (targetCollider.CompareTag("Enemy"))
             {
-                var target = targetCollider.GetComponent<IDamageable>();
+                var target = targetCollider.GetComponentInParent<IDamageable>();
                 if (target != null)
                 {
                     if (!hasHit)
@@ -102,7 +108,7 @@ namespace Nytherion.GamePlay.Combat
         {
             if (collision.CompareTag("Enemy"))
             {
-                var target = collision.GetComponent<IDamageable>();
+                var target = collision.GetComponentInParent<IDamageable>();
                 if (target != null && targetsInRange.Contains(target))
                 {
                     targetsInRange.Remove(target);

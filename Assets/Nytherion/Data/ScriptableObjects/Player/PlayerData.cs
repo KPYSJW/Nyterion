@@ -19,6 +19,9 @@ namespace Nytherion.Data.ScriptableObjects.Player
         public float dashCooldown;
         public float defense;
         public float extraProjectiles;
+        [InspectorName("효과 범위 증가")]
+        [Tooltip("플레이어 공격의 크기와 피해 판정 배율입니다. 1이면 기본 크기입니다.")]
+        public float projectileSizeMultiplier = 1f;
         public float lifesteal;
         public float chargeTimeReduction;
         public float critChance = 0.1f;

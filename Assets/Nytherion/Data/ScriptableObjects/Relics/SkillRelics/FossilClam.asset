@@ -14,21 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Fossil Clam
   koreanName: "\uD654\uC11D\uC870\uAC1C"
-  description_KR: "[Multi Shot] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Multi
-    Shot] : \uD22C\uC0AC\uCCB4 \uBC1C\uC0AC \uC2DC \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB97C
-    \uC5EC\uB7EC \uBC29\uD5A5\uC73C\uB85C \uB3D9\uC2DC \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
-  description_EN: "Obtain [Multi Shot] skill.\n[Multi Shot] : \uD22C\uC0AC\uCCB4
-    \uBC1C\uC0AC \uC2DC \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB97C \uC5EC\uB7EC \uBC29\uD5A5\uC73C\uB85C
-    \uB3D9\uC2DC \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  description_KR: "[\uB2E4\uC911 \uC0AC\uACA9] \uD68D\uB4DD\n\uCD94\uAC00 \uD22C\uC0AC\uCCB4
+    \uBC1C\uC0AC"
+  description_EN: 'Unlocks [Multi Shot]
+
+    Fires extra projectiles.'
   Image: {fileID: 21300000, guid: bc3c0c78e6b8ae5489adcb9af4f85980, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: -2
     effects:
     - rid: 2313383513706201106
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -48,9 +51,6 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: TrickshotEngineerSeries
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
   synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
   unlockMilestoneID: 
   references:

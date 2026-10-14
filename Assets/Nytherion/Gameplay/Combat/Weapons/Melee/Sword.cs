@@ -12,7 +12,7 @@ namespace Nytherion.GamePlay.Combat.Weapon
         [SerializeField] private string attackClipName  = "PlayerMeleeAnim";
         
         [Header("Animator Settings (Optional)")]
-        [Tooltip("Animator 기반으로 작동 시 할당합니다 (예: Flamberge)")]
+        [Tooltip("Animator 기반으로 작동 시 할당합니다")]
         [SerializeField] private Animator myAnimator;
         [SerializeField] private string attackTriggerName = "Attack";
 

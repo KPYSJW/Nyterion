@@ -40,7 +40,7 @@ namespace Nytherion.GamePlay.Combat
         {
             RaycastHit2D[] hits = Physics2D.CircleCastAll(
                transform.position,
-               weaponData.range,
+               weaponData.range * EffectSizeMultiplier,
                Vector2.zero);
 
             foreach (RaycastHit2D hit in hits)

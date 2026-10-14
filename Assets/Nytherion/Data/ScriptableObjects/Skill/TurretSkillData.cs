@@ -14,8 +14,8 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         [Tooltip("소환될 터렛의 게임 오브젝트 프리팹")]
         public GameObject turretPrefab;
         
-        /// <summary> 마우스 포인터를 기준으로 터렛이 소환될 수 있는 최대 탐색 반경 </summary>
-        [Tooltip("마우스 포인터를 기준으로 터렛이 소환될 수 있는 최대 반경.")]
+        /// <summary> 시전자에서 조준 방향으로 포탑을 배치할 수 있는 최대 거리 </summary>
+        [Tooltip("시전자에서 포탑 착지 지점까지의 최대 거리입니다.")]
         public float searchRadius;
         
         /// <summary> 터렛이 배치될 수 있는 내비메시 영역의 이름 </summary>
@@ -34,14 +34,43 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         [Tooltip("터렛이 투사체를 발사하는 간격")]
         public float attackInterval = 1f;
 
+        [Header("소환 충전")]
+        [Min(1), Tooltip("기본 저장 개수입니다. 충전 하나마다 스킬의 coolDown만큼 기다립니다.")]
+        public int maxCharges = 1;
+        [Min(0.5f), Tooltip("충전이 남아 있어도 소환 사이에는 최소 이 시간만큼 기다립니다.")]
+        public float minimumSummonInterval = 0.5f;
+
+        [Header("루티 강화 배치·발사")]
+        [Min(0f), Tooltip("복제초로 동시에 소환되는 루티 사이의 거리입니다.")]
+        public float duplicateSpacing = 0.6f;
+        [Range(0f, 90f), Tooltip("벽청 베리로 증가한 투사체 사이의 발사 각도입니다.")]
+        public float projectileSpreadAngle = 12f;
+
+        [Header("배치 연출")]
+        [Tooltip("시전자 위치에서 조준 방향의 바닥으로 날아가 착지합니다.")]
+        public bool launchAroundCaster;
+
+        [Min(0f), Tooltip("시전자와 착지 지점 사이의 최소 거리입니다.")]
+        public float minimumDeploymentDistance = 0.6f;
+
         [Header("Projectile Settings")]
         
         /// <summary> 오브젝트 풀에서 꺼내올 투사체의 식별 태그 </summary>
         [Tooltip("오브젝트 풀에서 사용할 투사체의 태그")]
         public string projectilePoolTag = "Player_Arrow";
+
+        [Tooltip("연결되어 있으면 풀 태그 대신 이 투사체 프리팹을 사용합니다.")]
+        public GameObject projectilePrefab;
+
+        [Tooltip("포탑 기준 발사 위치입니다.")]
+        public Vector3 projectileSpawnOffset;
         
         /// <summary> 터렛이 발사하는 투사체의 이동 속도 </summary>
         [Tooltip("발사된 투사체의 이동 속도")]
         public float projectileSpeed = 10f;
+
+        [Header("루티 씨앗 종료 조건")]
+        [Tooltip("씨앗을 막는 벽·구조물 레이어입니다. 바닥·플레이어·감지 트리거는 제외합니다.")]
+        public LayerMask projectileObstacleLayers = (1 << 9) | (1 << 11);
     }
 }

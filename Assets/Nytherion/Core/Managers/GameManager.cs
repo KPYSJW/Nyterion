@@ -164,11 +164,11 @@ namespace Nytherion.Core.Managers
         {
             string path = Path.Combine(Application.persistentDataPath, "nytherion_savedata.json");
 
-            if (File.Exists(path))
+            if (File.Exists(path) || File.Exists(path + ".bak"))
             {
                 try
                 {
-                    File.Delete(path);
+                    new Nytherion.Services.JsonSaveService().DeleteSaveData();
                     Debug.Log("[GameManager] 저장 파일이 삭제되었습니다. 다음 로드시 새 게임으로 시작됩니다.");
                 }
                 catch (System.Exception e)

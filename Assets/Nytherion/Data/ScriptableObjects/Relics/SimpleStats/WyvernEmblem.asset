@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Wyvern Emblem
   koreanName: "\uBE44\uB8E1\uC758 \uBB38\uC591"
-  description_KR: "\uADFC\uC811 \uACF5\uACA9\uC758 \uC18D\uB3C4(\uACF5\uACA9 \uC18D\uB3C4)\uB97C
-    8% \uB9CC\uD07C \uBE60\uB974\uAC8C \uD569\uB2C8\uB2E4."
-  description_EN: 
+  description_KR: "근접 공격 속도 +8%."
+  description_EN: "Melee attack speed +8%."
   Image: {fileID: 21300000, guid: c27ae965c5f1c094693caeccb8cdd709, type: 3}
   rarity: 2
   level: 1

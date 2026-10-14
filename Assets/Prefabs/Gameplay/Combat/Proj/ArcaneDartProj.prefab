@@ -29,9 +29,9 @@ Transform:
   m_GameObject: {fileID: 1453523852295367759}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -173,6 +173,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   chargePercent: 0
+  effectSizeMultiplier: 1
   traits: 00000000
   hitEffectPrefab: {fileID: 0}
+  playHitEffectOnWall: 0
+  isChainDamage: 0
   poolTag: ArcaneDartProj

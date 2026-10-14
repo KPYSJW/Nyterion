@@ -67,6 +67,10 @@ namespace Nytherion.UI.Title
 
         private void InitializeButtons()
         {
+            Nytherion.UI.Components.MenuHoverSoundScope.Mark(startButton != null ? startButton.gameObject : null);
+            Nytherion.UI.Components.MenuHoverSoundScope.Mark(settingsButton != null ? settingsButton.gameObject : null);
+            Nytherion.UI.Components.MenuHoverSoundScope.Mark(quitButton != null ? quitButton.gameObject : null);
+            Nytherion.UI.Components.MenuHoverSoundScope.Mark(settingsPanel);
             // Start Button 설정
             if (startButton != null)
             {

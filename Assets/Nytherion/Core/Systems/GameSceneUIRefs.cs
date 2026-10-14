@@ -6,9 +6,20 @@ using Nytherion.UI.Skill;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Nytherion.Core.Managers;
+using VContainer;
 
 public class GameSceneUIRefs : MonoBehaviour
 {
+    [Inject]
+    public void BindUIAudio(AudioManager audioManager)
+    {
+        // 씬에 배치한 장비 슬롯도 동적 인벤토리 슬롯과 같은 오디오를 사용합니다.
+        if (equipmentPanel == null) return;
+        foreach (EquipmentSlotUI slot in equipmentPanel.GetComponentsInChildren<EquipmentSlotUI>(true))
+            slot.BindUIAudio(audioManager);
+    }
+
     [Header("Core UI Components")]
     [SerializeField] private RelicGridUI relicGridUI;
     public RelicGridUI RelicGridUI => relicGridUI;
@@ -34,41 +45,13 @@ public class GameSceneUIRefs : MonoBehaviour
     public GameObject StatsPanel => statsPanel;
     [SerializeField] private Button inventoryCloseButton;
     public Button InventoryCloseButton => inventoryCloseButton;
+    [SerializeField] private Button inventorySortButton;
+    public Button InventorySortButton => inventorySortButton;
+    [SerializeField] private Button inventoryDismantleButton;
+    public Button InventoryDismantleButton => inventoryDismantleButton;
+    [SerializeField] private InventoryDismantlePanel dismantlePanel;
+    public InventoryDismantlePanel DismantlePanel => dismantlePanel;
     
-
-    [Header("Gacha UI References")]
-    [SerializeField] private CanvasGroup gachaCanvasGroup;
-    public CanvasGroup GachaCanvasGroup => gachaCanvasGroup;
-
-    [Header("Gacha Panels")]
-    [SerializeField] private GameObject gachaMainPanel;
-    public GameObject GachaMainPanel => gachaMainPanel;
-    [SerializeField] private GameObject relicResultPanel;
-    public GameObject RelicResultPanel => relicResultPanel;
-    [SerializeField] private GameObject relicSubPanel;
-    public GameObject RelicSubPanel => relicSubPanel;
-
-    [Header("Gacha UI Buttons")]
-    [SerializeField] private Button drawOnceBtton;
-    public Button DrawOnceButton => drawOnceBtton;
-
-    [SerializeField] private Button drawTenBtton;
-    public Button DrawTenButton => drawTenBtton;
-    
-    [SerializeField] private Button gachaCloseButton;
-    public Button GachaCloseButton => gachaCloseButton;
-    [SerializeField] private Button relicResultCloseButton;
-    public Button RelicResultCloseButton => relicResultCloseButton;
-
-    [Header("Gacha Type Indicator Text")]
-    [SerializeField] private TextMeshProUGUI gachaTypeTitleText;
-    public TextMeshProUGUI GachaTypeTitleText => gachaTypeTitleText;
-
-    [Header("Gacha Result Panel")]
-    [SerializeField] private Transform relicResultSlotParent;
-    public Transform RelicResultSlotParent => relicResultSlotParent;
-    [SerializeField] private GameObject resultSlotPrefab;
-    public GameObject ResultSlotPrefab => resultSlotPrefab;
 
     [Header("Settings UI")]
     [SerializeField] private Slider masterSlider;
@@ -165,6 +148,8 @@ public class GameSceneUIRefs : MonoBehaviour
     public Transform ProgressionSlotParent;
 
     [Header("Skill UI")]
+    [SerializeField] private SkillTooltip skillTooltip;
+    public SkillTooltip SkillTooltip => skillTooltip;
     public GameObject SkillMainPanel;
     public Transform storageContent;
     public SkillStorageArea storageDropArea;

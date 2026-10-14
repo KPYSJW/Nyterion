@@ -20,6 +20,10 @@ namespace Nytherion.GamePlay.Combat
 
         /// <summary>차징 무기가 공격 불가 중 들어온 누름 상태를 유지했다가 가능해지는 순간 다시 시작할지 여부입니다.</summary>
         public virtual bool AllowHeldAttackRetry => false;
+
+        /// <summary>타겟 메이커가 활성화되면 지원 무기의 원형 공격 중심을 지정 위치로 옮깁니다.</summary>
+        protected bool HasTargetMaker => playerManager != null && playerManager.playerRelicManager != null &&
+            playerManager.playerRelicManager.IsRelicActive("TargetMaker");
         
         [Tooltip("마지막 공격 시간 (Time.time 기준)")]
         protected float lastAttackTime;
@@ -30,9 +34,14 @@ namespace Nytherion.GamePlay.Combat
         protected float EffectiveDamageMultiplier => damageMultiplier * genericChargeDamageMultiplier;
         public float CurrentDamageMultiplier => EffectiveDamageMultiplier;
 
+        /// <summary>공격 연출과 실제 피해 판정에 함께 적용할 효과 크기입니다.</summary>
+        public float EffectSizeMultiplier => playerManager != null && playerManager.currentPlayerData != null
+            ? Mathf.Max(0.01f, playerManager.currentPlayerData.projectileSizeMultiplier) : 1f;
+
         protected PlayerManager playerManager;
         [SerializeField] protected Animator animator;
         private WeaponCrossbowRecoil staffRecoil;
+        private WeaponFireAudio fireAudio;
 
         protected virtual void Awake()
         {
@@ -49,6 +58,28 @@ namespace Nytherion.GamePlay.Combat
             }
 
             ConfigureStaffRecoil(weaponData);
+        }
+
+        protected virtual AudioClip GetFireSound()
+        {
+            return weaponData != null ? weaponData.fireSound : null;
+        }
+
+        protected void PlayFireSound()
+        {
+            if (weaponData == null) return;
+            PlayWeaponSound(GetFireSound(), weaponData.fireSoundVolume);
+        }
+
+        protected void PlayWeaponSound(AudioClip clip, float volume)
+        {
+            if (clip == null) return;
+            if (fireAudio == null)
+            {
+                fireAudio = GetComponent<WeaponFireAudio>();
+                if (fireAudio == null) fireAudio = gameObject.AddComponent<WeaponFireAudio>();
+            }
+            fireAudio.Play(clip, volume);
         }
 
         protected void PlayFireAnimation()

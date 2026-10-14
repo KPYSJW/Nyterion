@@ -14,7 +14,7 @@ namespace Nytherion.Core.Systems
         [SerializeField] private Texture2D uiCursor;
 
         [Header("Cursor Settings")]
-        [SerializeField, Min(1f)] private float cursorScale = 1.5f;
+        [SerializeField] private float cursorScale = 1.5f;
         [SerializeField] private Vector2 uiCursorHotspot = new Vector2(5f, 5f);
         [SerializeField] private CursorMode cursorMode = CursorMode.ForceSoftware;
 
@@ -106,7 +106,7 @@ namespace Nytherion.Core.Systems
 
         private Texture2D CreateScaledCursor(Texture2D source)
         {
-            if (source == null || cursorScale <= 1f)
+            if (source == null)
             {
                 return source;
             }

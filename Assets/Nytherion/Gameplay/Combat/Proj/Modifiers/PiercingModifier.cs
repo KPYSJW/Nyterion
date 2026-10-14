@@ -7,7 +7,7 @@ namespace Nytherion.GamePlay.Combat
         private void Start() { }
         public bool OnHit(Collider2D target)
         {
-            return true;
+            return CollisionObject.IsEnemyCollider(target);
         }
     }
 }

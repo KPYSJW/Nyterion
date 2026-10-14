@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using VContainer;
 using Nytherion.UI;
+using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 
 public abstract class UIPanelBase : MonoBehaviour
 {
@@ -10,9 +12,15 @@ public abstract class UIPanelBase : MonoBehaviour
 
     [Header("Panel Control")]
     [SerializeField] protected CanvasGroup controlledCanvasGroup;
+    [Tooltip("패널을 열 때 공통 UI 효과음을 재생합니다.")]
+    [SerializeField] private bool playOpenSound;
+    [Tooltip("이 패널의 닫기 효과음입니다. 미할당 시 공통 닫기 효과음을 사용합니다.")]
+    [SerializeField] private AudioClip closeSoundOverride;
 
     protected GlobalUIManager globalUIManager;
+    protected AudioManager audioManager;
     public bool IsOpen { get; private set; }
+    protected virtual bool UsesBookOpenSound => false;
 
     public UnityEvent OnPanelOpened;
     public UnityEvent OnPanelClosed;
@@ -27,9 +35,10 @@ public abstract class UIPanelBase : MonoBehaviour
     }
 
     [Inject]
-    public void ConstructParent(GlobalUIManager globalUIManager)
+    public void ConstructParent(GlobalUIManager globalUIManager, AudioManager audioManager)
     {
         this.globalUIManager = globalUIManager;
+        this.audioManager = audioManager;
     }
 
     protected virtual void Awake()
@@ -97,6 +106,8 @@ public abstract class UIPanelBase : MonoBehaviour
         controlledCanvasGroup.interactable = true;
         controlledCanvasGroup.blocksRaycasts = true;
 
+        if (playOpenSound && UsesBookOpenSound) audioManager?.PlayUIOpenSound();
+        else audioManager?.RequestUISound(UISoundType.Open);
         OnPanelOpened?.Invoke();
         OnPanelStateChanged(true);
     }
@@ -122,9 +133,12 @@ public abstract class UIPanelBase : MonoBehaviour
         controlledCanvasGroup.interactable = false;
         controlledCanvasGroup.blocksRaycasts = false;
 
+        audioManager?.RequestUISound(UISoundType.Close, closeSoundOverride);
         OnPanelClosed?.Invoke();
         OnPanelStateChanged(false);
     }
 
     protected virtual void OnPanelStateChanged(bool isOpen) { }
+
+    public void PlayUISound(UISoundType sound) => audioManager?.RequestUISound(sound);
 }

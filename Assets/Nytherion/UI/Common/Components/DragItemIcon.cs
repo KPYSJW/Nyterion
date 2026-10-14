@@ -88,11 +88,33 @@ public class DragItemIcon : MonoBehaviour
         if (iconImage != null)
         {
             iconImage.sprite = icon;
+            // 다른 경로에서 사용해도 이전 슬롯의 회전과 배율이 남지 않도록 초기화합니다.
+            iconImage.rectTransform.localRotation = Quaternion.identity;
+            iconImage.rectTransform.localScale = Vector3.one;
+            iconImage.preserveAspect = true;
+            iconImage.raycastTarget = false;
         }
         else
         {
             Debug.LogError("[DragItemIcon] iconImage is null. Cannot set icon.");
         }
+    }
+
+    public void SetSlotIcon(Image sourceImage)
+    {
+        if (sourceImage == null || iconImage == null) return;
+        SetIcon(sourceImage.sprite);
+
+        RectTransform targetRect = iconImage.rectTransform;
+        RectTransform sourceRect = sourceImage.rectTransform;
+        // 앵커를 고정해야 슬롯에서 복사한 크기가 드래그 캔버스 크기의 영향을 받지 않습니다.
+        targetRect.anchorMin = targetRect.anchorMax = new Vector2(0.5f, 0.5f);
+        targetRect.pivot = sourceRect.pivot;
+        targetRect.anchoredPosition = Vector2.zero;
+        targetRect.sizeDelta = sourceRect.rect.size;
+        targetRect.localRotation = sourceRect.localRotation;
+        targetRect.localScale = sourceRect.localScale;
+        iconImage.preserveAspect = sourceImage.preserveAspect;
     }
 
     public void Show()

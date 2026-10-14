@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.Core.Systems
@@ -14,6 +16,39 @@ namespace Nytherion.Core.Systems
 
         // 아이템 데이터와 수량을 쌍으로 가지는 배열로 인벤토리 슬롯을 관리
         private (ItemData item, int count)[] slots;
+        // 분해 대기 장비는 원래 슬롯을 예약한다. 저장에는 남기고 일반 조회에서는 숨긴다.
+        private readonly List<int> dismantleSlots = new List<int>();
+        public bool IsDismantleReserved(int index) => dismantleSlots.Contains(index);
+        public IReadOnlyList<int> DismantleSlots => dismantleSlots;
+
+        public (ItemData item, int count) GetStoredItemAt(int index)
+        {
+            return index >= 0 && index < slots.Length ? slots[index] : (null, 0);
+        }
+
+        public bool StageForDismantle(int index, ItemData expectedItem)
+        {
+            var slot = GetItemAt(index);
+            if (!(slot.item is EquipmentData) || slot.item != expectedItem || slot.count != 1 || IsDismantleReserved(index))
+                return false;
+            dismantleSlots.Add(index);
+            OnInventoryUpdated?.Invoke();
+            return true;
+        }
+
+        public void ResetDismantle()
+        {
+            if (dismantleSlots.Count == 0) return;
+            dismantleSlots.Clear();
+            OnInventoryUpdated?.Invoke();
+        }
+
+        // 재화 지급 전에 데이터만 확정해 자동 저장에 장비와 골드가 함께 반영되게 한다.
+        public void CompleteDismantleWithoutNotify()
+        {
+            foreach (int index in dismantleSlots) slots[index] = (null, 0);
+            dismantleSlots.Clear();
+        }
 
         /// <summary> 인벤토리의 최대 슬롯 개수/// </summary>
         public int MaxSlots => slots.Length;
@@ -47,7 +82,7 @@ namespace Nytherion.Core.Systems
         /// </summary>
         public (ItemData item, int count) GetItemAt(int index)
         {
-            if (index < 0 || index >= slots.Length) return (null, 0);
+            if (index < 0 || index >= slots.Length || IsDismantleReserved(index)) return (null, 0);
             return slots[index];
         }
 
@@ -90,7 +125,7 @@ namespace Nytherion.Core.Systems
         /// </summary>
         public void AddItemToSlot(ItemData item, int count, int slotIndex)
         {
-            if (slotIndex < 0 || slotIndex >= slots.Length) return;
+            if (slotIndex < 0 || slotIndex >= slots.Length || IsDismantleReserved(slotIndex)) return;
             slots[slotIndex] = (item, count);
             OnInventoryUpdated?.Invoke();
         }
@@ -102,7 +137,7 @@ namespace Nytherion.Core.Systems
         /// <returns>할당 성공 여부</returns>
         public bool AddItemToSlot(ItemData item, int count, int slotIndex, bool overwrite)
         {
-            if (slotIndex < 0 || slotIndex >= slots.Length) return false;
+            if (slotIndex < 0 || slotIndex >= slots.Length || IsDismantleReserved(slotIndex)) return false;
             if (!overwrite && slots[slotIndex].item != null) return false; // 덮어쓰기 불가이고 슬롯이 차있으면 실패
 
             slots[slotIndex] = (item, count);
@@ -120,7 +155,7 @@ namespace Nytherion.Core.Systems
 
             for (int i = 0; i < slots.Length; i++)
             {
-                if (slots[i].item != null && slots[i].item.ID == item.ID)
+                if (!IsDismantleReserved(i) && slots[i].item != null && slots[i].item.ID == item.ID)
                 {
                     if (slots[i].count >= count)
                     {
@@ -142,7 +177,7 @@ namespace Nytherion.Core.Systems
         /// </summary>
         public void RemoveItemFromSlot(int slotIndex, int count)
         {
-            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null) return;
+            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null || IsDismantleReserved(slotIndex)) return;
 
             slots[slotIndex].count -= count;
             if (slots[slotIndex].count <= 0)
@@ -158,6 +193,7 @@ namespace Nytherion.Core.Systems
         public void SwapItems(int fromIndex, int toIndex)
         {
             if (fromIndex < 0 || fromIndex >= slots.Length || toIndex < 0 || toIndex >= slots.Length) return;
+            if (IsDismantleReserved(fromIndex) || IsDismantleReserved(toIndex)) return;
 
             var temp = slots[fromIndex];
             slots[fromIndex] = slots[toIndex];
@@ -165,12 +201,67 @@ namespace Nytherion.Core.Systems
             OnInventoryUpdated?.Invoke();
         }
 
+        /// <summary> 높은 등급, 이름순으로 정렬하고 빈 슬롯은 뒤로 보낸다. </summary>
+        public bool SortByRarityAndName()
+        {
+            var occupiedSlots = new List<(ItemData item, int count, int originalIndex)>();
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (!IsDismantleReserved(i) && slots[i].item != null)
+                    occupiedSlots.Add((slots[i].item, slots[i].count, i));
+            }
+
+            occupiedSlots.Sort((left, right) =>
+            {
+                Rarity leftRarity = left.item is EquipmentData leftEquipment ? leftEquipment.rarity : Rarity.Common;
+                Rarity rightRarity = right.item is EquipmentData rightEquipment ? rightEquipment.rarity : Rarity.Common;
+                int comparison = rightRarity.CompareTo(leftRarity);
+                if (comparison != 0) return comparison;
+
+                comparison = StringComparer.OrdinalIgnoreCase.Compare(GetSortName(left.item), GetSortName(right.item));
+                // 같은 이름의 장비와 분리된 스택은 기존 순서를 유지한다.
+                return comparison != 0 ? comparison : left.originalIndex.CompareTo(right.originalIndex);
+            });
+
+            bool changed = false;
+            int targetIndex = 0;
+            for (int i = 0; i < occupiedSlots.Count; i++)
+            {
+                while (IsDismantleReserved(targetIndex)) targetIndex++;
+                if (occupiedSlots[i].originalIndex != targetIndex++)
+                {
+                    changed = true;
+                    break;
+                }
+            }
+            if (!changed) return false;
+
+            // 기존 인스턴스와 수량을 그대로 옮기고, 정렬 완료 후 한 번만 갱신한다.
+            for (int i = 0; i < slots.Length; i++)
+                if (!IsDismantleReserved(i)) slots[i] = (null, 0);
+            targetIndex = 0;
+            for (int i = 0; i < occupiedSlots.Count; i++)
+            {
+                while (IsDismantleReserved(targetIndex)) targetIndex++;
+                slots[targetIndex++] = (occupiedSlots[i].item, occupiedSlots[i].count);
+            }
+            OnInventoryUpdated?.Invoke();
+            return true;
+        }
+
+        private static string GetSortName(ItemData item)
+        {
+            if (!string.IsNullOrWhiteSpace(item.itemName_EN)) return item.itemName_EN.Trim();
+            if (!string.IsNullOrWhiteSpace(item.itemName_KR)) return item.itemName_KR.Trim();
+            return item.ID ?? string.Empty;
+        }
+
         /// <summary>
         /// 특정 슬롯에서 아이템을 제거하되, 이벤트 알림(OnInventoryUpdated)을 발생시키지 않고 제거된 데이터를 반환
         /// </summary>
         public (ItemData item, int count) RemoveItemFromSlotWithoutNotify(int slotIndex, int count)
         {
-            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null) return (null, 0);
+            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null || IsDismantleReserved(slotIndex)) return (null, 0);
 
             var removedItem = slots[slotIndex];
 
@@ -188,6 +279,7 @@ namespace Nytherion.Core.Systems
         /// </summary>
         public void Clear()
         {
+            dismantleSlots.Clear();
             Array.Clear(slots, 0, slots.Length);
             OnInventoryUpdated?.Invoke();
         }
@@ -205,7 +297,9 @@ namespace Nytherion.Core.Systems
         /// </summary>
         private int FindSlotWithItem(string itemID)
         {
-            return Array.FindIndex(slots, s => s.item != null && s.item.ID == itemID);
+            for (int i = 0; i < slots.Length; i++)
+                if (!IsDismantleReserved(i) && slots[i].item != null && slots[i].item.ID == itemID) return i;
+            return -1;
         }
     }
 }

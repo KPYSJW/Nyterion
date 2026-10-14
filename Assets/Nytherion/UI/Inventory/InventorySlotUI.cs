@@ -2,10 +2,13 @@ using Nytherion.Core.Enums;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.UI.Controllers;
+using Nytherion.UI.Components;
 using Nytherion.UI.Inventory.Utils;
+using Nytherion.Data.ScriptableObjects.Weapons;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 
@@ -21,6 +24,7 @@ namespace Nytherion.UI.Inventory
         private ItemUsageManager itemUsageManager;
         private InventoryDataManager inventoryDataManager;
         private ShopUI shopUI;
+        private InventoryUI inventoryUI;
         private QuickSlotManager quickSlotManager;
 
         [Inject]
@@ -37,13 +41,42 @@ namespace Nytherion.UI.Inventory
             this.shopUI = shopUI;
             this.quickSlotManager = quickSlotManager;
         }
+        [Inject]
+        public void BindInventoryUI(InventoryUI inventoryUI) => this.inventoryUI = inventoryUI;
+
+        public override bool CanReceiveItem(ItemData item)
+        {
+            return inventoryDataManager?.InventoryModel?.IsDismantleReserved(SlotIndex) != true;
+        }
         protected override void Awake()
         {
             base.Awake();
+            PixelPerfectSlotFrame.Apply(slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>());
             input = new ShopAction();
             OnBeginDragEvent += (s, e) => DragDropUIHandler.HandleBeginDragShared(s);
             OnEndDragEvent += (s, e) => DragDropUIHandler.HandleEndDragShared(s, e);
             OnPointerClickEvent += HandlePointerClick;
+        }
+
+        protected override void UpdateSlotBackground(ItemData item, bool hasItem)
+        {
+            base.UpdateSlotBackground(item, hasItem);
+            // 빈 슬롯과 등급별 슬롯 모두 스프라이트 변경 직후 같은 픽셀 배율을 적용한다.
+            PixelPerfectSlotFrame.Apply(slotBackgroundImage != null ? slotBackgroundImage : GetComponent<Image>());
+        }
+
+        protected override void UpdateVisuals(ItemData item, int count)
+        {
+            if (item != null && count > 0 && iconImage != null && iconImage.transform != transform)
+                PixelPerfectItemIcon.Apply(iconImage, transform as RectTransform,
+                    item is WeaponData weaponData ? weaponData.inventoryIconScale : 1f);
+            base.UpdateVisuals(item, count);
+        }
+
+        protected override void ApplyIconLayout()
+        {
+            // 인벤토리는 원본 방향과 화면의 픽셀 격자를 유지한다.
+            if (iconImage != null) iconImage.GetComponent<PixelPerfectItemIcon>()?.Refresh();
         }
         void OnEnable() => input?.Enable(); 
         void OnDisable() => input?.Disable();
@@ -90,6 +123,7 @@ namespace Nytherion.UI.Inventory
         public void OnDrop(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left) return;
+            if (!CanReceiveItem(null)) { DragDropUIHandler.dropHandled = true; return; }
             if (eventData.pointerDrag == null)
             {
                 return;
@@ -235,20 +269,9 @@ namespace Nytherion.UI.Inventory
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
         {
             if (IsEmpty || eventData.button != PointerEventData.InputButton.Right) return;
-
-            if (shopUI != null && shopUI.IsOpen)
+            if (inventoryUI != null && inventoryUI.IsDismantleOpen)
             {
-                bool isShiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-
-                if (isShiftPressed && CurrentCount > 1)
-                {
-                    shopUI.OpenSellPopup(CurrentItem, CurrentCount);
-                }
-                else
-                {
-                    shopUI.QuickSellItem(CurrentItem, 1);
-                }
-
+                if (!inventoryUI.TryStageForDismantle(this)) PlayUISound(UISoundType.Error);
                 return;
             }
             else if (CurrentItem is EquipmentData equipment)
@@ -273,11 +296,14 @@ namespace Nytherion.UI.Inventory
                         equipment.instanceId = System.Guid.NewGuid().ToString();
                     }
 
-                    equipmentDataManager.SetEquipment(targetSlotType, equipment);
+                    // 보관 슬롯 이동은 여기서 처리하므로 매니저의 자동 반환/제거를 중복 실행하지 않는다.
+                    equipmentDataManager.SetEquipment(targetSlotType, equipment, false);
+                    PlayUISound(UISoundType.Place);
 
                     if (previouslyEquipped != null)
                     {
-                        inventoryDataManager.AddItem(previouslyEquipped, 1);
+                        // 기존 장비 인스턴스를 클릭했던 보관 슬롯으로 반환한다.
+                        inventoryDataManager.AddItemToSlot(previouslyEquipped, 1, SlotIndex);
                     }
                 }
             }

@@ -17,6 +17,10 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField] private GameObject defaultProjectilePrefab; // ManaBall
         [SerializeField] private GameObject abyssalFlamePrefab; // AbyssalFlame
 
+        [Header("심연의 불꽃 발사 연출")]
+        [SerializeField] private GameObject abyssalFlameFireEffectPrefab;
+        [SerializeField] private AudioClip abyssalFlameFireSound;
+
         public override void Initialize(WeaponData data)
         {
             base.Initialize(data);
@@ -78,6 +82,26 @@ namespace Nytherion.GamePlay.Combat
                     projectilePoolTag = defaultProjectilePrefab.name;
                 }
             }
+        }
+
+        protected override AudioClip GetFireSound()
+        {
+            if (abyssalFlamePrefab != null && currentProjectilePrefab == abyssalFlamePrefab &&
+                abyssalFlameFireSound != null)
+                return abyssalFlameFireSound;
+            return base.GetFireSound();
+        }
+
+        protected override GameObject GetFireEffectPrefab()
+        {
+            // 실제 선택된 투사체에 맞춰 연출을 고르고, 공용 무기 데이터는 변경하지 않습니다.
+            if (abyssalFlamePrefab != null && currentProjectilePrefab == abyssalFlamePrefab &&
+                abyssalFlameFireEffectPrefab != null)
+            {
+                return abyssalFlameFireEffectPrefab;
+            }
+
+            return base.GetFireEffectPrefab();
         }
 
         public override List<EquipmentTrait> GetTraits()

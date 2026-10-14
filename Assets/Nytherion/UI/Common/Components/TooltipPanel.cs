@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Data.ScriptableObjects.Progression;
 using Nytherion.Core.Enums;
@@ -23,6 +24,13 @@ namespace Nytherion.UI.Components
         [SerializeField] private Image itemImageBackground;
 
         private Sprite defaultItemImageBackgroundSprite;
+        private Quaternion defaultItemImageRotation;
+        private Vector3 defaultItemImageScale;
+        private Vector2 defaultItemImageAnchorMin;
+        private Vector2 defaultItemImageAnchorMax;
+        private Vector2 defaultItemImagePivot;
+        private Vector2 defaultItemImageSizeDelta;
+        private Vector3 defaultItemImagePosition;
         private Color defaultNameTextColor;
         private Image nameTextBackground;
         private Texture2D nameTextBackgroundTexture;
@@ -68,6 +76,17 @@ namespace Nytherion.UI.Components
             if (itemImageBackground != null)
             {
                 defaultItemImageBackgroundSprite = itemImageBackground.sprite;
+            }
+
+            if (itemImage != null)
+            {
+                defaultItemImageRotation = itemImage.rectTransform.localRotation;
+                defaultItemImageScale = itemImage.rectTransform.localScale;
+                defaultItemImageAnchorMin = itemImage.rectTransform.anchorMin;
+                defaultItemImageAnchorMax = itemImage.rectTransform.anchorMax;
+                defaultItemImagePivot = itemImage.rectTransform.pivot;
+                defaultItemImageSizeDelta = itemImage.rectTransform.sizeDelta;
+                defaultItemImagePosition = itemImage.rectTransform.anchoredPosition3D;
             }
 
             if (nameText != null)
@@ -137,6 +156,7 @@ namespace Nytherion.UI.Components
         private void OnCanvasRender()
         {
             screenSize = canvas.GetComponent<RectTransform>().sizeDelta;
+            if (panel.activeSelf) ApplyItemIconLayout();
         }
 
         private void LateUpdate()
@@ -265,8 +285,7 @@ namespace Nytherion.UI.Components
                         "공격 속도: {0:0.##}",
                         "Attack Speed: {0:0.##}",
                         attacksPerSecond);
-                    string weaponStats = $"<color={DescriptionDefaultColorHex}>[{attackText}]</color>\n";
-                    weaponStats += $"<color={DescriptionDefaultColorHex}>[{attackSpeedText}]</color>\n\n";
+                    string weaponStats = $"<color={DescriptionDefaultColorHex}>{attackText} / {attackSpeedText}</color>\n\n";
 
                     finalDesc = weaponStats + finalDesc;
                 }
@@ -328,6 +347,7 @@ namespace Nytherion.UI.Components
             }
             
             panel.SetActive(true);
+            ApplyItemIconLayout();
         }
         public void ShowTooltip(SkillData skill, int level = 1, int currentExp = 0, int requiredExp = 1)
         {
@@ -347,8 +367,8 @@ namespace Nytherion.UI.Components
             string skillStats = LocalizationText.Get(
                 LocalizationTables.UI,
                 "ui.tooltip.skill_stats",
-                "[Lv.{0}] 경험치: {1} / {2}\n\n데미지: {3}\n쿨타임: {4}초\n사거리: {5}\n\n{6}",
-                "[Lv.{0}] EXP: {1} / {2}\n\nDamage: {3}\nCooldown: {4}s\nRange: {5}\n\n{6}",
+                "Lv.{0} / 경험치 {1}/{2}\n피해 {3} / 쿨타임 {4}초 / 사거리 {5}\n\n{6}",
+                "Lv.{0} / EXP {1}/{2}\nDamage {3} / Cooldown {4}s / Range {5}\n\n{6}",
                 level,
                 currentExp,
                 requiredExp,
@@ -374,6 +394,7 @@ namespace Nytherion.UI.Components
             }
 
             panel.SetActive(true);
+            ApplyItemIconLayout();
         }
 
         public void ShowTooltip(MilestoneData milestone, bool isCompleted, int currentVal, int targetVal)
@@ -465,7 +486,36 @@ namespace Nytherion.UI.Components
             }
 
             panel.SetActive(true);
+            ApplyItemIconLayout();
         }
+        private void ApplyItemIconLayout()
+        {
+            if (itemImage == null || !itemImage.gameObject.activeSelf) return;
+
+            if (currentItem is WeaponData weaponData)
+            {
+                // 보관함과 같은 슬롯 영역 및 무기별 크기 보정으로 표시한다.
+                RectTransform slotRect = itemImageBackground != null
+                    ? itemImageBackground.rectTransform
+                    : itemImage.rectTransform.parent as RectTransform;
+                PixelPerfectItemIcon.Apply(itemImage, slotRect, weaponData.inventoryIconScale);
+            }
+            else
+            {
+                // 다른 아이템·스킬·진척도에는 무기 전용 정렬을 중지하고 원래 영역을 복구한다.
+                PixelPerfectItemIcon layout = itemImage.GetComponent<PixelPerfectItemIcon>();
+                if (layout != null) layout.enabled = false;
+                RectTransform iconRect = itemImage.rectTransform;
+                iconRect.anchorMin = defaultItemImageAnchorMin;
+                iconRect.anchorMax = defaultItemImageAnchorMax;
+                iconRect.pivot = defaultItemImagePivot;
+                iconRect.sizeDelta = defaultItemImageSizeDelta;
+                iconRect.anchoredPosition3D = defaultItemImagePosition;
+                iconRect.localRotation = defaultItemImageRotation;
+                iconRect.localScale = defaultItemImageScale;
+            }
+        }
+
         public void HideTooltip()
         {
             currentItem = null;

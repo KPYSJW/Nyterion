@@ -1,239 +1,96 @@
-using UnityEngine;
-using Nytherion.Data.ScriptableObjects.Items;
+using System;
 using Nytherion.Core.Data;
 using Nytherion.Core.Interfaces;
+using Nytherion.Core.Managers;
 using Nytherion.Core.Systems;
-using System;
+using Nytherion.Data.ScriptableObjects.Items;
+using UnityEngine;
 using VContainer;
 
 namespace Nytherion.UI.Inventory
 {
+    /// <summary>장착 스킬 데이터를 HUD의 Q/R/E 슬롯에 동기화합니다.</summary>
     public class QuickSlotManager : MonoBehaviour, ISaveable
     {
+        private QuickSlotUI[] slots = Array.Empty<QuickSlotUI>();
+        private SkillDataManager skillDataManager;
+        private InventoryDataManager inventoryDataManager;
 
-        private QuickSlotUI[] slots;
+        public event Action OnQuickSlotUpdated;
+
+        [Inject]
+        public void Construct(GameSceneUIRefs uiRefs, SkillDataManager skillDataManager,
+            InventoryDataManager inventoryDataManager)
+        {
+            if (this.skillDataManager != null)
+                this.skillDataManager.OnSkillDataChanged -= RefreshSlots;
+
+            this.skillDataManager = skillDataManager;
+            this.inventoryDataManager = inventoryDataManager;
+            this.skillDataManager.OnSkillDataChanged += RefreshSlots;
+            TryInjectSlots(uiRefs.QuickSlots);
+        }
 
         public void TryInjectSlots(QuickSlotUI[] quickSlots)
         {
-            if (quickSlots != null && quickSlots.Length > 0)
-            {
-                slots = quickSlots;
-            }
+            slots = quickSlots ?? Array.Empty<QuickSlotUI>();
+            for (int i = 0; i < slots.Length; i++)
+                slots[i]?.Initialize(i);
+            RefreshSlots();
         }
 
-        private void Start()
-        {
-            
-        }
-        private GameSceneUIRefs uiRefs;
+        private void Start() => RefreshSlots();
 
-        [Inject]
-        public void Construct(GameSceneUIRefs uiRefs)
+        private void OnDestroy()
         {
-            this.uiRefs = uiRefs;
+            if (skillDataManager != null)
+                skillDataManager.OnSkillDataChanged -= RefreshSlots;
         }
 
-        private void EnsureSlotReferences()
+        public void RefreshSlots()
         {
-            if (slots == null || slots.Length == 0)
-            {
-                if (uiRefs != null && uiRefs.QuickSlots != null && uiRefs.QuickSlots.Length > 0)
-                {
-                    slots = uiRefs.QuickSlots;
-                }
-                else
-                {
-                    slots = GetComponentsInChildren<QuickSlotUI>(includeInactive: true);
-                    if (slots == null || slots.Length == 0)
-                    {
-                        slots = new QuickSlotUI[0];
-                    }
-                }
-            }
-        }
-        [SerializeField]
-        private KeyCode[] keys =
-        {
-            KeyCode.Alpha1,
-            KeyCode.Alpha2,
-            KeyCode.Alpha3,
-        };
-
-        public event Action OnQuickSlotUpdated;
-        private void Awake()
-        {
-            EnsureSlotReferences();
-
-            if (slots != null && slots.Length > 0)
-            {
-                for (int i = 0; i < slots.Length && i < keys.Length; i++)
-                {
-                    int slotIndex = i;
-                    slots[i].Initialize(slotIndex);
-                    slots[i].OnItemSet += (item, count) => OnQuickSlotUpdated?.Invoke();
-                    slots[i].OnItemCleared += () => OnQuickSlotUpdated?.Invoke();
-                }
-            }
-            else
-            {
-                Debug.LogError("[QuickSlotManager] Awake에서 슬롯을 찾을 수 없어 초기화를 건너뜁니다.");
-            }
-        }
-
-
-        private void Update()
-        {
-            for (int i = 0; i < keys.Length && i < slots.Length; i++)
-            {
-                if (Input.GetKeyDown(keys[i]))
-                {
-                    UseSlot(i);
-                }
-            }
-        }
-
-        public void UpdateSlotDataExternal(int index, ItemData item, int count)
-        {
-            //Debug.Log($"[QuickSlotManager] UpdateSlotDataExternal 호출 - 슬롯: {index}, 아이템: {item?.ID ?? "null"}, 개수: {count}");
-
-            if (index < 0 || index >= slots.Length)
-            {
-                Debug.LogWarning($"[QuickSlotManager] 잘못된 슬롯 인덱스: {index}");
-                return;
-            }
-
-            // QuickSlotUI가 이미 업데이트했으므로, 여기서는 이벤트만 발생
-            // (실제 데이터는 slots[index].GetItemInfo()로 가져올 수 있음)
+            if (skillDataManager == null) return;
+            var equipped = skillDataManager.equippedSkills;
+            for (int i = 0; i < slots.Length; i++)
+                slots[i]?.SetSkill(equipped != null && i < equipped.Length ? equipped[i] : null);
             OnQuickSlotUpdated?.Invoke();
-
-            //Debug.Log($"[QuickSlotManager] 슬롯 {index} 업데이트 이벤트 발생 완료");
         }
 
-        public void UseSlot(int index)
-        {
-            if (index < 0 || index >= slots.Length) return;
-            slots[index].UseItem();
-        }
-
-        public void ClearSlot(int index)
-        {
-            if (index < 0 || index >= slots.Length) return;
-            slots[index].ClearSlot();
-        }
-
-        public (ItemData item, int count) GetItemInfo(int index)
-        {
-            if (index < 0 || index >= slots.Length) return (null, 0);
-            return slots[index].GetItemInfo();
-        }
+        // 기존 인벤토리 드롭 코드와의 호환용입니다. HUD에는 아이템을 저장하지 않습니다.
+        public void UpdateSlotDataExternal(int index, ItemData item, int count) => RefreshSlots();
 
         public void PopulateSaveData(SaveData saveData)
         {
-            if (saveData == null)
-            {
-                Debug.LogWarning("[QuickSlotManager] PopulateSaveData: saveData가 null");
-                return;
-            }
-
-            saveData.quickSlotData.Clear();
-            //Debug.Log($"[QuickSlotManager] PopulateSaveData 시작 - slots 개수: {slots?.Length ?? 0}");
-
-            for (int i = 0; i < slots.Length; i++)
-            {
-                var (uiItem, uiCount) = slots[i].GetItemInfo();
-
-                if (uiItem != null && uiCount > 0)
-                {
-                    //Debug.Log($"[QuickSlotManager] 슬롯 {i} 저장: {uiItem.ID}, 개수: {uiCount}");
-                    saveData.quickSlotData.Add(new QuickSlotEntry
-                    {
-                        slotIndex = i,
-                        itemId = uiItem.ID,
-                        count = uiCount,
-                        instanceId = uiItem.isStackable ? null : uiItem.instanceId
-                    });
-                }
-                else
-                {
-                    //Debug.Log($"[QuickSlotManager] 슬롯 {i} 비어있음");
-                }
-            }
-            //Debug.Log($"[QuickSlotManager] PopulateSaveData 완료 - 저장된 항목 수: {saveData.quickSlotData.Count}");
+            // 장착 스킬은 SkillDataManager가 저장합니다.
+            // 복원하지 못한 레거시 퀵슬롯 아이템은 기존 저장 항목을 그대로 보존합니다.
         }
-        public bool ConsumeItemInQuickSlot(int slotIndex, int count = 1)
-        {
-            if (slotIndex < 0 || slotIndex >= slots.Length) return false;
 
-            var (item, currentCount) = slots[slotIndex].GetItemInfo();
-
-            if (item == null || currentCount < count) return false;
-
-            int newCount = currentCount - count;
-
-            if (newCount <= 0)
-            {
-                ClearSlot(slotIndex);
-            }
-            else
-            {
-                slots[slotIndex].SetItem(item, newCount);
-            }
-
-            return true;
-        }
         public void LoadFromSaveData(SaveData saveData)
         {
-
-            // 모든 슬롯 초기화
-            for (int i = 0; i < slots.Length; i++)
+            // 예전 퀵슬롯의 소모품은 인벤토리로 돌려주고, 공간이 부족하면 저장 항목을 보존합니다.
+            if (saveData?.quickSlotData != null && inventoryDataManager != null &&
+                inventoryDataManager.IsInitialized)
             {
-                slots[i].ClearSlot();
+                for (int i = saveData.quickSlotData.Count - 1; i >= 0; i--)
+                {
+                    QuickSlotEntry entry = saveData.quickSlotData[i];
+                    ItemData item = ItemDatabase.GetItemByID(entry.itemId);
+                    if (!(item is ConsumableData) || entry.count <= 0) continue;
+                    if (!item.isStackable)
+                    {
+                        item = Instantiate(item);
+                        item.instanceId = string.IsNullOrEmpty(entry.instanceId)
+                            ? Guid.NewGuid().ToString() : entry.instanceId;
+                    }
+
+                    // 로드 중 자동 저장을 호출하지 않고 원자적으로 수량 전체를 이동합니다.
+                    if (inventoryDataManager.InventoryModel.AddItem(item, entry.count))
+                        saveData.quickSlotData.RemoveAt(i);
+                    else if (!item.isStackable)
+                        Destroy(item);
+                }
             }
-
-            if (saveData?.quickSlotData == null || saveData.quickSlotData.Count == 0)
-            {
-                return;
-            }
-
-            Debug.Log($"[QuickSlotManager] 로드할 퀵슬롯 항목 수: {saveData.quickSlotData.Count}");
-
-            foreach (var entry in saveData.quickSlotData)
-            {
-                Debug.Log($"[QuickSlotManager] 로드 시도 - 슬롯: {entry.slotIndex}, 아이템ID: {entry.itemId}, 개수: {entry.count}");
-
-                if (entry.slotIndex < 0 || entry.slotIndex >= slots.Length)
-                {
-                    Debug.LogWarning($"[QuickSlotManager] 잘못된 슬롯 인덱스: {entry.slotIndex}");
-                    continue;
-                }
-
-                ItemData itemAsset = ItemDatabase.GetItemByID(entry.itemId);
-                if (itemAsset == null)
-                {
-                    Debug.LogWarning($"[QuickSlotManager] 아이템을 찾을 수 없음: {entry.itemId}");
-                    continue;
-                }
-
-                if (!(itemAsset is ConsumableData))
-                {
-                    Debug.LogWarning($"[QuickSlotManager] ConsumableData가 아님: {entry.itemId}, 타입: {itemAsset.GetType()}");
-                    continue;
-                }
-
-                ItemData itemToPlace = itemAsset;
-                if (!itemToPlace.isStackable)
-                {
-                    itemToPlace = Instantiate(itemAsset);
-                    itemToPlace.instanceId = string.IsNullOrEmpty(entry.instanceId)
-                                            ? System.Guid.NewGuid().ToString()
-                                            : entry.instanceId;
-                }
-
-                slots[entry.slotIndex].SetItem(itemToPlace, entry.count);
-                Debug.Log($"[QuickSlotManager] 슬롯 {entry.slotIndex}에 {entry.itemId} 로드 완료");
-            }
-
-            Debug.Log("[QuickSlotManager] LoadFromSaveData 완료");
+            RefreshSlots();
         }
     }
 }

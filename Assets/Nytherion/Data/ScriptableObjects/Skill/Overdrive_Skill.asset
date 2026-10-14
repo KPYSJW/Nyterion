@@ -15,9 +15,8 @@ MonoBehaviour:
   skillID: skill_overdrive
   skillType: 5
   skillName: Overdrive
-  description: "\uACFC\uBD80\uD558 \uC0C1\uD0DC\uC5D0 \uC9C4\uC785\uD558\uC5EC \uC77C\uC815
-    \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640 \uB300\uC26C \uC18D\uB3C4\uAC00
-    \uADF9\uB300\uD654\uB429\uB2C8\uB2E4."
+  description: "\uC77C\uC815 \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640 \uB300\uC2DC
+    \uC18D\uB3C4 \uC99D\uAC00"
   skillLevel: 1
   exp: 0
   coolDown: 25

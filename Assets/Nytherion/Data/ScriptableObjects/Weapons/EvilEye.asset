@@ -29,26 +29,54 @@ MonoBehaviour:
     value: -10
     valuePerLevel: 0
     isPercentage: 0
+  useDiagonalIcon: 1
+  iconRotationOffset: 0
+  iconSlotScale: 1.8
+  inventoryIconScale: 1
   damage: 20
   range: 0
   cooldown: 1.5
   weaponType: 0
   weaponSprite: {fileID: 21300000, guid: 9575dfaffdd75884ca0a7aad900e16e4, type: 3}
-  firePointOffset: {x: 0.35, y: 0, z: 0}
+  firePointOffset: {x: 0.1, y: 0, z: 0}
   spriteRotationOffset: 0
-  visualPositionOffset: {x: 0.3, y: 0, z: 0}
+  visualPositionOffset: {x: 0.3, y: -0.12, z: 0}
+  visualScale: 0.7
+  sortingOrderOffset: 5
+  useFixedFacingPose: 0
   useStaffRecoil: 1
   weaponEffectPrefab: {fileID: 1638640853019598765, guid: dd4a8661b5e3dac43b8d7395a450fcf2, type: 3}
-  fireEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 6604706768557165360, guid: a927d799c53273b48bde69876b3147ca, type: 3}
   chargeEffectPrefab: {fileID: 7099819955533219938, guid: d3d95f8cca20e7340af51e1891f3bd62, type: 3}
+  chargeEffectRotationSpeed: 90
+  fireSound: {fileID: 8300000, guid: c07ea823b74354443b7b284df53cb610, type: 3}
+  fireSoundVolume: 0.64
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 3778041586713616541, guid: 04bfdb23b152bb84fb9836c1365357a0, type: 3}
-  projectileSpeed: 8
+  projectileAnimationVariants: []
+  projectileStartEffectVariants: []
+  projectileSpeed: 10
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
+  hasHomingProjectiles: 0
+  usePlayerCircleSpawn: 0
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 30
+  - 15
+  - 0
+  - -15
+  - -30
+  homingTurnSpeed: 180
+  useConstantHomingSpeed: 0
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
   chargeThresholdTime: 0.15
-  requiredRelicId: 
+  requiredRelicId: ChargeRelic
   hitEffectPrefab: {fileID: 0}
-  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  weaponPrefab: {fileID: -2914722070659980993, guid: c165cdc6ec48b154bb41137b680b0a65, type: 3}
   isArchivable: 1

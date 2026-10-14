@@ -13,6 +13,8 @@ namespace Nytherion.Core.Enums
         Aura,
         ShadowClone,
         Turret,
-        Laser
+        Laser,
+        ChainIgnition,
+        PyroTank
     }
 }

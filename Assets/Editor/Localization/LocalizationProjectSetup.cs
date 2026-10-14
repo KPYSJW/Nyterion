@@ -38,8 +38,7 @@ namespace Nytherion.Editor.Localization
         private static readonly string[] RuntimeScenePaths =
         {
             "Assets/Scenes/Title.unity",
-            "Assets/Scenes/GameScene.unity",
-            "Assets/Scenes/Village.unity"
+            "Assets/Scenes/GameScene.unity"
         };
 
         [MenuItem("Nytherion/Localization/Setup And Migrate")]
@@ -501,7 +500,6 @@ namespace Nytherion.Editor.Localization
         private static void SetupLanguageControlsInRuntimeScenes()
         {
             SetupGameLanguageControls("Assets/Scenes/GameScene.unity");
-            SetupGameLanguageControls("Assets/Scenes/Village.unity");
             SetupTitleLanguageControls();
         }
 

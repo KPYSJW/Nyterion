@@ -25,7 +25,7 @@ namespace Nytherion.Data.ScriptableObjects.Stage
         [Tooltip("이 스테이지를 클리어하면 넘어갈 다음 스테이지 데이터입니다.")]
         public StageData nextStageData;
 
-        [Tooltip("이 스테이지를 클리어하면 로드할 씬 이름입니다. (예: Village)")]
+        [Tooltip("이 스테이지를 클리어하면 로드할 씬 이름입니다. (예: GameScene)")]
         public string victorySceneName = "GameScene"; 
     }
 }

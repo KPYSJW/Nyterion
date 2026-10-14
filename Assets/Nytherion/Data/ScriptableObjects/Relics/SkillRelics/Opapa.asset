@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Opapa
+  m_EditorClassIdentifier: 
+  relicName: Opapa
+  koreanName: "\uC624\uD30C\uD30C"
+  description_KR: "돌진 후 벽, 장애물, 화면 경계에서 튕기는 Opapa 소환. 적을 관통하며 구르기에 닿은 적을 1회 타격."
+  description_EN: "Summons Opapa, which charges and ricochets off walls, obstacles, and screen edges. Pierces enemies, hitting each once per roll."
+  Image: {fileID: 21300000, guid: a51d104611cfb294ba7a7c1123141e84, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: "\uAD6C\uB974\uAE30 \uB3D9\uC548 \uC801\uC744 \uAD00\uD1B5\uD558\uACE0
+      \uC9C0\uD615\uACFC \uD654\uBA74 \uACBD\uACC4\uC5D0\uC11C \uBC18\uC0AC\uB429\uB2C8\uB2E4."
+    description_EN: Pierces enemies while rolling and ricochets from terrain and
+      screen bounds.
+    condition:
+      rid: 7227149829055971328
+    effects:
+    - rid: 7227149829055971329
+  grantsProjectileHoming: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: SummonedCreatureSeries
+  synergySetBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: 7227149829055971328
+      type: {class: AlwaysTrueCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data: 
+    - rid: 7227149829055971329
+      type: {class: SummonedCompanionRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        companionPrefab: {fileID: 6229201192279560493, guid: fade179d11ef0af4abb7659ca11d4429, type: 3}
+        spawnOffset: {x: -1.2, y: 0.55, z: 0}

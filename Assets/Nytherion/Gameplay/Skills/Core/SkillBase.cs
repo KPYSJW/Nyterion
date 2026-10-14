@@ -12,6 +12,17 @@ namespace Nytherion.GamePlay.Skills
         /// <summary> 스킬의 기본 정보와 능력치를 담고 있는 데이터/// </summary>
         public SkillData skillData;
 
+        protected float EffectSizeMultiplier
+        {
+            get
+            {
+                var player = caster != null ? caster.GetComponentInParent<Nytherion.Core.Managers.PlayerManager>()
+                    : GetComponentInParent<Nytherion.Core.Managers.PlayerManager>();
+                return player != null && player.currentPlayerData != null
+                    ? Mathf.Max(0.01f, player.currentPlayerData.projectileSizeMultiplier) : 1f;
+            }
+        }
+
         /// <summary> 스킬을 시전 한 주체의 Transform/// </summary>
         [System.NonSerialized] public Transform caster;
 
@@ -26,13 +37,13 @@ namespace Nytherion.GamePlay.Skills
         ///  스킬 사용을 시도. 사용 가능하다면 스킬을 활성화하고 쿨다운을 초기화
         /// </summary>
         /// <returns></returns>
-        public bool CanUse() => Time.time > lastUseTime + skillData.coolDown;
+        public virtual bool CanUse() => Time.time > lastUseTime + skillData.coolDown;
 
         /// <summary>
         /// 실제 스킬의 효과나 로직이 구현되는 메서드
         /// </summary>
         /// <returns>스킬 사용 성공 여부</returns>
-        public bool TryUse()
+        public virtual bool TryUse()
         {
 
             if (CanUse())
@@ -52,13 +63,13 @@ namespace Nytherion.GamePlay.Skills
         /// <summary>
         /// 스킬의 전체 쿨다운 시간을 반환
         /// </summary>
-        public float GetCooldownTime() => skillData.coolDown;
+        public virtual float GetCooldownTime() => skillData.coolDown;
 
         /// <summary>
         /// 스킬이 다시 사용 가능해질 때까지 남은 시간을 반환
         /// </summary>
         /// <returns>남은 쿨다운 시간(최소 0초)</returns>
-        public float GetRemainingCooldown()
+        public virtual float GetRemainingCooldown()
         {
             float remaining = (lastUseTime + skillData.coolDown) - Time.time;
             return Mathf.Max(0f, remaining);

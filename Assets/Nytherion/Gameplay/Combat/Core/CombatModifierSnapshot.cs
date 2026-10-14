@@ -11,7 +11,7 @@ namespace Nytherion.GamePlay.Combat
     public sealed class CombatModifierSnapshot
     {
         public static readonly CombatModifierSnapshot Empty =
-            new CombatModifierSnapshot(new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase), false);
+            new CombatModifierSnapshot(new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase), false, false);
 
         private readonly Dictionary<string, int> activeRelicLevels;
 
@@ -19,10 +19,10 @@ namespace Nytherion.GamePlay.Combat
         public bool HasProjectileBounce { get; }
         public bool HasProjectileHoming { get; }
 
-        private CombatModifierSnapshot(Dictionary<string, int> activeRelicLevels, bool hasProjectileHoming)
+        private CombatModifierSnapshot(Dictionary<string, int> activeRelicLevels, bool hasProjectileHoming, bool hasProjectilePiercing)
         {
             this.activeRelicLevels = activeRelicLevels;
-            HasProjectilePiercing = IsAnyActive("Piercing", "관통", "TangledYarn", "꼬인 실타래");
+            HasProjectilePiercing = hasProjectilePiercing || IsAnyActive("Piercing", "관통", "TangledYarn", "꼬인 실타래");
             HasProjectileBounce = IsAnyActive("Bounce", "튕김", "SqueakyGear", "삐걱이는 톱니");
             HasProjectileHoming = hasProjectileHoming;
         }
@@ -31,6 +31,7 @@ namespace Nytherion.GamePlay.Combat
         {
             Dictionary<string, int> levels = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             bool hasProjectileHoming = false;
+            bool hasProjectilePiercing = false;
             if (relics != null)
             {
                 for (int i = 0; i < relics.Count; i++)
@@ -42,10 +43,11 @@ namespace Nytherion.GamePlay.Combat
                     AddLevel(levels, relic.relicName, relic.level);
                     AddLevel(levels, relic.koreanName, relic.level);
                     hasProjectileHoming |= relic.grantsProjectileHoming;
+                    hasProjectilePiercing |= relic.grantsProjectilePiercing;
                 }
             }
 
-            return new CombatModifierSnapshot(levels, hasProjectileHoming);
+            return new CombatModifierSnapshot(levels, hasProjectileHoming, hasProjectilePiercing);
         }
 
         public bool IsActive(string relicId)

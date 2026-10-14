@@ -107,6 +107,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                 case StatType.DashDuration: return data.dashDuration;
                 case StatType.DashCooldown: return data.dashCooldown;
                 case StatType.ExtraProjectiles: return data.extraProjectiles;
+                case StatType.ProjectileSize: return data.projectileSizeMultiplier;
                 default: return 0f;
             }
         }

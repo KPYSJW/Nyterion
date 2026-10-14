@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Starlight Shard
   koreanName: "\uBCC4\uBE5B \uC870\uAC01"
-  description_KR: "\uCE58\uBA85\uD0C0 \uBC1C\uC0DD \uD655\uB960\uC744 5% \uB9CC\uD07C
-    \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
-  description_EN: 
+  description_KR: "치명타 확률 +5%."
+  description_EN: "Critical chance +5%."
   Image: {fileID: 21300000, guid: ec2e33a4ea32b8e4fb5a56a10f53ba4c, type: 3}
   rarity: 1
   level: 1

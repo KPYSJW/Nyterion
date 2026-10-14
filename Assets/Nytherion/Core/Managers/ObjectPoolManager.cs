@@ -34,10 +34,17 @@ namespace Nytherion.Core.Managers
 
         protected override void Awake()
         {
-            base.Awake();
-
+            // Resolve 중에는 UI 의존성이 있는 풀 오브젝트를 생성하지 않는다.
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+        }
+
+        private void Start()
+        {
+            if (Instance == this && autoInitializeOnAwake)
+            {
+                Initialize();
+            }
         }
 
         protected override void OnInitializeInternal()
@@ -135,6 +142,11 @@ namespace Nytherion.Core.Managers
 
         public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
         {
+            if (poolDictionary == null)
+            {
+                Initialize();
+            }
+
             if (!poolDictionary.ContainsKey(tag))
             {
                 Debug.LogWarning($"Pool with tag '{tag}' doesn't exist.");
@@ -180,6 +192,11 @@ namespace Nytherion.Core.Managers
         public void ReturnToPool(string tag, GameObject objectToReturn)
         {
             if (objectToReturn == null) return;
+
+            if (poolDictionary == null)
+            {
+                Initialize();
+            }
 
             if (instancePoolTags != null && instancePoolTags.TryGetValue(objectToReturn, out string registeredTag))
             {

@@ -23,7 +23,9 @@ public class MeleeAttackCollider : MonoBehaviour
 
         if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
         {
-            playerHealth.TakeDamage(damage);
+            playerHealth.TakeDamage(
+                damage,
+                other.ClosestPoint(transform.position));
             hashit = true;
         }
     }

@@ -29,7 +29,6 @@ public class GameSceneLifetimeScope : LifetimeScope
 
     [Header("GameScene Managers")]
     [SerializeField] private GachaManager gachaManagerPrefab;
-    [SerializeField] private GachaUIController gachaUIControllerPrefab;
     [SerializeField] private InteractionManager interactionManagerPrefab;
     [SerializeField] private DungeonManager dungeonManagerPrefab;
     [SerializeField] private QuickSlotManager quickSlotManagerPrefab;
@@ -262,10 +261,6 @@ public class GameSceneLifetimeScope : LifetimeScope
 
     private void InstallGameSceneUI(IContainerBuilder builder)
     {
-        builder.RegisterComponentInNewPrefab(gachaUIControllerPrefab, Lifetime.Singleton)
-                .AsImplementedInterfaces()
-                .AsSelf();
-
         builder.RegisterComponentInNewPrefab(inventoryUIPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
                 .AsSelf();
@@ -342,11 +337,6 @@ public class GameSceneLifetimeScope : LifetimeScope
     {
         // ShopDealer들을 씬에서 찾아서 등록
        /* builder.RegisterComponentInHierarchy<ShopDealer>()
-                .AsImplementedInterfaces()
-                .AsSelf();
-
-        // GachaNPC들을 씬에서 찾아서 등록
-        builder.RegisterComponentInHierarchy<GachaNPC>()
                 .AsImplementedInterfaces()
                 .AsSelf();
 

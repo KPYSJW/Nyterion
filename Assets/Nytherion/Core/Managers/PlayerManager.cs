@@ -1,6 +1,7 @@
 using Nytherion.Data.ScriptableObjects.Player;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
 using Nytherion.Core.Enums;
 using Nytherion.GamePlay.Characters.Player;
@@ -24,8 +25,12 @@ namespace Nytherion.Core.Managers
         private InputManager inputManager;
         private EventManager eventManager;
         private RelicManager relicManager;
+        private SkillDataManager skillDataManager;
         private PlayerController playerController;
         public EventManager EventManager => eventManager;
+        private IObjectResolver objectResolver;
+        public ObjectPoolManager ObjectPool => objectResolver != null &&
+            objectResolver.TryResolve<ObjectPoolManager>(out var pool) ? pool : null;
 
         [Header("Player Data")]
         [SerializeField] private PlayerData basePlayerData;
@@ -46,12 +51,25 @@ namespace Nytherion.Core.Managers
             EquipmentDataManager equipmentDataManager,
             InputManager inputManager,
             EventManager eventManager,
-            RelicManager relicManager)
+            RelicManager relicManager,
+            SkillDataManager skillDataManager = null,
+            IObjectResolver objectResolver = null)
         {
             this.equipmentDataManager = equipmentDataManager;
             this.inputManager = inputManager;
             this.eventManager = eventManager;
             this.relicManager = relicManager;
+            this.skillDataManager = skillDataManager;
+            this.objectResolver = objectResolver;
+        }
+
+        public int GetSkillLevel(SkillData skill)
+        {
+            if (skill == null) return 1;
+            if (skillDataManager != null && !string.IsNullOrEmpty(skill.skillID) &&
+                skillDataManager.skillStates.TryGetValue(skill.skillID, out SkillState state))
+                return Mathf.Max(1, state.level);
+            return Mathf.Max(1, skill.skillLevel);
         }
 
         protected override void OnInitializeInternal()
@@ -67,6 +85,9 @@ namespace Nytherion.Core.Managers
                 playerRelicManager.Construct(eventManager, relicManager);
                 playerRelicManager.OnRelicsChanged += RecalculateStats;
             }
+
+            RelicEffectController relicEffects = GetComponent<RelicEffectController>();
+            if (relicEffects != null) relicEffects.Construct(relicManager);
 
             if (basePlayerData == null)
             {
@@ -412,6 +433,10 @@ namespace Nytherion.Core.Managers
                 case StatType.ExtraProjectiles:
                     if (isPercentage) currentPlayerData.extraProjectiles *= (1 + value);
                     else currentPlayerData.extraProjectiles += value;
+                    break;
+                case StatType.ProjectileSize:
+                    if (isPercentage) currentPlayerData.projectileSizeMultiplier *= (1 + value);
+                    else currentPlayerData.projectileSizeMultiplier += value;
                     break;
                 case StatType.ChargeTimeReduction:
                     if (isPercentage) currentPlayerData.chargeTimeReduction *= (1 + value);

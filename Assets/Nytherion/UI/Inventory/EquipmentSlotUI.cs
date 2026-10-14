@@ -1,6 +1,8 @@
 using Nytherion.Core.Enums;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Items;
+using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.UI.Components;
 using Nytherion.UI.Inventory.Utils;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,8 +26,16 @@ namespace Nytherion.UI.Inventory
         [Inject]
         public void Construct(EquipmentDataManager equipmentDataManager, InventoryDataManager inventoryDataManager)
         {
+            if (this.equipmentDataManager != null)
+            {
+                this.equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
+            }
             this.equipmentDataManager = equipmentDataManager;
             this.inventoryDataManager = inventoryDataManager;
+            if (isActiveAndEnabled)
+            {
+                SubscribeAndRefreshEquipment();
+            }
         }
 
         private void Start()
@@ -47,7 +57,7 @@ namespace Nytherion.UI.Inventory
                 }
             }
 
-            InitializeEquipmentState();
+            SubscribeAndRefreshEquipment();
         }
 
         /// <summary>
@@ -58,10 +68,7 @@ namespace Nytherion.UI.Inventory
             if (equipmentDataManager != null)
             {
                 var currentEquipment = equipmentDataManager.GetEquipment(this.slotType);
-                if (currentEquipment != null)
-                {
-                    base.SetItem(currentEquipment, 1);
-                }
+                base.SetItem(currentEquipment, currentEquipment == null ? 0 : 1);
             }
         }
 
@@ -78,6 +85,20 @@ namespace Nytherion.UI.Inventory
             OnEndDragEvent += HandleEndDrag;
         }
 
+        protected override void UpdateVisuals(ItemData item, int count)
+        {
+            if (item != null && count > 0 && iconImage != null && iconImage.transform != transform)
+                PixelPerfectItemIcon.Apply(iconImage, transform as RectTransform,
+                    item is WeaponData weaponData ? weaponData.inventoryIconScale : 1f);
+            base.UpdateVisuals(item, count);
+        }
+
+        protected override void ApplyIconLayout()
+        {
+            // 보관함과 같은 배율, 원본 방향, 픽셀 정렬을 사용한다.
+            if (iconImage != null) iconImage.GetComponent<PixelPerfectItemIcon>()?.Refresh();
+        }
+
         protected override void HandleEndDrag(BaseSlotUI slot, PointerEventData eventData)
         {
             base.HandleEndDrag(slot, eventData);
@@ -92,15 +113,17 @@ namespace Nytherion.UI.Inventory
 
         public void OnEnable()
         {
+            SubscribeAndRefreshEquipment();
+        }
+
+        private void SubscribeAndRefreshEquipment()
+        {
             if (equipmentDataManager != null)
             {
+                // OnEnable 이후 주입되거나 Start에서 참조를 확보해도 구독을 보장한다.
+                equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
                 equipmentDataManager.OnEquipmentChanged += HandleEquipmentChanged;
-
-                var currentEquipment = equipmentDataManager.GetEquipment(this.slotType);
-                if (currentEquipment != null && base.IsEmpty)
-                {
-                    base.SetItem(currentEquipment, 1);
-                }
+                InitializeEquipmentState();
             }
         }
 
@@ -235,10 +258,12 @@ namespace Nytherion.UI.Inventory
             {
                 Debug.Log("인벤토리 추가 성공. UI 슬롯을 비운다");
                 ClearSlot();
+                PlayUISound(UISoundType.Place);
             }
             else
             {
                 Debug.LogError("인벤토리 추가 실패");
+                PlayUISound(UISoundType.Error);
             }
         }
 

@@ -44,7 +44,7 @@ namespace Nytherion.GamePlay.Combat
             this.pool = pool;
             poolTag = data.projectilePrefab.name;
             maxLength = data.GetLength(stage);
-            width = data.GetWidth(stage);
+            width = data.GetWidth(stage) * owner.EffectSizeMultiplier;
             elapsed = 0f;
             nextTick = 0;
             overlaps.Clear();

@@ -1,6 +1,9 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Combat.Weapons;
 using UnityEngine;
@@ -18,6 +21,14 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField] private LayerMask enemyLayers;
         [SerializeField, Min(1)] private int overlapBufferSize = 64;
         [SerializeField] private int auraSortingOrderOffset = -2;
+        [Header("TargetMaker")]
+        [SerializeField] private GameObject summonVisualPrefab;
+        [SerializeField] private GameObject targetAttackVisualPrefab;
+        [SerializeField] private AnimationClip summonClip;
+        [SerializeField] private AnimationClip targetAttackClip;
+        [SerializeField, Tooltip("타겟 메이커의 소환 이펙트 생성 시 한 번 재생합니다.")]
+        private AudioClip targetSummonSound;
+        [SerializeField, Range(0f, 1f)] private float targetSummonSoundVolume = 0.5f;
 
         private readonly HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
 
@@ -31,9 +42,13 @@ namespace Nytherion.GamePlay.Combat
         private float nextDamageTime;
         private bool initialized;
         private bool facingPoseCached;
+        private Coroutine targetAttack;
+        private GameObject targetVisual;
+        private bool targetMode;
 
         public override bool OverrideRotation => true;
-        public override bool AllowAutoFire => false;
+        public override bool AllowAutoFire => HasTargetMaker;
+        public override bool AllowHeldAttackRetry => HasTargetMaker;
 
         // 수동 공격과 범용 차징을 모두 차단하기 위한 비활성 IChargeableWeapon 구현입니다.
         public bool IsCharging => false;
@@ -72,7 +87,18 @@ namespace Nytherion.GamePlay.Combat
                 return;
             }
 
+            bool targeting = HasTargetMaker;
+            if (targeting != targetMode)
+            {
+                targetMode = targeting;
+                if (!targeting) CancelTargetAttack();
+                nextDamageTime = Time.time + Mathf.Max(0.05f, weaponData.cooldown);
+            }
+            if (auraVisualInstance != null) auraVisualInstance.SetActive(!targeting);
+            if (targeting) return;
+
             SyncAuraTransform();
+            ResizeAuraVisual(weaponData.range * EffectSizeMultiplier);
 
             if (Time.time < nextDamageTime)
             {
@@ -90,11 +116,76 @@ namespace Nytherion.GamePlay.Combat
 
         public override bool CanAttack()
         {
-            return false;
+            // 지속 오라의 피해 주기는 공격속도가 아닙니다. 지정 공격은 연출이 끝나면 다시 사용할 수 있습니다.
+            return HasTargetMaker && targetAttack == null && weaponData != null &&
+                summonVisualPrefab != null && targetAttackVisualPrefab != null &&
+                summonClip != null && targetAttackClip != null;
         }
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
+            if (!CanAttack()) return;
+            targetPosition.z = 0f;
+            if (auraVisualInstance != null) auraVisualInstance.SetActive(false);
+            WeaponVFXHelper.PlayFireEffect(weaponData.fireEffectPrefab, transform.position, transform.rotation, transform);
+            targetAttack = StartCoroutine(AttackAtTarget(targetPosition));
+        }
+
+        private IEnumerator AttackAtTarget(Vector3 center)
+        {
+            float radius = Mathf.Max(0.1f, weaponData.range) * EffectSizeMultiplier;
+            float damage = Mathf.Max(0f, weaponData.damage * EffectiveDamageMultiplier);
+            targetVisual = CreateTargetVisual(summonVisualPrefab, center, radius * 0.7f);
+            PlayWeaponSound(targetSummonSound, targetSummonSoundVolume);
+            yield return new WaitForSeconds(summonClip.length);
+            Destroy(targetVisual);
+            targetVisual = CreateTargetVisual(targetAttackVisualPrefab, center, radius);
+            damagedTargets.Clear();
+            float endTime = Time.time + targetAttackClip.length;
+            while (Time.time < endTime)
+            {
+                // 공격 애니메이션 도중 진입한 적도 맞지만 같은 적의 여러 콜라이더와 재진입은 중복 타격하지 않습니다.
+                DealDamage(center, radius, damage);
+                yield return null;
+            }
+            Destroy(targetVisual);
+            targetVisual = null;
+            targetAttack = null;
+        }
+
+        private GameObject CreateTargetVisual(GameObject prefab, Vector3 center, float radius)
+        {
+            GameObject visual = Instantiate(prefab, center, Quaternion.identity);
+            SpriteRenderer renderer = visual.GetComponentInChildren<SpriteRenderer>();
+            if (renderer != null && renderer.sprite != null)
+            {
+                float diameter = Mathf.Max(renderer.sprite.bounds.size.x, renderer.sprite.bounds.size.y);
+                visual.transform.localScale = Vector3.one * (radius * 2f / Mathf.Max(0.01f, diameter));
+                if (playerManager != null)
+                {
+                    SpriteRenderer source = playerManager.GetComponentInChildren<SpriteRenderer>();
+                    if (source != null)
+                    {
+                        renderer.sortingLayerID = source.sortingLayerID;
+                        renderer.sortingOrder = source.sortingOrder + 2;
+                    }
+                }
+            }
+            return visual;
+        }
+
+        private void CancelTargetAttack()
+        {
+            if (targetAttack != null) StopCoroutine(targetAttack);
+            targetAttack = null;
+            if (targetVisual != null) Destroy(targetVisual);
+            targetVisual = null;
+        }
+
+        private void OnDisable()
+        {
+            CancelTargetAttack();
+            if (auraVisualInstance != null) auraVisualInstance.SetActive(false);
         }
 
         public override void AttackEnd()
@@ -142,7 +233,7 @@ namespace Nytherion.GamePlay.Combat
 
             EnsureOverlapBuffer();
             EnsureAuraVisual();
-            ResizeAuraVisual(data.range);
+            ResizeAuraVisual(data.range * EffectSizeMultiplier);
             SyncAuraTransform();
             nextDamageTime = Time.time + Mathf.Max(0.05f, data.cooldown);
         }
@@ -227,9 +318,22 @@ namespace Nytherion.GamePlay.Combat
             damagedTargets.Clear();
 
             Vector2 center = playerManager != null ? playerManager.transform.position : transform.position;
-            float radius = Mathf.Max(0.1f, weaponData.range);
+            float radius = Mathf.Max(0.1f, weaponData.range) * EffectSizeMultiplier;
             float damage = Mathf.Max(0f, weaponData.damage * EffectiveDamageMultiplier);
-            int hitCount = Physics2D.OverlapCircleNonAlloc(center, radius, overlapBuffer, enemyLayers);
+            DealDamage(center, radius, damage);
+        }
+
+        private void DealDamage(Vector2 center, float radius, float damage)
+        {
+            if (damage <= 0f) return;
+            bool dealtDamage = false;
+            int hitCount;
+            do
+            {
+                hitCount = Physics2D.OverlapCircleNonAlloc(center, radius, overlapBuffer, enemyLayers);
+                if (hitCount < overlapBuffer.Length) break;
+                Array.Resize(ref overlapBuffer, overlapBuffer.Length * 2);
+            } while (true);
 
             for (int i = 0; i < hitCount; i++)
             {
@@ -250,12 +354,19 @@ namespace Nytherion.GamePlay.Combat
                     continue;
                 }
 
+                if (target is EnemyBase enemy && enemy.isDead) continue;
+
                 target.TakeDamage(damage);
+                dealtDamage = true;
             }
+            Array.Clear(overlapBuffer, 0, hitCount);
+            // 일반 오라는 실제 타격한 주기에만 한 번, 지정 공격은 소환 시에만 재생합니다.
+            if (dealtDamage && !HasTargetMaker) PlayFireSound();
         }
 
         private void OnDestroy()
         {
+            CancelTargetAttack();
             if (auraVisualInstance != null)
             {
                 Destroy(auraVisualInstance);
@@ -264,7 +375,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnDrawGizmosSelected()
         {
-            float radius = weaponData != null ? Mathf.Max(0.1f, weaponData.range) : 2.75f;
+            float radius = (weaponData != null ? Mathf.Max(0.1f, weaponData.range) : 2.75f) * EffectSizeMultiplier;
             Vector3 center = playerManager != null ? playerManager.transform.position : transform.position;
             Gizmos.color = new Color(1f, 0.25f, 0.05f, 0.45f);
             Gizmos.DrawWireSphere(center, radius);

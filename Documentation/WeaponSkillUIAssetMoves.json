@@ -1,0 +1,174 @@
+{
+  "entries": [
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/ArcaneDart_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/ArcaneDart_Icon.png",
+      "guid": "3ccd97612d81f4b43987f4d128fd35e8"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/Blazeshade_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/Blazeshade_Icon.png",
+      "guid": "b63b2e1e6b354c9aa9e639776de7a175"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/ForestThorn_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/ForestThorn_Icon.png",
+      "guid": "e4f81336d877aa249911f981d161aba4"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/Frenzy_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/Frenzy_Icon.png",
+      "guid": "a84dd48d9f3985846b1adcf5f1406809"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/Guardian'sStaff_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/Guardian'sStaff_Icon.png",
+      "guid": "c8a3c06514b4c734dbdc586d4ebd29ef"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/LayLaser_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/LayLaser_Icon.png",
+      "guid": "4402aec81f1ae2e4a9b00a24e84fdc62"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/Pyrofall_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/Pyrofall_Icon.png",
+      "guid": "e0ce9508c41057443b89c40dc913b8b7"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/Spirits'Guidance_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/Spirits'Guidance_Icon.png",
+      "guid": "4d9574aa037f295409fc44d607d0fee5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/VoidRay_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/VoidRay_Icon.png",
+      "guid": "9cb3ff8a231e472489ec43bdc96b1274"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Combat/Weapons/ChargeableWeapon_Template.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Combat/Weapons/Templates/ChargeableWeapon_Template.prefab",
+      "guid": "745fe58976c7dbe48a2be055b403154d"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Combat/Weapons/FrenzyWeapon_Template.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Combat/Weapons/Templates/FrenzyWeapon_Template.prefab",
+      "guid": "f2b0acf08dec30a44b07ddd1938a737a"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Combat/Weapons/MeteorWeapon_Template.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Combat/Weapons/Templates/MeteorWeapon_Template.prefab",
+      "guid": "969983ef81ca5014097e4274a1e3db3d"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Combat/Weapons/RandomArchive_Template.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Combat/Weapons/Templates/RandomArchive_Template.prefab",
+      "guid": "7ff8fb6dff53d7e4cb16488827e583b2"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Combat/Weapons/RangedWeapon_Template.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Combat/Weapons/Templates/RangedWeapon_Template.prefab",
+      "guid": "13f0acf08dec30a44b07ddd1938a7372"
+    },
+    {
+      "source": "Assets/Prefabs/UI/SkillEquipSlot 1.prefab",
+      "destination": "Assets/Prefabs/UI/Skills/SkillEquipSlot 1.prefab",
+      "guid": "1cc473ab914bd9642a16ce6d328dde75"
+    },
+    {
+      "source": "Assets/Prefabs/UI/SkillEquipSlot 2.prefab",
+      "destination": "Assets/Prefabs/UI/Skills/SkillEquipSlot 2.prefab",
+      "guid": "b5037ce2d1c3bbf4894934c887b795cf"
+    },
+    {
+      "source": "Assets/Prefabs/UI/SkillEquipSlot.prefab",
+      "destination": "Assets/Prefabs/UI/Skills/SkillEquipSlot.prefab",
+      "guid": "4871379f9a589c0448f6287fc49e3018"
+    },
+    {
+      "source": "Assets/Prefabs/UI/SkillStorageSlot.prefab",
+      "destination": "Assets/Prefabs/UI/Skills/SkillStorageSlot.prefab",
+      "guid": "22c598c598dcc544caa3aaf9987a97c9"
+    },
+    {
+      "source": "Assets/Prefabs/UI/SkillTooltip.prefab",
+      "destination": "Assets/Prefabs/UI/Skills/SkillTooltip.prefab",
+      "guid": "a30d42a0d43a32549b3f08a2ae915fa5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/UI/EquipedSkill_Slot.png",
+      "destination": "Assets/Nytherion/Art/UI/Skills/EquipedSkill_Slot.png",
+      "guid": "982d8ded3e234974cb997b657d34bf09"
+    },
+    {
+      "source": "Assets/Nytherion/Art/UI/SkillPanel.png",
+      "destination": "Assets/Nytherion/Art/UI/Skills/SkillPanel.png",
+      "guid": "9ae213ff083ef5343ac46ce79767dfe7"
+    },
+    {
+      "source": "Assets/Nytherion/Art/UI/SkillStorageSlot.png",
+      "destination": "Assets/Nytherion/Art/UI/Skills/SkillStorageSlot.png",
+      "guid": "ecf32c8943de7e6458d493d5676a44ed"
+    },
+    {
+      "source": "Assets/Nytherion/Art/UI/SkillTooltip.png",
+      "destination": "Assets/Nytherion/Art/UI/Skills/SkillTooltip.png",
+      "guid": "227b37e1ae946e249b54321ccf11be39"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/SkillPanel.png",
+      "destination": "Assets/Nytherion/Art/UI/Skills/Variants/SkillPanel.png",
+      "guid": "50c851b63aa4f2143a1c9918dca1c08c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/SkillSlot.png",
+      "destination": "Assets/Nytherion/Art/UI/Skills/Variants/SkillSlot.png",
+      "guid": "2bd2e219ba99daa4892e702762c19362"
+    },
+    {
+      "source": "Assets/Nytherion/Art/UI/Aim.png",
+      "destination": "Assets/Nytherion/Art/UI/HUD/Aim.png",
+      "guid": "2e39f42e0bf443c9a5800f1e012704db"
+    },
+    {
+      "source": "Assets/Nytherion/Art/UI/Cursor.png",
+      "destination": "Assets/Nytherion/Art/UI/HUD/Cursor.png",
+      "guid": "db33c5633f324972bb3ce810b59115ca"
+    },
+    {
+      "source": "Assets/Prefabs/UI/MilestoneSlot.prefab",
+      "destination": "Assets/Prefabs/UI/Progression/MilestoneSlot.prefab",
+      "guid": "f2932e269c5bc224c9f50bea431d85c2"
+    },
+    {
+      "source": "Assets/Prefabs/UI/StatCell.prefab",
+      "destination": "Assets/Prefabs/UI/Inventory/StatCell.prefab",
+      "guid": "154ab9f8d61aff94593701fbdeee39b4"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Skills/AllStatUpSkillPrefab.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Skills/Buffs/AllStatUpSkillPrefab.prefab",
+      "guid": "4ac06976c636ab4479172aa18a139294"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Skills/AtkBuffSkillPrefab.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Skills/Buffs/AtkBuffSkillPrefab.prefab",
+      "guid": "568542e054e9eb246afad1ad7533ab7c"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Skills/AttackSpeedBoost.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Skills/Buffs/AttackSpeedBoost.prefab",
+      "guid": "9943bf6527c395a4e8f0d503d60c53ad"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Skills/CoolDownSkillPrefab.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Skills/Buffs/CoolDownSkillPrefab.prefab",
+      "guid": "4add78711b37c6040a072f683ca1eb4a"
+    },
+    {
+      "source": "Assets/Prefabs/Gameplay/Skills/LifeStealSkillPrefab.prefab",
+      "destination": "Assets/Prefabs/Gameplay/Skills/Buffs/LifeStealSkillPrefab.prefab",
+      "guid": "9659f2b7b90be3345abaac2116ceea1b"
+    }
+  ]
+}

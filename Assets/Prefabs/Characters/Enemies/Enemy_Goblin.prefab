@@ -202,7 +202,10 @@ MonoBehaviour:
   aiController: {fileID: 977409343758165628}
   spriteRenderer: {fileID: 4759487690129869322}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
-  hitFlashDuration: 0.2
+  hitFlashDuration: 0.1
+  whiteFlashDuration: 0.04
+  deathDissolveDuration: 1.6
+  deathDissolvePixelSize: 3
 --- !u!114 &7813974616548920301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,7 +247,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8336639199447205642}
   m_Enabled: 0
-  m_AgentTypeID: 0
+  m_AgentTypeID: -641862301
   m_Radius: 0.56
   m_Speed: 3.5
   m_Acceleration: 8

@@ -114,6 +114,7 @@ namespace Nytherion.GamePlay.Combat
             }
 
             activeBeam = instance.GetComponent<LayLaserBeam>();
+            PlayFireSound();
             activeBeam.Initialize(this, firePoint, direction, data, stage,
                 data.damage * EffectiveDamageMultiplier, pool);
             lastAttackTime = Time.time;

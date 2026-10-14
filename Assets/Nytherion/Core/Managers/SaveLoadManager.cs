@@ -29,6 +29,12 @@ namespace Nytherion.Core.Managers
 
         private bool preventAutoSave = false;
         private const float SAVE_COOLDOWN = 1f; // 저장 간 최소 간격
+        private bool isSaveBlocked = false;
+        private float lastAutoSaveAttemptTime = float.NegativeInfinity;
+
+        public bool IsSaveBlocked => isSaveBlocked;
+        public string LastError { get; private set; }
+        public SaveLoadStatus LastLoadStatus { get; private set; } = SaveLoadStatus.Missing;
 
         private void CollectSaveableEntities()
         {
@@ -138,18 +144,18 @@ namespace Nytherion.Core.Managers
 
             CollectSaveableEntities();
             StartCoroutine(DelayedLoadCoroutine());
-            lastSaveTime = Time.time;
         }
 
         private void Update()
         {
-            if (!isInitializationComplete || preventAutoSave) return;
+            if (!isInitializationComplete || preventAutoSave || isSaveBlocked) return;
 
-            // 자동 저장 체크
-            if (hasLoadedData && !isLoadingData && Time.time - lastSaveTime >= autoSaveInterval)
+            // 실패 시 성공 시각을 갱신하지 않되, 매 프레임 파일 쓰기를 재시도하지 않습니다.
+            if (hasLoadedData && !isLoadingData && Time.unscaledTime - lastSaveTime >= autoSaveInterval &&
+                Time.unscaledTime - lastAutoSaveAttemptTime >= SAVE_COOLDOWN)
             {
+                lastAutoSaveAttemptTime = Time.unscaledTime;
                 SaveGame();
-                lastSaveTime = Time.time;
             }
         }
 
@@ -178,7 +184,7 @@ namespace Nytherion.Core.Managers
 
             LoadGame();
 
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSecondsRealtime(2f);
             isInitializationComplete = true;
             preventAutoSave = false;
         }
@@ -203,60 +209,37 @@ namespace Nytherion.Core.Managers
 
         private void SaveGameInternal(bool ignoreCooldown)
         {
-            if (isLoadingData)
-            {
-                return;
-            }
-
-            if (preventAutoSave)
-            {
-                return;
-            }
-
-            if (!ignoreCooldown && Time.time - lastSaveTime < SAVE_COOLDOWN)
-            {
-                return;
-            }
-
-            if (Application.isEditor && !Application.isPlaying)
-            {
-                return;
-            }
+            if (isLoadingData || preventAutoSave || isSaveBlocked || !hasLoadedData) return;
+            if (!ignoreCooldown && Time.unscaledTime - lastSaveTime < SAVE_COOLDOWN) return;
+            if (Application.isEditor && !Application.isPlaying) return;
 
             CollectSaveableEntities();
-
-            if (saveableEntities == null || saveableEntities.Count == 0)
-            {
-                return;
-            }
-
-            if (saveData == null) saveData = new SaveData();
-
-            int successCount = 0;
-            foreach (var entity in saveableEntities)
-            {
-                if (entity != null)
-                {
-                    try
-                    {
-                        entity.PopulateSaveData(saveData);
-                        successCount++;
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError($"[SaveLoadManager] {entity.GetType().Name} 저장 중 오류: {e.Message}");
-                    }
-                }
-            }
+            if (saveableEntities == null || saveableEntities.Count == 0) return;
 
             try
             {
-                saveService.Save(saveData);
-                lastSaveTime = Time.time;
+                // 씬 밖 퀵슬롯과 던전이 직접 기록한 맵을 보존하고, 수집 실패로 기존 상태를 훼손하지 않습니다.
+                SaveData snapshot = JsonUtility.FromJson<SaveData>(JsonUtility.ToJson(CurrentSaveData));
+                foreach (ISaveable entity in saveableEntities)
+                {
+                    if (entity != null) entity.PopulateSaveData(snapshot);
+                }
+
+                if (saveService.Save(snapshot))
+                {
+                    saveData = snapshot;
+                    lastSaveTime = Time.unscaledTime;
+                    LastError = null;
+                }
+                else
+                {
+                    LastError = saveService.LastError;
+                }
             }
-            catch (System.Exception e)
+            catch (System.Exception exception)
             {
-                Debug.LogError($"[SaveLoadManager] SaveService.Save() 실패: {e.Message}");
+                LastError = exception.Message;
+                Debug.LogError($"[SaveLoadManager] 저장 데이터 수집 실패. 기존 파일을 보존합니다: {LastError}");
             }
         }
 
@@ -277,47 +260,61 @@ namespace Nytherion.Core.Managers
 
         private void LoadGameInternal()
         {
+            if (isLoadingData) return;
             CollectSaveableEntities();
-
             if (saveableEntities == null || saveableEntities.Count == 0)
             {
                 Debug.LogWarning("[SaveLoadManager] LoadGame 실패 - ISaveable 엔티티가 없음");
                 return;
             }
 
+            bool previousPreventAutoSave = preventAutoSave;
+            bool loadSucceeded = false;
             isLoadingData = true;
             preventAutoSave = true;
-
             try
             {
-                saveData = saveService.Load();
+                SaveLoadResult result = saveService.LoadWithResult();
+                LastLoadStatus = result.Status;
+                if (!result.IsSuccess && result.Status != SaveLoadStatus.Missing)
+                {
+                    isSaveBlocked = true;
+                    LastError = result.Error;
+                    Debug.LogError($"[SaveLoadManager] 세이브 복구 실패. 기존 파일을 보호하기 위해 저장을 차단합니다: {LastError}");
+                    return;
+                }
 
-                if (saveData == null)
+                SaveData loadedData = result.Status == SaveLoadStatus.Missing ? new SaveData() : result.Data;
+                // 적용 도중 예외가 발생한 부분 상태도 파일에 기록하지 않습니다.
+                isSaveBlocked = true;
+                if (!ApplyLoadedData(loadedData))
                 {
-                    saveData = new SaveData();
-                    LoadNewGameData();
+                    hasLoadedData = false;
+                    return;
                 }
-                else
-                {
-                    LoadExistingGameData();
-                }
+
+                saveData = loadedData;
+                hasLoadedData = true;
+                isSaveBlocked = false;
+                LastError = null;
+                loadSucceeded = true;
+                if (result.Status == SaveLoadStatus.RecoveredBackup)
+                    Debug.LogWarning("[SaveLoadManager] 정상 백업에서 세이브를 복구했습니다. 손상 원본은 다음 저장 시 별도 보관합니다.");
             }
-            catch (System.Exception e)
+            catch (System.Exception exception)
             {
-                Debug.LogError($"[SaveLoadManager] LoadGame 중 예외 발생: {e.Message}");
-                if (saveData == null)
-                {
-                    saveData = new SaveData();
-                    LoadNewGameData();
-                }
+                isSaveBlocked = true;
+                LastError = exception.Message;
+                Debug.LogError($"[SaveLoadManager] LoadGame 실패. 저장 파일을 보존합니다: {LastError}");
             }
             finally
             {
                 isLoadingData = false;
-                hasLoadedData = true;
+                // 최초 초기화의 차단 상태와 실행 중 강제 로드의 해제 상태를 각각 복원합니다.
+                preventAutoSave = previousPreventAutoSave;
             }
 
-            StartCoroutine(NotifyUIAfterLoad());
+            if (loadSucceeded) StartCoroutine(NotifyUIAfterLoad());
         }
 
         private IEnumerator NotifyUIAfterLoad()
@@ -337,50 +334,31 @@ namespace Nytherion.Core.Managers
             }
         }
 
-        private void LoadNewGameData()
+        private bool ApplyLoadedData(SaveData loadedData)
         {
-            foreach (var entity in saveableEntities)
+            bool success = true;
+            foreach (ISaveable entity in saveableEntities)
             {
-                if (entity != null)
+                if (entity == null) continue;
+                try
                 {
-                    try
-                    {
-                        entity.LoadFromSaveData(saveData);
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError($"[SaveLoadManager] {entity.GetType().Name} 새 게임 초기화 중 오류: {e.Message}");
-                    }
+                    entity.LoadFromSaveData(loadedData);
+                }
+                catch (System.Exception exception)
+                {
+                    success = false;
+                    LastError = exception.Message;
+                    Debug.LogError($"[SaveLoadManager] {entity.GetType().Name} 로드 중 오류. 저장을 차단합니다: {LastError}");
                 }
             }
-        }
-
-        private void LoadExistingGameData()
-        {
-            int successCount = 0;
-            foreach (var entity in saveableEntities)
-            {
-                if (entity != null)
-                {
-                    try
-                    {
-                        entity.LoadFromSaveData(saveData);
-                        successCount++;
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError($"[SaveLoadManager] {entity.GetType().Name} 로드 중 오류: {e.Message}");
-                        Debug.LogException(e);
-                    }
-                }
-            }
+            return success;
         }
 
         private void OnApplicationQuit()
         {
             if (!isLoadingData && hasLoadedData)
             {
-                SaveGame();
+                ForceSaveGame();
             }
         }
 
@@ -388,7 +366,7 @@ namespace Nytherion.Core.Managers
         {
             if (pauseStatus && !isLoadingData && hasLoadedData)
             {
-                SaveGame();
+                ForceSaveGame();
             }
         }
 
@@ -396,7 +374,7 @@ namespace Nytherion.Core.Managers
         {
             if (!hasFocus && !isLoadingData && hasLoadedData)
             {
-                SaveGame();
+                ForceSaveGame();
             }
         }
 
@@ -404,7 +382,7 @@ namespace Nytherion.Core.Managers
         {
             if (!isLoadingData && hasLoadedData)
             {
-                SaveGame();
+                ForceSaveGame();
             }
             base.OnDestroy();
         }

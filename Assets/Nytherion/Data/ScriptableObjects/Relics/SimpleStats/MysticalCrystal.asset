@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Mystical Crystal
   koreanName: "\uC2E0\uBE44\uB85C\uC6B4 \uC218\uC815"
-  description_KR: "플레이어의 모든 기본 스탯(공격력, 방어력, 체력 등)을 6% 증가시킵니다."
-  description_EN: 
+  description_KR: "모든 기본 능력치 +6%."
+  description_EN: "All base stats +6%."
   Image: {fileID: 21300000, guid: cc676c8f40cd98145a7b3ae8f7584836, type: 3}
   rarity: 2
   level: 1

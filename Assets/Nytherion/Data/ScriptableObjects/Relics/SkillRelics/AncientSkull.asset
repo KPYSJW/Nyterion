@@ -14,21 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Ancient Skull
   koreanName: "\uACE0\uB300\uD574\uACE8"
-  description_KR: "[SoulEater] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[SoulEater]
-    : \uC801 \uCC98\uCE58 \uC2DC \uC601\uD63C\uC744 \uD761\uC218\uD558\uC5EC \uCCB4\uB825\uC744
-    \uD68C\uBCF5\uD558\uACE0 \uC7A0\uC2DC \uB3D9\uC548 \uB2A5\uB825\uC744 \uAC15\uD654\uD569\uB2C8\uB2E4."
-  description_EN: "Obtain [SoulEater] skill.\n[SoulEater] : \uC801 \uCC98\uCE58 \uC2DC
-    \uC601\uD63C\uC744 \uD761\uC218\uD558\uC5EC \uCCB4\uB825\uC744 \uD68C\uBCF5\uD558\uACE0
-    \uC7A0\uC2DC \uB3D9\uC548 \uB2A5\uB825\uC744 \uAC15\uD654\uD569\uB2C8\uB2E4."
+  description_KR: "[\uC601\uD63C \uD3EC\uC2DD\uC790] \uD68D\uB4DD\n\uC801\uC744 \uCC98\uCE58\uD560\uC218\uB85D
+    \uAC15\uD574\uC9C0\uB294 \uD22C\uC0AC\uCCB4 \uBC1C\uC0AC"
+  description_EN: 'Unlocks [Soul Eater]
+
+    Fires a projectile that grows stronger
+    with each kill.'
   Image: {fileID: 21300000, guid: 605854ef5826a5e4ba9bcbc7341e1d55, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: -2
     effects:
     - rid: 2313383513706201109
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -48,6 +52,7 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
   references:
     version: 2

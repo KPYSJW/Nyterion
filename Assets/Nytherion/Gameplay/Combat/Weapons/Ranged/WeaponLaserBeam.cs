@@ -7,6 +7,7 @@ using UnityEngine;
 namespace Nytherion.GamePlay.Combat
 {
     /// <summary>레이저의 수명, 화면/장애물 끝점, 번개 외형, 틱 판정과 풀 반환을 담당합니다.</summary>
+    [DefaultExecutionOrder(100)] // 무기의 위치/반동/조준 자세 갱신 뒤 실제 총구 축을 읽습니다.
     public class WeaponLaserBeam : MonoBehaviour
     {
         private static readonly int ColorProperty = Shader.PropertyToID("_Color");
@@ -59,6 +60,9 @@ namespace Nytherion.GamePlay.Combat
         private bool usesBakedFadeFrames;
         private bool initialized;
         private Color beamColor;
+        private Vector3 startEffectBaseScale;
+        private Vector3 endEffectBaseScale;
+        private bool endpointScalesCached;
 
         public bool IsFiring { get; private set; }
         public float CurrentLength { get; private set; }
@@ -69,12 +73,20 @@ namespace Nytherion.GamePlay.Combat
             this.owner = owner;
             this.origin = origin;
             this.pool = pool;
+            if (!endpointScalesCached)
+            {
+                startEffectBaseScale = startEffectRenderer != null ? startEffectRenderer.transform.localScale : Vector3.one;
+                endEffectBaseScale = endEffectRenderer != null ? endEffectRenderer.transform.localScale : Vector3.one;
+                endpointScalesCached = true;
+            }
+            if (startEffectRenderer != null) startEffectRenderer.transform.localScale = startEffectBaseScale * owner.EffectSizeMultiplier;
+            if (endEffectRenderer != null) endEffectRenderer.transform.localScale = endEffectBaseScale * owner.EffectSizeMultiplier;
             poolTag = data.projectilePrefab != null ? data.projectilePrefab.name : string.Empty;
             damage = Mathf.Max(0f, tickDamage);
             duration = Mathf.Max(0.01f, data.fireDuration);
             interval = Mathf.Max(0.01f, data.tickInterval);
-            width = Mathf.Max(0.01f, data.beamWidth);
-            visualWidth = Mathf.Max(0.01f, data.visualBeamWidth);
+            width = Mathf.Max(0.01f, data.beamWidth) * owner.EffectSizeMultiplier;
+            visualWidth = Mathf.Max(0.01f, data.visualBeamWidth) * owner.EffectSizeMultiplier;
             fallbackLength = Mathf.Max(0f, data.range);
             fadeDuration = Mathf.Max(0f, data.fadeDuration);
             followAim = data.followAim;
@@ -96,8 +108,8 @@ namespace Nytherion.GamePlay.Combat
             hitTargets.Clear();
 
             initialDirection = aimDirection.sqrMagnitude > 0.0001f
-                ? aimDirection.normalized : (Vector2)origin.right;
-            localAimDirection = origin.InverseTransformDirection(initialDirection);
+                ? aimDirection.normalized : ((Vector2)origin.TransformVector(Vector3.right)).normalized;
+            localAimDirection = origin.InverseTransformVector(initialDirection);
             targetFilter = new ContactFilter2D { useTriggers = true };
             targetFilter.SetLayerMask(data.targetLayers);
             obstructionFilter = new ContactFilter2D { useTriggers = false };
@@ -215,7 +227,7 @@ namespace Nytherion.GamePlay.Combat
         private void UpdateGeometry(float visibility, bool refreshJitter)
         {
             direction = followAim
-                ? ((Vector2)origin.TransformDirection(localAimDirection)).normalized
+                ? ((Vector2)origin.TransformVector(localAimDirection)).normalized
                 : initialDirection;
             if (direction.sqrMagnitude < 0.0001f) direction = Vector2.right;
 

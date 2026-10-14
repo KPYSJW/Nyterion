@@ -7,6 +7,7 @@ using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Enemy;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Combat;
 using UnityEditor;
 using UnityEngine;
@@ -28,6 +29,8 @@ namespace Nytherion.Editor
         private static readonly MethodInfo AdvanceMethod = typeof(WeaponLaserBeam).GetMethod("Advance", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo RecoilReturnDurationField = typeof(LaserWeapon).GetField("recoilReturnDuration", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly MethodInfo AdvanceRecoilMethod = typeof(LaserWeapon).GetMethod("AdvanceRecoil", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly MethodInfo WeaponLateUpdateMethod = typeof(LaserWeapon).GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly MethodInfo UpdateAimPoseMethod = typeof(LaserWeapon).GetMethod("UpdateAimAndPose", BindingFlags.Instance | BindingFlags.NonPublic);
 
         [Serializable]
         private class CheckResult
@@ -74,7 +77,7 @@ namespace Nytherion.Editor
             {
                 Require(HealthField != null && BeamField != null && AttackTimeField != null &&
                     PoolInstanceField != null && MaterialPropertiesField != null && AdvanceMethod != null &&
-                    RecoilReturnDurationField != null && AdvanceRecoilMethod != null,
+                    RecoilReturnDurationField != null && AdvanceRecoilMethod != null && WeaponLateUpdateMethod != null && UpdateAimPoseMethod != null,
                     "검증에 필요한 런타임 필드/메서드를 찾을 수 없습니다.");
                 LaserWeaponData source = AssetDatabase.LoadAssetAtPath<LaserWeaponData>(DATA_PATH);
                 Require(source != null && source.weaponPrefab is LaserWeapon && source.projectilePrefab != null &&
@@ -144,6 +147,82 @@ namespace Nytherion.Editor
                         Require(endViewport.x > 0.99f && endViewport.x <= 1.001f,
                             $"장애물이 없는데 화면 오른쪽 끝까지 도달하지 않았습니다: {endViewport.x}");
                     }
+                });
+
+                Check(report, "장착 Y 오프셋: 오른쪽/왼쪽/대각 조준과 플레이 중 변경", () =>
+                {
+                    Camera camera = Camera.main;
+                    Require(camera != null && InputManager.Instance != null, "카메라/입력 매니저가 없습니다.");
+                    Vector2 mouse = InputManager.Instance.MousePosition;
+                    Vector3 target = camera.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, 0f));
+                    target.z = 0f;
+                    GameObject player = new GameObject("[LaserVerification] 장착 위치");
+                    LaserWeaponData data = Object.Instantiate(source);
+                    try
+                    {
+                        PlayerCombat combat = player.AddComponent<PlayerCombat>();
+                        combat.Construct(InputManager.Instance);
+                        Transform point = new GameObject("WeaponPoint").transform;
+                        point.SetParent(player.transform, false);
+                        typeof(PlayerCombat).GetField("weaponPoint", BindingFlags.Instance | BindingFlags.NonPublic)
+                            .SetValue(combat, point);
+                        combat.EquipWeapon(source.weaponPrefab, data);
+                        LaserWeapon weapon = (LaserWeapon)combat.currentWeapon;
+                        MethodInfo rotate = typeof(PlayerCombat).GetMethod("RotateWeaponToMouse", BindingFlags.Instance | BindingFlags.NonPublic);
+                        FieldInfo angleField = typeof(PlayerCombat).GetField("currentAngle", BindingFlags.Instance | BindingFlags.NonPublic);
+                        Vector3 centerOffset = (Vector3)typeof(PlayerCombat).GetField("centerOffset", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(combat);
+                        float radius = (float)typeof(PlayerCombat).GetField("orbitRadius", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(combat);
+                        foreach (float angle in new[] { 0f, 180f, 45f, -135f })
+                        {
+                            Vector3 direction = Quaternion.Euler(0f, 0f, angle) * Vector3.right;
+                            Vector3 center = target - direction * 10f;
+                            player.transform.position = center - centerOffset;
+                            angleField.SetValue(combat, angle);
+                            rotate.Invoke(combat, null);
+                            Equal(0f, Vector3.Distance(center + direction * radius, point.position), "조준 궤도 유지");
+                            Vector3 before = weapon.transform.position;
+                            data.visualPositionOffset += Vector3.up * 0.4f;
+                            WeaponLateUpdateMethod.Invoke(weapon, null);
+                            rotate.Invoke(combat, null);
+                            Vector3 expectedDelta = point.TransformVector(Vector3.up * 0.4f);
+                            Equal(0f, Vector3.Distance(expectedDelta, weapon.transform.position - before), "Y 변경의 월드 위치 반영");
+                            Equal(0f, Vector3.Distance(data.visualPositionOffset, weapon.transform.localPosition), "장착 오프셋 유지");
+                            AttackTimeField.SetValue(weapon, Time.time - data.cooldown - 0.1f);
+                            weapon.Attack(direction, target);
+                            WeaponLaserBeam beam = (WeaponLaserBeam)BeamField.GetValue(weapon);
+                            Require(beam != null, "장착한 레이저가 발사되지 않았습니다.");
+                            VerifyTargetAlignment(beam, target, weapon);
+                            Advance(beam, 1.4f);
+                            AdvanceRecoil(weapon, 1f);
+                        }
+                        data.visualPositionOffset = Vector3.zero;
+                        WeaponLateUpdateMethod.Invoke(weapon, null);
+                        rotate.Invoke(combat, null);
+                        Equal(0f, weapon.transform.localPosition.magnitude, "0 오프셋으로 복귀");
+                    }
+                    finally
+                    {
+                        Object.DestroyImmediate(player);
+                        Object.DestroyImmediate(data);
+                    }
+                });
+
+                CheckFixture(report, source, "발사 중 Y 조정: 총구 추적 및 변경 위치로 반동 복귀", fixture =>
+                {
+                    Vector3 rest = fixture.Owner.transform.localPosition;
+                    WeaponLaserBeam beam = fixture.Fire();
+                    float recoilX = fixture.Owner.transform.localPosition.x;
+                    fixture.Data.visualPositionOffset += Vector3.up * 0.4f;
+                    WeaponLateUpdateMethod.Invoke(fixture.Owner, null);
+                    Equal(recoilX, fixture.Owner.transform.localPosition.x, "기존 반동 유지");
+                    Equal(rest.y + 0.4f, fixture.Owner.transform.localPosition.y, "발사 중 Y 반영");
+                    Advance(beam, 0.01f);
+                    Equal(0f, Vector3.Distance(beam.transform.position, fixture.Owner.firePoint.position), "변경한 총구 추적");
+                    Advance(beam, 0.4f);
+                    fixture.Data.visualPositionOffset -= Vector3.up * 0.15f;
+                    WeaponLateUpdateMethod.Invoke(fixture.Owner, null);
+                    AdvanceRecoil(fixture.Owner, 1f);
+                    Equal(0f, Vector3.Distance(rest + Vector3.up * 0.25f, fixture.Owner.transform.localPosition), "복귀 중 변경한 위치 유지");
                 });
 
                 CheckFixture(report, source, "첫 틱 즉시 적용 및 일시정지", fixture =>
@@ -289,6 +368,7 @@ namespace Nytherion.Editor
                 {
                     fixture.Owner.firePoint.position = fixture.Owner.transform.position + Vector3.right * 2f;
                     Vector3 targetBetweenPlayerAndMuzzle = fixture.Owner.transform.position + Vector3.right;
+                    UpdateAimPoseMethod.Invoke(fixture.Owner, new object[] { targetBetweenPlayerAndMuzzle });
                     Physics2D.SyncTransforms();
                     fixture.Owner.Attack(Vector2.right, targetBetweenPlayerAndMuzzle);
                     WeaponLaserBeam beam = fixture.ActiveBeam;
@@ -297,6 +377,43 @@ namespace Nytherion.Editor
                         "마우스가 플레이어와 총구 사이에 있을 때 플레이어 방향으로 역발사됐습니다.");
                     Equal(0f, Vector3.Distance(beam.transform.position, fixture.Owner.firePoint.position),
                         "레이저 시작 위치");
+                });
+
+                CheckFixture(report, source, "총구 오프셋과 반동 중 마우스 조준점 명중 및 이동 추적", fixture =>
+                {
+                    EnemyBase first = fixture.Enemy(new Vector2(3f, 0f));
+                    EnemyBase second = fixture.Enemy(new Vector2(3f, 1f));
+                    fixture.Owner.transform.position += Vector3.down * 0.6f;
+                    Vector3 target = TestPosition + Vector3.right * 3f;
+                    UpdateAimPoseMethod.Invoke(fixture.Owner, new object[] { target });
+                    WeaponLaserBeam beam = fixture.Fire();
+                    VerifyTargetAlignment(beam, target, fixture.Owner);
+                    Equal(4f, Damage(first), "오프셋 총구에서 조준한 적 명중");
+                    fixture.Data.visualPositionOffset += Vector3.up * 0.25f;
+                    WeaponLateUpdateMethod.Invoke(fixture.Owner, null);
+                    Advance(beam, 0.1f);
+                    VerifyTargetAlignment(beam, target, fixture.Owner);
+                    target += Vector3.up;
+                    UpdateAimPoseMethod.Invoke(fixture.Owner, new object[] { target });
+                    Advance(beam, 0.1f);
+                    VerifyTargetAlignment(beam, target, fixture.Owner);
+                    Equal(4f, Damage(first), "이전 조준 대상 추가 피해 없음");
+                    Equal(4f, Damage(second), "이동한 조준점의 적 명중");
+                });
+
+                CheckFixture(report, source, "조준 추적 비활성화 시 보정된 최초 발사 방향 유지", fixture =>
+                {
+                    fixture.Data.followAim = false;
+                    fixture.Owner.transform.position += Vector3.down * 0.6f;
+                    Vector3 target = TestPosition + Vector3.right * 3f;
+                    UpdateAimPoseMethod.Invoke(fixture.Owner, new object[] { target });
+                    WeaponLaserBeam beam = fixture.Fire();
+                    VerifyTargetAlignment(beam, target, fixture.Owner);
+                    Vector2 initial = beam.transform.right;
+                    UpdateAimPoseMethod.Invoke(fixture.Owner, new object[] { target + Vector3.up * 2f });
+                    fixture.Owner.transform.position += Vector3.up;
+                    Advance(beam, 0.1f);
+                    Require(Vector2.Dot(initial, beam.transform.right) > 0.9999f, "고정 발사 방향이 변경됐습니다.");
                 });
 
                 CheckFixture(report, source, "시작/충돌 지점 애니메이션 위치와 방향", fixture =>
@@ -393,6 +510,18 @@ namespace Nytherion.Editor
             string summary = $"[LaserWeaponVerification] {report.total - report.failures}/{report.total} 통과, 정리={report.cleanupComplete}, 보고서={reportPath}";
             if (report.passed) Debug.Log(summary);
             else Debug.LogError(summary);
+        }
+
+        private static void VerifyTargetAlignment(WeaponLaserBeam beam, Vector3 target, LaserWeapon weapon)
+        {
+            Vector2 toTarget = target - beam.transform.position;
+            Vector2 direction = beam.transform.right;
+            Equal(0f, direction.x * toTarget.y - direction.y * toTarget.x, "레이저 선과 조준점의 수직 거리");
+            Require(Vector2.Dot(direction, toTarget) > 0f, "레이저가 조준점 반대 방향입니다.");
+            Vector2 weaponAxis = ((Vector2)weapon.transform.TransformVector(Vector3.right)).normalized;
+            Vector2 muzzleAxis = ((Vector2)weapon.firePoint.TransformVector(Vector3.right)).normalized;
+            Require(Vector2.Dot(direction, weaponAxis) > 0.9999f && Vector2.Dot(direction, muzzleAxis) > 0.9999f,
+                "무기/총구가 향하는 실제 축과 레이저 방향이 다릅니다.");
         }
 
         private static void VerifyAim(Fixture fixture, bool followAim)

@@ -99,7 +99,11 @@ namespace Nytherion.GamePlay.Combat.Behaviors
 
             if (target.TryGetComponent<PlayerHealth>(out var playerHealth))
             {
-                playerHealth.TakeDamage(damage);
+                Collider2D targetCollider = target.GetComponent<Collider2D>();
+                Vector2 hitPoint = targetCollider != null
+                    ? targetCollider.ClosestPoint(transform.position)
+                    : (Vector2)target.position;
+                playerHealth.TakeDamage(damage, hitPoint);
                 return;
             }
         }

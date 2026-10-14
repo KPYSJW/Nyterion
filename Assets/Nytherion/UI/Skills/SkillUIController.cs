@@ -2,6 +2,7 @@ using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
+using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 using Nytherion.Core.Enums;
@@ -14,6 +15,7 @@ namespace Nytherion.UI.Skill
     /// </summary>
     public class SkillUIController : UIPanelBase
     {
+        protected override bool UsesBookOpenSound => true;
         [Header("Toggle Settings")]
         [Tooltip("스킬 UI 전체를 담고 있는 패널 오브젝트")]
         [SerializeField] private GameObject uiPanel;
@@ -39,6 +41,9 @@ namespace Nytherion.UI.Skill
         private SaveLoadManager saveLoadManager;
         private IProgressionManager progressionManager;
 
+        [SerializeField] private SkillTooltip skillTooltipPrefab;
+        private SkillTooltip skillTooltip;
+        private bool ownsSkillTooltip;
         private SkillSlotUI[] storageSlots;
 
         [Tooltip("스킬 보관함 영역 (드롭 이벤트를 처리하기 위한 참조)")]
@@ -67,12 +72,26 @@ namespace Nytherion.UI.Skill
             this.storageDropArea = uiRefs.storageDropArea;
             this.storageContent = uiRefs.storageContent;
             this.equipSlots = uiRefs.equipSlots;
+            skillTooltip = uiRefs.SkillTooltip;
+            if (skillTooltip == null && skillTooltipPrefab != null && uiPanel != null)
+            {
+                Canvas rootCanvas = uiPanel.GetComponentInParent<Canvas>().rootCanvas;
+                skillTooltip = Instantiate(skillTooltipPrefab, rootCanvas.transform, false);
+                ownsSkillTooltip = true;
+            }
 
             // --- UIPanelBase 연동을 위한 설정 추가 ---
             if (uiPanel != null)
             {
                 // 자신 또는 부모(SkillRoot)에게서 CanvasGroup을 찾습니다.
                 this.controlledCanvasGroup = uiPanel.GetComponentInParent<CanvasGroup>();
+
+                // 중첩 Canvas의 슬롯도 마우스 이벤트를 받을 수 있도록 해당 Canvas에 레이캐스터를 보장한다.
+                Canvas skillCanvas = uiPanel.GetComponentInParent<Canvas>();
+                if (skillCanvas != null && skillCanvas.GetComponent<GraphicRaycaster>() == null)
+                {
+                    skillCanvas.gameObject.AddComponent<GraphicRaycaster>();
+                }
             }
             // --------------------------------------
         }
@@ -91,6 +110,7 @@ namespace Nytherion.UI.Skill
             // 장착 슬롯에 상호작용 이벤트 등록
             foreach (var slot in equipSlots)
             {
+                slot.BindUIAudio(audioManager);
                 slot.OnDoubleClick += HandleDoubleClick;
                 slot.OnDropSkill += HandleDrop;
             }
@@ -119,6 +139,7 @@ namespace Nytherion.UI.Skill
         }
         private void OnDestroy()
         {
+            if (ownsSkillTooltip && skillTooltip != null) Destroy(skillTooltip.gameObject);
             // 메모리 누수 방지를 위해 객체 파괴 시 모든 이벤트 구독 해제
             if (skillDataManager != null) skillDataManager.OnSkillDataChanged -= SyncUIFromData;
             if (inputManager != null) inputManager.onToggleSkillUI -= ToggleUI;
@@ -162,21 +183,37 @@ namespace Nytherion.UI.Skill
 
         public override void Close()
         {
+            // CanvasGroup으로 창을 숨길 때도 드래그 아이콘을 슬롯으로 복귀시킨다.
+            if (equipSlots != null)
+            {
+                foreach (var slot in equipSlots) slot?.CancelDrag();
+            }
+            if (storageSlots != null)
+            {
+                foreach (var slot in storageSlots) slot?.CancelDrag();
+            }
             base.Close();
             // UI가 닫힐 때 켜져있을 수 있는 툴팁 강제로 숨김
-            if (TooltipPanel.Instance != null)
-            {
-                TooltipPanel.Instance.HideTooltip();
-            }
+            skillTooltip?.Hide();
         }
 
         /// <summary>
-        /// 지정된 최대 갯수만큼 보관함 슬롯 프리팹을 생성하고 이벤트를 할당
+        /// 설정된 개수와 실제 보관함 크기에 맞춰 슬롯 프리팹을 생성하고 이벤트를 할당
         /// </summary>
         private void InitializeStorageSlots()
         {
-            storageSlots = new SkillSlotUI[maxStorageSlots];
-            for (int i = 0; i < maxStorageSlots; i++)
+            GridLayoutGroup layout = storageContent.GetComponent<GridLayoutGroup>();
+            if (layout != null) layout.cellSize = Vector2.one * Nytherion.UI.RelicBoard.RelicGridUI.StorageSlotSize;
+            EnsureStorageSlots(Mathf.Max(maxStorageSlots, skillDataManager.storageSkills.Length));
+        }
+
+        private void EnsureStorageSlots(int requiredSlots)
+        {
+            int currentCount = storageSlots?.Length ?? 0;
+            if (requiredSlots <= currentCount) return;
+
+            System.Array.Resize(ref storageSlots, requiredSlots);
+            for (int i = currentCount; i < requiredSlots; i++)
             {
                 GameObject go = Instantiate(slotPrefab, storageContent);
                 SkillSlotUI newSlot = go.GetComponent<SkillSlotUI>();
@@ -184,7 +221,8 @@ namespace Nytherion.UI.Skill
                 newSlot.slotType = SkillSlotType.Storage;
                 newSlot.slotIndex = i;
 
-                newSlot.Setup(null, skillDataManager);
+                newSlot.Setup(null, skillDataManager, skillTooltip);
+                newSlot.BindUIAudio(audioManager);
 
                 // 상호작용 이벤트 등록 
                 newSlot.OnDoubleClick += HandleDoubleClick;
@@ -202,11 +240,13 @@ namespace Nytherion.UI.Skill
             if (skillDataManager == null) return;
             if (storageSlots == null || equipSlots == null) return;
 
+            EnsureStorageSlots(skillDataManager.storageSkills.Length);
+
             // 장착 슬롯 갱신
             int equipCount = 0;
             for (int i = 0; i < equipSlots.Length; i++)
             {
-                equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager);
+                equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager, skillTooltip);
                 if (skillDataManager.equippedSkills[i] != null) equipCount++;
             }
 
@@ -216,9 +256,10 @@ namespace Nytherion.UI.Skill
             {
                 if (i < skillDataManager.storageSkills.Length)
                 {
-                    storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager);
+                    storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager, skillTooltip);
                     if (skillDataManager.storageSkills[i] != null) storageCount++;
                 }
+                else storageSlots[i].Setup(null, skillDataManager, skillTooltip);
             }
 
             if (playerSkillManager != null)
@@ -281,18 +322,27 @@ namespace Nytherion.UI.Skill
         /// </summary>
         private void SwapSkills(SkillSlotUI slotA, SkillSlotUI slotB)
         {
-            if (slotA == null || slotB == null) return;
+            if (slotA == null || slotB == null)
+            {
+                PlayUISound(UISoundType.Error);
+                return;
+            }
+            if (slotA == slotB) return;
+
+            slotA.CancelDrag();
+            slotB.CancelDrag();
 
             SkillData skillA = slotA.GetSkill();
             SkillData skillB = slotB.GetSkill();
 
             // 데이터 맞교환
-            slotA.Setup(skillB, skillDataManager);
-            slotB.Setup(skillA, skillDataManager);
+            slotA.Setup(skillB, skillDataManager, skillTooltip);
+            slotB.Setup(skillA, skillDataManager, skillTooltip);
 
             // 교환 후 변경된 상태를 매니저에 전달 및 저장
             UpdatePlayerSkills();
             SyncUIFromData();
+            PlayUISound(UISoundType.Place);
         }
 
         /// <summary>

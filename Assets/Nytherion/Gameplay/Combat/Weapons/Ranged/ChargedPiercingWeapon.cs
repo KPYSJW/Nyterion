@@ -18,12 +18,17 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         protected override void FireChargedAttack(Vector2 direction, float chargePercent)
         {
-            GameObject projObj = SpawnProj(direction, default, chargePercent);
+            FireProjectiles(direction, 1, 15f, chargePercent);
+            transform.localScale = originalScale;
+        }
+
+        protected override void ConfigureSpawnedProjectile(GameObject projObj, Vector2 direction, float chargePercent)
+        {
 
             if (projObj != null && projObj.TryGetComponent<CollisionObject>(out CollisionObject collisionObj))
             {
                 float currentDamageMultiplier = IsChargingEnabled() ? Mathf.Lerp(1.0f, maxDamageMultiplier, chargePercent) : 1.0f;
-                collisionObj.damage = weaponData.damage * currentDamageMultiplier;
+                collisionObj.damage *= currentDamageMultiplier;
 
                 PiercingModifier piercingModifier = projObj.GetComponent<PiercingModifier>();
                 if (piercingModifier == null) return;
@@ -39,12 +44,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
                         sr.color = Color.red;
                     }
                 }
-                else
-                {
-                    piercingModifier.enabled = false;
-                }
             }
-            transform.localScale = originalScale;
         }
 
         protected override void OnCharging(float chargePercent)

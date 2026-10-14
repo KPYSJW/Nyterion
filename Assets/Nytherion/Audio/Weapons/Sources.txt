@@ -1,0 +1,25 @@
+Nytherion 무기 효과음 v5 — 무료 편집 버전
+
+ArcaneDart, Frenzy는 승인된 기존 WAV 및 무기 데이터 그대로 유지했습니다.
+ForestThorn_Fire.wav는 2026-10-13 사용자가 제공한 ElevenLabs 효과음으로 교체했습니다.
+원본: ElevenLabs_audio_elevenlabs-sound-effects-v2_Rapid synthetic_2026-10-13T06_02_40_[cut_0sec].wav
+제공 파일을 편집 없이 복사했으며 기존 GUID, 임포트 설정과 무기 발사 음량(0.48)을 유지했습니다.
+나머지는 기존 프로젝트의 Frenzy_Fire.wav 발사감을 중심으로,
+ArcaneDart_Fire.wav와 ForestThorn_Fire.wav를 짧게 편집/혼합했습니다.
+변경: 길이, 피치, 대역, 음량 및 여운 조절. 기존 원본 파일은 바꾸지 않았습니다.
+유료 음향 생성 및 구매는 실행하지 않았습니다.
+
+교체 전 ForestThorn_Fire.wav 및 이를 혼합한 다른 무기 효과음에 사용된 외부 소스:
+1. RPG Audio — Kenney
+https://kenney.nl/assets/rpg-audio
+사용: chop.ogg, knifeSlice.ogg
+라이선스: CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+
+2. Earth Element Magic Spell — Iwan 'qubodup' Gabovitch
+https://opengameart.org/content/earth-element-magic-spell
+사용: Earth Element Magic Spell.flac
+라이선스: CC0 1.0 Universal
+
+Frenzy 및 ArcaneDart의 원본 출처/라이선스는 기존 프로젝트의 원본 기준을 따릅니다.
+v4에서 사용했던 ViRiX 샘플 및 다른 마법 소스는 현재 무기 WAV에 포함되어 있지 않습니다.

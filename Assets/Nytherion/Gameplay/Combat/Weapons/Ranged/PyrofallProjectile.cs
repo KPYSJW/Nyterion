@@ -91,7 +91,7 @@ namespace Nytherion.GamePlay.Combat
             animationTime = 0f;
             state = State.Falling;
 
-            transform.localScale = Vector3.one;
+            transform.localScale = Vector3.one * (owner != null ? owner.EffectSizeMultiplier : 1f);
             if (spriteRenderer != null)
             {
                 spriteRenderer.enabled = true;

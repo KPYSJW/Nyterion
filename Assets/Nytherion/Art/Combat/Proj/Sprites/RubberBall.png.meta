@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 200
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -102,8 +102,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 200
-        height: 200
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,10 +121,10 @@ TextureImporter:
       name: RubberBall_1
       rect:
         serializedVersion: 2
-        x: 200
+        x: 32
         y: 0
-        width: 200
-        height: 200
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -142,10 +142,10 @@ TextureImporter:
       name: RubberBall_2
       rect:
         serializedVersion: 2
-        x: 400
+        x: 64
         y: 0
-        width: 200
-        height: 200
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -163,10 +163,10 @@ TextureImporter:
       name: RubberBall_3
       rect:
         serializedVersion: 2
-        x: 600
+        x: 96
         y: 0
-        width: 200
-        height: 200
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,10 +184,10 @@ TextureImporter:
       name: RubberBall_4
       rect:
         serializedVersion: 2
-        x: 800
+        x: 128
         y: 0
-        width: 200
-        height: 200
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -197,48 +197,6 @@ TextureImporter:
       bones: []
       spriteID: db4ce9d3860f14b409093bb193ac1553
       internalID: 718559856
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RubberBall_5
-      rect:
-        serializedVersion: 2
-        x: 1000
-        y: 0
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6ca9f52c000ba814ca1196bd8e78d11d
-      internalID: 1857819834
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RubberBall_6
-      rect:
-        serializedVersion: 2
-        x: 1200
-        y: 0
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f17d9fe19f82c6648bc7b5ddc0ecbaa0
-      internalID: 1551608478
       vertices: []
       indices: 
       edges: []
@@ -259,8 +217,6 @@ TextureImporter:
       RubberBall_2: 246897514
       RubberBall_3: -1588378458
       RubberBall_4: 718559856
-      RubberBall_5: 1857819834
-      RubberBall_6: 1551608478
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

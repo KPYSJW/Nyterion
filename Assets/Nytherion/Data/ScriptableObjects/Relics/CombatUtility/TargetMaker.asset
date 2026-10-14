@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: TargetMaker
+  m_EditorClassIdentifier: 
+  relicName: TargetMaker
+  koreanName: "\uD0C0\uAC9F \uBA54\uC774\uCEE4"
+  description_KR: "불그늘, 수호자의 지팡이: 공격 중심을 조준 지점으로 변경. 불그늘은 고리 1회, 적마다 1회 타격.\n연쇄 점화: 조준 지점에서 3단계 확산. 첫 단계에 중심 폭발 1회 추가."
+  description_EN: "Blazeshade / Guardian's Staff: centers attacks on your aim. Blazeshade casts one ring, hitting each enemy once.\nChain Ignition: spreads in 3 waves from your aim, adding one center explosion in the first wave."
+  Image: {fileID: 21300000, guid: 91fddb5ffd049524ca98a4d4bfcda19d, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules: []
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds: []

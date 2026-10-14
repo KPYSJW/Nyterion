@@ -43,6 +43,9 @@ namespace Nytherion.UI.Controllers
             this.controlButton = gameSceneuiRefs.MenuControlButton;
             this.controlsPanel = gameSceneuiRefs.MenuControlsPanel;
             this.mainMenuButton = gameSceneuiRefs.MenuMainMenuButton;
+            Nytherion.UI.Components.MenuHoverSoundScope.Mark(mainPanel);
+            Nytherion.UI.Components.MenuHoverSoundScope.Mark(settingsPanel);
+            Nytherion.UI.Components.MenuHoverSoundScope.Mark(controlsPanel);
         }
 
         protected override void Awake()
@@ -154,24 +157,28 @@ namespace Nytherion.UI.Controllers
 
         private void OpenSettings()
         {
+            PlayUISound(Nytherion.Core.Enums.UISoundType.Open);
             settingsPanel.SetActive(true);
             mainPanel.SetActive(false);
         }
 
         public void CloseSettings()
         {
+            PlayUISound(Nytherion.Core.Enums.UISoundType.Close);
             settingsPanel.SetActive(false);
             mainPanel.SetActive(true);
         }
 
         private void OpenControls()
         {
+            PlayUISound(Nytherion.Core.Enums.UISoundType.Open);
             controlsPanel.SetActive(true);
             mainPanel.SetActive(false);
         }
 
         public void CloseControls()
         {
+            PlayUISound(Nytherion.Core.Enums.UISoundType.Close);
             controlsPanel.SetActive(false);
             mainPanel.SetActive(true);
         }

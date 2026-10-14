@@ -14,21 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Scroll of Shadow Clone
   koreanName: "\uBD84\uC2E0 \uC18C\uD658\uC11C"
-  description_KR: "[Shadow Clone] \uC2A4\uD0AC\uC744 \uC5BB\uC2B5\uB2C8\uB2E4.\n[Shadow
-    Clone] : \uD50C\uB808\uC774\uC5B4\uC758 \uD589\uB3D9\uC744 \uBCF8\uB728\uB294
-    \uADF8\uB9BC\uC790 \uBD84\uC2E0\uC744 \uC18C\uD658\uD558\uC5EC \uD568\uAED8 \uACF5\uACA9\uD569\uB2C8\uB2E4."
-  description_EN: "Obtain [Shadow Clone] skill.\n[Shadow Clone] : \uD50C\uB808\uC774\uC5B4\uC758
-    \uD589\uB3D9\uC744 \uBCF8\uB728\uB294 \uADF8\uB9BC\uC790 \uBD84\uC2E0\uC744 \uC18C\uD658\uD558\uC5EC
-    \uD568\uAED8 \uACF5\uACA9\uD569\uB2C8\uB2E4."
+  description_KR: "[\uADF8\uB9BC\uC790 \uBD84\uC2E0] \uD68D\uB4DD\n\uD568\uAED8 \uACF5\uACA9\uD558\uB294
+    \uADF8\uB9BC\uC790 \uBD84\uC2E0 \uC18C\uD658"
+  description_EN: 'Unlocks [Shadow Clone]
+
+    Summons a shadow clone that attacks
+    alongside you.'
   Image: {fileID: 21300000, guid: bc77d90dce3a1d9419269720e47db5f6, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: -2
     effects:
     - rid: 2313383513706201108
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -45,6 +49,7 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
   references:
     version: 2

@@ -17,6 +17,8 @@ namespace Nytherion.Core.Enums
         ChargeTimeReduction,
         CritChance,
         CritDamage,
-        All // 모든 능력치 공통 적용용
+        All, // 모든 능력치 공통 적용용 (기존 직렬화 값 15 유지)
+        [UnityEngine.InspectorName("효과 범위 증가")]
+        ProjectileSize
     }
 }

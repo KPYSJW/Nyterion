@@ -44,6 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cc12fe58b1cd764f8035edafc9cf936, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controlledCanvasGroup: {fileID: 0}
+  playOpenSound: 1
+  closeSoundOverride: {fileID: 8300000, guid: 2eb83f91811eaec499e756e67e4e5a73, type: 3}
+  OnPanelOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPanelClosed:
+    m_PersistentCalls:
+      m_Calls: []
   uiPanel: {fileID: 0}
   equipSlots:
   - {fileID: 0}
@@ -51,5 +60,6 @@ MonoBehaviour:
   - {fileID: 0}
   storageContent: {fileID: 0}
   slotPrefab: {fileID: 8498367146274910382, guid: 22c598c598dcc544caa3aaf9987a97c9, type: 3}
-  maxStorageSlots: 16
+  maxStorageSlots: 20
+  skillTooltipPrefab: {fileID: 8529682767669512991, guid: a30d42a0d43a32549b3f08a2ae915fa5, type: 3}
   storageDropArea: {fileID: 0}

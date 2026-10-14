@@ -24,11 +24,14 @@ namespace Nytherion.GamePlay.Combat.Weapons
             GameObject meteor = ObjectPoolManager.Instance.SpawnFromPool(weaponData.projectilePrefab, spawnPos, Quaternion.identity);
 
             if (meteor == null) return;
+            PlayFireSound();
+
+            meteor.transform.localScale *= EffectSizeMultiplier;
 
             // 메테오 전용 로직: 낙하 지점 설정
             if (meteor.TryGetComponent<MeteorProj>(out var proj))
             {
-                proj.Initialize(targetPosition);
+                proj.Initialize(targetPosition, ObjectPoolManager.Instance);
             }
 
             // 데미지 주입

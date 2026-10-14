@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nytherion.Gameplay.Relics.Modules;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Relics;
+using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Player
 {
@@ -35,6 +36,12 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private bool isEvaluating = false;
 
+        [Inject]
+        public void Construct(RelicManager relicManager)
+        {
+            globalRelicManager = relicManager;
+        }
+
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
@@ -49,7 +56,6 @@ namespace Nytherion.GamePlay.Characters.Player
             }
             
             // 전역 이벤트(OnRelicStateChanged 등)를 통해 레벨 변동 감지
-            globalRelicManager = FindObjectOfType<RelicManager>();
             if (globalRelicManager != null)
             {
                 globalRelicManager.OnRelicStateChanged += HandleRelicsChanged;
@@ -62,6 +68,9 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 playerManager.PlayerCombat.OnWeaponEquipped += HandleWeaponEquipped;
             }
+
+            // 저장된 장착 상태가 Start 이전에 동기화되어도 최초 효과를 적용한다.
+            ReevaluateAllConditions();
         }
 
         private void OnDestroy()

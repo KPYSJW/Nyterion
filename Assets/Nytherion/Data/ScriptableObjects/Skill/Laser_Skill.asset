@@ -15,9 +15,7 @@ MonoBehaviour:
   skillID: skill_laser
   skillType: 11
   skillName: Laser
-  description: "\uC9C1\uC120 \uBC29\uD5A5\uC73C\uB85C \uAC15\uB825\uD55C \uAD00\uD1B5
-    \uB808\uC774\uC800\uB97C \uBC1C\uC0AC\uD558\uC5EC \uADA4\uC801 \uC0C1\uC758 \uBAA8\uB4E0
-    \uC801\uC744 \uD30C\uAD34\uD569\uB2C8\uB2E4."
+  description: "\uC801\uC744 \uAD00\uD1B5\uD558\uB294 \uB808\uC774\uC800 \uBC1C\uC0AC"
   skillLevel: 0
   exp: 0
   coolDown: 2

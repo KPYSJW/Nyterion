@@ -1,5 +1,6 @@
 using UnityEngine;
 using Nytherion.Core.Interfaces;
+using Nytherion.Core.Managers;
 
 namespace Nytherion.GamePlay.Combat.Weapons
 {
@@ -18,6 +19,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
         private Vector3 targetPosition;
         private bool isFalling = false;
         private GameObject activeIndicator;
+        private ObjectPoolManager returnPool;
 
         private Animator animator;
         private CollisionObject col;
@@ -31,8 +33,10 @@ namespace Nytherion.GamePlay.Combat.Weapons
             circleCollider = GetComponent<CircleCollider2D>();
         }
 
-        public void Initialize(Vector3 targetPos)
+        public void Initialize(Vector3 targetPos, ObjectPoolManager pool = null)
         {
+            RemoveIndicator();
+            returnPool = pool;
             targetPosition = targetPos;
             isFalling = true;
 
@@ -47,7 +51,10 @@ namespace Nytherion.GamePlay.Combat.Weapons
             {
                 // 인디케이터는 마우스가 조준한 원래 바닥 위치에 정확히 생성
                 Vector3 indicatorPos = targetPosition;
-                activeIndicator = Instantiate(indicatorPrefab, indicatorPos, Quaternion.identity);
+                activeIndicator = returnPool != null
+                    ? returnPool.SpawnFromPool(indicatorPrefab, indicatorPos, Quaternion.identity, 3)
+                    : Instantiate(indicatorPrefab, indicatorPos, Quaternion.identity);
+                if (activeIndicator == null) return;
                 // 폭발 반경(explosionRadius)에 맞게 지름(Radius * 2) 크기로 원형 스케일 설정
                 activeIndicator.transform.localScale = new Vector3(explosionRadius * 2f, explosionRadius * 2f, 1f);
             }
@@ -107,12 +114,21 @@ namespace Nytherion.GamePlay.Combat.Weapons
         }
         public void DisableProjectile()
         {
+            if (!gameObject.activeSelf) return;
             RemoveIndicator();
-            gameObject.SetActive(false);
+            if (returnPool != null)
+            {
+                returnPool.ReturnToPool(gameObject.name, gameObject);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         private void OnDisable()
         {
+            isFalling = false;
             RemoveIndicator();
         }
 
@@ -120,8 +136,16 @@ namespace Nytherion.GamePlay.Combat.Weapons
         {
             if (activeIndicator != null)
             {
-                Destroy(activeIndicator);
+                GameObject indicator = activeIndicator;
                 activeIndicator = null;
+                if (returnPool != null)
+                {
+                    returnPool.ReturnToPool(indicatorPrefab.name, indicator);
+                }
+                else
+                {
+                    Destroy(indicator);
+                }
             }
         }
         private void OnDrawGizmosSelected()

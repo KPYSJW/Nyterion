@@ -6,6 +6,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects;
 using VContainer;
 using VContainer.Unity;
+using Nytherion.UI;
 public class RootLifetimeScope : LifetimeScope
 {
     public static RootLifetimeScope Instance { get; private set; }
@@ -122,6 +123,8 @@ public class RootLifetimeScope : LifetimeScope
 
     private void InstallSystemManagers(IContainerBuilder builder)
     {
+        builder.RegisterEntryPoint<UIAudioBinder>();
+
         builder.RegisterComponentInNewPrefab(audioManagerPrefab, Lifetime.Singleton)
             .UnderTransform(this.transform)
             .AsImplementedInterfaces()

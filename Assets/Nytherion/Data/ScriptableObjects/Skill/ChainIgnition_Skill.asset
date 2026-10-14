@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd766695ac23a1c41961a33508755ac6, type: 3}
+  m_Name: ChainIgnition_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_chain_ignition
+  skillType: 12
+  skillName: "\uC5F0\uC1C4 \uC810\uD654"
+  description: "\uC870\uC900 \uBC29\uD5A5\uC73C\uB85C \uC5F0\uC18D \uD654\uC5FC \uD3ED\uBC1C"
+  skillLevel: 1
+  exp: 0
+  coolDown: 1
+  manaCost: 0
+  damage: 10
+  range: 3
+  icon: {fileID: 21300000, guid: 2f9eb43b8ebfbac46a1aca9c42d36a58, type: 3}
+  skillPrefab: {fileID: 321789389180959963, guid: 54952d672c03eab46af707e65eeba278, type: 3}
+  unlockMilestoneID: 
+  castCenterOffset: {x: 0, y: 0}
+  baseProjectileCount: 1
+  levelsPerProjectile: 2
+  damagePerLevel: 2
+  directionTieAngle: 2
+  firstRingRadius: 1
+  waveInterval: 0.2
+  explosionRadius: 0.65
+  useEllipticalHitRange: 1
+  explosionVerticalRadius: 0.3
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  explosionVisualOffset: {x: 0, y: 0.3}
+  explosionFrames:
+  - {fileID: -1573681853, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: 1008365816, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: -1257224272, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: -1020992472, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: 30323046, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  - {fileID: -907549472, guid: 41cf23f2d3f4c4b4eb91c6ea0d69447f, type: 3}
+  framesPerSecond: 12
+  visualScale: 1.6
+  damageFrame: 1
+  wavePrefab: {fileID: 3381285174121021873, guid: 2ddc16832af540946b1f9eada5181dd5, type: 3}
+  explosionSound: {fileID: 8300000, guid: 08cfc0fe5678ea14dadea7f689d9f17a, type: 3}
+  explosionSoundVolume: 0.25
+  showHitRanges: 0
+  hitRangeColor: {r: 0, g: 1, b: 1, a: 0.85}
+  hitRangeLineWidth: 0.01

@@ -11,12 +11,17 @@ using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
-    public class EnemyBase : MonoBehaviour, IDamageable
+    public class EnemyBase : MonoBehaviour, IGroundDamageable
     {
+        private const string HitFlashShaderName = "Custom/SpriteFlash";
+        private static readonly int FlashColorId = Shader.PropertyToID("_FlashColor");
+        private static readonly int FlashAmountId = Shader.PropertyToID("_FlashAmount");
+        private static Material sharedHitFlashMaterial;
         
         public EnemyData enemyData;
         private float currentHealth;
         public bool isDead { get; private set; } = false;
+        protected virtual bool HasUnlimitedHealth => false;
 
         public RoomFirstDungeonGenerator.Room homeRoom { get; set; }
         private CurrencyDataManager currencyDataManager;
@@ -29,9 +34,20 @@ namespace Nytherion.GamePlay.Characters.Enemy
         [Header("Hit Flash")]
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Color hitColor = Color.red;
-        [SerializeField] private float hitFlashDuration = 0.2f;
+        [SerializeField] private float hitFlashDuration = 0.08f;
+        [SerializeField, Min(0f)] private float whiteFlashDuration = 0.04f;
         private Color originalColor = Color.white;
         private Coroutine hitFlashCoroutine;
+        private MaterialPropertyBlock hitFlashProperties;
+        private MaterialPropertyBlock originalHitProperties;
+        private Material materialBeforeHitFlash;
+        private bool isHitFlashMaterialApplied;
+
+        [Header("지면 공격 피격 범위")]
+        [Tooltip("지면 공격의 대상 위치를 구할 몸체 콜라이더입니다. 비워 두면 루트의 콜라이더를 먼저 사용합니다. 공격 범위 콜라이더는 지정하지 마세요.")]
+        [SerializeField] private Collider2D groundBodyCollider;
+        // 기존 원형 영역 API의 직렬화 호환용입니다. 지면 피해는 몸체 전체 크기로 판정합니다.
+        [SerializeField, HideInInspector, Range(0.05f, 1f)] private float groundHitRadiusRatio = 0.5f;
 
         [Header("Death Pixel Dissolve")]
         [SerializeField, Min(0.01f)] private float deathDissolveDuration = 1.6f;
@@ -39,8 +55,39 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private EnemyDeathDissolve deathDissolve;
 
+        public bool TryGetGroundHitBounds(out Bounds bounds)
+        {
+            if (groundBodyCollider == null)
+            {
+                groundBodyCollider = GetComponent<Collider2D>();
+                if (groundBodyCollider == null && spriteRenderer != null)
+                    groundBodyCollider = spriteRenderer.GetComponent<Collider2D>();
+            }
+            bounds = default;
+            if (isDead || groundBodyCollider == null || !groundBodyCollider.enabled ||
+                !groundBodyCollider.gameObject.activeInHierarchy)
+                return false;
+
+            bounds = groundBodyCollider.bounds;
+            return bounds.size.x > 0f && bounds.size.y > 0f;
+        }
+
+        public bool TryGetGroundHitCircle(out Vector2 center, out float radius)
+        {
+            center = transform.position;
+            radius = 0f;
+            if (!TryGetGroundHitBounds(out Bounds bounds)) return false;
+            radius = Mathf.Min(bounds.extents.x, bounds.extents.y) * Mathf.Clamp(groundHitRadiusRatio, 0.05f, 1f);
+            // 시전·조준에 사용하는 평면 좌표와 맞춥니다. 아래쪽으로 옮기면 표시 타원 안에서도 적이 빗나갑니다.
+            center = bounds.center;
+            return radius > 0f;
+        }
+
         private void Awake()
         {
+            hitFlashProperties = new MaterialPropertyBlock();
+            originalHitProperties = new MaterialPropertyBlock();
+
             if (spriteRenderer == null)
             {
                 spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -87,6 +134,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 StopCoroutine(hitFlashCoroutine);
                 hitFlashCoroutine = null;
             }
+            RestoreHitFlashMaterial();
             if (spriteRenderer != null)
             {
                 spriteRenderer.color = originalColor;
@@ -154,8 +202,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 statusEffectManager.TriggerLightningChain(damageAmount);
             }
 
-            currentHealth -= damageAmount;
-            if (currentHealth <= 0) Die();
+            // 허수아비도 피격 효과와 전투 이벤트는 처리하되 체력은 소모하지 않습니다.
+            if (!HasUnlimitedHealth)
+            {
+                currentHealth -= damageAmount;
+                if (currentHealth <= 0) Die();
+            }
         }
 
         private void Die()
@@ -183,6 +235,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 StopCoroutine(hitFlashCoroutine);
                 hitFlashCoroutine = null;
             }
+            RestoreHitFlashMaterial();
             if (spriteRenderer != null)
             {
                 spriteRenderer.color = originalColor;
@@ -220,6 +273,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (hitFlashCoroutine != null)
             {
                 StopCoroutine(hitFlashCoroutine);
+                RestoreHitFlashMaterial();
             }
 
             hitFlashCoroutine = StartCoroutine(HitFlashRoutine());
@@ -227,12 +281,90 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private IEnumerator HitFlashRoutine()
         {
-            spriteRenderer.color = hitColor;
+            float totalDuration = Mathf.Max(0f, hitFlashDuration);
+            float whiteDuration = Mathf.Min(
+                Mathf.Max(0f, whiteFlashDuration),
+                totalDuration);
+            float redDuration = Mathf.Max(0f, totalDuration - whiteDuration);
 
-            yield return new WaitForSeconds(hitFlashDuration);
+            if (TryApplyHitFlashMaterial())
+            {
+                SetHitFlash(Color.white);
+                if (whiteDuration > 0f)
+                {
+                    yield return new WaitForSeconds(whiteDuration);
+                }
+
+                SetHitFlash(hitColor);
+                if (redDuration > 0f)
+                {
+                    yield return new WaitForSeconds(redDuration);
+                }
+
+                RestoreHitFlashMaterial();
+            }
+            else
+            {
+                // 셰이더를 찾지 못한 경우에도 기존 빨간 피격 표시는 유지합니다.
+                spriteRenderer.color = hitColor;
+                if (totalDuration > 0f)
+                {
+                    yield return new WaitForSeconds(totalDuration);
+                }
+            }
 
             spriteRenderer.color = GetCurrentBaseColor();
             hitFlashCoroutine = null;
+        }
+
+        private bool TryApplyHitFlashMaterial()
+        {
+            Shader flashShader = Shader.Find(HitFlashShaderName);
+            if (flashShader == null)
+            {
+                return false;
+            }
+
+            if (sharedHitFlashMaterial == null ||
+                sharedHitFlashMaterial.shader != flashShader)
+            {
+                sharedHitFlashMaterial = new Material(flashShader)
+                {
+                    name = "Shared Enemy Hit Flash",
+                    hideFlags = HideFlags.HideAndDontSave
+                };
+            }
+
+            materialBeforeHitFlash = spriteRenderer.sharedMaterial;
+            originalHitProperties.Clear();
+            spriteRenderer.GetPropertyBlock(originalHitProperties);
+
+            hitFlashProperties.Clear();
+            spriteRenderer.GetPropertyBlock(hitFlashProperties);
+            spriteRenderer.sharedMaterial = sharedHitFlashMaterial;
+            spriteRenderer.SetPropertyBlock(hitFlashProperties);
+            isHitFlashMaterialApplied = true;
+            return true;
+        }
+
+        private void SetHitFlash(Color flashColor)
+        {
+            hitFlashProperties.SetColor(FlashColorId, flashColor);
+            hitFlashProperties.SetFloat(FlashAmountId, 1f);
+            spriteRenderer.SetPropertyBlock(hitFlashProperties);
+        }
+
+        private void RestoreHitFlashMaterial()
+        {
+            if (!isHitFlashMaterialApplied || spriteRenderer == null)
+            {
+                return;
+            }
+
+            spriteRenderer.sharedMaterial = materialBeforeHitFlash;
+            spriteRenderer.SetPropertyBlock(originalHitProperties);
+            materialBeforeHitFlash = null;
+            isHitFlashMaterialApplied = false;
         }
 
         public void UpdateStatusColor()

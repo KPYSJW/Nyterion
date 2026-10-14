@@ -379,7 +379,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponBases:
-  - {fileID: 6208765460595893722, guid: 1aec131cb75b7004892f7b283980aeb1, type: 3}
   - {fileID: 6208765460595893722, guid: e4c1af3dada07d84f9beb964981d8c6a, type: 3}
 --- !u!1001 &280121696
 PrefabInstance:

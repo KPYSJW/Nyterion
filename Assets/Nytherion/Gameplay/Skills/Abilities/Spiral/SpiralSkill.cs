@@ -32,10 +32,12 @@ namespace Nytherion.GamePlay.Skills
 
                 if (proj != null)
                 {
+                    proj.transform.localScale *= EffectSizeMultiplier;
                     // 충돌체 컴포넌트에 스킬 데이터의 데미지 적용
                     if (proj.TryGetComponent<CollisionObject>(out var col))
                     {
                         col.damage = skillData.damage;
+                        col.effectSizeMultiplier = EffectSizeMultiplier;
                     }
 
                     // 나선형 움직임을 담당하는 컴포넌트 초기화

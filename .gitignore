@@ -34,3 +34,7 @@
 /BuildSettings/
 
 *.md
+
+# 검증용 임시 프로젝트 및 작업 산출물
+/tmp/
+/output/
