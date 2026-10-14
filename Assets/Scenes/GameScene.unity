@@ -9743,7 +9743,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1336590988}
   m_HandleRect: {fileID: 1336590987}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -10211,7 +10211,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 552687602}
   m_HandleRect: {fileID: 552687601}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -11603,8 +11603,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 585024138}
   m_HandleRect: {fileID: 585024137}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -13685,7 +13685,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 2.8050666, y: 3.1581864, z: 2.9468486, w: 2.5937288}
+  m_RaycastPadding: {x: -2, y: -1.5, z: -2, w: -2.5}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -22609,8 +22609,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1721288127}
   m_HandleRect: {fileID: 1721288126}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.49999994
+  m_Value: 0
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -22848,7 +22848,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451803222681576171, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
       propertyPath: orthographic size
-      value: 5.1458335
+      value: 4.21875
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
