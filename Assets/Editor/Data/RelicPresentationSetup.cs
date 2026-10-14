@@ -121,7 +121,7 @@ namespace Nytherion.Editor
             }
 
             Scene activeScene = SceneManager.GetActiveScene();
-            foreach (string path in new[] { "Assets/Scenes/GameScene.unity", "Assets/Scenes/Village.unity" })
+            foreach (string path in new[] { "Assets/Scenes/GameScene.unity" })
             {
                 Scene scene = SceneManager.GetSceneByPath(path);
                 bool alreadyOpen = scene.IsValid() && scene.isLoaded;
@@ -195,7 +195,7 @@ namespace Nytherion.Editor
         private static void AuditScenes()
         {
             var results = new List<string>();
-            foreach (string path in new[] { "Assets/Scenes/GameScene.unity", "Assets/Scenes/Village.unity" })
+            foreach (string path in new[] { "Assets/Scenes/GameScene.unity" })
             {
                 Scene scene = SceneManager.GetSceneByPath(path);
                 bool alreadyOpen = scene.IsValid() && scene.isLoaded;

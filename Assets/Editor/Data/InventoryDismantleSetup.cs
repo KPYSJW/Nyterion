@@ -111,7 +111,7 @@ namespace Nytherion.Editor
         {
             Directory.CreateDirectory(Output);
             var report = new List<string>();
-            foreach (string path in new[] { "Assets/Scenes/GameScene.unity", "Assets/Scenes/Village.unity" })
+            foreach (string path in new[] { "Assets/Scenes/GameScene.unity" })
             {
                 Scene scene = SceneManager.GetSceneByPath(path);
                 bool loaded = scene.IsValid() && scene.isLoaded;
@@ -139,7 +139,7 @@ namespace Nytherion.Editor
             Directory.CreateDirectory(Output);
             Sprite sprite = GetRoundedSprite();
             var report = new List<string>();
-            foreach (string path in new[] { "Assets/Scenes/GameScene.unity", "Assets/Scenes/Village.unity" })
+            foreach (string path in new[] { "Assets/Scenes/GameScene.unity" })
             {
                 Scene scene = SceneManager.GetSceneByPath(path);
                 bool loaded = scene.IsValid() && scene.isLoaded;

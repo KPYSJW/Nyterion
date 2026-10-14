@@ -126,8 +126,6 @@ namespace Nytherion.Core.Managers
                 case "Stage_1_1":
                 case "Stage_1_2":
                     return stageBGM;
-                case "Village":
-                    return villageBGM;
                 default:
                     return null;
             }

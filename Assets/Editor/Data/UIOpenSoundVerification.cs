@@ -6,7 +6,6 @@ using Nytherion.Core.Managers;
 using Nytherion.UI.Controllers;
 using Nytherion.UI.Skill;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -75,12 +74,6 @@ namespace Nytherion.Editor
                     if (!hadVolume) PlayerPrefs.DeleteKey("Nytherion.Settings.SfxVolume");
                 }
                 File.AppendAllLines(UIOpenSoundSetup.Output + "/verification.txt", report);
-                if (SceneManager.GetActiveScene().name == "GameScene")
-                {
-                    EditorSceneManager.LoadSceneInPlayMode("Assets/Scenes/Village.unity", new LoadSceneParameters(LoadSceneMode.Single));
-                    readyAt = EditorApplication.timeSinceStartup + 5d;
-                    return;
-                }
                 Finish();
             }
             catch (Exception error)
