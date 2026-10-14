@@ -1,7 +1,10 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using Nytherion.Core.Data;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace Nytherion.Core.Managers
 {
@@ -9,6 +12,10 @@ namespace Nytherion.Core.Managers
     {
         public static InputManager Instance { get; private set; }
         private PlayerAction playerActions;
+        private bool isAttackPressed;
+        private EventSystem attackEventSystem;
+        private PointerEventData attackPointerData;
+        private readonly List<RaycastResult> attackUIRaycasts = new List<RaycastResult>();
 
         [Header("유물 UI 입력")]
         [SerializeField, Tooltip("유물 창을 열고 닫는 키")]
@@ -70,10 +77,8 @@ namespace Nytherion.Core.Managers
                 MoveInput = Vector2.zero;
             };
 
-            playerActions.Player.Attack.performed += ctx => 
-            {
-                onAttackDown?.Invoke();};
-            playerActions.Player.Attack.canceled += ctx => onAttackUp?.Invoke();
+            playerActions.Player.Attack.performed += HandleAttackPerformed;
+            playerActions.Player.Attack.canceled += HandleAttackCanceled;
 
             playerActions.Player.Dash.started += ctx => Dash = true;
             playerActions.Player.Dash.canceled += ctx => Dash = false;
@@ -81,14 +86,11 @@ namespace Nytherion.Core.Managers
             playerActions.Player.Skill.performed += ctx => onToggleSkillUI?.Invoke();
 
             playerActions.Player.Skill_Q.performed += ctx => TriggerSkillInput(0);
-            playerActions.Player.Skill_E.performed += ctx => TriggerSkillInput(1);
-            playerActions.Player.Skill_R.performed += ctx => TriggerSkillInput(2);
+            playerActions.Player.Skill_E.performed += ctx => TriggerSkillInput(2);
+            playerActions.Player.Skill_R.performed += ctx => TriggerSkillInput(1);
 
             playerActions.Player.Progression.performed += ctx => onToggleProgressionUI?.Invoke();
 
-            playerActions.Player.QuickSlot_1.started += ctx => onQuickSlotInput?.Invoke(1);
-            playerActions.Player.QuickSlot_2.started += ctx => onQuickSlotInput?.Invoke(2);
-            playerActions.Player.QuickSlot_3.started += ctx => onQuickSlotInput?.Invoke(3);
 
             playerActions.Player.Control.performed += ctx => IsControlPressed = true;
             playerActions.Player.Control.canceled += ctx => IsControlPressed = false;
@@ -124,8 +126,8 @@ namespace Nytherion.Core.Managers
             playerActions.Player.Shift.Disable();
             playerActions.Player.Skill.performed -= ctx => onToggleSkillUI?.Invoke();
             playerActions.Player.Skill_Q.performed -= ctx => TriggerSkillInput(0);
-            playerActions.Player.Skill_E.performed -= ctx => TriggerSkillInput(1);
-            playerActions.Player.Skill_R.performed -= ctx => TriggerSkillInput(2);
+            playerActions.Player.Skill_E.performed -= ctx => TriggerSkillInput(2);
+            playerActions.Player.Skill_R.performed -= ctx => TriggerSkillInput(1);
             playerActions.Player.Progression.performed -= ctx => onToggleProgressionUI?.Invoke();
         }
 
@@ -164,6 +166,54 @@ namespace Nytherion.Core.Managers
         }
         public void EnablePlayerControls() => playerActions.Player.Enable();
         public void DisablePlayerControls() => playerActions.Player.Disable();
+
+        private void HandleAttackPerformed(InputAction.CallbackContext context)
+        {
+            if (isAttackPressed || IsAttackBlockedByUI()) return;
+
+            isAttackPressed = true;
+            onAttackDown?.Invoke();
+        }
+
+        private void HandleAttackCanceled(InputAction.CallbackContext context)
+        {
+            // UI에서 시작한 클릭은 드래그 후 놓아도 공격 종료/차징 발사를 전달하지 않습니다.
+            if (!isAttackPressed) return;
+
+            isAttackPressed = false;
+            onAttackUp?.Invoke();
+        }
+
+        private bool IsAttackBlockedByUI()
+        {
+            if (UIPanelBase.IsAnyPanelOpen) return true;
+
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem == null || Mouse.current == null) return false;
+
+            // 입력 콜백에서는 EventSystem의 이전 프레임 포인터 상태 대신 현재 위치를 검사합니다.
+            if (attackPointerData == null || attackEventSystem != eventSystem)
+            {
+                attackEventSystem = eventSystem;
+                attackPointerData = new PointerEventData(eventSystem);
+            }
+            attackPointerData.Reset();
+            attackPointerData.position = MousePosition;
+            attackUIRaycasts.Clear();
+            eventSystem.RaycastAll(attackPointerData, attackUIRaycasts);
+
+            bool isOverUI = false;
+            foreach (RaycastResult result in attackUIRaycasts)
+            {
+                if (result.module is GraphicRaycaster)
+                {
+                    isOverUI = true;
+                    break;
+                }
+            }
+            attackUIRaycasts.Clear();
+            return isOverUI;
+        }
 
         private void Update()
         {

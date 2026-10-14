@@ -24,6 +24,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             GameObject meteor = ObjectPoolManager.Instance.SpawnFromPool(weaponData.projectilePrefab, spawnPos, Quaternion.identity);
 
             if (meteor == null) return;
+            PlayFireSound();
 
             meteor.transform.localScale *= EffectSizeMultiplier;
 

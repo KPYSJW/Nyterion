@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlledCanvasGroup: {fileID: 0}
+  playOpenSound: 1
+  closeSoundOverride: {fileID: 8300000, guid: 2eb83f91811eaec499e756e67e4e5a73, type: 3}
   OnPanelOpened:
     m_PersistentCalls:
       m_Calls: []

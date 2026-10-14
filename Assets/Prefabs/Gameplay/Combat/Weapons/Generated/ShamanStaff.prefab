@@ -110,6 +110,8 @@ MonoBehaviour:
   projectileSpeed: 8
   defaultProjectilePrefab: {fileID: 2083352507361239216, guid: 6a1132f325a188744b4676a6028afd78, type: 3}
   abyssalFlamePrefab: {fileID: 3217857750152948958, guid: 0d2db6e2038983a41b8731758e8c60b8, type: 3}
+  abyssalFlameFireEffectPrefab: {fileID: 3756641527762701589, guid: fb73c209984c4fd4bab15d137e74c9ef, type: 3}
+  abyssalFlameFireSound: {fileID: 8300000, guid: 7d133c78e721a234dac8617ecf71ff39, type: 3}
 --- !u!95 &8340302543433849024
 Animator:
   serializedVersion: 5

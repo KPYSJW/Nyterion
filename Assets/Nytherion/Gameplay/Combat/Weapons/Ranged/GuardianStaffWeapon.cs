@@ -68,6 +68,7 @@ namespace Nytherion.GamePlay.Combat
                 ? pool.SpawnFromPool(prefab.gameObject, center, Quaternion.identity)
                 : Instantiate(prefab.gameObject, center, Quaternion.identity);
             if (visual == null) return;
+            PlayFireSound();
 
             lastAttackTime = Time.time;
             if (firePoint != null && weaponData.fireEffectPrefab != null)

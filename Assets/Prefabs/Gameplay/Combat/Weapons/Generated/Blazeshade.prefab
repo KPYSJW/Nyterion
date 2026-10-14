@@ -110,3 +110,5 @@ MonoBehaviour:
   targetAttackVisualPrefab: {fileID: 5060610604748869780, guid: a4282d38586d3354c811f310b54c97a9, type: 3}
   summonClip: {fileID: 7400000, guid: 3a28cd2bc529ebf4fb16cbe0e27bad7d, type: 2}
   targetAttackClip: {fileID: 7400000, guid: 1227dc9e8d4e0c54ca5392d39d5f5a67, type: 2}
+  targetSummonSound: {fileID: 8300000, guid: 5e4f8b4836975a340b1b7d7240781179, type: 3}
+  targetSummonSoundVolume: 0.5

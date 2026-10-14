@@ -15,6 +15,7 @@ namespace Nytherion.UI.Skill
     /// </summary>
     public class SkillUIController : UIPanelBase
     {
+        protected override bool UsesBookOpenSound => true;
         [Header("Toggle Settings")]
         [Tooltip("스킬 UI 전체를 담고 있는 패널 오브젝트")]
         [SerializeField] private GameObject uiPanel;
@@ -42,6 +43,7 @@ namespace Nytherion.UI.Skill
 
         [SerializeField] private SkillTooltip skillTooltipPrefab;
         private SkillTooltip skillTooltip;
+        private bool ownsSkillTooltip;
         private SkillSlotUI[] storageSlots;
 
         [Tooltip("스킬 보관함 영역 (드롭 이벤트를 처리하기 위한 참조)")]
@@ -70,10 +72,12 @@ namespace Nytherion.UI.Skill
             this.storageDropArea = uiRefs.storageDropArea;
             this.storageContent = uiRefs.storageContent;
             this.equipSlots = uiRefs.equipSlots;
-            if (skillTooltipPrefab != null && uiPanel != null)
+            skillTooltip = uiRefs.SkillTooltip;
+            if (skillTooltip == null && skillTooltipPrefab != null && uiPanel != null)
             {
                 Canvas rootCanvas = uiPanel.GetComponentInParent<Canvas>().rootCanvas;
                 skillTooltip = Instantiate(skillTooltipPrefab, rootCanvas.transform, false);
+                ownsSkillTooltip = true;
             }
 
             // --- UIPanelBase 연동을 위한 설정 추가 ---
@@ -106,6 +110,7 @@ namespace Nytherion.UI.Skill
             // 장착 슬롯에 상호작용 이벤트 등록
             foreach (var slot in equipSlots)
             {
+                slot.BindUIAudio(audioManager);
                 slot.OnDoubleClick += HandleDoubleClick;
                 slot.OnDropSkill += HandleDrop;
             }
@@ -134,7 +139,7 @@ namespace Nytherion.UI.Skill
         }
         private void OnDestroy()
         {
-            if (skillTooltip != null) Destroy(skillTooltip.gameObject);
+            if (ownsSkillTooltip && skillTooltip != null) Destroy(skillTooltip.gameObject);
             // 메모리 누수 방지를 위해 객체 파괴 시 모든 이벤트 구독 해제
             if (skillDataManager != null) skillDataManager.OnSkillDataChanged -= SyncUIFromData;
             if (inputManager != null) inputManager.onToggleSkillUI -= ToggleUI;
@@ -217,6 +222,7 @@ namespace Nytherion.UI.Skill
                 newSlot.slotIndex = i;
 
                 newSlot.Setup(null, skillDataManager, skillTooltip);
+                newSlot.BindUIAudio(audioManager);
 
                 // 상호작용 이벤트 등록 
                 newSlot.OnDoubleClick += HandleDoubleClick;
@@ -316,7 +322,12 @@ namespace Nytherion.UI.Skill
         /// </summary>
         private void SwapSkills(SkillSlotUI slotA, SkillSlotUI slotB)
         {
-            if (slotA == null || slotB == null) return;
+            if (slotA == null || slotB == null)
+            {
+                PlayUISound(UISoundType.Error);
+                return;
+            }
+            if (slotA == slotB) return;
 
             slotA.CancelDrag();
             slotB.CancelDrag();
@@ -331,6 +342,7 @@ namespace Nytherion.UI.Skill
             // 교환 후 변경된 상태를 매니저에 전달 및 저장
             UpdatePlayerSkills();
             SyncUIFromData();
+            PlayUISound(UISoundType.Place);
         }
 
         /// <summary>

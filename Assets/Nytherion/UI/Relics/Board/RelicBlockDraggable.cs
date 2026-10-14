@@ -5,6 +5,7 @@ using Nytherion.GamePlay.Relics;
 using Nytherion.Core.Managers;
 using TMPro;
 using VContainer;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.RelicBoard
 {
@@ -31,6 +32,10 @@ namespace Nytherion.UI.RelicBoard
         private RelicManager relicManager;
         private RelicGridUI relicGridUI;
         private RelicTooltip relicTooltip;
+        private AudioManager uiAudioManager;
+
+        [Inject]
+        public void BindUIAudio(AudioManager audioManager) => uiAudioManager = audioManager;
         
         [Inject]
         public void Construct(
@@ -101,6 +106,7 @@ namespace Nytherion.UI.RelicBoard
                 if (relicManager != null)
                 {
                     relicManager.RotateDraggedBlock();
+                    uiAudioManager?.RequestUISound(UISoundType.Adjust);
                     rectTransform.Rotate(0, 0, 90);
                 }
                 if (relicGridUI != null)
@@ -117,6 +123,7 @@ namespace Nytherion.UI.RelicBoard
             if (blockData == null || relicManager == null || relicGridUI == null || relicGridUI.rootCanvas == null) return;
 
             isDragging = true;
+            uiAudioManager?.RequestUISound(UISoundType.Pickup);
 
             if (isPlaced)
             {
@@ -193,6 +200,16 @@ namespace Nytherion.UI.RelicBoard
             // 마지막 호버 셀 대신 실제 드롭 대상만 인정해 패널 밖 드롭을 취소한다.
             relicGridUI.GetDropTarget(eventData, out Vector2Int? dropGridPosition, out int? dropStorageIndex);
             relicManager.EndDrag(dropGridPosition, dropStorageIndex);
+            if (dropGridPosition.HasValue)
+            {
+                Vector2Int position = dropGridPosition.Value;
+                bool placed = relicManager.GetBlockAt(position.y, position.x) == blockData;
+                uiAudioManager?.RequestUISound(placed ? UISoundType.Place : UISoundType.Error);
+            }
+            else if (dropStorageIndex.HasValue)
+            {
+                uiAudioManager?.RequestUISound(UISoundType.Place);
+            }
 
             Destroy(gameObject);
         }
@@ -209,7 +226,8 @@ namespace Nytherion.UI.RelicBoard
             }
 
             relicTooltip?.Hide();
-            relicManager.UnequipFromGrid(blockData, gridPosition);
+            bool removed = relicManager.UnequipFromGrid(blockData, gridPosition);
+            uiAudioManager?.RequestUISound(removed ? UISoundType.Place : UISoundType.Error);
         }
 
         public void BuildVisualFromShape()

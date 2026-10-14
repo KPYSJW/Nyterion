@@ -55,7 +55,20 @@ namespace Nytherion.Editor
                 controller = Object.FindObjectOfType<SkillUIController>();
                 Require(controller != null, "현재 씬의 SkillUIController 생성", results);
                 SkillTooltip tooltip = Field<SkillTooltip>(controller, "skillTooltip");
-                Require(tooltip != null, "DI 컨트롤러에서 스킬 전용 툴팁 생성", results);
+                Require(tooltip != null, "DI 컨트롤러의 스킬 전용 툴팁 연결", results);
+                if (controller.gameObject.scene.name == "GameScene")
+                {
+                    GameSceneUIRefs refs = Object.FindObjectOfType<GameSceneUIRefs>();
+                    Require(refs != null && refs.SkillTooltip == tooltip &&
+                        !Field<bool>(controller, "ownsSkillTooltip"), "GameScene은 씬 툴팁을 사용", results);
+                    Canvas canvas = tooltip.GetComponent<Canvas>();
+                    Require(tooltip.transform.parent == canvas.rootCanvas.transform &&
+                        tooltip.name == "SkillTooltip", "Canvas 하위 객체 사용, Clone 생성 없음", results);
+                    Require(canvas.overrideSorting && canvas.sortingOrder == 920,
+                        "스킬 툴팁 정렬 순서 920 적용", results);
+                    Require(Object.FindObjectsOfType<SkillTooltip>().Length == 1,
+                        "중복 스킬 툴팁 없음", results);
+                }
                 CanvasGroup group = tooltip.GetComponent<CanvasGroup>();
                 Require(!group.blocksRaycasts && !group.interactable, "툴팁이 슬롯 입력을 가로막지 않음", results);
                 SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>(

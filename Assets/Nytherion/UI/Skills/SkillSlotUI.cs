@@ -5,6 +5,7 @@ using System;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.UI.Components;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.Skill
 {
@@ -23,6 +24,9 @@ namespace Nytherion.UI.Skill
         private SkillTooltip skillTooltip;
         private SkillData currentSkill;
         private SkillDataManager skillDataManager;
+        private AudioManager uiAudioManager;
+
+        public void BindUIAudio(AudioManager audioManager) => uiAudioManager = audioManager;
 
         // 슬롯 상호작용 이벤트
         public event Action<SkillSlotUI> OnDoubleClick;
@@ -67,7 +71,7 @@ namespace Nytherion.UI.Skill
             {
                 RectTransform iconRect = skillIcon.rectTransform;
                 iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 0.5f);
-                iconRect.sizeDelta = Vector2.one * (slotType == SkillSlotType.Storage ? 96f : 64f);
+                iconRect.sizeDelta = Vector2.one * (slotType == SkillSlotType.Storage ? 96f : 128f);
                 iconRect.anchoredPosition = Vector2.zero;
                 iconRect.localScale = Vector3.one;
             }
@@ -113,6 +117,8 @@ namespace Nytherion.UI.Skill
         // --- 클릭 이벤트 ---
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (currentSkill != null && eventData.button == PointerEventData.InputButton.Left)
+                uiAudioManager?.RequestUISound(UISoundType.Click);
             // 더블 클릭 감지
             if (eventData.clickCount == 2 && currentSkill != null)
             {
@@ -146,6 +152,7 @@ namespace Nytherion.UI.Skill
             iconOriginalRotation = iconRect.localRotation;
             iconOriginalRaycastTarget = skillIcon.raycastTarget;
             isDragging = true;
+            uiAudioManager?.RequestUISound(UISoundType.Pickup);
 
             // 슬롯에 맞춰 늘어나는 앵커를 고정해 Canvas 크기로 아이콘이 확대되지 않도록 한다.
             iconRect.SetParent(dragCanvas.transform, false);

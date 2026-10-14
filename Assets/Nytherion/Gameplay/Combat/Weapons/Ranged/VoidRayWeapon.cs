@@ -112,6 +112,7 @@ namespace Nytherion.GamePlay.Combat
 
             PrepareDamageSchedule(Time.timeAsDouble);
             activeBeam.Initialize(this, firePoint, data, pool);
+            PlayFireSound();
             lastAttackTime = Time.time;
         }
 

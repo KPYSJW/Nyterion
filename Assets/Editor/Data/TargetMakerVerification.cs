@@ -101,6 +101,9 @@ namespace Nytherion.Editor
 
         private static IEnumerator Verify(Transform owner, BlazeshadeWeapon weapon, WeaponData data)
         {
+            // 적 없는 오라 주기에는 피격음을 생성하거나 재생하지 않아야 합니다.
+            yield return new WaitForSeconds(Mathf.Max(0.05f, data.cooldown) + 0.1f);
+            Require(weapon.GetComponent<WeaponFireAudio>() == null, "적 없는 오라 주기는 무음");
             EnemyBase nearby = Enemy(owner.position + Vector3.right * 0.1f, true);
             Vector3 center = owner.position + Vector3.right * 30f;
             EnemyBase[] targets = Enumerable.Range(0, 72).Select(i => Enemy(center, i == 0)).ToArray();
@@ -109,6 +112,10 @@ namespace Nytherion.Editor
             Physics2D.SyncTransforms();
             yield return new WaitForSeconds(Mathf.Max(0.05f, data.cooldown) + 0.1f);
             Require(Value(nearby) < 10000f && targets.All(enemy => Value(enemy) == 10000f), "기본 오라는 플레이어 주변만 타격");
+            WeaponFireAudio audio = weapon.GetComponent<WeaponFireAudio>();
+            FieldInfo lastSound = typeof(WeaponFireAudio).GetField("lastPlayTime", BindingFlags.Instance | BindingFlags.NonPublic);
+            Require(audio != null && (float)lastSound.GetValue(audio) > 0f, "일반 오라 실제 피격 시 효과음 재생");
+            results.Add("PASS 일반 오라: 적 없는 주기 무음, 실제 피격 시 재생");
             results.Add("PASS 미장착: 새 이미지의 지속 오라와 플레이어 중심 피해");
             SetRelic(true);
             yield return null;
@@ -117,6 +124,9 @@ namespace Nytherion.Editor
             AnimationClip summon = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade/BlazeShadeSummonEffect.anim");
             AnimationClip attack = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade/BlazeShadeAttackEffect.anim");
             weapon.Attack(Vector2.right, center);
+            Require(weapon.GetComponent<AudioSource>().isPlaying && Mathf.Approximately((float)lastSound.GetValue(audio), Time.time),
+                "TargetMaker 생성 프레임에 소환음 재생");
+            float summonSoundTime = (float)lastSound.GetValue(audio);
             Require(!weapon.CanAttack(), "소환/공격 중 중복 입력 차단");
             Require(Visual("BlazeShadeSummonEffect", center) != null, "마우스 지정 위치에 소환 효과");
             yield return new WaitForSeconds(summon.length * 0.5f);
@@ -133,6 +143,8 @@ namespace Nytherion.Editor
             Require(targets.All(enemy => Mathf.Abs(Value(enemy) - (10000f - data.damage)) < 0.01f), "공격 중 추가 피해 없음");
             Require(Value(nearby) == nearbyHealth, "타겟 모드에서 플레이어 주변 오라 피해 중지");
             Require(Visual("BlazeShadeAttackEffect", center) == null && weapon.CanAttack(), "애니메이션 종료 시 제거 및 재공격 가능");
+            Require((float)lastSound.GetValue(audio) == summonSoundTime, "지정 공격 타격과 늦은 진입에 피격음 추가 재생 없음");
+            results.Add("PASS TargetMaker: 생성 시 소환음 한 번, 72명/중복 콜라이더/늦은 진입에도 추가 재생 없음");
             results.Add("PASS 소환→공격 순서, 지정 위치 고정, 72명/중복 콜라이더/늦은 진입 1회 타격, 종료 후 제거");
             weapon.Attack(Vector2.right, center);
             SetRelic(false);

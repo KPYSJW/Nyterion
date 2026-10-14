@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Combat.Weapons;
 using UnityEngine;
@@ -25,6 +26,9 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField] private GameObject targetAttackVisualPrefab;
         [SerializeField] private AnimationClip summonClip;
         [SerializeField] private AnimationClip targetAttackClip;
+        [SerializeField, Tooltip("타겟 메이커의 소환 이펙트 생성 시 한 번 재생합니다.")]
+        private AudioClip targetSummonSound;
+        [SerializeField, Range(0f, 1f)] private float targetSummonSoundVolume = 0.5f;
 
         private readonly HashSet<IDamageable> damagedTargets = new HashSet<IDamageable>();
 
@@ -132,6 +136,7 @@ namespace Nytherion.GamePlay.Combat
             float radius = Mathf.Max(0.1f, weaponData.range) * EffectSizeMultiplier;
             float damage = Mathf.Max(0f, weaponData.damage * EffectiveDamageMultiplier);
             targetVisual = CreateTargetVisual(summonVisualPrefab, center, radius * 0.7f);
+            PlayWeaponSound(targetSummonSound, targetSummonSoundVolume);
             yield return new WaitForSeconds(summonClip.length);
             Destroy(targetVisual);
             targetVisual = CreateTargetVisual(targetAttackVisualPrefab, center, radius);
@@ -320,6 +325,8 @@ namespace Nytherion.GamePlay.Combat
 
         private void DealDamage(Vector2 center, float radius, float damage)
         {
+            if (damage <= 0f) return;
+            bool dealtDamage = false;
             int hitCount;
             do
             {
@@ -347,9 +354,14 @@ namespace Nytherion.GamePlay.Combat
                     continue;
                 }
 
+                if (target is EnemyBase enemy && enemy.isDead) continue;
+
                 target.TakeDamage(damage);
+                dealtDamage = true;
             }
             Array.Clear(overlapBuffer, 0, hitCount);
+            // 일반 오라는 실제 타격한 주기에만 한 번, 지정 공격은 소환 시에만 재생합니다.
+            if (dealtDamage && !HasTargetMaker) PlayFireSound();
         }
 
         private void OnDestroy()

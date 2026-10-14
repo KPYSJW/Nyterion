@@ -251,6 +251,7 @@ namespace Nytherion.Core.Managers
             if (!IsInitialized) return false;
             if (fromSlotIndex < 0 || fromSlotIndex >= InventoryModel.MaxSlots) return false;
             if (toSlotIndex < 0 || toSlotIndex >= InventoryModel.MaxSlots) return false;
+            if (InventoryModel.IsDismantleReserved(fromSlotIndex) || InventoryModel.IsDismantleReserved(toSlotIndex)) return false;
 
             InventoryModel.SwapItems(fromSlotIndex, toSlotIndex);
 
@@ -272,6 +273,59 @@ namespace Nytherion.Core.Managers
         public bool MoveItem(int fromSlotIndex, int toSlotIndex)
         {
             return SwapItems(fromSlotIndex, toSlotIndex);
+        }
+
+        /// <summary> 인벤토리를 등급과 이름순으로 정렬하고 변경된 슬롯 순서를 저장한다. </summary>
+        public bool SortItems()
+        {
+            if (!IsInitialized || InventoryModel == null) return false;
+            if (!InventoryModel.SortByRarityAndName()) return false;
+
+            if (saveLoadManager != null) saveLoadManager.SaveGame();
+            return true;
+        }
+
+        public bool StageForDismantle(int slotIndex, ItemData expectedItem)
+        {
+            return IsInitialized && InventoryModel.StageForDismantle(slotIndex, expectedItem);
+        }
+
+        public List<(int slotIndex, EquipmentData item)> GetDismantleItems()
+        {
+            var items = new List<(int, EquipmentData)>();
+            if (!IsInitialized) return items;
+            foreach (int index in InventoryModel.DismantleSlots)
+                if (InventoryModel.GetStoredItemAt(index).item is EquipmentData equipment) items.Add((index, equipment));
+            return items;
+        }
+
+        public void ResetDismantle()
+        {
+            if (IsInitialized) InventoryModel.ResetDismantle();
+        }
+
+        public long GetDismantleGold(float valueRatio)
+        {
+            long total = 0;
+            foreach (var entry in GetDismantleItems())
+                total += Mathf.Max(0, Mathf.RoundToInt(entry.item.baseValue * valueRatio));
+            return total;
+        }
+
+        public bool DismantleEquipment(CurrencyDataManager currencyManager, float valueRatio)
+        {
+            if (!IsInitialized || currencyManager == null || !currencyManager.IsInitialized ||
+                GetDismantleItems().Count == 0 || float.IsNaN(valueRatio) || float.IsInfinity(valueRatio) || valueRatio < 0f)
+                return false;
+            long reward = GetDismantleGold(valueRatio);
+            if (reward > int.MaxValue - (long)currencyManager.GetGold()) return false;
+
+            InventoryModel.CompleteDismantleWithoutNotify();
+            // 예상 금액과 실제 지급액을 일치시키고 골드 획득 유물 보정을 중복 적용하지 않는다.
+            if (reward > 0) currencyManager.AddUnmodifiedCurrency(CurrencyType.Gold, (int)reward);
+            HandleInventoryModelUpdate();
+            saveLoadManager?.SaveGame();
+            return true;
         }
 
         /* ==========================================================
@@ -332,7 +386,7 @@ namespace Nytherion.Core.Managers
             for (int i = 0; i < InventoryModel.MaxSlots; i++)
             {
                 var slot = InventoryModel.GetItemAt(i);
-                if (slot.item == null)
+                if (slot.item == null && !InventoryModel.IsDismantleReserved(i))
                 {
                     emptyCount++;
                 }
@@ -466,7 +520,8 @@ namespace Nytherion.Core.Managers
 
             for (int i = 0; i < MaxSlotCount; i++)
             {
-                (ItemData item, int count) slot = InventoryModel.GetItemAt(i);
+                // 분해를 확정하지 않은 장비는 기존 저장 형식으로 원래 슬롯에 보존한다.
+                (ItemData item, int count) slot = InventoryModel.GetStoredItemAt(i);
                 if (slot.item != null)
                 {
                     string savedInstanceId = "";

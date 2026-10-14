@@ -7,6 +7,8 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Enums;
 using System;
 using Nytherion.UI.Components;
+using Nytherion.Core.Managers;
+using VContainer;
 
 namespace Nytherion.UI.Inventory
 {
@@ -42,6 +44,15 @@ namespace Nytherion.UI.Inventory
         [SerializeField] protected TextMeshProUGUI countText;
         protected ItemData currentItem;
         protected int currentCount;
+        private AudioManager uiAudioManager;
+        private ItemData draggedItem;
+        private int draggedCount;
+        private bool audioDragStarted;
+
+        [Inject]
+        public void BindUIAudio(AudioManager audioManager) => uiAudioManager = audioManager;
+
+        public void PlayUISound(UISoundType sound) => uiAudioManager?.RequestUISound(sound);
 
         [Header("Rarity Slot Visuals")]
         [SerializeField] protected Image slotBackgroundImage;
@@ -228,6 +239,9 @@ namespace Nytherion.UI.Inventory
 
         public virtual void OnPointerClick(PointerEventData eventData)
         {
+            if (!IsEmpty && (eventData.button == PointerEventData.InputButton.Left ||
+                eventData.button == PointerEventData.InputButton.Right))
+                PlayUISound(UISoundType.Click);
             OnPointerClickEvent?.Invoke(this, eventData);
         }
 
@@ -235,6 +249,10 @@ namespace Nytherion.UI.Inventory
         {
             if (eventData.button != PointerEventData.InputButton.Left) return;
             if (IsEmpty) return;
+            draggedItem = CurrentItem;
+            draggedCount = CurrentCount;
+            audioDragStarted = true;
+            PlayUISound(UISoundType.Pickup);
             OnBeginDragEvent?.Invoke(this, eventData);
         }
 
@@ -248,6 +266,18 @@ namespace Nytherion.UI.Inventory
         {
             if (eventData.button != PointerEventData.InputButton.Left) return;
             OnEndDragEvent?.Invoke(this, eventData);
+            if (!audioDragStarted) return;
+            audioDragStarted = false;
+            if (CurrentItem != draggedItem || CurrentCount != draggedCount)
+                PlayUISound(UISoundType.Place);
+            else
+            {
+                GameObject hit = eventData.pointerCurrentRaycast.gameObject;
+                BaseSlotUI target = hit != null ? hit.GetComponentInParent<BaseSlotUI>() : null;
+                if (target != null && target != this && !target.CanReceiveItem(draggedItem))
+                    PlayUISound(UISoundType.Error);
+            }
+            draggedItem = null;
         }
 
         /// <summary>

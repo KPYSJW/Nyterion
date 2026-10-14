@@ -76,6 +76,12 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Tooltip("차징 이펙트의 초당 Z축 회전 각도 (0: 회전 없음, 음수: 반대 방향)")]
         public float chargeEffectRotationSpeed = 0f;
 
+        [Header("발사 효과음")]
+        [Tooltip("실제 발사 시 재생할 짧은 2D 효과음입니다.")]
+        public AudioClip fireSound;
+        [Range(0f, 1f), Tooltip("사용자 효과음 볼륨에 곱할 무기별 음량입니다.")]
+        public float fireSoundVolume = 0.65f;
+
         [Header("Animation Settings")]
         [Tooltip("무기 전용 애니메이터 컨트롤러 (Idle, Fire 애니메이션 연동용)")]
         public RuntimeAnimatorController animatorController;

@@ -7,6 +7,8 @@ using Nytherion.Data.ScriptableObjects.Skill;
 using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using UnityEditor.Localization;
 using UnityEngine.Localization.Tables;
 using UnityEngine;
@@ -28,6 +30,18 @@ namespace Nytherion.Editor
         {
             if (EditorApplication.isCompiling || EditorApplication.isUpdating ||
                 EditorApplication.isPlayingOrWillChangePlaymode) return;
+            string sceneRequest = Output + "/game-scene.request";
+            if (File.Exists(sceneRequest))
+            {
+                File.Delete(sceneRequest);
+                try { ConfigureGameScene(); }
+                catch (Exception error)
+                {
+                    File.WriteAllText(Output + "/game-scene.txt", "FAIL " + error);
+                    Debug.LogException(error);
+                }
+                return;
+            }
             string descriptionRequest = Output + "/descriptions.request";
             if (File.Exists(descriptionRequest))
             {
@@ -65,6 +79,62 @@ namespace Nytherion.Editor
                 File.WriteAllText(Output + "/setup.txt", "FAIL " + error);
                 Debug.LogException(error);
             }
+        }
+
+        [MenuItem("Tools/Nytherion/Skills/GameScene 툴팁 연결")]
+        public static void ConfigureGameScene()
+        {
+            Directory.CreateDirectory(Output);
+            const string scenePath = "Assets/Scenes/GameScene.unity";
+            Scene scene = SceneManager.GetSceneByPath(scenePath);
+            bool alreadyOpen = scene.IsValid() && scene.isLoaded;
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new InvalidOperationException("편집 모드에서 실행해 주세요.");
+            if (!alreadyOpen) scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            try
+            {
+                GameSceneUIRefs refs = null;
+                foreach (GameObject root in scene.GetRootGameObjects())
+                {
+                    refs = root.GetComponentInChildren<GameSceneUIRefs>(true);
+                    if (refs != null) break;
+                }
+                if (refs == null || refs.SkillMainPanel == null)
+                    throw new InvalidOperationException("GameScene 스킬 UI 참조가 없습니다.");
+                Canvas rootCanvas = refs.SkillMainPanel.GetComponentInParent<Canvas>().rootCanvas;
+                SkillTooltip tooltip = refs.SkillTooltip;
+                if (tooltip == null)
+                {
+                    GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+                    GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, rootCanvas.transform);
+                    instance.name = "SkillTooltip";
+                    tooltip = instance.GetComponent<SkillTooltip>();
+                }
+                tooltip.transform.SetParent(rootCanvas.transform, false);
+                tooltip.transform.SetAsLastSibling();
+                Canvas canvas = tooltip.GetComponent<Canvas>();
+                canvas.overrideSorting = true;
+                canvas.sortingLayerID = rootCanvas.sortingLayerID;
+                canvas.sortingOrder = 920;
+                CanvasGroup group = tooltip.GetComponent<CanvasGroup>();
+                group.alpha = 0f;
+                group.interactable = group.blocksRaycasts = false;
+                var serialized = new SerializedObject(refs);
+                Assign(serialized, "skillTooltip", tooltip);
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                PrefabUtility.RecordPrefabInstancePropertyModifications(tooltip.transform);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(canvas);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(group);
+                EditorSceneManager.MarkSceneDirty(scene);
+                if (!EditorSceneManager.SaveScene(scene))
+                    throw new InvalidOperationException("GameScene 저장에 실패했습니다.");
+                if (refs.SkillTooltip != tooltip || tooltip.transform.parent != rootCanvas.transform ||
+                    !canvas.overrideSorting || canvas.sortingOrder != 920 || group.blocksRaycasts)
+                    throw new InvalidOperationException("스킬 툴팁 씬 설정 검증에 실패했습니다.");
+                File.WriteAllText(Output + "/game-scene.txt",
+                    "PASS GameScene: Canvas/SkillTooltip 프리팹 인스턴스, UIRefs 참조, Override Sorting=true, Order=920, 레이캐스트 차단 없음. 씬 저장 완료.");
+            }
+            finally { if (!alreadyOpen) EditorSceneManager.CloseScene(scene, true); }
         }
 
         [MenuItem("Tools/Nytherion/Skills/Create Skill Tooltip")]

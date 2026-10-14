@@ -24,6 +24,7 @@ namespace Nytherion.UI.Inventory
         private ItemUsageManager itemUsageManager;
         private InventoryDataManager inventoryDataManager;
         private ShopUI shopUI;
+        private InventoryUI inventoryUI;
         private QuickSlotManager quickSlotManager;
 
         [Inject]
@@ -39,6 +40,13 @@ namespace Nytherion.UI.Inventory
             this.inventoryDataManager = inventoryDataManager;
             this.shopUI = shopUI;
             this.quickSlotManager = quickSlotManager;
+        }
+        [Inject]
+        public void BindInventoryUI(InventoryUI inventoryUI) => this.inventoryUI = inventoryUI;
+
+        public override bool CanReceiveItem(ItemData item)
+        {
+            return inventoryDataManager?.InventoryModel?.IsDismantleReserved(SlotIndex) != true;
         }
         protected override void Awake()
         {
@@ -115,6 +123,7 @@ namespace Nytherion.UI.Inventory
         public void OnDrop(PointerEventData eventData)
         {
             if (eventData.button != PointerEventData.InputButton.Left) return;
+            if (!CanReceiveItem(null)) { DragDropUIHandler.dropHandled = true; return; }
             if (eventData.pointerDrag == null)
             {
                 return;
@@ -260,20 +269,9 @@ namespace Nytherion.UI.Inventory
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
         {
             if (IsEmpty || eventData.button != PointerEventData.InputButton.Right) return;
-
-            if (shopUI != null && shopUI.IsOpen)
+            if (inventoryUI != null && inventoryUI.IsDismantleOpen)
             {
-                bool isShiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-
-                if (isShiftPressed && CurrentCount > 1)
-                {
-                    shopUI.OpenSellPopup(CurrentItem, CurrentCount);
-                }
-                else
-                {
-                    shopUI.QuickSellItem(CurrentItem, 1);
-                }
-
+                if (!inventoryUI.TryStageForDismantle(this)) PlayUISound(UISoundType.Error);
                 return;
             }
             else if (CurrentItem is EquipmentData equipment)
@@ -300,6 +298,7 @@ namespace Nytherion.UI.Inventory
 
                     // 보관 슬롯 이동은 여기서 처리하므로 매니저의 자동 반환/제거를 중복 실행하지 않는다.
                     equipmentDataManager.SetEquipment(targetSlotType, equipment, false);
+                    PlayUISound(UISoundType.Place);
 
                     if (previouslyEquipped != null)
                     {

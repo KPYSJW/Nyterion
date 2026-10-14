@@ -24,6 +24,8 @@ namespace Nytherion.UI.Controllers
         [Header("UI References")]
         private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
         private bool isSlotPoolInitialized = false;
+        private bool isInitialized;
+        protected override bool UsesBookOpenSound => true;
 
         public event Action<bool> OnInventoryToggled;
 
@@ -35,6 +37,10 @@ namespace Nytherion.UI.Controllers
         private GameObject statsPanel;
         private Transform inventorySlotParent;
         private Button closeButton;
+        private Button sortButton;
+        private Button dismantleButton;
+        private InventoryDismantlePanel dismantlePanel;
+        public bool IsDismantleOpen => dismantlePanel != null && dismantlePanel.IsOpen;
         private InventoryPresenter inventoryPresenter;
         private IObjectResolver container;
         private ObjectPoolManager objectPoolManager;
@@ -51,6 +57,9 @@ namespace Nytherion.UI.Controllers
             this.statsPanel = gameSceneuiRefs.StatsPanel;
             this.inventorySlotParent = gameSceneuiRefs.InventorySlotParent;
             this.closeButton = gameSceneuiRefs.InventoryCloseButton;
+            this.sortButton = gameSceneuiRefs.InventorySortButton;
+            this.dismantleButton = gameSceneuiRefs.InventoryDismantleButton;
+            this.dismantlePanel = gameSceneuiRefs.DismantlePanel;
             this.controlledCanvasGroup = gameSceneuiRefs.InventoryCanvasGroup;
         }
 
@@ -118,8 +127,15 @@ namespace Nytherion.UI.Controllers
 
         public void Initialize()
         {
+            // VContainer와 GameSceneUIManager가 모두 초기화해도 이벤트는 한 번만 연결한다.
+            if (isInitialized) return;
+            isInitialized = true;
             
             FindUIElements();
+            if (dismantlePanel != null)
+                dismantlePanel.Initialize(GetInventoryDataManager(), container.Resolve<CurrencyDataManager>(),
+                    equipmentPanel, statsPanel, audioManager);
+            if (dismantleButton != null) dismantleButton.onClick.AddListener(ToggleDismantle);
             
             if (closeButton != null)
             {
@@ -138,6 +154,12 @@ namespace Nytherion.UI.Controllers
             else
             {
                 Debug.LogError("[InventoryUI] InventoryDataManager를 찾을 수 없습니다!");
+            }
+
+            if (sortButton != null)
+            {
+                sortButton.onClick.RemoveListener(SortInventory);
+                sortButton.onClick.AddListener(SortInventory);
             }
 
             if (toggleInventoryAction != null && toggleInventoryAction.action != null)
@@ -215,6 +237,22 @@ namespace Nytherion.UI.Controllers
             RefreshUI();
         }
 
+        private void SortInventory()
+        {
+            if (GetInventoryDataManager()?.SortItems() == true && TooltipPanel.Instance != null)
+                TooltipPanel.Instance.HideTooltip();
+        }
+
+        private void ToggleDismantle()
+        {
+            if (IsOpen) dismantlePanel?.Toggle();
+        }
+
+        public bool TryStageForDismantle(InventorySlotUI slot)
+        {
+            return IsOpen && IsDismantleOpen && dismantlePanel.TryAdd(slot);
+        }
+
         private void CreateSlotsFromPrefab()
         {
             /* InventoryPresenter에서 슬롯 생성을 담당하므로 여기서는 생성을 건너뜁니다.
@@ -270,6 +308,7 @@ namespace Nytherion.UI.Controllers
 
         protected override void OnPanelStateChanged(bool isOpen)
         {
+            if (!isOpen) dismantlePanel?.Close();
             OnInventoryToggled?.Invoke(isOpen);
 
             if (isOpen) RefreshUI();
@@ -282,6 +321,7 @@ namespace Nytherion.UI.Controllers
 
         public void OpenForShop()
         {
+            dismantlePanel?.Close();
             if (equipmentPanel != null) equipmentPanel.SetActive(false);
             if (statsPanel != null) statsPanel.SetActive(false);
             Open(false); // 다른 UI(상점)를 닫지 않고 열기
@@ -313,6 +353,11 @@ namespace Nytherion.UI.Controllers
 
         private void OnDestroy()
         {
+            dismantlePanel?.Close();
+            if (dismantleButton != null) dismantleButton.onClick.RemoveListener(ToggleDismantle);
+            if (sortButton != null) sortButton.onClick.RemoveListener(SortInventory);
+            if (closeButton != null) closeButton.onClick.RemoveListener(Close);
+
             // 이벤트 구독 해제
             InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
             if (inventoryDataMgr != null)

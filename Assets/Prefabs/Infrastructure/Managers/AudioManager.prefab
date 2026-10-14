@@ -45,10 +45,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77b6f5fecdb082444ac7a3118b92f08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
   bgmSource: {fileID: 8670448299925142163}
   titleBGM: {fileID: 8300000, guid: 23ffc80147ad1c34cad15f7834093272, type: 3}
   stageBGM: {fileID: 8300000, guid: 93c17722d6584c7408f1e00b726ed024, type: 3}
   villageBGM: {fileID: 8300000, guid: 3d1e36c809fcf404f853a42854d35c7f, type: 3}
+  uiOpenSound: {fileID: 8300000, guid: 3a6109052b9a34a44b7525d0d1cd5dcd, type: 3}
+  uiOpenSoundVolume: 0.7
+  uiHoverSound: {fileID: 8300000, guid: f5ed68e1f9edb294da76cb097e35f97f, type: 3}
+  uiHoverSoundVolume: 0.3
+  uiClickSound: {fileID: 8300000, guid: 4a8012416480c884091b3da2072a8ac2, type: 3}
+  uiClickSoundVolume: 1
+  uiCloseSound: {fileID: 8300000, guid: 3b3d309e72b28c94b93980aabeb15475, type: 3}
+  uiCloseSoundVolume: 1
+  uiPanelCloseSoundVolume: 1
+  uiAdjustSound: {fileID: 8300000, guid: eec52c24a46d92949bdd4a395c0ac572, type: 3}
+  uiAdjustSoundVolume: 0.45
+  uiPickupSound: {fileID: 8300000, guid: 75d17a1ee9cdf454db59647965ebec90, type: 3}
+  uiPickupSoundVolume: 1
+  uiPlaceSound: {fileID: 8300000, guid: cacae150b74a9484db28c8bf69caac70, type: 3}
+  uiPlaceSoundVolume: 1
+  uiSuccessSound: {fileID: 8300000, guid: f09393ea53d962749a52a0d2ec54ea71, type: 3}
+  uiShopTransactionSoundVolume: 1
+  uiErrorSound: {fileID: 8300000, guid: d07ce4610516dd24487c15f271108678, type: 3}
+  uiErrorSoundVolume: 1
+  uiInteractionVolume: 0.65
 --- !u!1 &6623918154787503390
 GameObject:
   m_ObjectHideFlags: 0

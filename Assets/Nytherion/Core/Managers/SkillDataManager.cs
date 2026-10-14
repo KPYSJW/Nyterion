@@ -231,6 +231,8 @@ namespace Nytherion.Core.Managers
 
             for (int i = 0; i < storageSkills.Length; i++)
                 storageSkills[i] = (i < newStorage.Length) ? newStorage[i] : null;
+
+            OnSkillDataChanged?.Invoke();
         }
 
         /// <summary>

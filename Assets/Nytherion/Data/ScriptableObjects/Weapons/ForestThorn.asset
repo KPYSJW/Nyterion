@@ -45,6 +45,8 @@ MonoBehaviour:
   fireEffectPrefab: {fileID: 164668213690554887, guid: a5ec6e97f1ff85e4fa6e56c4633534dc, type: 3}
   chargeEffectPrefab: {fileID: 7306622082136586299, guid: c66eebec310444c4796220c745954f62, type: 3}
   chargeEffectRotationSpeed: 0
+  fireSound: {fileID: 8300000, guid: acbcc7156b5313947a1fd65aae40295d, type: 3}
+  fireSoundVolume: 0.48
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 1453523852295367759, guid: 699b4cfa5de25e94db8b510f76821dc3, type: 3}
   projectileAnimationVariants: []

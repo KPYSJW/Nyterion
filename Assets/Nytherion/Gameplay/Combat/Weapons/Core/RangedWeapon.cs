@@ -194,6 +194,7 @@ namespace Nytherion.GamePlay.Combat
             // 풀은 발사마다 원본 스케일을 복원합니다. 차징 보정 뒤에 한 번만 적용합니다.
             projectile.transform.localScale *= EffectSizeMultiplier;
             if (collisionObj != null) collisionObj.effectSizeMultiplier = EffectSizeMultiplier;
+            PlayFireSound();
             return projectile; 
         }
 
@@ -210,11 +211,12 @@ namespace Nytherion.GamePlay.Combat
             }
 
             // 발사 이펙트 생성
-            if (ShouldSpawnFireEffect() && firePoint != null && weaponData != null && weaponData.fireEffectPrefab != null)
+            GameObject fireEffectPrefab = GetFireEffectPrefab();
+            if (ShouldSpawnFireEffect() && firePoint != null && fireEffectPrefab != null)
             {
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-                WeaponVFXHelper.PlayFireEffect(weaponData.fireEffectPrefab, firePoint.position, rotation, firePoint);
+                WeaponVFXHelper.PlayFireEffect(fireEffectPrefab, firePoint.position, rotation, firePoint);
             }
 
             int extra = 0;
@@ -446,6 +448,7 @@ namespace Nytherion.GamePlay.Combat
         }
 
         protected virtual void ConfigureSpawnedProjectile(GameObject projectile, Vector2 direction, float chargePercent) { }
+        protected virtual GameObject GetFireEffectPrefab() => weaponData != null ? weaponData.fireEffectPrefab : null;
         protected virtual bool ShouldSpawnFireEffect() => true;
         protected virtual bool ShouldPlayFireAnimation() => true;
     }

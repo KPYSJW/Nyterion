@@ -296,6 +296,7 @@ namespace Nytherion.UI.Controllers
             if (maxAffordable <= 0)
             {
                 Debug.Log("[ShopUI] 골드가 부족하여 1개도 살 수 없습니다.");
+                PlayUISound(UISoundType.Error);
                 return;
             }
 
@@ -342,7 +343,11 @@ namespace Nytherion.UI.Controllers
 
             int totalPrice = unitPrice * amountToBuy; 
 
-            if (!currencyMgr.HasCurrency(CurrencyType.Gold, totalPrice)) return;
+            if (!currencyMgr.HasCurrency(CurrencyType.Gold, totalPrice))
+            {
+                PlayUISound(UISoundType.Error);
+                return;
+            }
 
             if (currencyMgr.SpendCurrency(CurrencyType.Gold, totalPrice))
             {
@@ -358,6 +363,7 @@ namespace Nytherion.UI.Controllers
 
                 if (addSuccess) 
                 {
+                    PlayUISound(UISoundType.ShopTransaction);
                     ShopManager shopMgr = GetShopManager();
                     if (shopMgr != null && !shopItem.isUnlimited)
                     {
@@ -394,6 +400,7 @@ namespace Nytherion.UI.Controllers
                 else
                 {
                     currencyMgr.AddCurrency(CurrencyType.Gold, totalPrice);
+                    PlayUISound(UISoundType.Error);
                     slot.SetInteractable(true);
                 }
             }
@@ -419,6 +426,7 @@ namespace Nytherion.UI.Controllers
             if (currentCount < amount)
             {
                 Debug.LogWarning($"[ShopUI] 판매 실패: 인벤토리에 충분한 아이템이 없습니다. 요청: {amount}, 보유: {currentCount}");
+                PlayUISound(UISoundType.Error);
                 return;
             }
 
@@ -428,10 +436,12 @@ namespace Nytherion.UI.Controllers
                 int totalPrice = unitSellPrice * amount;
 
                 currencyMgr.AddCurrency(CurrencyType.Gold, totalPrice);
+                PlayUISound(UISoundType.ShopTransaction);
             }
             else
             {
                 Debug.LogWarning($"[ShopUI] '{item.itemName}' 판매 실패: 인벤토리에서 아이템 제거 실패");
+                PlayUISound(UISoundType.Error);
             }
         }
         public void QuickSellItem(ItemData item, int amount)
@@ -608,6 +618,7 @@ namespace Nytherion.UI.Controllers
             if (shopMgr == null || currentShopData == null) return;
 
             bool success = shopMgr.RerollShop(currentShopData.shopName, false);
+            PlayUISound(success ? UISoundType.ShopTransaction : UISoundType.Error);
             Debug.Log($"[ShopUI] RerollShop 결과: {success}");
 
             if (success)
@@ -623,6 +634,7 @@ namespace Nytherion.UI.Controllers
             if (shopMgr == null || currentShopData == null) return;
 
             bool success = shopMgr.RerollShopAdvanced(currentShopData.shopName, shopMgr.AdvancedRerollTokenCost);
+            PlayUISound(success ? UISoundType.ShopTransaction : UISoundType.Error);
 
             if (success)
             {

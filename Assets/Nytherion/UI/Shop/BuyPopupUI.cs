@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using Nytherion.Data.ScriptableObjects.Shop;
 using Nytherion.UI.Controllers;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.Shop
 {
@@ -48,6 +49,7 @@ namespace Nytherion.UI.Shop
 
             UpdateUI(1);
             gameObject.SetActive(true);
+            shopUI.PlayUISound(UISoundType.Open);
         }
 
         private void OnSliderValueChanged(float value)
@@ -73,6 +75,7 @@ namespace Nytherion.UI.Shop
 
         private void ClosePopup()
         {
+            if (gameObject.activeSelf) shopUI?.PlayUISound(UISoundType.Close);
             gameObject.SetActive(false);
         }
     }

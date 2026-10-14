@@ -46,14 +46,16 @@ MonoBehaviour:
   useFixedFacingPose: 0
   useStaffRecoil: 1
   weaponEffectPrefab: {fileID: 1638640853019598765, guid: 686dbf8c71a11b94fbfea2409aa31c8a, type: 3}
-  fireEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 1663538349821888843, guid: b18fd549af284fb449d3b37f01e209b0, type: 3}
   chargeEffectPrefab: {fileID: 0}
   chargeEffectRotationSpeed: 0
+  fireSound: {fileID: 8300000, guid: 9b744176f5fecd249a15eb48e9ec78b0, type: 3}
+  fireSoundVolume: 0.6
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 2083352507361239216, guid: 6a1132f325a188744b4676a6028afd78, type: 3}
   projectileAnimationVariants: []
   projectileStartEffectVariants: []
-  projectileSpeed: 5
+  projectileSpeed: 7
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1

@@ -258,10 +258,12 @@ namespace Nytherion.UI.Inventory
             {
                 Debug.Log("인벤토리 추가 성공. UI 슬롯을 비운다");
                 ClearSlot();
+                PlayUISound(UISoundType.Place);
             }
             else
             {
                 Debug.LogError("인벤토리 추가 실패");
+                PlayUISound(UISoundType.Error);
             }
         }
 

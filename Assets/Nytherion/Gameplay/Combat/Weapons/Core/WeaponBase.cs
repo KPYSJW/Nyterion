@@ -41,6 +41,7 @@ namespace Nytherion.GamePlay.Combat
         protected PlayerManager playerManager;
         [SerializeField] protected Animator animator;
         private WeaponCrossbowRecoil staffRecoil;
+        private WeaponFireAudio fireAudio;
 
         protected virtual void Awake()
         {
@@ -57,6 +58,28 @@ namespace Nytherion.GamePlay.Combat
             }
 
             ConfigureStaffRecoil(weaponData);
+        }
+
+        protected virtual AudioClip GetFireSound()
+        {
+            return weaponData != null ? weaponData.fireSound : null;
+        }
+
+        protected void PlayFireSound()
+        {
+            if (weaponData == null) return;
+            PlayWeaponSound(GetFireSound(), weaponData.fireSoundVolume);
+        }
+
+        protected void PlayWeaponSound(AudioClip clip, float volume)
+        {
+            if (clip == null) return;
+            if (fireAudio == null)
+            {
+                fireAudio = GetComponent<WeaponFireAudio>();
+                if (fireAudio == null) fireAudio = gameObject.AddComponent<WeaponFireAudio>();
+            }
+            fireAudio.Play(clip, volume);
         }
 
         protected void PlayFireAnimation()

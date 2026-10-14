@@ -33,6 +33,10 @@ namespace Nytherion.GamePlay.Characters.NPC
         private int relicLandingSearchRingCount = 8;
 
         private GachaManager gachaManager;
+        private AudioManager uiAudioManager;
+
+        [Inject]
+        public void BindUIAudio(AudioManager audioManager) => uiAudioManager = audioManager;
         private RelicManager relicManager;
         private CurrencyDataManager currencyDataManager;
         private ObjectPoolManager objectPoolManager;
@@ -64,11 +68,12 @@ namespace Nytherion.GamePlay.Characters.NPC
         private void Start()
         {
             // VContainer 의존성 해결 보완 (Inject 누락 대비)
-            if (gachaManager == null || relicManager == null || currencyDataManager == null || objectPoolManager == null || playerTransform == null)
+            if (gachaManager == null || relicManager == null || currencyDataManager == null || objectPoolManager == null || playerTransform == null || uiAudioManager == null)
             {
                 LifetimeScope lifetimeScope = LifetimeScope.Find<GameSceneLifetimeScope>();
                 if (lifetimeScope != null)
                 {
+                    if (uiAudioManager == null) lifetimeScope.Container.TryResolve<AudioManager>(out uiAudioManager);
                     if (gachaManager == null) lifetimeScope.Container.TryResolve<GachaManager>(out gachaManager);
                     if (relicManager == null) lifetimeScope.Container.TryResolve<RelicManager>(out relicManager);
                     if (currencyDataManager == null) lifetimeScope.Container.TryResolve<CurrencyDataManager>(out currencyDataManager);
@@ -181,6 +186,7 @@ namespace Nytherion.GamePlay.Characters.NPC
             if (currentToken < count)
             {
                 Debug.LogWarning($"[GachaChest] 토큰 부족! 필요 토큰: {count}, 보유 토큰: {currentToken}");
+                uiAudioManager?.RequestUISound(UISoundType.Error);
                 return false;
             }
 
@@ -189,6 +195,7 @@ namespace Nytherion.GamePlay.Characters.NPC
             if (pendingDrawnItems == null || pendingDrawnItems.Count == 0)
             {
                 Debug.LogWarning("[GachaChest] 가챠 풀 에러 또는 생성된 아이템 없음.");
+                uiAudioManager?.RequestUISound(UISoundType.Error);
                 return false;
             }
 

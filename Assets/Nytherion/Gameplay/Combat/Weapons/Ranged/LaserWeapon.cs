@@ -104,6 +104,7 @@ namespace Nytherion.GamePlay.Combat
                 data.damage * EffectiveDamageMultiplier, pool);
             lastAttackTime = Time.time;
             PlayFireAnimation();
+            PlayFireSound();
 
             if (data.fireEffectPrefab != null)
             {

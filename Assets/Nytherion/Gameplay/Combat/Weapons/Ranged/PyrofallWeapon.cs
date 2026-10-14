@@ -113,6 +113,7 @@ namespace Nytherion.GamePlay.Combat
 
             if (projectile != null && projectile.TryGetComponent(out PyrofallProjectile fireball))
             {
+                PlayFireSound();
                 fireball.Initialize(
                     destination,
                     weaponData.damage * EffectiveDamageMultiplier,

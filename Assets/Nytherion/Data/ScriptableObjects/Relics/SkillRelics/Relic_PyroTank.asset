@@ -20,7 +20,7 @@ MonoBehaviour:
 
     Summons a tank that charges at enemies
     and explodes.'
-  Image: {fileID: -1403334377, guid: 40236aab4161a0442992ea31c27d40e5, type: 3}
+  Image: {fileID: 21300000, guid: 64723e6225b2c194e8fda2b0635e9f0e, type: 3}
   rarity: 0
   level: 1
   isDisabled: 0
