@@ -7,7 +7,7 @@ public class DashState : PlayerState
 
     public override void Enter(PlayerController playerController)
     {
-        playerController.PlayAnimation("Dash");
+        //playerController.PlayAnimation("Dash");
         playerController.IsDashing = true;
         playerController.LastDashTime = Time.time;
         playerController.NotifyDashStarted();

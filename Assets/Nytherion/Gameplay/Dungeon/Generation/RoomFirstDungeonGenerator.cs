@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 using Nytherion.GamePlay.Characters.Enemy;
@@ -259,6 +260,7 @@ namespace Nytherion.GamePlay.Dungeon
 
             _dungeonManager?.ClearDungeonData();
             tilemapVisualizer.Clear();
+            tilemapVisualizer.ApplyDungeonTiles(dungeonData);
 
             VisualizeDungeon(
                 result.totalFloorPositions,
@@ -627,29 +629,101 @@ namespace Nytherion.GamePlay.Dungeon
                 for (int i = 0; i < monsterCount; i++)
                 {
                     if (candidatePositions.Count == 0) break;
+                    ObjectPoolManager poolManager = _dungeonManager?._objectPoolManager;
+                    if (poolManager == null) break;
 
-                    EnemyData monsterToSpawn = dungeonData.dungeonMonsters[Random.Range(0, dungeonData.dungeonMonsters.Count)];
-                    int randomIndex = Random.Range(0, candidatePositions.Count);
-                    Vector2Int spawnPosition = candidatePositions[randomIndex];
-                    candidatePositions.RemoveAt(randomIndex);
-
-                    if (_dungeonManager?._objectPoolManager != null)
+                    Vector3 preferredPosition = (Vector3Int)candidatePositions[Random.Range(0, candidatePositions.Count)]
+                        + new Vector3(0.5f, 0.5f, 0f);
+                    EnemyData monsterToSpawn = null;
+                    Vector3 spawnPosition = default;
+                    int firstMonsterIndex = Random.Range(0, dungeonData.dungeonMonsters.Count);
+                    for (int attempt = 0; attempt < dungeonData.dungeonMonsters.Count; attempt++)
                     {
-                        GameObject enemyObj = _dungeonManager._objectPoolManager.SpawnFromPool(monsterToSpawn.enemyName, (Vector3Int)spawnPosition + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+                        EnemyData candidate = dungeonData.dungeonMonsters[
+                            (firstMonsterIndex + attempt) % dungeonData.dungeonMonsters.Count];
+                        if (candidate == null) continue;
+                        GameObject prefab = poolManager.pools?.Find(p => p.tag == candidate.enemyName)?.prefab;
+                        if (TryFindEnemySpawnPosition(prefab, candidatePositions, preferredPosition, out spawnPosition))
+                        {
+                            monsterToSpawn = candidate;
+                            break;
+                        }
+                    }
+
+                    if (monsterToSpawn == null)
+                    {
+                        Debug.LogError($"[Enemy Spawn] Room {room.id}: None of the configured monsters can spawn on this room's NavMesh. Check its Surfaces and room size.");
+                        break;
+                    }
+                    candidatePositions.Remove(Vector2Int.FloorToInt((Vector2)spawnPosition));
+
+                    if (poolManager != null)
+                    {
+                        GameObject enemyObj = poolManager.SpawnFromPool(monsterToSpawn.enemyName, spawnPosition, Quaternion.identity);
                         if (enemyObj != null)
                         {
                             EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
                             if (enemy != null)
                             {
                                 enemy.Initialize(monsterToSpawn);
+                                if (enemy.aiController == null || !enemy.aiController.enabled)
+                                {
+                                    enemy.aiController?.PrepareForPoolReturn();
+                                    poolManager.ReturnToPool(monsterToSpawn.enemyName, enemyObj);
+                                    Debug.LogError($"[Enemy Spawn] {monsterToSpawn.enemyName}: Initialization failed; returned to pool without adding to the room.");
+                                    continue;
+                                }
                                 enemy.homeRoom = room;
                                 room.enemies.Add(enemy);
                                 enemyObj.SetActive(false);
+                            }
+                            else
+                            {
+                                poolManager.ReturnToPool(monsterToSpawn.enemyName, enemyObj);
                             }
                         }
                     }
                 }
             }
+        }
+
+        public static bool TryFindEnemySpawnPosition(GameObject prefab,
+            IEnumerable<Vector2Int> roomTiles, Vector3 preferredPosition, out Vector3 spawnPosition)
+        {
+            spawnPosition = default;
+            if (prefab == null || roomTiles == null) return false;
+            HashSet<Vector2Int> allowedTiles = new HashSet<Vector2Int>(roomTiles);
+            NavMeshAgent prefabAgent = prefab.GetComponent<NavMeshAgent>();
+            IEnemyMovementBehavior movement = prefab.GetComponents<MonoBehaviour>()
+                .OfType<IEnemyMovementBehavior>().FirstOrDefault();
+            bool requiresNavMesh = movement?.RequiresNavMeshAgent ?? prefabAgent != null;
+            if (requiresNavMesh && prefabAgent == null) return false;
+
+            NavMeshQueryFilter filter = new NavMeshQueryFilter
+            {
+                agentTypeID = prefabAgent != null ? prefabAgent.agentTypeID : 0,
+                areaMask = prefabAgent != null ? prefabAgent.areaMask : NavMesh.AllAreas
+            };
+            float nearestDistance = float.PositiveInfinity;
+            foreach (Vector2Int tile in allowedTiles)
+            {
+                Vector3 candidate = new Vector3(tile.x + 0.5f, tile.y + 0.5f, preferredPosition.z);
+                if (requiresNavMesh)
+                {
+                    // Search each floor tile, not a large radius that can snap
+                    // into another room. The baked type already includes clearance.
+                    if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, 0.75f, filter)) continue;
+                    candidate = hit.position;
+                    candidate.z = preferredPosition.z;
+                    if (!allowedTiles.Contains(Vector2Int.FloorToInt((Vector2)candidate))) continue;
+                }
+
+                float distance = (candidate - preferredPosition).sqrMagnitude;
+                if (distance >= nearestDistance) continue;
+                nearestDistance = distance;
+                spawnPosition = candidate;
+            }
+            return !float.IsPositiveInfinity(nearestDistance);
         }
 
 

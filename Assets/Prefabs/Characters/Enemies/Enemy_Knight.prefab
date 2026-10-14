@@ -153,7 +153,7 @@ MonoBehaviour:
   aiController: {fileID: -2069670417764568593}
   spriteRenderer: {fileID: 1932627695806784113}
   hitColor: {r: 1, g: 0, b: 0, a: 0.13333334}
-  hitFlashDuration: 0.2
+  hitFlashDuration: 0.1
   deathDissolveDuration: 0.5
   deathDissolvePixelSize: 5
   groundBodyCollider: {fileID: 3671000620282556980}
@@ -191,7 +191,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 280546291285116296}
   m_Enabled: 0
-  m_AgentTypeID: 0
+  m_AgentTypeID: -641862302
   m_Radius: 0.88
   m_Speed: 3.5
   m_Acceleration: 8

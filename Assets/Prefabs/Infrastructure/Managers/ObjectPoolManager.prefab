@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2c33c68d52ff6341b859349ae0bc6d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoInitializeOnAwake: 0
+  autoInitializeOnAwake: 1
   pools:
   - tag: Frog
     prefab: {fileID: 6406644339438500767, guid: 8d651861435092749ba2c150c8722f4b, type: 3}
@@ -124,3 +124,6 @@ MonoBehaviour:
   - tag: Bag_ranged
     prefab: {fileID: 5986761678656965167, guid: 2c7fbadb91405c14baa8c7d7cd6ef01c, type: 3}
     size: 30
+  - tag: Boss_Knight
+    prefab: {fileID: 6005206889974843037, guid: 3c00dc98d379ccc4bb780d16110c8500, type: 3}
+    size: 1

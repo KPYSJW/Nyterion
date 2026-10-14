@@ -348,6 +348,8 @@ namespace Nytherion.GamePlay.Dungeon
         {
             if (room == null) return true;
             if (room.cleared) return true;
+            if (room.type == RoomFirstDungeonGenerator.RoomType.Boss && !hasBossSpawned)
+                return false;
 
             if (room.type == RoomFirstDungeonGenerator.RoomType.Start ||
                 room.type == RoomFirstDungeonGenerator.RoomType.Shop ||
@@ -703,22 +705,30 @@ namespace Nytherion.GamePlay.Dungeon
             canvasGroup.alpha = to;
         }
 
-        private void SpawnBoss(RoomFirstDungeonGenerator.Room bossRoom)
+        private bool SpawnBoss(RoomFirstDungeonGenerator.Room bossRoom)
         {
             DungeonData dungeonData = currentDungeonData;
             if (dungeonData.bossMonsterData == null)
             {
                 Debug.LogWarning("DungeonData에 보스 몬스터 데이터가 할당되지 않았습니다.");
-                return;
+                return false;
             }
 
             if (!bossRoom.bossSpawnPoint.HasValue)
             {
                 Debug.LogError("보스 방에 스폰 위치가 지정되지 않았습니다! RoomFirstDungeonGenerator를 확인하세요.");
-                return;
+                return false;
             }
 
-            Vector3 spawnPosition = bossRoom.bossSpawnPoint.Value;
+            GameObject bossPrefab = _objectPoolManager?.pools?.Find(
+                p => p.tag == dungeonData.bossMonsterData.enemyName)?.prefab;
+            if (roomFloorData == null || !roomFloorData.TryGetValue(bossRoom, out var floorTiles) ||
+                !RoomFirstDungeonGenerator.TryFindEnemySpawnPosition(bossPrefab, floorTiles,
+                    bossRoom.bossSpawnPoint.Value, out Vector3 spawnPosition))
+            {
+                Debug.LogError($"[Boss Spawn] {dungeonData.bossMonsterData.enemyName}: No valid spawn position inside the boss room. Check this boss's NavMesh Surface and room size. The boss room has not been cleared.");
+                return false;
+            }
             GameObject bossObj = _objectPoolManager.SpawnFromPool(
                 dungeonData.bossMonsterData.enemyName,
                 spawnPosition,
@@ -727,15 +737,26 @@ namespace Nytherion.GamePlay.Dungeon
             if (bossObj != null && bossObj.TryGetComponent<EnemyBase>(out var bossEnemy))
             {
                 bossEnemy.Initialize(dungeonData.bossMonsterData);
+                if (bossEnemy.aiController == null || !bossEnemy.aiController.enabled)
+                {
+                    bossEnemy.aiController?.PrepareForPoolReturn();
+                    _objectPoolManager.ReturnToPool(dungeonData.bossMonsterData.enemyName, bossObj);
+                    Debug.LogError("[Boss Spawn] Initialization failed; returned to pool without marking the boss as spawned.");
+                    return false;
+                }
                 bossEnemy.homeRoom = bossRoom;
                 bossRoom.enemies.Add(bossEnemy);
                 hasBossSpawned = true;
 
                 Debug.Log($"<color=red><b>보스 등장!</b></color> '{dungeonData.bossMonsterData.enemyName}' 스폰 완료!");
+                return true;
             }
             else
             {
+                if (bossObj != null)
+                    _objectPoolManager.ReturnToPool(dungeonData.bossMonsterData.enemyName, bossObj);
                 Debug.LogError($"오브젝트 풀에서 '{dungeonData.bossMonsterData.enemyName}' 태그를 가진 오브젝트를 스폰하는데 실패했습니다. ObjectPoolManager 설정을 확인하세요.");
+                return false;
             }
         }
         #endregion

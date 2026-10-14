@@ -29,7 +29,9 @@ public class EnemyProjectiles : MonoBehaviour
          hashit=true;
          if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
          {
-            playerHealth.TakeDamage(damage);
+            playerHealth.TakeDamage(
+               damage,
+               other.ClosestPoint(transform.position));
          }
       }
    }

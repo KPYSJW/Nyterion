@@ -39,6 +39,17 @@ namespace Nytherion.Data.ScriptableObjects.Dungeon
     [CreateAssetMenu(fileName = "DungeonGenerationData", menuName = "Procedural Generation/Dungeon Generation Data")]
     public class DungeonData : ScriptableObject
     {
+        [Header("Tile Assets")]
+        [Tooltip("Unassigned tiles use the TilemapVisualizer Inspector defaults.")]
+        public TileBase floorTile;
+        public RuleTile wallRuleTile;
+        public TileBase portalTile;
+
+        [Header("Special Room Tile Assets")]
+        [Tooltip("Start and shop room prefabs take priority over these floor tiles.")]
+        public TileBase startRoomTile;
+        public TileBase shopRoomTile;
+        public TileBase itemRoomTile;
         [Header("Room Settings")]
         [Tooltip("�����ϰ��� �ϴ� ���� �� �����Դϴ�.")]
         public int desiredNumberOfRooms = 15;

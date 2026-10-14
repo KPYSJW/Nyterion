@@ -384,16 +384,22 @@ namespace Nytherion.GamePlay.Characters.Enemy
             movementAllowed = true;
             ClearForcedDestination();
             ClearForcedFacingDirection();
-            if (movementBehavior.RequiresNavMeshAgent && !agent.enabled)
+            agent.updateRotation = false;
+            agent.updateUpAxis = false;
+            if (movementBehavior.RequiresNavMeshAgent)
             {
-                agent.enabled = true;
+                if (!TryPlaceAgentOnNavMesh())
+                {
+                    movementAllowed = false;
+                    StopMovement();
+                    enabled = false;
+                    return;
+                }
             }
             else if (!movementBehavior.RequiresNavMeshAgent && agent.enabled)
             {
                 agent.enabled = false;
             }
-            agent.updateRotation = false;
-            agent.updateUpAxis = false;
 
             ApplyEnemyData(data);
             StopMovement();
@@ -424,8 +430,63 @@ namespace Nytherion.GamePlay.Characters.Enemy
             movementBehavior.ResetForReuse();
         }
 
+        private bool TryPlaceAgentOnNavMesh()
+        {
+            // A pooled agent may still refer to its previous position. Bind it
+            // only after finding a position on this monster's own NavMesh type.
+            agent.enabled = false;
+            Vector3 spawnPosition = transform.position;
+            NavMeshQueryFilter filter = new NavMeshQueryFilter
+            {
+                agentTypeID = agent.agentTypeID,
+                areaMask = agent.areaMask
+            };
+            NavMeshBuildSettings settings = NavMesh.GetSettingsByID(agent.agentTypeID);
+            float searchDistance = Mathf.Max(1f,
+                Mathf.Max(agent.radius, settings.agentRadius) * 2f);
+
+            if (!NavMesh.SamplePosition(spawnPosition, out NavMeshHit hit,
+                    searchDistance, filter))
+            {
+                Debug.LogError(
+                    $"[Enemy Spawn] {name}: No nearby NavMesh for Agent Type " +
+                    $"{agent.agentTypeID} at {spawnPosition} " +
+                    $"(search distance: {searchDistance:F2}). " +
+                    "Check that this type's Surface is built before spawning " +
+                    "and that the room is wide enough for this monster.", this);
+                return false;
+            }
+
+            // This project uses an XY NavMesh. Keep the sprite's Z depth and
+            // synchronize the Rigidbody as well as the Transform before binding.
+            Vector3 correctedPosition = hit.position;
+            correctedPosition.z = spawnPosition.z;
+            transform.position = correctedPosition;
+            rb.position = (Vector2)correctedPosition;
+            rb.velocity = Vector2.zero;
+            agent.enabled = true;
+
+            if (agent.isOnNavMesh)
+            {
+                rb.position = (Vector2)transform.position;
+                return true;
+            }
+
+            agent.enabled = false;
+            Debug.LogError(
+                $"[Enemy Spawn] {name}: Agent Type {agent.agentTypeID} " +
+                $"could not bind to the sampled NavMesh at {correctedPosition}.", this);
+            return false;
+        }
+
         public void PrepareForPoolReturn()
         {
+            if (currentState != null)
+            {
+                currentState.ExitState(this);
+                currentState = null;
+            }
+
             movementAllowed = false;
             ClearForcedDestination();
             ClearForcedFacingDirection();
@@ -435,6 +496,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 attackBehavior.ResetForReuse();
             }
             combatBehavior?.ResetForReuse();
+            enabled = false;
         }
 
         private void InitializeCombatSystem()

@@ -66,7 +66,7 @@ Shader "Nytherion/2D/Dash Afterimage"
         half4 AfterimageFragment(Varyings input) : SV_Target
         {
             half alpha = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv).a * input.color.a;
-            return half4(1.0h, 1.0h, 1.0h, alpha);
+            return half4(input.color.rgb, alpha);
         }
         ENDHLSL
 
