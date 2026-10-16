@@ -17,15 +17,14 @@ namespace Nytherion.UI.Presenters
         private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
         private InventoryDataManager inventoryDataManager;
         private bool isInitialized = false;
+        public bool IsInitialized => isInitialized;
         private IObjectResolver container;
-        private GameSceneUIRefs gameSceneuiRefs;
         private ObjectPoolManager objectPoolManager;
 
         [Inject]
         public void Construct(IObjectResolver container, GameSceneUIRefs gameSceneuiRefs, ObjectPoolManager objectPoolManager)
         {
             this.container = container;
-            this.gameSceneuiRefs = gameSceneuiRefs;
             this.objectPoolManager = objectPoolManager;
             this.slotParent = gameSceneuiRefs.InventorySlotParent;
             this.slotPrefab = gameSceneuiRefs.InventorySlotPrefab;
@@ -57,19 +56,18 @@ namespace Nytherion.UI.Presenters
                 return;
             }
 
-            // 기존 슬롯들을 풀로 반환
-            foreach (Transform child in slotParent)
+            // 프리팹이 없는 수동 테스트 UI는 배치된 슬롯을 그대로 사용한다.
+            if (slotPrefab == null)
             {
-                if (slotPrefab != null)
-                {
-                    objectPoolManager.ReturnToPool(slotPrefab.name, child.gameObject);
-                }
-                else
-                {
-                    Destroy(child.gameObject);
-                }
+                slotPool = new List<InventorySlotUI>(slotParent.GetComponentsInChildren<InventorySlotUI>(true));
+                for (int i = 0; i < slotPool.Count; i++) slotPool[i].Initialize(i);
             }
-            slotPool.Clear();
+            else
+            {
+                for (int i = slotParent.childCount - 1; i >= 0; i--)
+                    objectPoolManager.ReturnToPool(slotPrefab.name, slotParent.GetChild(i).gameObject);
+                slotPool.Clear();
+            }
 
             EnsureSlotPoolCapacity(manager.MaxSlotCount);
 
@@ -101,26 +99,48 @@ namespace Nytherion.UI.Presenters
 
         private void OnDestroy()
         {
-            InventoryDataManager manager = GetInventoryDataManager();
-            if (manager != null)
+            // 파괴 순서에 따라 참조가 먼저 사라져도 새 매니저를 Resolve하지 않는다.
+            if (inventoryDataManager != null)
             {
-                manager.OnDataChanged -= OnInventoryDataChanged;
+                inventoryDataManager.OnDataChanged -= OnInventoryDataChanged;
             }
         }
 
         public void Cleanup()
         {
-            InventoryDataManager manager = GetInventoryDataManager();
-            if (manager != null)
+            if (inventoryDataManager != null)
             {
-                manager.OnDataChanged -= OnInventoryDataChanged;
+                inventoryDataManager.OnDataChanged -= OnInventoryDataChanged;
             }
             isInitialized = false;
         }
 
         private void OnInventoryDataChanged(InventoryChangeData changeData)
         {
-            UpdateSlotsUI();
+            EnsureSlotPoolCapacity(inventoryDataManager.MaxSlotCount);
+            if (changeData.slotIndex < 0)
+            {
+                UpdateSlotsUI();
+                return;
+            }
+            UpdateSlotUI(changeData.slotIndex);
+            if (changeData.changeType == InventoryChangeType.SlotsSwapped)
+                UpdateSlotUI(changeData.otherSlotIndex);
+        }
+
+        public void RefreshUI()
+        {
+            if (!isInitialized) Initialize();
+            else UpdateSlotsUI();
+        }
+
+        private void UpdateSlotUI(int index)
+        {
+            if (index < 0 || index >= slotPool.Count) return;
+            var (item, count) = inventoryDataManager.GetSlot(index);
+            InventorySlotUI slot = slotPool[index];
+            // 전체 갱신에서도 내용이 같은 슬롯은 다시 그리지 않는다.
+            if (slot.CurrentItem != item || slot.CurrentCount != count) slot.SetItem(item, count);
         }
 
         private void UpdateSlotsUI()
@@ -136,8 +156,8 @@ namespace Nytherion.UI.Presenters
 
             for (int i = 0; i < slotPool.Count; i++)
             {
-                var (item, count) = manager.GetSlot(i);
-                slotPool[i].SetItem(item, count);
+                slotPool[i].gameObject.SetActive(i < manager.MaxSlotCount);
+                UpdateSlotUI(i);
             }
         }
     }

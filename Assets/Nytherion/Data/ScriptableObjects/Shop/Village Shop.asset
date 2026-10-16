@@ -29,31 +29,6 @@ MonoBehaviour:
     price: 10
     stock: 0
     isUnlimited: 1
-  - shopItemId: 2b748509-02e8-4ef2-a704-d1d98a203fc5
-    item: {fileID: 11400000, guid: 316e5f1eb6ea22046852bfce0bd7d0b9, type: 2}
-    price: 50
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: ee1c36c2-6b9d-4496-be98-5c4a7e4f07d9
-    item: {fileID: 11400000, guid: 74ea2c6d8da87c5428259194c1c4c4c5, type: 2}
-    price: 50
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: 02a52a0b-9d3c-47f9-ba23-159da49b47bb
-    item: {fileID: 11400000, guid: 0065191d61e19d34984b1c60a33329a9, type: 2}
-    price: 100
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: d26bd47e-3f68-447e-b534-98a9484c5c26
-    item: {fileID: 11400000, guid: 858108e2754dda5448d2ad380a6a657d, type: 2}
-    price: 200
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: 5b82b993-02cb-4308-bf9b-57857b2a9b31
-    item: {fileID: 11400000, guid: e975f9ccd1cca63428958880db494d1d, type: 2}
-    price: 200
-    stock: 10
-    isUnlimited: 0
   - shopItemId: e36068e1-f70d-4a62-ac50-0021fd7092d1
     item: {fileID: 11400000, guid: c19efd2c24895944f90973cb5732048e, type: 2}
     price: 100
@@ -106,31 +81,6 @@ MonoBehaviour:
     isUnlimited: 0
   - shopItemId: 9ed09863-0fe8-4741-aecf-7c8d99ce1550
     item: {fileID: 11400000, guid: bfcc6bc6f7a9e7d4998a440e0763228f, type: 2}
-    price: 100
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: 561d05c4-b207-4e7a-ab26-e1f7b163a6a3
-    item: {fileID: 11400000, guid: 323c157966016e94692a23fdc1952326, type: 2}
-    price: 100
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: 61064644-1e5e-4320-9669-a36bc8ae881c
-    item: {fileID: 11400000, guid: e128a3f8902d4bda85cc4aef52ef29b8, type: 2}
-    price: 100
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: 3677a5fa-7801-4f36-bb44-7ae62c6f3fa1
-    item: {fileID: 11400000, guid: e79d5d30ce3363d41a45cff77bc5a2e6, type: 2}
-    price: 100
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: a4840cbf-db37-449d-a786-3607d0dcbc1e
-    item: {fileID: 11400000, guid: 742c991ecf50a4a42838d99a1c24e561, type: 2}
-    price: 100
-    stock: 1
-    isUnlimited: 0
-  - shopItemId: 1bac3356-5ba3-47f1-b401-cc96e57ef056
-    item: {fileID: 11400000, guid: 9bb9f2fd648443e4ea74a1147a6fc75e, type: 2}
     price: 100
     stock: 1
     isUnlimited: 0

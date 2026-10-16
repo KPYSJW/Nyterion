@@ -1,0 +1,39 @@
+후속 작업 4 — 스코프·UI 초기화 책임 정리 (2026-10-16)
+
+R01: Root → Data → GameScene 컨테이너 상속
+- DataLifetimeScope와 GameSceneLifetimeScope의 런타임 부모를 명시했다.
+- VContainer의 부모 빌드 대기·Awake 재시도에서 Data 스코프 자신을 중복 인스턴스로 제거하지 않도록 했다.
+- GameScene의 영속 매니저 재등록·인터페이스 중복 등록·준비 플래그 대기 코루틴을 제거했다.
+- DataLifetimeScope는 9개 매니저의 실제 초기화 및 저장 데이터 로드 성공을 확인한다.
+- GameSceneInitializer는 저장 준비를 확정한 뒤 기존 씬 초기화를 진행한다. 저장 적용 실패 시 시작을 중단한다.
+- 데이터 매니저 프리팹과 실제 씬 참조를 확인했다. 던전 생성·저장 맵 정책 및 던전 프리팹 설정은 변경하지 않았다.
+
+R02: UI 초기화
+- GameSceneUIManager 프리팹 에셋 자체의 런타임 컴포넌트 등록을 제거했다.
+- InventoryUI의 초기화는 VContainer의 IInitializable 경로가 담당한다. Controller는 중복 호출하지 않는다.
+- 유물 그리드 Initialize 코루틴은 기존 RelicUIController의 패널 열기 경로에서 정상 실행한다.
+- 기존 UIManager 스크립트·프리팹과 수동 테스트용 자산은 이번 삭제 대상에 포함하지 않았다.
+
+종료 수명 문제
+- SaveLoadManager는 정상 종료 시 OnApplicationQuit에서 저장하며, OnDestroy에서 새로 Resolve하지 않는다.
+- InventoryPresenter, InventoryUI, ShopUI의 OnDestroy 구독 해제는 이미 보관한 참조만 사용한다.
+- 파괴 순서에 따라 사라진 참조를 다시 Resolve하여 매니저를 재생성하던 경로를 제거했다.
+- RootLifetimeScope의 씬 이벤트는 파괴 시에도 구독을 해제한다.
+
+검증
+- Assets/Editor/Data/ScopeLifecycleVerification.cs, Tools/Nytherion/Scopes/Verify Title and Reentry.
+- 실제 Title → GameScene → Title → GameScene 재진입 및 Boot → Title → GameScene을 검증했다.
+- GameScene 직접 진입도 부모 상속·동일 매니저·로컬 초기화 목록·UI·유물 코루틴 검증을 통과했다.
+- 9개 영속 매니저는 씬을 나갔다 돌아와도 동일 인스턴스를 유지하며 각각 1개다.
+- 씬을 나가면 기존 게임 스코프·InventoryPresenter가 제거되고, 유물 보드를 열면 슬롯 초기화 코루틴이 실행된다.
+- 실제 사용자 저장 경로와 분리한 임시 제품명에서 실행하고 제품명·경로·열린 씬을 복원했다.
+- 결과: output/scope-lifecycle/Title.txt, GameScene.txt, Boot.txt 및 각 *-errors.txt.
+- GameScene 경로는 이후 유물 효과·투사체·저장·드래그·등급 프레임의 통합 회귀 검증도 함께 실행한다.
+- 최종 GameScene 경로의 통합 회귀 및 종료까지 수집한 플레이 오류 검증도 통과했다.
+- 인벤토리 변경 알림, 장비 교환, 정렬, 분해의 기존 격리 검증을 다시 통과했다.
+- Windows64 비개발 Player 스크립트 컴파일(36개 어셈블리)을 통과했다: output/review-player-compile/verification.txt.
+- 에디터 자동 검증의 기존 전제도 현재 구현에 맞췄다. 투사체 시작 애니메이션 완료를 기다리고, 검증용 유물 UI 컨테이너에 오디오 매니저를 등록하며, 스킬 보관함의 기존 전용 배경을 검사한다.
+
+제한
+- 전체 Player 빌드의 기존 Localization 설정 누락은 별도 해결 대상이다.
+- 던전 저장 정책·최적화(R08·R09)는 사용자 요청으로 보류한다.

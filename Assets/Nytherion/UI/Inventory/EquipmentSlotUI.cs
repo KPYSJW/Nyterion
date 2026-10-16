@@ -136,7 +136,7 @@ namespace Nytherion.UI.Inventory
         }
 
         /// <summary>
-        /// 장비 데이터가 변경되었을 때ㅑUI를 갱신
+        /// 장비 데이터가 변경되었을 때 UI를 갱신
         /// </summary>
         private void HandleEquipmentChanged(EquipmentSlotType changedSlotType, EquipmentData newItem, EquipmentData oldItem)
         {
@@ -164,28 +164,21 @@ namespace Nytherion.UI.Inventory
             // 아이템이 인벤토리 슬롯에서 왓는지 확인하고 장비 슬롯에 맞는 타입인지 검사
             if (sourceBaseSlot is InventorySlotUI sourceSlot && CanReceiveItem(sourceSlot.CurrentItem))
             {
-                // 아이템 정보 추출
-                (ItemData itemToEquip, int count) = sourceSlot.GetItemInfo();
-                if (itemToEquip == null) return;
-
-                // 인벤토리에서 제거 후 장착
-                if (inventoryDataManager.RemoveItemFromSlot(sourceSlot.SlotIndex, 1))
-                {
-                    // 기존에 장착된 아이템이 있으면 인벤토리로 반환 
-                    if (!IsEmpty)
-                    {
-                        inventoryDataManager.AddItem(CurrentItem, 1);
-                    }
-                    SetItem(itemToEquip, 1);
-                    DragDropUIHandler.dropHandled = true;
-                }
+                DragDropUIHandler.dropHandled = true;
+                TryEquipFromInventory(sourceSlot);
             }
         }
 
-        public override void SetItem(ItemData newItem, int count = 1)
+        public bool TryEquipFromInventory(InventorySlotUI sourceSlot)
         {
-            base.SetItem(newItem, count);
-            UpdateEquipment(newItem);
+            return sourceSlot != null && equipmentDataManager != null &&
+                equipmentDataManager.TryEquipFromInventory(slotType, sourceSlot.SlotIndex, sourceSlot.CurrentItem as EquipmentData);
+        }
+
+        public bool TryMoveToInventory(InventorySlotUI targetSlot)
+        {
+            return targetSlot != null && equipmentDataManager != null &&
+                equipmentDataManager.TryUnequipToInventory(slotType, CurrentItem as EquipmentData, targetSlot.SlotIndex);
         }
 
         /// <summary>
@@ -208,31 +201,6 @@ namespace Nytherion.UI.Inventory
         }
 
         /// <summary>
-        /// 실제 데이터 매니저에 장비 상태를 업데이트하도록 요청
-        /// </summary>
-        private void UpdateEquipment(ItemData itemToEquip)
-        {
-            if (equipmentDataManager == null)
-            {
-                Debug.LogError("equipmentDataManager가 null");
-                return;
-            }
-
-            EquipmentData equipment = itemToEquip as EquipmentData;
-
-            if (equipment != null)
-            {
-                // 인스턴스 ID가 없으면 고유 ID 부여
-                if (string.IsNullOrEmpty(equipment.instanceId))
-                {
-                    equipment.instanceId = System.Guid.NewGuid().ToString();
-                }
-            }
-
-            equipmentDataManager.SetEquipment(this.slotType, equipment, false);
-        }
-
-        /// <summary>
         /// 현재 장착된 아이템을 해제하고 인벤토리로 반환
         /// </summary>
         private void HandlePointerClick(BaseSlotUI slot, PointerEventData eventData)
@@ -250,30 +218,15 @@ namespace Nytherion.UI.Inventory
                 Debug.Log($"{slotType} 슬롯이 비어있어 해제를 취소");
                 return;
             }
-            Debug.Log($"{slotType} 슬롯 해제 시도 시작");
-
-            bool isAddedToInventory = inventoryDataManager.AddItem(CurrentItem, 1);
-
-            if (isAddedToInventory)
+            if (equipmentDataManager != null &&
+                equipmentDataManager.TryUnequipToInventory(slotType, CurrentItem as EquipmentData))
             {
-                Debug.Log("인벤토리 추가 성공. UI 슬롯을 비운다");
-                ClearSlot();
                 PlayUISound(UISoundType.Place);
             }
             else
             {
-                Debug.LogError("인벤토리 추가 실패");
+                Debug.LogWarning("[EquipmentSlotUI] 빈 인벤토리 슬롯이 없어 장비 해제를 취소했습니다.");
                 PlayUISound(UISoundType.Error);
-            }
-        }
-
-        public override void ClearSlot()
-        {
-            ItemData itemToClear = CurrentItem;
-            base.ClearSlot();
-            if (itemToClear != null)
-            {
-                UpdateEquipment(null);
             }
         }
     }

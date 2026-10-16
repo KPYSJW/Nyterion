@@ -6217,7 +6217,7 @@ MonoBehaviour:
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
   itemUsageManagerPrefab: {fileID: 7984585239593921606, guid: 4d55406ce8a55294dbc5ee1bb0d895af, type: 3}
   inventoryManagerPrefab: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
-  currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
+  currencyManagerPrefab: {fileID: 0}
   relicSystemDebuggerPrefab: {fileID: 3331487929666877543, guid: 394d30e042c9e0f4ea5cdbbf3e518f3d, type: 3}
   followCameraPrefab: {fileID: 1351506084518171216, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
   settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
@@ -8090,7 +8090,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 2017612256}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 0
 --- !u!114 &885889819
 MonoBehaviour:
@@ -9271,6 +9279,7 @@ MonoBehaviour:
   nameText: {fileID: 817842890}
   descriptionText: {fileID: 1041614962}
   itemImage: {fileID: 1687327910}
+  itemImageBackground: {fileID: 0}
 --- !u!114 &1009812007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9621,6 +9630,7 @@ MonoBehaviour:
   rootCanvas: {fileID: 991894734}
   blockStorageParent: {fileID: 1441543700}
   storageSlotPrefab: {fileID: 6419789725286957115, guid: e2ba06097f52a4f4993b965cae2f6be0, type: 3}
+  relicCountText: {fileID: 0}
   levelUpGizmoPrefab: {fileID: 3142902908754315950, guid: 685e10347cd99754bb8dd5043b88cc6f, type: 3}
   levelDownGizmoPrefab: {fileID: 3142902908754315950, guid: c93654ea3214cf34bbbb393124b691ac, type: 3}
   silenceGizmoPrefab: {fileID: 0}
@@ -10023,7 +10033,6 @@ GameObject:
   - component: {fileID: 1152535258}
   - component: {fileID: 1152535257}
   - component: {fileID: 1152535256}
-  - component: {fileID: 1152535255}
   m_Layer: 5
   m_Name: TestInventoryPanel
   m_TagString: Untagged
@@ -10062,34 +10071,6 @@ RectTransform:
   m_AnchoredPosition: {x: 75, y: 0}
   m_SizeDelta: {x: 150, y: 578}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1152535255
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1152535253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3f0ccb3f83c93e40acc226e052b22bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testItem1: {fileID: 11400000, guid: 8bd67bbb3a5e03c48bf1fdfea8048989, type: 2}
-  testItem2: {fileID: 11400000, guid: ce56e5e4941c62146a09bd3ed905537f, type: 2}
-  testWeapon: {fileID: 11400000, guid: 2878006638567b147a17a1d8b2c1285e, type: 2}
-  addItem1Button: {fileID: 59929218}
-  addItem2Button: {fileID: 336339722}
-  addItem3Button: {fileID: 2077170650}
-  removeItem1Button: {fileID: 647756217}
-  clearInventoryButton: {fileID: 1763693252}
-  saveButton: {fileID: 1131780899}
-  loadButton: {fileID: 1639417822}
-  clearSaveButton: {fileID: 2050821492}
-  debugSaveDataButton: {fileID: 1296884128}
-  debugItemTableButton: {fileID: 1827274854}
-  debugCurrentInventoryButton: {fileID: 1966531506}
-  statusText: {fileID: 178048776}
-  messageDuration: 2
 --- !u!114 &1152535256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10994,24 +10975,28 @@ MonoBehaviour:
   equipmentPanel: {fileID: 1815426203}
   statsPanel: {fileID: 710009862}
   inventoryCloseButton: {fileID: 83059471}
+  inventorySortButton: {fileID: 0}
+  inventoryDismantleButton: {fileID: 0}
+  dismantlePanel: {fileID: 0}
   masterSlider: {fileID: 86255024}
   bgmSlider: {fileID: 1271392899}
   sfxSlider: {fileID: 254147706}
   fullscreenToggle: {fileID: 155500682}
   resolutionDropdown: {fileID: 362752912}
+  languageDropdown: {fileID: 0}
   shopUIPrefab: {fileID: 6172483716451235044, guid: 64f76ba40056f374d8a12a54fa013056, type: 3}
   shopCanvasGroup: {fileID: 106828223}
-  shopSlotParent: {fileID: 1979839556}
-  shopSlotPrefab: {fileID: 6342647029431398638, guid: a837b6b876a9ddc4a9b50e0beca1626a, type: 3}
+  shopSlots: []
   shopCloseButton: {fileID: 1015615506}
   shopPlayerGoldText: {fileID: 97213116}
   shopPlayerInventoryParent: {fileID: 1751922873}
-  sellSlotUI: {fileID: 2070626695}
-  shopBuyTabButton: {fileID: 0}
-  shopBuybackTabButton: {fileID: 0}
   shopEmptyStateUI: {fileID: 0}
   shopBuyPopupUI: {fileID: 0}
   shopSellPopupUI: {fileID: 0}
+  shopRerollButton: {fileID: 0}
+  shopRerollCostText: {fileID: 0}
+  shopAdvancedRerollButton: {fileID: 0}
+  shopAdvancedRerollCostText: {fileID: 0}
   menuCanvasGroup: {fileID: 262096834}
   menuMainPanel: {fileID: 412291301}
   menuResumeButton: {fileID: 2071977788}
@@ -11021,6 +11006,10 @@ MonoBehaviour:
   menuControlsPanel: {fileID: 1584552901}
   menuMainMenuButton: {fileID: 385159297}
   relicCanvasGroup: {fileID: 991894735}
+  relicSetEffectStatusPanel: {fileID: 0}
+  relicTranscendenceEffectStatusPanel: {fileID: 0}
+  relicEffectStatusEntryPrefab: {fileID: 0}
+  relicTranscendenceEffectStatusEntryPrefab: {fileID: 0}
   worldmapController: {fileID: 214497320}
   minimapTileGenerator: {fileID: 337788158}
   currencyDisplays:
@@ -11029,6 +11018,7 @@ MonoBehaviour:
   ProgressionMainPanel: {fileID: 0}
   ProgressionTitleText: {fileID: 0}
   ProgressionSlotParent: {fileID: 0}
+  skillTooltip: {fileID: 0}
   SkillMainPanel: {fileID: 0}
   storageContent: {fileID: 0}
   storageDropArea: {fileID: 0}
@@ -11560,6 +11550,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 1260613761}
   nameText: {fileID: 221284349}
+  levelText: {fileID: 0}
+  setText: {fileID: 0}
+  setBadgeBackground: {fileID: 0}
+  setBadgeContainer: {fileID: 0}
   descriptionText: {fileID: 935917467}
   influenceCells:
   - {fileID: 1457979645}
@@ -11828,7 +11822,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1533540142}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 3
 --- !u!114 &1280793620
 MonoBehaviour:
@@ -11920,7 +11922,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 339428844}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 2
 --- !u!114 &1282804017
 MonoBehaviour:
@@ -13975,7 +13985,6 @@ GameObject:
   - component: {fileID: 1575114022}
   - component: {fileID: 1575114025}
   - component: {fileID: 1575114024}
-  - component: {fileID: 1575114023}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -14002,34 +14011,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1575114023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1575114021}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3f0ccb3f83c93e40acc226e052b22bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testItem1: {fileID: 11400000, guid: 8bd67bbb3a5e03c48bf1fdfea8048989, type: 2}
-  testItem2: {fileID: 11400000, guid: ce56e5e4941c62146a09bd3ed905537f, type: 2}
-  testWeapon: {fileID: 0}
-  addItem1Button: {fileID: 59929218}
-  addItem2Button: {fileID: 336339722}
-  addItem3Button: {fileID: 2077170650}
-  removeItem1Button: {fileID: 647756217}
-  clearInventoryButton: {fileID: 1763693252}
-  saveButton: {fileID: 1131780899}
-  loadButton: {fileID: 1639417822}
-  clearSaveButton: {fileID: 2050821492}
-  debugSaveDataButton: {fileID: 0}
-  debugItemTableButton: {fileID: 0}
-  debugCurrentInventoryButton: {fileID: 0}
-  statusText: {fileID: 178048776}
-  messageDuration: 2
 --- !u!114 &1575114024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17194,7 +17175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e93e3382e4beb6f49a4e5b145e47e6a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hpSlider: {fileID: 1821009061}
+  hpFillImage: {fileID: 0}
   hpText: {fileID: 1419325772}
 --- !u!1 &1885568657
 GameObject:
@@ -19020,17 +19001,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3105964096157326149, guid: 819391e7ef2372c4f987fd864182a082, type: 3}
   m_PrefabInstance: {fileID: 2070626693}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2070626695 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -3426222900903197820, guid: 819391e7ef2372c4f987fd864182a082, type: 3}
-  m_PrefabInstance: {fileID: 2070626693}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2365d712b7b83244a957f2df3698fa3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2071977786
 GameObject:
   m_ObjectHideFlags: 0
@@ -19533,7 +19503,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 42816614}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 4
 --- !u!114 &2119041637
 MonoBehaviour:
@@ -19625,7 +19603,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1531550207}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 1
 --- !u!114 &2124228425
 MonoBehaviour:

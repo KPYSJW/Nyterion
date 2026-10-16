@@ -23,6 +23,7 @@ namespace Nytherion.Core.Managers
         private Dictionary<string, Transform> poolRoots;
         private Dictionary<string, Transform> categoryRoots;
         private Dictionary<GameObject, string> instancePoolTags;
+        private Dictionary<string, Pool> poolConfigurations;
 
         private IObjectResolver container;
 
@@ -53,6 +54,7 @@ namespace Nytherion.Core.Managers
             poolRoots = new Dictionary<string, Transform>();
             categoryRoots = new Dictionary<string, Transform>();
             instancePoolTags = new Dictionary<GameObject, string>();
+            poolConfigurations = new Dictionary<string, Pool>();
 
             if (pools == null)
             {
@@ -131,11 +133,14 @@ namespace Nytherion.Core.Managers
                 objectPool.Enqueue(obj);
             }
 
-            // 중복 추가 방지
-            if (!pools.Exists(p => p.tag == tag))
+            // 설정 목록은 풀 생성 시 한 번만 찾고, 생성·확장 시에는 태그로 바로 조회한다.
+            Pool configuration = pools.Find(p => p.tag == tag);
+            if (configuration == null)
             {
-                pools.Add(new Pool { tag = tag, prefab = prefab, size = size });
+                configuration = new Pool { tag = tag, prefab = prefab, size = size };
+                pools.Add(configuration);
             }
+            poolConfigurations.Add(tag, configuration);
             
             poolDictionary.Add(tag, objectPool);
         }
@@ -147,20 +152,20 @@ namespace Nytherion.Core.Managers
                 Initialize();
             }
 
-            if (!poolDictionary.ContainsKey(tag))
+            if (!poolDictionary.TryGetValue(tag, out Queue<GameObject> queue))
             {
                 Debug.LogWarning($"Pool with tag '{tag}' doesn't exist.");
                 return null;
             }
 
-            Pool pool = pools.Find(p => p.tag == tag);
+            poolConfigurations.TryGetValue(tag, out Pool pool);
             Vector3 originalScale = Vector3.one;
             if (pool != null && pool.prefab != null)
             {
                 originalScale = pool.prefab.transform.localScale;
             }
 
-            if (poolDictionary[tag].Count == 0)
+            if (queue.Count == 0)
             {
                 if (pool != null && pool.prefab != null)
                 {
@@ -181,7 +186,7 @@ namespace Nytherion.Core.Managers
                 return null;
             }
 
-            GameObject obj = poolDictionary[tag].Dequeue();
+            GameObject obj = queue.Dequeue();
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             obj.transform.localScale = originalScale;

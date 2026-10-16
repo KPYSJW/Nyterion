@@ -666,7 +666,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 646093295}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 3
 --- !u!1 &214872912
 GameObject:
@@ -1815,7 +1823,6 @@ GameObject:
   - component: {fileID: 361151590}
   - component: {fileID: 361151593}
   - component: {fileID: 361151592}
-  - component: {fileID: 361151591}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1842,34 +1849,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &361151591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 361151589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3f0ccb3f83c93e40acc226e052b22bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testItem1: {fileID: 11400000, guid: 8bd67bbb3a5e03c48bf1fdfea8048989, type: 2}
-  testItem2: {fileID: 11400000, guid: ce56e5e4941c62146a09bd3ed905537f, type: 2}
-  testWeapon: {fileID: 0}
-  addItem1Button: {fileID: 986719510}
-  addItem2Button: {fileID: 925758780}
-  addItem3Button: {fileID: 2126453084}
-  removeItem1Button: {fileID: 398637549}
-  clearInventoryButton: {fileID: 931614446}
-  saveButton: {fileID: 870269072}
-  loadButton: {fileID: 1927511802}
-  clearSaveButton: {fileID: 954201724}
-  debugSaveDataButton: {fileID: 0}
-  debugItemTableButton: {fileID: 0}
-  debugCurrentInventoryButton: {fileID: 0}
-  statusText: {fileID: 1438264543}
-  messageDuration: 2
 --- !u!114 &361151592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3205,7 +3184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81f599e74a26e814faf5f829779fcb0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keys: 31000000320000003300000034000000350000003600000037000000380000003900000030000000
 --- !u!4 &545297293
 Transform:
   m_ObjectHideFlags: 0
@@ -4237,6 +4215,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlledCanvasGroup: {fileID: 0}
+  playOpenSound: 0
+  closeSoundOverride: {fileID: 0}
   OnPanelOpened:
     m_PersistentCalls:
       m_Calls: []
@@ -6225,7 +6205,6 @@ GameObject:
   - component: {fileID: 985033009}
   - component: {fileID: 985033008}
   - component: {fileID: 985033007}
-  - component: {fileID: 985033010}
   m_Layer: 5
   m_Name: TestInventoryPanel
   m_TagString: Untagged
@@ -6328,34 +6307,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 985033005}
   m_CullTransparentMesh: 1
---- !u!114 &985033010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 985033005}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3f0ccb3f83c93e40acc226e052b22bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testItem1: {fileID: 11400000, guid: 8bd67bbb3a5e03c48bf1fdfea8048989, type: 2}
-  testItem2: {fileID: 11400000, guid: ce56e5e4941c62146a09bd3ed905537f, type: 2}
-  testWeapon: {fileID: 11400000, guid: 2878006638567b147a17a1d8b2c1285e, type: 2}
-  addItem1Button: {fileID: 986719510}
-  addItem2Button: {fileID: 925758780}
-  addItem3Button: {fileID: 2126453084}
-  removeItem1Button: {fileID: 398637549}
-  clearInventoryButton: {fileID: 931614446}
-  saveButton: {fileID: 870269072}
-  loadButton: {fileID: 1927511802}
-  clearSaveButton: {fileID: 954201724}
-  debugSaveDataButton: {fileID: 590164655}
-  debugItemTableButton: {fileID: 842335337}
-  debugCurrentInventoryButton: {fileID: 1867770478}
-  statusText: {fileID: 1438264543}
-  messageDuration: 2
 --- !u!1 &986719509
 GameObject:
   m_ObjectHideFlags: 0
@@ -7159,6 +7110,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlledCanvasGroup: {fileID: 0}
+  playOpenSound: 0
+  closeSoundOverride: {fileID: 0}
   OnPanelOpened:
     m_PersistentCalls:
       m_Calls: []
@@ -7687,7 +7640,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 334940062}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 4
 --- !u!1 &1120365806
 GameObject:
@@ -9225,6 +9186,7 @@ MonoBehaviour:
   nameText: {fileID: 1148025799}
   descriptionText: {fileID: 1578048623}
   itemImage: {fileID: 69962414}
+  itemImageBackground: {fileID: 0}
 --- !u!1 &1338273092
 GameObject:
   m_ObjectHideFlags: 0
@@ -9404,6 +9366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoInitializeOnAwake: 0
+  relicUIToggleKey: 35
 --- !u!224 &1366862288 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3105964096157326149, guid: 91520e8127259d14fa16a318b4013704, type: 3}
@@ -12840,7 +12803,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1869006652}
-  - component: {fileID: 1869006651}
   m_Layer: 0
   m_Name: CurrencyManager
   m_TagString: Untagged
@@ -12848,18 +12810,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1869006651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1869006650}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5726ca6e982eee3449f4ec1fd08bd575, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1869006652
 Transform:
   m_ObjectHideFlags: 0
@@ -13074,7 +13024,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 568426264}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 2
 --- !u!1 &1927511801
 GameObject:
@@ -13740,7 +13698,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1137657499}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 1
 --- !u!1 &2012032537
 GameObject:
@@ -14071,7 +14037,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1065531337}
+  iconSlotScale: 1.3
   countText: {fileID: 0}
+  slotBackgroundImage: {fileID: 0}
+  defaultSlotSprite: {fileID: 0}
+  commonSlotSprite: {fileID: 0}
+  uncommonSlotSprite: {fileID: 0}
+  rareSlotSprite: {fileID: 0}
+  epicSlotSprite: {fileID: 0}
+  legendarySlotSprite: {fileID: 0}
   slotType: 0
 --- !u!1 &2042787340
 GameObject:

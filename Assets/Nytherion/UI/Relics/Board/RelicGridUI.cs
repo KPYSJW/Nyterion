@@ -241,8 +241,10 @@ namespace Nytherion.UI.RelicBoard
         private void ClearAllVisuals()
         {
             foreach (Transform child in placedBlocksContainer) RetireVisual(child.gameObject);
+            foreach (RelicSlotCell cell in slotCells) cell?.ClearCell();
             foreach (GameObject slot in storageSlots)
             {
+                slot.GetComponent<RelicSlotVisual>()?.SetRarity(null);
                 foreach (RelicBlockDraggable draggable in slot.GetComponentsInChildren<RelicBlockDraggable>())
                     RetireVisual(draggable.gameObject);
                 Image icon = slot.transform.Find("Icon")?.GetComponent<Image>();
@@ -306,7 +308,7 @@ namespace Nytherion.UI.RelicBoard
 
         private void CreateBlockInStorage(RelicBlock blockData, GameObject slotObj)
         {
-
+            slotObj.GetComponent<RelicSlotVisual>()?.SetRarity(blockData.SourceData.rarity);
             try
             {
                 GameObject blockObj = container.Instantiate(draggableBlockPrefab, slotObj.transform);
@@ -333,6 +335,7 @@ namespace Nytherion.UI.RelicBoard
 
         private void CreateBlockOnGrid(RelicBlock blockData, Vector2Int position)
         {
+            slotCells[position.y, position.x]?.SetRarity(blockData.SourceData.rarity);
             GameObject blockObj = container.Instantiate(draggableBlockPrefab, placedBlocksContainer);
             RelicBlockDraggable draggable = blockObj.GetComponent<RelicBlockDraggable>();
 

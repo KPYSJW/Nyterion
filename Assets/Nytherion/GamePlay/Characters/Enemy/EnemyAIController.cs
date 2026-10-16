@@ -29,6 +29,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private IEnemyCombatBehavior combatBehavior;
 
         private bool movementAllowed = true;
+        private bool isUpdatingState;
+        private bool hasPendingDestination;
+        private Vector3 pendingDestination;
 
         private EnemyBaseState currentState;
         public EnemyIdleState idleState;
@@ -86,14 +89,38 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void Update()
         {
-            currentState.UpdateState(this);
-
-            if (hasForcedDestination)
+            isUpdatingState = true;
+            try
             {
-                TryMoveToForcedDestination();
+                currentState?.UpdateState(this);
+
+                // 상태 로직에서 여러 번 요청해도 강제 목적지를 우선해 한 번만 이동한다.
+                if (hasForcedDestination) TryMoveToForcedDestination();
+            }
+            finally
+            {
+                isUpdatingState = false;
             }
 
+            if (hasPendingDestination && movementAllowed)
+                movementBehavior?.MoveTowards(pendingDestination);
+            hasPendingDestination = false;
             UpdateDirection();
+        }
+
+        private void RequestMovement(Vector3 destination)
+        {
+            if (isUpdatingState)
+            {
+                pendingDestination = destination;
+                hasPendingDestination = true;
+            }
+            else
+            {
+                // 상태 갱신 밖에서 호출하는 기존 API는 즉시 적용한다.
+                movementBehavior.MoveTowards(destination);
+                UpdateDirection();
+            }
         }
 
         public void TransitionToState(EnemyBaseState newState)
@@ -120,7 +147,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (!movementAllowed || !hasForcedDestination || movementBehavior == null)
                 return false;
 
-            movementBehavior.MoveTowards(forcedDestination);
+            RequestMovement(forcedDestination);
             return true;
         }
         public void SetForcedFacingDirection(Vector2 direction)
@@ -172,9 +199,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 ? forcedDestination
                 : player.position;
 
-            movementBehavior.MoveTowards(destination);
-
-            UpdateDirection();
+            RequestMovement(destination);
         }
 
         public void MoveToTarget(Vector2 targetPosition)
@@ -182,9 +207,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (!movementAllowed) return;
             if (movementBehavior == null) return;
 
-            movementBehavior.MoveTowards(targetPosition);
-
-            UpdateDirection();
+            RequestMovement(targetPosition);
         }
 
         public float GetDistanceToPlayer()
@@ -206,9 +229,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             direction.Normalize();
             Vector2 target = (Vector2)transform.position + direction * distance;
 
-            movementBehavior.MoveTowards(target);
-
-            UpdateDirection();
+            RequestMovement(target);
         }
 
         
@@ -332,6 +353,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void StopMovement()
         {
+            hasPendingDestination = false;
             movementBehavior?.StopMovement();
         }
 

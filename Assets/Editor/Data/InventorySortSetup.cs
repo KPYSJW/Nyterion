@@ -342,7 +342,9 @@ namespace Nytherion.Editor
                     slotObject.AddComponent<InventorySlotUI>().Initialize(i);
                 }
                 InventoryUI ui = root.AddComponent<InventoryUI>();
-                ui.Construct(resolver, refs, null);
+                var presenter = root.AddComponent<Nytherion.UI.Presenters.InventoryPresenter>();
+                presenter.Construct(resolver, refs, null);
+                ui.Construct(resolver, refs);
                 ui.Initialize();
                 ui.Open(false);
                 button.onClick.Invoke();

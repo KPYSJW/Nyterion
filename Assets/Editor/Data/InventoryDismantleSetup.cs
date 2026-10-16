@@ -100,6 +100,12 @@ namespace Nytherion.Editor
                 catch (Exception error) { File.WriteAllText(Output + "/verification.txt", "FAIL " + error); }
                 return;
             }
+            if (File.Exists(Output + "/ui-verify.request"))
+            {
+                File.Delete(Output + "/ui-verify.request");
+                VerifyUIOnly();
+                return;
+            }
             if (!File.Exists(Output + "/setup.request")) return;
             File.Delete(Output + "/setup.request");
             try { Apply(); File.WriteAllText(Output + "/result.txt", "PASS 씬 설정과 분해 데이터/UI 검증 완료"); }
@@ -427,6 +433,29 @@ namespace Nytherion.Editor
             File.WriteAllLines(Output + "/verification.txt", report);
         }
 
+        [MenuItem("Tools/Nytherion/Inventory/Verify Dismantle UI")]
+        public static void VerifyUIOnly()
+        {
+            Directory.CreateDirectory(Output);
+            const string path = "Assets/Scenes/GameScene.unity";
+            Scene scene = SceneManager.GetSceneByPath(path);
+            bool alreadyOpen = scene.IsValid() && scene.isLoaded;
+            try
+            {
+                if (!alreadyOpen) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                GameSceneUIRefs refs = scene.GetRootGameObjects().SelectMany(root =>
+                    root.GetComponentsInChildren<GameSceneUIRefs>(true)).First();
+                VerifyUI(refs, EditorSceneManager.NewPreviewScene());
+                File.WriteAllText(Output + "/ui-verification.txt", "PASS 격리 UI의 초기화·버튼 토글·우클릭/드롭·예약/복귀·보상 지급. 원본 씬과 소지품 미수정.");
+            }
+            catch (Exception error)
+            {
+                File.WriteAllText(Output + "/ui-verification.txt", "FAIL " + error);
+                Debug.LogException(error);
+            }
+            finally { if (!alreadyOpen && scene.IsValid() && scene.isLoaded) EditorSceneManager.CloseScene(scene, true); }
+        }
+
         private static void VerifyUI(GameSceneUIRefs source, Scene? preview)
         {
             GameObject root = Object.Instantiate(source.InventoryCanvasGroup.gameObject);
@@ -462,7 +491,9 @@ namespace Nytherion.Editor
                     slot.Initialize(i); sourceSlots.Add(slot);
                 }
                 InventoryUI ui = root.AddComponent<InventoryUI>();
-                ui.Construct(resolver, refs, null);
+                var presenter = root.AddComponent<Nytherion.UI.Presenters.InventoryPresenter>();
+                presenter.Construct(resolver, refs, null);
+                ui.Construct(resolver, refs);
                 ui.Initialize(); ui.Initialize(); ui.Open(false);
                 foreach (var slot in sourceSlots) { slot.Construct(null, null, inventory, null, null); slot.BindInventoryUI(ui); }
                 refs.EquipmentPanel.SetActive(true); refs.StatsPanel.SetActive(true);

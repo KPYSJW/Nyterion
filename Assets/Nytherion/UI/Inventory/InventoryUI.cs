@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Managers;
-using Nytherion.Core.Interfaces;
 using Nytherion.UI.Components;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Presenters;
-using System.Linq;
 using VContainer;
 using VContainer.Unity;
 
@@ -21,10 +18,8 @@ namespace Nytherion.UI.Controllers
         [SerializeField] private InputActionReference toggleInventoryAction;
         [SerializeField] private GameSceneUIRefs gameSceneuiRefs;
 
-        [Header("UI References")]
-        private List<InventorySlotUI> slotPool = new List<InventorySlotUI>();
-        private bool isSlotPoolInitialized = false;
         private bool isInitialized;
+        public bool IsInitialized => isInitialized;
         protected override bool UsesBookOpenSound => true;
 
         public event Action<bool> OnInventoryToggled;
@@ -35,7 +30,6 @@ namespace Nytherion.UI.Controllers
         private ShopManager shopManager;
         private GameObject equipmentPanel;
         private GameObject statsPanel;
-        private Transform inventorySlotParent;
         private Button closeButton;
         private Button sortButton;
         private Button dismantleButton;
@@ -43,19 +37,15 @@ namespace Nytherion.UI.Controllers
         public bool IsDismantleOpen => dismantlePanel != null && dismantlePanel.IsOpen;
         private InventoryPresenter inventoryPresenter;
         private IObjectResolver container;
-        private ObjectPoolManager objectPoolManager;
 
         [Inject]
         public void Construct(IObjectResolver container,
-            GameSceneUIRefs gameSceneuiRefs,
-            ObjectPoolManager objectPoolManager)
+            GameSceneUIRefs gameSceneuiRefs)
         {
             this.container = container;
             this.gameSceneuiRefs = gameSceneuiRefs;
-            this.objectPoolManager = objectPoolManager;
             this.equipmentPanel = gameSceneuiRefs.EquipmentPanel;
             this.statsPanel = gameSceneuiRefs.StatsPanel;
-            this.inventorySlotParent = gameSceneuiRefs.InventorySlotParent;
             this.closeButton = gameSceneuiRefs.InventoryCloseButton;
             this.sortButton = gameSceneuiRefs.InventorySortButton;
             this.dismantleButton = gameSceneuiRefs.InventoryDismantleButton;
@@ -113,25 +103,19 @@ namespace Nytherion.UI.Controllers
             }
             return shopManager;
         }
-        protected override void Awake()
-        {
-            base.Awake();
-
-            inventoryPresenter?.Initialize();
-        }
-
-        private void Start()
-        {
-            InitializeSlotPool();
-        }
-
         public void Initialize()
         {
-            // VContainer와 GameSceneUIManager가 모두 초기화해도 이벤트는 한 번만 연결한다.
+            // 수동 검증 등에서 다시 호출해도 이벤트는 한 번만 연결한다.
             if (isInitialized) return;
-            isInitialized = true;
-            
             FindUIElements();
+            if (inventoryPresenter == null)
+            {
+                Debug.LogError("[InventoryUI] InventoryPresenter가 등록되지 않았습니다.");
+                return;
+            }
+            inventoryPresenter.Initialize();
+            if (!inventoryPresenter.IsInitialized) return;
+            isInitialized = true;
             if (dismantlePanel != null)
                 dismantlePanel.Initialize(GetInventoryDataManager(), container.Resolve<CurrencyDataManager>(),
                     equipmentPanel, statsPanel, audioManager);
@@ -144,16 +128,6 @@ namespace Nytherion.UI.Controllers
             else
             {
                 Debug.LogWarning("[InventoryUI] closeButton이 null입니다.");
-            }
-
-            InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
-            if (inventoryDataMgr != null)
-            {
-                inventoryDataMgr.OnDataChanged += OnInventoryDataChanged;
-            }
-            else
-            {
-                Debug.LogError("[InventoryUI] InventoryDataManager를 찾을 수 없습니다!");
             }
 
             if (sortButton != null)
@@ -179,9 +153,6 @@ namespace Nytherion.UI.Controllers
                 Debug.LogWarning("[InventoryUI] EventManager를 찾을 수 없습니다.");
             }
 
-            inventoryPresenter?.Initialize();
-            InitializeSlotPool();
-
             Close();
         }
 
@@ -191,50 +162,12 @@ namespace Nytherion.UI.Controllers
             if (closeButton == null)
                 closeButton = GetComponentInChildren<Button>();
             
-            if (inventorySlotParent == null)
-            {
-                var slotParentGO = transform.Find("InventorySlotParent");
-                if (slotParentGO != null)
-                    inventorySlotParent = slotParentGO;
-            }
-
             if (inventoryPresenter == null)
-                inventoryPresenter = GetComponentInChildren<InventoryPresenter>();
-        }
-
-        private void InitializeSlotPool()
-        {
-            if (isSlotPoolInitialized)
             {
-                return;
+                if (container != null) container.TryResolve(out inventoryPresenter);
+                if (inventoryPresenter == null)
+                    inventoryPresenter = GetComponentInChildren<InventoryPresenter>(true);
             }
-
-            if (inventorySlotParent == null)
-            {
-                return;
-            }
-
-            // 기존 슬롯들 먼저 찾기 (Presenter가 생성한 슬롯 포함)
-            slotPool = inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true).ToList();
-
-            if (slotPool.Count == 0)
-            {
-                // 아직 슬롯이 생성되지 않았을 수 있음
-                return;
-            }
-
-            // 슬롯 초기화
-            for (int i = 0; i < slotPool.Count; i++)
-            {
-                slotPool[i].Initialize(i);
-            }
-            
-            isSlotPoolInitialized = true;
-        }
-
-        private void OnInventoryDataChanged(InventoryChangeData changeData)
-        {
-            RefreshUI();
         }
 
         private void SortInventory()
@@ -251,36 +184,6 @@ namespace Nytherion.UI.Controllers
         public bool TryStageForDismantle(InventorySlotUI slot)
         {
             return IsOpen && IsDismantleOpen && dismantlePanel.TryAdd(slot);
-        }
-
-        private void CreateSlotsFromPrefab()
-        {
-            /* InventoryPresenter에서 슬롯 생성을 담당하므로 여기서는 생성을 건너뜁니다.
-            InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
-            int slotCount = inventoryDataMgr?.MaxSlotCount ?? 24;
-            
-            GameObject prefab = gameSceneuiRefs.InventorySlotPrefab;
-
-            slotPool = new List<InventorySlotUI>();
-            
-            for (int i = 0; i < slotCount; i++)
-            {
-                // 오브젝트 풀에서 슬롯 가져오기
-                GameObject slotObj = objectPoolManager.SpawnFromPool(prefab, Vector3.zero, Quaternion.identity);
-                slotObj.transform.SetParent(inventorySlotParent, false);
-                slotObj.name = $"InventorySlot_{i}";
-                
-                InventorySlotUI slotUI = slotObj.GetComponent<InventorySlotUI>();
-                if (slotUI != null)
-                {
-                    slotPool.Add(slotUI);
-                }
-                else
-                {
-                    Debug.LogWarning($"[InventoryUI] 슬롯 {i}에 InventorySlotUI 컴포넌트가 없습니다!");
-                }
-            }
-            */
         }
 
         private void OnToggleAction(InputAction.CallbackContext context)
@@ -329,26 +232,7 @@ namespace Nytherion.UI.Controllers
 
         public void RefreshUI()
         {
-            InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
-            if (slotPool == null || inventoryDataMgr == null)
-            {
-                Debug.LogWarning($"[InventoryUI] RefreshUI 실패 - slotPool: {slotPool?.Count ?? 0}, inventoryDataMgr: {inventoryDataMgr?.GetType().Name ?? "null"}");
-                return;
-            }
-
-            for (int i = 0; i < slotPool.Count; i++)
-            {
-                if (i < inventoryDataMgr.MaxSlotCount)
-                {
-                    var (item, count) = inventoryDataMgr.GetSlot(i);
-                    slotPool[i].SetItem(item, count);
-                }
-                else
-                {
-                    slotPool[i].ClearSlot();
-                    slotPool[i].gameObject.SetActive(false);
-                }
-            }
+            inventoryPresenter?.RefreshUI();
         }
 
         private void OnDestroy()
@@ -359,17 +243,10 @@ namespace Nytherion.UI.Controllers
             if (closeButton != null) closeButton.onClick.RemoveListener(Close);
 
             // 이벤트 구독 해제
-            InventoryDataManager inventoryDataMgr = GetInventoryDataManager();
-            if (inventoryDataMgr != null)
+            if (eventManager != null)
             {
-                inventoryDataMgr.OnDataChanged -= OnInventoryDataChanged;
-            }
-
-            EventManager eventMgr = GetEventManager();
-            if (eventMgr != null)
-            {
-                eventMgr.OnOpenInventoryForShop -= OpenForShop;
-                eventMgr.OnCloseInventoryForShop -= Close;
+                eventManager.OnOpenInventoryForShop -= OpenForShop;
+                eventManager.OnCloseInventoryForShop -= Close;
             }
 
             if (toggleInventoryAction != null && toggleInventoryAction.action != null)

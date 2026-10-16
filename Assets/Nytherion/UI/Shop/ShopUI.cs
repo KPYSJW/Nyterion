@@ -31,10 +31,6 @@ namespace Nytherion.UI.Controllers
         private Button shopAdvancedRerollButton;
         private TextMeshProUGUI shopAdvancedRerollCostText;
 
-        [Header("Player Inventory Display")]
-        private Transform inventorySlotParent;
-        private List<InventorySlotUI> inventorySlots;
-
         private ShopData currentShopData;
         private const float SELL_PRICE_RATIO = 0.7f;
         private InventoryDataManager inventoryDataManager;
@@ -65,7 +61,6 @@ namespace Nytherion.UI.Controllers
             this.closeButton = gameSceneuiRefs.ShopCloseButton;
             this.goldText = gameSceneuiRefs.ShopPlayerGoldText;
             this.shopSlots = gameSceneuiRefs.ShopSlots;
-            this.inventorySlotParent = gameSceneuiRefs.InventorySlotParent;
             this.controlledCanvasGroup = gameSceneuiRefs.ShopCanvasGroup;
             this.emptyStateUI = gameSceneuiRefs.ShopEmptyStateUI;
             this.buyPopupUI = gameSceneuiRefs.ShopBuyPopupUI;
@@ -202,22 +197,11 @@ namespace Nytherion.UI.Controllers
                 currencyMgr.OnDataChanged += OnCurrencyDataChanged;
             }
 
-            InventoryDataManager inventoryMgr = GetInventoryDataManager();
-            if (inventoryMgr != null)
-            {
-                inventoryMgr.OnDataChanged += OnInventoryDataChanged;
-            }
-
             EventManager eventMgr = GetEventManager();
             if (eventMgr != null)
             {
                 eventMgr.OnInteraction += HandleInteraction;
             }
-            if (inventorySlotParent != null)
-            {
-                inventorySlots = new List<InventorySlotUI>(inventorySlotParent.GetComponentsInChildren<InventorySlotUI>(true));
-            }
-
             Close();
         }
 
@@ -506,30 +490,6 @@ namespace Nytherion.UI.Controllers
             }
         }
 
-        private void RefreshPlayerInventoryUI()
-        {
-            if (!IsOpen || inventorySlots == null) return;
-
-            InventoryDataManager inventoryMgr = GetInventoryDataManager();
-            if (inventoryMgr == null) return;
-
-            var items = inventoryMgr.GetAllItems();
-            int i = 0;
-            foreach (var itemEntry in items)
-            {
-                if (i >= inventorySlots.Count) break;
-                if (inventorySlots[i] != null && itemEntry.item != null)
-                {
-                    inventorySlots[i].SetItem(itemEntry.item, itemEntry.count);
-                }
-                i++;
-            }
-            for (; i < inventorySlots.Count; i++)
-            {
-                if (inventorySlots[i] != null) inventorySlots[i].ClearSlot();
-            }
-        }
-
         private void UpdateCurrencyUI(CurrencyType type, int amount)
         {
             if (type == CurrencyType.Gold && goldText != null)
@@ -544,26 +504,15 @@ namespace Nytherion.UI.Controllers
             UpdateCurrencyUI(changeData.currencyType, changeData.newAmount);
         }
 
-        private void OnInventoryDataChanged(InventoryChangeData changeData)
-        {
-            RefreshPlayerInventoryUI();
-        }
-
         private void OnDestroy()
         {
             LocalizationText.LanguageChanged -= OnLanguageChanged;
 
-            CurrencyDataManager currencyMgr = GetCurrencyDataManager();
-            if (currencyMgr != null)
+            if (currencyDataManager != null)
             {
-                currencyMgr.OnDataChanged -= OnCurrencyDataChanged;
+                currencyDataManager.OnDataChanged -= OnCurrencyDataChanged;
             }
 
-            InventoryDataManager inventoryMgr = GetInventoryDataManager();
-            if (inventoryMgr != null)
-            {
-                inventoryMgr.OnDataChanged -= OnInventoryDataChanged;
-            }
         }
 
         private void OnLanguageChanged()
@@ -574,7 +523,6 @@ namespace Nytherion.UI.Controllers
             }
 
             RefreshShopUI();
-            RefreshPlayerInventoryUI();
         }
         private void RefreshShopUI()
         {

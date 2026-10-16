@@ -161,4 +161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b5cca8edd40c94aa7519a807b72eb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemData: {fileID: 11400000, guid: 0065191d61e19d34984b1c60a33329a9, type: 2}
+  itemData: {fileID: 0}
+  goldAmount: 0
+  pickupType: 0

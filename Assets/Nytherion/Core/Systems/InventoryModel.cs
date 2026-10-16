@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Nytherion.Core.Enums;
+using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Items;
 
 namespace Nytherion.Core.Systems
@@ -12,7 +13,27 @@ namespace Nytherion.Core.Systems
     public class InventoryModel
     {
         /// <summary> 인벤토리 데이터가 변경될 때마다 호출/// </summary>
-        public event Action OnInventoryUpdated;
+        public event Action<InventoryChangeData> OnInventoryUpdated;
+
+        private void NotifySlotChanged(int slotIndex, InventoryChangeType changeType, string itemId)
+        {
+            OnInventoryUpdated?.Invoke(new InventoryChangeData
+            {
+                slotIndex = slotIndex,
+                itemId = itemId,
+                newCount = GetItemAt(slotIndex).count,
+                changeType = changeType
+            });
+        }
+
+        private void NotifyAllSlotsChanged()
+        {
+            OnInventoryUpdated?.Invoke(new InventoryChangeData
+            {
+                slotIndex = -1,
+                changeType = InventoryChangeType.InventoryLoaded
+            });
+        }
 
         // 아이템 데이터와 수량을 쌍으로 가지는 배열로 인벤토리 슬롯을 관리
         private (ItemData item, int count)[] slots;
@@ -32,7 +53,7 @@ namespace Nytherion.Core.Systems
             if (!(slot.item is EquipmentData) || slot.item != expectedItem || slot.count != 1 || IsDismantleReserved(index))
                 return false;
             dismantleSlots.Add(index);
-            OnInventoryUpdated?.Invoke();
+            NotifySlotChanged(index, InventoryChangeType.SlotCleared, expectedItem.ID);
             return true;
         }
 
@@ -40,7 +61,7 @@ namespace Nytherion.Core.Systems
         {
             if (dismantleSlots.Count == 0) return;
             dismantleSlots.Clear();
-            OnInventoryUpdated?.Invoke();
+            NotifyAllSlotsChanged();
         }
 
         // 재화 지급 전에 데이터만 확정해 자동 저장에 장비와 골드가 함께 반영되게 한다.
@@ -74,7 +95,7 @@ namespace Nytherion.Core.Systems
             if (requiredSlots <= MaxSlots) return;
 
             Array.Resize(ref slots, requiredSlots);
-            OnInventoryUpdated?.Invoke();
+            NotifyAllSlotsChanged();
         }
 
         /// <summary>
@@ -102,7 +123,7 @@ namespace Nytherion.Core.Systems
                 if (existingSlot != -1)
                 {
                     slots[existingSlot].count += count;
-                    OnInventoryUpdated?.Invoke();
+                    NotifySlotChanged(existingSlot, InventoryChangeType.ItemCountChanged, item.ID);
                     return true;
                 }
             }
@@ -112,7 +133,7 @@ namespace Nytherion.Core.Systems
             if (emptySlot != -1)
             {
                 slots[emptySlot] = (item, count);
-                OnInventoryUpdated?.Invoke();
+                NotifySlotChanged(emptySlot, InventoryChangeType.ItemAdded, item.ID);
                 return true;
             }
 
@@ -120,14 +141,44 @@ namespace Nytherion.Core.Systems
             return false;
         }
 
+        /// <summary> 장비 지급 수량 전체를 수용할 때만 추가한다. 알림은 호출자가 확정 후 보낸다. </summary>
+        internal bool TryAddEquipmentInstancesWithoutNotify(IReadOnlyList<EquipmentData> equipment)
+        {
+            if (equipment == null || equipment.Count == 0) return false;
+
+            int emptyCount = 0;
+            for (int i = 0; i < slots.Length; i++)
+                if (slots[i].item == null && !IsDismantleReserved(i)) emptyCount++;
+            if (emptyCount < equipment.Count) return false;
+            for (int i = 0; i < equipment.Count; i++)
+                if (equipment[i] == null) return false;
+
+            int nextSlot = 0;
+            foreach (EquipmentData item in equipment)
+            {
+                while (slots[nextSlot].item != null || IsDismantleReserved(nextSlot)) nextSlot++;
+                slots[nextSlot++] = (item, 1);
+            }
+            return true;
+        }
+
+        /// <summary> 선택 당시 장비가 그대로 있을 때만 교환한다. 장착 데이터 확정 전에는 알리지 않는다. </summary>
+        internal bool TryExchangeEquipmentWithoutNotify(int slotIndex, EquipmentData expectedItem, EquipmentData replacement)
+        {
+            if (slotIndex < 0 || slotIndex >= slots.Length || IsDismantleReserved(slotIndex)) return false;
+            var slot = slots[slotIndex];
+            if (slot.item != expectedItem || slot.count != (expectedItem == null ? 0 : 1)) return false;
+
+            slots[slotIndex] = (replacement, replacement == null ? 0 : 1);
+            return true;
+        }
+
         /// <summary>
         /// 특정 슬롯에 아이템을 강제로 할당. (기존 아이템 덮어쓰기 가능)
         /// </summary>
         public void AddItemToSlot(ItemData item, int count, int slotIndex)
         {
-            if (slotIndex < 0 || slotIndex >= slots.Length || IsDismantleReserved(slotIndex)) return;
-            slots[slotIndex] = (item, count);
-            OnInventoryUpdated?.Invoke();
+            AddItemToSlot(item, count, slotIndex, true);
         }
 
         /// <summary>
@@ -137,11 +188,11 @@ namespace Nytherion.Core.Systems
         /// <returns>할당 성공 여부</returns>
         public bool AddItemToSlot(ItemData item, int count, int slotIndex, bool overwrite)
         {
-            if (slotIndex < 0 || slotIndex >= slots.Length || IsDismantleReserved(slotIndex)) return false;
+            if (item == null || count <= 0 || slotIndex < 0 || slotIndex >= slots.Length || IsDismantleReserved(slotIndex)) return false;
             if (!overwrite && slots[slotIndex].item != null) return false; // 덮어쓰기 불가이고 슬롯이 차있으면 실패
 
             slots[slotIndex] = (item, count);
-            OnInventoryUpdated?.Invoke();
+            NotifySlotChanged(slotIndex, InventoryChangeType.ItemAdded, item.ID);
             return true;
         }
 
@@ -164,7 +215,7 @@ namespace Nytherion.Core.Systems
                         {
                             slots[i] = (null, 0); // 수량이 0이하가 되면 슬롯을 비움
                         }
-                        OnInventoryUpdated?.Invoke();
+                        NotifySlotChanged(i, slots[i].item == null ? InventoryChangeType.SlotCleared : InventoryChangeType.ItemCountChanged, item.ID);
                         return true;
                     }
                 }
@@ -177,14 +228,16 @@ namespace Nytherion.Core.Systems
         /// </summary>
         public void RemoveItemFromSlot(int slotIndex, int count)
         {
-            if (slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null || IsDismantleReserved(slotIndex)) return;
+            if (count <= 0 || slotIndex < 0 || slotIndex >= slots.Length || slots[slotIndex].item == null ||
+                slots[slotIndex].count < count || IsDismantleReserved(slotIndex)) return;
 
+            string itemId = slots[slotIndex].item.ID;
             slots[slotIndex].count -= count;
             if (slots[slotIndex].count <= 0)
             {
                 slots[slotIndex] = (null, 0);
             }
-            OnInventoryUpdated?.Invoke();
+            NotifySlotChanged(slotIndex, slots[slotIndex].item == null ? InventoryChangeType.SlotCleared : InventoryChangeType.ItemCountChanged, itemId);
         }
 
         /// <summary>
@@ -194,11 +247,17 @@ namespace Nytherion.Core.Systems
         {
             if (fromIndex < 0 || fromIndex >= slots.Length || toIndex < 0 || toIndex >= slots.Length) return;
             if (IsDismantleReserved(fromIndex) || IsDismantleReserved(toIndex)) return;
+            if (fromIndex == toIndex || (slots[fromIndex].item == slots[toIndex].item && slots[fromIndex].count == slots[toIndex].count)) return;
 
             var temp = slots[fromIndex];
             slots[fromIndex] = slots[toIndex];
             slots[toIndex] = temp;
-            OnInventoryUpdated?.Invoke();
+            OnInventoryUpdated?.Invoke(new InventoryChangeData
+            {
+                slotIndex = fromIndex,
+                otherSlotIndex = toIndex,
+                changeType = InventoryChangeType.SlotsSwapped
+            });
         }
 
         /// <summary> 높은 등급, 이름순으로 정렬하고 빈 슬롯은 뒤로 보낸다. </summary>
@@ -245,7 +304,7 @@ namespace Nytherion.Core.Systems
                 while (IsDismantleReserved(targetIndex)) targetIndex++;
                 slots[targetIndex++] = (occupiedSlots[i].item, occupiedSlots[i].count);
             }
-            OnInventoryUpdated?.Invoke();
+            NotifyAllSlotsChanged();
             return true;
         }
 
@@ -281,7 +340,7 @@ namespace Nytherion.Core.Systems
         {
             dismantleSlots.Clear();
             Array.Clear(slots, 0, slots.Length);
-            OnInventoryUpdated?.Invoke();
+            NotifyAllSlotsChanged();
         }
 
         /// <summary>

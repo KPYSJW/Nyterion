@@ -2083,7 +2083,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2690c349e441e8b42af915304662c6c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  milestoneDropdown: {fileID: 0}
   addProgressButton: {fileID: 0}
   maxProgressButton: {fileID: 0}
   testMilestones:
@@ -3180,7 +3179,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -364, y: 103}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1800, y: 1200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &237702019
@@ -9744,7 +9743,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1336590987}
   m_Direction: 0
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11603,8 +11602,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 585024138}
   m_HandleRect: {fileID: 585024137}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.5
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -13606,8 +13605,7 @@ MonoBehaviour:
   playerManagerPrefab: {fileID: -2891475838477974602, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
   menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
   itemUsageManagerPrefab: {fileID: 7984585239593921606, guid: 4d55406ce8a55294dbc5ee1bb0d895af, type: 3}
-  inventoryManagerPrefab: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
-  currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
+  currencyManagerPrefab: {fileID: 0}
   relicSystemDebuggerPrefab: {fileID: 3331487929666877543, guid: 394d30e042c9e0f4ea5cdbbf3e518f3d, type: 3}
   followCameraPrefab: {fileID: 1351506084518171216, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
   settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
@@ -13685,7 +13683,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: -2, y: -1.5, z: -2, w: -2.5}
+  m_RaycastPadding: {x: 3.9979484, y: 3.1798859, z: 2.3893373, w: 3.2075036}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -22014,7 +22012,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 410, y: 40}
+  m_AnchoredPosition: {x: 413, y: 40}
   m_SizeDelta: {x: 700, y: 710}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1605786343
@@ -22609,8 +22607,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1721288127}
   m_HandleRect: {fileID: 1721288126}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.5
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -22848,7 +22846,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451803222681576171, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
       propertyPath: orthographic size
-      value: 4.21875
+      value: 7.90625
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

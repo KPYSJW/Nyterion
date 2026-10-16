@@ -13,7 +13,7 @@ namespace Nytherion.UI.Skill
     /// <summary>
     /// 스킬 UI 전체를 제어하며, UI 슬롯과 게임 데이터 매니저를 동기화하는 클래스
     /// </summary>
-    public class SkillUIController : UIPanelBase
+    public class SkillUIController : UIPanelBase, IInitializable
     {
         protected override bool UsesBookOpenSound => true;
         [Header("Toggle Settings")]
@@ -40,6 +40,8 @@ namespace Nytherion.UI.Skill
         private PlayerSkillManager playerSkillManager;
         private SaveLoadManager saveLoadManager;
         private IProgressionManager progressionManager;
+        private bool isInitialized;
+        public bool IsInitialized => isInitialized;
 
         [SerializeField] private SkillTooltip skillTooltipPrefab;
         private SkillTooltip skillTooltip;
@@ -104,6 +106,13 @@ namespace Nytherion.UI.Skill
 
         private void Start()
         {
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            if (isInitialized) return;
+            isInitialized = true;
             // 보관함 슬롯 UI 객체들을 미리 생성
             InitializeStorageSlots();
 

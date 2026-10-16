@@ -63,7 +63,10 @@ namespace Nytherion.GamePlay.Characters.Player
         [Inject]
         public void Construct(InputManager inputManager)
         {
+            UnsubscribeAttackInput();
             this.inputManager = inputManager;
+            // 씬에 미리 배치된 플레이어는 Start 이후 주입될 수도 있다.
+            if (isActiveAndEnabled) SubscribeAttackInput();
         }
 
         private void Awake()
@@ -75,11 +78,29 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void Start()
         {
+            SubscribeAttackInput();
+        }
+
+        private void OnEnable()
+        {
+            SubscribeAttackInput();
+        }
+
+        private void SubscribeAttackInput()
+        {
             if (inputManager != null)
             {
+                UnsubscribeAttackInput();
                 inputManager.onAttackDown += HandleAttackDown;
                 inputManager.onAttackUp += HandleAttackUp;
             }
+        }
+
+        private void UnsubscribeAttackInput()
+        {
+            if (inputManager == null) return;
+            inputManager.onAttackDown -= HandleAttackDown;
+            inputManager.onAttackUp -= HandleAttackUp;
         }
 
         private void HandleAttackDown()
@@ -483,11 +504,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             isAttackHeld = false;
             CancelGenericCharge();
-            if (inputManager != null)
-            {
-                inputManager.onAttackDown -= HandleAttackDown;
-                inputManager.onAttackUp -= HandleAttackUp;
-            }
+            UnsubscribeAttackInput();
         }
     }
 }

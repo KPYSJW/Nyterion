@@ -156,6 +156,17 @@ namespace Nytherion.UI.Inventory
                 var text = cell.GetComponentInChildren<TextMeshProUGUI>();
                 if (text != null)
                 {
+                    // 텍스트 영역을 셀에 맞춰 긴 번역이 옆 열이나 다음 행을 침범하지 않게 한다.
+                    RectTransform textRect = text.rectTransform;
+                    textRect.anchorMin = Vector2.zero;
+                    textRect.anchorMax = Vector2.one;
+                    textRect.offsetMin = Vector2.zero;
+                    textRect.offsetMax = Vector2.zero;
+                    text.fontSizeMax = text.fontSize;
+                    text.fontSizeMin = Mathf.Min(14f, text.fontSizeMax);
+                    text.enableAutoSizing = true;
+                    text.enableWordWrapping = false;
+                    text.overflowMode = TextOverflowModes.Ellipsis;
                     text.text = $"{GetLocalizedStatName(statName)}: {value}";
                 }
                 return cell;
@@ -193,6 +204,7 @@ namespace Nytherion.UI.Inventory
                 "meleeSpeed" => ("근접 공격 속도", "Melee Attack Speed"),
                 "rangedSpeed" => ("원거리 공격 속도", "Ranged Attack Speed"),
                 "extraProjectiles" => ("추가 투사체 수", "Extra Projectiles"),
+                "projectileSizeMultiplier" => ("효과 범위 증가", "Area of Effect"),
                 "lifesteal" => ("생명력 흡수", "Lifesteal"),
                 "chargeTimeReduction" => ("충전 시간 감소", "Charge Time Reduction"),
                 "critChance" => ("치명타 확률", "Critical Chance"),

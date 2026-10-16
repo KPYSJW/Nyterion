@@ -57,8 +57,13 @@ namespace Nytherion.Core.Managers
         }
 
         /// <summary>
-        /// 내부에서 변경이 일어났을 때, 외부로 전체 갱신 알림 보냄
+        /// 모델이 확정한 변경 내용을 한 번만 전달한다.
         /// </summary>
+        private void HandleInventoryModelUpdate(InventoryChangeData changeData)
+        {
+            NotifyDataChanged(changeData);
+        }
+
         private void HandleInventoryModelUpdate()
         {
             // 일반적인 인벤토리 업데이트를 알림
@@ -76,14 +81,14 @@ namespace Nytherion.Core.Managers
          * ========================================================== */
 
         /// <summary>
-        /// 인벤토리에 아이템을 추가. 빈 슬롯을 자동으로 찾는다
+        /// 신규 아이템을 지급한다. 장비는 수량 전체를 수용할 때만 복제해 추가한다.
         /// </summary>
         /// <param name="itemData">추가할 아이템 데이터</param>
         /// <param name="count">추가할 수량</param>
         /// <returns>추가 성공 여부</returns>
         public bool AddItem(ItemData itemData, int count = 1)
         {
-            if (!IsInitialized || itemData == null)
+            if (!IsInitialized || itemData == null || count <= 0)
             {
                 return false;
             }
@@ -91,31 +96,42 @@ namespace Nytherion.Core.Managers
             // 장비 아이템인 경우 개별 복제본 생성하여 각각 추가
             if (itemData is EquipmentData equipmentAsset)
             {
-                bool allSuccess = true;
-                for (int i = 0; i < count; i++)
+                if (GetEmptySlotCount() < count) return false;
+
+                var clones = new List<EquipmentData>(count);
+                bool added = false;
+                try
                 {
-                    EquipmentData clonedEquipment = UnityEngine.Object.Instantiate(equipmentAsset);
-                    clonedEquipment.instanceId = System.Guid.NewGuid().ToString();
-                    
-                    if (!InventoryModel.AddItem(clonedEquipment, 1))
+                    for (int i = 0; i < count; i++)
                     {
-                        allSuccess = false;
+                        EquipmentData clone = Instantiate(equipmentAsset);
+                        clones.Add(clone);
+                        clone.instanceId = Guid.NewGuid().ToString();
+                    }
+                    added = InventoryModel.TryAddEquipmentInstancesWithoutNotify(clones);
+                }
+                finally
+                {
+                    if (!added)
+                    {
+                        foreach (EquipmentData clone in clones)
+                        {
+                            if (Application.isPlaying) Destroy(clone);
+                            else DestroyImmediate(clone);
+                        }
                     }
                 }
+                if (!added) return false;
 
-                if (allSuccess || count > 0)
+                NotifyDataChanged(new InventoryChangeData
                 {
-                    NotifyDataChanged(new InventoryChangeData
-                    {
-                        slotIndex = -1, 
-                        itemId = itemData.ID,
-                        newCount = count,
-                        changeType = InventoryChangeType.ItemAdded
-                    });
-                    if (saveLoadManager != null) saveLoadManager.SaveGame();
-                    return allSuccess;
-                }
-                return false;
+                    slotIndex = -1,
+                    itemId = itemData.ID,
+                    newCount = count,
+                    changeType = InventoryChangeType.ItemAdded
+                });
+                saveLoadManager?.SaveGame();
+                return true;
             }
 
             // 중첩 가능한 일반 아이템 처리
@@ -123,14 +139,6 @@ namespace Nytherion.Core.Managers
 
             if (result)
             {
-                NotifyDataChanged(new InventoryChangeData
-                {
-                    slotIndex = -1, 
-                    itemId = itemData.ID,
-                    newCount = count,
-                    changeType = InventoryChangeType.ItemAdded
-                });
-
                 if (saveLoadManager != null)
                 {
                     saveLoadManager.SaveGame();
@@ -150,13 +158,6 @@ namespace Nytherion.Core.Managers
 
             if (result)
             {
-                NotifyDataChanged(new InventoryChangeData
-                {
-                    slotIndex = slotIndex,
-                    itemId = itemData.ID,
-                    newCount = count,
-                    changeType = InventoryChangeType.ItemAdded
-                });
                 if (saveLoadManager != null) saveLoadManager.SaveGame();
             }
 
@@ -191,14 +192,6 @@ namespace Nytherion.Core.Managers
 
             if (result)
             {
-                NotifyDataChanged(new InventoryChangeData
-                {
-                    slotIndex = -1, 
-                    itemId = itemId,
-                    newCount = 0, 
-                    changeType = InventoryChangeType.ItemRemoved
-                });
-
                 // 자동 저장 실행
                 if (saveLoadManager != null)
                 {
@@ -216,27 +209,12 @@ namespace Nytherion.Core.Managers
         /// <returns>제거 성공 여부</returns>
         public bool RemoveItemFromSlot(int slotIndex, int count = 1)
         {
-            if (!IsInitialized) return false;
+            if (!IsInitialized || count <= 0) return false;
 
             (ItemData item, int count) slot = InventoryModel.GetItemAt(slotIndex);
-            if (slot.item == null) return false;
-
-            string itemId = slot.item.ID;
-            int originalCount = slot.count;
+            if (slot.item == null || slot.count < count) return false;
 
             InventoryModel.RemoveItemFromSlot(slotIndex, count);
-
-            // 변경 후 슬롯의 상태를 다시 확인하여 남은 개수를 파악
-            (ItemData item, int count) updatedSlot = InventoryModel.GetItemAt(slotIndex);
-            int newCount = updatedSlot.item != null ? updatedSlot.count : 0;
-
-            NotifyDataChanged(new InventoryChangeData
-            {
-                slotIndex = slotIndex,
-                itemId = itemId,
-                newCount = newCount,
-                changeType = newCount > 0 ? InventoryChangeType.ItemCountChanged : InventoryChangeType.SlotCleared
-            });
 
             return true;
         }
@@ -252,17 +230,11 @@ namespace Nytherion.Core.Managers
             if (fromSlotIndex < 0 || fromSlotIndex >= InventoryModel.MaxSlots) return false;
             if (toSlotIndex < 0 || toSlotIndex >= InventoryModel.MaxSlots) return false;
             if (InventoryModel.IsDismantleReserved(fromSlotIndex) || InventoryModel.IsDismantleReserved(toSlotIndex)) return false;
+            var source = InventoryModel.GetItemAt(fromSlotIndex);
+            var target = InventoryModel.GetItemAt(toSlotIndex);
+            if (fromSlotIndex == toSlotIndex || (source.item == target.item && source.count == target.count)) return false;
 
             InventoryModel.SwapItems(fromSlotIndex, toSlotIndex);
-
-            // 아이템 교환은 전체 업데이트로 처리
-            NotifyDataChanged(new InventoryChangeData
-            {
-                slotIndex = -1,
-                itemId = "",
-                newCount = 0,
-                changeType = InventoryChangeType.InventoryLoaded
-            });
 
             return true;
         }
@@ -499,16 +471,30 @@ namespace Nytherion.Core.Managers
             bool result = InventoryModel.AddItem(equipmentInstance, 1);
             if (result)
             {
-                NotifyDataChanged(new InventoryChangeData
-                {
-                    slotIndex = -1,
-                    itemId = equipmentInstance.ID,
-                    newCount = 1,
-                    changeType = InventoryChangeType.ItemAdded
-                });
                 if (saveLoadManager != null) saveLoadManager.SaveGame();
             }
             return result;
+        }
+
+        /// <summary> 인벤토리와 장착 데이터가 모두 확정된 뒤 한 번 알리고 저장한다. </summary>
+        internal void CompleteEquipmentTransfer(int slotIndex)
+        {
+            try
+            {
+                var slot = GetSlot(slotIndex);
+                NotifyDataChanged(new InventoryChangeData
+                {
+                    slotIndex = slotIndex,
+                    itemId = slot.item?.ID ?? "",
+                    newCount = slot.count,
+                    changeType = slot.item == null ? InventoryChangeType.SlotCleared : InventoryChangeType.ItemAdded
+                });
+            }
+            finally
+            {
+                // 연속 교체도 직전 저장 쿨다운에 막히지 않게 최종 상태를 기록한다.
+                saveLoadManager?.ForceSaveGame();
+            }
         }
 
         /// <summary>

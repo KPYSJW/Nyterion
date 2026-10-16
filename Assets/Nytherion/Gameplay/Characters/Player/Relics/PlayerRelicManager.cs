@@ -21,6 +21,9 @@ namespace Nytherion.GamePlay.Characters.Player
         private bool hasStarted;
 
         public event Action OnRelicsChanged;
+        // 목록과 전투 스냅샷, 능력치 동기화가 끝난 뒤 효과 조건을 한 번 평가한다.
+        public event Action OnRelicEffectsChanged;
+        public bool IsSynchronizingRelics { get; private set; }
         public CombatModifierSnapshot CombatModifiers { get; private set; } = CombatModifierSnapshot.Empty;
 
         [Inject]
@@ -69,30 +72,23 @@ namespace Nytherion.GamePlay.Characters.Player
 
             if (relicManager == null) return;
 
-            relicManager.OnRelicEquippedStateChanged -= HandleRelicStateFromGrid;
-            relicManager.OnRelicEquippedStateChanged += HandleRelicStateFromGrid;
             relicManager.OnRelicStateChanged -= HandleRelicStateChanged;
             relicManager.OnRelicStateChanged += HandleRelicStateChanged;
 
-            bool relicListChanged = SyncWithGrid();
-            RebuildCombatModifiers();
-            if (relicListChanged)
-            {
-                OnRelicsChanged?.Invoke();
-            }
+            PublishChanges(SyncWithGrid(out _));
         }
 
         private void UnsubscribeRelicEvents(RelicManager targetRelicManager)
         {
-            targetRelicManager.OnRelicEquippedStateChanged -= HandleRelicStateFromGrid;
             targetRelicManager.OnRelicStateChanged -= HandleRelicStateChanged;
         }
 
         /// <summary>
         /// 게임 시작 및 로드 시, 그리드에 장착된 각인과 플레이어의 장착 상태를 일치시킨다
         /// </summary>
-        private bool SyncWithGrid()
+        private bool SyncWithGrid(out bool hasAdded)
         {
+            hasAdded = false;
             if (relicManager == null) return false;
 
             var placedBlocks = relicManager.GetPlacedBlocks();
@@ -103,6 +99,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 if (block != null && block.SourceData != null && !placedRelics.Contains(block.SourceData))
                 {
                     placedRelics.Add(block.SourceData);
+                    hasAdded |= !equippedRelics.Contains(block.SourceData);
                 }
             }
 
@@ -128,36 +125,10 @@ namespace Nytherion.GamePlay.Characters.Player
             return true;
         }
 
-        private void HandleRelicStateFromGrid(RelicData data, bool isEquipped)
-        {
-
-            if (isEquipped)
-            {
-                // 중복 체크 후 장착
-                if (!equippedRelics.Contains(data))
-                {
-                    AddRelic(data);
-                }
-            }
-            else
-            {
-                // 이름으로 찾아서 해제
-                int indexToRemove = equippedRelics.FindIndex(e => e.relicName == data.relicName);
-                if (indexToRemove != -1)
-                {
-                    RemoveRelic(indexToRemove);
-                }
-            }
-        }
-
         private void HandleRelicStateChanged()
         {
-            bool relicListChanged = SyncWithGrid();
-            RebuildCombatModifiers();
-            if (relicListChanged)
-            {
-                OnRelicsChanged?.Invoke();
-            }
+            bool relicListChanged = SyncWithGrid(out bool hasAdded);
+            PublishChanges(relicListChanged, hasAdded);
         }
 
         public void AddRelic(RelicData relic)
@@ -169,19 +140,7 @@ namespace Nytherion.GamePlay.Characters.Player
             }
 
             equippedRelics.Add(relic);
-            RebuildCombatModifiers();
-
-            var currentWeaponData = playerManager?.PlayerCombat?.currentWeapon?.weaponData;
-            if (currentWeaponData != null && synergyEvaluator != null)
-            {
-                WeaponRelicSynergyData SynergyData = synergyEvaluator.EvaluateSynergy(currentWeaponData, GetCurrentRelics());
-                if (SynergyData != null)
-                {
-                    Debug.Log($" 시너지 발동: {SynergyData.weaponName} + {SynergyData.relicName}");
-                }
-            }
-
-            OnRelicsChanged?.Invoke();
+            PublishChanges(true, true);
         }
 
         public void RemoveRelic(int index)
@@ -189,9 +148,7 @@ namespace Nytherion.GamePlay.Characters.Player
             if (index >= 0 && index < equippedRelics.Count)
             {
                 equippedRelics.RemoveAt(index);
-                RebuildCombatModifiers();
-
-                OnRelicsChanged?.Invoke();
+                PublishChanges(true);
             }
         }
 
@@ -205,6 +162,24 @@ namespace Nytherion.GamePlay.Characters.Player
         private void RebuildCombatModifiers()
         {
             CombatModifiers = CombatModifierSnapshot.Create(equippedRelics);
+        }
+
+        private void PublishChanges(bool listChanged, bool hasAdded = false)
+        {
+            IsSynchronizingRelics = true;
+            try
+            {
+                RebuildCombatModifiers();
+                if (hasAdded)
+                {
+                    var weapon = playerManager?.PlayerCombat?.currentWeapon?.weaponData;
+                    if (weapon != null && synergyEvaluator != null)
+                        synergyEvaluator.EvaluateSynergy(weapon, equippedRelics);
+                }
+                if (listChanged) OnRelicsChanged?.Invoke();
+            }
+            finally { IsSynchronizingRelics = false; }
+            OnRelicEffectsChanged?.Invoke();
         }
     }
 }

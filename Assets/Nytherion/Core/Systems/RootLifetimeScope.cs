@@ -75,7 +75,7 @@ public class RootLifetimeScope : LifetimeScope
 
         if (dataLifetimeScopePrefab != null && DataLifetimeScope.Instance == null)
         {
-            var dataScope = Instantiate(dataLifetimeScopePrefab, this.transform);
+            CreateChildFromPrefab(dataLifetimeScopePrefab);
         }
         else if (dataLifetimeScopePrefab == null)
         {
@@ -141,4 +141,10 @@ public class RootLifetimeScope : LifetimeScope
             .AsSelf();
     }
 
+    protected override void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        if (Instance == this) Instance = null;
+        base.OnDestroy();
+    }
 }

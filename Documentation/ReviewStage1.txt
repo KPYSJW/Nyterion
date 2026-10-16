@@ -1,0 +1,65 @@
+Nytherion 코드 리뷰 후속 작업 1 — 2026-10-16
+
+범위: 런타임 Editor 참조와 깨진 스크립트·에셋·빌드 씬 참조 정리.
+후속 작업 2의 장비 교환·저장 트랜잭션은 변경하지 않았다.
+
+적용한 변경
+
+1. Assets/Nytherion/ScriptArchiver.cs 전체를 UNITY_EDITOR 조건으로 분리했다.
+   기존 메뉴는 편집기 어셈블리에 유지하고 Player 어셈블리에서는 제외했다.
+   파일 이동과 기존 .meta 변경은 하지 않았다.
+
+2. Build Settings에서 디스크에 없는 BootTest, TitleTest, GameSceneTest를 제거했다.
+   존재하는 씬 5개의 순서·활성 상태와 첫 씬 Title은 유지했다.
+
+3. Unity Editor API로 누락 컴포넌트 9개를 제거했다.
+   - 삭제된 TestInventoryUI 4개: Inventory, test2 씬.
+   - 삭제된 CurrencyManager 2개: Inventory 씬, CurrencyManager 프리팹.
+   - 예전 GameInstaller와 RootLifetimeScope 각 1개: test 씬.
+   - 삭제된 Bow 1개: Bow_Test 프리팹.
+   관련 통화 필드의 끊긴 참조와 현재 코드에서 사용하지 않는 옛 직렬화 필드도 정리했다.
+   수동 테스트 도구의 옛 기능을 다시 구현한 작업은 아니다.
+
+4. 삭제된 타입의 ScriptableObject 에셋 13개를 원본과 .meta 보관 후 Unity API로 제거했다.
+   - 방어구·액세서리 12개: ArmorData와 장비 슬롯이 과거에 함께 삭제된 것을 이력에서 확인했다.
+   - AttributeEffectDatabase 1개: 타입과 소비자가 현재 트리에 없다.
+   제거 직전 현재 참조 수 0, 원본 데이터·메타 불일치 0을 재검증했다.
+
+5. 정상적으로 로드할 수 없는 항목을 데이터 목록에서 제거했다.
+   - ItemDatabaseSO.allItems: 32 → 22.
+   - Common_Weapon.items: 8 → 1.
+   - Village Shop.itemsForSale: 24 → 14.
+   삭제된 ArmorData를 참조하던 항목 외에 대응하는 .meta가 아예 없는 옛 GUID 항목도 포함한다.
+   드롭 프리팹 2개와 SocialDistancing 보상에 남은 방어구 참조도 해제했다.
+   정상 항목의 ID·순서·가격·가중치를 수정하지 않았다.
+
+원본 보관과 GUID 검증
+
+Documentation/ReviewStage1Originals.zip에 수정 전 에셋·씬·설정과 .meta 55개 항목을 보관했다.
+SHA-256: 7FAF5B7643D5116FF3A9A4426B9263F3966F262153F5726C117B82BC44D784D6
+삭제한 데이터 에셋 13개의 원래 GUID와 내용도 이 파일에 들어 있다.
+남아 있는 변경 대상 14개의 .meta는 원본과 바이트 단위로 동일하다.
+필요한 항목을 현재 변경분과 비교해 선택 복원할 수 있다. 에셋 복원 시 원래 .meta를 함께 보존한다.
+
+검증 결과와 제한
+
+- Unity 2022.3.62f2에서 에디터 컴파일 및 스크립트 GUID/실제 타입 감사 통과.
+- 원본의 누락 스크립트 참조 22곳 → 현재 0곳.
+- Windows64 Player 스크립트 컴파일 통과.
+- Player Assembly-CSharp에는 UnityEditor 어셈블리 참조와 ScriptArchiver 타입이 없다.
+  Editor Assembly-CSharp에는 ScriptArchiver가 유지된 것을 DLL 메타데이터로 확인했다.
+- 별도 제품명·저장 경로에서 Title → GameScene 진입, Root/Data 단일 인스턴스,
+  씬 컨테이너·플레이어·던전 매니저 생성, 이후 5초간 오류 없음 확인.
+  테스트 뒤 원래 제품명을 복원했으며 사용자 저장 파일을 테스트에 사용하지 않았다.
+- 전체 Windows 개발 Player 빌드는 기존 LocalizationBuildValidator에서 중단됐다.
+  원인: 활성 LocalizationSettings와 Locale/String Table 에셋이 구성되지 않았다.
+  번역 검사기를 우회하거나 전체 번역 데이터·UI 마이그레이션을 실행하지 않았다.
+- 배치 플레이에서 DungeonNavMeshBuilder가 WaitForEndOfFrame에 대기했다.
+  전체 던전 생성 시도는 시간 초과로 별도 기록했고, 이번 단계의 씬 진입 검증과 구분했다.
+  그래픽 모드에서 NavMesh·던전 생성 완료, 수동 테스트 씬의 전체 동작은 추가 확인 대상이다.
+
+검증 산출물: output/review-stage1/
+  cleanup.txt, audit.txt, archive-verification.json, remaining-cleanup-proof.json
+  runtime-compile.txt, runtime-metadata.json, build.txt, build-editor.log
+  smoke.txt, smoke-errors.txt, entry-editor.log, smoke-dungeon-attempt.txt
+  임시 Editor 도구 소스는 *.cs.txt로 보관하고 Assets에서는 제거했다.

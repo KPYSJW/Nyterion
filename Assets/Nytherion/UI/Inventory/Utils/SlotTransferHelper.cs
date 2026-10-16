@@ -18,6 +18,19 @@ namespace Nytherion.UI.Inventory.Utils
 
         public static void TransferItem(BaseSlotUI source, BaseSlotUI target)
         {
+            // 드롭 이벤트가 누락된 경우에도 장비 이동은 데이터 교환 경로만 사용한다.
+            if (target is EquipmentSlotUI targetEquipment && source is InventorySlotUI sourceInventory)
+            {
+                targetEquipment.TryEquipFromInventory(sourceInventory);
+                return;
+            }
+            if (source is EquipmentSlotUI sourceEquipment && target is InventorySlotUI targetInventory)
+            {
+                sourceEquipment.TryMoveToInventory(targetInventory);
+                return;
+            }
+            if (source is EquipmentSlotUI || target is EquipmentSlotUI) return;
+
             if(source == target)
             {
                 source.SetItem(source.CurrentItem, source.CurrentCount);
@@ -63,7 +76,7 @@ namespace Nytherion.UI.Inventory.Utils
 
         public static void HandleDropOnEmptySpace(BaseSlotUI source, PointerEventData eventData)
         {
-            if (source == null || source.IsEmpty)
+            if (source == null || source.IsEmpty || source is EquipmentSlotUI)
             {
                 return;
             }

@@ -1,10 +1,8 @@
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Dungeon;
 using Nytherion.UI.Map;
-using Nytherion.UI.Inventory;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using VContainer;
 using VContainer.Unity;
 
 public class GameSceneInitializer : IStartable
@@ -13,7 +11,6 @@ public class GameSceneInitializer : IStartable
     private readonly DungeonManager dungeonManager;
     private readonly WorldmapController worldmapController;
     private readonly MinimapTileGenerator minimapGenerator;
-    private readonly QuickSlotManager quickSlotManager;
     private readonly SaveLoadManager saveLoadManager;
 
     public GameSceneInitializer(
@@ -21,20 +18,26 @@ public class GameSceneInitializer : IStartable
         DungeonManager dungeonManager,
         WorldmapController worldmapController,
         MinimapTileGenerator minimapGenerator,
-        QuickSlotManager quickSlotManager,
         SaveLoadManager saveLoadManager)
     {
         this.stageManager = stageManager;
         this.dungeonManager = dungeonManager;
         this.worldmapController = worldmapController;
         this.minimapGenerator = minimapGenerator;
-        this.quickSlotManager = quickSlotManager;
         this.saveLoadManager = saveLoadManager;
     }
 
     public void Start()
     {
         if (SceneManager.GetActiveScene().name != "GameScene") return;
+
+        // 데이터 스코프의 초기화가 끝난 뒤 로드를 확정하고, 실패한 부분 상태로 던전을 시작하지 않는다.
+        saveLoadManager.LoadGameIfNeeded();
+        if (!saveLoadManager.HasLoadedData || saveLoadManager.IsSaveBlocked)
+        {
+            Debug.LogError($"[GameSceneInitializer] 저장 데이터를 준비하지 못해 던전 시작을 중단합니다: {saveLoadManager.LastError}");
+            return;
+        }
 
         stageManager.SetDungeonManager(dungeonManager);
         dungeonManager.SetStageManager(stageManager);
@@ -44,23 +47,6 @@ public class GameSceneInitializer : IStartable
             dungeonManager.SetControllers(worldmapController, minimapGenerator);
             dungeonManager.roomFirstDungeonGenerator.SetControllers(worldmapController, minimapGenerator);
         }
-         InitializeGameData();
         dungeonManager.StartDungeonGeneration();
-
-        // SaveLoadManager를 통한 정상적인 로드 (강제로드가 아님)
-       
-    }
-
-    private void InitializeGameData()
-    {
-
-        if (saveLoadManager != null)
-        {
-            saveLoadManager.LoadGameIfNeeded();
-        }
-        else
-        {
-            Debug.LogError("[GameSceneInitializer] SaveLoadManager가 null입니다");
-        }
     }
 }
