@@ -117,6 +117,9 @@ namespace Nytherion.UI.Inventory
             {
                 if (field.Name == "dashSpeed" || field.Name == "dashDuration" || field.Name == "dashCooldown" || field.Name == "dashDistance") continue;
 
+                // 현재 사용하는 원거리 능력치만 공격력·공격 속도로 표시한다.
+                if (field.Name == "meleeDamage" || field.Name == "meleeSpeed") continue;
+
                 object value = field.GetValue(currentPlayerData);
                 if (value == null) continue;
 
@@ -127,7 +130,7 @@ namespace Nytherion.UI.Inventory
                     {
                         displayValue = $"{Mathf.RoundToInt(floatValue * 100f)}%";
                     }
-                    else if (field.Name == "meleeSpeed" || field.Name == "rangedSpeed")
+                    else if (field.Name == "rangedSpeed")
                     {
                         displayValue = $"{floatValue:0.##}";
                     }
@@ -199,14 +202,12 @@ namespace Nytherion.UI.Inventory
                 "maxHealth" => ("최대 체력", "Max Health"),
                 "defense" => ("방어력", "Defense"),
                 "moveSpeed" => ("이동 속도", "Move Speed"),
-                "meleeDamage" => ("근접 공격력", "Melee Damage"),
-                "rangedDamage" => ("원거리 공격력", "Ranged Damage"),
-                "meleeSpeed" => ("근접 공격 속도", "Melee Attack Speed"),
-                "rangedSpeed" => ("원거리 공격 속도", "Ranged Attack Speed"),
+                "rangedDamage" => ("공격력", "Attack"),
+                "rangedSpeed" => ("공격 속도", "Attack Speed"),
                 "extraProjectiles" => ("추가 투사체 수", "Extra Projectiles"),
                 "projectileSizeMultiplier" => ("효과 범위 증가", "Area of Effect"),
                 "lifesteal" => ("생명력 흡수", "Lifesteal"),
-                "chargeTimeReduction" => ("충전 시간 감소", "Charge Time Reduction"),
+                "chargeTimeReduction" => ("충전 시간 감소", "Charge Reduction"),
                 "critChance" => ("치명타 확률", "Critical Chance"),
                 "critDamageMultiplier" => ("치명타 피해량", "Critical Damage"),
                 _ => (statName, statName)

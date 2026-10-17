@@ -262,6 +262,12 @@ namespace Nytherion.Core.Managers
             return IsInitialized && InventoryModel.StageForDismantle(slotIndex, expectedItem);
         }
 
+        /// <summary> 선택한 등급 이하의 소지 장비를 분해 대기 칸에 추가한다. </summary>
+        public int StageForDismantleUpToRarity(Rarity maxRarity)
+        {
+            return IsInitialized ? InventoryModel.StageForDismantleUpToRarity(maxRarity) : 0;
+        }
+
         public List<(int slotIndex, EquipmentData item)> GetDismantleItems()
         {
             var items = new List<(int, EquipmentData)>();

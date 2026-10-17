@@ -1,6 +1,7 @@
 using Nytherion.Core.Managers;
 using Nytherion.GamePlay.Combat;
 using Nytherion.GamePlay.Combat.Weapons;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -52,7 +53,12 @@ namespace Nytherion.Core.test
         private void OnGUI()
         {
             if (labelStyle == null)
-                labelStyle = new GUIStyle(GUI.skin.label) { fontSize = 18, wordWrap = true };
+                labelStyle = new GUIStyle(GUI.skin.label)
+                {
+                    font = TMP_Settings.defaultFontAsset != null ? TMP_Settings.defaultFontAsset.sourceFontFile : GUI.skin.font,
+                    fontSize = 18,
+                    wordWrap = true
+                };
             GUI.Label(new Rect(20f, 20f, Screen.width - 40f, 110f),
                 "Frenzy 발사 스프라이트 테스트\n" +
                 "마우스로 조준 · 왼쪽 버튼 또는 스페이스를 누르고 발사\n" +

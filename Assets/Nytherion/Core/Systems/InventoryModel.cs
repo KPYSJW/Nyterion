@@ -57,6 +57,26 @@ namespace Nytherion.Core.Systems
             return true;
         }
 
+        /// <summary> 선택한 등급 이하의 소지 장비를 추가하고 화면 갱신은 한 번만 알린다. </summary>
+        public int StageForDismantleUpToRarity(Rarity maxRarity)
+        {
+            if (!Enum.IsDefined(typeof(Rarity), maxRarity)) return 0;
+
+            int added = 0;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                var slot = GetItemAt(i);
+                if (!(slot.item is EquipmentData equipment) || slot.count != 1 ||
+                    !Enum.IsDefined(typeof(Rarity), equipment.rarity) || equipment.rarity > maxRarity)
+                    continue;
+
+                dismantleSlots.Add(i);
+                added++;
+            }
+            if (added > 0) NotifyAllSlotsChanged();
+            return added;
+        }
+
         public void ResetDismantle()
         {
             if (dismantleSlots.Count == 0) return;

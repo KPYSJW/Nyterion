@@ -308,6 +308,25 @@ namespace Nytherion.Core.Managers
             return storageBlocks;
         }
 
+        /// <summary>보관함 전체를 높은 등급, 표시 이름순으로 정렬한다. 장착 상태와 유물 인스턴스는 유지한다.</summary>
+        public bool SortStorageBlocks()
+        {
+            // 드래그 중에는 원래 슬롯과 드롭 대상의 순번을 유지한다.
+            if (storageBlocks == null || currentlyDraggedBlock != null) return false;
+
+            List<RelicBlock> sorted = storageBlocks
+                .OrderByDescending(block => block?.SourceData != null ? (int)block.SourceData.rarity : -1)
+                .ThenBy(block => block?.SourceData != null ? block.SourceData.DisplayName : string.Empty,
+                    StringComparer.CurrentCultureIgnoreCase)
+                .ToList();
+            if (storageBlocks.SequenceEqual(sorted)) return true;
+
+            storageBlocks.Clear();
+            storageBlocks.AddRange(sorted);
+            OnRelicStateChanged?.Invoke();
+            return true;
+        }
+
         public IEnumerable<KeyValuePair<string, Vector2Int>> GetPlacedBlocks()
         {
             return placedBlockPositions;

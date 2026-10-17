@@ -22,6 +22,8 @@ namespace Nytherion.UI.Inventory
         [SerializeField] private DismantleSlotUI slotTemplate;
         [SerializeField] private Button dismantleButton;
         [SerializeField] private Button resetButton;
+        [SerializeField] private TMP_Dropdown maxRarityDropdown;
+        [SerializeField] private Button bulkStageButton;
         [SerializeField] private TMP_Text expectedGoldText;
         [SerializeField] private GameObject emptyHint;
 
@@ -48,6 +50,16 @@ namespace Nytherion.UI.Inventory
             dismantleButton.onClick.AddListener(Dismantle);
             resetButton.onClick.RemoveListener(ResetItems);
             resetButton.onClick.AddListener(ResetItems);
+            if (bulkStageButton != null)
+            {
+                bulkStageButton.onClick.RemoveListener(StageByRarity);
+                bulkStageButton.onClick.AddListener(StageByRarity);
+            }
+            if (maxRarityDropdown != null)
+            {
+                maxRarityDropdown.onValueChanged.RemoveListener(OnRarityChanged);
+                maxRarityDropdown.onValueChanged.AddListener(OnRarityChanged);
+            }
             inventory.OnDataChanged += OnInventoryChanged;
             slotTemplate.gameObject.SetActive(false);
             gameObject.SetActive(false);
@@ -113,6 +125,34 @@ namespace Nytherion.UI.Inventory
             TooltipPanel.Instance?.HideTooltip();
         }
 
+        public void StageByRarity()
+        {
+            if (!IsOpen || inventory == null || maxRarityDropdown == null) return;
+            int added = inventory.StageForDismantleUpToRarity((Rarity)maxRarityDropdown.value);
+            audioManager?.RequestUISound(added > 0 ? UISoundType.Place : UISoundType.Error);
+            TooltipPanel.Instance?.HideTooltip();
+        }
+
+        private void OnRarityChanged(int _) => RefreshBulkStageButton();
+
+        private void RefreshBulkStageButton()
+        {
+            if (bulkStageButton == null) return;
+            bulkStageButton.interactable = false;
+            if (inventory == null || maxRarityDropdown == null) return;
+            Rarity maxRarity = (Rarity)maxRarityDropdown.value;
+            for (int i = 0; i < inventory.MaxSlotCount; i++)
+            {
+                var slot = inventory.GetSlot(i);
+                if (slot.count == 1 && slot.item is EquipmentData equipment &&
+                    equipment.rarity >= Rarity.Common && equipment.rarity <= maxRarity)
+                {
+                    bulkStageButton.interactable = true;
+                    return;
+                }
+            }
+        }
+
         private void OnInventoryChanged(InventoryChangeData change) => Refresh();
 
         private void Refresh()
@@ -146,6 +186,7 @@ namespace Nytherion.UI.Inventory
                 gold <= int.MaxValue - (long)currency.GetGold();
             resetButton.interactable = items.Count > 0;
             emptyHint.SetActive(items.Count == 0);
+            RefreshBulkStageButton();
         }
 
         private void OnDisable() { if (IsOpen) Close(); }
@@ -153,6 +194,8 @@ namespace Nytherion.UI.Inventory
         {
             Close();
             if (inventory != null) inventory.OnDataChanged -= OnInventoryChanged;
+            if (bulkStageButton != null) bulkStageButton.onClick.RemoveListener(StageByRarity);
+            if (maxRarityDropdown != null) maxRarityDropdown.onValueChanged.RemoveListener(OnRarityChanged);
         }
     }
 }

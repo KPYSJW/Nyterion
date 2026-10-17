@@ -8,6 +8,8 @@ namespace Nytherion.Core.Data
     /// </summary>
     public static class UserSettings
     {
+        public static event System.Action<int, int> ResolutionApplied;
+
         private const string KeyPrefix = "Nytherion.Settings.";
         private const string MasterVolumeKey = KeyPrefix + "MasterVolume";
         private const string BgmVolumeKey = KeyPrefix + "BgmVolume";
@@ -101,12 +103,25 @@ namespace Nytherion.Core.Data
             bool hasFullscreenSetting = PlayerPrefs.HasKey(FullscreenKey);
             if (hasResolution)
             {
-                Screen.SetResolution(width, height, GetFullscreen(Screen.fullScreen));
+                ApplyDisplaySettings(width, height, GetFullscreen(Screen.fullScreen));
             }
             else if (hasFullscreenSetting)
             {
-                Screen.fullScreen = GetFullscreen(Screen.fullScreen);
+                ApplyDisplaySettings(Screen.width, Screen.height, GetFullscreen(Screen.fullScreen));
             }
+        }
+
+        /// <summary>해상도와 화면 모드를 함께 적용해 연속 변경 시에도 선택값을 유지합니다.</summary>
+        public static void ApplyDisplaySettings(int width, int height, bool isFullscreen)
+        {
+            if (width <= 0 || height <= 0) return;
+
+            FullScreenMode mode = isFullscreen
+                ? (Screen.fullScreenMode == FullScreenMode.Windowed
+                    ? FullScreenMode.FullScreenWindow : Screen.fullScreenMode)
+                : FullScreenMode.Windowed;
+            Screen.SetResolution(width, height, mode);
+            ResolutionApplied?.Invoke(width, height);
         }
 
         public static void Save()

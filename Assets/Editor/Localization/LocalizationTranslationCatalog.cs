@@ -65,13 +65,13 @@ namespace Nytherion.Editor.Localization
                 ["ui.stat.defense"] = new TranslationEntry("ui.stat.defense", "방어력", "Defense"),
                 ["ui.stat.moveSpeed"] = new TranslationEntry("ui.stat.moveSpeed", "이동 속도", "Move Speed"),
                 ["ui.stat.meleeDamage"] = new TranslationEntry("ui.stat.meleeDamage", "근접 공격력", "Melee Damage"),
-                ["ui.stat.rangedDamage"] = new TranslationEntry("ui.stat.rangedDamage", "원거리 공격력", "Ranged Damage"),
+                ["ui.stat.rangedDamage"] = new TranslationEntry("ui.stat.rangedDamage", "공격력", "Attack"),
                 ["ui.stat.meleeSpeed"] = new TranslationEntry("ui.stat.meleeSpeed", "근접 공격 속도", "Melee Attack Speed"),
-                ["ui.stat.rangedSpeed"] = new TranslationEntry("ui.stat.rangedSpeed", "원거리 공격 속도", "Ranged Attack Speed"),
+                ["ui.stat.rangedSpeed"] = new TranslationEntry("ui.stat.rangedSpeed", "공격 속도", "Attack Speed"),
                 ["ui.stat.extraProjectiles"] = new TranslationEntry("ui.stat.extraProjectiles", "추가 투사체 수", "Extra Projectiles"),
                 ["ui.stat.projectileSizeMultiplier"] = new TranslationEntry("ui.stat.projectileSizeMultiplier", "효과 범위 증가", "Area of Effect"),
                 ["ui.stat.lifesteal"] = new TranslationEntry("ui.stat.lifesteal", "생명력 흡수", "Lifesteal"),
-                ["ui.stat.chargeTimeReduction"] = new TranslationEntry("ui.stat.chargeTimeReduction", "충전 시간 감소", "Charge Time Reduction"),
+                ["ui.stat.chargeTimeReduction"] = new TranslationEntry("ui.stat.chargeTimeReduction", "충전 시간 감소", "Charge Reduction"),
                 ["ui.stat.critChance"] = new TranslationEntry("ui.stat.critChance", "치명타 확률", "Critical Chance"),
                 ["ui.stat.critDamageMultiplier"] = new TranslationEntry("ui.stat.critDamageMultiplier", "치명타 피해량", "Critical Damage")
             };

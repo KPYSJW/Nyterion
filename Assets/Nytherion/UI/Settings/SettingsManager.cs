@@ -35,7 +35,7 @@ namespace Nytherion.UI.Controllers
         [SerializeField] private Button sfxUpButton;
         [SerializeField] private Button sfxDownButton;
         
-        private List<Resolution> customResolutions = new List<Resolution>
+        private readonly List<Resolution> customResolutions = new List<Resolution>
         {
             new Resolution { width = 1280, height = 720 },
             new Resolution { width = 1600, height = 900 },
@@ -253,20 +253,24 @@ namespace Nytherion.UI.Controllers
         private void PopulateResolutions()
         {
             List<string> options = new List<string>();
-            int currentIndex = 0;
-            bool hasSavedResolution = UserSettings.TryGetResolution(out int savedWidth, out int savedHeight);
-            int targetWidth = hasSavedResolution ? savedWidth : Screen.width;
-            int targetHeight = hasSavedResolution ? savedHeight : Screen.height;
+            // 저장값과 실제 화면이 다를 수 있으므로 현재 화면 크기를 기준으로 선택합니다.
+            int targetWidth = Screen.width;
+            int targetHeight = Screen.height;
+            int currentIndex = customResolutions.FindIndex(res =>
+                res.width == targetWidth && res.height == targetHeight);
+            if (currentIndex < 0)
+            {
+                customResolutions.Add(new Resolution { width = targetWidth, height = targetHeight });
+                customResolutions.Sort((left, right) => left.width != right.width
+                    ? left.width.CompareTo(right.width) : left.height.CompareTo(right.height));
+                currentIndex = customResolutions.FindIndex(res =>
+                    res.width == targetWidth && res.height == targetHeight);
+            }
 
             for (int i = 0; i < customResolutions.Count; i++)
             {
-                string label = customResolutions[i].width + "x" + customResolutions[i].height;
+                string label = customResolutions[i].width + " × " + customResolutions[i].height;
                 options.Add(label);
-
-                if (targetWidth == customResolutions[i].width && targetHeight == customResolutions[i].height)
-                {
-                    currentIndex = i;
-                }
             }
 
             if (resolutionDropdown != null)
@@ -286,16 +290,26 @@ namespace Nytherion.UI.Controllers
             }
 
             Resolution res = customResolutions[index];
-            Screen.SetResolution(res.width, res.height, Screen.fullScreen);
             UserSettings.SetResolution(res.width, res.height);
+            UserSettings.ApplyDisplaySettings(res.width, res.height,
+                fullscreenToggle != null ? fullscreenToggle.isOn : UserSettings.GetFullscreen(Screen.fullScreen));
             UserSettings.Save();
             Debug.Log($"해상도 변경: {res.width}x{res.height}");
         }
 
         private void SetFullscreen(bool isFullscreen)
         {
-            Screen.fullScreen = isFullscreen;
             UserSettings.SetFullscreen(isFullscreen);
+            int index = resolutionDropdown != null ? resolutionDropdown.value : -1;
+            if (index >= 0 && index < customResolutions.Count)
+            {
+                Resolution res = customResolutions[index];
+                UserSettings.ApplyDisplaySettings(res.width, res.height, isFullscreen);
+            }
+            else
+            {
+                UserSettings.ApplyDisplaySettings(Screen.width, Screen.height, isFullscreen);
+            }
             UserSettings.Save();
             Debug.Log("전체화면: " + isFullscreen);
         }
