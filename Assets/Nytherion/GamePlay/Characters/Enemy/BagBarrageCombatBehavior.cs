@@ -42,11 +42,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public bool ShouldEnterAttackState(EnemyAIController enemy)
         {
-            if (enemy == null || enemy.player == null)
+            if (enemy == null || enemy.CurrentTarget == null)
                 return false;
 
             float distanceSquared =
-                ((Vector2)enemy.transform.position - (Vector2)enemy.player.position).sqrMagnitude;
+                ((Vector2)enemy.transform.position - (Vector2)enemy.CurrentTarget.position).sqrMagnitude;
             return distanceSquared <= attackRange * attackRange &&
                    Time.time - lastBarrageEndTime >= attackCooldown;
         }
@@ -169,6 +169,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private Vector2 GetRandomTarget()
         {
+            if (activeEnemy != null && activeEnemy.CurrentTarget != null &&
+                activeEnemy.CurrentTarget != activeEnemy.player)
+                return activeEnemy.CurrentTarget.position;
             float minimum = Mathf.Max(0f, minTargetDistance);
             float maximum = Mathf.Max(minimum, maxTargetDistance);
             Vector2 direction = Random.insideUnitCircle.normalized;

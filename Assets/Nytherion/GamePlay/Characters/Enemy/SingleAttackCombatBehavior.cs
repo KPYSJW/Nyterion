@@ -26,14 +26,14 @@ namespace Nytherion.GamePlay.Characters.Enemy
             IAttackBehavior attack = SelectAttack(enemy);
             return attack != null &&
                    attack.AttackCoolDown >= 1f &&
-                   attack.IsInAttackRange(enemy.player);
+                   attack.IsInAttackRange(enemy.CurrentTarget);
         }
 
         public void EnterAttackState(EnemyAIController enemy)
         {
-            if (enemy.player != null)
+            if (enemy.CurrentTarget != null)
             {
-                float horizontalDirection = enemy.player.position.x - enemy.transform.position.x;
+                float horizontalDirection = enemy.CurrentTarget.position.x - enemy.transform.position.x;
                 if (Mathf.Abs(horizontalDirection) > 0.01f)
                 {
                     enemy.SetForcedFacingDirection(new Vector2(horizontalDirection, 0f));
@@ -70,13 +70,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 return;
             }
 
-            if (attack == null || !attack.IsInAttackRange(enemy.player))
+            if (attack == null || !attack.IsInAttackRange(enemy.CurrentTarget))
             {
                 enemy.TransitionToState(enemy.chaseState);
                 return;
             }
 
-            if (!attack.TryAttack(enemy.player))
+            if (!attack.TryAttack(enemy.CurrentTarget))
             {
                 waitingForAttackCooldown = true;
                 enemy.PlayAnimation("Idle");
@@ -100,14 +100,14 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private IAttackBehavior SelectAttack(EnemyAIController enemy)
         {
-            if (enemy == null || enemy.player == null || attackBehaviors == null)
+            if (enemy == null || enemy.CurrentTarget == null || attackBehaviors == null)
                 return null;
 
             if (attackSelector != null)
             {
                 return attackSelector.SelectAttackBehavior(
                     enemy.transform,
-                    enemy.player,
+                    enemy.CurrentTarget,
                     attackBehaviors);
             }
 

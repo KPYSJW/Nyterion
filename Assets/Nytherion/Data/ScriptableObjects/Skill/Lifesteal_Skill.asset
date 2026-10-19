@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Lifesteal_Skill
   m_EditorClassIdentifier: 
   skillID: skill_lifesteal
+  isDisabled: 0
   skillType: 6
   skillName: Lifesteal
-  description: "\uC77C\uC815 \uC2DC\uAC04 \uACF5\uACA9 \uD53C\uD574\uB85C \uCCB4\uB825
-    \uD68C\uBCF5"
+  description: "\uC9C0\uC18D \uC2DC\uAC04\uB3D9\uC548 \uC0DD\uBA85\uB825 \uD761\uC218
+    \uC99D\uAC00 "
   skillLevel: 0
   exp: 0
   coolDown: 30

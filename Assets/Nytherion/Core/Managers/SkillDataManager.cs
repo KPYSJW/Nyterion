@@ -85,6 +85,8 @@ namespace Nytherion.Core.Managers
         /// <param name="newSkill">획득한 스킬 데이터</param>
         public void AcquireSkill(SkillData newSkill)
         {
+            if (newSkill == null || !newSkill.IsRuntimeAvailable) return;
+
             // 이미 보유한 스킬일 경우 중복 획득 처리
             if (skillStates.ContainsKey(newSkill.skillID))
             {
@@ -114,7 +116,7 @@ namespace Nytherion.Core.Managers
         /// </summary>
         public void GrantSkillFromRelic(SkillData skillData, int relicLevel)
         {
-            if (skillData == null || string.IsNullOrEmpty(skillData.skillID)) return;
+            if (skillData == null || !skillData.IsRuntimeAvailable || string.IsNullOrEmpty(skillData.skillID)) return;
 
             string skillId = skillData.skillID;
 
@@ -227,10 +229,10 @@ namespace Nytherion.Core.Managers
         {
             // 전달받은 배열 길이만큼 복사하되 범위를 넘으면 null 처리
             for (int i = 0; i < equippedSkills.Length; i++)
-                equippedSkills[i] = (i < newEquipped.Length) ? newEquipped[i] : null;
+                equippedSkills[i] = (i < newEquipped.Length && newEquipped[i] != null && newEquipped[i].IsRuntimeAvailable) ? newEquipped[i] : null;
 
             for (int i = 0; i < storageSkills.Length; i++)
-                storageSkills[i] = (i < newStorage.Length) ? newStorage[i] : null;
+                storageSkills[i] = (i < newStorage.Length && newStorage[i] != null && newStorage[i].IsRuntimeAvailable) ? newStorage[i] : null;
 
             OnSkillDataChanged?.Invoke();
         }
@@ -251,7 +253,7 @@ namespace Nytherion.Core.Managers
             // 보유 중인 스킬 데이터와 레벨/ 경험치 저장
             for (int i = 0; i < storageSkills.Length; i++)
             {
-                if (storageSkills[i] != null)
+                if (storageSkills[i] != null && storageSkills[i].IsRuntimeAvailable)
                 {
                     string id = storageSkills[i].skillID;
 
@@ -275,7 +277,7 @@ namespace Nytherion.Core.Managers
             // 장착 중인 스킬의 ID 저장 및 상태를 ownedSkills에 추가 기록
             for (int i = 0; i < equippedSkills.Length; i++)
             {
-                if (equippedSkills[i] != null)
+                if (equippedSkills[i] != null && equippedSkills[i].IsRuntimeAvailable)
                 {
                     string id = equippedSkills[i].skillID;
                     saveData.equippedSkillIds.Add(id);
@@ -330,7 +332,7 @@ namespace Nytherion.Core.Managers
             {
                 for (int i = 0; i < defaultStartingSkills.Count; i++)
                 {
-                    if (i < storageSkills.Length)
+                    if (i < storageSkills.Length && defaultStartingSkills[i] != null && defaultStartingSkills[i].IsRuntimeAvailable)
                     {
                         storageSkills[i] = defaultStartingSkills[i];
                         skillStates[storageSkills[i].skillID] = new SkillState();
@@ -360,7 +362,7 @@ namespace Nytherion.Core.Managers
                     else
                     {
                         // 저장된 보관함 범위를 넘어선 데이터는 장착 스킬의 상태 정보임
-                        if (!string.IsNullOrEmpty(id))
+                        if (!string.IsNullOrEmpty(id) && skillDatabase.GetSkillById(id) != null)
                         {
                             skillStates[id] = new SkillState { level = entry.level, exp = entry.exp };
                         }
@@ -375,7 +377,7 @@ namespace Nytherion.Core.Managers
                     equippedSkills[i] = string.IsNullOrEmpty(id) ? null : skillDatabase.GetSkillById(id);
                     
                     // 장착 스킬이 있는데 상태가 없다면 기본 상태로 초기화
-                    if (!string.IsNullOrEmpty(id) && !skillStates.ContainsKey(id))
+                    if (equippedSkills[i] != null && !skillStates.ContainsKey(id))
                     {
                         skillStates[id] = new SkillState { level = 1, exp = 0 };
                     }
@@ -383,7 +385,7 @@ namespace Nytherion.Core.Managers
 
                 // 장착 스킬 로드 완료 후 씬의 PlayerSkillManager에도 바로 적용
                 Nytherion.GamePlay.Characters.Player.PlayerSkillManager playerSkillManager = UnityEngine.Object.FindObjectOfType<Nytherion.GamePlay.Characters.Player.PlayerSkillManager>();
-                if (playerSkillManager != null)
+                if (Application.isPlaying && playerSkillManager != null)
                 {
                     playerSkillManager.SetEquippedSkills(equippedSkills);
                 }

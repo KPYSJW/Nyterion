@@ -30,7 +30,7 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float iconSlotScale = 1.5f;
 
         [Min(0.1f)]
-        [Tooltip("인벤토리 전용 크기 보정입니다. 1은 현재 기본 크기, 0.75는 축소입니다. 확대 시 정수 픽셀 배율에 맞춰 표시됩니다.")]
+        [Tooltip("장착·보관함 아이콘 크기 보정입니다. 1 이하는 정수 픽셀 배율을 유지하고, 1보다 크면 슬롯 안쪽에서 정수 제한 없이 확대합니다.")]
         public float inventoryIconScale = 1f;
 
         [Header("Weapon Settings")]

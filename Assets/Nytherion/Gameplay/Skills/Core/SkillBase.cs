@@ -37,7 +37,7 @@ namespace Nytherion.GamePlay.Skills
         ///  스킬 사용을 시도. 사용 가능하다면 스킬을 활성화하고 쿨다운을 초기화
         /// </summary>
         /// <returns></returns>
-        public virtual bool CanUse() => Time.time > lastUseTime + skillData.coolDown;
+        public virtual bool CanUse() => skillData != null && skillData.IsRuntimeAvailable && Time.time > lastUseTime + GetCooldownTime();
 
         /// <summary>
         /// 실제 스킬의 효과나 로직이 구현되는 메서드
@@ -71,7 +71,7 @@ namespace Nytherion.GamePlay.Skills
         /// <returns>남은 쿨다운 시간(최소 0초)</returns>
         public virtual float GetRemainingCooldown()
         {
-            float remaining = (lastUseTime + skillData.coolDown) - Time.time;
+            float remaining = (lastUseTime + GetCooldownTime()) - Time.time;
             return Mathf.Max(0f, remaining);
         }
     }

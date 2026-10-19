@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.GamePlay.Skills;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat
 {
     /// <summary>레이저의 수명, 화면/장애물 끝점, 번개 외형, 틱 판정과 풀 반환을 담당합니다.</summary>
     [DefaultExecutionOrder(100)] // 무기의 위치/반동/조준 자세 갱신 뒤 실제 총구 축을 읽습니다.
-    public class WeaponLaserBeam : MonoBehaviour
+    public class WeaponLaserBeam : MonoBehaviour, IProjectileGateBeam
     {
         private static readonly int ColorProperty = Shader.PropertyToID("_Color");
         private static readonly int TilingProperty = Shader.PropertyToID("_Tiling");
@@ -63,6 +64,12 @@ namespace Nytherion.GamePlay.Combat
         private Vector3 startEffectBaseScale;
         private Vector3 endEffectBaseScale;
         private bool endpointScalesCached;
+        private readonly ProjectileGateBeamPath<WeaponLaserBeam> gatePath = new ProjectileGateBeamPath<WeaponLaserBeam>();
+        private WeaponLaserBeam gateSource;
+        private LaserWeaponData settings;
+        private Vector3 gateStart;
+        private Vector2 gateDirection;
+        private Vector3 BeamStart => gateSource != null ? gateStart : origin.position;
 
         public bool IsFiring { get; private set; }
         public float CurrentLength { get; private set; }
@@ -70,6 +77,9 @@ namespace Nytherion.GamePlay.Combat
         public void Initialize(LaserWeapon owner, Transform origin, Vector2 aimDirection,
             LaserWeaponData data, float tickDamage, ObjectPoolManager pool)
         {
+            gatePath.Clear();
+            gateSource = null;
+            settings = data;
             this.owner = owner;
             this.origin = origin;
             this.pool = pool;
@@ -158,6 +168,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void LateUpdate()
         {
+            if (gateSource != null) return;
             Advance(Time.deltaTime);
         }
 
@@ -221,27 +232,27 @@ namespace Nytherion.GamePlay.Combat
             if (!IsFiring) return;
             IsFiring = false;
             firingEndTime = elapsed;
-            owner?.OnBeamFiringEnded(this);
+            if (gateSource == null) owner?.OnBeamFiringEnded(this);
         }
 
         private void UpdateGeometry(float visibility, bool refreshJitter)
         {
-            direction = followAim
+            direction = gateSource != null ? gateDirection : followAim
                 ? ((Vector2)origin.TransformVector(localAimDirection)).normalized
                 : initialDirection;
             if (direction.sqrMagnitude < 0.0001f) direction = Vector2.right;
 
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            transform.SetPositionAndRotation(origin.position, Quaternion.Euler(0f, 0f, angle));
+            transform.SetPositionAndRotation(BeamStart, Quaternion.Euler(0f, 0f, angle));
 
             // 카메라가 있으면 사거리 대신 화면 끝을 최대 끝점으로 사용합니다.
             // 카메라가 없는 검증/수동 씬에서는 WeaponData.range가 안전한 예비 길이입니다.
-            CurrentLength = TryGetCameraEdgeDistance(origin.position, direction, out float cameraDistance)
+            CurrentLength = TryGetCameraEdgeDistance(BeamStart, direction, out float cameraDistance)
                 ? cameraDistance : fallbackLength;
 
             // 빔의 폭까지 검사하므로 가장자리가 벽을 뚫고 피해를 주지 않습니다.
             obstructions.Clear();
-            Physics2D.BoxCast(origin.position, new Vector2(0.001f, width), angle,
+            Physics2D.BoxCast(BeamStart, new Vector2(0.001f, width), angle,
                 direction, obstructionFilter, obstructions, CurrentLength);
             for (int i = 0; i < obstructions.Count; i++)
             {
@@ -250,7 +261,64 @@ namespace Nytherion.GamePlay.Combat
                 CurrentLength = Mathf.Min(CurrentLength, obstructions[i].distance);
             }
 
+            if (gateSource == null)
+            {
+                CurrentLength = gatePath.Update(owner.CasterTransform, BeamStart, direction, CurrentLength,
+                    settings.projectilePrefab, pool);
+                for (int i = 0; i < gatePath.Count; i++)
+                    gatePath.GetBranch(i).UpdateGateBranch(this, gatePath.GetStart(i), gatePath.GetDirection(i),
+                        gatePath.SizeMultiplier, visibility, refreshJitter);
+            }
             UpdateVisual(visibility, refreshJitter);
+        }
+
+        private void UpdateGateBranch(WeaponLaserBeam source, Vector3 start, Vector2 outputDirection,
+            float scale, float visibility, bool refreshJitter)
+        {
+            bool firstUse = gateSource != source;
+            gateSource = source;
+            settings = source.settings;
+            owner = source.owner;
+            origin = source.origin;
+            pool = source.pool;
+            poolTag = source.poolTag;
+            gateStart = start;
+            gateDirection = outputDirection;
+            damage = source.damage;
+            width = source.width * scale;
+            visualWidth = source.visualWidth * scale;
+            fallbackLength = source.fallbackLength;
+            elapsed = source.elapsed;
+            visualSegments = source.visualSegments;
+            jitterMagnitude = source.jitterMagnitude * scale;
+            jitterInterval = source.jitterInterval;
+            textureTileLength = source.textureTileLength * scale;
+            targetFilter = source.targetFilter;
+            obstructionFilter = source.obstructionFilter;
+            beamColor = source.beamColor;
+            IsFiring = source.IsFiring;
+            initialized = true;
+            EnsureVisualBuffer();
+            if (lineRenderer != null)
+            {
+                lineRenderer.useWorldSpace = true;
+                lineRenderer.positionCount = visualPoints.Length;
+                lineRenderer.numCapVertices = 0;
+                lineRenderer.numCornerVertices = 2;
+                lineRenderer.sortingLayerID = source.lineRenderer.sortingLayerID;
+                lineRenderer.sortingOrder = source.lineRenderer.sortingOrder;
+            }
+            if (firstUse)
+            {
+                startEffectBaseScale = source.startEffectBaseScale;
+                endEffectBaseScale = source.endEffectBaseScale;
+                endpointScalesCached = true;
+                jitterSeed = Random.value * 1000f;
+                if (lineRenderer != null) PrepareEndpointEffect(endEffectRenderer);
+            }
+            if (endEffectRenderer != null)
+                endEffectRenderer.transform.localScale = endEffectBaseScale * owner.EffectSizeMultiplier * scale;
+            UpdateGeometry(visibility, refreshJitter || firstUse);
         }
 
         private bool TryGetCameraEdgeDistance(Vector2 start, Vector2 rayDirection, out float distance)
@@ -260,7 +328,7 @@ namespace Nytherion.GamePlay.Combat
             Camera targetCamera = Camera.main;
             if (targetCamera == null) return false;
 
-            float planeDistance = Vector3.Dot(origin.position - targetCamera.transform.position,
+            float planeDistance = Vector3.Dot(BeamStart - targetCamera.transform.position,
                 targetCamera.transform.forward);
             if (planeDistance <= 0f) return false;
 
@@ -316,7 +384,7 @@ namespace Nytherion.GamePlay.Combat
             UpdateEndpointEffects(visibility);
             if (!lineRenderer.enabled) return;
 
-            if (refreshJitter || visualPoints[0] != ClampToCamera(origin.position) ||
+            if (refreshJitter || visualPoints[0] != ClampToCamera(BeamStart) ||
                 visualPoints[visualPoints.Length - 1] != ClampToCamera(GetEndPoint()))
             {
                 GenerateLightningPath();
@@ -357,8 +425,8 @@ namespace Nytherion.GamePlay.Combat
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
             // 시작 효과의 왼쪽(-X)은 플레이어 쪽, 종료 효과는 그 반대 방향을 향합니다.
-            UpdateEndpointEffect(startEffectRenderer, origin.position, angle, visibility);
-            UpdateEndpointEffect(endEffectRenderer, GetEndPoint(), angle + 180f, visibility);
+            UpdateEndpointEffect(startEffectRenderer, BeamStart, angle, gateSource == null ? visibility : 0f);
+            UpdateEndpointEffect(endEffectRenderer, GetEndPoint(), angle + 180f, gatePath.HasGate ? 0f : visibility);
         }
 
         private static void UpdateEndpointEffect(SpriteRenderer endpoint, Vector3 position,
@@ -377,7 +445,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void GenerateLightningPath()
         {
-            Vector3 start = origin.position;
+            Vector3 start = BeamStart;
             Vector3 end = GetEndPoint();
             Vector2 normal = new Vector2(-direction.y, direction.x);
             float noiseTime = Mathf.Floor(elapsed / jitterInterval) * 0.73f;
@@ -396,7 +464,7 @@ namespace Nytherion.GamePlay.Combat
 
         private Vector3 GetEndPoint()
         {
-            return origin != null ? origin.position + (Vector3)(direction * CurrentLength) : transform.position;
+            return origin != null ? BeamStart + (Vector3)(direction * CurrentLength) : transform.position;
         }
 
         private Vector3 ClampToCamera(Vector3 point)
@@ -418,7 +486,7 @@ namespace Nytherion.GamePlay.Combat
         private void PerformDamageTick()
         {
             damageTicksDealt++;
-            owner?.OnBeamDamageTick(this, direction);
+            if (gateSource == null) owner?.OnBeamDamageTick(this, direction);
             if (!initialized || !IsFiring || owner == null || origin == null) return;
 
             // 반동으로 총구가 움직인 같은 프레임에 빔 시작점도 다시 맞춥니다.
@@ -446,16 +514,20 @@ namespace Nytherion.GamePlay.Combat
                 if (!initialized || owner == null) return;
                 if (targetBehaviour.isActiveAndEnabled) owner.ApplyStatusEffects(target);
             }
+            for (int i = 0; i < gatePath.Count; i++)
+                gatePath.GetBranch(i).PerformDamageTick();
         }
 
         public void StopImmediately()
         {
             if (!initialized) return;
 
+            gatePath.Clear();
+
             bool wasFiring = IsFiring;
             initialized = false;
             IsFiring = false;
-            if (owner != null)
+            if (owner != null && gateSource == null)
             {
                 if (wasFiring) owner.OnBeamFiringEnded(this);
                 owner.OnBeamReleased(this);
@@ -480,7 +552,8 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnDisable()
         {
-            if (initialized && owner != null)
+            gatePath.Clear();
+            if (initialized && owner != null && gateSource == null)
             {
                 if (IsFiring) owner.OnBeamFiringEnded(this);
                 owner.OnBeamReleased(this);
@@ -489,6 +562,8 @@ namespace Nytherion.GamePlay.Combat
             IsFiring = false;
             owner = null;
             origin = null;
+            gateSource = null;
+            settings = null;
             cachedCamera = null;
             overlaps.Clear();
             obstructions.Clear();

@@ -39,7 +39,7 @@ namespace Nytherion.Editor
                     SerializedProperty itemProp = property.FindPropertyRelative("itemData");
                     EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, EditorGUIUtility.singleLineHeight), itemProp);
                 }
-                else if (currentType == RewardType.Relic)
+                else if (currentType == RewardType.Relic || currentType == RewardType.RelicUnlock)
                 {
                     SerializedProperty relicProp = property.FindPropertyRelative("relicData");
                     EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, EditorGUIUtility.singleLineHeight), relicProp);
@@ -62,7 +62,8 @@ namespace Nytherion.Editor
             SerializedProperty typeProp = property.FindPropertyRelative("rewardType");
             RewardType currentType = (RewardType)typeProp.enumValueIndex;
 
-            if (currentType == RewardType.Skill || currentType == RewardType.Item || currentType == RewardType.Relic)
+            if (currentType == RewardType.Skill || currentType == RewardType.Item ||
+                currentType == RewardType.Relic || currentType == RewardType.RelicUnlock)
             {
                 height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             }

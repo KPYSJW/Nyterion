@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Weapons;
+using Nytherion.GamePlay.Skills;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat
 {
     /// <summary>원본 스프라이트 광선의 재생, 단계별 판정과 풀 수명을 관리합니다.</summary>
-    public class LayLaserBeam : MonoBehaviour
+    public class LayLaserBeam : MonoBehaviour, IProjectileGateBeam
     {
         [SerializeField] private SpriteRenderer beamRenderer;
         [SerializeField] private SpriteRenderer startEffectRenderer;
@@ -28,6 +29,11 @@ namespace Nytherion.GamePlay.Combat
         private float width;
         private float elapsed;
         private int nextTick;
+        private readonly ProjectileGateBeamPath<LayLaserBeam> gatePath = new ProjectileGateBeamPath<LayLaserBeam>();
+        private LayLaserBeam gateSource;
+        private Vector3 gateStart;
+        private Vector2 gateDirection;
+        private Vector3 BeamStart => gateSource != null ? gateStart : origin.position;
 
         public bool IsFiring { get; private set; }
         public float CurrentLength { get; private set; }
@@ -36,6 +42,8 @@ namespace Nytherion.GamePlay.Combat
         public void Initialize(LayLaserWeapon owner, Transform origin, Vector2 direction,
             LayLaserWeaponData data, int stage, float damage, ObjectPoolManager pool)
         {
+            gatePath.Clear();
+            gateSource = null;
             this.owner = owner;
             this.origin = origin;
             this.direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
@@ -71,6 +79,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void LateUpdate()
         {
+            if (gateSource != null) return;
             Advance(Time.deltaTime);
         }
 
@@ -106,20 +115,54 @@ namespace Nytherion.GamePlay.Combat
         private void UpdateGeometry()
         {
             // PlayerCombat.Update에서 회전한 무기의 현재 조준축을 같은 프레임에 따라갑니다.
-            Vector2 currentDirection = owner.CurrentFireDirection;
+            Vector2 currentDirection = gateSource != null ? gateDirection : owner.CurrentFireDirection;
             if (currentDirection.sqrMagnitude > 0.0001f)
                 direction = currentDirection.normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            transform.SetPositionAndRotation(origin.position, Quaternion.Euler(0f, 0f, angle));
+            transform.SetPositionAndRotation(BeamStart, Quaternion.Euler(0f, 0f, angle));
             CurrentLength = maxLength;
             obstructions.Clear();
-            Physics2D.BoxCast(origin.position, new Vector2(0.001f, width), angle,
+            Physics2D.BoxCast(BeamStart, new Vector2(0.001f, width), angle,
                 direction, obstructionFilter, obstructions, maxLength);
             foreach (RaycastHit2D hit in obstructions)
             {
                 if (hit.collider != null && !hit.collider.transform.IsChildOf(owner.CasterTransform))
                     CurrentLength = Mathf.Min(CurrentLength, hit.distance);
             }
+            if (gateSource == null)
+            {
+                CurrentLength = gatePath.Update(owner.CasterTransform, BeamStart, direction, CurrentLength,
+                    data.projectilePrefab, pool);
+                for (int i = 0; i < gatePath.Count; i++)
+                    gatePath.GetBranch(i).UpdateGateBranch(this, gatePath.GetStart(i), gatePath.GetDirection(i),
+                        gatePath.SizeMultiplier);
+            }
+        }
+
+        private void UpdateGateBranch(LayLaserBeam source, Vector3 start, Vector2 outputDirection, float scale)
+        {
+            bool firstUse = gateSource != source;
+            gateSource = source;
+            owner = source.owner;
+            origin = source.origin;
+            data = source.data;
+            pool = source.pool;
+            poolTag = source.poolTag;
+            gateStart = start;
+            gateDirection = outputDirection;
+            damage = source.damage;
+            maxLength = source.maxLength;
+            width = source.width * scale;
+            elapsed = source.elapsed;
+            targetFilter = source.targetFilter;
+            obstructionFilter = source.obstructionFilter;
+            IsFiring = source.IsFiring;
+            beamRenderer.sortingLayerID = source.beamRenderer.sortingLayerID;
+            beamRenderer.sortingOrder = source.beamRenderer.sortingOrder;
+            if (firstUse)
+                PrepareEndpointRenderer(endEffectRenderer, beamRenderer.sortingLayerID, beamRenderer.sortingOrder + 1);
+            UpdateGeometry();
+            UpdateVisual();
         }
 
         private void UpdateVisual()
@@ -145,9 +188,9 @@ namespace Nytherion.GamePlay.Combat
             float endpointScale = width / (Mathf.Max(0.01f, endpointSprite.bounds.size.y) *
                 Mathf.Max(0.01f, data.beamOpaqueWidthRatio));
             UpdateEndpointRenderer(startEffectRenderer, endpointSprite, Vector3.zero,
-                Quaternion.identity, endpointScale, beamRenderer.enabled);
+                Quaternion.identity, endpointScale, beamRenderer.enabled && gateSource == null);
             UpdateEndpointRenderer(endEffectRenderer, endpointSprite, Vector3.right * CurrentLength,
-                Quaternion.Euler(0f, 0f, 180f), endpointScale, beamRenderer.enabled);
+                Quaternion.Euler(0f, 0f, 180f), endpointScale, beamRenderer.enabled && !gatePath.HasGate);
         }
 
         private static void PrepareEndpointRenderer(SpriteRenderer renderer, int sortingLayerId, int sortingOrder)
@@ -175,7 +218,7 @@ namespace Nytherion.GamePlay.Combat
             if (CurrentLength <= 0f) return;
             overlaps.Clear();
             hitTargets.Clear();
-            Vector2 center = (Vector2)origin.position + direction * (CurrentLength * 0.5f);
+            Vector2 center = (Vector2)BeamStart + direction * (CurrentLength * 0.5f);
             Physics2D.OverlapBox(center, new Vector2(CurrentLength, width), transform.eulerAngles.z,
                 targetFilter, overlaps);
             foreach (Collider2D hit in overlaps)
@@ -188,6 +231,8 @@ namespace Nytherion.GamePlay.Combat
                 if (behaviour != null && behaviour.isActiveAndEnabled) owner.ApplyStatusEffects(target);
                 if (!IsFiring || owner == null) return;
             }
+            for (int i = 0; i < gatePath.Count; i++)
+                gatePath.GetBranch(i).PerformDamageTick();
         }
 
         public void StopImmediately()
@@ -204,10 +249,12 @@ namespace Nytherion.GamePlay.Combat
 
         private void ResetState()
         {
+            gatePath.Clear();
             IsFiring = false;
-            if (owner != null) owner.OnBeamReleased(this);
+            if (owner != null && gateSource == null) owner.OnBeamReleased(this);
             owner = null;
             origin = null;
+            gateSource = null;
             if (beamRenderer != null) beamRenderer.enabled = false;
             if (startEffectRenderer != null) startEffectRenderer.enabled = false;
             if (endEffectRenderer != null) endEffectRenderer.enabled = false;

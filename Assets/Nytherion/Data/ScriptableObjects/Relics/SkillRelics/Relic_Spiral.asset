@@ -14,12 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Relic of Spiral
   koreanName: "Spiral \uAC01\uC778"
-  description_KR: "[\uB098\uC120] \uD68D\uB4DD\n\uC8FC\uBCC0 \uC801\uC744 \uACF5\uACA9\uD558\uB294
-    \uD68C\uC804 \uAD6C\uCCB4 \uC18C\uD658"
-  description_EN: 'Unlocks [Spiral]
-
-    Summons spinning orbs that attack nearby
-    enemies.'
+  description_KR: "\uC8FC\uBCC0 \uC801\uC744 \uACF5\uACA9\uD558\uB294 \uD68C\uC804
+    \uAD6C\uCCB4 \uC18C\uD658"
+  description_EN: Summons spinning orbs that attack nearby enemies.
   Image: {fileID: 21300000, guid: 2641987862f4dbd4da2fef9e117d24b6, type: 3}
   rarity: 3
   level: 1

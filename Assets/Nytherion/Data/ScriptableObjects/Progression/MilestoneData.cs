@@ -34,7 +34,7 @@ namespace Nytherion.Data.ScriptableObjects.Progression
                     foreach (RewardData reward in rewards)
                     {
                         if (reward != null &&
-                            reward.rewardType == RewardType.Relic &&
+                            (reward.rewardType == RewardType.Relic || reward.rewardType == RewardType.RelicUnlock) &&
                             reward.relicData != null &&
                             reward.relicData.Image != null)
                         {

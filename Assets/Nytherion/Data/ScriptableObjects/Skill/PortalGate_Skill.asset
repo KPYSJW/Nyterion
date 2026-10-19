@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac222b12ae5f0d4b9064e289b48d423, type: 3}
+  m_Name: PortalGate_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_portal_gate
+  isDisabled: 0
+  skillType: 15
+  skillName: "\uCC28\uC6D0\uBB38"
+  description: "\uC774\uB3D9 \uAC00\uB2A5\uD55C \uD3EC\uD0C8\uC744 \uC0DD\uC131\uD569\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 45
+  manaCost: 0
+  damage: 0
+  range: 0
+  icon: {fileID: -748852817, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  skillPrefab: {fileID: 5301498552719101818, guid: 0c07251587c502f41abcef15f2784f65, type: 3}
+  unlockMilestoneID: 
+  screenEdgePadding: 0.1
+  placementRadius: 0.45
+  wallPadding: 0.08
+  minimumSeparation: 1.3
+  blockingLayers:
+    serializedVersion: 2
+    m_Bits: 2560
+  lifetime: 15
+  maxTraversals: 6
+  interactionRadius: 0.6
+  traversalDelay: 0.35
+  portalPrefab: {fileID: 6494710699563147376, guid: 56972740e85e79c4993112a70cbed2d7, type: 3}
+  animationFrames:
+  - {fileID: -748852817, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: -673543354, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: -1199685353, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: -355830670, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: 667813086, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: 1404893443, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: 2008551129, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: -1498331416, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: 2038438751, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: -123293505, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: 7821527, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: -485187293, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: 144542840, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: -229404200, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: 1684081119, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  - {fileID: 1024099152, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  framesPerSecond: 12

@@ -14,12 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Ancient Skull
   koreanName: "\uACE0\uB300\uD574\uACE8"
-  description_KR: "[\uC601\uD63C \uD3EC\uC2DD\uC790] \uD68D\uB4DD\n\uC801\uC744 \uCC98\uCE58\uD560\uC218\uB85D
-    \uAC15\uD574\uC9C0\uB294 \uD22C\uC0AC\uCCB4 \uBC1C\uC0AC"
-  description_EN: 'Unlocks [Soul Eater]
-
-    Fires a projectile that grows stronger
-    with each kill.'
+  description_KR: "\uC801\uC744 \uCC98\uCE58\uD560\uC218\uB85D \uAC15\uD574\uC9C0\uB294
+    \uD22C\uC0AC\uCCB4 \uBC1C\uC0AC"
+  description_EN: Fires a projectile that grows stronger with each kill.
   Image: {fileID: 21300000, guid: 605854ef5826a5e4ba9bcbc7341e1d55, type: 3}
   rarity: 3
   level: 1

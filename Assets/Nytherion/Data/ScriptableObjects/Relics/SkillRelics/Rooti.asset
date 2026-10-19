@@ -14,17 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Rooti
   koreanName: "\uB8E8\uD2F0"
-  description_KR: "\uB8E8\uD2F0\uB294 \uD3EC\uD0D1 \uC2A4\uD0AC\uB85C \uC804\uD658\uB418\uC5C8\uC2B5\uB2C8\uB2E4.
-    \uC774 \uC720\uBB3C\uC740 \uB354 \uC774\uC0C1 \uC18C\uD658\uC218\uB97C \uC0DD\uC131\uD558\uC9C0
-    \uC54A\uC2B5\uB2C8\uB2E4."
-  description_EN: Rooti is now deployed by the turret skill. This legacy relic no
-    longer summons a companion.
+  description_KR: "\uB8E8\uD2F0 \uC18C\uD658 \uC2A4\uD0AC\uC744 \uC0AC\uC6A9 \uAC00\uB2A5\uD558\uAC8C
+    \uB41C\uB2E4."
+  description_EN: 
   Image: {fileID: 21300000, guid: c0cfa8eb448663441811f8c9bd7a6b93, type: 3}
   rarity: 3
   level: 3
   isDisabled: 1
   effectModules: []
   grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:

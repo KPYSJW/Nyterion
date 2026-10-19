@@ -438,6 +438,7 @@ namespace Nytherion.UI.Components
             {
                 foreach (var reward in milestone.rewards)
                 {
+                    if (reward == null) continue;
                     if (reward.rewardType == RewardType.Skill && reward.skillData != null)
                     {
                         content += LocalizationText.Get(
@@ -446,6 +447,15 @@ namespace Nytherion.UI.Components
                             "\n보상: {0} 스킬 획득",
                             "\nReward: Unlock {0}",
                             reward.skillData.DisplayName);
+                    }
+                    else if (reward.rewardType == RewardType.RelicUnlock && reward.relicData != null)
+                    {
+                        content += LocalizationText.Get(
+                            LocalizationTables.UI,
+                            "ui.tooltip.reward.relic_unlock",
+                            "\n보상: {0} 유물 해금",
+                            "\nReward: Unlock {0} relic",
+                            reward.relicData.DisplayName);
                     }
                     else if (reward.rewardType == RewardType.Gold)
                     {

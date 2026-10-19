@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: ChargeRelic
   m_EditorClassIdentifier: 
   relicName: ChargeRelic
-  koreanName: "차징의 구"
-  description_KR: "무기의 차징 공격을 활성화합니다."
-  description_EN: 'Enables weapon charging attacks.'
+  koreanName: "\uCC28\uC9D5\uC758 \uAD6C"
+  description_KR: "\uBB34\uAE30 \uCC28\uC9D5 \uACF5\uACA9 \uD65C\uC131\uD654"
+  description_EN: Enables charged weapon attacks.
   Image: {fileID: 21300000, guid: d8edc57c276626f449084ba691022a1c, type: 3}
   rarity: 1
   level: 1
   isDisabled: 0
   effectModules: []
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -34,6 +36,7 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
   references:
     version: 2

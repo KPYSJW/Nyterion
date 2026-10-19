@@ -13,19 +13,22 @@ MonoBehaviour:
   m_Name: ExtraTrigger
   m_EditorClassIdentifier: 
   relicName: Trigger Piece
-  koreanName: 방아쇠 조각
-  description: "추가 투사체 +1. (당기면 멈출 수 없습니다)"
-  description_KR: "추가 투사체 +1. (당기면 멈출 수 없습니다)"
-  description_EN: "Extra projectile +1. (Cannot stop once pulled)"
+  koreanName: "\uBC29\uC544\uC1E0 \uC870\uAC01"
+  description_KR: "\uCD94\uAC00 \uD22C\uC0AC\uCCB4 +1"
+  description_EN: Extra projectiles +1.
   Image: {fileID: 21300000, guid: f2bb4c220f7f50641b73101d96dad533, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: -2
     effects:
     - rid: 6716071107867705345
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -43,9 +46,7 @@ MonoBehaviour:
     levelAmount: 1
   synergySeriesId: TrickshotEngineerSeries
   synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
-  unlockMilestoneID:
+  unlockMilestoneID: 
   references:
     version: 2
     RefIds:

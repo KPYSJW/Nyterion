@@ -13,14 +13,11 @@ MonoBehaviour:
   m_Name: Relic_Turret
   m_EditorClassIdentifier: 
   relicName: Relic of Turret
-  koreanName: "Turret \uAC01\uC778"
-  description_KR: "[\uB8E8\uD2F0 \uD3EC\uD0D1] \uD68D\uB4DD\n\uC801\uC744 \uC790\uB3D9\uC73C\uB85C
-    \uACF5\uACA9\uD558\uB294 \uB8E8\uD2F0 \uD3EC\uD0D1 \uC124\uCE58"
-  description_EN: 'Unlocks [Rooti Turret]
-
-    Deploys a Rooti turret that automatically
-    attacks enemies.'
-  Image: {fileID: 21300000, guid: 094fafc3a6865ea438ec0eca814508bf, type: 3}
+  koreanName: "\uB8E8\uD2F0"
+  description_KR: "\uC801\uC744 \uC790\uB3D9\uC73C\uB85C \uACF5\uACA9\uD558\uB294
+    \uB8E8\uD2F0 \uD3EC\uD0D1 \uC124\uCE58"
+  description_EN: Deploys a Rooti turret that automatically attacks enemies.
+  Image: {fileID: 21300000, guid: c0cfa8eb448663441811f8c9bd7a6b93, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0

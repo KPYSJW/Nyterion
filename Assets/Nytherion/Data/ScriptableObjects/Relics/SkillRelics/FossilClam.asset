@@ -14,11 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Fossil Clam
   koreanName: "\uD654\uC11D\uC870\uAC1C"
-  description_KR: "[\uB2E4\uC911 \uC0AC\uACA9] \uD68D\uB4DD\n\uCD94\uAC00 \uD22C\uC0AC\uCCB4
-    \uBC1C\uC0AC"
-  description_EN: 'Unlocks [Multi Shot]
-
-    Fires extra projectiles.'
+  description_KR: "\uCD94\uAC00 \uD22C\uC0AC\uCCB4 \uBC1C\uC0AC"
+  description_EN: Fires extra projectiles.
   Image: {fileID: 21300000, guid: bc3c0c78e6b8ae5489adcb9af4f85980, type: 3}
   rarity: 3
   level: 1

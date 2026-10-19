@@ -14,12 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Mandrake
   koreanName: "\uB9E8\uB4DC\uB808\uC774\uD06C"
-  description_KR: "[\uC624\uBC84\uB4DC\uB77C\uC774\uBE0C] \uD68D\uB4DD\n\uC77C\uC815
-    \uC2DC\uAC04 \uACF5\uACA9 \uC18D\uB3C4\uC640 \uB300\uC2DC \uC18D\uB3C4 \uC99D\uAC00"
-  description_EN: 'Unlocks [Overdrive]
-
-    Temporarily boosts attack speed and dash
-    speed.'
+  description_KR: "\uC77C\uC815 \uC2DC\uAC04 \uACF5\uACA9\uB825, \uACF5\uACA9 \uC18D\uB3C4\uC640
+    \uB300\uC2DC \uC18D\uB3C4 \uC99D\uAC00"
+  description_EN: Temporarily boosts attack, attack speed and dash speed.
   Image: {fileID: 21300000, guid: 1073be4f7aaa7424fbc413e401329463, type: 3}
   rarity: 3
   level: 1

@@ -76,7 +76,7 @@ namespace Nytherion.Editor
             AssetDatabase.Refresh();
             allSkills = AssetDatabase.FindAssets("t:SkillData")
                 .Select(guid => AssetDatabase.LoadAssetAtPath<SkillData>(AssetDatabase.GUIDToAssetPath(guid)))
-                .Where(s => s != null)
+                .Where(s => s != null && s.IsRuntimeAvailable)
                 .OrderBy(s => s.skillName)
                 .ToList();
         }
@@ -329,7 +329,7 @@ namespace Nytherion.Editor
                 }
             }
 
-            database.allSkills.RemoveAll(s => s == null);
+            database.allSkills.RemoveAll(s => s == null || !s.IsRuntimeAvailable);
             database.allSkills = database.allSkills.OrderBy(s => s.skillName).ToList();
 
             EditorUtility.SetDirty(database);
@@ -357,6 +357,7 @@ namespace Nytherion.Editor
             SkillData newData = Instantiate(creationData);
             
             if (!Directory.Exists(SKILL_DATA_PATH)) Directory.CreateDirectory(SKILL_DATA_PATH);
+            AssetDatabase.CreateAsset(newData, fullPath);
             
             if (createMilestone)
             {
@@ -366,15 +367,18 @@ namespace Nytherion.Editor
                 MilestoneData newMilestone = CreateInstance<MilestoneData>();
                 newMilestone.milestoneID = mID;
                 newMilestone.title = milestoneTitle;
-                newMilestone.description = $"{newData.skillName} 스킬을 해금하기 위한 업적입니다.";
+                newMilestone.description = $"{newData.skillName} 스킬 유물을 해금하기 위한 업적입니다.";
                 newMilestone.progressionType = milestoneType;
                 newMilestone.targetValue = milestoneTarget;
-                newMilestone.icon = newData.icon;
+                var skillRelic = SkillRelicMilestoneSetup.GetOrCreateSkillRelic(newData);
+                newMilestone.icon = skillRelic.Image;
+                skillRelic.unlockMilestoneID = mID;
+                EditorUtility.SetDirty(skillRelic);
 
                 RewardData reward = new RewardData
                 {
-                    rewardType = RewardType.Skill,
-                    skillData = newData,
+                    rewardType = RewardType.RelicUnlock,
+                    relicData = skillRelic,
                     amount = 1
                 };
                 newMilestone.rewards = new List<RewardData> { reward };
@@ -387,7 +391,7 @@ namespace Nytherion.Editor
                 Debug.Log($"[SkillManager] Automatically created milestone: {mPath}");
             }
 
-            AssetDatabase.CreateAsset(newData, fullPath);
+            EditorUtility.SetDirty(newData);
             AssetDatabase.SaveAssets();
 
             AddToDatabase(newData);
@@ -514,7 +518,7 @@ namespace Nytherion.Editor
                 if (str.EndsWith(".asset"))
                 {
                     SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>(str);
-                    if (skill != null)
+                    if (skill != null && skill.IsRuntimeAvailable)
                     {
                         if (database == null) database = GetDatabase();
                         if (database != null)
@@ -532,7 +536,7 @@ namespace Nytherion.Editor
 
             if (databaseChanged && database != null)
             {
-                database.allSkills.RemoveAll(s => s == null);
+                database.allSkills.RemoveAll(s => s == null || !s.IsRuntimeAvailable);
                 database.allSkills = database.allSkills.OrderBy(s => s.skillName).ToList();
                 EditorUtility.SetDirty(database);
                 AssetDatabase.SaveAssets();

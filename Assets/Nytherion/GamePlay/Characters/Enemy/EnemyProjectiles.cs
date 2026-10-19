@@ -4,6 +4,7 @@ using Nytherion.Core.Systems;
 using Nytherion.GamePlay.Characters.Player;
 using Unity.VisualScripting;
 using UnityEngine;
+using Nytherion.GamePlay.Combat;
 
 public class EnemyProjectiles : MonoBehaviour
 {
@@ -22,18 +23,9 @@ public class EnemyProjectiles : MonoBehaviour
          return;
       }
 
-      if(other.CompareTag(Tags.Player))
-      {
-         if(hashit)return;
-
-         hashit=true;
-         if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
-         {
-            playerHealth.TakeDamage(
-               damage,
-               other.ClosestPoint(transform.position));
-         }
-      }
+      if (hashit) return;
+      hashit = EnemyAttackTarget.TryDamage(other, damage, other.ClosestPoint(transform.position));
+      if (hashit) Destroy(gameObject);
    }
     
 }

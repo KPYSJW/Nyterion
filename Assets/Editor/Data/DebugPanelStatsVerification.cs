@@ -126,7 +126,8 @@ namespace Nytherion.Editor
                         Rect bounds = container.rect;
                         Require(local.x >= bounds.xMin - 0.01f && local.x <= bounds.xMax + 0.01f &&
                             local.y >= bounds.yMin - 0.01f && local.y <= bounds.yMax + 0.01f,
-                            $"패널 밖 버튼: {button.name}, 위치 {local}, 컨테이너 {bounds}");
+                            $"패널 밖 버튼: {button.name}, 위치 {local}, 컨테이너 {bounds}, " +
+                            $"레이아웃 {JsonUtility.ToJson(container.GetComponent<LayoutGroup>())}");
                     }
                 }
                 buttons.Single(b => b.name == "ResetDebugStatsButton").onClick.Invoke();

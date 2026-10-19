@@ -144,8 +144,7 @@ namespace Nytherion.Editor
                 relic = ScriptableObject.CreateInstance<RelicData>();
                 relic.relicName = "Relic of Chain Ignition";
                 relic.koreanName = "연쇄 점화 각인";
-                relic.description_KR = "[연쇄 점화] 스킬을 얻습니다.\n[연쇄 점화] : " + data.description;
-                relic.description_EN = "Grants Chain Ignition. Three waves expand toward the mouse, starting with one direction. Levels and relics increase damage and fill up to eight directions.";
+                RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
                 relic.Image = icon;
                 relic.rarity = Rarity.Common;
                 relic.effectModules = new List<RelicEffectModule>

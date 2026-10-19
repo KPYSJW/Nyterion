@@ -489,12 +489,7 @@ namespace Nytherion.Editor
             relic.name = "Opapa";
             relic.relicName = "Opapa";
             relic.koreanName = "오파파";
-            relic.description_KR =
-                "적을 향해 돌진한 뒤 벽, 장애물과 화면 경계에서 튕기며 적을 관통하는 Opapa를 소환합니다.\n" +
-                "구르기에 닿은 적은 한 번씩 피해를 받습니다.";
-            relic.description_EN =
-                "Summons Opapa, who charges toward enemies, pierces them, and ricochets from walls, " +
-                "obstacles, and the camera boundary.";
+            RelicDescriptionSetup.ApplyDescription(relic);
             relic.Image = icon;
             relic.rarity = Rarity.Epic;
             relic.level = 1;

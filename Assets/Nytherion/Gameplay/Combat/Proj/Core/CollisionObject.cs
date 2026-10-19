@@ -7,6 +7,7 @@ using VContainer;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Gameplay.Relics.Modules;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.GamePlay.Skills;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -42,6 +43,27 @@ namespace Nytherion.GamePlay.Combat
         private LayerMask obstacleCollisionLayers;
         private bool useObstacleCollision;
         private bool hasReturnedToPool;
+        private Transform projectileOwner;
+        private Vector2 previousGatePosition;
+        private List<RaycastHit2D> gateHits;
+
+        public Transform ProjectileOwner => projectileOwner != null ? projectileOwner :
+            playerManager != null ? playerManager.transform : null;
+        public bool HasPassedProjectileGate { get; private set; }
+
+        public void SetProjectileOwner(Transform owner) => projectileOwner = owner;
+
+        public void CopyGatePayloadTo(CollisionObject output)
+        {
+            output.Configure(damage, traits, chargePercent, hitEffectPrefab, ModifierSnapshot, true);
+            output.projectileOwner = ProjectileOwner;
+            output.HasPassedProjectileGate = true;
+            output.isChainDamage = isChainDamage;
+            output.hitEffectPrefab = hitEffectPrefab;
+            output.playHitEffectOnWall = playHitEffectOnWall;
+            output.useObstacleCollision = useObstacleCollision;
+            output.obstacleCollisionLayers = obstacleCollisionLayers;
+        }
 
         public CombatModifierSnapshot ModifierSnapshot => playerManager != null && playerManager.playerRelicManager != null
             ? playerManager.playerRelicManager.CombatModifiers
@@ -78,6 +100,9 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnEnable()
         {
+            projectileOwner = null;
+            HasPassedProjectileGate = false;
+            previousGatePosition = transform.position;
             effectSizeMultiplier = 1f;
             hasReturnedToPool = false;
             useObstacleCollision = false;
@@ -161,10 +186,36 @@ namespace Nytherion.GamePlay.Combat
             return false;
         }
 
+        private void FixedUpdate()
+        {
+            Vector2 position = transform.position;
+            if (!hasReturnedToPool && !HasPassedProjectileGate && ProjectileOwner != null &&
+                (position - previousGatePosition).sqrMagnitude > 0.000001f)
+            {
+                // 트리거보다 빠르게 이동한 탄도 이전 물리 위치부터 경로를 검사합니다.
+                if (gateHits == null) gateHits = new List<RaycastHit2D>(8);
+                ContactFilter2D filter = new ContactFilter2D { useTriggers = true };
+                filter.SetLayerMask(1 << 0);
+                Physics2D.Linecast(previousGatePosition, position, filter, gateHits);
+                for (int i = 0; i < gateHits.Count; i++)
+                {
+                    if (gateHits[i].collider.TryGetComponent(out ProjectileGateController gate) && gate.TryConvert(this))
+                        break;
+                }
+                gateHits.Clear();
+            }
+            previousGatePosition = position;
+        }
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
             // 같은 물리 틱에 여러 충돌체가 진입해도 이미 반환된 탄은 피해를 주지 않습니다.
             if (hasReturnedToPool || !gameObject.activeInHierarchy) return;
+            if (collision.TryGetComponent(out ProjectileGateController gate))
+            {
+                gate.TryConvert(this);
+                return;
+            }
             bool isEnemy = IsEnemyCollider(collision);
             bool isWall = HasTagInParents(collision.transform, "Wall") || IsObstacleCollision(collision);
             if (isEnemy && bounceModifier.enabled && bounceModifier.ShouldIgnoreHit(collision)) return;

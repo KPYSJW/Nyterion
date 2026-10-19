@@ -93,7 +93,7 @@ namespace Nytherion.GamePlay.Characters.Player
             }
 
             // 새로운 스킬 데이터와 생성할 프리팹이 존재하는 경우 인스턴스화
-            if (newSkillData != null && newSkillData.skillPrefab != null)
+            if (newSkillData != null && newSkillData.IsRuntimeAvailable && newSkillData.skillPrefab != null)
             {
                 // 별도의 부모 오브젝트가 없다면 플레이어 자신을 부모로 설정 
                 Transform parentTransform = skillHolder != null ? skillHolder : transform;

@@ -9,19 +9,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c76a15f5956734698ddc4f8e8d05f5, type: 3}
+  m_Script: {fileID: 11500000, guid: b840defec29380f4e81182a5778688d6, type: 3}
   m_Name: MeteorStrike_Skill
   m_EditorClassIdentifier: 
   skillID: skill_meteor_strike
+  isDisabled: 0
   skillType: 5
   skillName: Meteor Strike
-  description: "\uC6B4\uC11D\uC744 \uB5A8\uC5B4\uB728\uB824 \uC8FC\uBCC0 \uC801 \uACF5\uACA9"
+  description: "\uC2DC\uC804 \uC21C\uAC04 \uCE74\uBA54\uB77C \uC548\uC758 \uBAA8\uB4E0
+    \uC801\uC744 \uC870\uC900\uD574 \uC6B4\uC11D\uC744 \uD558\uB098\uC529 \uC2DC\uAC04\uCC28\uB85C
+    \uB5A8\uC5B4\uB728\uB9BD\uB2C8\uB2E4. \uB808\uBCA8\uC774 \uC624\uB97C\uC218\uB85D
+    \uD53C\uD574\uB7C9\uC774 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   skillLevel: 1
   exp: 0
   coolDown: 15
   manaCost: 60
   damage: 120
   range: 10
-  icon: {fileID: 0}
-  skillPrefab: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4853b92c04f207648a22980fc1ab8b86, type: 3}
+  skillPrefab: {fileID: 5855128319438904853, guid: e80e977e29bdf6743b8057c45e53e2cf, type: 3}
   unlockMilestoneID: milestone_untouchable
+  damagePerLevel: 20
+  strikeInterval: 0.12
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  dropHeight: 10
+  fallSpeed: 20
+  explosionYOffset: 0.4
+  impactPrefab: {fileID: 7987386238065005855, guid: a94b835fdf8762c4c8f7a9317d7066de, type: 3}

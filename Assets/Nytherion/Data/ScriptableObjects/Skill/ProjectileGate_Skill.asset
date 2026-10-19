@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0c110349ad32244c9f1cf1ba3c0ba92, type: 3}
+  m_Name: ProjectileGate_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_projectile_gate
+  isDisabled: 0
+  skillType: 14
+  skillName: "\uBD84\uAD11 \uAC8C\uC774\uD2B8"
+  description: "\uD22C\uC0AC\uCCB4 \uBD84\uC5F4 \uAC8C\uC774\uD2B8 \uC0DD\uC131"
+  skillLevel: 1
+  exp: 0
+  coolDown: 20
+  manaCost: 0
+  damage: 0
+  range: 3
+  icon: {fileID: 21300000, guid: e163ea6d63064344791862b8b80618b4, type: 3}
+  skillPrefab: {fileID: 5355363650030601184, guid: 5c9b5d3bbef8ae74f8ee8ab5a403e5b7, type: 3}
+  unlockMilestoneID: 
+  cooldownReductionPerLevel: 1
+  minimumCooldown: 2
+  forwardDistance: 1
+  halfWidth: 0.75
+  lifetime: 6
+  detectionThickness: 0.12
+  outputCount: 3
+  speedMultiplier: 1.8
+  sizeMultiplier: 0.65
+  outputLifetime: 5
+  laserSpreadHalfAngle: 30
+  gatePrefab: {fileID: 4342005718276173818, guid: 0bd17b8d84d56c74097c25d83ecf2e2a, type: 3}
+  beamAnimation: {fileID: 7400000, guid: d7d0d6e13eb56824081538f3df261dbb, type: 2}
+  endpointScale: 1

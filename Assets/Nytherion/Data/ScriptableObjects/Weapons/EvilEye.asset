@@ -32,7 +32,7 @@ MonoBehaviour:
   useDiagonalIcon: 1
   iconRotationOffset: 0
   iconSlotScale: 1.8
-  inventoryIconScale: 1
+  inventoryIconScale: 1.5
   damage: 20
   range: 0
   cooldown: 1.5

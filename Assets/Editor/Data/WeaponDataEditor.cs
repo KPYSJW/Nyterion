@@ -50,7 +50,7 @@ namespace Nytherion.Editor
                         new GUIContent("Icon Slot Scale", "장착·상점 슬롯과 툴팁의 크기입니다. 인벤토리에는 적용되지 않습니다."));
                     EditorGUILayout.PropertyField(
                         serializedObject.FindProperty(nameof(WeaponData.inventoryIconScale)),
-                        new GUIContent("인벤토리 아이콘 크기", "1: 현재 기본 크기 / 0.75: 축소. 확대 시 정수 픽셀 배율에 맞춥니다."));
+                        new GUIContent("인벤토리 아이콘 크기", "1: 기본 / 0.75: 축소 / 1 초과: 장착·보관함 슬롯 안쪽에서 정수 배율 제한 없이 확대합니다."));
                 }
             }
             serializedObject.ApplyModifiedProperties();

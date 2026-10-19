@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -17,9 +17,6 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   progressionType: 7
-  requiredMilestones: []
   targetValue: 10000
-  rewards:
-  - rewardType: 0
-    amount: 0
-    skillData: {fileID: 11400000, guid: 40cb3348b3dc96849ad26abdb73b9fcb, type: 2}
+  requiredMilestones: []
+  rewards: []

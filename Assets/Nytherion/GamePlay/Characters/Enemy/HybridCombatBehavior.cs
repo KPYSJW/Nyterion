@@ -37,7 +37,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public bool ShouldEnterAttackState(EnemyAIController enemy)
         {
             IAttackBehavior attack = SelectAttack(enemy);
-            if (attack == null || !attack.IsInAttackRange(enemy.player))
+            if (attack == null || !attack.IsInAttackRange(enemy.CurrentTarget))
                 return false;
 
             if (attack is MeleeAttackBehavior)
@@ -72,7 +72,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 return;
 
             IAttackBehavior attack = SelectAttack(enemy);
-            if (attack == null || !attack.IsInAttackRange(enemy.player))
+            if (attack == null || !attack.IsInAttackRange(enemy.CurrentTarget))
             {
                 enemy.TransitionToState(enemy.chaseState);
                 return;
@@ -98,7 +98,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 return;
             }
 
-            if (!attack.TryAttack(enemy.player))
+            if (!attack.TryAttack(enemy.CurrentTarget))
                 return;
 
             bool isRangedAttack = attack is RangedAttackBehavior;
@@ -122,19 +122,19 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private IAttackBehavior SelectAttack(EnemyAIController enemy)
         {
-            if (enemy == null || enemy.player == null || attackBehaviors == null)
+            if (enemy == null || enemy.CurrentTarget == null || attackBehaviors == null)
                 return null;
 
             if (attackSelector != null)
             {
                 return attackSelector.SelectAttackBehavior(
                     enemy.transform,
-                    enemy.player,
+                    enemy.CurrentTarget,
                     attackBehaviors);
             }
 
             return attackBehaviors
-                .Where(attack => attack.IsInAttackRange(enemy.player))
+                .Where(attack => attack.IsInAttackRange(enemy.CurrentTarget))
                 .OrderByDescending(attack => attack.AttackCoolDown)
                 .FirstOrDefault();
         }

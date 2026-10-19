@@ -495,8 +495,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             ignoredPlayerBodyCollider =
-                enemyAIController != null && enemyAIController.player != null
-                    ? enemyAIController.player.GetComponent<Collider2D>()
+                enemyAIController != null && enemyAIController.CurrentTarget != null
+                    ? enemyAIController.CurrentTarget.GetComponent<Collider2D>()
                     : null;
 
             shouldRestorePlayerCollision =
@@ -607,13 +607,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (enemyAIController == null ||
                 enemyAIController.agent == null ||
                 !enemyAIController.agent.isOnNavMesh ||
-                enemyAIController.player == null)
+                enemyAIController.CurrentTarget == null)
             {
                 return false;
             }
 
             bool hasPath = enemyAIController.agent.CalculatePath(
-                enemyAIController.player.position,
+                enemyAIController.CurrentTarget.position,
                 jumpPath);
 
             if (!hasPath ||

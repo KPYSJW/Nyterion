@@ -1,6 +1,7 @@
 using Nytherion.Core.Systems;
 using Nytherion.GamePlay.Characters.Player;
 using UnityEngine;
+using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
@@ -109,12 +110,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (flightProgress < playerCollisionStartProgress)
                 return false;
 
-            PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
-            if (playerHealth == null)
-                return false;
-
             Vector2 hitPoint = other.ClosestPoint(transform.position);
-            playerHealth.TakeDamage(damage, hitPoint);
+            if (!EnemyAttackTarget.TryDamage(other, damage, hitPoint)) return false;
             Explode(hitPoint);
             return true;
         }

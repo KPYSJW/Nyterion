@@ -3,13 +3,14 @@ using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.GamePlay.Skills;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Nytherion.GamePlay.Combat
 {
     /// <summary>지속 광선의 좌표 계산, 충돌 필터링, 피해 주기와 풀 수명만 관리합니다.</summary>
-    public class VoidRayBeam : MonoBehaviour
+    public class VoidRayBeam : MonoBehaviour, IProjectileGateBeam
     {
         private VoidRayBeamVisual visual;
 
@@ -38,12 +39,26 @@ namespace Nytherion.GamePlay.Combat
         private float visualAlpha = 1f;
         private float effectSizeMultiplier = 1f;
         private bool connectedVisual;
+        private readonly ProjectileGateBeamPath<VoidRayBeam> gatePath = new ProjectileGateBeamPath<VoidRayBeam>();
+        private VoidRayBeam gateSource;
+        private Vector3 gateStart;
+        private Vector2 gateDirection;
+        private float gateSizeMultiplier = 1f;
 
         public bool IsFiring { get; private set; }
         public bool IsFading { get; private set; }
         public bool HasHit { get; private set; }
-        public bool HasTargetHit => IsFiring && HasValidTarget();
-        public int CurrentTargetCount => IsFiring ? CountValidTargets() : 0;
+        public bool HasTargetHit => IsFiring && CurrentTargetCount > 0;
+        public int CurrentTargetCount
+        {
+            get
+            {
+                if (!IsFiring) return 0;
+                int count = CountValidTargets();
+                for (int i = 0; i < gatePath.Count; i++) count += gatePath.GetBranch(i).CountValidTargets();
+                return count;
+            }
+        }
         public float CurrentLength { get; private set; }
         public Vector2 StartPoint => startPoint;
         public Vector2 EndPoint => endPoint;
@@ -57,6 +72,9 @@ namespace Nytherion.GamePlay.Combat
         public void Initialize(VoidRayWeapon owner, Transform origin, VoidRayWeaponData data,
             ObjectPoolManager pool)
         {
+            gatePath.Clear();
+            gateSource = null;
+            gateSizeMultiplier = 1f;
             this.owner = owner;
             this.origin = origin;
             this.data = data;
@@ -90,6 +108,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void LateUpdate()
         {
+            if (gateSource != null) return;
             if (IsFiring)
             {
                 if (owner == null || !owner.isActiveAndEnabled || origin == null ||
@@ -125,15 +144,15 @@ namespace Nytherion.GamePlay.Combat
             targetPoints.Clear();
             if (owner == null || origin == null || data == null) return;
 
-            Vector2 currentDirection = owner.CurrentFireDirection;
+            Vector2 currentDirection = gateSource != null ? gateDirection : owner.CurrentFireDirection;
             if (currentDirection.sqrMagnitude > 0.0001f)
                 direction = currentDirection.normalized;
-            Vector2 currentMuzzleDirection = owner.CurrentMuzzleDirection;
+            Vector2 currentMuzzleDirection = gateSource != null ? gateDirection : owner.CurrentMuzzleDirection;
             if (currentMuzzleDirection.sqrMagnitude > 0.0001f)
                 muzzleDirection = currentMuzzleDirection.normalized;
 
-            startPoint = origin.position;
-            effectSizeMultiplier = owner.EffectSizeMultiplier;
+            startPoint = gateSource != null ? (Vector2)gateStart : (Vector2)origin.position;
+            effectSizeMultiplier = owner.EffectSizeMultiplier * gateSizeMultiplier;
             float obstructionDistance = data.MaxRange;
             Collider2D obstructionCollider = null;
 
@@ -190,6 +209,24 @@ namespace Nytherion.GamePlay.Combat
                 }
             }
 
+            if (gateSource == null)
+            {
+                // 적 또는 벽이 먼저 있으면 그 뒤의 게이트에는 광선이 도달하지 않습니다.
+                float straightLength = foundFirstTarget ? Mathf.Min(obstructionDistance, firstTarget.Distance) : obstructionDistance;
+                float gateLength = gatePath.Update(owner.CasterTransform, startPoint, direction, straightLength,
+                    data.projectilePrefab, pool);
+                if (gatePath.HasGate)
+                {
+                    endPoint = startPoint + direction * gateLength;
+                    CurrentLength = gateLength;
+                    HasHit = false;
+                    for (int i = 0; i < gatePath.Count; i++)
+                        gatePath.GetBranch(i).UpdateGateBranch(this, gatePath.GetStart(i), gatePath.GetDirection(i),
+                            gatePath.SizeMultiplier);
+                    return;
+                }
+            }
+
             if (foundFirstTarget)
             {
                 AddCurrentTarget(firstTarget);
@@ -206,6 +243,30 @@ namespace Nytherion.GamePlay.Combat
                 : startPoint + direction * obstructionDistance;
             CurrentLength = GetCurrentPathLength();
             HasHit = currentTargets.Count > 0 || obstructionCollider != null;
+        }
+
+        private void UpdateGateBranch(VoidRayBeam source, Vector3 start, Vector2 outputDirection, float scale)
+        {
+            bool firstUse = gateSource != source;
+            gateSource = source;
+            owner = source.owner;
+            origin = source.origin;
+            data = source.data;
+            pool = source.pool;
+            poolTag = source.poolTag;
+            gateStart = start;
+            gateDirection = outputDirection;
+            gateSizeMultiplier = scale;
+            elapsed = source.elapsed;
+            visualAlpha = source.visualAlpha;
+            collisionFilter = source.collisionFilter;
+            targetFilter = source.targetFilter;
+            IsFiring = source.IsFiring;
+            IsFading = false;
+            EnsureVisual();
+            if (firstUse) visual.Initialize(owner.GetComponent<SpriteRenderer>(), data);
+            UpdateGeometry();
+            UpdateVisual();
         }
 
         private void AddCurrentTarget(TargetHit hit)
@@ -268,28 +329,33 @@ namespace Nytherion.GamePlay.Combat
             {
                 // 밀린 틱 사이에 대상이 이동/사망해도 이전 판정을 재사용하지 않습니다.
                 UpdateGeometry();
-                if (!HasValidTarget()) continue;
-
                 float damage = owner.GetDamagePerTick();
-                bool dealtDamage = false;
-                for (int i = 0; i < currentTargets.Count; i++)
+                ApplyDamageTick(damage);
+                if (!IsFiring || owner == null) return;
+                for (int i = 0; i < gatePath.Count; i++)
                 {
-                    TargetHit hit = currentTargets[i];
-                    if (!IsTargetHitValid(hit)) continue;
-
-                    hit.Target.TakeDamage(damage);
-                    dealtDamage = true;
+                    gatePath.GetBranch(i).ApplyDamageTick(damage);
                     if (!IsFiring || owner == null) return;
-                    if (IsTargetAlive(hit.Target, hit.Behaviour))
-                        owner.ApplyStatusEffects(hit.Target);
-                    else
-                        RemoveCachedTarget(hit.Target);
                 }
-
-                if (dealtDamage) visual.NotifyDamageTick(elapsed);
                 // 죽거나 이동한 적에 굵은 연결선이 한 프레임 더 남지 않게 합니다.
                 UpdateGeometry();
             }
+        }
+
+        private void ApplyDamageTick(float damage)
+        {
+            bool dealtDamage = false;
+            for (int i = 0; i < currentTargets.Count; i++)
+            {
+                TargetHit hit = currentTargets[i];
+                if (!IsTargetHitValid(hit)) continue;
+                hit.Target.TakeDamage(damage);
+                dealtDamage = true;
+                if (!IsFiring || owner == null) return;
+                if (IsTargetAlive(hit.Target, hit.Behaviour)) owner.ApplyStatusEffects(hit.Target);
+                else RemoveCachedTarget(hit.Target);
+            }
+            if (dealtDamage) visual.NotifyDamageTick(elapsed);
         }
 
         private void AddOrUpdateTargetCandidate(Collider2D collider, IDamageable target,
@@ -374,9 +440,21 @@ namespace Nytherion.GamePlay.Combat
 
         private void UpdateVisual()
         {
-            if (IsFiring) connectedVisual = HasTargetHit;
-            visual.Render(startPoint, endPoint, direction, muzzleDirection, HasHit, connectedVisual,
-                targetPoints, elapsed, visualAlpha, IsFiring, effectSizeMultiplier);
+            if (IsFiring) connectedVisual = HasValidTarget();
+            visual.Render(startPoint, endPoint, direction, muzzleDirection, HasHit || gatePath.HasGate, connectedVisual,
+                targetPoints, elapsed, visualAlpha, IsFiring, effectSizeMultiplier, gateSource == null);
+            if (gateSource == null && IsFading)
+            {
+                for (int i = 0; i < gatePath.Count; i++)
+                {
+                    VoidRayBeam branch = gatePath.GetBranch(i);
+                    branch.IsFiring = false;
+                    branch.IsFading = true;
+                    branch.elapsed = elapsed;
+                    branch.visualAlpha = visualAlpha;
+                    branch.UpdateVisual();
+                }
+            }
         }
 
         private void EnsureVisual()
@@ -392,7 +470,9 @@ namespace Nytherion.GamePlay.Combat
             ClearCurrentTargets();
             VoidRayWeapon releasingOwner = owner;
             owner = null;
-            releasingOwner?.OnBeamReleased(this);
+            if (gateSource == null) releasingOwner?.OnBeamReleased(this);
+            for (int i = 0; i < gatePath.Count; i++)
+                gatePath.GetBranch(i).IsFiring = false;
 
             float fadeDuration = data != null ? Mathf.Max(0f, data.visualFadeDuration) : 0f;
             if (fadeDuration <= 0f)
@@ -412,7 +492,7 @@ namespace Nytherion.GamePlay.Combat
             owner = null;
             IsFiring = false;
             IsFading = false;
-            releasingOwner?.OnBeamReleased(this);
+            if (gateSource == null) releasingOwner?.OnBeamReleased(this);
             FinishAndRelease();
         }
 
@@ -431,6 +511,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void ResetState()
         {
+            gatePath.Clear();
             IsFiring = false;
             IsFading = false;
             HasHit = false;
@@ -438,6 +519,8 @@ namespace Nytherion.GamePlay.Combat
             visualAlpha = 0f;
             owner = null;
             origin = null;
+            gateSource = null;
+            gateSizeMultiplier = 1f;
             data = null;
             pool = null;
             poolTag = null;
@@ -479,7 +562,7 @@ namespace Nytherion.GamePlay.Combat
         {
             VoidRayWeapon releasingOwner = owner;
             owner = null;
-            releasingOwner?.OnBeamReleased(this);
+            if (gateSource == null) releasingOwner?.OnBeamReleased(this);
             ResetState();
         }
     }
@@ -555,7 +638,7 @@ namespace Nytherion.GamePlay.Combat
         public void Render(Vector2 startPoint, Vector2 endPoint, Vector2 direction,
             Vector2 muzzleDirection, bool hasHit, bool hasTargetHit,
             IReadOnlyList<Vector2> targetPoints, float elapsed, float alpha, bool allowJitter,
-            float effectSizeMultiplier = 1f)
+            float effectSizeMultiplier = 1f, bool showStartEffect = true)
         {
             if (data == null || outerLine == null || secondaryLine == null || coreLine == null) return;
             ConfigureSorting(weaponRenderer);
@@ -628,7 +711,7 @@ namespace Nytherion.GamePlay.Combat
             Sprite startSprite = startFrameIndex >= 0 ? data.startEndFrames[startFrameIndex] : null;
             float startEffectWidth = data.AirOuterWidth * 2f *
                 Mathf.Max(0.1f, data.startEffectSizeMultiplier) * effectSizeMultiplier;
-            UpdateEndpoint(startEffectRenderer, startSprite, startPoint, muzzleDirection, true, alpha,
+            UpdateEndpoint(startEffectRenderer, startSprite, startPoint, muzzleDirection, showStartEffect, alpha,
                 startEffectWidth, damagePulse);
             if (endEffectRenderer != null) endEffectRenderer.enabled = false;
         }

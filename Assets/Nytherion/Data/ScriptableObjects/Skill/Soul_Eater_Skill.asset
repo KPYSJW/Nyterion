@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Soul_Eater_Skill
   m_EditorClassIdentifier: 
   skillID: skill_souleater
+  isDisabled: 0
   skillType: 1
   skillName: SoulEater
   description: "\uC801\uC744 \uCC98\uCE58\uD560\uC218\uB85D \uAC15\uD574\uC9C0\uB294
@@ -23,6 +24,6 @@ MonoBehaviour:
   manaCost: 0
   damage: 10
   range: 20
-  icon: {fileID: 21300000, guid: 783a2cec6c880b44a838fb8d6784ad88, type: 3}
+  icon: {fileID: 21300000, guid: 36c1e236c80bd8441aebb22c9d81181f, type: 3}
   skillPrefab: {fileID: 8870546469580780684, guid: f7b5ab6c13d185b48b5618e5733e2014, type: 3}
   unlockMilestoneID: 

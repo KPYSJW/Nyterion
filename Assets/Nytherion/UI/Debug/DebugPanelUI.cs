@@ -645,21 +645,26 @@ namespace Nytherion.UI.Test
                 container = buttons.transform;
             }
 
-            // 17개 능력치와 초기화 버튼이 패널 안에 들어가도록 기존 빈 컨테이너를 확장한다.
+            // 능력치 버튼이 부모 패널의 공간을 사용할 수 있도록 컨테이너를 확장한다.
             RectTransform rect = (RectTransform)container;
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
             rect.offsetMin = new Vector2(12f, 12f);
             rect.offsetMax = new Vector2(-12f, -12f);
-            VerticalLayoutGroup layout = container.GetComponent<VerticalLayoutGroup>();
+
+            // Inspector에서 지정한 Grid 등 기존 레이아웃을 유지하고, 없을 때만 세로 배치를 추가한다.
+            LayoutGroup layout = container.GetComponent<LayoutGroup>();
             if (layout == null) layout = container.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(0, 0, 0, 0);
-            layout.spacing = 6f;
-            layout.childAlignment = TextAnchor.UpperCenter;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = false;
+            if (layout is VerticalLayoutGroup verticalLayout)
+            {
+                verticalLayout.padding = new RectOffset(0, 0, 0, 0);
+                verticalLayout.spacing = 6f;
+                verticalLayout.childAlignment = TextAnchor.UpperCenter;
+                verticalLayout.childControlWidth = true;
+                verticalLayout.childControlHeight = true;
+                verticalLayout.childForceExpandWidth = true;
+                verticalLayout.childForceExpandHeight = false;
+            }
 
             foreach (var entry in debugStats)
             {

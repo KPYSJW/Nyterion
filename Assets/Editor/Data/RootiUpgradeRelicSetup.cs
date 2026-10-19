@@ -88,7 +88,7 @@ namespace Nytherion.Editor
             // relicName은 저장 ID로도 쓰이므로 기존에 지정한 이름은 바꾸지 않습니다.
             if (string.IsNullOrWhiteSpace(relic.relicName)) relic.relicName = englishName;
             if (string.IsNullOrWhiteSpace(relic.koreanName)) relic.koreanName = koreanName;
-            if (string.IsNullOrWhiteSpace(relic.description_KR)) relic.description_KR = description;
+            RelicDescriptionSetup.ApplyDescription(relic);
             if (relic.Image == null)
                 relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/" + fileName + ".png");
             if (relic.effectModules == null) relic.effectModules = new List<RelicEffectModule>();

@@ -169,6 +169,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             public LineRenderer Line;
             public Material Material;
             public PlayerHealth Player;
+            public Nytherion.GamePlay.Skills.DecoyDummy Decoy;
             public Collider2D[] PlayerColliders;
             public Vector2 Origin;
             public float Elapsed;
@@ -399,15 +400,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 : GetCurrentPosition(enemy);
 
             Vector2 targetCenter = Vector2.zero;
-            if (enemy.player != null)
+            if (enemy.CurrentTarget != null)
             {
-                Collider2D playerCollider = enemy.player.GetComponent<Collider2D>();
+                Collider2D playerCollider = enemy.CurrentTarget.GetComponent<Collider2D>();
                 targetCenter = playerCollider != null && playerCollider.isActiveAndEnabled &&
                     !playerCollider.isTrigger
                     ? (Vector2)playerCollider.bounds.center
-                    : (Vector2)enemy.player.position;
+                    : (Vector2)enemy.CurrentTarget.position;
             }
-            dashDirection = enemy.player != null
+            dashDirection = enemy.CurrentTarget != null
                 ? (targetCenter - dashAimCenter).normalized
                 : Vector2.zero;
             if (dashDirection.sqrMagnitude > 0.001f)
@@ -474,7 +475,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void BeginLightningCrossing(EnemyAIController enemy)
         {
-            if (enemy.player == null || enemy.rb == null || !enemy.rb.simulated ||
+            if (enemy.CurrentTarget == null || enemy.rb == null || !enemy.rb.simulated ||
                 enemy.agent == null || !enemy.agent.isActiveAndEnabled || !enemy.agent.isOnNavMesh)
             {
                 enemy.TransitionToState(enemy.chaseState);
@@ -642,11 +643,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
             SetCrossingVisible(false);
             HideDashRangePreview();
             HoldPositionDuringPreparation(enemy);
-            if (enemy.player == null || enemy.agent == null || !enemy.agent.isOnNavMesh) return false;
+            if (enemy.CurrentTarget == null || enemy.agent == null || !enemy.agent.isOnNavMesh) return false;
 
-            Collider2D playerCollider = enemy.player.GetComponent<Collider2D>();
+            Collider2D playerCollider = enemy.CurrentTarget.GetComponent<Collider2D>();
             Vector3 playerCenter = playerCollider != null && playerCollider.isActiveAndEnabled
-                ? playerCollider.bounds.center : enemy.player.position;
+                ? playerCollider.bounds.center : enemy.CurrentTarget.position;
             Vector3 requestedNav = playerCenter - crossingColliderCenterOffset - bodyToAgentOffset;
             requestedNav.z = enemy.agent.nextPosition.z;
             NavMeshQueryFilter filter = new NavMeshQueryFilter
@@ -830,7 +831,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void BeginOverchargePursuit(EnemyAIController enemy)
         {
-            if (enemy.player == null || enemy.agent == null ||
+            if (enemy.CurrentTarget == null || enemy.agent == null ||
                 !enemy.agent.isActiveAndEnabled || !enemy.agent.isOnNavMesh)
             {
                 enemy.TransitionToState(enemy.chaseState);
@@ -851,7 +852,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void UpdateOverchargePursuit(EnemyAIController enemy)
         {
-            if (Time.time >= overchargeEndsAt || enemy.player == null ||
+            if (Time.time >= overchargeEndsAt || enemy.CurrentTarget == null ||
                 overchargeAgent == null || !overchargeAgent.isActiveAndEnabled ||
                 !overchargeAgent.isOnNavMesh)
             {
@@ -1046,10 +1047,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void CheckOverchargeShieldHit(Vector2 center, float radius)
         {
-            if (activeEnemy.player == null || overchargeContact == null || radius <= 0f) return;
-            if (shieldPlayer != activeEnemy.player || shieldPlayerColliders == null)
+            if (activeEnemy.CurrentTarget == null || overchargeContact == null || radius <= 0f) return;
+            if (shieldPlayer != activeEnemy.CurrentTarget || shieldPlayerColliders == null)
             {
-                shieldPlayer = activeEnemy.player;
+                shieldPlayer = activeEnemy.CurrentTarget;
                 shieldPlayerColliders = shieldPlayer.GetComponentsInChildren<Collider2D>();
             }
             foreach (Collider2D collider in shieldPlayerColliders)
@@ -1309,12 +1310,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
             wave.Elapsed = 0f;
             wave.PreviousRadius = 0f;
             wave.HitPlayer = false;
-            wave.Player = enemy.player != null
-                ? enemy.player.GetComponentInParent<PlayerHealth>() : null;
-            if (wave.Player == null && enemy.player != null)
-                wave.Player = enemy.player.GetComponentInChildren<PlayerHealth>();
+            wave.Decoy = enemy.CurrentTarget != null
+                ? enemy.CurrentTarget.GetComponent<Nytherion.GamePlay.Skills.DecoyDummy>() : null;
+            wave.Player = enemy.CurrentTarget != null
+                ? enemy.CurrentTarget.GetComponentInParent<PlayerHealth>() : null;
+            if (wave.Player == null && enemy.CurrentTarget != null)
+                wave.Player = enemy.CurrentTarget.GetComponentInChildren<PlayerHealth>();
             wave.PlayerColliders = wave.Player != null
-                ? wave.Player.GetComponentsInChildren<Collider2D>() : null;
+                ? wave.Player.GetComponentsInChildren<Collider2D>() : wave.Decoy != null
+                    ? wave.Decoy.GetComponentsInChildren<Collider2D>() : null;
             statusEffectManager = GetComponent<StatusEffectManager>();
             wave.Active = true;
             DrawShockwave(wave, 0f, 0f);
@@ -1381,8 +1385,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void CheckShockwaveHit(ShockwaveInstance wave, float previousRadius, float radius)
         {
-            if (wave.HitPlayer || wave.Player == null ||
-                !wave.Player.isActiveAndEnabled || wave.PlayerColliders == null)
+            if (wave.HitPlayer || wave.PlayerColliders == null ||
+                (wave.Player == null && (wave.Decoy == null || !wave.Decoy.IsAlive)) ||
+                (wave.Player != null && !wave.Player.isActiveAndEnabled))
                 return;
 
             float halfWidth = Mathf.Max(0.01f, shockwaveWidth) * 0.5f;
@@ -1405,7 +1410,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 float damage = Mathf.Max(0f, shockwaveDamage);
                 if (statusEffectManager != null)
                     damage *= statusEffectManager.GetOutgoingDamageMultiplier();
-                wave.Player.TakeDamage(damage, hitPoint);
+                if (wave.Decoy != null) wave.Decoy.TakeDamage(damage);
+                else wave.Player.TakeDamage(damage, hitPoint);
                 return;
             }
         }
@@ -1420,6 +1426,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             wave.Active = false;
             if (wave.Line != null) wave.Line.enabled = false;
             wave.Player = null;
+            wave.Decoy = null;
             wave.PlayerColliders = null;
         }
 

@@ -194,6 +194,12 @@ namespace Nytherion.Core.Managers
             return obj;
         }
 
+        public bool TryGetPoolTag(GameObject instance, out string tag)
+        {
+            tag = null;
+            return instance != null && instancePoolTags != null && instancePoolTags.TryGetValue(instance, out tag);
+        }
+
         public void ReturnToPool(string tag, GameObject objectToReturn)
         {
             if (objectToReturn == null) return;

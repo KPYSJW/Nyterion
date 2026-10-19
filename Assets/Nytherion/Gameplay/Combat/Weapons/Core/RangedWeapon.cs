@@ -163,6 +163,7 @@ namespace Nytherion.GamePlay.Combat
             
             if (projectile.TryGetComponent<CollisionObject>(out CollisionObject collisionObj))
             {
+                collisionObj.SetProjectileOwner(playerManager != null ? playerManager.transform : transform.root);
                 if (weaponData != null)
                 {
                     collisionObj.Configure(

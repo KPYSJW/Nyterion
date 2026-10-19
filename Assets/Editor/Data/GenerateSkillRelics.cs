@@ -1,5 +1,4 @@
 using UnityEditor;
-using Nytherion.Editor.Localization;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.Data.ScriptableObjects.Relics;
@@ -19,21 +18,16 @@ namespace Nytherion.Editor
         // 기본 제공 스킬 설명 딕셔너리
         private static readonly Dictionary<string, string> DefaultSkillDescriptions = new Dictionary<string, string>
         {
-            { "AS_Skill", "일정 시간 공격 속도 증가." },
             { "All_Stat_Skill", "모든 능력치 증가." },
-            { "Atk_Buff_Skill", "일정 시간 공격력 증가." },
-            { "Aura_Skill", "주변 적에게 지속 피해." },
             { "Blackhole_Skill", "블랙홀로 적을 끌어당기며 지속 피해." },
             { "CallLightning_Skill", "하늘에서 강력한 벼락을 내리쳐 적들에게 고위력의 전기 피해를 입힙니다." },
-            { "Dash_CD_Skill", "대시 쿨타임 감소." },
             { "FireWave_Skill", "전방으로 번지는 거대한 화염 파도를 발사하여 범위 안의 적들에게 화염 피해를 입힙니다." },
             { "FrostNova_Skill", "주변의 넓은 영역에 냉기 피해를 입히고 잠시 동안 빙결 상태로 만듭니다." },
             { "IceShard_Skill", "날카로운 얼음 파편들을 부채꼴 모양으로 발사하여 적들을 꿰뚫고 피해를 입힙니다." },
-            { "Laser_Skill", "관통 레이저로 직선상의 적 공격." },
             { "Lifesteal_Skill", "일정 시간 가한 피해의 일부를 체력으로 회복." },
-            { "MeteorStrike_Skill", "운석을 떨어뜨려 범위 피해." },
+            { "MeteorStrike_Skill", "시전 순간 카메라 안의 모든 적을 조준해 운석을 하나씩 시간차로 떨어뜨립니다. 레벨이 오를수록 피해량이 증가합니다." },
             { "MultiShot_Skill", "투사체 발사 시 추가 투사체 발사." },
-            { "Overdrive_Skill", "일정 시간 공격 속도, 대시 속도 증가." },
+            { "Overdrive_Skill", "일정 시간 공격력, 공격 속도, 대시 속도 증가." },
             { "Shadow_Clone_Skill", "함께 공격하는 그림자 분신 소환." },
             { "Soul_Eater_Skill", "적 처치 시 체력 회복 및 일시적 능력 강화." },
             { "Spiral_Skill", "회전 구체로 주변 적에게 지속 피해." },
@@ -74,7 +68,7 @@ namespace Nytherion.Editor
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>(path);
-                if (skill != null && !allSkills.Contains(skill))
+                if (skill != null && skill.IsRuntimeAvailable && !allSkills.Contains(skill))
                 {
                     allSkills.Add(skill);
                 }
@@ -108,6 +102,8 @@ namespace Nytherion.Editor
             {
                 string cleanName = string.IsNullOrEmpty(skill.skillName) ? skill.name : skill.skillName;
                 cleanName = cleanName.Replace(" ", "_");
+                // 루티 포탑은 기존 유물 경로와 저장 ID를 유지합니다.
+                if (skill.skillID == "skill_turret") cleanName = "Turret";
                 string assetName = $"Relic_{cleanName}.asset";
                 string fullPath = Path.Combine(SKILL_RELIC_SAVE_DIR, assetName).Replace("\\", "/");
 
@@ -124,6 +120,7 @@ namespace Nytherion.Editor
 
                 relicData.relicName = $"Relic of {cleanName}";
                 relicData.koreanName = $"{skillName} 각인";
+                if (skill.skillID == "skill_turret") relicData.koreanName = "루티";
                 GetSkillRelicDescriptions(skill, out string descriptionKR, out string descriptionEN);
                 relicData.description_KR = descriptionKR;
                 relicData.description_EN = descriptionEN;
@@ -178,25 +175,7 @@ namespace Nytherion.Editor
         // 에디터 재로드와 유물 생성 시 같은 간결한 설명을 사용합니다.
         private static void GetSkillRelicDescriptions(SkillData skill, out string korean, out string english)
         {
-            string koreanName = string.IsNullOrEmpty(skill.skillName) ? skill.name : skill.skillName;
-            string englishName = koreanName;
-            string englishDescription = "";
-            if (!string.IsNullOrEmpty(skill.skillID))
-            {
-                if (LocalizationTranslationCatalog.Skills.TryGetValue(skill.skillID, out var names))
-                {
-                    koreanName = names.Korean;
-                    englishName = names.English;
-                }
-                LocalizationTranslationCatalog.SkillEnglishDescriptions.TryGetValue(skill.skillID, out englishDescription);
-            }
-
-            korean = $"[{koreanName}] 획득";
-            english = $"Unlocks [{englishName}]";
-            if (!string.IsNullOrWhiteSpace(skill.description))
-                korean += "\n" + skill.description.Trim();
-            if (!string.IsNullOrWhiteSpace(englishDescription))
-                english += "\n" + englishDescription.Trim();
+            RelicDescriptionSetup.GetSkillDescriptions(skill, out korean, out english);
         }
 
         /// <summary>
@@ -211,7 +190,7 @@ namespace Nytherion.Editor
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>(path);
-                if (skill == null) continue;
+                if (skill == null || !skill.IsRuntimeAvailable) continue;
 
                 string assetName = Path.GetFileNameWithoutExtension(path);
                 if (string.IsNullOrEmpty(skill.description))
@@ -263,14 +242,22 @@ namespace Nytherion.Editor
 
                     foreach (RelicEffectBase effect in module.effects)
                     {
-                        if (effect is GrantSkillEffect grantEffect && grantEffect.skillData != null)
+                        if (effect is GrantSkillEffect grantEffect && grantEffect.skillData != null && grantEffect.skillData.IsRuntimeAvailable)
                         {
                             GetSkillRelicDescriptions(grantEffect.skillData, out string newKR, out string newEN);
 
-                            if (relic.description_KR != newKR || relic.description_EN != newEN)
+                            // 구형 루티 유물은 은퇴했으므로 현재 스킬 유물에 루티의 이름과 아이콘을 표시합니다.
+                            bool updateRooti = grantEffect.skillData.skillID == "skill_turret" &&
+                                (relic.koreanName != "루티" || relic.Image != grantEffect.skillData.icon);
+                            if (relic.description_KR != newKR || relic.description_EN != newEN || updateRooti)
                             {
                                 relic.description_KR = newKR;
                                 relic.description_EN = newEN;
+                                if (updateRooti)
+                                {
+                                    relic.koreanName = "루티";
+                                    relic.Image = grantEffect.skillData.icon;
+                                }
                                 EditorUtility.SetDirty(relic);
                                 updateCount++;
                             }
