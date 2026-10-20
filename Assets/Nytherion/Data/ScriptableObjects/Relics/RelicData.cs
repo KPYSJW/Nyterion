@@ -213,16 +213,20 @@ namespace Nytherion.Data.ScriptableObjects.Relics
     public class RelicData : ScriptableObject
     {
         [Header("기본정보")]
-        public string relicName; // 영어 이름 
+        public string relicName; // 저장과 참조에 사용하는 고유 ID
         public string koreanName;    // 한국어 이름 
+        [Tooltip("영어 표시 이름입니다. 비어 있으면 기존 유물 ID를 표시합니다.")]
+        public string englishName;
         [TextArea] public string description_KR;
         [TextArea] public string description_EN;
+
+        public string EnglishName => string.IsNullOrWhiteSpace(englishName) ? relicName : englishName;
 
         public string DisplayName => LocalizationText.Get(
             LocalizationTables.Relics,
             LocalizationKeys.RelicName(relicName),
             koreanName,
-            relicName);
+            EnglishName);
         public string Description => LocalizationText.Get(
             LocalizationTables.Relics,
             LocalizationKeys.RelicDescription(relicName),

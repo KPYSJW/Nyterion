@@ -38,8 +38,12 @@ namespace Nytherion.UI.RelicBoard
         [Header("보관소 설정")]
         [SerializeField] public RectTransform blockStorageParent;
         [SerializeField] public GameObject storageSlotPrefab;
-        [Tooltip("인벤토리 정렬 버튼과 같은 이미지·픽셀 보정 설정을 사용합니다.")]
-        [SerializeField] private Button storageSortButtonTemplate;
+        [Header("보관소 페이지 UI")]
+        [SerializeField] private RectTransform paginationRoot;
+        [SerializeField] private Button previousPageButton;
+        [SerializeField] private Button nextPageButton;
+        [SerializeField] private Button storageSortButton;
+        [SerializeField] private TextMeshProUGUI pageText;
 
         [Header("장착 유물 수")]
         [Tooltip("현재 장착 유물 수를 표시할 텍스트입니다. 비어 있으면 같은 캔버스의 RelicCountText를 자동으로 찾습니다.")]
@@ -62,11 +66,6 @@ namespace Nytherion.UI.RelicBoard
         private Coroutine refreshRoutine;
         private int storagePage;
         private int storagePageCount = 1;
-        private RectTransform paginationRoot;
-        private Button previousPageButton;
-        private Button nextPageButton;
-        private Button storageSortButton;
-        private TextMeshProUGUI pageText;
         private sealed class PreviewGizmo
         {
             public GameObject prefab;
@@ -183,7 +182,7 @@ namespace Nytherion.UI.RelicBoard
 
             UpdateRelicCountText();
             UpdatePagination();
-            storageSortButton.interactable = storageBlocks.Count > 1;
+            if (storageSortButton != null) storageSortButton.interactable = storageBlocks.Count > 1;
             refreshRoutine = null;
 
         }
@@ -281,7 +280,7 @@ namespace Nytherion.UI.RelicBoard
                 Image frame = slot.GetComponent<Image>();
                 PixelPerfectSlotFrame.Apply(frame);
             }
-            CreatePagination();
+            InitializePagination();
         }
 
         public static void ConfigureStorageLayout(RectTransform storageRoot)
@@ -373,84 +372,30 @@ namespace Nytherion.UI.RelicBoard
             HandleRelicStateChanged();
         }
 
-        public void SetStorageSortButtonTemplate(Button template)
+        private void InitializePagination()
         {
-            storageSortButtonTemplate = template;
-        }
+            if (paginationRoot == null || previousPageButton == null || nextPageButton == null ||
+                storageSortButton == null || pageText == null)
+            {
+                Debug.LogError("[RelicGridUI] 하이라키의 보관소 페이지 UI를 Inspector에 연결해 주세요.", this);
+                return;
+            }
 
-        private void CreatePagination()
-        {
-            GameObject controls = new GameObject("RelicStoragePages", typeof(RectTransform));
-            paginationRoot = controls.GetComponent<RectTransform>();
-            paginationRoot.SetParent(blockStorageParent.parent, false);
-            paginationRoot.anchorMin = blockStorageParent.anchorMin;
-            paginationRoot.anchorMax = blockStorageParent.anchorMin;
-            paginationRoot.sizeDelta = new Vector2(blockStorageParent.rect.width, 36f);
-            previousPageButton = CreatePageButton("Previous", "<", -80f, -1);
-            nextPageButton = CreatePageButton("Next", ">", 80f, 1);
-            pageText = CreatePageLabel(controls.transform, "Page", Vector2.zero);
-            if (storageSortButtonTemplate != null)
-            {
-                // 이미지와 픽셀 보정 컴포넌트를 함께 복제해 인벤토리 버튼의 모양을 유지한다.
-                storageSortButton = Instantiate(storageSortButtonTemplate, paginationRoot);
-                storageSortButton.name = "Sort";
-                RectTransform rect = storageSortButton.GetComponent<RectTransform>();
-                rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.one * 0.5f;
-                rect.localScale = Vector3.one;
-                rect.anchoredPosition = new Vector2(blockStorageParent.rect.width * 0.5f - rect.rect.width * 0.5f, 0f);
-                storageSortButton.onClick = new Button.ButtonClickedEvent();
-                storageSortButton.gameObject.SetActive(true);
-            }
-            else
-            {
-                storageSortButton = CreateStorageButton("Sort", "정렬", blockStorageParent.rect.width * 0.5f - 48f, 96f);
-            }
+            previousPageButton.onClick.RemoveListener(ShowPreviousStoragePage);
+            previousPageButton.onClick.AddListener(ShowPreviousStoragePage);
+            nextPageButton.onClick.RemoveListener(ShowNextStoragePage);
+            nextPageButton.onClick.AddListener(ShowNextStoragePage);
+            storageSortButton.onClick.RemoveListener(SortStorage);
             storageSortButton.onClick.AddListener(SortStorage);
         }
 
-        private Button CreatePageButton(string name, string label, float x, int direction)
-        {
-            Button button = CreateStorageButton(name, label, x, 48f);
-            button.onClick.AddListener(() => ChangeStoragePage(direction));
-            return button;
-        }
-
-        private Button CreateStorageButton(string name, string label, float x, float width)
-        {
-            GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
-            RectTransform rect = go.GetComponent<RectTransform>();
-            rect.SetParent(paginationRoot, false);
-            rect.sizeDelta = new Vector2(width, 36f);
-            rect.anchoredPosition = new Vector2(x, 0f);
-            go.GetComponent<Image>().color = new Color(0.18f, 0.18f, 0.18f, 1f);
-            Button button = go.GetComponent<Button>();
-            button.targetGraphic = go.GetComponent<Image>();
-            CreatePageLabel(go.transform, "Label", Vector2.zero).text = label;
-            return button;
-        }
-
-        private static TextMeshProUGUI CreatePageLabel(Transform parent, string name, Vector2 position)
-        {
-            GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
-            RectTransform rect = go.GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            rect.sizeDelta = new Vector2(64f, 36f);
-            rect.anchoredPosition = position;
-            TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
-            label.font = TMP_Settings.defaultFontAsset;
-            label.fontSize = 22f;
-            label.alignment = TextAlignmentOptions.Center;
-            label.color = Color.white;
-            label.raycastTarget = false;
-            return label;
-        }
+        private void ShowPreviousStoragePage() => ChangeStoragePage(-1);
+        private void ShowNextStoragePage() => ChangeStoragePage(1);
 
         private void UpdatePagination()
         {
-            if (paginationRoot == null) return;
-            LayoutRebuilder.ForceRebuildLayoutImmediate(blockStorageParent);
-            paginationRoot.anchoredPosition = blockStorageParent.anchoredPosition +
-                new Vector2(0f, -blockStorageParent.rect.height - 52f);
+            if (paginationRoot == null || previousPageButton == null || nextPageButton == null ||
+                pageText == null) return;
             // 정렬 버튼은 보관함이 한 페이지일 때도 표시한다.
             previousPageButton.gameObject.SetActive(storagePageCount > 1);
             nextPageButton.gameObject.SetActive(storagePageCount > 1);

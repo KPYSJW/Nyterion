@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
   m_Name: GoldHunterSet
   m_EditorClassIdentifier: 
-  setName_KR: "황금 사냥꾼"
-  setName_EN: Gold Hunter
+  setName_KR: "탐욕"
+  setName_EN: "Greed"
   statusIcon: {fileID: 21300000, guid: c50ae50928b345eb9edccdefe2f11f0d, type: 3}
   badgeBackgroundColor: {r: 0.55, g: 0.38, b: 0.06, a: 0.96}
   badgeTextColor: {r: 1, g: 0.96, b: 0.72, a: 1}
-  description_KR: "골드를 더 많이 획득하고 연속 획득을 보상하는 경제 유물 세트입니다."
-  description_EN: An economy relic set that increases gold gains and rewards consecutive acquisitions.
+  description_KR: "골드 획득량을 높이고, 연속 획득과 적 처치로 추가 골드를 얻습니다."
+  description_EN: "Increase gold gains and earn bonus gold through consecutive gains and enemy kills."
   synergySeriesId: GoldHunterSeries
   bonusModules:
   - condition: {rid: 3001}

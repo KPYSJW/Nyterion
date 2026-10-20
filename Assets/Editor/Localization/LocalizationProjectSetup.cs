@@ -304,7 +304,7 @@ namespace Nytherion.Editor.Localization
                     LocalizationTables.Relics,
                     LocalizationKeys.RelicName(relic.relicName),
                     relic.koreanName,
-                    relic.relicName);
+                    relic.EnglishName);
                 SetEntry(
                     LocalizationTables.Relics,
                     LocalizationKeys.RelicDescription(relic.relicName),

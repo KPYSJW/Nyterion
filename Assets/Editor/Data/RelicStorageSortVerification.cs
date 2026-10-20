@@ -51,12 +51,6 @@ namespace Nytherion.Editor
                 GameObject canvas = Object.Instantiate(original.rootCanvas.gameObject);
                 SceneManager.MoveGameObjectToScene(canvas, target);
                 canvas.name = "유물 보관함 정렬 검증";
-                GameSceneUIRefs refs = source.GetRootGameObjects()
-                    .SelectMany(root => root.GetComponentsInChildren<GameSceneUIRefs>(true)).Single();
-                Button template = Object.Instantiate(refs.InventorySortButton, canvas.transform);
-                template.name = "검증 정렬 버튼 원본";
-                template.gameObject.SetActive(false);
-                canvas.GetComponentInChildren<RelicGridUI>(true).SetStorageSortButtonTemplate(template);
                 CanvasGroup group = canvas.GetComponent<CanvasGroup>();
                 group.alpha = 1f;
                 group.interactable = group.blocksRaycasts = true;

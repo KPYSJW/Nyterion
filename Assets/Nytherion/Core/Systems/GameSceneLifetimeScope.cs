@@ -8,6 +8,7 @@ using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Dungeon;
 using Nytherion.GamePlay.Relics;
 using Nytherion.UI.Controllers;
+using Nytherion.UI.Components;
 using Nytherion.UI.RelicBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
@@ -140,6 +141,10 @@ public class GameSceneLifetimeScope : LifetimeScope
 
     private void InstallGameSceneUI(IContainerBuilder builder)
     {
+        builder.RegisterComponentInHierarchy<TooltipPanel>()
+                .AsImplementedInterfaces()
+                .AsSelf();
+
         builder.RegisterComponentInNewPrefab(inventoryUIPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
                 .AsSelf();

@@ -39,7 +39,7 @@ namespace Nytherion.Editor
                 ["Ginseng"] = ("루티 소환 저장량 +1", "Rooti summon capacity +1."),
                 ["Echo Flower"] = ("충전 1개로 루티 2마리 소환", "Summons two Rooti with one charge."),
                 ["Bounce Berry"] = ("루티 씨앗이 주변 적에게 최대 3회 도탄", "Rooti seeds bounce to nearby enemies up to 3 times."),
-                ["TargetMaker"] = ("불그늘·수호자의 지팡이·연쇄 점화의 공격 중심을 조준 지점으로 변경", "Centers Blazeshade, Guardian's Staff and Chain Ignition attacks on the aimed position."),
+                ["TargetMaker"] = ("불그늘·단절·연쇄 점화의 공격 중심을 조준 지점으로 변경", "Centers Blazeshade, Isolation and Chain Ignition attacks on the aimed position."),
                 ["WindStone"] = ("적중 시 20% 확률로 풍석 발사\n0.25초마다 적중 피해의 50% (레벨당 +10%p)", "On hit: 20% chance to fire a Wind Stone.\nDeals 50% of hit damage every 0.25s (+10pp per level)."),
                 ["Zenith"] = ("파이로폴 추가 화염구가 화면 내 적을 자동 조준", "Pyrofall's extra fireballs automatically target enemies in view."),
                 ["Rubber Ball"] = ("투사체가 주변 적에게 최대 3회 도탄", "Projectiles bounce to nearby enemies up to 3 times."),
@@ -48,12 +48,12 @@ namespace Nytherion.Editor
                 ["Haste Rune"] = ("충전 시간 -10%", "Charge time -10%."),
                 ["Fire Pepper"] = ("화염 상태이상 피해 주기 -30%", "Burn damage interval -30%."),
                 ["Trigger Piece"] = ("추가 투사체 +1", "Extra projectiles +1."),
-                ["First Pip"] = ("치명타 확률 +4%p (레벨당 +1%p)\n눈 6종 장착 시 효과 2배", "Critical chance +4pp (+1pp per level).\nEquip all 6 Pips to double their effects."),
-                ["Second Pip"] = ("치명타 피해 +15% (레벨당 +4%)\n눈 6종 장착 시 효과 2배", "Critical damage +15% (+4% per level).\nEquip all 6 Pips to double their effects."),
-                ["Third Pip"] = ("근접 공격력 +3 (레벨당 +1)\n눈 6종 장착 시 효과 2배", "Melee attack +3 (+1 per level).\nEquip all 6 Pips to double their effects."),
-                ["Fourth Pip"] = ("원거리 공격력 +3 (레벨당 +1)\n눈 6종 장착 시 효과 2배", "Ranged attack +3 (+1 per level).\nEquip all 6 Pips to double their effects."),
-                ["Fifth Pip"] = ("근접 공격 속도 +10% (레벨당 +2%)\n눈 6종 장착 시 효과 2배", "Melee attack speed +10% (+2% per level).\nEquip all 6 Pips to double their effects."),
-                ["Six Pip"] = ("원거리 공격 속도 +10% (레벨당 +2%)\n눈 6종 장착 시 효과 2배", "Ranged attack speed +10% (+2% per level).\nEquip all 6 Pips to double their effects.")
+                ["First Pip"] = ("치명타 확률 +4%p (레벨당 +1%p)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Critical chance +4pp (+1pp per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
+                ["Second Pip"] = ("치명타 피해 +15% (레벨당 +4%)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Critical damage +15% (+4% per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
+                ["Third Pip"] = ("근접 공격력 +3 (레벨당 +1)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Melee attack +3 (+1 per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
+                ["Fourth Pip"] = ("원거리 공격력 +3 (레벨당 +1)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Ranged attack +3 (+1 per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
+                ["Fifth Pip"] = ("근접 공격 속도 +10% (레벨당 +2%)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Melee attack speed +10% (+2% per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
+                ["Six Pip"] = ("원거리 공격 속도 +10% (레벨당 +2%)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Ranged attack speed +10% (+2% per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%.")
             };
 
         static RelicDescriptionSetup() => EditorApplication.update += Update;
@@ -77,6 +77,10 @@ namespace Nytherion.Editor
         {
             switch (skill.skillID)
             {
+                case "skill_bubble_shield":
+                    korean = "피해를 흡수하는 버블 실드 스킬 획득";
+                    english = "Grants a bubble shield skill that absorbs damage.";
+                    return;
                 case "skill_meteor_strike":
                     korean = "화면 내 모든 적에게 운석을 순차 낙하";
                     english = "Drops meteors on all enemies in view in succession.";

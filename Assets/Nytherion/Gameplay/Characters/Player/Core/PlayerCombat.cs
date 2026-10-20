@@ -43,13 +43,16 @@ namespace Nytherion.GamePlay.Characters.Player
         private bool isAttackHeld = false;
         private bool isGenericCharging;
         private float genericChargeTime;
+        private bool isGenericChargeReleased;
+        private Vector2 genericChargeDirection;
+        private Vector3 genericChargeTarget;
 
         public bool IsGenericCharging => isGenericCharging;
         public bool IsAttackActive => currentWeapon != null &&
             (isAttackHeld || isGenericCharging ||
              (currentWeapon is IChargeableWeapon chargeable && chargeable.IsCharging) ||
-             (currentWeapon is LaserWeapon laser && laser.IsFiring) ||
-             (currentWeapon is LayLaserWeapon layLaser && layLaser.IsFiring) ||
+             (currentWeapon is CrimsonLotusWeapon laser && laser.IsFiring) ||
+             (currentWeapon is ObliterationWeapon layLaser && layLaser.IsFiring) ||
              (currentWeapon is VoidRayWeapon voidRay && voidRay.IsFiring));
         public float GenericChargePercent
         {
@@ -269,6 +272,10 @@ namespace Nytherion.GamePlay.Characters.Player
                 {
                     CancelGenericCharge();
                 }
+                else if (isGenericChargeReleased)
+                {
+                    if (currentWeapon.CanAttack()) FireGenericCharge();
+                }
                 else
                 {
                     genericChargeTime = Mathf.Min(genericChargeTime + Time.deltaTime, GetGenericMaxChargeTime());
@@ -409,7 +416,7 @@ namespace Nytherion.GamePlay.Characters.Player
                     weaponPoint.localScale = new Vector3(1f, 1f, 1f);
                 }
 
-                if (currentWeapon is LaserWeapon laserWeapon)
+                if (currentWeapon is CrimsonLotusWeapon laserWeapon)
                     laserWeapon.UpdateAimAndPose(mouseWorldPos);
             }
         }
@@ -422,7 +429,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 currentWeapon.ResetGenericChargeMultiplier();
                 Vector2 fireDirection = currentWeapon is VoidRayWeapon voidRay
                     ? voidRay.CurrentFireDirection
-                    : currentWeapon is LaserWeapon laserWeapon
+                    : currentWeapon is CrimsonLotusWeapon laserWeapon
                         ? laserWeapon.CurrentFireDirection
                         : (Vector2)weaponPoint.right;
                 Vector2 mouseScreenPos = inputManager.MousePosition;
@@ -459,25 +466,35 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             isGenericCharging = true;
             genericChargeTime = 0f;
+            isGenericChargeReleased = false;
         }
 
         private void ReleaseGenericCharge()
         {
-            if (currentWeapon == null || !currentWeapon.CanAttack())
+            if (!ShouldUseGenericCharging())
             {
                 CancelGenericCharge();
                 return;
             }
 
-            float chargePercent = GenericChargePercent;
-            isGenericCharging = false;
-            genericChargeTime = 0f;
-
-            Vector2 fireDirection = currentWeapon is LaserWeapon laserWeapon
+            genericChargeDirection = currentWeapon is CrimsonLotusWeapon laserWeapon
                 ? laserWeapon.CurrentFireDirection : (Vector2)weaponPoint.right;
             Vector2 mouseScreenPos = inputManager.MousePosition;
-            Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
-            targetWorldPos.z = 0f;
+            genericChargeTarget = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
+            genericChargeTarget.z = 0f;
+            // 쿨다운 중 놓은 차징은 충전량과 조준점을 보존하고 공격 가능한 첫 프레임에 발사합니다.
+            isGenericChargeReleased = true;
+            if (currentWeapon.CanAttack()) FireGenericCharge();
+        }
+
+        private void FireGenericCharge()
+        {
+            float chargePercent = GenericChargePercent;
+            Vector2 fireDirection = genericChargeDirection;
+            Vector3 targetWorldPos = genericChargeTarget;
+            isGenericCharging = false;
+            isGenericChargeReleased = false;
+            genericChargeTime = 0f;
 
             LastAttackDirection = fireDirection.normalized;
             playerController?.NotifyCombatActivity();
@@ -497,6 +514,7 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             isGenericCharging = false;
             genericChargeTime = 0f;
+            isGenericChargeReleased = false;
             currentWeapon?.ResetGenericChargeMultiplier();
         }
 

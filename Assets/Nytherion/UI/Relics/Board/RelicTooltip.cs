@@ -30,6 +30,10 @@ namespace Nytherion.UI.RelicBoard
     [SerializeField] private RectTransform setBadgeContainer;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
+    [Header("하이라키 효과 현황 툴팁")]
+    [SerializeField] private RelicEffectTooltip setEffectTooltip;
+    [SerializeField] private RelicEffectTooltip transcendenceEffectTooltip;
+
     [Header("Influence Grid")]
     [SerializeField] private Image[] influenceCells = new Image[9];
     [SerializeField] private Color centerColor = Color.yellow;
@@ -98,16 +102,16 @@ namespace Nytherion.UI.RelicBoard
         float height = rectTransform.rect.height * canvas.scaleFactor;
         
         float margin = 10f;
-        float cursorOffset = 15f;
+        Vector2 cursorOffset = new Vector2(15f, 15f);
         
         // 기본 위치: 마우스 우측 하단
-        float targetX = mousePosition.x + cursorOffset;
-        float targetY = mousePosition.y - cursorOffset;
+        float targetX = mousePosition.x + cursorOffset.x;
+        float targetY = mousePosition.y - cursorOffset.y;
         
         // 화면 오른쪽 경계를 넘어가는 경우 마우스 좌측으로 배치
         if (targetX + width > Screen.width - margin)
         {
-            targetX = mousePosition.x - width - cursorOffset;
+            targetX = mousePosition.x - width - cursorOffset.x;
         }
         // 마우스 좌측으로 배치했을 때도 화면 왼쪽 경계를 넘어가는 경우 화면 좌측 경계에 맞춤
         if (targetX < margin)
@@ -118,7 +122,7 @@ namespace Nytherion.UI.RelicBoard
         // 화면 아래쪽 경계를 넘어가는 경우 마우스 상단으로 배치
         if (targetY - height < margin)
         {
-            targetY = mousePosition.y + height + cursorOffset;
+            targetY = mousePosition.y + height + cursorOffset.y;
         }
         // 마우스 상단으로 배치했을 때도 화면 위쪽 경계를 넘어가는 경우 화면 위쪽 경계에 맞춤
         if (targetY > Screen.height - margin)
@@ -133,6 +137,8 @@ namespace Nytherion.UI.RelicBoard
     {
         if (block == null) return;
 
+        setEffectTooltip?.Hide();
+        transcendenceEffectTooltip?.Hide();
         currentBlock = block;
 
         SetInfluenceGridVisible(true);
@@ -153,26 +159,27 @@ namespace Nytherion.UI.RelicBoard
         tooltipPanel.SetActive(true);
     }
 
-    public void ShowStatus(string title, string description)
+    public void ShowStatus(string title, string description, bool isTranscendence = false,
+        Color? titleColor = null, Sprite icon = null, IReadOnlyList<Sprite> requirementIcons = null)
     {
-        currentBlock = null;
-        SetInfluenceGridVisible(false);
-        nameText.text = title;
-        nameText.color = Color.white;
-        if (levelText != null)
+        Hide();
+        RelicEffectTooltip effectTooltip = isTranscendence
+            ? transcendenceEffectTooltip
+            : setEffectTooltip;
+        if (effectTooltip == null)
         {
-            levelText.gameObject.SetActive(false);
+            Debug.LogWarning("[RelicTooltip] 하이라키의 세트/초월 효과 툴팁 참조가 비어 있습니다.");
+            return;
         }
-        SetEffectBadgesVisible(false);
-        descriptionText.color = Color.white;
-        descriptionText.text = description;
-        tooltipPanel.SetActive(true);
+        effectTooltip.Show(title, description, titleColor, icon, requirementIcons);
     }
 
     public void Hide()
     {
         currentBlock = null;
         tooltipPanel.SetActive(false);
+        setEffectTooltip?.Hide();
+        transcendenceEffectTooltip?.Hide();
     }
 
     private void OnLocaleChanged(Locale _)

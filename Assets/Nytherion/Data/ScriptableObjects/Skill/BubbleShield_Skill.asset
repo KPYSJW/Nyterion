@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a62f258cb0cc8d4fb8e4f3bf978c852, type: 3}
+  m_Name: BubbleShield_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_bubble_shield
+  isDisabled: 0
+  skillType: 17
+  skillName: "\uBC84\uBE14 \uC2E4\uB4DC"
+  description: "\uD53C\uD574\uB97C \uD761\uC218\uD558\uB294 \uC2E4\uB4DC \uC0DD\uC131"
+  skillLevel: 1
+  exp: 0
+  coolDown: 20
+  manaCost: 0
+  damage: 0
+  range: 0
+  icon: {fileID: 184623147, guid: 1680c2c5c307f284c8177d20079a8bc2, type: 3}
+  skillPrefab: {fileID: 2286145910398734347, guid: 7183957c8b658654bbc95abe18ba7632, type: 3}
+  unlockMilestoneID: 
+  baseShield: 100
+  shieldPerLevel: 25
+  duration: 8
+  summonFrames:
+  - {fileID: 490712321, guid: 0b0ad4d105bac7c459a6df9edd264996, type: 3}
+  - {fileID: -568593246, guid: 0b0ad4d105bac7c459a6df9edd264996, type: 3}
+  - {fileID: 589813067, guid: 0b0ad4d105bac7c459a6df9edd264996, type: 3}
+  - {fileID: -1338871301, guid: 0b0ad4d105bac7c459a6df9edd264996, type: 3}
+  - {fileID: -507649123, guid: 0b0ad4d105bac7c459a6df9edd264996, type: 3}
+  - {fileID: -1940922678, guid: 0b0ad4d105bac7c459a6df9edd264996, type: 3}
+  - {fileID: 1026657144, guid: 0b0ad4d105bac7c459a6df9edd264996, type: 3}
+  shieldSprite: {fileID: 184623147, guid: 1680c2c5c307f284c8177d20079a8bc2, type: 3}
+  crashFrames:
+  - {fileID: -684586039, guid: 2d8d135ff7200ac4a8231cc67aaff89b, type: 3}
+  - {fileID: 138536483, guid: 2d8d135ff7200ac4a8231cc67aaff89b, type: 3}
+  - {fileID: 324211651, guid: 2d8d135ff7200ac4a8231cc67aaff89b, type: 3}
+  - {fileID: 2137393338, guid: 2d8d135ff7200ac4a8231cc67aaff89b, type: 3}
+  framesPerSecond: 12
+  sizeMultiplier: 1.5
+  shieldColor: {r: 0.65, g: 0.9, b: 1, a: 0.38}
+  hitEffectPrefab: {fileID: 5368819878935445956, guid: a31abc6703e0e1c41891d0a24fe567e4, type: 3}
+  hitEffectScale: 1
+  hitSurfaceRadius: 0.34375
+  shieldBarSprite: {fileID: 21300000, guid: a6bebfb6b3db461498d845a61d54ce3b, type: 3}

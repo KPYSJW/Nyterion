@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Dice1
+  m_EditorClassIdentifier: 
+  relicName: First Pip
+  koreanName: "\uC8FC\uC0AC\uC704 1"
+  englishName: Dice 1
+  description_KR: "\uCE58\uBA85\uD0C0 \uD655\uB960 +4%p (\uB808\uBCA8\uB2F9 +1%p)\n\uCD94\uAC00
+    \uD53C\uD574: 2\uC138\uD2B8 -10~20% / 4\uC138\uD2B8 0~40% / 6\uC138\uD2B8 20~60%"
+  description_EN: 'Critical chance +4pp (+1pp per level).
+
+    Bonus damage: 2 dice
+    -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%.'
+  Image: {fileID: 21300000, guid: 7482d8313ebfc7a42a6a48d8a9f4f880, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: 
+    description_EN: 
+    condition:
+      rid: 1001
+    effects:
+    - rid: 1002
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 1, y: 0}
+    type: 4
+    levelAmount: 1
+  synergySeriesId: AncientStatSeries
+  synergySetBonusData: {fileID: 11400000, guid: 129645fca4b20f14abe16e329caf04a0, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: 1001
+      type: {class: AlwaysTrueCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data: 
+    - rid: 1002
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 13
+          value: 0.04
+          valuePerLevel: 0.01
+          isPercentage: 1

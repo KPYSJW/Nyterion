@@ -20,7 +20,8 @@ namespace Nytherion.Editor
                 if (property.name == nameof(WeaponData.useDiagonalIcon) ||
                     property.name == nameof(WeaponData.iconRotationOffset) ||
                     property.name == nameof(WeaponData.iconSlotScale) ||
-                    property.name == nameof(WeaponData.inventoryIconScale)) continue;
+                    property.name == nameof(WeaponData.inventoryIconScale) ||
+                    property.name == nameof(WeaponData.inventoryIconSizeMultiplier)) continue;
 
                 using (new EditorGUI.DisabledScope(property.name == "m_Script"))
                 {
@@ -50,7 +51,10 @@ namespace Nytherion.Editor
                         new GUIContent("Icon Slot Scale", "장착·상점 슬롯과 툴팁의 크기입니다. 인벤토리에는 적용되지 않습니다."));
                     EditorGUILayout.PropertyField(
                         serializedObject.FindProperty(nameof(WeaponData.inventoryIconScale)),
-                        new GUIContent("인벤토리 아이콘 크기", "1: 기본 / 0.75: 축소 / 1 초과: 장착·보관함 슬롯 안쪽에서 정수 배율 제한 없이 확대합니다."));
+                        new GUIContent("인벤토리 아이콘 크기", "1 이상: 실제 그림을 장착·보관함 슬롯 안쪽에 맞춤 / 1 미만: 기존 정수 픽셀 배율로 축소합니다."));
+                    EditorGUILayout.PropertyField(
+                        serializedObject.FindProperty(nameof(WeaponData.inventoryIconSizeMultiplier)),
+                        new GUIContent("인벤토리 아이콘 미세 배율", "현재 크기를 기준으로 1: 유지 / 0.9: 10% 축소 / 0.75: 25% 축소합니다. 확대는 슬롯 안쪽으로 제한됩니다."));
                 }
             }
             serializedObject.ApplyModifiedProperties();

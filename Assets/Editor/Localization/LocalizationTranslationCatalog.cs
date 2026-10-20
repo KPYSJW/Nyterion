@@ -129,6 +129,7 @@ namespace Nytherion.Editor.Localization
         public static readonly IReadOnlyDictionary<string, string> SkillKoreanDescriptions =
             new Dictionary<string, string>
             {
+                ["skill_bubble_shield"] = "피해를 흡수하는 실드 생성",
                 ["skill_all_stat_up"] = "일정 시간 모든 능력치 증가",
                 ["skill_aura"] = "주변 적에게 지속 피해를 주는 오라 생성",
                 ["skill_blackhole"] = "적을 끌어당기며 피해를 주는 블랙홀 생성",
@@ -147,6 +148,7 @@ namespace Nytherion.Editor.Localization
         public static readonly IReadOnlyDictionary<string, string> SkillEnglishDescriptions =
             new Dictionary<string, string>
             {
+                ["skill_bubble_shield"] = "Creates a damage-absorbing shield.",
                 ["skill_all_stat_up"] = "Temporarily boosts all stats.",
                 ["skill_aura"] = "Creates an aura that damages nearby enemies.",
                 ["skill_blackhole"] = "Creates a black hole that pulls in and damages enemies.",

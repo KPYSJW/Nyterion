@@ -44,6 +44,8 @@ namespace Nytherion.UI.Skill
         public bool IsInitialized => isInitialized;
 
         [SerializeField] private SkillTooltip skillTooltipPrefab;
+        [SerializeField] private SkillCooldownHUD cooldownHUDPrefab;
+        private SkillCooldownHUD cooldownHUD;
         private SkillTooltip skillTooltip;
         private bool ownsSkillTooltip;
         private SkillSlotUI[] storageSlots;
@@ -74,6 +76,11 @@ namespace Nytherion.UI.Skill
             this.storageDropArea = uiRefs.storageDropArea;
             this.storageContent = uiRefs.storageContent;
             this.equipSlots = uiRefs.equipSlots;
+            if (cooldownHUD == null && cooldownHUDPrefab != null)
+            {
+                cooldownHUD = Instantiate(cooldownHUDPrefab);
+                cooldownHUD.Bind(playerSkillManager, uiRefs.QuickSlots);
+            }
             skillTooltip = uiRefs.SkillTooltip;
             if (skillTooltip == null && skillTooltipPrefab != null && uiPanel != null)
             {
@@ -132,8 +139,8 @@ namespace Nytherion.UI.Skill
             // 데이터 변경 시 UI 동기화하도록 이벤트 구독
             if (skillDataManager != null)
             {
-                skillDataManager.OnSkillDataChanged += SyncUIFromData;
-                SyncUIFromData(); // 초기 데이터로 UI 1회 갱신
+                skillDataManager.OnSkillDataChanged += HandleSkillDataChanged;
+                HandleSkillDataChanged();
             }
 
             // 특정 영역에 드롭 시 보관함으로 이동시키는 이벤트 구독
@@ -149,8 +156,9 @@ namespace Nytherion.UI.Skill
         private void OnDestroy()
         {
             if (ownsSkillTooltip && skillTooltip != null) Destroy(skillTooltip.gameObject);
+            if (cooldownHUD != null) Destroy(cooldownHUD.gameObject);
             // 메모리 누수 방지를 위해 객체 파괴 시 모든 이벤트 구독 해제
-            if (skillDataManager != null) skillDataManager.OnSkillDataChanged -= SyncUIFromData;
+            if (skillDataManager != null) skillDataManager.OnSkillDataChanged -= HandleSkillDataChanged;
             if (inputManager != null) inputManager.onToggleSkillUI -= ToggleUI;
             if (progressionManager != null) progressionManager.OnSkillUnlocked -= HandleSkillUnlocked;
         }
@@ -270,9 +278,13 @@ namespace Nytherion.UI.Skill
                 }
                 else storageSlots[i].Setup(null, skillDataManager, skillTooltip);
             }
+        }
 
-            if (playerSkillManager != null)
-                playerSkillManager.SetEquippedSkills(skillDataManager.equippedSkills);
+        private void HandleSkillDataChanged()
+        {
+            if (skillDataManager == null) return;
+            playerSkillManager?.SetEquippedSkills(skillDataManager.equippedSkills);
+            SyncUIFromData();
         }
 
         private bool IsEquipped(SkillData skillToCheck)
@@ -434,12 +446,6 @@ namespace Nytherion.UI.Skill
             if (skillDataManager != null)
             {
                 skillDataManager.UpdateSkills(currentEquipped, currentStorage);
-            }
-
-            // 수집한 장착 상태를 실제 캐릭터 컨트롤러 시스템에 전달
-            if (playerSkillManager != null)
-            {
-                playerSkillManager.SetEquippedSkills(currentEquipped);
             }
 
             // 변경된 최종 상태를 디스크에 세이브

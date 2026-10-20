@@ -2,6 +2,7 @@ using Nytherion.Core.Managers;
 using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.GamePlay.Skills;
+using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 
@@ -22,6 +23,13 @@ namespace Nytherion.GamePlay.Characters.Player
         public Transform skillHolder;
 
         private IProgressionManager progressionManager;
+
+        // 슬롯을 옮기거나 보관함으로 돌려도 동일한 스킬의 쿨타임·충전 상태를 재사용한다.
+        private readonly Dictionary<string, SkillBase.CooldownState> cooldownStates =
+            new Dictionary<string, SkillBase.CooldownState>();
+
+        private static string GetSkillKey(SkillData data) => string.IsNullOrEmpty(data.skillID)
+            ? "instance:" + data.GetInstanceID() : "skill:" + data.skillID;
 
         [Inject]
         public void Construct(IProgressionManager progressionManager)
@@ -68,9 +76,23 @@ namespace Nytherion.GamePlay.Characters.Player
         /// <param name="newSkills">장착할 스킬 데이터 배열</param>
         public void SetEquippedSkills(SkillData[] newSkills)
         {
-            for (int i = 0; i < newSkills.Length; i++)
+            // 교환 전 모든 슬롯의 상태를 먼저 기록해야 앞 슬롯을 바꾸는 도중의 초기화를 막을 수 있다.
+            foreach (SkillBase skill in equippedSkills)
             {
-                EquipSkill(newSkills[i], i);
+                if (skill != null && skill.skillData != null)
+                    cooldownStates[GetSkillKey(skill.skillData)] = skill.CaptureCooldownState();
+            }
+
+            var assignedSkills = new HashSet<string>();
+            for (int i = 0; i < equippedSkills.Length; i++)
+            {
+                SkillData data = newSkills != null && i < newSkills.Length ? newSkills[i] : null;
+                if (data != null && (!data.IsRuntimeAvailable || data.skillPrefab == null ||
+                    !assignedSkills.Add(GetSkillKey(data)))) data = null;
+
+                // 표시 갱신이나 레벨 변경 이벤트만으로 실행 중인 스킬을 재생성하지 않는다.
+                if (equippedSkills[i] != null && equippedSkills[i].skillData == data) continue;
+                EquipSkill(data, i);
             }
         }
 
@@ -88,6 +110,7 @@ namespace Nytherion.GamePlay.Characters.Player
             // 이미 해당 슬롯에 장착된 스킬이 있다면 기존 오브젝트를 메모리에서 제거 
             if (equippedSkills[slotIndex] != null)
             {
+                equippedSkills[slotIndex].gameObject.SetActive(false);
                 Destroy(equippedSkills[slotIndex].gameObject);
                 equippedSkills[slotIndex] = null;
             }
@@ -107,6 +130,9 @@ namespace Nytherion.GamePlay.Characters.Player
                     skillBase.skillData = newSkillData;
                     skillBase.caster = transform;
                     skillBase.firePoint = weaponPoint;
+
+                    if (cooldownStates.TryGetValue(GetSkillKey(newSkillData), out SkillBase.CooldownState state))
+                        skillBase.RestoreCooldownState(state);
 
                     // 장착된 스킬 배열에 스킬 등록
                     equippedSkills[slotIndex] = skillBase;

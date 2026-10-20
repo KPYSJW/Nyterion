@@ -30,8 +30,12 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float iconSlotScale = 1.5f;
 
         [Min(0.1f)]
-        [Tooltip("장착·보관함 아이콘 크기 보정입니다. 1 이하는 정수 픽셀 배율을 유지하고, 1보다 크면 슬롯 안쪽에서 정수 제한 없이 확대합니다.")]
+        [Tooltip("장착·보관함에서 1 이상은 투명 여백을 제외한 그림을 슬롯 안쪽에 맞춥니다. 1 미만은 기존 정수 픽셀 배율로 축소합니다.")]
         public float inventoryIconScale = 1f;
+
+        [Min(0.1f)]
+        [Tooltip("기존 인벤토리 아이콘 크기에 곱하는 미세 조절 배율입니다. 0.9는 10% 축소하며 슬롯 안쪽 크기까지만 확대합니다.")]
+        public float inventoryIconSizeMultiplier = 1f;
 
         [Header("Weapon Settings")]
         public float damage;
@@ -97,6 +101,12 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float projectileRotationOffset = 0f;
         public ExtraProjectileMode extraProjectileMode = ExtraProjectileMode.Spread;
         public float maxChargeTime = 1.0f;
+        [Min(1), Tooltip("최대 차징 시 추가 투사체를 포함한 전체 발사 수에 곱할 배율입니다.")]
+        public int fullChargeProjectileCountMultiplier = 1;
+        [Min(0f), Tooltip("최대 차징 원형 발사에서 다음 탄의 시작 연출을 생성할 간격입니다. 0이면 동시에 생성합니다.")]
+        public float fullChargeProjectileInterval;
+        [Min(0f), Tooltip("최대 차징 탄의 짧은 준비 연출 시간입니다. 0이면 원본 애니메이션 속도를 사용합니다.")]
+        public float fullChargePreparationTime;
         [Tooltip("이 무기가 발사하는 투사체는 유도 유물이 없어도 기본 유도를 사용합니다.")]
         public bool hasHomingProjectiles;
         [Header("플레이어 주변 원형 발사")]

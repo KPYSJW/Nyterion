@@ -9,10 +9,11 @@ using Nytherion.Core.Enums;
 using Nytherion.Core.Utils;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
+using VContainer.Unity;
 
 namespace Nytherion.UI.Components
 {
-    public class TooltipPanel : MonoBehaviour
+    public class TooltipPanel : MonoBehaviour, IInitializable
     {
         public static TooltipPanel Instance { get; private set; }
 
@@ -46,6 +47,7 @@ namespace Nytherion.UI.Components
         private int currentMilestoneValue;
         private int currentMilestoneTarget;
         private bool isLocalizationSubscribed;
+        private bool isInitialized;
 
         private const float NameBackgroundHorizontalPadding = 28f;
         private const float NameBackgroundVerticalPadding = 10f;
@@ -59,10 +61,20 @@ namespace Nytherion.UI.Components
 
         private void Awake()
         {
-            if (Instance == null) 
-                Instance = this;
-            else 
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            // 비활성 씬 오브젝트도 DI에서 초기화하고, 첫 표시의 Awake에서는 숨기지 않는다.
+            if (isInitialized) return;
+            if (Instance != null && Instance != this)
+            {
                 Destroy(gameObject);
+                return;
+            }
+            isInitialized = true;
+            Instance = this;
 
             if (itemImageBackground == null && panel != null)
             {
@@ -140,6 +152,7 @@ namespace Nytherion.UI.Components
 
         private void OnDestroy()
         {
+            if (Instance == this) Instance = null;
             Canvas.willRenderCanvases -= OnCanvasRender;
 
             if (nameTextBackgroundSprite != null)
@@ -508,7 +521,8 @@ namespace Nytherion.UI.Components
                 RectTransform slotRect = itemImageBackground != null
                     ? itemImageBackground.rectTransform
                     : itemImage.rectTransform.parent as RectTransform;
-                PixelPerfectItemIcon.Apply(itemImage, slotRect, weaponData.inventoryIconScale);
+                PixelPerfectItemIcon.Apply(itemImage, slotRect, weaponData.inventoryIconScale, true,
+                    weaponData.inventoryIconSizeMultiplier);
             }
             else
             {

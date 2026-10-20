@@ -17,6 +17,37 @@ namespace Nytherion.GamePlay.Skills
         private float nextRechargeTime = Mathf.Infinity;
         private float nextSummonTime = -Mathf.Infinity;
 
+        private sealed class ChargeCooldownState : CooldownState
+        {
+            public bool Initialized;
+            public int Charges;
+            public int Capacity;
+            public float NextRechargeTime;
+            public float NextSummonTime;
+        }
+
+        public override CooldownState CaptureCooldownState()
+        {
+            RefreshCharges();
+            return new ChargeCooldownState
+            {
+                Initialized = chargesInitialized, Charges = charges, Capacity = chargeCapacity,
+                NextRechargeTime = nextRechargeTime, NextSummonTime = nextSummonTime
+            };
+        }
+
+        public override void RestoreCooldownState(CooldownState state)
+        {
+            base.RestoreCooldownState(state);
+            if (!(state is ChargeCooldownState chargeState)) return;
+            chargesInitialized = chargeState.Initialized;
+            charges = chargeState.Charges;
+            chargeCapacity = chargeState.Capacity;
+            nextRechargeTime = chargeState.NextRechargeTime;
+            nextSummonTime = chargeState.NextSummonTime;
+            RefreshCharges();
+        }
+
         private RootiUpgradeRuntime Upgrades => caster != null ? caster.GetComponent<RootiUpgradeRuntime>() : null;
         public int CurrentCharges { get { RefreshCharges(); return charges; } }
         public int MaxCharges { get { RefreshCharges(); return chargeCapacity; } }

@@ -43,6 +43,12 @@ namespace Nytherion.GamePlay.Combat
         private int[] circleSpawnPointIndices;
         private int initializationVersion;
 
+        private struct CircleProjectileSpawn
+        {
+            public Vector2 Direction;
+            public Vector3 Position;
+        }
+
         public override void Initialize(WeaponData data)
         {
             base.Initialize(data);
@@ -226,6 +232,9 @@ namespace Nytherion.GamePlay.Combat
                 extra = Mathf.FloorToInt(playerManager.currentPlayerData.extraProjectiles);
             }
             int totalCount = Mathf.Max(1, baseCount) + Mathf.Max(0, extra);
+            bool fullCharge = chargePercent >= 1f;
+            if (fullCharge && weaponData != null)
+                totalCount *= Mathf.Max(1, weaponData.fullChargeProjectileCountMultiplier);
 
             bool useLaunchAngles = weaponData != null && weaponData.useHomingLaunchAngles &&
                 weaponData.homingLaunchAngles != null && weaponData.homingLaunchAngles.Length > 0;
@@ -253,6 +262,8 @@ namespace Nytherion.GamePlay.Combat
                 int angleCount = useLaunchAngles ? weaponData.homingLaunchAngles.Length : 1;
                 float centerIndex = (angleCount - 1) * 0.5f;
                 float halfWidth = Mathf.Min((totalCount - 1) * 0.5f, centerIndex);
+                bool sequential = useCircleSpawn && fullCharge && weaponData.fullChargeProjectileInterval > 0f;
+                CircleProjectileSpawn[] sequence = sequential ? new CircleProjectileSpawn[totalCount] : null;
                 for (int i = 0; i < totalCount; i++)
                 {
                     Vector3 spawnPos = origin;
@@ -283,11 +294,17 @@ namespace Nytherion.GamePlay.Combat
                     }
                     float radians = (launchAngle + offset) * Mathf.Deg2Rad;
                     Vector2 launchDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
-                    if (useCircleSpawn)
+                    if (sequential)
+                        sequence[i] = new CircleProjectileSpawn { Direction = launchDirection, Position = spawnPos };
+                    else if (useCircleSpawn)
                         SpawnWithStartEffect(launchDirection, spawnPos, chargePercent, projectileDamageMultiplier, target);
                     else
                         SpawnProj(launchDirection, default, chargePercent, projectileDamageMultiplier, target, true, spawnPos);
                 }
+                if (sequential)
+                    StartCoroutine(FireCircleSequence(sequence, chargePercent, projectileDamageMultiplier, target,
+                        weaponData.fullChargeProjectileInterval, weaponData.fullChargePreparationTime,
+                        EffectiveDamageMultiplier, initializationVersion, weaponData));
             }
 
             else if (totalCount <= 1)
@@ -393,15 +410,45 @@ namespace Nytherion.GamePlay.Combat
         }
 
         protected virtual Vector2 GetProjectileDirection(Vector2 direction) => direction;
+
+        protected void CancelPendingProjectileSpawns()
+        {
+            initializationVersion++;
+            StopAllCoroutines();
+        }
+
+        private IEnumerator FireCircleSequence(CircleProjectileSpawn[] sequence, float chargePercent,
+            float projectileDamageMultiplier, Collider2D target, float interval, float preparationTime,
+            float damage, int version, WeaponData data)
+        {
+            // 발사 위치와 피해량을 공격 시작 시점에 고정해 겹친 공격이나 능력치 변경의 영향을 막습니다.
+            float nextSpawnTime = Time.time;
+            for (int i = 0; i < sequence.Length; i++)
+            {
+                while (Time.time < nextSpawnTime)
+                {
+                    if (!isActiveAndEnabled || initializationVersion != version || weaponData != data) yield break;
+                    yield return null;
+                }
+                if (!isActiveAndEnabled || initializationVersion != version || weaponData != data) yield break;
+                // 이전 탄의 연출 종료를 기다리지 않고 짧은 준비 연출들을 겹쳐 빠르게 쏟아냅니다.
+                SpawnWithStartEffect(sequence[i].Direction, sequence[i].Position, chargePercent,
+                    projectileDamageMultiplier, target, damage, preparationTime);
+                nextSpawnTime += interval;
+            }
+        }
+
         private void SpawnWithStartEffect(Vector2 direction, Vector3 position, float chargePercent,
-            float projectileDamageMultiplier, Collider2D target)
+            float projectileDamageMultiplier, Collider2D target, float? effectiveDamageMultiplier = null,
+            float preparationTime = 0f)
         {
             GameObject[] effects = weaponData.projectileStartEffectVariants;
             RuntimeAnimatorController[] variants = weaponData.projectileAnimationVariants;
             int index = nextProjectileAnimationIndex;
             if (effects == null || index >= effects.Length || effects[index] == null || variants == null || variants.Length == 0)
             {
-                SpawnProj(direction, default, chargePercent, projectileDamageMultiplier, target, true, position);
+                SpawnProj(direction, default, chargePercent, projectileDamageMultiplier, target, true, position,
+                    effectiveDamageMultiplier: effectiveDamageMultiplier);
                 return;
             }
             ObjectPoolManager pool = ObjectPoolManager.Instance;
@@ -410,7 +457,8 @@ namespace Nytherion.GamePlay.Combat
             if (!effect.TryGetComponent(out ProjectileStartEffect startEffect))
             {
                 pool.ReturnToPool(effects[index].name, effect);
-                SpawnProj(direction, default, chargePercent, projectileDamageMultiplier, target, true, position);
+                SpawnProj(direction, default, chargePercent, projectileDamageMultiplier, target, true, position,
+                    effectiveDamageMultiplier: effectiveDamageMultiplier);
                 return;
             }
             // 이펙트 재생 전에 이미지를 예약해 겹친 공격도 시작 이펙트와 같은 탄을 사용합니다.
@@ -425,10 +473,11 @@ namespace Nytherion.GamePlay.Combat
             effect.transform.localScale *= EffectSizeMultiplier;
             int version = initializationVersion;
             WeaponData data = weaponData;
-            float damage = EffectiveDamageMultiplier;
+            float damage = effectiveDamageMultiplier ?? EffectiveDamageMultiplier;
             startEffect.Play(pool,
                 () => SpawnProj(direction, default, chargePercent, projectileDamageMultiplier, target, true, position, index, damage),
-                () => this != null && isActiveAndEnabled && initializationVersion == version && weaponData == data);
+                () => this != null && isActiveAndEnabled && initializationVersion == version && weaponData == data,
+                preparationTime);
         }
 
         private void ApplyProjectileAnimation(GameObject projectile, int? reservedIndex = null)

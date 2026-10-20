@@ -17,8 +17,8 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: 8aaf48ff6f83e24468edb84bcba417e5, type: 3}
   badgeBackgroundColor: {r: 0.16, g: 0.38, b: 0.12, a: 0.96}
   badgeTextColor: {r: 0.9, g: 1, b: 0.82, a: 1}
-  description_KR: "독을 중첩하고 전염시켜 적 무리를 붕괴시키는 상태 이상 유물 세트입니다."
-  description_EN: A status-effect relic set that stacks and spreads poison through enemy groups.
+  description_KR: "중독 피해와 지속 시간을 늘리고, 중독된 적 처치 시 주변에 독을 전염시키고 폭발 피해를 줍니다."
+  description_EN: "Increase Poison damage and duration, and spread Poison and deal explosion damage around poisoned enemies on death."
   synergySeriesId: PlagueAlchemistSeries
   bonusModules:
   - condition:

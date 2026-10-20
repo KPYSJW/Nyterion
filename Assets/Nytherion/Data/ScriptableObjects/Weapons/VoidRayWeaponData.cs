@@ -47,8 +47,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Header("적 연결 광선 (명중 중에만 굵어짐)")]
         [Min(0.01f)] public float outerWidth = 0.36f;
         [Min(0.01f)] public float coreWidth = 0.09375f;
-        public Color outerColor = new Color(0.02f, 0.8f, 0.95f, 0.9f);
-        public Color coreColor = new Color(0.88f, 1f, 1f, 1f);
+        public Color outerColor = new Color(0.09f, 0.07f, 0.22f, 0.9f);
+        public Color coreColor = new Color(0.26f, 0.2f, 0.56f, 1f);
         [Range(2, 6)] public int connectedStrandCount = 5;
         [Range(0.25f, 2f)] public float connectedStrandSpreadMultiplier = 1.2f;
         [Range(0f, 1f)] public float connectedGlowAlpha = 0f;
@@ -77,8 +77,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float impactSparkWidth = 0.078125f;
         [Min(0.01f), Tooltip("불똥이 튀었다가 사라지는 시간입니다.")]
         public float impactSparkDuration = 0.22f;
-        [Tooltip("청록색 광선과 구분되는 용접 불똥 색상입니다.")]
-        public Color impactSparkColor = new Color(1f, 0.62f, 0.08f, 1f);
+        [Tooltip("군청색 광선과 어울리는 보라색 명중 불똥입니다.")]
+        public Color impactSparkColor = new Color(0.37f, 0.24f, 0.64f, 1f);
         [FormerlySerializedAs("hitEffectSortingOrder")]
         [Tooltip("사각형 불똥이 몬스터보다 앞에 표시될 정렬 순서입니다.")]
         public int impactSparkSortingOrder = 34;

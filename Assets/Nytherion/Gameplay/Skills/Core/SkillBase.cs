@@ -32,12 +32,25 @@ namespace Nytherion.GamePlay.Skills
         /// <summary> 마지막으로 스킬을 사용한 시간 (초기값은 게임 시작 즉시 사용 가능하도록 음수 무한대로 설정/// </summary>
         [System.NonSerialized] private float lastUseTime = -Mathf.Infinity;
 
+        /// <summary>장착 해제 중에도 게임 시간 기준으로 유지되는 쿨타임 상태.</summary>
+        public class CooldownState
+        {
+            public float LastUseTime = -Mathf.Infinity;
+        }
+
+        public virtual CooldownState CaptureCooldownState() => new CooldownState { LastUseTime = lastUseTime };
+
+        public virtual void RestoreCooldownState(CooldownState state)
+        {
+            if (state != null) lastUseTime = state.LastUseTime;
+        }
+
 
         /// <summary>
         ///  스킬 사용을 시도. 사용 가능하다면 스킬을 활성화하고 쿨다운을 초기화
         /// </summary>
         /// <returns></returns>
-        public virtual bool CanUse() => skillData != null && skillData.IsRuntimeAvailable && Time.time > lastUseTime + GetCooldownTime();
+        public virtual bool CanUse() => skillData != null && skillData.IsRuntimeAvailable && Time.time >= lastUseTime + GetCooldownTime();
 
         /// <summary>
         /// 실제 스킬의 효과나 로직이 구현되는 메서드

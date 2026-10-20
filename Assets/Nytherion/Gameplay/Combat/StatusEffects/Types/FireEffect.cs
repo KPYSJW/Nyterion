@@ -13,8 +13,11 @@ namespace Nytherion.GamePlay.Combat
         private int maximumStacks = 1;
         private float tickInterval = 0.5f;
         private float nextTickTime;
+        private float corrosiveDamageMultiplier = 1f;
+        private float corrosiveIntervalMultiplier = 1f;
 
-        public float TickDamage => baseTickDamage * setDamageMultiplier * stackCount;
+        public float TickDamage => baseTickDamage * setDamageMultiplier * stackCount * corrosiveDamageMultiplier;
+        public float TickInterval => tickInterval * corrosiveIntervalMultiplier;
         public int StackCount => stackCount;
 
         public FireEffect(float damage, float duration)
@@ -25,7 +28,7 @@ namespace Nytherion.GamePlay.Combat
 
         public override void OnApply()
         {
-            nextTickTime = Time.time + tickInterval;
+            nextTickTime = Time.time + TickInterval;
             if (manager != null)
             {
                 manager.PlayVFX(EffectId);
@@ -74,15 +77,28 @@ namespace Nytherion.GamePlay.Combat
             Timer = Duration;
         }
 
+        public void SetCorrosiveFlameBonus(float damageMultiplier, float intervalMultiplier)
+        {
+            damageMultiplier = Mathf.Max(1f, damageMultiplier);
+            intervalMultiplier = Mathf.Clamp(intervalMultiplier, 0.1f, 1f);
+            if (corrosiveDamageMultiplier == damageMultiplier && corrosiveIntervalMultiplier == intervalMultiplier) return;
+            float previousInterval = TickInterval;
+            corrosiveDamageMultiplier = damageMultiplier;
+            corrosiveIntervalMultiplier = intervalMultiplier;
+            // 다음 틱까지 남은 비율을 유지해 강화 시작·종료 시 틱이 초기화되지 않게 한다.
+            if (previousInterval > 0f && nextTickTime > Time.time)
+                nextTickTime = Time.time + (nextTickTime - Time.time) * TickInterval / previousInterval;
+        }
+
         public override void OnUpdate(float deltaTime)
         {
             if (Time.time >= nextTickTime)
             {
                 if (target != null && !target.isDead)
                 {
-                    target.TakeDamage(TickDamage);
+                    target.TakeDamageOverTime(TickDamage);
                 }
-                nextTickTime = Time.time + tickInterval;
+                nextTickTime = Time.time + TickInterval;
             }
         }
 

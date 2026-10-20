@@ -1,10 +1,44 @@
 using UnityEngine;
 using Nytherion.Core.Managers;
+using UnityEngine.Rendering;
 
 namespace Nytherion.GamePlay.Combat
 {
     public static class WeaponVFXHelper
     {
+        // 적 본체와 비행 적(정렬 순서 10)보다 앞에 타격 효과를 표시합니다.
+        public const int HitEffectSortingOrder = 100;
+        // 바닥 타일(-10) 위, 적 렌더러(-5 이상) 아래에 광선을 표시합니다.
+        public const int BackgroundBeamSortingOrder = -8;
+
+        public static void ConfigureBeamSorting(GameObject root, Renderer beam, SpriteRenderer start, SpriteRenderer impact)
+        {
+            if (!root.TryGetComponent(out SortingGroup group)) group = root.AddComponent<SortingGroup>();
+            group.sortAtRoot = true;
+            group.sortingLayerID = beam.sortingLayerID;
+            group.sortingOrder = BackgroundBeamSortingOrder;
+            beam.sortingOrder = BackgroundBeamSortingOrder;
+            if (start != null)
+            {
+                start.sortingLayerID = beam.sortingLayerID;
+                start.sortingOrder = BackgroundBeamSortingOrder + 1;
+            }
+            if (impact == null) return;
+            // 타격 효과는 공격 본체의 그룹에서 독립시켜 적보다 앞에 표시합니다.
+            if (!impact.TryGetComponent(out SortingGroup impactGroup)) impactGroup = impact.gameObject.AddComponent<SortingGroup>();
+            impactGroup.sortAtRoot = true;
+            impactGroup.sortingLayerID = beam.sortingLayerID;
+            impactGroup.sortingOrder = HitEffectSortingOrder;
+            impact.sortingLayerID = beam.sortingLayerID;
+            impact.sortingOrder = HitEffectSortingOrder;
+        }
+
+        public static void ApplyHitEffectSorting(GameObject effect)
+        {
+            foreach (Renderer effectRenderer in effect.GetComponentsInChildren<Renderer>(true))
+                effectRenderer.sortingOrder = Mathf.Max(HitEffectSortingOrder, effectRenderer.sortingOrder);
+        }
+
         public static void PlayHitEffect(GameObject effectPrefab, Vector3 position, float chargePercent = 0f, Vector3? direction = null)
         {
             if (effectPrefab == null) return;
@@ -29,6 +63,8 @@ namespace Nytherion.GamePlay.Combat
 
             if (effectObj != null)
             {
+                ApplyHitEffectSorting(effectObj);
+
                 Vector3 originalScale = effectPrefab.transform.localScale;
                 effectObj.transform.localScale = new Vector3(originalScale.x * randomScale, originalScale.y * randomScale, originalScale.z);
 

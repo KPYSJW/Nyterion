@@ -33,7 +33,7 @@ namespace Nytherion.GamePlay.Combat
             if (spriteRenderer != null)
             {
                 spriteRenderer.enabled = frames != null && frames.Length > 0;
-                spriteRenderer.sortingOrder = sortingOrder;
+                spriteRenderer.sortingOrder = Mathf.Max(WeaponVFXHelper.HitEffectSortingOrder, sortingOrder);
                 spriteRenderer.sprite = GetFrame(0);
             }
         }

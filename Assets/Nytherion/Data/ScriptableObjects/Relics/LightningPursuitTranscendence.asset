@@ -12,24 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
   m_Name: LightningPursuitTranscendence
   m_EditorClassIdentifier: 
-  effectName_KR: "뇌광 추적"
-  effectName_EN: Lightning Pursuit
+  effectName_KR: "\uC5F0\uC1C4 \uBC88\uAC1C"
+  effectName_EN: Chain Lightning
   statusIcon: {fileID: 21300000, guid: 5e47aa5232424b6dad0ccdfdcc01b6f9, type: 3}
+  nameColor: {r: 0.49411765, g: 0.60784316, b: 1, a: 1}
   badgeBackgroundColor: {r: 0.16, g: 0.28, b: 0.58, a: 0.96}
   badgeTextColor: {r: 0.88, g: 0.94, b: 1, a: 1}
-  description_KR: "대시 후 첫 원거리 공격이 적중하면 주변 최대 4명에게 적중 피해의 45% 연쇄 번개를 방출합니다."
-  description_EN: The first ranged attack after dashing releases chain lightning for 45% of hit damage to up to 4 nearby enemies.
+  description_KR: "\uB300\uC2DC \uD6C4 \uCCAB \uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC801\uC911
+    \uC2DC \uC8FC\uBCC0 \uCD5C\uB300 4\uBA85\uC5D0\uAC8C \uC801\uC911 \uD53C\uD574\uC758
+    45% \uC5F0\uC1C4 \uBC88\uAC1C."
+  description_EN: The first ranged hit after dashing chains lightning to up to 4
+    nearby enemies for 45% of the hit damage.
   requirements:
   - setBonusData: {fileID: 11400000, guid: 2b58d07a0be049d0ae64c7aad4390f1a, type: 2}
     requiredEquippedCount: 4
   - setBonusData: {fileID: 11400000, guid: 7b3d90ce1f2c4e4ebab8c9f534f67823, type: 2}
     requiredEquippedCount: 4
   effectModules:
-  - condition: {rid: -2}
+  - description_KR: "\uB300\uC2DC \uD6C4 \uCCAB \uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC801\uC911
+      \uC2DC \uC8FC\uBCC0 \uCD5C\uB300 4\uBA85\uC5D0\uAC8C \uC801\uC911 \uD53C\uD574\uC758
+      45% \uC5F0\uC1C4 \uBC88\uAC1C."
+    description_EN: The first ranged hit after dashing chains lightning to up to
+      4 nearby enemies for 45% of the hit damage.
+    condition:
+      rid: -2
     effects:
     - rid: 1001
-    description_KR: "대시 후 첫 원거리 적중에 연쇄 번개"
-    description_EN: Chain lightning on the first ranged hit after a dash.
   references:
     version: 2
     RefIds:

@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: Ignition
+  m_EditorClassIdentifier: 
+  uniqueID: 2a806402-a12e-4d18-bd6f-c28696b33301
+  itemName_KR: "\uC778\uD654"
+  itemName_EN: Ignition
+  icon: {fileID: 21300000, guid: 86ca16057b9423a42a4afdd754cf5d78, type: 3}
+  description_KR: 
+  description_EN: 
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 150
+  equipmentType: 0
+  traits: 03000000
+  statModifiers: []
+  useDiagonalIcon: 1
+  iconRotationOffset: 0
+  iconSlotScale: 1.8
+  inventoryIconScale: 1
+  damage: 5
+  range: 5
+  cooldown: 0.2
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: 17732bfbc7fe2f34cbcdff0c504216fb, type: 3}
+  firePointOffset: {x: 0, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: 0.35, y: -0.12, z: 0}
+  visualScale: 0.7
+  sortingOrderOffset: 5
+  useFixedFacingPose: 0
+  useStaffRecoil: 1
+  weaponEffectPrefab: {fileID: 1638640853019598765, guid: dd4a8661b5e3dac43b8d7395a450fcf2, type: 3}
+  fireEffectPrefab: {fileID: 6716736704492513234, guid: 85429d9760b62c94d9b2fd120966ffff, type: 3}
+  chargeEffectPrefab: {fileID: 0}
+  chargeEffectRotationSpeed: 0
+  fireSound: {fileID: 8300000, guid: 1827d1b972eb149489bd16f723aa7dfe, type: 3}
+  fireSoundVolume: 0.5
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 5436712931287769894, guid: 6fa2d79781527d446b45d12445b98292, type: 3}
+  projectileAnimationVariants: []
+  projectileStartEffectVariants: []
+  projectileSpeed: 8
+  projectileRotationOffset: 0
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  fullChargeProjectileCountMultiplier: 1
+  fullChargeProjectileInterval: 0
+  fullChargePreparationTime: 0
+  hasHomingProjectiles: 0
+  usePlayerCircleSpawn: 0
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 30
+  - 15
+  - 0
+  - -15
+  - -30
+  homingTurnSpeed: 180
+  useConstantHomingSpeed: 0
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 8898539355576231548, guid: e0b13f6003df5254686bfa87c5a49070, type: 3}
+  weaponPrefab: {fileID: 1472925551449637739, guid: 4f8e25e862823d44bb7a3ccd6f73f7c1, type: 3}
+  isArchivable: 1

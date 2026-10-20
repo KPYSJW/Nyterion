@@ -17,8 +17,8 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: e881e1116fb14f34492b57c6515abbfb, type: 3}
   badgeBackgroundColor: {r: 0.15686275, g: 0.35686275, b: 0.27450982, a: 0.9607843}
   badgeTextColor: {r: 0.9098039, g: 1, b: 0.95686275, a: 1}
-  description_KR: "플레이어를 따라다니며 직접 전투하는 소환수 유물 세트입니다."
-  description_EN: A Servant relic set that follows the player and fights directly.
+  description_KR: "플레이어를 따라다니며 적을 공격하는 소환수를 소환합니다."
+  description_EN: "Summon companions that follow the player and attack enemies."
   synergySeriesId: SummonedCreatureSeries
   bonusModules:
   - condition:

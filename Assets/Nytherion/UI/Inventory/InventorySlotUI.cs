@@ -68,7 +68,8 @@ namespace Nytherion.UI.Inventory
         {
             if (item != null && count > 0 && iconImage != null && iconImage.transform != transform)
                 PixelPerfectItemIcon.Apply(iconImage, transform as RectTransform,
-                    item is WeaponData weaponData ? weaponData.inventoryIconScale : 1f);
+                    item is WeaponData weaponData ? weaponData.inventoryIconScale : 1f, item is WeaponData,
+                    item is WeaponData weapon ? weapon.inventoryIconSizeMultiplier : 1f);
             base.UpdateVisuals(item, count);
         }
 

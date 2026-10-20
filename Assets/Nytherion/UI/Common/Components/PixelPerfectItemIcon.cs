@@ -4,19 +4,22 @@ using System.Collections.Generic;
 
 namespace Nytherion.UI.Components
 {
-    /// <summary>아이콘을 원본 방향으로 표시하고 화면의 정수 픽셀 배율과 위치에 맞춘다.</summary>
+    /// <summary>아이콘을 원본 방향으로 표시하고 실제 그림 크기와 화면 픽셀 위치에 맞춘다.</summary>
     [ExecuteAlways, DisallowMultipleComponent, RequireComponent(typeof(Image))]
     public class PixelPerfectItemIcon : MonoBehaviour
     {
         private Image image;
         private RectTransform slot;
         private float iconScale = 1f;
+        private bool fitVisibleBounds;
+        private float sizeMultiplier = 1f;
         private readonly Vector3[] corners = new Vector3[4];
         private const float Padding = 8f;
         private const float DisplayScale = 2f;
         private static readonly Dictionary<Sprite, Rect> VisibleRects = new Dictionary<Sprite, Rect>();
 
-        public static void Apply(Image image, RectTransform slot, float iconScale = 1f)
+        public static void Apply(Image image, RectTransform slot, float iconScale = 1f, bool fitVisibleBounds = false,
+            float sizeMultiplier = 1f)
         {
             if (image == null || slot == null || image.transform == slot) return;
             PixelPerfectItemIcon layout = image.GetComponent<PixelPerfectItemIcon>();
@@ -25,6 +28,8 @@ namespace Nytherion.UI.Components
             layout.image = image;
             layout.slot = slot;
             layout.iconScale = Mathf.Max(0.1f, iconScale);
+            layout.fitVisibleBounds = fitVisibleBounds;
+            layout.sizeMultiplier = Mathf.Max(0.1f, sizeMultiplier);
             layout.Refresh();
         }
 
@@ -61,6 +66,11 @@ namespace Nytherion.UI.Components
             pixelScale = Mathf.Min(pixelScale * iconScale, visibleFit);
             // 개별 확대를 요청한 장비는 정수 배율 내림으로 확대 효과가 사라지지 않게 한다.
             if (pixelScale >= 1f && iconScale <= 1f) pixelScale = Mathf.Floor(pixelScale + 0.0001f);
+            // 무기는 PNG 여백이나 화면 배율의 정수 내림에 따라 작아지지 않게 실제 그림으로 맞춘다.
+            // 명시적으로 축소한 장비와 비무기 아이템은 기존 픽셀 배율을 유지한다.
+            if (fitVisibleBounds && iconScale >= 1f) pixelScale = visibleFit;
+            // 기존 무기별 크기 보정 뒤에 적용해 0.9가 현재 표시 크기의 90%가 되게 한다.
+            pixelScale = Mathf.Min(pixelScale * sizeMultiplier, visibleFit);
             Vector2 displaySize = sourceSize * pixelScale;
 
             Vector2 center = RectTransformUtility.WorldToScreenPoint(camera, slot.TransformPoint(slot.rect.center));

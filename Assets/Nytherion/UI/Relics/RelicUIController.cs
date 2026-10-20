@@ -32,7 +32,6 @@ namespace Nytherion.UI.Controllers
             this.relicGridUI = relicGridUI;
             this.relicManager = relicManager;
             this.controlledCanvasGroup = gameSceneUIRefs.RelicCanvasGroup;
-            relicGridUI?.SetStorageSortButtonTemplate(gameSceneUIRefs.InventorySortButton);
 
             EnsureEffectStatusUI();
 

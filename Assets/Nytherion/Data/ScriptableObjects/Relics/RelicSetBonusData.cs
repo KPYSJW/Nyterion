@@ -17,7 +17,7 @@ namespace Nytherion.Data.ScriptableObjects.Relics
     public class RelicSetBonusData : ScriptableObject
     {
         private const string ActiveTierColorHex = "#FFFFFF";
-        private const string InactiveTierColorHex = "#525252";
+        private const string InactiveTierColorHex = "#808080";
 
         [Header("UI 표시")]
         public string setName_KR;
@@ -88,6 +88,21 @@ namespace Nytherion.Data.ScriptableObjects.Relics
             return minimum != int.MaxValue && GetEquippedCount(relicManager) >= minimum;
         }
 
+        /// <summary>요구 개수 순서에 따른 현재 활성 단계. 미활성은 -1, 첫 단계는 0이다.</summary>
+        public int GetActiveTierIndex(RelicManager relicManager)
+        {
+            if (bonusModules == null || relicManager == null) return -1;
+
+            int equippedCount = GetEquippedCount(relicManager);
+            return bonusModules
+                .Where(module => module?.condition is ChainSynergyCondition condition &&
+                    condition.measure == ChainSynergyMeasure.EquippedSeriesRelicCount &&
+                    string.Equals(condition.targetSeriesId, synergySeriesId, StringComparison.Ordinal))
+                .Select(module => ((ChainSynergyCondition)module.condition).requiredChainLength)
+                .Distinct()
+                .Count(requiredCount => equippedCount >= requiredCount) - 1;
+        }
+
         public string BuildTooltipText(RelicManager relicManager)
         {
             StringBuilder builder = new StringBuilder();
@@ -99,10 +114,20 @@ namespace Nytherion.Data.ScriptableObjects.Relics
 
             if (bonusModules != null)
             {
-                int equippedCount = GetEquippedCount(relicManager);
-                IEnumerable<RelicEffectModule> orderedModules = bonusModules
+                List<RelicEffectModule> orderedModules = bonusModules
                     .Where(module => module?.condition is ChainSynergyCondition)
-                    .OrderBy(module => ((ChainSynergyCondition)module.condition).requiredChainLength);
+                    .OrderBy(module => ((ChainSynergyCondition)module.condition).requiredChainLength)
+                    .ToList();
+
+                // 실제 효과 적용과 동일하게 같은 조건 그룹의 가장 높은 충족 단계만 강조한다.
+                var activeTiers = orderedModules
+                    .Select(module => (ChainSynergyCondition)module.condition)
+                    .Where(condition => relicManager != null &&
+                        (condition.measure == ChainSynergyMeasure.EquippedSeriesRelicCount
+                            ? relicManager.GetEquippedSeriesRelicCount(condition.targetSeriesId)
+                            : relicManager.GetMaxChainLength(condition.targetSeriesId)) >= condition.requiredChainLength)
+                    .GroupBy(condition => (condition.measure, condition.targetSeriesId))
+                    .ToDictionary(group => group.Key, group => group.Max(condition => condition.requiredChainLength));
 
                 foreach (RelicEffectModule module in orderedModules)
                 {
@@ -114,7 +139,9 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                             "ui.relic.effect_description_missing",
                             "효과 설명이 설정되지 않았습니다.",
                             "No effect description has been configured.");
-                    string tierColor = equippedCount >= condition.requiredChainLength
+                    string tierColor = activeTiers.TryGetValue(
+                        (condition.measure, condition.targetSeriesId), out int activeRequirement) &&
+                        condition.requiredChainLength == activeRequirement
                         ? ActiveTierColorHex
                         : InactiveTierColorHex;
 

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
   m_Name: FrostWardenSet
   m_EditorClassIdentifier: 
-  setName_KR: "빙결 파수꾼"
-  setName_EN: Frost Warden
+  setName_KR: "만년서리"
+  setName_EN: "Everfrost"
   statusIcon: {fileID: 21300000, guid: b18d509706164b53b2069555bf259654, type: 3}
   badgeBackgroundColor: {r: 0.18, g: 0.42, b: 0.62, a: 0.96}
   badgeTextColor: {r: 0.9, g: 0.98, b: 1, a: 1}
-  description_KR: "냉기 중첩으로 적을 멈추고 파쇄하는 제어형 유물 세트입니다."
-  description_EN: A control relic set that freezes and shatters enemies with Ice stacks.
+  description_KR: "냉기가 중첩된 적을 빙결시키고, 빙결된 적 공격 시 주변에 파쇄 피해를 줍니다."
+  description_EN: "Freeze enemies with accumulated Ice stacks and deal shatter damage around frozen enemies when hit."
   synergySeriesId: FrostWardenSeries
   bonusModules:
   - condition: {rid: 3001}

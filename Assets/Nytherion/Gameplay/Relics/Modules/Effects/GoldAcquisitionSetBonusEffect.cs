@@ -13,7 +13,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// <summary>
     /// 골드 획득량을 높이고 짧은 시간 안에 연속 획득하면 황금 열기를 누적한다.
     /// </summary>
-    [Serializable, RelicDisplayName("황금 사냥꾼 세트 강화")]
+    [Serializable, RelicDisplayName("탐욕 세트 강화")]
     public sealed class GoldAcquisitionSetBonusEffect : RelicEffectBase
     {
         [Min(0f)] public float baseGoldGainBonus;

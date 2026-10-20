@@ -18,9 +18,9 @@ namespace Nytherion.Editor
         public const string DataFolder = "Assets/Nytherion/Data/ScriptableObjects/Weapons/";
         public static readonly string[] Names = {
             "Afterglow", "ArcaneDart", "Blazeshade", "Capricious", "EvilEye", "ForestThorn",
-            "Frenzy", "GuardianStaff", "Icicle", "LaserEmitter", "LayLaser", "Pyrofall",
-            "PyrogemStaff", "SaintsStaff", "ShamanStaff", "SpiritsGuidance", "Stormbringer",
-            "VenomousStaff", "VoidRay"
+            "Frenzy", "Isolation", "Icicle", "CrimsonLotus", "Obliteration", "Pyrofall",
+            "Ignition", "Radiance", "ShamanStaff", "SpiritsGuidance", "Stormbringer",
+            "Corrosion", "VoidRay"
         };
         private static readonly float[] Volumes = {
             0.64f, 0.48f, 0.62f, 0.6f, 0.64f, 0.48f, 0.4f, 0.65f, 0.58f,

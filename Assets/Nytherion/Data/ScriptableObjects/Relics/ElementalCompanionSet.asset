@@ -17,8 +17,8 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: 63867d480efeee249abe248d36b59c33, type: 3}
   badgeBackgroundColor: {r: 0.20392157, g: 0.30588236, b: 0.54901963, a: 0.9607843}
   badgeTextColor: {r: 0.9490196, g: 0.9607843, b: 1, a: 1}
-  description_KR: "공격에 맞춰 투사체를 발사하는 소환물 유물 세트입니다."
-  description_EN: A Summon relic set that fires projectiles with your attacks.
+  description_KR: "소환물 투사체의 피해와 발사 수를 늘립니다."
+  description_EN: "Increase summon projectile damage and projectile count."
   synergySeriesId: ElementalCompanionSeries
   bonusModules:
   - condition:

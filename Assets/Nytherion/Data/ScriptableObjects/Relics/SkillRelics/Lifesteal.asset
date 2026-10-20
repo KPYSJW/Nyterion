@@ -17,7 +17,7 @@ MonoBehaviour:
   description_KR: "\uC77C\uC815 \uC2DC\uAC04 \uACF5\uACA9 \uD53C\uD574\uB85C \uCCB4\uB825
     \uD68C\uBCF5"
   description_EN: Temporarily restores health by dealing damage.
-  Image: {fileID: 21300000, guid: 9b633ceb4f7f6a74db851fcfcb6a6dd8, type: 3}
+  Image: {fileID: 21300000, guid: 277ee38f9483dfa43abab5ec944ea163, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0

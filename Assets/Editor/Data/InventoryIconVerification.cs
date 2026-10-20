@@ -15,7 +15,7 @@ using Object = UnityEngine.Object;
 
 namespace Nytherion.Editor
 {
-    /// <summary>실제 슬롯과 아이콘의 렌더링에서 원본 픽셀의 사각형 블록이 유지되는지 확인한다.</summary>
+    /// <summary>전체 무기의 슬롯 채움과 중앙 정렬, 비무기 아이콘의 정수 픽셀 렌더링을 확인한다.</summary>
     [InitializeOnLoad]
     public static class InventoryIconVerification
     {
@@ -30,6 +30,7 @@ namespace Nytherion.Editor
             public string assetPath;
             public float scale;
             public float iconSlotScale;
+            public float sizeMultiplier;
         }
 
         static InventoryIconVerification()
@@ -54,9 +55,11 @@ namespace Nytherion.Editor
                 Undo.RecordObject(data, "인벤토리 아이콘 크기 조정");
                 data.inventoryIconScale = Mathf.Max(0.1f, request.scale);
                 if (request.iconSlotScale > 0f) data.iconSlotScale = request.iconSlotScale;
+                if (request.sizeMultiplier > 0f) data.inventoryIconSizeMultiplier = request.sizeMultiplier;
                 EditorUtility.SetDirty(data);
                 AssetDatabase.SaveAssetIfDirty(data);
-                File.WriteAllText(Output + "/scale-setup.txt", request.assetPath + ": inventoryIconScale=" + data.inventoryIconScale);
+                File.WriteAllText(Output + "/scale-setup.txt", request.assetPath + ": inventoryIconScale=" + data.inventoryIconScale +
+                    ", inventoryIconSizeMultiplier=" + data.inventoryIconSizeMultiplier);
                 return;
             }
             if (SessionState.GetBool(PendingPlay, false) && EditorApplication.isPlaying &&
@@ -87,8 +90,7 @@ namespace Nytherion.Editor
             InventoryUI inventory = Object.FindObjectOfType<InventoryUI>(true);
             if (inventory == null) throw new InvalidOperationException("실행 씬에 InventoryUI가 없습니다.");
             bool wasOpen = inventory.IsOpen;
-            ItemData testItem = AssetDatabase.LoadAssetAtPath<ItemData>(
-                "Assets/Nytherion/Data/ScriptableObjects/Weapons/SaintsStaff.asset");
+            var testItems = LoadWeaponItems();
             int verified = 0;
             try
             {
@@ -102,25 +104,45 @@ namespace Nytherion.Editor
                     int count = slot.CurrentCount;
                     try
                     {
-                        // 매니저의 인벤토리/저장 데이터는 건드리지 않고 표시만 검사한 뒤 즉시 복구한다.
-                        slot.SetItem(testItem, 1);
-                        Canvas.ForceUpdateCanvases();
-                        PixelPerfectItemIcon layout = slot.IconImage.GetComponent<PixelPerfectItemIcon>();
-                        if (layout == null || slot.IconImage.sprite != testItem.icon || !slot.IconImage.enabled)
-                            throw new InvalidOperationException("실행 슬롯의 픽셀 아이콘 설정 누락: " + slot.name);
-                        layout.Refresh();
-                        if (Quaternion.Angle(slot.IconImage.rectTransform.localRotation, Quaternion.identity) > 0.01f)
-                            throw new InvalidOperationException("실행 슬롯 아이콘 회전: " + slot.name);
-                        VerifyContained(slot);
+                        foreach (ItemData testItem in testItems)
+                        {
+                            // 매니저의 인벤토리/저장 데이터는 건드리지 않고 표시만 검사한 뒤 즉시 복구한다.
+                            slot.SetItem(testItem, 1);
+                            Canvas.ForceUpdateCanvases();
+                            PixelPerfectItemIcon layout = slot.IconImage.GetComponent<PixelPerfectItemIcon>();
+                            if (layout == null || slot.IconImage.sprite != testItem.icon || !slot.IconImage.enabled)
+                                throw new InvalidOperationException("실행 슬롯의 픽셀 아이콘 설정 누락: " + slot.name);
+                            layout.Refresh();
+                            if (Quaternion.Angle(slot.IconImage.rectTransform.localRotation, Quaternion.identity) > 0.01f)
+                                throw new InvalidOperationException("실행 슬롯 아이콘 회전: " + slot.name);
+                            VerifyContained(slot);
+                        }
                         verified++;
                     }
                     finally { slot.SetItem(original, count); }
                 }
                 if (verified == 0) throw new InvalidOperationException("실행 슬롯이 없습니다.");
                 File.WriteAllText(Output + "/play-verification.txt", "PASS " + SceneManager.GetActiveScene().name +
-                    " 플레이 모드: 실제 인벤토리 열기, 장착·보관 슬롯 " + verified + "개 아이콘 표시/슬롯 내부 배치/원본 방향/복원");
+                    " 플레이 모드: 실제 인벤토리 열기, 장착·보관 슬롯 " + verified + "개 × 전체 무기 " +
+                    testItems.Count + "종 아이콘 표시/슬롯 채움/중앙 정렬/원본 방향/복원");
             }
             finally { if (!wasOpen) inventory.Close(); }
+        }
+
+        private static List<ItemData> LoadWeaponItems()
+        {
+            var items = new List<ItemData>();
+            foreach (string guid in AssetDatabase.FindAssets("t:WeaponData",
+                new[] { "Assets/Nytherion/Data/ScriptableObjects/Weapons" }))
+            {
+                WeaponData weapon = AssetDatabase.LoadAssetAtPath<WeaponData>(AssetDatabase.GUIDToAssetPath(guid));
+                if (weapon == null || weapon.icon == null)
+                    throw new InvalidOperationException("검증 무기 아이콘 누락: " + AssetDatabase.GUIDToAssetPath(guid));
+                items.Add(weapon);
+            }
+            items.Sort((a, b) => string.CompareOrdinal(a.name, b.name));
+            if (items.Count == 0) throw new InvalidOperationException("검증 무기가 없습니다.");
+            return items;
         }
 
         [MenuItem("Tools/Nytherion/Inventory/Verify Pixel Icons")]
@@ -164,16 +186,16 @@ namespace Nytherion.Editor
                 InventorySlotUI slot = slotObject.GetComponent<InventorySlotUI>();
                 RectTransform slotRect = slotObject.GetComponent<RectTransform>();
                 slotObject.transform.Find("CountText").gameObject.SetActive(false);
-                string[] paths = {
-                    "Weapons/ArcaneDart.asset", "Weapons/Frenzy.asset", "Weapons/ShamanStaff.asset", "Weapons/SaintsStaff.asset",
-                    "Weapons/GuardianStaff.asset", "Weapons/EvilEye.asset", "Weapons/ForestThorn.asset",
+                var paths = new List<string>();
+                foreach (ItemData weapon in LoadWeaponItems()) paths.Add(AssetDatabase.GetAssetPath(weapon));
+                paths.AddRange(new[] {
                     "Assets/Nytherion/Art/Relics/Sprites/BloomRing.png",
                     "Assets/Nytherion/Art/Relics/Sprites/SkullRing.png"
-                };
+                });
                 foreach (string path in paths)
                 {
                     ItemData item;
-                    if (path.StartsWith("Assets/", StringComparison.Ordinal))
+                    if (path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
                     {
                         // 장비 데이터와 독립적인 임시 아이템으로 비무기 아이콘 경로도 확인한다.
                         item = ScriptableObject.CreateInstance<ConsumableData>();
@@ -181,11 +203,14 @@ namespace Nytherion.Editor
                         item.icon = AssetDatabase.LoadAssetAtPath<Sprite>(path);
                         temporaryItems.Add(item);
                     }
-                    else item = AssetDatabase.LoadAssetAtPath<ItemData>("Assets/Nytherion/Data/ScriptableObjects/" + path);
+                    else item = AssetDatabase.LoadAssetAtPath<ItemData>(path);
                     if (item == null || item.icon == null) throw new InvalidOperationException("검증 아이콘 누락: " + path);
+                    foreach (Vector2 slotSize in new[] { new Vector2(96f, 96f), new Vector2(128f, 128f),
+                        new Vector2(160f, 160f), new Vector2(128f, 96f) })
                     foreach (float scale in new[] { 0.125f, 0.333f, 0.5f, 0.75f, 1f, 1.25f, 1.5f })
                     foreach (bool pixelPerfect in new[] { false, true })
                     {
+                        slotRect.sizeDelta = slotSize;
                         canvas.scaleFactor = scale;
                         canvas.pixelPerfect = pixelPerfect;
                         slotRect.anchoredPosition = new Vector2(0.37f, -3.47f);
@@ -205,7 +230,8 @@ namespace Nytherion.Editor
                         Vector2 max = camera.WorldToScreenPoint(corners[2]);
                         Vector2 size = max - min;
                         float pixelScale = size.x / item.icon.rect.width;
-                        bool integerScale = !(item is WeaponData weapon) || weapon.inventoryIconScale <= 1f;
+                        bool integerScale = !(item is WeaponData weapon) ||
+                            (weapon.inventoryIconScale < 1f && Mathf.Approximately(weapon.inventoryIconSizeMultiplier, 1f));
                         if (integerScale && pixelScale >= 1f && (Mathf.Abs(pixelScale - Mathf.Round(pixelScale)) > 0.002f ||
                             Mathf.Abs(min.x - Mathf.Round(min.x)) > 0.002f || Mathf.Abs(min.y - Mathf.Round(min.y)) > 0.002f))
                             throw new InvalidOperationException("정수 픽셀 배율/위치 불일치: " + path);
@@ -221,12 +247,12 @@ namespace Nytherion.Editor
                         finally { RenderTexture.active = previous; }
                         if (integerScale && pixelScale >= 1f)
                             VerifyPixelBlocks(readback, min, item.icon.rect.size, Mathf.RoundToInt(pixelScale));
-                        if (scale == 1f && !pixelPerfect)
+                        if (scale == 1f && !pixelPerfect && slotSize == new Vector2(128f, 128f))
                         {
-                            if ((item.name == "SaintsStaff" && pixelScale < 2.99f) ||
+                            if ((item.name == "Radiance" && pixelScale < 2.99f) ||
                                 (item.name == "Frenzy" && pixelScale < 1.99f))
                                 throw new InvalidOperationException("기존 장비 표시 크기보다 작아짐: " + item.name);
-                            if ((item.name == "GuardianStaff" || item.name == "EvilEye") &&
+                            if ((item.name == "Isolation" || item.name == "EvilEye") &&
                                 ReadSourceVisibleRect(item.icon).height * pixelScale <
                                 (slotRect.rect.height - 16f) * scale - 1f)
                                 throw new InvalidOperationException("개별 확대 장비가 슬롯 안쪽을 채우지 못함: " + item.name);
@@ -236,7 +262,7 @@ namespace Nytherion.Editor
                     slot.ClearSlot();
                     if (slot.IconImage.enabled || slot.IconImage.sprite != null)
                         throw new InvalidOperationException("슬롯 비우기 실패");
-                    results.Add("PASS " + path + ": 7개 화면 배율, Canvas 픽셀 보정 켜짐/꺼짐, 슬롯 내부 배치, 원본 방향, 픽셀 블록, 교체/비우기");
+                    results.Add("PASS " + path + ": 슬롯 크기 4종 × 화면 배율 7종 × Canvas 픽셀 보정 켜짐/꺼짐, 슬롯 채움, 중앙 정렬, 원본 방향, 교체/비우기");
                 }
             }
             catch (Exception error) { results.Add("FAIL " + error); Debug.LogException(error); }
@@ -302,6 +328,17 @@ namespace Nytherion.Editor
             Vector2 offset = visibleCenter - (min + max) * 0.5f;
             if (Mathf.Abs(offset.x) > 0.51f || Mathf.Abs(offset.y) > 0.51f)
                 throw new InvalidOperationException("장비 그림이 슬롯 중심에서 벗어남: " + slot.CurrentItem.name);
+            if (slot.CurrentItem is WeaponData weapon && weapon.inventoryIconScale >= 1f)
+            {
+                Vector2 visibleSize = RectTransformUtility.WorldToScreenPoint(camera, icon.TransformPoint(localMax)) -
+                    RectTransformUtility.WorldToScreenPoint(camera, icon.TransformPoint(localMin));
+                Vector2 available = max - min - padding * 2f;
+                float fill = Mathf.Max(visibleSize.x / available.x, visibleSize.y / available.y);
+                float expectedFill = Mathf.Clamp(weapon.inventoryIconSizeMultiplier, 0.1f, 1f);
+                if (Mathf.Abs(fill - expectedFill) > 0.01f)
+                    throw new InvalidOperationException("무기 그림의 미세 배율 불일치: " + weapon.name +
+                        " / 실제=" + fill + " / 기대=" + expectedFill);
+            }
         }
 
         private static Rect ReadSourceVisibleRect(Sprite sprite)

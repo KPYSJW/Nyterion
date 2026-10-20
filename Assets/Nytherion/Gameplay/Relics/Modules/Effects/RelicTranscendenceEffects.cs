@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Nytherion.Gameplay.Relics.Modules
 {
-    [Serializable, RelicDisplayName("결정 탄도")]
+    [Serializable, RelicDisplayName("얼음 파편")]
     public sealed class CrystalBallisticsEffect : RelicEffectBase
     {
         [Min(0f)] public float shardDamageRatio = 0.35f;
@@ -156,63 +156,64 @@ namespace Nytherion.Gameplay.Relics.Modules
     [Serializable, RelicDisplayName("부식성 화염")]
     public sealed class CorrosiveFlameEffect : RelicEffectBase
     {
-        [Min(0f)] public float spreadFireDamageRatio = 0.5f;
-        [Min(0.1f)] public float spreadRadius = 5f;
-        [Min(1)] public int maxTargets = 3;
-        [Min(0.1f)] public float fireDuration = 4f;
+        [Min(1f)] public float tickDamageMultiplier = 1.25f;
+        [Range(0.1f, 1f)] public float tickIntervalMultiplier = 0.75f;
 
-        [NonSerialized] private PlayerManager playerManager;
-        [NonSerialized] private EventManager eventManager;
+        [NonSerialized] private CorrosiveFlameRuntime appliedRuntime;
 
-        public override void ApplyEffect(PlayerManager currentPlayerManager, int level)
+        public override void ApplyEffect(PlayerManager playerManager, int level)
         {
-            RemoveEffect(currentPlayerManager, level);
-            playerManager = currentPlayerManager;
-            eventManager = currentPlayerManager != null ? currentPlayerManager.EventManager : null;
-            if (eventManager != null)
+            RemoveEffect(playerManager, level);
+            if (playerManager == null) return;
+
+            appliedRuntime = playerManager.GetComponent<CorrosiveFlameRuntime>();
+            if (appliedRuntime == null)
             {
-                eventManager.OnEnemyDied += HandleEnemyDied;
+                appliedRuntime = playerManager.gameObject.AddComponent<CorrosiveFlameRuntime>();
             }
+            appliedRuntime.SetBonus(this, tickDamageMultiplier, tickIntervalMultiplier);
         }
 
-        public override void RemoveEffect(PlayerManager currentPlayerManager, int level)
+        public override void RemoveEffect(PlayerManager playerManager, int level)
         {
-            if (eventManager != null)
+            if (appliedRuntime == null && playerManager != null)
             {
-                eventManager.OnEnemyDied -= HandleEnemyDied;
+                appliedRuntime = playerManager.GetComponent<CorrosiveFlameRuntime>();
             }
-            eventManager = null;
-            playerManager = null;
+            appliedRuntime?.RemoveBonus(this);
+            appliedRuntime = null;
+        }
+    }
+
+    public sealed class CorrosiveFlameRuntime : MonoBehaviour
+    {
+        private readonly Dictionary<CorrosiveFlameEffect, Vector2> bonuses =
+            new Dictionary<CorrosiveFlameEffect, Vector2>();
+
+        public float TickDamageMultiplier { get; private set; } = 1f;
+        public float TickIntervalMultiplier { get; private set; } = 1f;
+
+        public void SetBonus(CorrosiveFlameEffect source, float damageMultiplier, float intervalMultiplier)
+        {
+            if (source == null) return;
+            bonuses[source] = new Vector2(Mathf.Max(1f, damageMultiplier), Mathf.Clamp(intervalMultiplier, 0.1f, 1f));
+            Recalculate();
         }
 
-        private void HandleEnemyDied(EnemyBase defeatedEnemy)
+        public void RemoveBonus(CorrosiveFlameEffect source)
         {
-            if (defeatedEnemy == null ||
-                !defeatedEnemy.TryGetComponent(out StatusEffectManager defeatedStatus) ||
-                !defeatedStatus.TryGetEffect(out FireEffect fire) ||
-                !defeatedStatus.TryGetEffect(out PoisonEffect poison))
-            {
-                return;
-            }
+            if (source == null || !bonuses.Remove(source)) return;
+            Recalculate();
+        }
 
-            float damage = fire.TickDamage * Mathf.Max(0f, spreadFireDamageRatio) *
-                           (1f + 0.08f * poison.StackCount);
-            Collider2D[] hits = Physics2D.OverlapCircleAll(defeatedEnemy.transform.position, spreadRadius);
-            HashSet<EnemyBase> uniqueTargets = new HashSet<EnemyBase>();
-            int count = 0;
-            foreach (Collider2D hit in hits)
+        private void Recalculate()
+        {
+            TickDamageMultiplier = 1f;
+            TickIntervalMultiplier = 1f;
+            foreach (Vector2 bonus in bonuses.Values)
             {
-                EnemyBase enemy = hit != null ? hit.GetComponentInParent<EnemyBase>() : null;
-                if (enemy == null || enemy == defeatedEnemy || enemy.isDead || !uniqueTargets.Add(enemy) ||
-                    !enemy.TryGetComponent(out StatusEffectManager statusManager))
-                {
-                    continue;
-                }
-
-                statusManager.ConfigureCombatContext(playerManager);
-                statusManager.ApplyEffect(new FireEffect(damage, fireDuration));
-                count++;
-                if (count >= Mathf.Max(1, maxTargets)) break;
+                TickDamageMultiplier = Mathf.Max(TickDamageMultiplier, bonus.x);
+                TickIntervalMultiplier = Mathf.Min(TickIntervalMultiplier, bonus.y);
             }
         }
     }
@@ -246,7 +247,7 @@ namespace Nytherion.Gameplay.Relics.Modules
         }
     }
 
-    [Serializable, RelicDisplayName("뇌광 추적")]
+    [Serializable, RelicDisplayName("연쇄 번개")]
     public sealed class DashChainLightningEffect : RelicEffectBase
     {
         [Min(0f)] public float damageRatio = 0.45f;
@@ -330,7 +331,7 @@ namespace Nytherion.Gameplay.Relics.Modules
         }
     }
 
-    [Serializable, RelicDisplayName("황금 질주")]
+    [Serializable, RelicDisplayName("골드 러쉬")]
     public sealed class GoldenRushEffect : RelicEffectBase
     {
         [Min(0.1f)] public float goldWindow = 1.5f;

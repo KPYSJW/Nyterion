@@ -99,6 +99,11 @@ namespace Nytherion.UI.Skill
                     "내구도  {0}\n지속시간  {1}초\n유인 반경  {2}\n쿨타임  {3}초",
                     "Durability  {0}\nDuration  {1}s\nTaunt radius  {2}\nCooldown  {3}s",
                     decoy.GetDurability(level), decoy.GetLifetime(level), decoy.tauntRadius, decoy.coolDown);
+            if (currentSkill is BubbleShieldSkillData shield)
+                statsText.text = LocalizationText.Get(LocalizationTables.UI, "ui.skill_tooltip.bubble_shield_stats",
+                    "실드량  {0}\n지속시간  {1}초\n쿨타임  {2}초",
+                    "Shield  {0}\nDuration  {1}s\nCooldown  {2}s",
+                    shield.GetShield(level), shield.duration, shield.coolDown);
             descriptionText.text = currentSkill.Description;
             RectTransform rect = (RectTransform)transform;
             LayoutRebuilder.ForceRebuildLayoutImmediate(rect);

@@ -18,6 +18,7 @@ namespace Nytherion.Core.Enums
         PyroTank,
         ProjectileGate,
         PortalGate,
-        Decoy
+        Decoy,
+        BubbleShield
     }
 }

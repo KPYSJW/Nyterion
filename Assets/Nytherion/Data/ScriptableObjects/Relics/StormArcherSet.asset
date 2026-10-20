@@ -17,8 +17,8 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: b3fc391692e54091b673db1fe54757ab, type: 3}
   badgeBackgroundColor: {r: 0.08, g: 0.24, b: 0.52, a: 0.96}
   badgeTextColor: {r: 0.88, g: 0.95, b: 1, a: 1}
-  description_KR: "빠른 사격과 번개 연쇄로 전장을 제압하는 원거리 유물 세트입니다."
-  description_EN: A ranged relic set that overwhelms the battlefield with rapid shots and chain lightning.
+  description_KR: "원거리 공격 속도를 높이고, 치명타 적중 시 연쇄 번개와 일정 공격 횟수마다 추가 투사체를 발사합니다."
+  description_EN: "Increase ranged attack speed, trigger chain lightning on critical hits, and fire an extra projectile periodically."
   synergySeriesId: StormArcherSeries
   bonusModules:
   - condition:

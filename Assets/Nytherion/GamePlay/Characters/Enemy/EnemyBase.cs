@@ -8,6 +8,7 @@ using Nytherion.GamePlay.Dungeon;
 using UnityEngine;
 using VContainer;
 using Nytherion.GamePlay.Combat;
+using Nytherion.Gameplay.Relics.Modules;
 
 namespace Nytherion.GamePlay.Characters.Enemy
 {
@@ -156,7 +157,25 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void TakeDamage(float damageAmount, bool isChain = false)
         {
+            ApplyDamage(damageAmount, isChain, true);
+        }
+
+        public void TakeDamageOverTime(float damageAmount)
+        {
+            ApplyDamage(damageAmount, false, false);
+        }
+
+        private void ApplyDamage(float damageAmount, bool isChain, bool applyAttackBonus)
+        {
             if (isDead) return;
+
+            // 같은 적중 안에서 합산하므로 치명타와 적중 효과를 다시 발동시키지 않습니다.
+            // 지속 피해와 유물·번개의 연쇄 피해는 새 주사위 추첨에서 제외합니다.
+            if (applyAttackBonus && !isChain && damageAmount > 0f && playerManager != null &&
+                playerManager.TryGetComponent(out PipCompletionRuntime diceBonus))
+            {
+                damageAmount *= diceBonus.RollDamageMultiplier();
+            }
 
             // StatusEffectManager를 통한 데미지 배율 적용
             if (statusEffectManager != null)

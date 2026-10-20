@@ -17,7 +17,8 @@ namespace Nytherion.UI.Inventory
         {
             if (iconImage != null && item != null)
                 PixelPerfectItemIcon.Apply(iconImage, transform as RectTransform,
-                    item is WeaponData weapon ? weapon.inventoryIconScale : 1f);
+                    item is WeaponData weapon ? weapon.inventoryIconScale : 1f, item is WeaponData,
+                    item is WeaponData weaponData ? weaponData.inventoryIconSizeMultiplier : 1f);
             base.UpdateVisuals(item, count);
         }
         protected override void UpdateSlotBackground(ItemData item, bool hasItem)
