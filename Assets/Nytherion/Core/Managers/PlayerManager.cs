@@ -242,6 +242,14 @@ namespace Nytherion.Core.Managers
         }
 
         private List<StatModifier> temporaryModifiers = new List<StatModifier>();
+        private bool debugGuaranteedCritical;
+
+        public void SetDebugGuaranteedCritical(bool active)
+        {
+            if (debugGuaranteedCritical == active) return;
+            debugGuaranteedCritical = active;
+            if (currentPlayerData != null) RecalculateStats();
+        }
         
         // 반전시켜야 할 장비 태그(Trait) 목록
         private List<EquipmentTrait> traitsToInvert = new List<EquipmentTrait>();
@@ -397,6 +405,9 @@ namespace Nytherion.Core.Managers
                     ApplyModifierToPlayer(st, totalSum, true);
                 }
             }
+
+            // 테스트 중에도 장비 변경이나 능력치 재계산 후 치명타 확률을 정확히 100%로 유지한다.
+            if (debugGuaranteedCritical) currentPlayerData.critChance = 1f;
 
             // 유리 칼 (Glass Sword) 유물 효과 적용: 최대 체력 50 고정
             if (playerRelicManager != null && playerRelicManager.IsRelicActive("Glass Sword"))

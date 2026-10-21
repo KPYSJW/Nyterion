@@ -519,7 +519,11 @@ namespace Nytherion.GamePlay.Combat
                 if (!(target is MonoBehaviour targetBehaviour) || !targetBehaviour.isActiveAndEnabled ||
                     !hitTargets.Add(target)) continue;
 
-                target.TakeDamage(damage);
+                // 사망으로 콜라이더가 비활성화되기 전에 이번 타격 위치에 효과를 재생합니다.
+                Vector2 hitEffectOffset = Random.insideUnitCircle * Mathf.Max(0f, settings.hitEffectOffsetRadius);
+                Vector3 hitEffectPosition = hit.bounds.center + new Vector3(hitEffectOffset.x, hitEffectOffset.y, 0f);
+                WeaponVFXHelper.PlayHitEffect(settings.hitEffectPrefab, hitEffectPosition);
+                owner.DealAttackDamage(target, damage);
                 if (!initialized || owner == null) return;
                 if (targetBehaviour.isActiveAndEnabled) owner.ApplyStatusEffects(target);
             }

@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using Nytherion.Core.Enums;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Enemy;
@@ -55,6 +57,19 @@ namespace Nytherion.GamePlay.Characters.Enemy
         [SerializeField, Min(1f)] private float deathDissolvePixelSize = 3f;
 
         private EnemyDeathDissolve deathDissolve;
+
+        public Vector3 GetFootPosition()
+        {
+            // 공격 범위 콜라이더가 아닌 본체 스프라이트 하단을 발 위치로 사용합니다.
+            if (spriteRenderer != null && spriteRenderer.sprite != null)
+            {
+                Bounds bounds = spriteRenderer.bounds;
+                return new Vector3(bounds.center.x, bounds.min.y, transform.position.z);
+            }
+            if (TryGetGroundHitBounds(out Bounds bodyBounds))
+                return new Vector3(bodyBounds.center.x, bodyBounds.min.y, transform.position.z);
+            return transform.position;
+        }
 
         public bool TryGetGroundHitBounds(out Bounds bounds)
         {
@@ -157,21 +172,27 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void TakeDamage(float damageAmount, bool isChain = false)
         {
-            ApplyDamage(damageAmount, isChain, true);
+            ApplyDamage(damageAmount, isChain, false);
+        }
+
+        public void TakeDamage(float damageAmount, bool isChain, IReadOnlyList<EquipmentTrait> attackTraits)
+        {
+            ApplyDamage(damageAmount, isChain, false, attackTraits);
         }
 
         public void TakeDamageOverTime(float damageAmount)
         {
-            ApplyDamage(damageAmount, false, false);
+            ApplyDamage(damageAmount, false, true);
         }
 
-        private void ApplyDamage(float damageAmount, bool isChain, bool applyAttackBonus)
+        private void ApplyDamage(float damageAmount, bool isChain, bool isDamageOverTime,
+            IReadOnlyList<EquipmentTrait> attackTraits = null)
         {
             if (isDead) return;
 
             // 같은 적중 안에서 합산하므로 치명타와 적중 효과를 다시 발동시키지 않습니다.
             // 지속 피해와 유물·번개의 연쇄 피해는 새 주사위 추첨에서 제외합니다.
-            if (applyAttackBonus && !isChain && damageAmount > 0f && playerManager != null &&
+            if (!isDamageOverTime && !isChain && damageAmount > 0f && playerManager != null &&
                 playerManager.TryGetComponent(out PipCompletionRuntime diceBonus))
             {
                 damageAmount *= diceBonus.RollDamageMultiplier();
@@ -200,13 +221,17 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             PlayHitFlash();
+            // 이번 적중 이벤트에서 새로 부여한 감전은 같은 타격을 다시 확산시키지 않습니다.
+            bool hadLightningBeforeHit = !isChain && statusEffectManager != null && statusEffectManager.HasEffect("Lightning");
             if (eventManager != null)
             {
                 eventManager.TriggerEnemyDamagedByPlayerWithCrit(
                     damageAmount,
                     isCritical,
                     this,
-                    isChain);
+                    isChain,
+                    isDamageOverTime,
+                    attackTraits);
             }
 
             // 신성 가호 타격 회복 트리거
@@ -216,7 +241,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             // 감전 전격 체인 트리거 (체인 공격이 아닌 원래 공격일 때만 작동)
-            if (!isChain && statusEffectManager != null && statusEffectManager.HasEffect("Lightning"))
+            if (hadLightningBeforeHit && statusEffectManager != null && statusEffectManager.HasEffect("Lightning"))
             {
                 statusEffectManager.TriggerLightningChain(damageAmount);
             }

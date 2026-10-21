@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxChainCount: 4
   chainRange: 4.5
-  lightningEffectPrefab: {fileID: 7723255363691099883, guid: 047f7b089a21e084b809437b3873c215, type: 3}
+  lightningEffectPrefab: {fileID: 3308011568596385946, guid: 3e75ee02960e82147b51f4d897f1a0c1, type: 3}
   sparkEffectPrefab: {fileID: 2415647646280282227, guid: da4b3e0153b21e746819be3f591293d7, type: 3}
 --- !u!95 &-6664904993168764427
 Animator:

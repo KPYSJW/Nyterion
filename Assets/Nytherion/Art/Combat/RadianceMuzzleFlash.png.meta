@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SaintsStaffMuzzleFlash_0
+      name: RadianceMuzzleFlash_0
       rect:
         serializedVersion: 2
         x: 0
@@ -105,20 +105,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2cf3e33e8d16888489bdc8709d3e6a5a
-      internalID: -1426755517
+      spriteID: 33ebaf0beab06a249b1bee1341004105
+      internalID: -1741144136
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SaintsStaffMuzzleFlash_1
+      name: RadianceMuzzleFlash_1
       rect:
         serializedVersion: 2
         x: 64
@@ -126,20 +126,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ef904111398985d45a1e2822bfdefc5f
-      internalID: -1857614017
+      spriteID: ef2de826b259ef34abaa35c910f3a407
+      internalID: 1769878198
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SaintsStaffMuzzleFlash_2
+      name: RadianceMuzzleFlash_2
       rect:
         serializedVersion: 2
         x: 128
@@ -147,20 +147,20 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: abcc501c0b9c33e46bd63f78ae9a69d3
-      internalID: -2041037162
+      spriteID: 48eacf653b6314149b752bdb3d910d33
+      internalID: 622789929
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SaintsStaffMuzzleFlash_3
+      name: RadianceMuzzleFlash_3
       rect:
         serializedVersion: 2
         x: 192
@@ -168,35 +168,14 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 765a209d9abe8bb4e9c9fa3b3f3afb79
-      internalID: 1054077463
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SaintsStaffMuzzleFlash_4
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 0
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ac82aded38a4b044c87b8b2abe60b22e
-      internalID: 1600967334
+      spriteID: f33ff8bf2b4c10f43b4023f99f7bf510
+      internalID: 1079943903
       vertices: []
       indices: 
       edges: []
@@ -212,11 +191,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      SaintsStaffMuzzleFlash_0: -1426755517
-      SaintsStaffMuzzleFlash_1: -1857614017
-      SaintsStaffMuzzleFlash_2: -2041037162
-      SaintsStaffMuzzleFlash_3: 1054077463
-      SaintsStaffMuzzleFlash_4: 1600967334
+      RadianceMuzzleFlash_0: -1741144136
+      RadianceMuzzleFlash_1: 1769878198
+      RadianceMuzzleFlash_2: 622789929
+      RadianceMuzzleFlash_3: 1079943903
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

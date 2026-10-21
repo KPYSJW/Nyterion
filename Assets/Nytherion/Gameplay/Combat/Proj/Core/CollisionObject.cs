@@ -22,6 +22,8 @@ namespace Nytherion.GamePlay.Combat
         public GameObject hitEffectPrefab;
         [Tooltip("벽과 충돌할 때도 피격 이펙트를 재생합니다.")]
         public bool playHitEffectOnWall;
+        [Tooltip("타격 이펙트의 오른쪽 축이 탄환이 날아온 쪽을 향합니다.")]
+        public bool alignHitEffectToIncomingDirection;
         [Tooltip("유물의 추가 피해로 처리해 적중 효과의 재귀 발동을 방지합니다.")]
         public bool isChainDamage;
 
@@ -50,6 +52,7 @@ namespace Nytherion.GamePlay.Combat
         public Transform ProjectileOwner => projectileOwner != null ? projectileOwner :
             playerManager != null ? playerManager.transform : null;
         public bool HasPassedProjectileGate { get; private set; }
+        internal Vector3 CurrentHitCenter { get; private set; }
 
         public void SetProjectileOwner(Transform owner) => projectileOwner = owner;
 
@@ -61,6 +64,7 @@ namespace Nytherion.GamePlay.Combat
             output.isChainDamage = isChainDamage;
             output.hitEffectPrefab = hitEffectPrefab;
             output.playHitEffectOnWall = playHitEffectOnWall;
+            output.alignHitEffectToIncomingDirection = alignHitEffectToIncomingDirection;
             output.useObstacleCollision = useObstacleCollision;
             output.obstacleCollisionLayers = obstacleCollisionLayers;
         }
@@ -222,12 +226,20 @@ namespace Nytherion.GamePlay.Combat
 
             if (isEnemy || isWall)
             {
+                // 처치로 충돌체가 비활성화되기 전에 타격 연출 기준점을 보관합니다.
+                CurrentHitCenter = collision.bounds.center;
+                Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                Vector2 incomingDirection = -transform.right;
+                if (alignHitEffectToIncomingDirection && TryGetComponent(out Rigidbody2D hitRigidbody) &&
+                    hitRigidbody.velocity.sqrMagnitude > 0.000001f)
+                    incomingDirection = -hitRigidbody.velocity.normalized;
                 if (isEnemy)
                 {
                     hasEnemyHit = true;
-                    lastHitPosition = collision.ClosestPoint(transform.position);
+                    lastHitPosition = hitPoint;
                     IDamageable target = collision.GetComponentInParent<IDamageable>();
-                    target?.TakeDamage(damage, isChainDamage);
+                    if (target is EnemyBase enemy) enemy.TakeDamage(damage, isChainDamage, traits);
+                    else target?.TakeDamage(damage, isChainDamage);
                     if (TryGetComponent(out HomingProj homingProjectile))
                         homingProjectile.StopTrackingHitTarget(target);
 
@@ -268,8 +280,8 @@ namespace Nytherion.GamePlay.Combat
                 if (isEnemy || (isWall && playHitEffectOnWall))
                 {
                     // 적 또는 설정된 벽 충돌 위치에 피격 이펙트를 재생합니다.
-                    Vector2 hitPoint = collision.ClosestPoint(transform.position);
-                    WeaponVFXHelper.PlayHitEffect(hitEffectPrefab, hitPoint, chargePercent);
+                    WeaponVFXHelper.PlayHitEffect(hitEffectPrefab, hitPoint, chargePercent,
+                        incomingDirection, alignHitEffectToIncomingDirection);
                 }
 
                 bool shouldSurvive = false;

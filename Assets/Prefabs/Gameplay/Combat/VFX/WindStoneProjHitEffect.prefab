@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3654134727070077490}
   - component: {fileID: 7414197427486639985}
   - component: {fileID: 3819561400172078475}
+  - component: {fileID: 5798917261246538102}
   m_Layer: 0
   m_Name: WindStoneProjHitEffect
   m_TagString: Untagged
@@ -121,3 +122,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolTag: Spark
   returnDelay: 0.5
+--- !u!114 &5798917261246538102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3177229851976881774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1fca1ac4de4496bc478b0ccfe3ae11, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  poolTag: WindStoneProjHitEffect

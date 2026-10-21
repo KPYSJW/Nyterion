@@ -50,6 +50,8 @@ namespace Nytherion.GamePlay.Combat
                 statusDisplay = gameObject.AddComponent<EnemyStatusDisplayUI>();
             }
             statusDisplay.Initialize(sr);
+            // 첫 효과 적용으로 활성화된 경우 초기화 전에 쌓인 효과도 표시한다.
+            statusDisplay.UpdateDisplay(activeEffects);
             enabled = activeEffects.Count > 0;
         }
 
@@ -195,6 +197,10 @@ namespace Nytherion.GamePlay.Combat
                 existing.OnStack(newEffect);
                 existing.EffectIcon = newEffect.EffectIcon;
                 RefreshCorrosiveFlameBonus();
+                if (statusDisplay != null)
+                {
+                    statusDisplay.UpdateDisplay(activeEffects);
+                }
                 return;
             }
 

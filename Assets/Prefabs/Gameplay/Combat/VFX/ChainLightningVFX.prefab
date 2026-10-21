@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6674081564679321939}
   - component: {fileID: 7723255363691099883}
   m_Layer: 0
-  m_Name: PFX_ChainLightning
+  m_Name: ChainLightningVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -163,3 +163,9 @@ MonoBehaviour:
   duration: 0.2
   textureScrollSpeed: 15
   useStraightLine: 0
+  spriteSegmentPrefab: {fileID: 0}
+  spriteHeight: 1
+  spriteFrames: []
+  spriteFramesPerSecond: 30
+  spriteFrameOffset: 1
+  impactEffectPrefab: {fileID: 7449952486631440590, guid: 4f9d8bd05ab68034f81bcf7233d11c14, type: 3}

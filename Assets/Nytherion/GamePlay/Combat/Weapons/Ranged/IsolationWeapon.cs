@@ -101,7 +101,7 @@ namespace Nytherion.GamePlay.Combat
                 if (target == null || !damagedTargets.Add(target)) continue;
                 if (target is MonoBehaviour behaviour && !behaviour.gameObject.activeInHierarchy) continue;
                 Vector3 hitPosition = hit.bounds.center;
-                target.TakeDamage(damage);
+                DealAttackDamage(target, damage);
                 ApplyStatusEffects(target);
                 WeaponVFXHelper.PlayHitEffect(weaponData.hitEffectPrefab, hitPosition);
             }

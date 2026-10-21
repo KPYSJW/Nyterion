@@ -88,7 +88,7 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        // 마지막 프레임 뒤의 Animation Event에서 호출합니다.
+        // 마지막 스프라이트 프레임의 Animation Event에서 호출합니다.
         public void AnimationFinished()
         {
             if (playing) ReturnEffect();

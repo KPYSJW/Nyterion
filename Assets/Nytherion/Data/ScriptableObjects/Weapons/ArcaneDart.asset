@@ -29,6 +29,7 @@ MonoBehaviour:
   iconRotationOffset: 0
   iconSlotScale: 1
   inventoryIconScale: 1
+  inventoryIconSizeMultiplier: 1
   damage: 0
   range: 0
   cooldown: 0.1
@@ -55,6 +56,9 @@ MonoBehaviour:
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
+  fullChargeProjectileCountMultiplier: 1
+  fullChargeProjectileInterval: 0
+  fullChargePreparationTime: 0
   hasHomingProjectiles: 0
   usePlayerCircleSpawn: 0
   playerCircleSpawnRadius: 0.65
@@ -73,6 +77,6 @@ MonoBehaviour:
   homingLifetime: 4
   chargeThresholdTime: 0.15
   requiredRelicId: ChargeRelic
-  hitEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 5277606065596536386, guid: d5ec2c95f7686d547985b21803ba8ec3, type: 3}
   weaponPrefab: {fileID: -2914722070659980993, guid: d36f87945e7b4c38b4e8509f92f0e61a, type: 3}
   isArchivable: 1

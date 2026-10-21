@@ -51,7 +51,7 @@ namespace Nytherion.Editor
             {
                 Verify();
                 File.WriteAllText(Output + "/verification.txt",
-                    "PASS: GameScene 플레이 모드 능력치 버튼 16개, 증가/반복 클릭, %p 증가, 투사체 수 증가, 초기화, 외부 보정 유지, 패널 재열기, 패널 내부 배치.");
+                    "PASS: GameScene 플레이 모드 카테고리 전환, 능력치 버튼 16개, 증가/반복 클릭, %p 증가, 투사체 수 증가, 초기화, 외부 보정 유지, 패널 재열기, 스크롤 목록 내부 배치.");
             }
             catch (Exception error)
             {
@@ -73,6 +73,8 @@ namespace Nytherion.Editor
             FieldInfo playerField = typeof(DebugPanelUI).GetField("playerManager", BindingFlags.Instance | BindingFlags.NonPublic);
             PlayerManager originalPlayer = (PlayerManager)playerField.GetValue(panel);
             bool wasOpen = panel.IsOpen;
+            FieldInfo categoryField = typeof(DebugPanelUI).GetField("selectedCategory", BindingFlags.Instance | BindingFlags.NonPublic);
+            string originalCategory = (string)categoryField.GetValue(panel);
             GameObject root = new GameObject("[검증] 임시 능력치 플레이어");
             PlayerData data = ScriptableObject.CreateInstance<PlayerData>();
             PlayerManager player = root.AddComponent<PlayerManager>();
@@ -89,7 +91,20 @@ namespace Nytherion.Editor
                 panel.Open(false);
                 GameObject content = (GameObject)typeof(DebugPanelUI).GetField("contentPanel2", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(panel);
                 Require(content != null && content.activeInHierarchy, "ContentPanel2 활성화 실패");
-                Button[] buttons = content.GetComponentsInChildren<Button>(true);
+                ScrollRect[] pages = content.GetComponentsInChildren<ScrollRect>(true);
+                Require(pages.Length == 11, "기능 카테고리 11개가 필요합니다.");
+                foreach (ScrollRect page in pages)
+                {
+                    string category = page.name.Substring("Page_".Length);
+                    Button categoryButton = panel.GetComponentsInChildren<Button>(true)
+                        .Single(button => button.name == "Category_" + category);
+                    categoryButton.onClick.Invoke();
+                    Require(page.gameObject.activeInHierarchy && pages.Count(p => p.gameObject.activeSelf) == 1,
+                        category + " 카테고리의 단독 표시 실패");
+                }
+                panel.SelectCategory("능력치");
+                ScrollRect statPage = pages.Single(page => page.name == "Page_능력치");
+                Button[] buttons = statPage.content.GetComponentsInChildren<Button>(true);
                 Require(buttons.Length == 17, "능력치 16개와 초기화 버튼이 필요합니다.");
                 foreach (StatType stat in Enum.GetValues(typeof(StatType)))
                 {
@@ -112,9 +127,9 @@ namespace Nytherion.Editor
                 Require(player.currentPlayerData.meleeDamage > damage, "반복 클릭 누적 실패");
                 panel.Close();
                 panel.Open(false);
-                Require(content.GetComponentsInChildren<Button>(true).Length == 17, "패널 재열기 시 중복 버튼 발생");
+                Require(statPage.content.GetComponentsInChildren<Button>(true).Length == 17, "패널 재열기 시 중복 버튼 발생");
                 Canvas.ForceUpdateCanvases();
-                RectTransform container = (RectTransform)content.transform.Find("Buttons");
+                RectTransform container = statPage.content;
                 LayoutRebuilder.ForceRebuildLayoutImmediate(container);
                 foreach (Button button in buttons)
                 {
@@ -138,6 +153,7 @@ namespace Nytherion.Editor
             {
                 panel.ResetDebugStats();
                 playerField.SetValue(panel, originalPlayer);
+                panel.SelectCategory(originalCategory);
                 if (!wasOpen) panel.Close();
                 UnityEngine.Object.DestroyImmediate(player.currentPlayerData);
                 UnityEngine.Object.DestroyImmediate(root);

@@ -21,6 +21,9 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Min(0.01f), Tooltip("레이저 이미지의 시각 폭. 판정 폭과 별도로 원본 스프라이트 비율을 유지합니다.")]
         public float visualBeamWidth = 1f;
 
+        [Min(0f), Tooltip("타격 이펙트가 피격 콜라이더 중심에서 무작위로 벗어나는 최대 거리(월드 단위)입니다. 0이면 중심에 생성합니다.")]
+        public float hitEffectOffsetRadius = 0.15f;
+
         [Min(0f), Tooltip("소멸 프레임이 없는 레이저 재질에서만 사용하는 예비 페이드 시간(초)입니다.")]
         public float fadeDuration = 0.12f;
 

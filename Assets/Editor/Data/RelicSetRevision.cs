@@ -36,7 +36,7 @@ namespace Nytherion.Editor
             ("GoldenRushTranscendence", "GoldenRush", "골드 러쉬", "Gold Rush"),
             ("GoldHunterSet", "GoldHunter", "탐욕", "Greed"),
             ("MobileWarriorSet", "MobileWarrior", "돌풍", "WindBlast"),
-            ("LightningPursuitTranscendence", "LightningPursuit", "연쇄 번개", "Chain Lightning"),
+            ("LightningPursuitTranscendence", "LightningPursuit", "연쇄 폭풍", "Chain Storm"),
             ("FrostWardenSet", "FrostWarden", "만년서리", "Everfrost"),
             ("TrickshotEngineerSet", "TrickshotEngineer", "난반사", "Ricochet"),
             ("CrystalBallisticsTranscendence", "CrystalBallistics", "얼음 파편", "Ice Splinter")

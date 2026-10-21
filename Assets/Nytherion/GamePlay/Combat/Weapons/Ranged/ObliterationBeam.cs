@@ -232,7 +232,11 @@ namespace Nytherion.GamePlay.Combat
                 if (hit == null || !hit.gameObject.activeInHierarchy || hit.transform.IsChildOf(owner.CasterTransform)) continue;
                 IDamageable target = hit.GetComponentInParent<IDamageable>();
                 if (!(target is MonoBehaviour behaviour) || !behaviour.isActiveAndEnabled || !hitTargets.Add(target)) continue;
-                target.TakeDamage(damage);
+                // 사망으로 콜라이더가 비활성화되기 전에 중심 근처에 타격 애니메이션을 재생합니다.
+                Vector2 hitOffset = Random.insideUnitCircle * Mathf.Max(0f, data.hitEffectOffsetRadius);
+                Vector3 hitPosition = hit.bounds.center + new Vector3(hitOffset.x, hitOffset.y, 0f);
+                WeaponVFXHelper.PlayHitEffect(data.hitEffectPrefab, hitPosition);
+                owner.DealAttackDamage(target, damage);
                 if (!IsFiring || owner == null) return;
                 if (behaviour != null && behaviour.isActiveAndEnabled) owner.ApplyStatusEffects(target);
                 if (!IsFiring || owner == null) return;

@@ -28,6 +28,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public Sprite[] startEndFrames = new Sprite[8];
         [Min(1f)] public float beamFramesPerSecond = 16f;
         [Min(0.01f)] public float tickInterval = 0.2f;
+        [Min(0f), Tooltip("타격 이펙트가 피격 콜라이더 중심에서 무작위로 벗어나는 최대 거리입니다.")]
+        public float hitEffectOffsetRadius = 0.15f;
         [Tooltip("원본 프레임에서 광선의 최대 불투명 폭 / 프레임 전체 폭입니다.")]
         [Range(0.01f, 1f)] public float beamOpaqueWidthRatio = 0.625f;
         public LayerMask targetLayers;

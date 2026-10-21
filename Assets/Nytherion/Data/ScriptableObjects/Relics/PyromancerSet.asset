@@ -25,20 +25,20 @@ MonoBehaviour:
       rid: 2001
     effects:
     - rid: 2002
-    description_KR: "화상 지속 시간 +15%, 화상 틱 피해 +10%"
-    description_EN: Burn duration +15% and burn tick damage +10%
+    description_KR: "화상 지속 시간 +15%, 화상 지속 피해 +10%"
+    description_EN: Burn duration +15% and burn damage +10%
   - condition:
       rid: 4001
     effects:
     - rid: 4002
-    description_KR: "화상 지속 시간 +25%, 화상 틱 피해 +15%, 피해 주기 -15%. 화상 최대 2중첩"
-    description_EN: Burn duration +25%, burn tick damage +15%, and tick interval -15%. Burns stack up to 2 times.
+    description_KR: "화상 지속 시간 +25%, 화상 지속 피해 +15%, 피해 간격 -15%. 화상 최대 2중첩"
+    description_EN: Burn duration +25%, burn damage +15%, and damage interval -15%. Burns stack up to 2 times.
   - condition:
       rid: 6001
     effects:
     - rid: 6002
-    description_KR: "화상 지속 시간 +30%, 화상 틱 피해 +25%, 피해 주기 -20%. 화상 최대 3중첩"
-    description_EN: Burn duration +30%, burn tick damage +25%, and tick interval -20%. Burns stack up to 3 times.
+    description_KR: "화상 지속 시간 +30%, 화상 지속 피해 +25%, 피해 간격 -20%. 화상 최대 3중첩"
+    description_EN: Burn duration +30%, burn damage +25%, and damage interval -20%. Burns stack up to 3 times.
   linkedTranscendenceEffects:
   - {fileID: 11400000, guid: 4c65b1aa02994e2b86b713fd192e4c08, type: 2}
   - {fileID: 11400000, guid: 12aab72e0d404cc7b837fbb68ce72c58, type: 2}

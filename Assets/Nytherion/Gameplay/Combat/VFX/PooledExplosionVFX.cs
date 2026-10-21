@@ -14,6 +14,10 @@ namespace Nytherion.GamePlay.Combat
             {
                 ObjectPoolManager.Instance.ReturnToPool(poolTag, gameObject);
             }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 }

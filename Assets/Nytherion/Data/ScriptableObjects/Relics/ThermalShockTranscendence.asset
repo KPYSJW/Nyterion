@@ -18,24 +18,21 @@ MonoBehaviour:
   nameColor: {r: 1, g: 0.6156863, b: 0.38039216, a: 1}
   badgeBackgroundColor: {r: 0.52, g: 0.18, b: 0.28, a: 0.96}
   badgeTextColor: {r: 1, g: 0.9, b: 0.9, a: 1}
-  description_KR: "\uD654\uC0C1\xB7\uB0C9\uAE30\uAC00 \uD568\uAED8 \uAC78\uB9B0 \uC801
-    \uACF5\uACA9 \uC2DC \uC8FC\uBCC0 \uCD5C\uB300 4\uBA85\uC5D0\uAC8C \uC801\uC911
-    \uD53C\uD574\uC758 80% \uD3ED\uBC1C. \uB300\uC0C1\uBCC4 \uC7AC\uC0AC\uC6A9 \uB300\uAE30\uC2DC\uAC04
-    1\uCD08."
-  description_EN: Hitting an enemy with Fire and Ice deals 80% of the hit damage
-    to up to 4 nearby enemies. 1-second cooldown per target.
+  description_KR: "\uC9C1\uC811 \uD0C0\uACA9\uC73C\uB85C \uD654\uC0C1\uACFC \uB0C9\uAE30\uAC00
+    \uD568\uAED8 \uAC78\uB9AC\uB294 \uC801\uC5D0\uAC8C \uC5F4\uCDA9\uACA9\uC744 \uC77C\uC73C\uD0B5\uB2C8\uB2E4."
+  description_EN: Direct hits trigger a thermal explosion when the target has both
+    Fire and Ice.
   requirements:
   - setBonusData: {fileID: 11400000, guid: 6a2c8fbd0e1b4d3da9c7b8e423e56712, type: 2}
     requiredEquippedCount: 4
   - setBonusData: {fileID: 11400000, guid: 8a24e6b5472c42cfbd2e54670dc28ec5, type: 2}
     requiredEquippedCount: 3
   effectModules:
-  - description_KR: "\uD654\uC0C1\xB7\uB0C9\uAE30\uAC00 \uD568\uAED8 \uAC78\uB9B0
-      \uC801 \uACF5\uACA9 \uC2DC \uC8FC\uBCC0 \uCD5C\uB300 4\uBA85\uC5D0\uAC8C \uC801\uC911
-      \uD53C\uD574\uC758 80% \uD3ED\uBC1C. \uB300\uC0C1\uBCC4 \uC7AC\uC0AC\uC6A9
-      \uB300\uAE30\uC2DC\uAC04 1\uCD08."
-    description_EN: Hitting an enemy with Fire and Ice deals 80% of the hit damage
-      to up to 4 nearby enemies. 1-second cooldown per target.
+  - description_KR: "\uC9C1\uC811 \uD0C0\uACA9\uC73C\uB85C \uD654\uC0C1\uACFC \uB0C9\uAE30\uAC00
+      \uD568\uAED8 \uAC78\uB9AC\uB294 \uC801\uC5D0\uAC8C \uC5F4\uCDA9\uACA9\uC744
+      \uC77C\uC73C\uD0B5\uB2C8\uB2E4."
+    description_EN: Direct hits trigger a thermal explosion when the target has both
+      Fire and Ice.
     condition:
       rid: -2
     effects:
@@ -49,6 +46,6 @@ MonoBehaviour:
       type: {class: ThermalShockEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         damageRatio: 0.8
-        explosionRadius: 3
+        explosionRadius: 1
         maxTargets: 4
-        perTargetCooldown: 1
+        explosionEffectPrefab: {fileID: 5317775924854041750, guid: 69dc9f9468404644cab4220f8b8d2644, type: 3}

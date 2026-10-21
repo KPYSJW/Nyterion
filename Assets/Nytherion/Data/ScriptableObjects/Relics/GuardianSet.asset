@@ -17,8 +17,8 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: b6c68c3a0f0f4aca9609fa5c8fbdb7c2, type: 3}
   badgeBackgroundColor: {r: 0.12, g: 0.28, b: 0.42, a: 0.96}
   badgeTextColor: {r: 0.88, g: 0.96, b: 1, a: 1}
-  description_KR: "최대 체력과 방어력을 높이고, 피격 시 방어력과 낮은 체력에서 흡혈을 높입니다."
-  description_EN: "Increase maximum health and defense, gain defense after taking damage, and gain lifesteal at low health."
+  description_KR: "최대 체력과 방어력을 높이고, 피격 시 방어력을 높이며 낮은 체력에서 매초 체력을 재생합니다."
+  description_EN: "Increase maximum health and defense, gain defense after taking damage, and regenerate health every second at low health."
   synergySeriesId: GuardianSeries
   bonusModules:
   - condition:
@@ -40,8 +40,8 @@ MonoBehaviour:
     - rid: 6002
     - rid: 6003
     - rid: 6004
-    description_KR: "최대 체력 +12%, 방어력 +15%. 피격 시 4초 동안 방어력 +20%. 체력 40% 이하에서 흡혈 +3%p"
-    description_EN: Max health +12% and defense +15%. Taking damage grants +20% defense for 4 seconds. At 40% HP or below, lifesteal +3%p.
+    description_KR: "최대 체력 +12%, 방어력 +15%. 피격 시 4초 동안 방어력 +20%. 체력 40% 이하에서 매초 최대 체력의 3% 재생"
+    description_EN: Max health +12% and defense +15%. Taking damage grants +20% defense for 4 seconds. At 40% HP or below, regenerate 3% of maximum health every second.
   linkedTranscendenceEffects:
   - {fileID: 11400000, guid: 9e3f23b2189249a6b5ca73fd01fa4d11, type: 2}
   references:
@@ -120,11 +120,7 @@ MonoBehaviour:
           valuePerLevel: 0
           isPercentage: 1
     - rid: 6004
-      type: {class: HealthThresholdStatEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      type: {class: HealthThresholdRegenerationEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         thresholdPercent: 40
-        statModifiers:
-        - stat: 11
-          value: 0.03
-          valuePerLevel: 0
-          isPercentage: 0
+        maxHealthRatioPerSecond: 0.03

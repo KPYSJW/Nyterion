@@ -10,6 +10,9 @@ namespace Nytherion.GamePlay.Combat
     [RequireComponent(typeof(Collider2D))]
     public class IcicleProj : MonoBehaviour, IProj, IProjModifier
     {
+        private static readonly int HitStateHash = Animator.StringToHash("Base Layer.Hit");
+        private const float HitReturnTimeout = 0.5f;
+
         [Header("Animation Trigger Names")]
         [SerializeField] private string launchTrigger = "Launch";
         [SerializeField] private string hitTrigger = "Hit";
@@ -66,7 +69,15 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnEnable()
         {
+            CancelInvoke(nameof(FinishHit));
             isHit = false;
+            if (animator != null && animator.runtimeAnimatorController != null)
+            {
+                // 풀에서 다시 꺼낼 때 이전 충돌 상태와 대기 중인 트리거를 초기화합니다.
+                animator.Rebind();
+                animator.Play(0, 0, 0f);
+                animator.Update(0f);
+            }
             if (projectileRenderer != null) projectileRenderer.sortingOrder = projectileSortingOrder;
             if (myCollider != null)
             {
@@ -87,6 +98,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnDisable()
         {
+            CancelInvoke(nameof(FinishHit));
             // 풀로 반환되어 비활성화될 때 물리적 충돌 무시 설정을 복구
             ResetIgnoredCollider();
             StopTrail(true);
@@ -173,6 +185,8 @@ namespace Nytherion.GamePlay.Combat
             if (isHit) return true;
 
             isHit = true;
+            // 애니메이션 종료 이벤트가 누락되어도 충돌한 투사체는 반드시 반환합니다.
+            Invoke(nameof(FinishHit), HitReturnTimeout);
             if (projectileRenderer != null)
                 projectileRenderer.sortingOrder = Mathf.Max(WeaponVFXHelper.HitEffectSortingOrder, projectileRenderer.sortingOrder);
             
@@ -220,7 +234,16 @@ namespace Nytherion.GamePlay.Combat
                 TriggerSplit(target);
             }
 
-            if (animator != null && !string.IsNullOrEmpty(hitTrigger))
+            if (animator != null && animator.isActiveAndEnabled &&
+                animator.runtimeAnimatorController != null && animator.HasState(0, HitStateHash))
+            {
+                // Start에서 충돌하면 Launch 이벤트가 차단되므로 Repeat를 거치지 않고 Hit를 재생합니다.
+                if (!string.IsNullOrEmpty(launchTrigger)) animator.ResetTrigger(launchTrigger);
+                if (!string.IsNullOrEmpty(hitTrigger)) animator.ResetTrigger(hitTrigger);
+                animator.Play(HitStateHash, 0, 0f);
+            }
+            else if (animator != null && animator.isActiveAndEnabled &&
+                animator.runtimeAnimatorController != null && !string.IsNullOrEmpty(hitTrigger))
             {
                 animator.SetTrigger(hitTrigger);
             }
@@ -293,6 +316,7 @@ namespace Nytherion.GamePlay.Combat
         // 애니메이션 이벤트: Hit 애니메이션 종료 시점에 호출
         public void FinishHit()
         {
+            CancelInvoke(nameof(FinishHit));
             if (collisionObj != null)
             {
                 collisionObj.ReturnToPool();

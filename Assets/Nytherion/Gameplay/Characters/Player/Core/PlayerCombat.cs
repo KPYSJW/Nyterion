@@ -3,6 +3,8 @@ using Nytherion.Core.Managers;
 using UnityEngine;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Combat.Weapons;
+using Nytherion.Core.Enums;
+using System.Collections.Generic;
 using VContainer;
 
 namespace Nytherion.GamePlay.Characters.Player
@@ -32,7 +34,46 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public event System.Action<WeaponBase> OnWeaponEquipped;
         public event System.Action<Vector2, Vector3> OnPlayerAttack;
+        public event System.Action<Vector2, Vector3> OnPlayerAttackStarted;
         public event System.Action OnPlayerAttackEnd;
+
+        // 테스트 속성은 무기 데이터에 기록하지 않고 플레이어 수명 동안만 유지한다.
+        private readonly HashSet<EquipmentTrait> debugAttackTraits = new HashSet<EquipmentTrait>();
+
+        public bool IsDebugAttackTraitActive(EquipmentTrait trait) => debugAttackTraits.Contains(trait);
+
+        public void SetDebugAttackTrait(EquipmentTrait trait, bool active)
+        {
+            switch (trait)
+            {
+                case EquipmentTrait.Fire:
+                case EquipmentTrait.Ice:
+                case EquipmentTrait.Lightning:
+                case EquipmentTrait.Poison:
+                case EquipmentTrait.Curse:
+                case EquipmentTrait.Holy:
+                case EquipmentTrait.Demonic:
+                    if (active) debugAttackTraits.Add(trait);
+                    else debugAttackTraits.Remove(trait);
+                    break;
+            }
+        }
+
+        public void ResetDebugAttackTraits() => debugAttackTraits.Clear();
+
+        public List<EquipmentTrait> MergeDebugAttackTraits(List<EquipmentTrait> baseTraits)
+        {
+            if (debugAttackTraits.Count == 0) return baseTraits ?? new List<EquipmentTrait>();
+
+            // 발사한 투사체의 속성 목록과 원본 장비 데이터를 변경하지 않도록 복사한다.
+            List<EquipmentTrait> traits = baseTraits != null
+                ? new List<EquipmentTrait>(baseTraits) : new List<EquipmentTrait>();
+            foreach (EquipmentTrait trait in debugAttackTraits)
+            {
+                if (!traits.Contains(trait)) traits.Add(trait);
+            }
+            return traits;
+        }
 
         private InputManager inputManager;
         private PlayerManager playerManager;
@@ -436,6 +477,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
                 targetWorldPos.z = 0f;
                 LastAttackDirection = fireDirection.normalized;
+                OnPlayerAttackStarted?.Invoke(fireDirection, targetWorldPos);
                 currentWeapon.Attack(fireDirection, targetWorldPos);
 
                 OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);
@@ -498,6 +540,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
             LastAttackDirection = fireDirection.normalized;
             playerController?.NotifyCombatActivity();
+            OnPlayerAttackStarted?.Invoke(fireDirection, targetWorldPos);
             currentWeapon.AttackWithGenericCharge(fireDirection, targetWorldPos, chargePercent);
             currentWeapon.AttackEnd();
             OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);

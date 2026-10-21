@@ -25,6 +25,56 @@ namespace Nytherion.GamePlay.Characters.Player
         private readonly List<RelicEffectModule> activeModules = new();
         private readonly Dictionary<(Object, ChainSynergyMeasure, string), int> maxSatisfiedChains = new();
 
+        // 디버그 강제 활성 상태는 플레이어 수명 동안만 유지하며 저장하지 않는다.
+        private readonly Dictionary<RelicSetBonusData, int> debugSetRequirements = new();
+        private readonly HashSet<RelicTranscendenceData> debugTranscendences = new();
+
+        public int GetDebugSetRequirement(RelicSetBonusData setBonus) =>
+            setBonus != null && debugSetRequirements.TryGetValue(setBonus, out int requirement) ? requirement : 0;
+
+        public bool IsDebugTranscendenceActive(RelicTranscendenceData transcendence) =>
+            transcendence != null && debugTranscendences.Contains(transcendence);
+
+        public void SetDebugSetBonus(RelicSetBonusData setBonus, int requirement)
+        {
+            if (setBonus == null) return;
+            if (requirement > 0) debugSetRequirements[setBonus] = requirement;
+            else debugSetRequirements.Remove(setBonus);
+            RefreshDebugCriticalChance();
+            ReevaluateAllConditions();
+        }
+
+        public void SetDebugTranscendence(RelicTranscendenceData transcendence, bool active)
+        {
+            if (transcendence == null) return;
+            if (active) debugTranscendences.Add(transcendence);
+            else debugTranscendences.Remove(transcendence);
+            ReevaluateAllConditions();
+        }
+
+        public void ResetDebugEffects()
+        {
+            debugSetRequirements.Clear();
+            debugTranscendences.Clear();
+            RefreshDebugCriticalChance();
+            ReevaluateAllConditions();
+        }
+
+        private void RefreshDebugCriticalChance()
+        {
+            if (playerManager == null) return;
+            bool guaranteeCritical = false;
+            foreach (var entry in debugSetRequirements)
+            {
+                if (entry.Key != null && entry.Key.synergySeriesId == "StormArcherSeries" && entry.Value > 0)
+                {
+                    guaranteeCritical = true;
+                    break;
+                }
+            }
+            playerManager.SetDebugGuaranteedCritical(guaranteeCritical);
+        }
+
         private readonly struct EquippedModuleData
         {
             public readonly Object Owner;
@@ -86,6 +136,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 playerManager.PlayerCombat.OnWeaponEquipped -= HandleWeaponEquipped;
             }
             
+            if (playerManager != null) playerManager.SetDebugGuaranteedCritical(false);
             RemoveAllActiveEffects();
         }
 
@@ -139,6 +190,9 @@ namespace Nytherion.GamePlay.Characters.Player
                     }
                 }
 
+                equippedSetBonuses.UnionWith(debugSetRequirements.Keys);
+                linkedTranscendenceEffects.UnionWith(debugTranscendences);
+
                 // 공유 세트 모듈은 여러 유물이 참조해도 세트당 한 번만 등록한다.
                 foreach (RelicSetBonusData setBonus in equippedSetBonuses)
                 {
@@ -163,7 +217,8 @@ namespace Nytherion.GamePlay.Characters.Player
                 // 초월 효과는 모든 하위 세트의 요구 수량을 만족한 동안만 효과 모듈을 등록한다.
                 foreach (RelicTranscendenceData transcendence in linkedTranscendenceEffects)
                 {
-                    if (transcendence == null || !transcendence.IsActive(globalRelicManager) ||
+                    if (transcendence == null ||
+                        (!debugTranscendences.Contains(transcendence) && !transcendence.IsActive(globalRelicManager)) ||
                         transcendence.effectModules == null)
                     {
                         continue;
@@ -179,11 +234,16 @@ namespace Nytherion.GamePlay.Characters.Player
                 // 유물 또는 공유 세트별로 조건을 만족한 가장 높은 단계만 활성화한다.
                 foreach (KeyValuePair<RelicEffectModule, EquippedModuleData> pair in currentlyEquippedModules)
                 {
-                    if (!(pair.Key.condition is ChainSynergyCondition chainCondition) ||
-                        !chainCondition.IsConditionMet(playerManager, pair.Value.Level))
+                    if (!(pair.Key.condition is ChainSynergyCondition chainCondition))
                     {
                         continue;
                     }
+
+                    bool isSatisfied = pair.Value.Owner is RelicSetBonusData setBonus &&
+                        debugSetRequirements.TryGetValue(setBonus, out int debugRequirement)
+                        ? chainCondition.requiredChainLength <= debugRequirement
+                        : chainCondition.IsConditionMet(playerManager, pair.Value.Level);
+                    if (!isSatisfied) continue;
 
                     var tierGroup = GetChainTierGroup(pair.Value.Owner, chainCondition);
                     if (!maxSatisfiedChains.TryGetValue(tierGroup, out int currentMaximum) ||
@@ -248,6 +308,9 @@ namespace Nytherion.GamePlay.Characters.Player
             EquippedModuleData data,
             Dictionary<(Object, ChainSynergyMeasure, string), int> maxSatisfiedChains)
         {
+            if (data.Owner is RelicTranscendenceData transcendence && debugTranscendences.Contains(transcendence))
+                return true;
+
             if (module.condition == null) return true;
 
             if (module.condition is ChainSynergyCondition chainCondition)

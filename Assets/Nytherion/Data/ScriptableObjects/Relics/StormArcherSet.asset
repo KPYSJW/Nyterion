@@ -12,36 +12,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
   m_Name: StormArcherSet
   m_EditorClassIdentifier: 
-  setName_KR: "폭풍사수"
+  setName_KR: "\uD3ED\uD48D\uC0AC\uC218"
   setName_EN: Storm Archer
   statusIcon: {fileID: 21300000, guid: b3fc391692e54091b673db1fe54757ab, type: 3}
   badgeBackgroundColor: {r: 0.08, g: 0.24, b: 0.52, a: 0.96}
   badgeTextColor: {r: 0.88, g: 0.95, b: 1, a: 1}
-  description_KR: "원거리 공격 속도를 높이고, 치명타 적중 시 연쇄 번개와 일정 공격 횟수마다 추가 투사체를 발사합니다."
-  description_EN: "Increase ranged attack speed, trigger chain lightning on critical hits, and fire an extra projectile periodically."
+  description_KR: "\uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC18D\uB3C4\uB97C \uB192\uC774\uACE0,
+    \uCE58\uBA85\uD0C0 \uC801\uC911 \uC2DC \uC5F0\uC1C4 \uBC88\uAC1C\uC640 \uC77C\uC815
+    \uACF5\uACA9 \uD69F\uC218\uB9C8\uB2E4 \uCD94\uAC00 \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  description_EN: Increase ranged attack speed, trigger chain lightning on critical
+    hits, and fire an extra projectile periodically.
   synergySeriesId: StormArcherSeries
   bonusModules:
-  - condition:
+  - description_KR: "\uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC18D\uB3C4 +8%"
+    description_EN: Ranged attack speed +8%
+    condition:
       rid: 2001
     effects:
     - rid: 2002
-    description_KR: "원거리 공격 속도 +8%"
-    description_EN: Ranged attack speed +8%
-  - condition:
+  - description_KR: "\uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC18D\uB3C4 +12%. \uCE58\uBA85\uD0C0
+      \uC801\uC911 \uC2DC \uC8FC\uBCC0 \uCD5C\uB300 3\uBA85\uC758 \uC801\uC5D0\uAC8C
+      \uD53C\uD574\uC758 25%\uB85C \uC5F0\uC1C4 \uBC88\uAC1C"
+    description_EN: Ranged attack speed +12%. Critical hits chain to up to 3 nearby
+      enemies for 25% damage.
+    condition:
       rid: 4001
     effects:
     - rid: 4002
     - rid: 4003
-    description_KR: "원거리 공격 속도 +12%. 치명타 적중 시 주변 최대 3명의 적에게 피해의 25%로 연쇄 번개"
-    description_EN: Ranged attack speed +12%. Critical hits chain to up to 3 nearby enemies for 25% damage.
-  - condition:
+  - description_KR: "\uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC18D\uB3C4 +15%. \uCE58\uBA85\uD0C0
+      \uC5F0\uC1C4 \uBC88\uAC1C\uAC00 \uCD5C\uB300 4\uBA85\uC758 \uC801\uC5D0\uAC8C
+      \uD53C\uD574\uC758 30%\uB97C \uC804\uB2EC. 5\uBC88\uC9F8 \uC6D0\uAC70\uB9AC
+      \uACF5\uACA9\uB9C8\uB2E4 \uD53C\uD574 75%\uC758 \uD22C\uC0AC\uCCB4 1\uBC1C
+      \uCD94\uAC00"
+    description_EN: Ranged attack speed +15%. Critical hits chain to up to 4 enemies
+      for 30% damage. Every 5th ranged attack fires 1 additional projectile at 75%
+      damage.
+    condition:
       rid: 6001
     effects:
     - rid: 6002
     - rid: 6003
     - rid: 6004
-    description_KR: "원거리 공격 속도 +15%. 치명타 연쇄 번개가 최대 4명의 적에게 피해의 30%를 전달. 5번째 원거리 공격마다 피해 75%의 투사체 1발 추가"
-    description_EN: Ranged attack speed +15%. Critical hits chain to up to 4 enemies for 30% damage. Every 5th ranged attack fires 1 additional projectile at 75% damage.
   linkedTranscendenceEffects:
   - {fileID: 11400000, guid: d61a1e7a4f5a4514aa12a683bf9cc027, type: 2}
   references:
@@ -82,6 +94,7 @@ MonoBehaviour:
         searchRadius: 5
         maxTargets: 3
         lightningDuration: 3
+        lightningEffectPrefab: {fileID: 6856125335028078497, guid: 49e4afd1439a0e148a3ec68f9931dc41, type: 3}
     - rid: 6001
       type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
@@ -103,6 +116,7 @@ MonoBehaviour:
         searchRadius: 5.5
         maxTargets: 4
         lightningDuration: 4
+        lightningEffectPrefab: {fileID: 6856125335028078497, guid: 49e4afd1439a0e148a3ec68f9931dc41, type: 3}
     - rid: 6004
       type: {class: PeriodicRangedAttackProjectileEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:

@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0a111af5ecf403439c0c369fefadc3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
   relicDatabaseSO: {fileID: 11400000, guid: a65bb19fc4e3962499d93dadf5a1d350, type: 2}
+  dismantleRewards: {fileID: 11400000, guid: 0d0569934d9f8b3438812f6a616cebe6, type: 2}
   gridRows: 5
   gridColumns: 5

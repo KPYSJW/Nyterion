@@ -32,6 +32,7 @@ MonoBehaviour:
   iconRotationOffset: 0
   iconSlotScale: 1.8
   inventoryIconScale: 1
+  inventoryIconSizeMultiplier: 1
   damage: 4
   range: 10
   cooldown: 0.6
@@ -79,7 +80,7 @@ MonoBehaviour:
   homingLifetime: 4
   chargeThresholdTime: 0
   requiredRelicId: 
-  hitEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 2330837766149394742, guid: ef5f2ef162737b444a0739001ab0102c, type: 3}
   weaponPrefab: {fileID: 7826317382683610794, guid: 2642a855e8bbd9b49995dff6b11a388c, type: 3}
   isArchivable: 0
   chargeFrames:
@@ -126,6 +127,7 @@ MonoBehaviour:
   - {fileID: -1272494078, guid: 45d7c898e7bf4fd6a88e734a86c40ce1, type: 3}
   beamFramesPerSecond: 16
   tickInterval: 0.2
+  hitEffectOffsetRadius: 0.15
   beamOpaqueWidthRatio: 0.625
   targetLayers:
     serializedVersion: 2

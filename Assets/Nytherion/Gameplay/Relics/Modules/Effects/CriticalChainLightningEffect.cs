@@ -31,6 +31,9 @@ namespace Nytherion.Gameplay.Relics.Modules
         [Tooltip("연쇄 대상에게 표시할 감전 효과 지속 시간")]
         public float lightningDuration = 3f;
 
+        [Tooltip("치명타 연쇄 번개에 사용할 번개 선 이펙트")]
+        public ChainLightningVFX lightningEffectPrefab;
+
         [NonSerialized] private EventManager cachedEventManager;
 
         public override void ApplyEffect(PlayerManager playerManager, int level)
@@ -60,6 +63,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                 eventData.Target.transform.position,
                 Mathf.Max(0.1f, searchRadius));
             HashSet<EnemyBase> damagedEnemies = new HashSet<EnemyBase>();
+            List<Transform> lightningAnchors = new List<Transform>();
             int damagedCount = 0;
 
             foreach (Collider2D hit in colliders)
@@ -71,6 +75,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                     continue;
                 }
 
+                lightningAnchors.Add(enemy.transform);
                 enemy.TakeDamage(eventData.DamageAmount * Mathf.Max(0f, damageRatio), true);
                 if (!enemy.isDead && enemy.TryGetComponent(out StatusEffectManager statusEffectManager))
                 {
@@ -80,6 +85,16 @@ namespace Nytherion.Gameplay.Relics.Modules
 
                 damagedCount++;
                 if (damagedCount >= Mathf.Max(1, maxTargets)) break;
+            }
+
+            // 피해량이 0이어도 감전과 함께 번개부르미의 선 이펙트를 재생합니다.
+            if (lightningEffectPrefab != null && (lightningAnchors.Count > 0 || lightningEffectPrefab.HasImpactEffect))
+            {
+                ChainLightningVFX effect = UnityEngine.Object.Instantiate(lightningEffectPrefab,
+                    eventData.Target.transform.position, Quaternion.identity);
+                effect.name = "StormArcherLightningVFX";
+                effect.Setup(eventData.Target.transform, lightningAnchors);
+                UnityEngine.Object.Destroy(effect.gameObject, effect.duration + 0.1f);
             }
         }
     }

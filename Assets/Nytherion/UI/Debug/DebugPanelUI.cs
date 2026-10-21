@@ -18,6 +18,9 @@ using Nytherion.Core.Interfaces;
 using Nytherion.Core.Systems;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Data.ScriptableObjects.Skill;
+using Nytherion.Data.ScriptableObjects.Relics;
+using Nytherion.Gameplay.Relics.Modules;
+using System.Linq;
 
 namespace Nytherion.UI.Test
 {
@@ -63,6 +66,18 @@ namespace Nytherion.UI.Test
         private ILocalizationService localizationService;
         private Button languageToggleButton;
         private readonly List<StatModifier> debugStatModifiers = new List<StatModifier>();
+        private readonly Dictionary<string, GameObject> categoryPages = new Dictionary<string, GameObject>();
+        private readonly Dictionary<string, Button> categoryButtons = new Dictionary<string, Button>();
+        private readonly Dictionary<Button, (RelicSetBonusData set, int requirement, ColorBlock colors)> setEffectButtons =
+            new Dictionary<Button, (RelicSetBonusData, int, ColorBlock)>();
+        private readonly Dictionary<TMP_Text, RelicSetBonusData> setNameLabels = new Dictionary<TMP_Text, RelicSetBonusData>();
+        private readonly Dictionary<Button, RelicTranscendenceData> transcendenceEffectButtons =
+            new Dictionary<Button, RelicTranscendenceData>();
+        private readonly Dictionary<Button, (EquipmentTrait trait, string label)> attackTraitButtons =
+            new Dictionary<Button, (EquipmentTrait, string)>();
+        private Button debugButtonTemplate;
+        private bool effectButtonsCreated;
+        private string selectedCategory = "플레이어";
 
         // 비율 능력치는 고정값으로 더한다. 예: 0.05는 5%p 증가입니다.
         private static readonly (StatType stat, string label, float amount, bool ratio)[] debugStats =
@@ -125,6 +140,7 @@ namespace Nytherion.UI.Test
             // 디버그용 장비/스킬 지급, 언어 전환 및 몬스터 소환 버튼을 런타임에 생성
             CreateRuntimeDebugButtons();
             CreateRuntimeStatButtons();
+            CreateCategoryNavigation();
 
             if (localizationService != null)
             {
@@ -185,10 +201,17 @@ namespace Nytherion.UI.Test
         private void OnDestroy()
         {
             ResetDebugStats();
+            GetRelicEffectController()?.ResetDebugEffects();
+            if (playerManager != null) playerManager.PlayerCombat?.ResetDebugAttackTraits();
             if (localizationService != null)
             {
                 localizationService.LanguageChanged -= OnLanguageChanged;
             }
+        }
+
+        private void LateUpdate()
+        {
+            if (IsOpen) RefreshCategoryGridLayouts();
         }
 
         protected override void OnPanelStateChanged(bool isOpen)
@@ -198,6 +221,9 @@ namespace Nytherion.UI.Test
             
             if (isOpen)
             {
+                CreateRelicEffectButtons();
+                RefreshEffectButtonLabels();
+                RefreshAttackTraitButtonLabels();
                 UpdateStatusText("디버그 패널 활성화됨");
                 // 패널이 열릴 때 게임 시간 정지 (선택 사항)
                 // Time.timeScale = 0f;
@@ -601,7 +627,7 @@ namespace Nytherion.UI.Test
             newButton.name = objectName;
 
             // 버튼의 텍스트(TMP_Text) 변경
-            TMP_Text buttonText = newButton.GetComponentInChildren<TMP_Text>();
+            TMP_Text buttonText = newButton.GetComponentInChildren<TMP_Text>(true);
             if (buttonText != null)
             {
                 buttonText.text = label;
@@ -609,7 +635,7 @@ namespace Nytherion.UI.Test
             else
             {
                 // 일반 Text 컴포넌트인 경우 대응
-                Text legacyText = newButton.GetComponentInChildren<Text>();
+                Text legacyText = newButton.GetComponentInChildren<Text>(true);
                 if (legacyText != null)
                 {
                     legacyText.text = label;
@@ -620,7 +646,410 @@ namespace Nytherion.UI.Test
             // 복제된 버튼의 Inspector 영구 이벤트까지 제거한다.
             newButton.onClick = new Button.ButtonClickedEvent();
             newButton.onClick.AddListener(action);
+            newButton.gameObject.SetActive(true);
             return newButton;
+        }
+
+        private void CreateCategoryNavigation()
+        {
+            if (contentPanel == null || contentPanel2 == null || categoryPages.Count > 0) return;
+            Button[] existingButtons = contentPanel.GetComponentsInChildren<Button>(true);
+            Button[] statButtons = contentPanel2.GetComponentsInChildren<Button>(true);
+            if (existingButtons.Length == 0) return;
+            debugButtonTemplate = existingButtons[0];
+
+            ConfigurePanelRect(contentPanel, new Vector2(0.02f, 0.1f), new Vector2(0.24f, 0.9f));
+            ConfigurePanelRect(contentPanel2, new Vector2(0.26f, 0.1f), new Vector2(0.98f, 0.9f));
+            RectTransform navigation = CreateRect("Categories", contentPanel.transform);
+            StretchRect(navigation, new Vector2(12f, 12f), new Vector2(-12f, -12f));
+            VerticalLayoutGroup layout = navigation.gameObject.AddComponent<VerticalLayoutGroup>();
+            ConfigureVerticalLayout(layout);
+
+            foreach (string category in new[] { "플레이어", "능력치", "공격 속성", "재화", "장비·아이템", "스킬", "유물", "세트 효과", "초월 효과", "소환", "시스템" })
+            {
+                categoryPages.Add(category, CreateCategoryPage(category));
+                Button button = CreateRuntimeButton(debugButtonTemplate, navigation,
+                    "Category_" + category, category, () => SelectCategory(category));
+                ConfigureStatButton(button);
+                categoryButtons.Add(category, button);
+            }
+
+            // 씬에 연결된 영구 이벤트는 그대로 두고 버튼의 부모만 옮긴다.
+            foreach (Button button in existingButtons)
+            {
+                MoveToCategory(button, GetButtonCategory(button));
+            }
+            foreach (Button button in statButtons) MoveToCategory(button, "능력치");
+            Transform oldButtons = contentPanel.transform.Find("Buttons");
+            if (oldButtons != null) oldButtons.gameObject.SetActive(false);
+            oldButtons = contentPanel2.transform.Find("Buttons");
+            if (oldButtons != null) oldButtons.gameObject.SetActive(false);
+
+            if (statusText != null)
+            {
+                statusText.transform.SetParent(contentPanel2.transform, false);
+                StretchRect(statusText.rectTransform, new Vector2(12f, 8f), new Vector2(-12f, 66f));
+                statusText.rectTransform.anchorMax = new Vector2(1f, 0f);
+                statusText.alignment = TextAlignmentOptions.MidlineLeft;
+                statusText.enableAutoSizing = true;
+                statusText.fontSizeMin = 14f;
+                statusText.fontSizeMax = 22f;
+                statusText.raycastTarget = false;
+            }
+            CreateRelicEffectButtons();
+            CreateAttackTraitButtons();
+            SelectCategory(selectedCategory);
+        }
+
+        private static void StretchRect(RectTransform rect, Vector2 offsetMin, Vector2 offsetMax)
+        {
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = offsetMin;
+            rect.offsetMax = offsetMax;
+            rect.localScale = Vector3.one;
+        }
+
+        private static RectTransform CreateRect(string objectName, Transform parent)
+        {
+            GameObject child = new GameObject(objectName, typeof(RectTransform));
+            child.layer = parent.gameObject.layer;
+            child.transform.SetParent(parent, false);
+            return (RectTransform)child.transform;
+        }
+
+        private static void ConfigurePanelRect(GameObject panel, Vector2 anchorMin, Vector2 anchorMax)
+        {
+            RectTransform rect = (RectTransform)panel.transform;
+            StretchRect(rect, Vector2.zero, Vector2.zero);
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            Image background = panel.GetComponent<Image>();
+            if (background == null) background = panel.AddComponent<Image>();
+            background.color = new Color(0.05f, 0.06f, 0.09f, 0.96f);
+        }
+
+        private static void ConfigureVerticalLayout(VerticalLayoutGroup layout)
+        {
+            layout.spacing = 6f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+        }
+
+        private GameObject CreateCategoryPage(string category)
+        {
+            RectTransform page = CreateRect("Page_" + category, contentPanel2.transform);
+            StretchRect(page, new Vector2(12f, 80f), new Vector2(-12f, -12f));
+            ScrollRect scroll = page.gameObject.AddComponent<ScrollRect>();
+            RectTransform viewport = CreateRect("Viewport", page);
+            StretchRect(viewport, Vector2.zero, Vector2.zero);
+            viewport.gameObject.AddComponent<RectMask2D>();
+            Image raycastArea = viewport.gameObject.AddComponent<Image>();
+            raycastArea.color = Color.clear;
+            RectTransform buttons = CreateRect("Buttons", viewport);
+            buttons.anchorMin = new Vector2(0f, 1f);
+            buttons.anchorMax = Vector2.one;
+            buttons.pivot = new Vector2(0.5f, 1f);
+            buttons.sizeDelta = Vector2.zero;
+            GridLayoutGroup grid = buttons.gameObject.AddComponent<GridLayoutGroup>();
+            grid.spacing = new Vector2(8f, 8f);
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = 3;
+            grid.cellSize = new Vector2(240f, category == "세트 효과" ? 80f : 44f);
+            ContentSizeFitter fitter = buttons.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            scroll.viewport = viewport;
+            scroll.content = buttons;
+            scroll.horizontal = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.scrollSensitivity = 30f;
+            page.gameObject.SetActive(false);
+            return page.gameObject;
+        }
+
+        private void RefreshCategoryGridLayouts()
+        {
+            foreach (var entry in categoryPages)
+            {
+                if (!entry.Value.activeSelf) continue;
+                RectTransform content = entry.Value.GetComponent<ScrollRect>().content;
+                GridLayoutGroup grid = content.GetComponent<GridLayoutGroup>();
+                float width = content.rect.width - grid.padding.horizontal;
+                if (width <= 0f) continue;
+                int columns = Mathf.Clamp(Mathf.FloorToInt((width + grid.spacing.x) / (240f + grid.spacing.x)), 1, 4);
+                Vector2 cellSize = new Vector2((width - grid.spacing.x * (columns - 1)) / columns, grid.cellSize.y);
+                if (grid.constraintCount != columns) grid.constraintCount = columns;
+                if (grid.cellSize != cellSize) grid.cellSize = cellSize;
+            }
+        }
+
+        private void MoveToCategory(Button button, string category)
+        {
+            button.transform.SetParent(categoryPages[category].GetComponent<ScrollRect>().content, false);
+            ConfigureStatButton(button);
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label != null)
+            {
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 14f;
+                label.fontSizeMax = 24f;
+            }
+        }
+
+        private string GetButtonCategory(Button button)
+        {
+            string method = button.onClick.GetPersistentEventCount() > 0
+                ? button.onClick.GetPersistentMethodName(0) : button.name;
+            if (method.Contains("Gold") || method.Contains("Token")) return "재화";
+            if (method.Contains("Relic")) return "유물";
+            if (method.Contains("Skill")) return "스킬";
+            if (method.Contains("Spawn") || method.Contains("TrainingDumm")) return "소환";
+            if (method.Contains("Item") || method.Contains("Equipment") || method.Contains("Potion") || method.Contains("Inventory")) return "장비·아이템";
+            if (method.Contains("Heal") || method.Contains("GodMode")) return "플레이어";
+            return "시스템";
+        }
+
+        public void SelectCategory(string category)
+        {
+            if (!categoryPages.ContainsKey(category)) return;
+            selectedCategory = category;
+            foreach (var entry in categoryPages) entry.Value.SetActive(entry.Key == category);
+            foreach (var entry in categoryButtons) entry.Value.interactable = entry.Key != category;
+            RefreshCategoryGridLayouts();
+            RefreshEffectButtonLabels();
+            RefreshAttackTraitButtonLabels();
+            UpdateStatusText(category == "세트 효과" || category == "초월 효과"
+                ? "유물 배치 조건을 무시하고 임시 적용합니다. 다시 누르면 해제됩니다. 목록은 휠로 스크롤할 수 있습니다."
+                : category == "공격 속성"
+                ? "무기 공격에 속성을 추가합니다. 여러 속성을 함께 켤 수 있으며, 다시 누르면 해제됩니다."
+                : $"{category} · 목록은 마우스 휠로 스크롤할 수 있습니다.");
+        }
+
+        private Button AddCategoryButton(string category, string objectName, string label, UnityEngine.Events.UnityAction action)
+        {
+            Button button = CreateRuntimeButton(debugButtonTemplate,
+                categoryPages[category].GetComponent<ScrollRect>().content, objectName, label, action);
+            MoveToCategory(button, category);
+            return button;
+        }
+
+        private RelicEffectController GetRelicEffectController() =>
+            playerManager != null ? playerManager.GetComponent<RelicEffectController>() : null;
+
+        private void CreateAttackTraitButtons()
+        {
+            var traits = new[]
+            {
+                (EquipmentTrait.Fire, "화염"),
+                (EquipmentTrait.Ice, "빙결"),
+                (EquipmentTrait.Lightning, "전격"),
+                (EquipmentTrait.Poison, "독"),
+                (EquipmentTrait.Curse, "저주"),
+                (EquipmentTrait.Holy, "신성"),
+                (EquipmentTrait.Demonic, "마성")
+            };
+            foreach (var entry in traits)
+            {
+                Button button = AddCategoryButton("공격 속성", "DebugAttackTrait_" + entry.Item1, "",
+                    () => ToggleDebugAttackTrait(entry.Item1));
+                attackTraitButtons.Add(button, entry);
+            }
+            AddCategoryButton("공격 속성", "ResetDebugAttackTraitsButton", "테스트 공격 속성 초기화", ResetDebugAttackTraits);
+            RefreshAttackTraitButtonLabels();
+        }
+
+        public void ToggleDebugAttackTrait(EquipmentTrait trait)
+        {
+            PlayerCombat combat = playerManager != null ? playerManager.PlayerCombat : null;
+            if (combat == null)
+            {
+                UpdateStatusText("플레이어 전투 기능이 아직 준비되지 않았습니다.");
+                return;
+            }
+            bool active = !combat.IsDebugAttackTraitActive(trait);
+            combat.SetDebugAttackTrait(trait, active);
+            RefreshAttackTraitButtonLabels();
+            foreach (var entry in attackTraitButtons.Values)
+            {
+                if (entry.trait != trait) continue;
+                UpdateStatusText($"공격 {entry.label} 속성 테스트 {(active ? "활성화" : "해제")} · 다음 무기 공격부터 적용됩니다.");
+                break;
+            }
+        }
+
+        public void ResetDebugAttackTraits()
+        {
+            if (playerManager != null) playerManager.PlayerCombat?.ResetDebugAttackTraits();
+            RefreshAttackTraitButtonLabels();
+            UpdateStatusText("테스트 공격 속성을 초기화했습니다. 무기 고유 속성은 유지됩니다.");
+        }
+
+        private void RefreshAttackTraitButtonLabels()
+        {
+            PlayerCombat combat = playerManager != null ? playerManager.PlayerCombat : null;
+            foreach (var entry in attackTraitButtons)
+            {
+                bool active = combat != null && combat.IsDebugAttackTraitActive(entry.Value.trait);
+                SetButtonLabel(entry.Key, $"[{(active ? "ON" : "OFF")}] {entry.Value.label}");
+            }
+        }
+
+        private void CreateRelicEffectButtons()
+        {
+            if (effectButtonsCreated || debugButtonTemplate == null || !categoryPages.ContainsKey("세트 효과")) return;
+            if (relicManager == null) TryManualInject();
+            if (relicManager == null) return;
+            List<RelicSetBonusData> sets = relicManager.GetAvailableSetBonuses().ToList();
+            if (sets.Count == 0) return;
+            effectButtonsCreated = true;
+
+            AddCategoryButton("세트 효과", "ResetDebugSetEffectsButton", "세트·초월 초기화", ResetDebugRelicEffects);
+            AddCategoryButton("초월 효과", "ResetDebugTranscendencesButton", "세트·초월 초기화", ResetDebugRelicEffects);
+            foreach (RelicSetBonusData set in sets)
+            {
+                if (set.bonusModules == null) continue;
+                var requirements = set.bonusModules
+                    .Where(module => module?.condition is ChainSynergyCondition)
+                    .Select(module => ((ChainSynergyCondition)module.condition).requiredChainLength)
+                    .Where(count => count > 0).Distinct().OrderBy(count => count).ToList();
+                if (requirements.Count == 0) continue;
+                RectTransform tierRow = CreateSetEffectGroup(set);
+                foreach (int requirement in requirements)
+                {
+                    Button button = CreateRuntimeButton(debugButtonTemplate, tierRow, $"DebugSet_{set.name}_{requirement}",
+                        requirement.ToString(),
+                        () => ToggleDebugSetBonus(set, requirement));
+                    ConfigureStatButton(button);
+                    setEffectButtons.Add(button, (set, requirement, button.colors));
+                }
+            }
+            foreach (RelicTranscendenceData transcendence in sets
+                .Where(set => set.linkedTranscendenceEffects != null)
+                .SelectMany(set => set.linkedTranscendenceEffects).Where(effect => effect != null)
+                .Distinct().OrderBy(effect => effect.name))
+            {
+                Button button = AddCategoryButton("초월 효과", "DebugTranscendence_" + transcendence.name, "",
+                    () => ToggleDebugTranscendence(transcendence));
+                transcendenceEffectButtons.Add(button, transcendence);
+            }
+            RefreshEffectButtonLabels();
+        }
+
+        private RectTransform CreateSetEffectGroup(RelicSetBonusData set)
+        {
+            Transform parent = categoryPages["세트 효과"].GetComponent<ScrollRect>().content;
+            RectTransform group = CreateRect("DebugSetGroup_" + set.name, parent);
+            Image background = group.gameObject.AddComponent<Image>();
+            background.color = new Color(1f, 1f, 1f, 0.06f);
+            background.raycastTarget = false;
+            VerticalLayoutGroup layout = group.gameObject.AddComponent<VerticalLayoutGroup>();
+            ConfigureVerticalLayout(layout);
+            layout.padding = new RectOffset(6, 6, 6, 6);
+            layout.spacing = 4f;
+
+            TMP_Text title = CreateRect("SetName", group).gameObject.AddComponent<TextMeshProUGUI>();
+            TMP_Text templateLabel = debugButtonTemplate.GetComponentInChildren<TMP_Text>(true);
+            if (templateLabel != null)
+            {
+                title.font = templateLabel.font;
+                title.fontSharedMaterial = templateLabel.fontSharedMaterial;
+            }
+            title.text = set.DisplayName;
+            title.color = Color.white;
+            title.alignment = TextAlignmentOptions.Center;
+            title.enableAutoSizing = true;
+            title.fontSizeMin = 14f;
+            title.fontSizeMax = 22f;
+            title.raycastTarget = false;
+            LayoutElement titleSize = title.gameObject.AddComponent<LayoutElement>();
+            titleSize.minHeight = 24f;
+            titleSize.preferredHeight = 24f;
+            titleSize.flexibleHeight = 0f;
+            setNameLabels.Add(title, set);
+
+            RectTransform row = CreateRect("Tiers", group);
+            HorizontalLayoutGroup rowLayout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            rowLayout.spacing = 4f;
+            rowLayout.childControlWidth = true;
+            rowLayout.childControlHeight = true;
+            rowLayout.childForceExpandWidth = true;
+            rowLayout.childForceExpandHeight = true;
+            LayoutElement rowSize = row.gameObject.AddComponent<LayoutElement>();
+            rowSize.minHeight = 32f;
+            rowSize.preferredHeight = 40f;
+            rowSize.flexibleHeight = 1f;
+            return row;
+        }
+
+        public void ToggleDebugSetBonus(RelicSetBonusData set, int requirement)
+        {
+            RelicEffectController controller = GetRelicEffectController();
+            if (controller == null || playerManager.currentPlayerData == null)
+            {
+                UpdateStatusText("플레이어 유물 효과가 아직 준비되지 않았습니다.");
+                return;
+            }
+            if (set == null || requirement <= 0) return;
+            bool activate = controller.GetDebugSetRequirement(set) != requirement;
+            controller.SetDebugSetBonus(set, activate ? requirement : 0);
+            RefreshEffectButtonLabels();
+            string criticalNotice = activate && set.synergySeriesId == "StormArcherSeries" ? " · 치명타 100%" : "";
+            UpdateStatusText($"{set.DisplayName} {requirement}세트 테스트 {(activate ? "활성화" : "해제")}{criticalNotice} (보드·저장에는 반영되지 않음)");
+        }
+
+        public void ToggleDebugTranscendence(RelicTranscendenceData transcendence)
+        {
+            RelicEffectController controller = GetRelicEffectController();
+            if (controller == null || playerManager.currentPlayerData == null)
+            {
+                UpdateStatusText("플레이어 유물 효과가 아직 준비되지 않았습니다.");
+                return;
+            }
+            if (transcendence == null) return;
+            bool activate = !controller.IsDebugTranscendenceActive(transcendence);
+            controller.SetDebugTranscendence(transcendence, activate);
+            RefreshEffectButtonLabels();
+            UpdateStatusText($"{transcendence.DisplayName} 테스트 {(activate ? "활성화" : "해제")} (보드·저장에는 반영되지 않음)");
+        }
+
+        public void ResetDebugRelicEffects()
+        {
+            GetRelicEffectController()?.ResetDebugEffects();
+            RefreshEffectButtonLabels();
+            UpdateStatusText("세트·초월 테스트 효과를 해제했습니다. 실제 장착 효과는 유지됩니다.");
+        }
+
+        private void RefreshEffectButtonLabels()
+        {
+            RelicEffectController controller = GetRelicEffectController();
+            foreach (var entry in setNameLabels) entry.Key.text = entry.Value.DisplayName;
+            foreach (var entry in setEffectButtons)
+            {
+                bool active = controller != null && controller.GetDebugSetRequirement(entry.Value.set) == entry.Value.requirement;
+                ColorBlock colors = entry.Value.colors;
+                if (active)
+                {
+                    colors.normalColor = new Color(0.35f, 0.9f, 0.55f);
+                    colors.highlightedColor = new Color(0.5f, 1f, 0.7f);
+                    colors.selectedColor = colors.normalColor;
+                }
+                entry.Key.colors = colors;
+            }
+            foreach (var entry in transcendenceEffectButtons)
+                SetButtonLabel(entry.Key, $"[{(controller != null && controller.IsDebugTranscendenceActive(entry.Value) ? "ON" : "OFF")}] {entry.Value.DisplayName}");
+        }
+
+        private static void SetButtonLabel(Button button, string label)
+        {
+            TMP_Text text = button.GetComponentInChildren<TMP_Text>(true);
+            if (text != null) text.text = label;
+            else
+            {
+                Text legacyText = button.GetComponentInChildren<Text>(true);
+                if (legacyText != null) legacyText.text = label;
+            }
         }
 
         private void CreateRuntimeStatButtons()
@@ -772,6 +1201,7 @@ namespace Nytherion.UI.Test
         private void OnLanguageChanged(SupportedLanguage _)
         {
             UpdateLanguageButtonLabel();
+            RefreshEffectButtonLabels();
         }
 
         private void UpdateLanguageButtonLabel()
@@ -781,14 +1211,14 @@ namespace Nytherion.UI.Test
                 return;
             }
 
-            TMP_Text buttonText = languageToggleButton.GetComponentInChildren<TMP_Text>();
+            TMP_Text buttonText = languageToggleButton.GetComponentInChildren<TMP_Text>(true);
             if (buttonText != null)
             {
                 buttonText.text = GetLanguageButtonLabel();
                 return;
             }
 
-            Text legacyText = languageToggleButton.GetComponentInChildren<Text>();
+            Text legacyText = languageToggleButton.GetComponentInChildren<Text>(true);
             if (legacyText != null)
             {
                 legacyText.text = GetLanguageButtonLabel();

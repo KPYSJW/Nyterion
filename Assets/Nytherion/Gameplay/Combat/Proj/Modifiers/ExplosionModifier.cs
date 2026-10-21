@@ -27,6 +27,11 @@ namespace Nytherion.GamePlay.Combat
 
                 if (explosionVisual == null) return false;
                 explosionVisual.transform.localScale *= col != null ? col.effectSizeMultiplier : 1f;
+                if (target != null && CollisionObject.IsEnemyCollider(target) &&
+                    explosionVisual.TryGetComponent<EvilEyeHitDrift>(out var hitVisual))
+                {
+                    hitVisual.SetSpawnCenter(col != null ? col.CurrentHitCenter : target.bounds.center);
+                }
 
                 if (explosionVisual.TryGetComponent<ExplosionDamage>(out var expDamage))
                 {

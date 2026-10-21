@@ -24,6 +24,22 @@ namespace Nytherion.UI.RelicBoard
 
         private RelicManager relicManager;
         private IObjectResolver container;
+        private CurrencyDataManager currency;
+        private AudioManager uiAudio;
+        private RelicTooltip tooltip;
+
+        [Header("유물 분해")]
+        [SerializeField] private Button storageDismantleButton;
+        [SerializeField] private RelicDismantlePanel dismantlePanel;
+        public RelicDismantlePanel DismantlePanel => dismantlePanel;
+
+        [Inject]
+        public void BindDismantle(CurrencyDataManager currency, AudioManager audio, RelicTooltip tooltip)
+        {
+            this.currency = currency;
+            uiAudio = audio;
+            this.tooltip = tooltip;
+        }
 
         [Header("UI 구성요소")]
         [SerializeField] private GameObject slotCellPrefab;
@@ -48,6 +64,8 @@ namespace Nytherion.UI.RelicBoard
         [Header("장착 유물 수")]
         [Tooltip("현재 장착 유물 수를 표시할 텍스트입니다. 비어 있으면 같은 캔버스의 RelicCountText를 자동으로 찾습니다.")]
         [SerializeField] private TextMeshProUGUI relicCountText;
+        private bool relicCountHiddenForDismantle;
+        private bool relicCountWasActive;
 
         [Header("영향 범위 기즈모")]
         [Tooltip("레벨 업 효과를 표시할 프리팹")]
@@ -110,6 +128,12 @@ namespace Nytherion.UI.RelicBoard
 
             if (slotCells == null) InitializeGridCells();
             InitializeStorageSlots();
+            if (dismantlePanel != null && currency != null)
+            {
+                dismantlePanel.Initialize(relicManager, currency, this, uiAudio, tooltip);
+                storageDismantleButton.onClick.RemoveListener(dismantlePanel.Toggle);
+                storageDismantleButton.onClick.AddListener(dismantlePanel.Toggle);
+            }
             HandleRelicStateChanged();
             yield return null;
 
@@ -128,6 +152,7 @@ namespace Nytherion.UI.RelicBoard
         private void OnDisable()
         {
             CancelActiveDrag();
+            CloseDismantle();
             if (refreshRoutine != null) StopCoroutine(refreshRoutine);
             refreshRoutine = null;
             ClearPreview();
@@ -153,7 +178,8 @@ namespace Nytherion.UI.RelicBoard
             ClearAllVisuals();
 
             List<RelicBlock> storageBlocks = relicManager.GetStorageBlocks()
-                .Where(block => block != null && block.SourceData != null && block.SourceData.IsRuntimeAvailable)
+                .Where(block => block != null && block.SourceData != null && block.SourceData.IsRuntimeAvailable &&
+                    !relicManager.IsStagedForDismantle(block))
                 .ToList();
             storagePageCount = Mathf.Max(1, Mathf.CeilToInt(storageBlocks.Count / (float)StorageSlotsPerPage));
             storagePage = Mathf.Clamp(storagePage, 0, storagePageCount - 1);
@@ -210,6 +236,17 @@ namespace Nytherion.UI.RelicBoard
                     return;
                 }
             }
+        }
+
+        public void SetRelicCountHiddenForDismantle(bool hidden)
+        {
+            if (relicCountHiddenForDismantle == hidden) return;
+            ResolveRelicCountText();
+            if (relicCountText == null) return;
+
+            if (hidden) relicCountWasActive = relicCountText.gameObject.activeSelf;
+            relicCountHiddenForDismantle = hidden;
+            relicCountText.gameObject.SetActive(hidden ? false : relicCountWasActive);
         }
 
         private void InitializeGridCells()
@@ -336,6 +373,23 @@ namespace Nytherion.UI.RelicBoard
             }
         }
 
+        public GameObject CreateDismantleSlot(RelicBlock block, Transform parent)
+        {
+            GameObject slot = Instantiate(storageSlotPrefab, parent);
+            PixelPerfectSlotFrame.Apply(slot.GetComponent<Image>());
+            CreateBlockInStorage(block, slot);
+            RelicBlockDraggable draggable = slot.GetComponentInChildren<RelicBlockDraggable>();
+            if (draggable != null)
+            {
+                draggable.isDismantleStaged = true;
+                GridLayoutGroup layout = parent.GetComponent<GridLayoutGroup>();
+                if (layout != null) ((RectTransform)draggable.transform).sizeDelta = layout.cellSize;
+            }
+            return slot;
+        }
+
+        public void CloseDismantle() => dismantlePanel?.Close();
+
         private void CreateBlockOnGrid(RelicBlock blockData, Vector2Int position)
         {
             slotCells[position.y, position.x]?.SetRarity(blockData.SourceData.rarity);
@@ -421,7 +475,8 @@ namespace Nytherion.UI.RelicBoard
                 {
                     List<RelicBlock> blocks = relicManager.GetStorageBlocks().ToList();
                     List<RelicBlock> visibleBlocks = blocks
-                        .Where(block => block != null && block.SourceData != null && block.SourceData.IsRuntimeAvailable)
+                        .Where(block => block != null && block.SourceData != null && block.SourceData.IsRuntimeAvailable &&
+                            !relicManager.IsStagedForDismantle(block))
                         .ToList();
                     int visibleIndex = storagePage * StorageSlotsPerPage + i;
                     storageIndex = visibleIndex < visibleBlocks.Count

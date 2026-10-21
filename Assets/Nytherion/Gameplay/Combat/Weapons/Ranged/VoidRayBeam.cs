@@ -349,7 +349,7 @@ namespace Nytherion.GamePlay.Combat
             {
                 TargetHit hit = currentTargets[i];
                 if (!IsTargetHitValid(hit)) continue;
-                hit.Target.TakeDamage(damage);
+                owner.DealAttackDamage(hit.Target, damage);
                 dealtDamage = true;
                 if (!IsFiring || owner == null) return;
                 if (IsTargetAlive(hit.Target, hit.Behaviour)) owner.ApplyStatusEffects(hit.Target);

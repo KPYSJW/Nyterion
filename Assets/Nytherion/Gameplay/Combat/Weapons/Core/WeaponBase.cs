@@ -4,6 +4,7 @@ using Nytherion.Core.Enums;
 using Nytherion.Core.Interfaces;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.Core.Managers;
+using Nytherion.GamePlay.Characters.Enemy;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -179,11 +180,19 @@ namespace Nytherion.GamePlay.Combat
 
         public virtual List<EquipmentTrait> GetTraits()
         {
-            if (weaponData != null && weaponData.traits != null)
+            List<EquipmentTrait> baseTraits = weaponData != null ? weaponData.traits : null;
+            if (playerManager != null && playerManager.PlayerCombat != null)
             {
-                return weaponData.traits;
+                return playerManager.PlayerCombat.MergeDebugAttackTraits(baseTraits);
             }
-            return new List<EquipmentTrait>();
+            return baseTraits ?? new List<EquipmentTrait>();
+        }
+
+        // 상태 효과를 적용하기 전에도 이번 타격의 속성을 적중 이벤트에 전달합니다.
+        public void DealAttackDamage(IDamageable target, float damage)
+        {
+            if (target is EnemyBase enemy) enemy.TakeDamage(damage, false, GetTraits());
+            else target?.TakeDamage(damage);
         }
 
         public void ApplyStatusEffects(IDamageable target)

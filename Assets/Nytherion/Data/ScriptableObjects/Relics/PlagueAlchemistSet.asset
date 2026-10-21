@@ -25,20 +25,20 @@ MonoBehaviour:
       rid: 2001
     effects:
     - rid: 2002
-    description_KR: "독 지속 시간 +15%, 독 틱 피해 +10%"
-    description_EN: Poison duration +15% and poison tick damage +10%
+    description_KR: "독 지속 시간 +15%, 독 지속 피해 +10%"
+    description_EN: Poison duration +15% and poison damage +10%
   - condition:
       rid: 4001
     effects:
     - rid: 4002
-    description_KR: "독 지속 시간 +25%, 독 틱 피해 +18%. 중독된 적 처치 시 주변 최대 3명의 적에게 65% 위력의 독 전염"
-    description_EN: Poison duration +25% and poison tick damage +18%. Killing a poisoned enemy spreads poison at 65% power to up to 3 nearby enemies.
+    description_KR: "독 지속 시간 +25%, 독 지속 피해 +18%. 중독된 적 처치 시 주변 최대 3명의 적에게 65% 위력의 독 전염"
+    description_EN: Poison duration +25% and poison damage +18%. Killing a poisoned enemy spreads poison at 65% power to up to 3 nearby enemies.
   - condition:
       rid: 6001
     effects:
     - rid: 6002
-    description_KR: "독 지속 시간 +35%, 독 틱 피해 +25%. 처치 시 주변 최대 5명에게 80% 위력의 독 전염 및 독 중첩 피해의 150% 폭발"
-    description_EN: Poison duration +35% and poison tick damage +25%. Kills spread poison at 80% power to up to 5 enemies and explode for 150% of stacked poison damage.
+    description_KR: "독 지속 시간 +35%, 독 지속 피해 +25%. 처치 시 주변 최대 5명에게 80% 위력의 독 전염 및 독 중첩 피해의 150% 폭발"
+    description_EN: Poison duration +35% and poison damage +25%. Kills spread poison at 80% power to up to 5 enemies and explode for 150% of stacked poison damage.
   linkedTranscendenceEffects:
   - {fileID: 11400000, guid: 12aab72e0d404cc7b837fbb68ce72c58, type: 2}
   references:
