@@ -20,6 +20,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
         protected bool isPressing = false;
         protected float pressTime = 0f;
         
+        private bool isFiringChargedAttack;
         private GameObject activeChargeEffectInstance = null;
         private GameObject sparkChargeObject = null;
         private Vector3 originalSparkChargeScale = Vector3.one;
@@ -187,7 +188,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             float rotationOffset = weaponData != null ? weaponData.spriteRotationOffset : 0f;
             float scaleSign = Mathf.Sign(transform.lossyScale.y);
             Vector2 releaseDirection = Quaternion.Euler(0f, 0f, -rotationOffset * scaleSign) * transform.right;
-            FireChargedAttack(releaseDirection, 0f);
+            ExecuteAttack(releaseDirection, 0f, false);
 
             lastAttackTime = Time.time;
             PlayFireAnimation();
@@ -208,7 +209,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             float rotationOffset = weaponData != null ? weaponData.spriteRotationOffset : 0f;
             float scaleSign = Mathf.Sign(transform.lossyScale.y);
             Vector2 releaseDirection = Quaternion.Euler(0f, 0f, -rotationOffset * scaleSign) * transform.right;
-            FireChargedAttack(releaseDirection, 1.0f); // 1.0 = 풀차징
+            ExecuteAttack(releaseDirection, 1.0f, true); // 1.0 = 풀차징
 
             lastAttackTime = Time.time;
             PlayFireAnimation();
@@ -225,7 +226,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
             if (!isCharging)
             {
                 isPressing = false;
-                FireChargedAttack(releaseDirection, 0f);
+                ExecuteAttack(releaseDirection, 0f, false);
                 lastAttackTime = Time.time;
                 PlayFireAnimation();
             }
@@ -243,12 +244,26 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 float adjustedMaxChargeTime = GetAdjustedMaxChargeTime();
                 float finalChargePercent = adjustedMaxChargeTime > 0f ? (currentChargeTime / adjustedMaxChargeTime) : 1.0f;
 
-                FireChargedAttack(releaseDirection, finalChargePercent);
+                ExecuteAttack(releaseDirection, finalChargePercent, true);
 
                 lastAttackTime = Time.time;
                 currentChargeTime = 0f;
                 PlayFireAnimation();
             }
+        }
+
+        private void ExecuteAttack(Vector2 direction, float chargePercent, bool charged)
+        {
+            isFiringChargedAttack = charged;
+            try { FireChargedAttack(direction, chargePercent); }
+            finally { isFiringChargedAttack = false; }
+        }
+
+        protected override GameObject GetFireEffectPrefab()
+        {
+            if (isFiringChargedAttack && weaponData != null && weaponData.chargedFireEffectPrefab != null)
+                return weaponData.chargedFireEffectPrefab;
+            return base.GetFireEffectPrefab();
         }
 
         protected virtual void OnCharging(float chargePercent) { }
@@ -271,6 +286,19 @@ namespace Nytherion.GamePlay.Combat.Weapons
                 if (activeChargeEffectInstance != null)
                 {
                     activeChargeEffectInstance.transform.SetParent(firePoint);
+                    // 프리팹의 위치를 발사 지점 기준 오프셋으로 적용하며 풀 재사용 시에도 복원합니다.
+                    activeChargeEffectInstance.transform.localPosition = weaponData.chargeEffectPrefab.transform.localPosition;
+
+                    // 무기의 실제 표시 순서를 기준으로 차징 스프라이트를 앞에 배치합니다.
+                    SpriteRenderer weaponRenderer = GetComponentInChildren<SpriteRenderer>();
+                    if (weaponRenderer != null)
+                    {
+                        foreach (SpriteRenderer effectRenderer in activeChargeEffectInstance.GetComponentsInChildren<SpriteRenderer>())
+                        {
+                            effectRenderer.sortingLayerID = weaponRenderer.sortingLayerID;
+                            effectRenderer.sortingOrder = weaponRenderer.sortingOrder + 1;
+                        }
+                    }
 
                     AutoReturnToPool autoReturn;
                     if (activeChargeEffectInstance.TryGetComponent<AutoReturnToPool>(out autoReturn))

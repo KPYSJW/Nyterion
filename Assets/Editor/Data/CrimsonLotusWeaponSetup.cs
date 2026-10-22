@@ -98,6 +98,7 @@ namespace Nytherion.Editor
                 data.damageTickCount = 3;
                 data.beamWidth = 0.55f;
                 data.visualBeamWidth = 1f;
+                data.fullChargeWidthMultiplier = 2.5f;
                 data.fadeDuration = 0.12f;
                 data.followAim = true;
                 data.targetLayers = targetMask;
@@ -137,6 +138,16 @@ namespace Nytherion.Editor
             }
 
             bool dataChanged = false;
+            if (data.chargeEffectPrefab == null)
+            {
+                GameObject chargeEffect = AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Gameplay/Combat/VFX/CrimsonLotusCharging.prefab");
+                if (chargeEffect != null)
+                {
+                    data.chargeEffectPrefab = chargeEffect;
+                    dataChanged = true;
+                }
+            }
             if (data.weaponPrefab == null)
             {
                 data.weaponPrefab = weaponPrefab.GetComponent<CrimsonLotusWeapon>();
@@ -177,10 +188,10 @@ namespace Nytherion.Editor
             bool changed = group == null;
             if (group == null) group = root.AddComponent<UnityEngine.Rendering.SortingGroup>();
             changed |= !group.sortAtRoot || group.sortingLayerID != 0 ||
-                group.sortingOrder != WeaponVFXHelper.BackgroundBeamSortingOrder;
+                group.sortingOrder != CrimsonLotusBeam.DefaultSortingOrder;
             group.sortAtRoot = true;
             group.sortingLayerID = 0;
-            group.sortingOrder = WeaponVFXHelper.BackgroundBeamSortingOrder;
+            group.sortingOrder = CrimsonLotusBeam.DefaultSortingOrder;
             return changed;
         }
 
@@ -206,14 +217,14 @@ namespace Nytherion.Editor
                 renderer.numCapVertices = 0;
                 renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 renderer.receiveShadows = false;
-                renderer.sortingOrder = WeaponVFXHelper.BackgroundBeamSortingOrder;
+                renderer.sortingOrder = CrimsonLotusBeam.DefaultSortingOrder;
 
                 bool unused = false;
                 SpriteRenderer startEffect = EnsureEndpointEffect(root.transform, "StartEffect",
                     endpointSprite, endpointController, 0f, ref unused);
                 SpriteRenderer endEffect = EnsureEndpointEffect(root.transform, "EndEffect",
                     endpointSprite, endpointController, 180f, ref unused);
-                WeaponVFXHelper.ConfigureBeamSorting(root, renderer, startEffect, endEffect);
+                WeaponVFXHelper.ConfigureBeamSorting(root, renderer, startEffect, endEffect, CrimsonLotusBeam.DefaultSortingOrder);
 
                 SerializedObject serializedBeam = new SerializedObject(beam);
                 serializedBeam.FindProperty("lineRenderer").objectReferenceValue = renderer;
@@ -291,7 +302,7 @@ namespace Nytherion.Editor
                     endpointSprite, endpointController, 0f, ref changed);
                 SpriteRenderer endEffect = EnsureEndpointEffect(root.transform, "EndEffect",
                     endpointSprite, endpointController, 180f, ref changed);
-                WeaponVFXHelper.ConfigureBeamSorting(root, renderer, startEffect, endEffect);
+                WeaponVFXHelper.ConfigureBeamSorting(root, renderer, startEffect, endEffect, CrimsonLotusBeam.DefaultSortingOrder);
                 changed = true;
                 SerializedObject serializedBeam = new SerializedObject(beam);
                 changed |= AssignMissingReference(serializedBeam, "lineRenderer", renderer);
@@ -371,7 +382,7 @@ namespace Nytherion.Editor
                 renderer.sprite = sprite;
                 changed = true;
             }
-            int sortingOrder = name == "EndEffect" ? WeaponVFXHelper.HitEffectSortingOrder : WeaponVFXHelper.BackgroundBeamSortingOrder + 1;
+            int sortingOrder = name == "EndEffect" ? WeaponVFXHelper.HitEffectSortingOrder : CrimsonLotusBeam.DefaultSortingOrder + 1;
             if (renderer.sortingOrder != sortingOrder)
             {
                 renderer.sortingOrder = sortingOrder;

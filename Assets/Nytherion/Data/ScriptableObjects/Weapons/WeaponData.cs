@@ -74,6 +74,9 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         [Tooltip("발사 시 재생할 이펙트 프리팹입니다. 무기 데이터 Inspector의 '발사 이미지 설정'에서 스프라이트 이미지로 생성·연결할 수 있습니다.")]
         public GameObject fireEffectPrefab;
 
+        [Tooltip("차징 공격 전용 발사 이펙트입니다. 비어 있으면 일반 발사 이펙트를 사용합니다.")]
+        public GameObject chargedFireEffectPrefab;
+
         [Tooltip("차징(충전) 중 지속적으로 발생할 이펙트 프리팹 (예: 차징 기 축적 이펙트 등)")]
         public GameObject chargeEffectPrefab;
 
@@ -92,6 +95,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
 
         [Header("Projectile Settings")]
         public GameObject projectilePrefab;
+        [Tooltip("차징 공격에 사용할 전용 투사체입니다. 비어 있으면 기본 투사체를 사용합니다.")]
+        public GameObject chargedProjectilePrefab;
         [Tooltip("발사된 투사체마다 순환할 애니메이터입니다. 비어 있으면 프리팹의 애니메이션을 사용합니다.")]
         public RuntimeAnimatorController[] projectileAnimationVariants;
         [Tooltip("투사체 이미지와 같은 순서로 연결할 시작 이펙트입니다. 원형 발사 시 이펙트를 한 번 재생한 뒤 대응하는 탄을 발사합니다.")]
@@ -101,6 +106,8 @@ namespace Nytherion.Data.ScriptableObjects.Weapons
         public float projectileRotationOffset = 0f;
         public ExtraProjectileMode extraProjectileMode = ExtraProjectileMode.Spread;
         public float maxChargeTime = 1.0f;
+        [Min(1f), Tooltip("지원 무기의 최대 차징 공격 범위 배율입니다. 단절의 충전 비율에 따라 적용됩니다.")]
+        public float fullChargeRangeMultiplier = 1f;
         [Min(1), Tooltip("최대 차징 시 추가 투사체를 포함한 전체 발사 수에 곱할 배율입니다.")]
         public int fullChargeProjectileCountMultiplier = 1;
         [Min(0f), Tooltip("최대 차징 원형 발사에서 다음 탄의 시작 연출을 생성할 간격입니다. 0이면 동시에 생성합니다.")]

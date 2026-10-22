@@ -180,6 +180,48 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Spirits'GuidanceProjStart1_4
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43fdcf9d8fef5f341979ad6049addb4c
+      internalID: -1623510003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits'GuidanceProjStart1_5
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b452c2c5e95fa0429f8a8f23bed0a6f
+      internalID: -1778856743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -195,6 +237,8 @@ TextureImporter:
       Spirits'GuidanceProjStart1_1: 425837191
       Spirits'GuidanceProjStart1_2: 1636156604
       Spirits'GuidanceProjStart1_3: 2039586058
+      Spirits'GuidanceProjStart1_4: -1623510003
+      Spirits'GuidanceProjStart1_5: -1778856743
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

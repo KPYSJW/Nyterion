@@ -139,9 +139,13 @@ namespace Nytherion.Editor
                 temporary.Add(beam.gameObject);
                 beam.Initialize(laser, laser.firePoint, Vector2.right, laserData, 0f, pool);
                 Require(laserData.itemName_KR == "홍련" && laserData.itemName_EN == "CrimsonLotus", "홍련 이름 교환 누락");
-                Require(beam.GetComponentInChildren<LineRenderer>().sortingOrder < enemyMin, "홍련 광선이 적보다 앞에 있습니다.");
+                int weaponOrder = laser.GetComponentInChildren<SpriteRenderer>().sortingOrder;
+                Require(beam.GetComponent<UnityEngine.Rendering.SortingGroup>().sortingOrder > weaponOrder,
+                    "홍련 광선이 무기 뒤에 있습니다.");
+                Require(beam.GetComponentInChildren<LineRenderer>().sortingOrder > weaponOrder,
+                    "홍련 광선 렌더러가 무기 뒤에 있습니다.");
                 Require(beam.transform.Find("EndEffect").GetComponent<SpriteRenderer>().sortingOrder > enemyMax, "홍련 타격 효과가 적 뒤에 있습니다.");
-                Pass("홍련: 연속 광선 이름 및 타격 효과 전경 정렬");
+                Pass("홍련: 무기 앞에 광선 표시 및 타격 효과 전경 정렬");
                 BeamRenderingVerification.Run(laser, beam);
 
                 ObliterationWeaponData lotusData = AssetDatabase.LoadAssetAtPath<ObliterationWeaponData>(ObliterationWeaponSetup.DataPath);
@@ -154,10 +158,13 @@ namespace Nytherion.Editor
                 temporary.Add(lotusBeam.gameObject);
                 lotusBeam.Initialize(lotus, lotus.firePoint, Vector2.right, lotusData, 4, 0f, pool);
                 Require(lotusData.itemName_KR == "소멸" && lotusData.itemName_EN == "Obliteration", "소멸 이름 교환 누락");
-                Require(lotusBeam.transform.Find("Visual").GetComponent<SpriteRenderer>().sortingOrder < enemyMin, "소멸 공격이 적보다 앞에 있습니다.");
-                Require(lotusBeam.GetComponent<UnityEngine.Rendering.SortingGroup>().sortingOrder < enemyMin, "소멸 공격 그룹이 적보다 앞에 있습니다.");
+                int lotusWeaponOrder = lotus.GetComponent<SpriteRenderer>().sortingOrder;
+                Require(lotusBeam.transform.Find("Visual").GetComponent<SpriteRenderer>().sortingOrder > lotusWeaponOrder,
+                    "소멸 공격이 무기 뒤에 있습니다.");
+                Require(lotusBeam.GetComponent<UnityEngine.Rendering.SortingGroup>().sortingOrder > lotusWeaponOrder,
+                    "소멸 공격 그룹이 무기 뒤에 있습니다.");
                 Require(lotusBeam.transform.Find("EndEffect").GetComponent<SpriteRenderer>().sortingOrder > enemyMax, "소멸 타격 효과가 적 뒤에 있습니다.");
-                Pass("소멸: 충전 광선 이름, 공격 배경 및 타격 효과 전경 정렬");
+                Pass("소멸: 무기 앞에 공격 광선 표시 및 타격 효과 전경 정렬");
                 BeamRenderingVerification.Run(lotus, lotusBeam);
             }
             finally

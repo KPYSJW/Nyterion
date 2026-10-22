@@ -46,7 +46,7 @@ MonoBehaviour:
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
-  chargeEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 6645847367225884104, guid: 6aadfd46b67d419e87dda5ce62c2f96f, type: 3}
   chargeEffectRotationSpeed: 0
   fireSound: {fileID: 8300000, guid: 74fdbda70b9a7e64089903a8eee27d65, type: 3}
   fireSoundVolume: 0.53
@@ -87,6 +87,7 @@ MonoBehaviour:
   damageTickCount: 3
   beamWidth: 0.55
   visualBeamWidth: 1
+  fullChargeWidthMultiplier: 2.5
   hitEffectOffsetRadius: 0.15
   fadeDuration: 0.12
   followAim: 1

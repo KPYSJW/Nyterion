@@ -93,7 +93,8 @@ namespace Nytherion.GamePlay.Combat
         {
             // 별도 차징 발사 설정이 있는 무기만 공용 발사에 충전량을 전달합니다.
             genericChargePercent = weaponData != null &&
-                (weaponData.fullChargeProjectileCountMultiplier > 1 || weaponData.fullChargeProjectileInterval > 0f)
+                (weaponData.chargedProjectilePrefab != null || weaponData.fullChargeProjectileCountMultiplier > 1 ||
+                 weaponData.fullChargeProjectileInterval > 0f)
                 ? Mathf.Clamp01(chargePercent) : 0f;
             try
             {

@@ -16,8 +16,8 @@ MonoBehaviour:
   itemName_KR: "\uC815\uB839\uC758 \uC778\uB3C4"
   itemName_EN: Spirits' Guidance
   icon: {fileID: 21300000, guid: 4d9574aa037f295409fc44d607d0fee5, type: 3}
-  description_KR: "주변에서 유도탄을 발사하며, 최대 충전 시 두 배의 탄을 순차 발사합니다."
-  description_EN: Fires homing bolts from nearby points, firing twice as many in sequence at full charge.
+  description_KR: "주변에서 유도탄을 발사하며, 최대 충전 시 세 배의 탄을 순차 발사합니다."
+  description_EN: Fires homing bolts from nearby points, firing three times as many in sequence at full charge.
   isStackable: 0
   maxStack: 1
   unlockMilestoneID: 
@@ -43,7 +43,7 @@ MonoBehaviour:
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
-  chargeEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 6645847367225884104, guid: 1f5baa4026904132bb695d09ee0a0b62, type: 3}
   chargeEffectRotationSpeed: 0
   fireSound: {fileID: 8300000, guid: faadc81b121afdc46bb2c69cdff8312e, type: 3}
   fireSoundVolume: 0.55
@@ -61,9 +61,9 @@ MonoBehaviour:
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
-  fullChargeProjectileCountMultiplier: 2
+  fullChargeProjectileCountMultiplier: 3
   fullChargeProjectileInterval: 0.04
-  fullChargePreparationTime: 0.06
+  fullChargePreparationTime: 0
   hasHomingProjectiles: 1
   usePlayerCircleSpawn: 1
   playerCircleSpawnRadius: 0.65

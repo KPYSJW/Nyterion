@@ -22,11 +22,6 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField] private LayerMask autoTargetEnemyLayers;
         [SerializeField, Min(1)] private int autoTargetBufferSize = 64;
 
-        [Header("Cast Flash")]
-        [SerializeField] private SpriteRenderer castFlashRenderer;
-        [SerializeField] private Sprite[] castFlashFrames;
-        [SerializeField, Min(1f)] private float castFlashAnimationFps = 14f;
-
         private Camera gameplayCamera;
         private PlayerController playerController;
         private readonly HashSet<IDamageable> autoTargetEnemies = new HashSet<IDamageable>();
@@ -36,8 +31,6 @@ namespace Nytherion.GamePlay.Combat
         private Vector3 rightFacingLocalScale;
         private float rightFacingRotation;
         private bool facingPoseCached;
-        private float castFlashAnimationTime;
-        private bool isCastFlashPlaying;
 
         public override bool OverrideRotation => true;
 
@@ -51,7 +44,6 @@ namespace Nytherion.GamePlay.Combat
                 autoTargetEnemyLayers = LayerMask.GetMask("Enemy");
             }
             EnsureAutoTargetBuffer();
-            HideCastFlash();
         }
 
         private void Start()
@@ -79,7 +71,8 @@ namespace Nytherion.GamePlay.Combat
 
             lastAttackTime = Time.time;
             PlayFireAnimation();
-            PlayCastFlash();
+            Transform visual = transform.Find("Visual") ?? transform;
+            WeaponVFXHelper.PlayFireEffect(weaponData.fireEffectPrefab, visual.position, visual.rotation, visual);
 
             SpawnFireball(targetPosition);
 
@@ -234,27 +227,6 @@ namespace Nytherion.GamePlay.Combat
             return randomTarget;
         }
 
-        private void Update()
-        {
-            if (!isCastFlashPlaying)
-            {
-                return;
-            }
-
-            castFlashAnimationTime += Time.deltaTime;
-            int frameIndex = Mathf.FloorToInt(castFlashAnimationTime * castFlashAnimationFps);
-            if (castFlashFrames == null || frameIndex >= castFlashFrames.Length)
-            {
-                HideCastFlash();
-                return;
-            }
-
-            if (castFlashRenderer != null)
-            {
-                castFlashRenderer.sprite = castFlashFrames[frameIndex];
-            }
-        }
-
         private void LateUpdate()
         {
             ApplyFacingPose();
@@ -262,29 +234,6 @@ namespace Nytherion.GamePlay.Combat
 
         public override void AttackEnd()
         {
-        }
-
-        private void PlayCastFlash()
-        {
-            if (castFlashRenderer == null || castFlashFrames == null || castFlashFrames.Length == 0)
-            {
-                return;
-            }
-
-            castFlashAnimationTime = 0f;
-            isCastFlashPlaying = true;
-            castFlashRenderer.sprite = castFlashFrames[0];
-            castFlashRenderer.enabled = true;
-        }
-
-        private void HideCastFlash()
-        {
-            castFlashAnimationTime = 0f;
-            isCastFlashPlaying = false;
-            if (castFlashRenderer != null)
-            {
-                castFlashRenderer.enabled = false;
-            }
         }
 
         private void CacheRightFacingPose(WeaponData data)
@@ -344,11 +293,6 @@ namespace Nytherion.GamePlay.Combat
             float depth = Mathf.Abs(targetPosition.z - gameplayCamera.transform.position.z);
             float cameraTopY = gameplayCamera.ViewportToWorldPoint(new Vector3(0.5f, 1f, depth)).y;
             return Mathf.Max(minimumY, cameraTopY + cameraTopPadding);
-        }
-
-        private void OnDisable()
-        {
-            HideCastFlash();
         }
 
     }

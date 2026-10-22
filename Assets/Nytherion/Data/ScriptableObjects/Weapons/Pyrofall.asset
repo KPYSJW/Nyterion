@@ -30,6 +30,7 @@ MonoBehaviour:
   iconRotationOffset: 0
   iconSlotScale: 1.8
   inventoryIconScale: 1
+  inventoryIconSizeMultiplier: 1
   damage: 20
   range: 1
   cooldown: 1.4
@@ -43,8 +44,8 @@ MonoBehaviour:
   useFixedFacingPose: 0
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
-  fireEffectPrefab: {fileID: 0}
-  chargeEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 6645847367225884104, guid: e38d1c173379d7a45a0c18d595f65aeb, type: 3}
+  chargeEffectPrefab: {fileID: 6645847367225884104, guid: 2efb887ffc3d4e30b44f7045065e5f8b, type: 3}
   chargeEffectRotationSpeed: 0
   fireSound: {fileID: 8300000, guid: a8360f33f5145a34cbaf20741efa70b4, type: 3}
   fireSoundVolume: 0.62
@@ -56,6 +57,9 @@ MonoBehaviour:
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
+  fullChargeProjectileCountMultiplier: 1
+  fullChargeProjectileInterval: 0
+  fullChargePreparationTime: 0
   hasHomingProjectiles: 0
   usePlayerCircleSpawn: 0
   playerCircleSpawnRadius: 0.65

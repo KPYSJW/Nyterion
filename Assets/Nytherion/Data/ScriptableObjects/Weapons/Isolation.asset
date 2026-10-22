@@ -46,7 +46,7 @@ MonoBehaviour:
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 5048765113198229882, guid: 0f1e50ffabb134b479a2407f57bb02f2, type: 3}
-  chargeEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 6645847367225884104, guid: c894e18dc8d94e508219082707168b4a, type: 3}
   chargeEffectRotationSpeed: 0
   fireSound: {fileID: 8300000, guid: 358a4ca2d82e4054ea949b317d332445, type: 3}
   fireSoundVolume: 0.65
@@ -58,6 +58,7 @@ MonoBehaviour:
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
+  fullChargeRangeMultiplier: 1.6
   fullChargeProjectileCountMultiplier: 1
   fullChargeProjectileInterval: 0
   fullChargePreparationTime: 0

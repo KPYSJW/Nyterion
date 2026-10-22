@@ -8,8 +8,10 @@ using UnityEngine;
 namespace Nytherion.GamePlay.Combat
 {
     /// <summary>원본 스프라이트 광선의 재생, 단계별 판정과 풀 수명을 관리합니다.</summary>
+    [DefaultExecutionOrder(100)]
     public class ObliterationBeam : MonoBehaviour, IProjectileGateBeam
     {
+        public const int DefaultSortingOrder = 2;
         [SerializeField] private SpriteRenderer beamRenderer;
         [SerializeField] private SpriteRenderer startEffectRenderer;
         [SerializeField] private SpriteRenderer endEffectRenderer;
@@ -17,6 +19,7 @@ namespace Nytherion.GamePlay.Combat
         private readonly List<RaycastHit2D> obstructions = new List<RaycastHit2D>(8);
         private readonly HashSet<IDamageable> hitTargets = new HashSet<IDamageable>();
         private ObliterationWeapon owner;
+        private SpriteRenderer ownerRenderer;
         private ObliterationWeaponData data;
         private Transform origin;
         private ObjectPoolManager pool;
@@ -45,6 +48,7 @@ namespace Nytherion.GamePlay.Combat
             gatePath.Clear();
             gateSource = null;
             this.owner = owner;
+            ownerRenderer = owner.GetComponent<SpriteRenderer>();
             this.origin = origin;
             this.direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
             this.data = data;
@@ -64,16 +68,10 @@ namespace Nytherion.GamePlay.Combat
             obstructionFilter.SetLayerMask(data.obstructionLayers);
             IsFiring = true;
 
-            SpriteRenderer source = owner.GetComponent<SpriteRenderer>();
-            if (source != null)
-            {
-                beamRenderer.sortingLayerID = source.sortingLayerID;
-                beamRenderer.sortingOrder = WeaponVFXHelper.BackgroundBeamSortingOrder;
-                PrepareEndpointRenderer(startEffectRenderer, source.sortingLayerID, WeaponVFXHelper.BackgroundBeamSortingOrder + 1);
-            }
+            ConfigureSorting();
+            PrepareEndpointRenderer(startEffectRenderer, beamRenderer.sortingLayerID, beamRenderer.sortingOrder + 1);
             PrepareEndpointRenderer(endEffectRenderer, beamRenderer.sortingLayerID,
                 Mathf.Max(WeaponVFXHelper.HitEffectSortingOrder, beamRenderer.sortingOrder + 1));
-            WeaponVFXHelper.ConfigureBeamSorting(gameObject, beamRenderer, startEffectRenderer, endEffectRenderer);
             beamRenderer.enabled = true;
             UpdateGeometry();
             UpdateVisual();
@@ -94,6 +92,7 @@ namespace Nytherion.GamePlay.Combat
                 return;
             }
             if (deltaTime <= 0f) return;
+            ConfigureSorting();
             elapsed += deltaTime;
             UpdateGeometry();
 
@@ -146,6 +145,7 @@ namespace Nytherion.GamePlay.Combat
             bool firstUse = gateSource != source;
             gateSource = source;
             owner = source.owner;
+            ownerRenderer = source.ownerRenderer;
             origin = source.origin;
             data = source.data;
             pool = source.pool;
@@ -161,14 +161,27 @@ namespace Nytherion.GamePlay.Combat
             IsFiring = source.IsFiring;
             beamRenderer.sortingLayerID = source.beamRenderer.sortingLayerID;
             beamRenderer.sortingOrder = source.beamRenderer.sortingOrder;
+            ConfigureSorting();
             if (firstUse)
             {
                 PrepareEndpointRenderer(endEffectRenderer, beamRenderer.sortingLayerID,
                     Mathf.Max(WeaponVFXHelper.HitEffectSortingOrder, beamRenderer.sortingOrder + 1));
-                WeaponVFXHelper.ConfigureBeamSorting(gameObject, beamRenderer, startEffectRenderer, endEffectRenderer);
             }
             UpdateGeometry();
             UpdateVisual();
+        }
+
+        private void ConfigureSorting()
+        {
+            // 무기의 표시 순서가 바뀌어도 공격 광선은 한 단계 앞에 배치합니다.
+            int sortingOrder = DefaultSortingOrder;
+            if (ownerRenderer != null)
+            {
+                beamRenderer.sortingLayerID = ownerRenderer.sortingLayerID;
+                sortingOrder = ownerRenderer.sortingOrder + 1;
+            }
+            WeaponVFXHelper.ConfigureBeamSorting(gameObject, beamRenderer, startEffectRenderer, endEffectRenderer,
+                sortingOrder);
         }
 
         private void UpdateVisual()

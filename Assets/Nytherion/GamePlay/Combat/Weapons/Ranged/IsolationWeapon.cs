@@ -25,6 +25,7 @@ namespace Nytherion.GamePlay.Combat
         private float rightFacingRotation;
         private bool facingPoseCached;
         private int nextEffectIndex;
+        private float chargeRangeMultiplier = 1f;
 
         public override bool OverrideRotation => true;
 
@@ -55,6 +56,15 @@ namespace Nytherion.GamePlay.Combat
                 attackEffects[nextEffectIndex] != null && base.CanAttack();
         }
 
+        public override void AttackWithGenericCharge(Vector2 direction, Vector3 targetPosition, float chargePercent)
+        {
+            float previousMultiplier = chargeRangeMultiplier;
+            float fullChargeMultiplier = weaponData != null ? Mathf.Max(1f, weaponData.fullChargeRangeMultiplier) : 1f;
+            chargeRangeMultiplier = Mathf.Lerp(1f, fullChargeMultiplier, Mathf.Clamp01(chargePercent));
+            try { base.AttackWithGenericCharge(direction, targetPosition, chargePercent); }
+            finally { chargeRangeMultiplier = previousMultiplier; }
+        }
+
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
             if (!CanAttack()) return;
@@ -74,7 +84,7 @@ namespace Nytherion.GamePlay.Combat
             if (firePoint != null && weaponData.fireEffectPrefab != null)
                 WeaponVFXHelper.PlayFireEffect(weaponData.fireEffectPrefab, firePoint.position, firePoint.rotation, firePoint);
             nextEffectIndex = (nextEffectIndex + 1) % attackEffects.Length;
-            float radius = Mathf.Max(0.01f, weaponData.range) * EffectSizeMultiplier * prefab.RadiusMultiplier;
+            float radius = Mathf.Max(0.01f, weaponData.range) * EffectSizeMultiplier * prefab.RadiusMultiplier * chargeRangeMultiplier;
             SpriteRenderer ownerRenderer = owner != null ? owner.GetComponentInChildren<SpriteRenderer>() : null;
             visual.GetComponent<IsolationAttackEffect>().Play(HasTargetMaker ? null : owner, radius, pool, ownerRenderer, GetComponent<SpriteRenderer>());
             DealDamage(center, radius);

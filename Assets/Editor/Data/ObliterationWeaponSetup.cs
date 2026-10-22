@@ -91,6 +91,10 @@ namespace Nytherion.Editor
             data.beamFrames = beamFrames;
             data.startEndFrames = startEndFrames;
 
+            if (data.chargeEffectPrefab == null)
+                data.chargeEffectPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Gameplay/Combat/VFX/ObliterationCharging.prefab");
+
             AnimatorController controller = CreateAnimationAssets(weaponSprite, chargeFrames);
             if (beamPrefab == null) beamPrefab = CreateBeam(material);
             else beamPrefab = ConfigureBeamPrefab(material);
@@ -319,10 +323,10 @@ namespace Nytherion.Editor
                 visual.SetParent(root.transform, false);
                 SpriteRenderer renderer = visual.gameObject.AddComponent<SpriteRenderer>();
                 renderer.sharedMaterial = material;
-                renderer.sortingOrder = 2;
+                renderer.sortingOrder = ObliterationBeam.DefaultSortingOrder;
                 SpriteRenderer startRenderer = CreateEndpointRenderer(root.transform, "StartEffect", material);
                 SpriteRenderer endRenderer = CreateEndpointRenderer(root.transform, "EndEffect", material);
-                WeaponVFXHelper.ConfigureBeamSorting(root, renderer, startRenderer, endRenderer);
+                WeaponVFXHelper.ConfigureBeamSorting(root, renderer, startRenderer, endRenderer, ObliterationBeam.DefaultSortingOrder);
                 SerializedObject serialized = new SerializedObject(beam);
                 serialized.FindProperty("beamRenderer").objectReferenceValue = renderer;
                 serialized.FindProperty("startEffectRenderer").objectReferenceValue = startRenderer;
@@ -345,10 +349,10 @@ namespace Nytherion.Editor
                     throw new InvalidOperationException("Obliteration 광선 프리팹의 본체 컴포넌트를 확인해 주세요.");
 
                 renderer.sharedMaterial = material;
-                renderer.sortingOrder = 2;
+                renderer.sortingOrder = ObliterationBeam.DefaultSortingOrder;
                 SpriteRenderer startRenderer = CreateEndpointRenderer(root.transform, "StartEffect", material);
                 SpriteRenderer endRenderer = CreateEndpointRenderer(root.transform, "EndEffect", material);
-                WeaponVFXHelper.ConfigureBeamSorting(root, renderer, startRenderer, endRenderer);
+                WeaponVFXHelper.ConfigureBeamSorting(root, renderer, startRenderer, endRenderer, ObliterationBeam.DefaultSortingOrder);
                 SerializedObject serialized = new SerializedObject(beam);
                 serialized.FindProperty("beamRenderer").objectReferenceValue = renderer;
                 serialized.FindProperty("startEffectRenderer").objectReferenceValue = startRenderer;
@@ -370,7 +374,7 @@ namespace Nytherion.Editor
             SpriteRenderer renderer = endpoint.GetComponent<SpriteRenderer>();
             if (renderer == null) renderer = endpoint.gameObject.AddComponent<SpriteRenderer>();
             renderer.sharedMaterial = material;
-            renderer.sortingOrder = name == "EndEffect" ? WeaponVFXHelper.HitEffectSortingOrder : 3;
+            renderer.sortingOrder = name == "EndEffect" ? WeaponVFXHelper.HitEffectSortingOrder : ObliterationBeam.DefaultSortingOrder + 1;
             renderer.enabled = false;
             return renderer;
         }

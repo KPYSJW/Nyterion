@@ -42,6 +42,7 @@ namespace Nytherion.GamePlay.Combat
         private int nextProjectileAnimationIndex;
         private int[] circleSpawnPointIndices;
         private int initializationVersion;
+        private bool isFiringGenericChargedAttack;
 
         private struct CircleProjectileSpawn
         {
@@ -96,9 +97,12 @@ namespace Nytherion.GamePlay.Combat
             Vector3 spawnPos = spawnPosition ?? new Vector3(firePoint.position.x, firePoint.position.y, 0f) + spawnOffset;
             
             GameObject projectile;
-            if (currentProjectilePrefab != null)
+            bool useChargedProjectile = weaponData != null && weaponData.chargedProjectilePrefab != null &&
+                (isFiringGenericChargedAttack || chargePercent > 0f);
+            GameObject projectilePrefab = useChargedProjectile ? weaponData.chargedProjectilePrefab : currentProjectilePrefab;
+            if (projectilePrefab != null)
             {
-                projectile = ObjectPoolManager.Instance.SpawnFromPool(currentProjectilePrefab, spawnPos, Quaternion.identity);
+                projectile = ObjectPoolManager.Instance.SpawnFromPool(projectilePrefab, spawnPos, Quaternion.identity);
             }
             else
             {
@@ -106,6 +110,18 @@ namespace Nytherion.GamePlay.Combat
             }
 
             if (projectile == null) return null;
+
+            if (useChargedProjectile)
+            {
+                Animator projectileAnimator = projectile.GetComponentInChildren<Animator>();
+                if (projectileAnimator != null && projectileAnimator.runtimeAnimatorController != null)
+                {
+                    // 풀에서 꺼낼 때도 도입 프레임부터 다시 시작합니다.
+                    projectileAnimator.Rebind();
+                    projectileAnimator.Play(0, 0, 0f);
+                    projectileAnimator.Update(0f);
+                }
+            }
 
             Vector2 normalizedDir = GetProjectileDirection(direction).normalized;
             float angle = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
@@ -212,6 +228,9 @@ namespace Nytherion.GamePlay.Combat
             float chargePercent = 0f,
             float projectileDamageMultiplier = 1f)
         {
+            // 충전 시작 직후 놓은 공격도 지연 발사에서 전용 투사체 선택을 유지합니다.
+            if (isFiringGenericChargedAttack && weaponData != null && weaponData.chargedProjectilePrefab != null)
+                chargePercent = Mathf.Max(float.Epsilon, chargePercent);
             if (ShouldPlayFireAnimation())
             {
                 PlayFireAnimation();
@@ -498,7 +517,27 @@ namespace Nytherion.GamePlay.Combat
         }
 
         protected virtual void ConfigureSpawnedProjectile(GameObject projectile, Vector2 direction, float chargePercent) { }
-        protected virtual GameObject GetFireEffectPrefab() => weaponData != null ? weaponData.fireEffectPrefab : null;
+        public override void AttackWithGenericCharge(Vector2 direction, Vector3 targetPosition, float chargePercent)
+        {
+            bool previousState = isFiringGenericChargedAttack;
+            isFiringGenericChargedAttack = true;
+            try
+            {
+                base.AttackWithGenericCharge(direction, targetPosition, chargePercent);
+            }
+            finally
+            {
+                isFiringGenericChargedAttack = previousState;
+            }
+        }
+
+        protected virtual GameObject GetFireEffectPrefab()
+        {
+            if (weaponData == null) return null;
+            // 공용 차징 공격도 전용 발사 프리팹을 사용하며 일반 공격은 기존 연출을 유지합니다.
+            return isFiringGenericChargedAttack && weaponData.chargedFireEffectPrefab != null
+                ? weaponData.chargedFireEffectPrefab : weaponData.fireEffectPrefab;
+        }
         protected virtual bool ShouldSpawnFireEffect() => true;
         protected virtual bool ShouldPlayFireAnimation() => true;
     }

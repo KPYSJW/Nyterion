@@ -13,6 +13,7 @@ namespace Nytherion.GamePlay.Combat
     [RequireComponent(typeof(SortingGroup))]
     public class CrimsonLotusBeam : MonoBehaviour, IProjectileGateBeam
     {
+        public const int DefaultSortingOrder = 2;
         private static readonly int ColorProperty = Shader.PropertyToID("_Color");
         private static readonly int TilingProperty = Shader.PropertyToID("_Tiling");
         private static readonly int AnimationTimeProperty = Shader.PropertyToID("_AnimationTime");
@@ -29,6 +30,7 @@ namespace Nytherion.GamePlay.Combat
         private MaterialPropertyBlock materialProperties;
 
         private CrimsonLotusWeapon owner;
+        private SpriteRenderer ownerRenderer;
         private Transform origin;
         private ObjectPoolManager pool;
         private string poolTag;
@@ -45,6 +47,7 @@ namespace Nytherion.GamePlay.Combat
         private float interval;
         private float width;
         private float visualWidth;
+        private float sizeMultiplier;
         private float fallbackLength;
         private float fadeDuration;
         private float jitterMagnitude;
@@ -83,22 +86,25 @@ namespace Nytherion.GamePlay.Combat
             gateSource = null;
             settings = data;
             this.owner = owner;
+            ownerRenderer = owner.GetComponentInChildren<SpriteRenderer>();
             this.origin = origin;
             this.pool = pool;
+            // 발사 순간의 충전 배율을 저장해 발사 유지와 풀 재사용 시 두께를 보장합니다.
+            sizeMultiplier = owner.EffectSizeMultiplier * owner.ChargeWidthMultiplier;
             if (!endpointScalesCached)
             {
                 startEffectBaseScale = startEffectRenderer != null ? startEffectRenderer.transform.localScale : Vector3.one;
                 endEffectBaseScale = endEffectRenderer != null ? endEffectRenderer.transform.localScale : Vector3.one;
                 endpointScalesCached = true;
             }
-            if (startEffectRenderer != null) startEffectRenderer.transform.localScale = startEffectBaseScale * owner.EffectSizeMultiplier;
-            if (endEffectRenderer != null) endEffectRenderer.transform.localScale = endEffectBaseScale * owner.EffectSizeMultiplier;
+            if (startEffectRenderer != null) startEffectRenderer.transform.localScale = startEffectBaseScale * sizeMultiplier;
+            if (endEffectRenderer != null) endEffectRenderer.transform.localScale = endEffectBaseScale * sizeMultiplier;
             poolTag = data.projectilePrefab != null ? data.projectilePrefab.name : string.Empty;
             damage = Mathf.Max(0f, tickDamage);
             duration = Mathf.Max(0.01f, data.fireDuration);
             interval = Mathf.Max(0.01f, data.tickInterval);
-            width = Mathf.Max(0.01f, data.beamWidth) * owner.EffectSizeMultiplier;
-            visualWidth = Mathf.Max(0.01f, data.visualBeamWidth) * owner.EffectSizeMultiplier;
+            width = Mathf.Max(0.01f, data.beamWidth) * sizeMultiplier;
+            visualWidth = Mathf.Max(0.01f, data.visualBeamWidth) * sizeMultiplier;
             fallbackLength = Mathf.Max(0f, data.range);
             fadeDuration = Mathf.Max(0f, data.fadeDuration);
             followAim = data.followAim;
@@ -150,12 +156,10 @@ namespace Nytherion.GamePlay.Combat
                     }
                 }
 
-                SpriteRenderer sourceRenderer = owner.GetComponentInChildren<SpriteRenderer>();
-                if (sourceRenderer != null)
+                if (ownerRenderer != null)
                 {
-                    lineRenderer.sortingLayerID = sourceRenderer.sortingLayerID;
+                    lineRenderer.sortingLayerID = ownerRenderer.sortingLayerID;
                 }
-                lineRenderer.sortingOrder = WeaponVFXHelper.BackgroundBeamSortingOrder;
                 ConfigureSortingGroup();
 
                 PrepareEndpointEffect(startEffectRenderer);
@@ -184,6 +188,8 @@ namespace Nytherion.GamePlay.Combat
                 return;
             }
             if (deltaTime <= 0f) return;
+
+            if (lineRenderer != null) ConfigureSortingGroup();
 
             elapsed += deltaTime;
             bool refreshJitter = jitterMagnitude > 0f && elapsed >= nextJitterTime;
@@ -282,6 +288,7 @@ namespace Nytherion.GamePlay.Combat
             gateSource = source;
             settings = source.settings;
             owner = source.owner;
+            ownerRenderer = source.ownerRenderer;
             origin = source.origin;
             pool = source.pool;
             poolTag = source.poolTag;
@@ -290,6 +297,7 @@ namespace Nytherion.GamePlay.Combat
             damage = source.damage;
             width = source.width * scale;
             visualWidth = source.visualWidth * scale;
+            sizeMultiplier = source.sizeMultiplier * scale;
             fallbackLength = source.fallbackLength;
             elapsed = source.elapsed;
             visualSegments = source.visualSegments;
@@ -321,7 +329,7 @@ namespace Nytherion.GamePlay.Combat
                 if (lineRenderer != null) PrepareEndpointEffect(endEffectRenderer);
             }
             if (endEffectRenderer != null)
-                endEffectRenderer.transform.localScale = endEffectBaseScale * owner.EffectSizeMultiplier * scale;
+                endEffectRenderer.transform.localScale = endEffectBaseScale * sizeMultiplier;
             UpdateGeometry(visibility, refreshJitter || firstUse);
         }
 
@@ -409,7 +417,15 @@ namespace Nytherion.GamePlay.Combat
 
         private void ConfigureSortingGroup()
         {
-            WeaponVFXHelper.ConfigureBeamSorting(gameObject, lineRenderer, startEffectRenderer, endEffectRenderer);
+            // 무기의 정렬 순서가 바뀌어도 레이저와 발사부가 항상 그 앞에 표시됩니다.
+            int sortingOrder = DefaultSortingOrder;
+            if (ownerRenderer != null)
+            {
+                lineRenderer.sortingLayerID = ownerRenderer.sortingLayerID;
+                sortingOrder = ownerRenderer.sortingOrder + 1;
+            }
+            WeaponVFXHelper.ConfigureBeamSorting(gameObject, lineRenderer, startEffectRenderer, endEffectRenderer,
+                sortingOrder);
         }
 
         private void PrepareEndpointEffect(SpriteRenderer endpoint)

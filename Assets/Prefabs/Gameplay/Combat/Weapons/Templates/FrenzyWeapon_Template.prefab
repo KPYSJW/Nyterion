@@ -109,10 +109,9 @@ MonoBehaviour:
   burstInterval: 0.05
   parallelSpacing: 0.5
   projectileSpeed: 8
-  spinUpTime: 1
+  burstDuration: 3
   minAnimSpeed: 0.5
   maxAnimSpeed: 3
-  fireThreshold: 0.9
   spreadHalfAngle: 4
 --- !u!95 &8340302543433849024
 Animator:

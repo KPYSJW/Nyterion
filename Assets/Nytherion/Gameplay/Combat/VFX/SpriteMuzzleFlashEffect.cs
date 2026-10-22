@@ -11,6 +11,12 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField] private AnimationClip animationClip;
         [SerializeField] private Vector3 muzzleOffset = new Vector3(-0.06f, 0f, 0f);
 
+        [Tooltip("총구의 로컬 위치 오프셋·크기·좌우 반전을 함께 따릅니다.")]
+        [SerializeField] private bool inheritMuzzleTransform;
+
+        [Tooltip("프리팹 루트의 Position을 발사 지점 기준 오프셋으로 사용합니다.")]
+        [SerializeField] private bool usePrefabPositionOffset;
+
         [Header("표시 순서")]
         [SerializeField] private int sortingOrderOffset = 2;
         [SerializeField] private int minimumSortingOrder = -32768;
@@ -26,8 +32,10 @@ namespace Nytherion.GamePlay.Combat
         private bool playing;
         private int spawnFrame;
         private float elapsed;
+        private Vector3 effectScale;
+        private Vector3 positionOffset;
 
-        public void Play(ObjectPoolManager effectPool, Transform firePoint)
+        public void Play(ObjectPoolManager effectPool, Transform firePoint, Vector3 prefabOffset = default)
         {
             if (effectAnimator == null) effectAnimator = GetComponent<Animator>();
             if (effectRenderer == null) effectRenderer = GetComponent<SpriteRenderer>();
@@ -36,6 +44,10 @@ namespace Nytherion.GamePlay.Combat
             hasMuzzle = muzzle != null;
             WeaponBase weapon = hasMuzzle ? muzzle.GetComponentInParent<WeaponBase>() : null;
             weaponRenderer = weapon != null ? weapon.GetComponent<SpriteRenderer>() : null;
+            if (weaponRenderer == null && weapon != null && inheritMuzzleTransform)
+                weaponRenderer = weapon.GetComponentInChildren<SpriteRenderer>();
+            effectScale = transform.localScale;
+            positionOffset = usePrefabPositionOffset ? prefabOffset : muzzleOffset;
             if (animationClip == null || effectAnimator.runtimeAnimatorController == null)
             {
                 ReturnEffect();
@@ -78,8 +90,17 @@ namespace Nytherion.GamePlay.Combat
         {
             if (muzzle != null)
             {
-                transform.position = muzzle.position + muzzle.rotation * muzzleOffset;
-                transform.rotation = muzzle.rotation;
+                if (inheritMuzzleTransform)
+                {
+                    transform.position = muzzle.TransformPoint(positionOffset);
+                    transform.rotation = muzzle.rotation;
+                    transform.localScale = Vector3.Scale(effectScale, muzzle.lossyScale);
+                }
+                else
+                {
+                    transform.position = muzzle.position + muzzle.rotation * positionOffset;
+                    transform.rotation = muzzle.rotation;
+                }
             }
             if (weaponRenderer != null)
             {

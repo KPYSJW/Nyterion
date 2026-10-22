@@ -123,9 +123,9 @@ namespace Nytherion.Editor
             data.hasHomingProjectiles = true;
             data.useConstantHomingSpeed = true;
             data.usePlayerCircleSpawn = true;
-            data.fullChargeProjectileCountMultiplier = 2;
+            data.fullChargeProjectileCountMultiplier = 3;
             data.fullChargeProjectileInterval = 0.04f;
-            data.fullChargePreparationTime = 0.06f;
+            data.fullChargePreparationTime = 0f;
             data.playerCircleSpawnRadius = 0.65f;
             data.playerCircleSpawnPointCount = 12;
             data.useHomingLaunchAngles = true;
@@ -145,8 +145,8 @@ namespace Nytherion.Editor
 
         private static void SetBalanceDescription(WeaponData data)
         {
-            data.description_KR = "주변에서 유도탄을 발사하며, 최대 충전 시 두 배의 탄을 순차 발사합니다.";
-            data.description_EN = "Fires homing bolts from nearby points, firing twice as many in sequence at full charge.";
+            data.description_KR = "주변에서 유도탄을 발사하며, 최대 충전 시 세 배의 탄을 순차 발사합니다.";
+            data.description_EN = "Fires homing bolts from nearby points, firing three times as many in sequence at full charge.";
         }
 
         [MenuItem("Tools/Nytherion/Homing Magic/Apply Flight Settings")]

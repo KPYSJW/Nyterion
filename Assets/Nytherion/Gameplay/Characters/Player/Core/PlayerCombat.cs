@@ -82,6 +82,11 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private float currentAngle = 0f;
         private bool isAttackHeld = false;
+        private GameObject genericChargeEffect;
+        private GameObject genericChargeEffectPrefab;
+        private ObjectPoolManager genericChargeEffectPool;
+        private bool isGenericChargePending;
+        private float genericChargePressStartedAt;
         private bool isGenericCharging;
         private float genericChargeTime;
         private bool isGenericChargeReleased;
@@ -90,8 +95,9 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public bool IsGenericCharging => isGenericCharging;
         public bool IsAttackActive => currentWeapon != null &&
-            (isAttackHeld || isGenericCharging ||
+            (isAttackHeld || isGenericChargePending || isGenericCharging ||
              (currentWeapon is IChargeableWeapon chargeable && chargeable.IsCharging) ||
+             (currentWeapon is FrenzyWeapon frenzy && frenzy.IsFiring) ||
              (currentWeapon is CrimsonLotusWeapon laser && laser.IsFiring) ||
              (currentWeapon is ObliterationWeapon layLaser && layLaser.IsFiring) ||
              (currentWeapon is VoidRayWeapon voidRay && voidRay.IsFiring));
@@ -164,7 +170,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private void HandleAttackUp()
         {
             isAttackHeld = false;
-            if (isGenericCharging)
+            if (isGenericChargePending || isGenericCharging)
             {
                 ReleaseGenericCharge();
             }
@@ -307,7 +313,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 meleeWeaponPoint.localScale = Vector3.one *
                     (currentWeapon is MeleeWeapon ? currentWeapon.EffectSizeMultiplier : 1f);
 
-            if (isGenericCharging)
+            if (isGenericChargePending || isGenericCharging)
             {
                 if (!ShouldUseGenericCharging())
                 {
@@ -319,7 +325,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 }
                 else
                 {
-                    genericChargeTime = Mathf.Min(genericChargeTime + Time.deltaTime, GetGenericMaxChargeTime());
+                    UpdateGenericChargeProgress(Time.time - genericChargePressStartedAt);
                 }
                 return;
             }
@@ -506,9 +512,27 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void BeginGenericCharge()
         {
-            isGenericCharging = true;
+            isGenericChargePending = true;
+            genericChargePressStartedAt = Time.time;
+            isGenericCharging = false;
             genericChargeTime = 0f;
             isGenericChargeReleased = false;
+            UpdateGenericChargeProgress(0f);
+        }
+
+        private void UpdateGenericChargeProgress(float heldTime)
+        {
+            float threshold = currentWeapon != null && currentWeapon.weaponData != null
+                ? Mathf.Max(0f, currentWeapon.weaponData.chargeThresholdTime) : 0.15f;
+            if (heldTime < threshold) return;
+            if (!isGenericCharging)
+            {
+                isGenericChargePending = false;
+                isGenericCharging = true;
+                ShowGenericChargeEffect();
+            }
+            // 일반 클릭 판별에 사용한 시간은 실제 충전량에 포함하지 않습니다.
+            genericChargeTime = Mathf.Clamp(heldTime - threshold, 0f, GetGenericMaxChargeTime());
         }
 
         private void ReleaseGenericCharge()
@@ -519,6 +543,8 @@ namespace Nytherion.GamePlay.Characters.Player
                 return;
             }
 
+            // Update 사이에 버튼을 놓아도 실제 누른 시간으로 일반/차징을 구분합니다.
+            UpdateGenericChargeProgress(Time.time - genericChargePressStartedAt);
             genericChargeDirection = currentWeapon is CrimsonLotusWeapon laserWeapon
                 ? laserWeapon.CurrentFireDirection : (Vector2)weaponPoint.right;
             Vector2 mouseScreenPos = inputManager.MousePosition;
@@ -531,9 +557,12 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void FireGenericCharge()
         {
+            HideGenericChargeEffect();
+            bool wasCharging = isGenericCharging;
             float chargePercent = GenericChargePercent;
             Vector2 fireDirection = genericChargeDirection;
             Vector3 targetWorldPos = genericChargeTarget;
+            isGenericChargePending = false;
             isGenericCharging = false;
             isGenericChargeReleased = false;
             genericChargeTime = 0f;
@@ -541,7 +570,13 @@ namespace Nytherion.GamePlay.Characters.Player
             LastAttackDirection = fireDirection.normalized;
             playerController?.NotifyCombatActivity();
             OnPlayerAttackStarted?.Invoke(fireDirection, targetWorldPos);
-            currentWeapon.AttackWithGenericCharge(fireDirection, targetWorldPos, chargePercent);
+            if (wasCharging)
+                currentWeapon.AttackWithGenericCharge(fireDirection, targetWorldPos, chargePercent);
+            else
+            {
+                currentWeapon.ResetGenericChargeMultiplier();
+                currentWeapon.Attack(fireDirection, targetWorldPos);
+            }
             currentWeapon.AttackEnd();
             OnPlayerAttack?.Invoke(fireDirection, targetWorldPos);
             OnPlayerAttackEnd?.Invoke();
@@ -553,8 +588,60 @@ namespace Nytherion.GamePlay.Characters.Player
             return Mathf.Max(0.01f, currentWeapon.weaponData.maxChargeTime);
         }
 
+        private void ShowGenericChargeEffect()
+        {
+            HideGenericChargeEffect();
+            if (currentWeapon == null || currentWeapon.weaponData == null ||
+                currentWeapon.weaponData.chargeEffectPrefab == null) return;
+
+            genericChargeEffectPrefab = currentWeapon.weaponData.chargeEffectPrefab;
+            genericChargeEffectPool = ObjectPoolManager.Instance;
+            Transform anchor = currentWeapon is RangedWeapon ranged && ranged.firePoint != null
+                ? ranged.firePoint
+                : currentWeapon is IsolationWeapon isolation && isolation.firePoint != null
+                    ? isolation.firePoint : currentWeapon.transform;
+            genericChargeEffect = genericChargeEffectPool != null
+                ? genericChargeEffectPool.SpawnFromPool(genericChargeEffectPrefab, anchor.position, anchor.rotation)
+                : Instantiate(genericChargeEffectPrefab, anchor.position, anchor.rotation);
+            if (genericChargeEffect == null) return;
+            genericChargeEffect.transform.SetParent(anchor, false);
+            genericChargeEffect.transform.localPosition = genericChargeEffectPrefab.transform.localPosition;
+            genericChargeEffect.transform.localRotation = genericChargeEffectPrefab.transform.localRotation;
+            genericChargeEffect.transform.localScale = genericChargeEffectPrefab.transform.localScale;
+
+            // 무기의 표시 순서를 기준으로 차징 연출을 배치합니다.
+            SpriteRenderer weaponRenderer = currentWeapon.GetComponentInChildren<SpriteRenderer>();
+            foreach (SpriteRenderer renderer in genericChargeEffect.GetComponentsInChildren<SpriteRenderer>())
+            {
+                if (weaponRenderer == null) break;
+                renderer.sortingLayerID = weaponRenderer.sortingLayerID;
+                renderer.sortingOrder = weaponRenderer.sortingOrder + 1;
+            }
+            foreach (Animator effectAnimator in genericChargeEffect.GetComponentsInChildren<Animator>())
+            {
+                effectAnimator.Rebind();
+                effectAnimator.Play(0, 0, 0f);
+                effectAnimator.Update(0f);
+            }
+        }
+
+        private void HideGenericChargeEffect()
+        {
+            if (genericChargeEffect != null)
+            {
+                if (genericChargeEffectPool != null)
+                    genericChargeEffectPool.ReturnToPool(genericChargeEffectPrefab.name, genericChargeEffect);
+                else Destroy(genericChargeEffect);
+            }
+            genericChargeEffect = null;
+            genericChargeEffectPrefab = null;
+            genericChargeEffectPool = null;
+        }
+
         private void CancelGenericCharge()
         {
+            HideGenericChargeEffect();
+            isGenericChargePending = false;
             isGenericCharging = false;
             genericChargeTime = 0f;
             isGenericChargeReleased = false;

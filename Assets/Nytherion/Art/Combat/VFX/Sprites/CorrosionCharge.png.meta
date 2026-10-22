@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 85.333336
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -97,169 +97,127 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: VenomousStaffCharge_0
+      name: CorrosionCharge_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 24
-        height: 24
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dad670b5f58aa8448adb0cca93cbbc25
-      internalID: 1301500935
+      spriteID: 958524b977b1b1a42aac4ba70228d740
+      internalID: 1934251624
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VenomousStaffCharge_1
+      name: CorrosionCharge_1
       rect:
         serializedVersion: 2
-        x: 24
+        x: 64
         y: 0
-        width: 24
-        height: 24
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0182f467b49367e4c988ec5a85eb2f72
-      internalID: -1902544577
+      spriteID: 94c32a3ff5ad64d45a52b2cf772765f2
+      internalID: -916007700
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VenomousStaffCharge_2
+      name: CorrosionCharge_2
       rect:
         serializedVersion: 2
-        x: 48
+        x: 128
         y: 0
-        width: 24
-        height: 24
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cb93ede0abd32774c9ba0497e8568f80
-      internalID: -2089684428
+      spriteID: 4b2898868677d4e419fffcdfcb5b89be
+      internalID: -1261275435
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VenomousStaffCharge_3
+      name: CorrosionCharge_3
       rect:
         serializedVersion: 2
-        x: 72
+        x: 192
         y: 0
-        width: 24
-        height: 24
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 997e47156472afa449af6f69960ca4c2
-      internalID: -380262274
+      spriteID: ad49d4dcb96880540b5387b33ee46b61
+      internalID: 241041506
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VenomousStaffCharge_4
+      name: CorrosionCharge_4
       rect:
         serializedVersion: 2
-        x: 96
+        x: 256
         y: 0
-        width: 24
-        height: 24
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b560542a23a28074eb444cc2ba96b823
-      internalID: -1640354016
+      spriteID: ca6cecb07d33b494595e4822265cec6f
+      internalID: 2079981392
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VenomousStaffCharge_5
+      name: CorrosionCharge_5
       rect:
         serializedVersion: 2
-        x: 120
+        x: 320
         y: 0
-        width: 24
-        height: 24
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fbda239d4d9ba694eb7362286d0025db
-      internalID: 487568279
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VenomousStaffCharge_6
-      rect:
-        serializedVersion: 2
-        x: 144
-        y: 0
-        width: 24
-        height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7fcb58e3de1091840a3da3fb0dab81af
-      internalID: 1068498022
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VenomousStaffCharge_7
-      rect:
-        serializedVersion: 2
-        x: 168
-        y: 0
-        width: 24
-        height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 759bde0a36b6549408361d20f64a8497
-      internalID: 2126756391
+      spriteID: 4a5ee43b774ae30479eb74cfa8d6e56e
+      internalID: -682902502
       vertices: []
       indices: 
       edges: []
@@ -275,14 +233,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      VenomousStaffCharge_0: 1301500935
-      VenomousStaffCharge_1: -1902544577
-      VenomousStaffCharge_2: -2089684428
-      VenomousStaffCharge_3: -380262274
-      VenomousStaffCharge_4: -1640354016
-      VenomousStaffCharge_5: 487568279
-      VenomousStaffCharge_6: 1068498022
-      VenomousStaffCharge_7: 2126756391
+      CorrosionCharge_0: 1934251624
+      CorrosionCharge_1: -916007700
+      CorrosionCharge_2: -1261275435
+      CorrosionCharge_3: 241041506
+      CorrosionCharge_4: 2079981392
+      CorrosionCharge_5: -682902502
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

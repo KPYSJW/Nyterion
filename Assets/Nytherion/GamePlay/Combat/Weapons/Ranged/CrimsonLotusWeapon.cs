@@ -23,9 +23,11 @@ namespace Nytherion.GamePlay.Combat
         private Vector3 appliedVisualPositionOffset;
         private Vector3 aimTargetPosition;
         private bool hasAimTarget;
+        private float chargeWidthMultiplier = 1f;
 
         public override bool AllowAutoFire => false;
         public bool IsFiring => activeBeam != null && activeBeam.IsFiring;
+        internal float ChargeWidthMultiplier => chargeWidthMultiplier;
         internal Transform CasterTransform => playerManager != null ? playerManager.transform : transform;
         internal Vector2 CurrentFireDirection => firePoint != null
             ? ((Vector2)firePoint.TransformVector(Vector3.right)).normalized
@@ -74,6 +76,23 @@ namespace Nytherion.GamePlay.Combat
         {
             return isActiveAndEnabled && weaponData is CrimsonLotusWeaponData &&
                    firePoint != null && !IsFiring && base.CanAttack();
+        }
+
+        public override void AttackWithGenericCharge(Vector2 direction, Vector3 targetPosition, float chargePercent)
+        {
+            float previousMultiplier = chargeWidthMultiplier;
+            float fullChargeMultiplier = weaponData is CrimsonLotusWeaponData data
+                ? Mathf.Max(1f, data.fullChargeWidthMultiplier)
+                : 1f;
+            chargeWidthMultiplier = Mathf.Lerp(1f, fullChargeMultiplier, Mathf.Clamp01(chargePercent));
+            try
+            {
+                base.AttackWithGenericCharge(direction, targetPosition, chargePercent);
+            }
+            finally
+            {
+                chargeWidthMultiplier = previousMultiplier;
+            }
         }
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)

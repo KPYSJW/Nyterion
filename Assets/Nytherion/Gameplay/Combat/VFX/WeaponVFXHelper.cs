@@ -11,17 +11,18 @@ namespace Nytherion.GamePlay.Combat
         // 바닥 타일(-10) 위, 적 렌더러(-5 이상) 아래에 광선을 표시합니다.
         public const int BackgroundBeamSortingOrder = -8;
 
-        public static void ConfigureBeamSorting(GameObject root, Renderer beam, SpriteRenderer start, SpriteRenderer impact)
+        public static void ConfigureBeamSorting(GameObject root, Renderer beam, SpriteRenderer start, SpriteRenderer impact,
+            int sortingOrder = BackgroundBeamSortingOrder)
         {
             if (!root.TryGetComponent(out SortingGroup group)) group = root.AddComponent<SortingGroup>();
             group.sortAtRoot = true;
             group.sortingLayerID = beam.sortingLayerID;
-            group.sortingOrder = BackgroundBeamSortingOrder;
-            beam.sortingOrder = BackgroundBeamSortingOrder;
+            group.sortingOrder = sortingOrder;
+            beam.sortingOrder = sortingOrder;
             if (start != null)
             {
                 start.sortingLayerID = beam.sortingLayerID;
-                start.sortingOrder = BackgroundBeamSortingOrder + 1;
+                start.sortingOrder = sortingOrder + 1;
             }
             if (impact == null) return;
             // 타격 효과는 공격 본체의 그룹에서 독립시켜 적보다 앞에 표시합니다.
@@ -106,7 +107,7 @@ namespace Nytherion.GamePlay.Combat
             {
                 if (effectObj.TryGetComponent<SpriteMuzzleFlashEffect>(out var spriteFlash))
                 {
-                    spriteFlash.Play(ObjectPoolManager.Instance, parent);
+                    spriteFlash.Play(ObjectPoolManager.Instance, parent, effectPrefab.transform.localPosition);
                     return;
                 }
 

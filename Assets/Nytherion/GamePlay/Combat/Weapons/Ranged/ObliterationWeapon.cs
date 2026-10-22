@@ -20,6 +20,9 @@ namespace Nytherion.GamePlay.Combat
         private ObliterationWeaponData data;
         private ObliterationBeam activeBeam;
         private float heldTime;
+        private GameObject chargeEffectInstance;
+        private GameObject chargeEffectPrefab;
+        private ObjectPoolManager chargeEffectPool;
 
         public bool IsCharging { get; private set; }
         public bool IsFiring => activeBeam != null && activeBeam.IsFiring;
@@ -79,6 +82,7 @@ namespace Nytherion.GamePlay.Combat
                 data.fullChargeFramesPerSecond / ObliterationWeaponData.ChargeAnimationFramesPerSecond);
             animator.SetBool(ChargingParameterHash, true);
             animator.Play(AdjustedChargeTime <= 0f ? FullChargeStateHash : ChargeStateHash, 0, 0f);
+            ShowChargeEffect();
         }
 
         private void Update()
@@ -98,6 +102,7 @@ namespace Nytherion.GamePlay.Combat
             if (!IsCharging) return;
             int stage = data.GetChargeStage(ChargePercent);
             IsCharging = false;
+            HideChargeEffect();
             heldTime = 0f;
             UpdateFirePointForStage(stage);
             ReturnToIdleAnimation();
@@ -131,11 +136,58 @@ namespace Nytherion.GamePlay.Combat
         private void CancelAttack()
         {
             IsCharging = false;
+            HideChargeEffect();
             heldTime = 0f;
             ReturnToIdleAnimation();
             if (activeBeam != null) activeBeam.StopImmediately();
             activeBeam = null;
             ResetFirePointPosition();
+        }
+
+        private void ShowChargeEffect()
+        {
+            HideChargeEffect();
+            if (data == null || data.chargeEffectPrefab == null || firePoint == null) return;
+
+            chargeEffectPrefab = data.chargeEffectPrefab;
+            chargeEffectPool = ObjectPoolManager.Instance;
+            chargeEffectInstance = chargeEffectPool != null
+                ? chargeEffectPool.SpawnFromPool(chargeEffectPrefab, firePoint.position, firePoint.rotation)
+                : Instantiate(chargeEffectPrefab, firePoint.position, firePoint.rotation);
+            if (chargeEffectInstance == null) return;
+
+            // 단계별로 이동하는 총구를 따라가며 프리팹의 위치 보정값을 유지합니다.
+            chargeEffectInstance.transform.SetParent(firePoint, false);
+            chargeEffectInstance.transform.localPosition = chargeEffectPrefab.transform.localPosition;
+            chargeEffectInstance.transform.localRotation = chargeEffectPrefab.transform.localRotation;
+            chargeEffectInstance.transform.localScale = chargeEffectPrefab.transform.localScale;
+            if (weaponRenderer != null)
+            {
+                foreach (SpriteRenderer effectRenderer in chargeEffectInstance.GetComponentsInChildren<SpriteRenderer>())
+                {
+                    effectRenderer.sortingLayerID = weaponRenderer.sortingLayerID;
+                    effectRenderer.sortingOrder = weaponRenderer.sortingOrder + 1;
+                }
+            }
+            foreach (Animator effectAnimator in chargeEffectInstance.GetComponentsInChildren<Animator>())
+            {
+                effectAnimator.Rebind();
+                effectAnimator.Play(0, 0, 0f);
+                effectAnimator.Update(0f);
+            }
+        }
+
+        private void HideChargeEffect()
+        {
+            if (chargeEffectInstance != null)
+            {
+                if (chargeEffectPool != null)
+                    chargeEffectPool.ReturnToPool(chargeEffectPrefab.name, chargeEffectInstance);
+                else Destroy(chargeEffectInstance);
+            }
+            chargeEffectInstance = null;
+            chargeEffectPrefab = null;
+            chargeEffectPool = null;
         }
 
         private void ConfigureChargeAnimator()

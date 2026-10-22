@@ -18,6 +18,7 @@ namespace Nytherion.Editor
         public const string DataPath = "Assets/Nytherion/Data/ScriptableObjects/Weapons/Pyrofall.asset";
         public const string WeaponPath = "Assets/Prefabs/Gameplay/Combat/Weapons/Generated/Pyrofall.prefab";
         public const string ProjectilePath = "Assets/Prefabs/Gameplay/Combat/Proj/PyrofallFireball.prefab";
+        public const string FireEffectPath = "Assets/Prefabs/Gameplay/Combat/VFX/PyrofallCastFlash.prefab";
         public const string HitEffectPath = "Assets/Prefabs/Gameplay/Combat/VFX/PyrofallHitVFX.prefab";
 
         private const string WeaponSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Sprites/Pyrofall.png";
@@ -73,8 +74,9 @@ namespace Nytherion.Editor
                 material);
             GameObject hitEffectPrefab = CreateOrUpdateHitEffectPrefab(hitEffectFrames, material);
             ConfigureData(data, weaponSprite, iconSprite, projectilePrefab, hitEffectPrefab, isNewData);
-            GameObject weaponPrefab = CreateOrUpdateWeaponPrefab(data, weaponSprite, castFlashFrames, material);
+            GameObject weaponPrefab = CreateOrUpdateWeaponPrefab(data, weaponSprite, material);
 
+            SeparateCastFlash();
             data.weaponPrefab = weaponPrefab.GetComponent<PyrofallWeapon>();
             EditorUtility.SetDirty(data);
             AssetDatabase.SaveAssetIfDirty(data);
@@ -204,7 +206,6 @@ namespace Nytherion.Editor
         private static GameObject CreateOrUpdateWeaponPrefab(
             WeaponData data,
             Sprite weaponSprite,
-            Sprite[] castFlashFrames,
             Material material)
         {
             if (AssetDatabase.LoadAssetAtPath<GameObject>(WeaponPath) == null)
@@ -214,7 +215,7 @@ namespace Nytherion.Editor
                 {
                     GameObject root = new GameObject("Pyrofall");
                     SceneManager.MoveGameObjectToScene(root, scene);
-                    ConfigureWeaponObject(root, data, weaponSprite, castFlashFrames, material);
+                    ConfigureWeaponObject(root, data, weaponSprite, material);
                     return SavePrefab(root, WeaponPath);
                 }
                 finally
@@ -226,7 +227,7 @@ namespace Nytherion.Editor
             GameObject contents = PrefabUtility.LoadPrefabContents(WeaponPath);
             try
             {
-                ConfigureWeaponObject(contents, data, weaponSprite, castFlashFrames, material);
+                ConfigureWeaponObject(contents, data, weaponSprite, material);
                 return PrefabUtility.SaveAsPrefabAsset(contents, WeaponPath);
             }
             finally
@@ -303,7 +304,6 @@ namespace Nytherion.Editor
             GameObject root,
             WeaponData data,
             Sprite weaponSprite,
-            Sprite[] castFlashFrames,
             Material material)
         {
             Transform visual = root.transform.Find("Visual");
@@ -325,26 +325,6 @@ namespace Nytherion.Editor
             renderer.sharedMaterial = material;
             renderer.sortingOrder = 1;
 
-            Transform castFlash = visual.Find("CastFlash");
-            if (castFlash == null)
-            {
-                castFlash = new GameObject("CastFlash").transform;
-                castFlash.SetParent(visual, false);
-            }
-            castFlash.localPosition = new Vector3(0f, 0.68f, 0f);
-            castFlash.localRotation = Quaternion.identity;
-            castFlash.localScale = Vector3.one * 0.75f;
-
-            SpriteRenderer castFlashRenderer = castFlash.GetComponent<SpriteRenderer>();
-            if (castFlashRenderer == null)
-            {
-                castFlashRenderer = castFlash.gameObject.AddComponent<SpriteRenderer>();
-            }
-            castFlashRenderer.sprite = castFlashFrames[0];
-            castFlashRenderer.sharedMaterial = material;
-            castFlashRenderer.sortingOrder = 2;
-            castFlashRenderer.enabled = false;
-
             SpriteRenderer legacyRootRenderer = root.GetComponent<SpriteRenderer>();
             if (legacyRootRenderer != null)
             {
@@ -363,10 +343,61 @@ namespace Nytherion.Editor
             serialized.FindProperty("minimumDropHeight").floatValue = 1f;
             serialized.FindProperty("autoTargetEnemyLayers").intValue = LayerMask.GetMask("Enemy");
             serialized.FindProperty("autoTargetBufferSize").intValue = 64;
-            serialized.FindProperty("castFlashRenderer").objectReferenceValue = castFlashRenderer;
-            SetSpriteArray(serialized.FindProperty("castFlashFrames"), castFlashFrames);
-            serialized.FindProperty("castFlashAnimationFps").floatValue = 14f;
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        [MenuItem("Tools/Nytherion/Pyrofall/Separate Cast Flash")]
+        public static void SeparateCastFlash()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new InvalidOperationException("편집 모드에서 발사 연출을 분리해 주세요.");
+            WeaponData data = LoadExisting<WeaponData>(DataPath);
+            Sprite[] frames = LoadFrames(CastFlashSpritePath, "PyroFallFlash", 7);
+            if (data == null || frames.Length != 7)
+                throw new InvalidOperationException("파이로폴 데이터와 발사 이미지 7프레임을 확인해 주세요.");
+
+            GameObject contents = PrefabUtility.LoadPrefabContents(WeaponPath);
+            try
+            {
+                Transform legacy = contents.transform.Find("Visual/CastFlash");
+                // 기존 표시 설정을 옮기고, 이미 분리한 프리팹의 사용자 설정은 유지합니다.
+                if (data.fireEffectPrefab == null)
+                {
+                    Vector3 offset = legacy != null ? legacy.localPosition : new Vector3(0f, 0.68f, 0f);
+                    float scale = legacy != null ? legacy.localScale.x : 0.75f;
+                    GameObject effect = WeaponFireEffectAssets.CreateAndAssign(data, frames, 0, 6,
+                        14f, scale, offset, FireEffectPath,
+                        "Assets/Nytherion/Art/Combat/VFX/Animations/Weapons/PyrofallCastFlash");
+                    GameObject effectContents = PrefabUtility.LoadPrefabContents(FireEffectPath);
+                    try
+                    {
+                        var serialized = new SerializedObject(effectContents.GetComponent<SpriteMuzzleFlashEffect>());
+                        serialized.FindProperty("inheritMuzzleTransform").boolValue = true;
+                        serialized.FindProperty("sortingOrderOffset").intValue = 1;
+                        serialized.ApplyModifiedPropertiesWithoutUndo();
+                        SpriteRenderer legacyRenderer = legacy != null ? legacy.GetComponent<SpriteRenderer>() : null;
+                        if (legacyRenderer != null)
+                            effectContents.GetComponent<SpriteRenderer>().sharedMaterial = legacyRenderer.sharedMaterial;
+                        PrefabUtility.SaveAsPrefabAsset(effectContents, FireEffectPath);
+                    }
+                    finally { PrefabUtility.UnloadPrefabContents(effectContents); }
+
+                    // 마지막 프레임도 기존처럼 1/14초 동안 표시한 뒤 종료합니다.
+                    var effectData = new SerializedObject(effect.GetComponent<SpriteMuzzleFlashEffect>());
+                    var clip = (AnimationClip)effectData.FindProperty("animationClip").objectReferenceValue;
+                    AnimationUtility.SetAnimationEvents(clip, new[] { new AnimationEvent
+                        { time = 7f / 14f, functionName = nameof(SpriteMuzzleFlashEffect.AnimationFinished) } });
+                    EditorUtility.SetDirty(clip);
+                    AssetDatabase.SaveAssetIfDirty(clip);
+                }
+                if (data.fireEffectPrefab.GetComponent<SpriteMuzzleFlashEffect>() == null)
+                    throw new InvalidOperationException("연결된 발사 프리팹의 재생 컴포넌트를 확인해 주세요.");
+                if (legacy != null)
+                    UnityEngine.Object.DestroyImmediate(legacy.gameObject);
+                PrefabUtility.SaveAsPrefabAsset(contents, WeaponPath);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(contents); }
+            Debug.Log("[PyrofallCastFlash] 발사 이펙트 프리팹 분리 및 WeaponData 연결 완료.");
         }
 
         private static Sprite ConfigureSingleSprite(string path)
@@ -447,7 +478,9 @@ namespace Nytherion.Editor
                 data.weaponPrefab == null || data.projectilePrefab == null || data.hitEffectPrefab == null ||
                 weaponPrefab.GetComponent<PyrofallWeapon>() == null ||
                 weaponPrefab.transform.Find("Visual") == null ||
-                weaponPrefab.transform.Find("Visual/CastFlash") == null ||
+                weaponPrefab.transform.Find("Visual/CastFlash") != null ||
+                data.fireEffectPrefab == null ||
+                data.fireEffectPrefab.GetComponent<SpriteMuzzleFlashEffect>() == null ||
                 projectilePrefab.GetComponent<PyrofallProjectile>() == null ||
                 hitEffectPrefab.GetComponent<PyrofallHitEffect>() == null)
             {

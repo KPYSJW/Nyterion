@@ -41,6 +41,7 @@ namespace Nytherion.Editor
                 ["Bounce Berry"] = ("루티 씨앗이 주변 적에게 최대 3회 도탄", "Rooti seeds bounce to nearby enemies up to 3 times."),
                 ["TargetMaker"] = ("불그늘·단절·연쇄 점화의 공격 중심을 조준 지점으로 변경", "Centers Blazeshade, Isolation and Chain Ignition attacks on the aimed position."),
                 ["WindStone"] = ("적중 시 20% 확률로 풍석 발사\n0.25초마다 적중 피해의 50% (레벨당 +10%p)", "On hit: 20% chance to fire a Wind Stone.\nDeals 50% of hit damage every 0.25s (+10pp per level)."),
+                ["PowerDevice"] = ("광란을 풀차징한 뒤 다음 공격 버튼을 누르는 동안 계속 연사합니다.", "After fully charging Frenzy, hold the next attack press to fire continuously."),
                 ["Zenith"] = ("파이로폴 추가 화염구가 화면 내 적을 자동 조준", "Pyrofall's extra fireballs automatically target enemies in view."),
                 ["Rubber Ball"] = ("투사체가 주변 적에게 최대 3회 도탄", "Projectiles bounce to nearby enemies up to 3 times."),
                 ["Globe"] = ("투사체가 적을 관통", "Projectiles pierce enemies."),

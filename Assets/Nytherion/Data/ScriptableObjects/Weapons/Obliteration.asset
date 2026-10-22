@@ -47,7 +47,7 @@ MonoBehaviour:
   useStaffRecoil: 0
   weaponEffectPrefab: {fileID: 0}
   fireEffectPrefab: {fileID: 0}
-  chargeEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 6645847367225884104, guid: 9c4c4f70ca6642f8a3ea0e5d06494062, type: 3}
   chargeEffectRotationSpeed: 0
   fireSound: {fileID: 8300000, guid: cec7c95d3079e1641b76a34f305c85a8, type: 3}
   fireSoundVolume: 0.6

@@ -91,11 +91,13 @@ namespace Nytherion.Editor
             {
                 data = UnityEngine.Object.Instantiate(reference);
                 data.name = "Isolation";
+                data.chargeEffectPrefab = null;
                 var serialized = new SerializedObject(data);
                 serialized.FindProperty("uniqueID").stringValue = Guid.NewGuid().ToString();
                 serialized.ApplyModifiedPropertiesWithoutUndo();
                 data.damage = 10f;
                 data.cooldown = 1f;
+                data.fullChargeRangeMultiplier = 1.6f;
                 data.range = effects.Max(effect => effect.NativeRadius) * 2f;
                 data.traits = new List<EquipmentTrait>();
                 data.statModifiers = new List<Nytherion.Core.Data.StatModifier>();
@@ -116,7 +118,8 @@ namespace Nytherion.Editor
             data.useStaffRecoil = reference.useStaffRecoil;
             data.weaponEffectPrefab = null;
             data.fireEffectPrefab = null;
-            data.chargeEffectPrefab = null;
+            if (data.chargeEffectPrefab == null)
+                data.chargeEffectPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Gameplay/Combat/VFX/IsolationCharging.prefab");
             data.animatorController = null;
             data.projectilePrefab = null;
             data.hitEffectPrefab = hitEffect;

@@ -135,9 +135,7 @@ namespace Nytherion.Editor
                 {
                     weapon.Attack(Vector2.right);
                     Require(root.GetComponent<WeaponFireAudio>() == null, "Frenzy 스핀업 전에 사운드 재생");
-                    typeof(FrenzyWeapon).GetField("lastProjectileFireTime", Hidden).SetValue(weapon, float.NegativeInfinity);
-                    typeof(FrenzyWeapon).GetField("currentSpinUpProgress", Hidden).SetValue(weapon, 1f);
-                    typeof(FrenzyWeapon).GetMethod("Update", Hidden).Invoke(weapon, null);
+                    weapon.AttackEnd();
                 }
                 else if (weapon is RandomArchiveWeapon archive)
                 {
