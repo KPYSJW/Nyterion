@@ -13,7 +13,7 @@ namespace Nytherion.UI.Skill
     /// <summary>
     /// 스킬 UI 전체를 제어하며, UI 슬롯과 게임 데이터 매니저를 동기화하는 클래스
     /// </summary>
-    public class SkillUIController : UIPanelBase
+    public class SkillUIController : UIPanelBase, IInitializable
     {
         protected override bool UsesBookOpenSound => true;
         [Header("Toggle Settings")]
@@ -40,8 +40,12 @@ namespace Nytherion.UI.Skill
         private PlayerSkillManager playerSkillManager;
         private SaveLoadManager saveLoadManager;
         private IProgressionManager progressionManager;
+        private bool isInitialized;
+        public bool IsInitialized => isInitialized;
 
         [SerializeField] private SkillTooltip skillTooltipPrefab;
+        [SerializeField] private SkillCooldownHUD cooldownHUDPrefab;
+        private SkillCooldownHUD cooldownHUD;
         private SkillTooltip skillTooltip;
         private bool ownsSkillTooltip;
         private SkillSlotUI[] storageSlots;
@@ -72,6 +76,11 @@ namespace Nytherion.UI.Skill
             this.storageDropArea = uiRefs.storageDropArea;
             this.storageContent = uiRefs.storageContent;
             this.equipSlots = uiRefs.equipSlots;
+            if (cooldownHUD == null && cooldownHUDPrefab != null)
+            {
+                cooldownHUD = Instantiate(cooldownHUDPrefab);
+                cooldownHUD.Bind(playerSkillManager, uiRefs.QuickSlots);
+            }
             skillTooltip = uiRefs.SkillTooltip;
             if (skillTooltip == null && skillTooltipPrefab != null && uiPanel != null)
             {
@@ -104,6 +113,13 @@ namespace Nytherion.UI.Skill
 
         private void Start()
         {
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            if (isInitialized) return;
+            isInitialized = true;
             // 보관함 슬롯 UI 객체들을 미리 생성
             InitializeStorageSlots();
 
@@ -111,7 +127,8 @@ namespace Nytherion.UI.Skill
             foreach (var slot in equipSlots)
             {
                 slot.BindUIAudio(audioManager);
-                slot.OnDoubleClick += HandleDoubleClick;
+                slot.OnDoubleClick += HandleQuickTransfer;
+                slot.OnRightClick += HandleQuickTransfer;
                 slot.OnDropSkill += HandleDrop;
             }
 
@@ -123,8 +140,8 @@ namespace Nytherion.UI.Skill
             // 데이터 변경 시 UI 동기화하도록 이벤트 구독
             if (skillDataManager != null)
             {
-                skillDataManager.OnSkillDataChanged += SyncUIFromData;
-                SyncUIFromData(); // 초기 데이터로 UI 1회 갱신
+                skillDataManager.OnSkillDataChanged += HandleSkillDataChanged;
+                HandleSkillDataChanged();
             }
 
             // 특정 영역에 드롭 시 보관함으로 이동시키는 이벤트 구독
@@ -140,10 +157,28 @@ namespace Nytherion.UI.Skill
         private void OnDestroy()
         {
             if (ownsSkillTooltip && skillTooltip != null) Destroy(skillTooltip.gameObject);
+            if (cooldownHUD != null) Destroy(cooldownHUD.gameObject);
             // 메모리 누수 방지를 위해 객체 파괴 시 모든 이벤트 구독 해제
-            if (skillDataManager != null) skillDataManager.OnSkillDataChanged -= SyncUIFromData;
+            if (skillDataManager != null) skillDataManager.OnSkillDataChanged -= HandleSkillDataChanged;
             if (inputManager != null) inputManager.onToggleSkillUI -= ToggleUI;
             if (progressionManager != null) progressionManager.OnSkillUnlocked -= HandleSkillUnlocked;
+            if (equipSlots != null)
+            {
+                foreach (var slot in equipSlots) UnbindSlot(slot);
+            }
+            if (storageSlots != null)
+            {
+                foreach (var slot in storageSlots) UnbindSlot(slot);
+            }
+            if (storageDropArea != null) storageDropArea.OnDropToStorage -= HandleDropToStorageBackground;
+        }
+
+        private void UnbindSlot(SkillSlotUI slot)
+        {
+            if (slot == null) return;
+            slot.OnDoubleClick -= HandleQuickTransfer;
+            slot.OnRightClick -= HandleQuickTransfer;
+            slot.OnDropSkill -= HandleDrop;
         }
 
         /// <summary>
@@ -225,7 +260,8 @@ namespace Nytherion.UI.Skill
                 newSlot.BindUIAudio(audioManager);
 
                 // 상호작용 이벤트 등록 
-                newSlot.OnDoubleClick += HandleDoubleClick;
+                newSlot.OnDoubleClick += HandleQuickTransfer;
+                newSlot.OnRightClick += HandleQuickTransfer;
                 newSlot.OnDropSkill += HandleDrop;
 
                 storageSlots[i] = newSlot;
@@ -261,9 +297,13 @@ namespace Nytherion.UI.Skill
                 }
                 else storageSlots[i].Setup(null, skillDataManager, skillTooltip);
             }
+        }
 
-            if (playerSkillManager != null)
-                playerSkillManager.SetEquippedSkills(skillDataManager.equippedSkills);
+        private void HandleSkillDataChanged()
+        {
+            if (skillDataManager == null) return;
+            playerSkillManager?.SetEquippedSkills(skillDataManager.equippedSkills);
+            SyncUIFromData();
         }
 
         private bool IsEquipped(SkillData skillToCheck)
@@ -277,10 +317,10 @@ namespace Nytherion.UI.Skill
         }
 
         /// <summary>
-        /// 슬롯을 더블 클릭했을 때 장착 <-> 해제 상태로 서로 전환
+        /// 슬롯을 우클릭하거나 더블 클릭했을 때 빈 슬롯으로 장착하거나 해제
         /// </summary>
         /// <param name="clickedSlot"></param>
-        private void HandleDoubleClick(SkillSlotUI clickedSlot)
+        private void HandleQuickTransfer(SkillSlotUI clickedSlot)
         {
             // 보관함의 스킬을 더블 클릭 => 비어있는 장착 슬롯으로 이동
             if (clickedSlot.slotType == SkillSlotType.Storage && clickedSlot.GetSkill() != null)
@@ -346,7 +386,7 @@ namespace Nytherion.UI.Skill
         }
 
         /// <summary>
-        /// 비어있는 장착 슬롯을 찾아서 반환. 빈 슬롯이 없으면 첫 번째 슬롯을 반환하여 덮어쓰도록 한다.
+        /// Q, E, R 순서로 비어있는 장착 슬롯을 반환. 모두 장착 중이면 이동하지 않는다.
         /// </summary>
         /// <returns></returns>
         private SkillSlotUI GetAvailableEquipSlot()
@@ -355,7 +395,7 @@ namespace Nytherion.UI.Skill
             {
                 if (slot.GetSkill() == null) return slot;
             }
-            return equipSlots[0];
+            return null;
         }
 
         /// <summary>
@@ -425,12 +465,6 @@ namespace Nytherion.UI.Skill
             if (skillDataManager != null)
             {
                 skillDataManager.UpdateSkills(currentEquipped, currentStorage);
-            }
-
-            // 수집한 장착 상태를 실제 캐릭터 컨트롤러 시스템에 전달
-            if (playerSkillManager != null)
-            {
-                playerSkillManager.SetEquippedSkills(currentEquipped);
             }
 
             // 변경된 최종 상태를 디스크에 세이브

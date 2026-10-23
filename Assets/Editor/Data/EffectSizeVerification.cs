@@ -73,7 +73,7 @@ namespace Nytherion.Editor
             player.currentPlayerData = stats;
             try
             {
-                foreach (string name in new[] { "Blazeshade", "GuardianStaff" })
+                foreach (string name in new[] { "Blazeshade", "Isolation" })
                 {
                     WeaponData source = Load<WeaponData>(name);
                     WeaponData data = Object.Instantiate(source);
@@ -104,7 +104,7 @@ namespace Nytherion.Editor
                     Object.DestroyImmediate(targetObject);
                 }
 
-                foreach (string name in new[] { "LaserEmitter", "LayLaser" })
+                foreach (string name in new[] { "CrimsonLotus", "Obliteration" })
                 {
                     WeaponData data = Load<WeaponData>(name);
                     var weapon = Object.Instantiate(data.weaponPrefab, root.transform);
@@ -113,20 +113,20 @@ namespace Nytherion.Editor
                     var beam = Object.Instantiate(data.projectilePrefab);
                     temporary.Add(beam);
                     stats.projectileSizeMultiplier = 2f;
-                    if (weapon is LaserWeapon laser)
+                    if (weapon is CrimsonLotusWeapon laser)
                     {
-                        var effect = beam.GetComponent<WeaponLaserBeam>();
-                        effect.Initialize(laser, laser.firePoint, Vector2.right, (LaserWeaponData)data, 0f, null);
-                        Equal(((LaserWeaponData)data).beamWidth * 2f,
-                            (float)typeof(WeaponLaserBeam).GetField("width", Private).GetValue(effect), name + " 판정 폭");
-                        Equal(((LaserWeaponData)data).visualBeamWidth * 2f,
-                            (float)typeof(WeaponLaserBeam).GetField("visualWidth", Private).GetValue(effect), name + " 시각 폭");
+                        var effect = beam.GetComponent<CrimsonLotusBeam>();
+                        effect.Initialize(laser, laser.firePoint, Vector2.right, (CrimsonLotusWeaponData)data, 0f, null);
+                        Equal(((CrimsonLotusWeaponData)data).beamWidth * 2f,
+                            (float)typeof(CrimsonLotusBeam).GetField("width", Private).GetValue(effect), name + " 판정 폭");
+                        Equal(((CrimsonLotusWeaponData)data).visualBeamWidth * 2f,
+                            (float)typeof(CrimsonLotusBeam).GetField("visualWidth", Private).GetValue(effect), name + " 시각 폭");
                     }
-                    else if (weapon is LayLaserWeapon lay)
+                    else if (weapon is ObliterationWeapon lay)
                     {
-                        var effect = beam.GetComponent<LayLaserBeam>();
-                        effect.Initialize(lay, lay.firePoint, Vector2.right, (LayLaserWeaponData)data, 0, 0f, null);
-                        Equal(((LayLaserWeaponData)data).GetWidth(0) * 2f, effect.CurrentWidth, name + " 판정 폭");
+                        var effect = beam.GetComponent<ObliterationBeam>();
+                        effect.Initialize(lay, lay.firePoint, Vector2.right, (ObliterationWeaponData)data, 0, 0f, null);
+                        Equal(((ObliterationWeaponData)data).GetWidth(0) * 2f, effect.CurrentWidth, name + " 판정 폭");
                     }
                     else throw new InvalidOperationException(name + " 무기 타입");
                     results.Add("PASS " + name + " 광선 폭 2배");
@@ -201,7 +201,7 @@ namespace Nytherion.Editor
             if (weapon is BlazeshadeWeapon)
                 typeof(BlazeshadeWeapon).GetMethod("DealAuraDamage", Private).Invoke(weapon, null);
             else
-                typeof(GuardianStaffWeapon).GetMethod("DealDamage", Private).Invoke(weapon,
+                typeof(IsolationWeapon).GetMethod("DealDamage", Private).Invoke(weapon,
                     new object[] { (Vector2)center, weapon.weaponData.range * weapon.EffectSizeMultiplier });
         }
 

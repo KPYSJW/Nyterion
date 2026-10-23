@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: SocialDistancing_Milestone
   m_EditorClassIdentifier: 
   milestoneID: SocialDistancing
-  title: "사회적 거리두기"
-  description: "'길쭉한 가지' 주변 4슬롯을 모두 비운 채 효과 발동."
+  title: "\uC0AC\uD68C\uC801 \uAC70\uB9AC\uB450\uAE30"
+  description: "'\uAE38\uCB49\uD55C \uAC00\uC9C0' \uC8FC\uBCC0 4\uC2AC\uB86F\uC744
+    \uBAA8\uB450 \uBE44\uC6B4 \uCC44 \uD6A8\uACFC \uBC1C\uB3D9."
   icon: {fileID: 0}
   progressionType: 14
-  requiredMilestones: []
   targetValue: 1
+  requiredMilestones: []
   rewards:
   - rewardType: 3
     amount: 1
     skillData: {fileID: 0}
-    itemData: {fileID: 11400000, guid: 0065191d61e19d34984b1c60a33329a9, type: 2}
+    itemData: {fileID: 0}
     relicData: {fileID: 0}

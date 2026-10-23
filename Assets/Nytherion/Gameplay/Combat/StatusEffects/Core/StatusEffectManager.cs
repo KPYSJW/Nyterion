@@ -50,12 +50,15 @@ namespace Nytherion.GamePlay.Combat
                 statusDisplay = gameObject.AddComponent<EnemyStatusDisplayUI>();
             }
             statusDisplay.Initialize(sr);
+            // 첫 효과 적용으로 활성화된 경우 초기화 전에 쌓인 효과도 표시한다.
+            statusDisplay.UpdateDisplay(activeEffects);
             enabled = activeEffects.Count > 0;
         }
 
         public void ConfigureCombatContext(PlayerManager currentPlayerManager)
         {
             playerManager = currentPlayerManager;
+            RefreshCorrosiveFlameBonus();
         }
 
         private void CacheVFX()
@@ -193,12 +196,18 @@ namespace Nytherion.GamePlay.Combat
                 existing.ResetDuration();
                 existing.OnStack(newEffect);
                 existing.EffectIcon = newEffect.EffectIcon;
+                RefreshCorrosiveFlameBonus();
+                if (statusDisplay != null)
+                {
+                    statusDisplay.UpdateDisplay(activeEffects);
+                }
                 return;
             }
 
             activeEffects.Add(newEffect);
             newEffect.Initialize(owner, this, newEffect.Duration);
             newEffect.OnApply();
+            RefreshCorrosiveFlameBonus();
 
             if (owner != null)
             {
@@ -229,6 +238,7 @@ namespace Nytherion.GamePlay.Combat
         private void Update()
         {
             float deltaTime = Time.deltaTime;
+            RefreshCorrosiveFlameBonus(deltaTime);
             bool anyRemoved = false;
             for (int i = activeEffects.Count - 1; i >= 0; i--)
             {
@@ -246,6 +256,7 @@ namespace Nytherion.GamePlay.Combat
 
             if (anyRemoved)
             {
+                RefreshCorrosiveFlameBonus();
                 if (owner != null)
                 {
                     owner.UpdateStatusColor();
@@ -259,6 +270,22 @@ namespace Nytherion.GamePlay.Combat
                     enabled = false;
                 }
             }
+        }
+
+        private void RefreshCorrosiveFlameBonus(float elapsedTime = 0f)
+        {
+            TryGetEffect(out FireEffect fire);
+            TryGetEffect(out PoisonEffect poison);
+            float damageMultiplier = 1f;
+            float intervalMultiplier = 1f;
+            if (fire != null && fire.Timer > elapsedTime && poison != null && poison.Timer > elapsedTime &&
+                playerManager != null && playerManager.TryGetComponent(out CorrosiveFlameRuntime runtime))
+            {
+                damageMultiplier = runtime.TickDamageMultiplier;
+                intervalMultiplier = runtime.TickIntervalMultiplier;
+            }
+            fire?.SetCorrosiveFlameBonus(damageMultiplier, intervalMultiplier);
+            poison?.SetCorrosiveFlameBonus(damageMultiplier, intervalMultiplier);
         }
 
         public float GetReceivedDamageMultiplier()

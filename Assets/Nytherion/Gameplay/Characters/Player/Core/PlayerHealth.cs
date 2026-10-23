@@ -24,6 +24,13 @@ namespace Nytherion.GamePlay.Characters.Player
         public float MaxHealth { get; private set; }
         public float CurrentHealth { get; private set; }
 
+        public float CurrentShield { get; private set; }
+        public float MaxShield { get; private set; }
+        public Sprite ShieldBarSprite { get; private set; }
+        public event Action<float, float> ShieldChanged;
+        public event Action<Vector2> ShieldHit;
+        private UnityEngine.Object shieldSource;
+
         public bool IsInvulnerable { get; private set; }
 
         [Header("Hit Flash")]
@@ -39,7 +46,8 @@ namespace Nytherion.GamePlay.Characters.Player
         private IProgressionManager progressionManager;
         private Coroutine hitFlashCoroutine;
         private MaterialPropertyBlock hitFlashProperties;
-        private MaterialPropertyBlock originalHitProperties;
+        private Color flashColorBeforeHit;
+        private float flashAmountBeforeHit;
         private Material materialBeforeHitFlash;
         private Color colorBeforeHitFlash = Color.white;
         private bool isHitFlashMaterialApplied;
@@ -48,7 +56,6 @@ namespace Nytherion.GamePlay.Characters.Player
         private void Awake()
         {
             hitFlashProperties = new MaterialPropertyBlock();
-            originalHitProperties = new MaterialPropertyBlock();
 
             if (spriteRenderer == null)
             {
@@ -65,6 +72,7 @@ namespace Nytherion.GamePlay.Characters.Player
         public void InitializeHealth(float health)
         {
             StopHitFlash();
+            ClearShield();
             MaxHealth = health;
             CurrentHealth = MaxHealth;
             IsInvulnerable = false;
@@ -76,6 +84,25 @@ namespace Nytherion.GamePlay.Characters.Player
             IsInvulnerable = value;
         }
 
+        public void ApplyShield(float amount, UnityEngine.Object source, Sprite barSprite = null)
+        {
+            if (CurrentHealth <= 0f || amount <= 0f || source == null) return;
+            shieldSource = source;
+            ShieldBarSprite = barSprite;
+            CurrentShield = MaxShield = amount;
+            ShieldChanged?.Invoke(CurrentShield, MaxShield);
+        }
+
+        public void ClearShield(UnityEngine.Object source = null)
+        {
+            if (source != null && shieldSource != source) return;
+            if (CurrentShield <= 0f && MaxShield <= 0f) return;
+            CurrentShield = MaxShield = 0f;
+            ShieldBarSprite = null;
+            shieldSource = null;
+            ShieldChanged?.Invoke(0f, 0f);
+        }
+
         public void TakeDamage(float amount)
         {
             TakeDamage(amount, transform.position);
@@ -83,7 +110,19 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void TakeDamage(float amount, Vector2 hitPoint)
         {
-            if (IsInvulnerable || amount <= 0f) return;
+            if (IsInvulnerable || amount <= 0f || CurrentHealth <= 0f) return;
+
+            float absorbed = Mathf.Min(CurrentShield, amount);
+            if (absorbed > 0f)
+            {
+                CurrentShield -= absorbed;
+                amount -= absorbed;
+                if (CurrentShield <= 0f) { MaxShield = 0f; ShieldBarSprite = null; shieldSource = null; }
+                ShieldHit?.Invoke(hitPoint);
+                ShieldChanged?.Invoke(CurrentShield, MaxShield);
+                GetComponent<PlayerController>()?.NotifyCombatActivity();
+                if (amount <= 0f) return;
+            }
 
             float previousHealth = CurrentHealth;
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
@@ -233,19 +272,18 @@ namespace Nytherion.GamePlay.Characters.Player
             }
 
             materialBeforeHitFlash = spriteRenderer.sharedMaterial;
-            originalHitProperties.Clear();
-            spriteRenderer.GetPropertyBlock(originalHitProperties);
-
-            hitFlashProperties.Clear();
             spriteRenderer.GetPropertyBlock(hitFlashProperties);
+            flashColorBeforeHit = hitFlashProperties.GetColor(FlashColorId);
+            flashAmountBeforeHit = hitFlashProperties.GetFloat(FlashAmountId);
             spriteRenderer.sharedMaterial = sharedHitFlashMaterial;
-            spriteRenderer.SetPropertyBlock(hitFlashProperties);
             isHitFlashMaterialApplied = true;
             return true;
         }
 
         private void SetHitFlash(Color flashColor)
         {
+            // Read the current sprite properties instead of reapplying an earlier texture.
+            spriteRenderer.GetPropertyBlock(hitFlashProperties);
             hitFlashProperties.SetColor(FlashColorId, flashColor);
             hitFlashProperties.SetFloat(FlashAmountId, 1f);
             spriteRenderer.SetPropertyBlock(hitFlashProperties);
@@ -272,7 +310,10 @@ namespace Nytherion.GamePlay.Characters.Player
             if (isHitFlashMaterialApplied)
             {
                 spriteRenderer.sharedMaterial = materialBeforeHitFlash;
-                spriteRenderer.SetPropertyBlock(originalHitProperties);
+                spriteRenderer.GetPropertyBlock(hitFlashProperties);
+                hitFlashProperties.SetColor(FlashColorId, flashColorBeforeHit);
+                hitFlashProperties.SetFloat(FlashAmountId, flashAmountBeforeHit);
+                spriteRenderer.SetPropertyBlock(hitFlashProperties);
                 materialBeforeHitFlash = null;
                 isHitFlashMaterialApplied = false;
             }
@@ -287,6 +328,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private void OnDisable()
         {
             StopHitFlash();
+            ClearShield();
         }
     }
 }

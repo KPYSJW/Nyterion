@@ -10,11 +10,15 @@ namespace Nytherion.Core.Enums
         TestSkill,
         LifestealBuff,
         StatBuff,
-        Aura,
+        Aura, // 폐기됨: 기존 직렬화 값 보존
         ShadowClone,
         Turret,
         Laser,
         ChainIgnition,
-        PyroTank
+        PyroTank,
+        ProjectileGate,
+        PortalGate,
+        Decoy,
+        BubbleShield
     }
 }

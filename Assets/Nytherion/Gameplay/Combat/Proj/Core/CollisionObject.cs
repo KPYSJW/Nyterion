@@ -7,6 +7,7 @@ using VContainer;
 using Nytherion.GamePlay.Characters.Player;
 using Nytherion.Gameplay.Relics.Modules;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.GamePlay.Skills;
 
 namespace Nytherion.GamePlay.Combat
 {
@@ -21,6 +22,8 @@ namespace Nytherion.GamePlay.Combat
         public GameObject hitEffectPrefab;
         [Tooltip("벽과 충돌할 때도 피격 이펙트를 재생합니다.")]
         public bool playHitEffectOnWall;
+        [Tooltip("타격 이펙트의 오른쪽 축이 탄환이 날아온 쪽을 향합니다.")]
+        public bool alignHitEffectToIncomingDirection;
         [Tooltip("유물의 추가 피해로 처리해 적중 효과의 재귀 발동을 방지합니다.")]
         public bool isChainDamage;
 
@@ -42,6 +45,29 @@ namespace Nytherion.GamePlay.Combat
         private LayerMask obstacleCollisionLayers;
         private bool useObstacleCollision;
         private bool hasReturnedToPool;
+        private Transform projectileOwner;
+        private Vector2 previousGatePosition;
+        private List<RaycastHit2D> gateHits;
+
+        public Transform ProjectileOwner => projectileOwner != null ? projectileOwner :
+            playerManager != null ? playerManager.transform : null;
+        public bool HasPassedProjectileGate { get; private set; }
+        internal Vector3 CurrentHitCenter { get; private set; }
+
+        public void SetProjectileOwner(Transform owner) => projectileOwner = owner;
+
+        public void CopyGatePayloadTo(CollisionObject output)
+        {
+            output.Configure(damage, traits, chargePercent, hitEffectPrefab, ModifierSnapshot, true);
+            output.projectileOwner = ProjectileOwner;
+            output.HasPassedProjectileGate = true;
+            output.isChainDamage = isChainDamage;
+            output.hitEffectPrefab = hitEffectPrefab;
+            output.playHitEffectOnWall = playHitEffectOnWall;
+            output.alignHitEffectToIncomingDirection = alignHitEffectToIncomingDirection;
+            output.useObstacleCollision = useObstacleCollision;
+            output.obstacleCollisionLayers = obstacleCollisionLayers;
+        }
 
         public CombatModifierSnapshot ModifierSnapshot => playerManager != null && playerManager.playerRelicManager != null
             ? playerManager.playerRelicManager.CombatModifiers
@@ -78,6 +104,9 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnEnable()
         {
+            projectileOwner = null;
+            HasPassedProjectileGate = false;
+            previousGatePosition = transform.position;
             effectSizeMultiplier = 1f;
             hasReturnedToPool = false;
             useObstacleCollision = false;
@@ -161,22 +190,56 @@ namespace Nytherion.GamePlay.Combat
             return false;
         }
 
+        private void FixedUpdate()
+        {
+            Vector2 position = transform.position;
+            if (!hasReturnedToPool && !HasPassedProjectileGate && ProjectileOwner != null &&
+                (position - previousGatePosition).sqrMagnitude > 0.000001f)
+            {
+                // 트리거보다 빠르게 이동한 탄도 이전 물리 위치부터 경로를 검사합니다.
+                if (gateHits == null) gateHits = new List<RaycastHit2D>(8);
+                ContactFilter2D filter = new ContactFilter2D { useTriggers = true };
+                filter.SetLayerMask(1 << 0);
+                Physics2D.Linecast(previousGatePosition, position, filter, gateHits);
+                for (int i = 0; i < gateHits.Count; i++)
+                {
+                    if (gateHits[i].collider.TryGetComponent(out ProjectileGateController gate) && gate.TryConvert(this))
+                        break;
+                }
+                gateHits.Clear();
+            }
+            previousGatePosition = position;
+        }
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
             // 같은 물리 틱에 여러 충돌체가 진입해도 이미 반환된 탄은 피해를 주지 않습니다.
             if (hasReturnedToPool || !gameObject.activeInHierarchy) return;
+            if (collision.TryGetComponent(out ProjectileGateController gate))
+            {
+                gate.TryConvert(this);
+                return;
+            }
             bool isEnemy = IsEnemyCollider(collision);
             bool isWall = HasTagInParents(collision.transform, "Wall") || IsObstacleCollision(collision);
             if (isEnemy && bounceModifier.enabled && bounceModifier.ShouldIgnoreHit(collision)) return;
 
             if (isEnemy || isWall)
             {
+                // 처치로 충돌체가 비활성화되기 전에 타격 연출 기준점을 보관합니다.
+                CurrentHitCenter = collision.bounds.center;
+                Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                Vector2 incomingDirection = -transform.right;
+                if (alignHitEffectToIncomingDirection && TryGetComponent(out Rigidbody2D hitRigidbody) &&
+                    hitRigidbody.velocity.sqrMagnitude > 0.000001f)
+                    incomingDirection = -hitRigidbody.velocity.normalized;
                 if (isEnemy)
                 {
                     hasEnemyHit = true;
-                    lastHitPosition = collision.ClosestPoint(transform.position);
+                    lastHitPosition = hitPoint;
                     IDamageable target = collision.GetComponentInParent<IDamageable>();
-                    target?.TakeDamage(damage, isChainDamage);
+                    if (target is EnemyBase enemy) enemy.TakeDamage(damage, isChainDamage, traits);
+                    else target?.TakeDamage(damage, isChainDamage);
                     if (TryGetComponent(out HomingProj homingProjectile))
                         homingProjectile.StopTrackingHitTarget(target);
 
@@ -217,8 +280,8 @@ namespace Nytherion.GamePlay.Combat
                 if (isEnemy || (isWall && playHitEffectOnWall))
                 {
                     // 적 또는 설정된 벽 충돌 위치에 피격 이펙트를 재생합니다.
-                    Vector2 hitPoint = collision.ClosestPoint(transform.position);
-                    WeaponVFXHelper.PlayHitEffect(hitEffectPrefab, hitPoint, chargePercent);
+                    WeaponVFXHelper.PlayHitEffect(hitEffectPrefab, hitPoint, chargePercent,
+                        incomingDirection, alignHitEffectToIncomingDirection);
                 }
 
                 bool shouldSurvive = false;

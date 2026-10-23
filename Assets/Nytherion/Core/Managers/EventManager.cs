@@ -6,6 +6,7 @@ using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.Core.Data;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -17,17 +18,31 @@ namespace Nytherion.Core.Managers
         public float DamageAmount { get; }
         public bool IsCritical { get; }
         public bool IsChainDamage { get; }
+        public bool IsDamageOverTime { get; }
+        public IReadOnlyList<EquipmentTrait> AttackTraits { get; }
 
         public PlayerDamageEventData(
             EnemyBase target,
             float damageAmount,
             bool isCritical,
-            bool isChainDamage)
+            bool isChainDamage,
+            bool isDamageOverTime = false,
+            IReadOnlyList<EquipmentTrait> attackTraits = null)
         {
             Target = target;
             DamageAmount = damageAmount;
             IsCritical = isCritical;
             IsChainDamage = isChainDamage;
+            IsDamageOverTime = isDamageOverTime;
+            AttackTraits = attackTraits;
+        }
+
+        public bool HasAttackTrait(EquipmentTrait trait)
+        {
+            if (AttackTraits == null) return false;
+            for (int i = 0; i < AttackTraits.Count; i++)
+                if (AttackTraits[i] == trait) return true;
+            return false;
         }
     }
 
@@ -75,14 +90,18 @@ namespace Nytherion.Core.Managers
             float damageAmount,
             bool isCritical,
             EnemyBase target,
-            bool isChainDamage)
+            bool isChainDamage,
+            bool isDamageOverTime = false,
+            IReadOnlyList<EquipmentTrait> attackTraits = null)
         {
             OnEnemyDamagedByPlayerWithCrit?.Invoke(damageAmount, isCritical);
             OnEnemyDamagedByPlayerDetailed?.Invoke(new PlayerDamageEventData(
                 target,
                 damageAmount,
                 isCritical,
-                isChainDamage));
+                isChainDamage,
+                isDamageOverTime,
+                attackTraits));
         }
         public void TriggerOpenInventoryForShop()
         {

@@ -39,6 +39,9 @@ namespace Nytherion.Editor
                 var keys = AnimationUtility.GetObjectReferenceCurve(clip,
                     EditorCurveBinding.PPtrCurve(string.Empty, typeof(SpriteRenderer), "m_Sprite"));
                 Require(keys.Select(key => key.value).SequenceEqual(frames.Skip(1).Take(3)), "선택한 프레임 범위 및 순서");
+                AnimationEvent[] events = AnimationUtility.GetAnimationEvents(clip);
+                Require(events.Length == 1 && events[0].functionName == nameof(SpriteMuzzleFlashEffect.AnimationFinished) &&
+                    Mathf.Approximately(events[0].time, keys[keys.Length - 1].time), "마지막 프레임에 종료 이벤트 배치");
                 Require(Mathf.Approximately(clip.length, 3f / 24f) &&
                     prefab.transform.localScale == Vector3.one * 0.4f &&
                     serialized.FindProperty("muzzleOffset").vector3Value == new Vector3(0.1f, 0.05f), "속도·크기·위치 설정");
@@ -50,7 +53,7 @@ namespace Nytherion.Editor
                 Require(Mathf.Approximately(prefab.GetComponent<SpriteMuzzleFlashEffect>().Duration, 2f / 30f),
                     "수정한 프레임 수와 속도 반영");
                 report = "PASS 격자 슬라이스 및 ID 보존\nPASS 선택 범위·fps·크기·위치 반영\n" +
-                    "PASS 무기 데이터 자동 연결 및 프리팹 GUID 유지\n";
+                    "PASS 마지막 프레임에 종료 이벤트 배치\nPASS 무기 데이터 자동 연결 및 프리팹 GUID 유지\n";
             }
             catch (Exception error)
             {

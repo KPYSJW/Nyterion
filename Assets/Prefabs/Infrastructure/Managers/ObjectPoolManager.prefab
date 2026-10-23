@@ -85,7 +85,7 @@ MonoBehaviour:
   - tag: InventorySlot
     prefab: {fileID: 6342647029431398638, guid: 692090581c23e93499fd924cba8e9ce6, type: 3}
     size: 40
-  - tag: Player_IceShot
+  - tag: Player_Icicle
     prefab: {fileID: 1453523852295367759, guid: faa0e1fb9b693594f9f00ae2dff2402f, type: 3}
     size: 40
   - tag: Player_AcidicLarva
@@ -97,7 +97,7 @@ MonoBehaviour:
   - tag: PoisonVFX
     prefab: {fileID: 6051215695420182853, guid: bdfe3fa95f522f547b9bc5b453d44c2d, type: 3}
     size: 40
-  - tag: IceShotHitVFX
+  - tag: IcicleHitVFX
     prefab: {fileID: 8242796725191159463, guid: c499398c197697d42ada936fbdee7862, type: 3}
     size: 40
   - tag: Knight
@@ -127,3 +127,6 @@ MonoBehaviour:
   - tag: Boss_Knight
     prefab: {fileID: 6005206889974843037, guid: 3c00dc98d379ccc4bb780d16110c8500, type: 3}
     size: 1
+  - tag: Player_EvilEyeHitVFX
+    prefab: {fileID: 2802172147523158979, guid: b9ac66dedf1aff345990bd1acbff592f, type: 3}
+    size: 30

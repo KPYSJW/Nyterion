@@ -163,14 +163,14 @@ namespace Nytherion.Editor
             Require(Visual("BlazeShadeSummonEffect", center) == null, "무기 비활성화 시 이펙트 정리");
             results.Add("PASS 장착 해제/침묵/무기 비활성화 시 지정 공격 중지 및 정리");
 
-            var staffData = Object.Instantiate(AssetDatabase.LoadAssetAtPath<WeaponData>(GuardianStaffWeaponSetup.DataPath));
+            var staffData = Object.Instantiate(AssetDatabase.LoadAssetAtPath<WeaponData>(IsolationWeaponSetup.DataPath));
             temporary.Add(staffData);
             staffData.hitEffectPrefab = null;
-            var staff = Object.Instantiate((GuardianStaffWeapon)staffData.weaponPrefab, owner);
+            var staff = Object.Instantiate((IsolationWeapon)staffData.weaponPrefab, owner);
             staff.Initialize(staffData);
             EnemyBase atOwner = Enemy(owner.position, false);
             staff.Attack(Vector2.right, center);
-            var effect = Object.FindObjectsOfType<GuardianStaffAttackEffect>().Single(e => Vector3.Distance(e.transform.position, center) < 0.01f);
+            var effect = Object.FindObjectsOfType<IsolationAttackEffect>().Single(e => Vector3.Distance(e.transform.position, center) < 0.01f);
             owner.position += Vector3.up * 10f;
             yield return null;
             Require(Vector3.Distance(effect.transform.position, center) < 0.01f && Value(atOwner) == 10000f, "수호자의 지팡이 지정 공격/이펙트 위치 고정");

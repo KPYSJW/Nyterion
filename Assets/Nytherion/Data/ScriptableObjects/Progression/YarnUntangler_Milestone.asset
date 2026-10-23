@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: YarnUntangler_Milestone
   m_EditorClassIdentifier: 
   milestoneID: YarnUntangler
-  title: "실타래 풀기 장인"
-  description: "'꼬인 실타래' 효과(활성 체인 링크 3개 이상) 상태로 방 클리어."
+  title: "\uC2E4\uD0C0\uB798 \uD480\uAE30 \uC7A5\uC778"
+  description: "'\uAF2C\uC778 \uC2E4\uD0C0\uB798' \uD6A8\uACFC(\uD65C\uC131 \uCCB4\uC778
+    \uB9C1\uD06C 3\uAC1C \uC774\uC0C1) \uC0C1\uD0DC\uB85C \uBC29 \uD074\uB9AC\uC5B4."
   icon: {fileID: 0}
   progressionType: 15
-  requiredMilestones: []
   targetValue: 1
+  requiredMilestones: []
   rewards:
-  - rewardType: 0
+  - rewardType: 5
     amount: 1
-    skillData: {fileID: 11400000, guid: 9db2d15baa8d38845ab987c170946da2, type: 2}
+    skillData: {fileID: 0}
     itemData: {fileID: 0}
-    relicData: {fileID: 0}
+    relicData: {fileID: 11400000, guid: e4717c8baee99954ab910445142b2ac6, type: 2}

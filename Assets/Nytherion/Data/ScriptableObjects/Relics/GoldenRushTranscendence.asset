@@ -12,24 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
   m_Name: GoldenRushTranscendence
   m_EditorClassIdentifier: 
-  effectName_KR: "황금 질주"
-  effectName_EN: Golden Rush
+  effectName_KR: "\uACE8\uB4DC \uB7EC\uC26C"
+  effectName_EN: Gold Rush
   statusIcon: {fileID: 21300000, guid: 59b513bddfae417cab5d363ac775c13c, type: 3}
+  nameColor: {r: 1, g: 0.8235294, b: 0.2901961, a: 1}
   badgeBackgroundColor: {r: 0.55, g: 0.32, b: 0.08, a: 0.96}
   badgeTextColor: {r: 1, g: 0.96, b: 0.72, a: 1}
-  description_KR: "대시 후 1.5초 안에 획득한 골드가 25% 증가하고, 첫 획득 시 해당 대시의 재사용 대기시간을 0.15초 돌려받습니다."
-  description_EN: Gold gained within 1.5 seconds after dashing is increased by 25%, and the first gain refunds 0.15 seconds of dash cooldown.
+  description_KR: "\uB300\uC2DC \uD6C4 1.5\uCD08\uAC04 \uACE8\uB4DC \uD68D\uB4DD\uB7C9
+    +25%. \uCCAB \uD68D\uB4DD \uC2DC \uB300\uC2DC \uC7AC\uC0AC\uC6A9 \uB300\uAE30\uC2DC\uAC04
+    0.15\uCD08 \uD658\uAE09."
+  description_EN: Gain 25% more gold for 1.5 seconds after dashing. The first gain
+    refunds 0.15 seconds of dash cooldown.
   requirements:
   - setBonusData: {fileID: 11400000, guid: 6c103d9f84564dbca326e8cbecbfb3ad, type: 2}
     requiredEquippedCount: 3
   - setBonusData: {fileID: 11400000, guid: 7b3d90ce1f2c4e4ebab8c9f534f67823, type: 2}
     requiredEquippedCount: 4
   effectModules:
-  - condition: {rid: -2}
+  - description_KR: "\uB300\uC2DC \uD6C4 1.5\uCD08\uAC04 \uACE8\uB4DC \uD68D\uB4DD\uB7C9
+      +25%. \uCCAB \uD68D\uB4DD \uC2DC \uB300\uC2DC \uC7AC\uC0AC\uC6A9 \uB300\uAE30\uC2DC\uAC04
+      0.15\uCD08 \uD658\uAE09."
+    description_EN: Gain 25% more gold for 1.5 seconds after dashing. The first gain
+      refunds 0.15 seconds of dash cooldown.
+    condition:
+      rid: -2
     effects:
     - rid: 1001
-    description_KR: "대시 직후 골드 획득 강화"
-    description_EN: Enhance gold gains immediately after dashing.
   references:
     version: 2
     RefIds:

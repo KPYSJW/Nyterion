@@ -4,6 +4,7 @@ using Nytherion.Core.Systems;
 using Nytherion.GamePlay.Characters.Player;
 using Unity.VisualScripting;
 using UnityEngine;
+using Nytherion.GamePlay.Combat;
 
 public class MeleeAttackCollider : MonoBehaviour
 {
@@ -19,14 +20,6 @@ public class MeleeAttackCollider : MonoBehaviour
     {
         if(hashit)return;
 
-        if(!other.CompareTag(Tags.Player))return;
-
-        if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
-        {
-            playerHealth.TakeDamage(
-                damage,
-                other.ClosestPoint(transform.position));
-            hashit = true;
-        }
+        hashit = EnemyAttackTarget.TryDamage(other, damage, other.ClosestPoint(transform.position));
     }
 }

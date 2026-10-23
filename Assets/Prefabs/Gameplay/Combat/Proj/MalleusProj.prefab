@@ -128,9 +128,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   chargePercent: 0
+  effectSizeMultiplier: 1
   traits: 02000000
   hitEffectPrefab: {fileID: 0}
-  poolTag: Player_IceShot
+  playHitEffectOnWall: 0
+  isChainDamage: 0
+  poolTag: Player_Icicle
 --- !u!58 &8669505786798437599
 CircleCollider2D:
   m_ObjectHideFlags: 0

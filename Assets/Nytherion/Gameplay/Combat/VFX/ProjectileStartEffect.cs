@@ -13,20 +13,26 @@ namespace Nytherion.GamePlay.Combat
         private Action pendingFire;
         private Func<bool> canContinue;
 
-        public void Play(ObjectPoolManager pool, Action fire, Func<bool> canContinue)
+        public void Play(ObjectPoolManager pool, Action fire, Func<bool> canContinue, float preparationTime = 0f)
         {
             ClearPendingFire();
             Animator animator = GetComponent<Animator>();
             animator.Rebind();
+            animator.speed = 1f;
+            animator.Update(0f);
+            AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+            float stateSpeed = Mathf.Max(0.01f, Mathf.Abs(state.speed * state.speedMultiplier));
+            if (preparationTime > 0f && Duration > 0f)
+                animator.speed = Duration / (preparationTime * stateSpeed);
             effectPool = pool;
             pendingFire = fire;
             this.canContinue = canContinue;
-            animator.Update(0f);
         }
 
         private void Update()
         {
-            if (pendingFire != null && !canContinue()) ReturnEffect();
+            if (pendingFire == null) return;
+            if (!canContinue()) ReturnEffect();
         }
 
         // 시작 애니메이션 마지막의 Animation Event가 호출합니다.
@@ -53,6 +59,10 @@ namespace Nytherion.GamePlay.Combat
             effectPool = null;
         }
 
-        private void OnDisable() => ClearPendingFire();
+        private void OnDisable()
+        {
+            ClearPendingFire();
+            GetComponent<Animator>().speed = 1f;
+        }
     }
 }

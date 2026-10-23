@@ -6,6 +6,7 @@ using System.Linq;
 using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.Data.ScriptableObjects.Gacha;
 using Nytherion.Core.Enums;
+using Nytherion.Gameplay.Relics.Modules;
 
 namespace Nytherion.Editor
 {
@@ -71,7 +72,9 @@ namespace Nytherion.Editor
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 RelicData relic = AssetDatabase.LoadAssetAtPath<RelicData>(path);
-                if (relic != null)
+                if (relic != null && (relic.effectModules == null || !relic.effectModules.Any(module =>
+                    module != null && module.effects != null && module.effects.Any(effect =>
+                        effect is GrantSkillEffect grant && grant.skillData != null && !grant.skillData.IsRuntimeAvailable))))
                 {
                     relicsByRarity[relic.rarity].Add(relic);
                 }

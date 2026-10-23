@@ -98,7 +98,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public bool ShouldEnterAttackState(EnemyAIController enemy)
         {
             return enemy != null &&
-                   enemy.player != null &&
+                   enemy.CurrentTarget != null &&
                    Time.time >= nextChargeTime &&
                    enemy.GetDistanceToPlayer() <= chargeRange;
         }
@@ -111,7 +111,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             FaceTowardsPlayer(enemy);
             ShowChargeRangePreview(
                 enemy,
-                ((Vector2)enemy.player.position - (Vector2)enemy.transform.position).normalized);
+                ((Vector2)enemy.CurrentTarget.position - (Vector2)enemy.transform.position).normalized);
             SetPhase(ChargePhase.Charging);
             enemy.PlayAnimation(chargeLoopAnimation);
         }
@@ -126,7 +126,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                     FaceTowardsPlayer(enemy);
                     ShowChargeRangePreview(
                         enemy,
-                        ((Vector2)enemy.player.position - (Vector2)enemy.transform.position).normalized);
+                        ((Vector2)enemy.CurrentTarget.position - (Vector2)enemy.transform.position).normalized);
                     enemy.TryMoveToForcedDestination();
                     if (Time.time - phaseStartedAt >= chargeWaitTime)
                     {
@@ -183,7 +183,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private void LockChargeDestination(EnemyAIController enemy)
         {
             Vector2 origin = enemy.transform.position;
-            Vector2 playerPosition = enemy.player.position;
+            Vector2 playerPosition = enemy.CurrentTarget.position;
             chargeDirection = (playerPosition - origin).normalized;
 
             if (chargeDirection.sqrMagnitude <= 0.001f)
@@ -417,10 +417,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private static void FaceTowardsPlayer(EnemyAIController enemy)
         {
-            if (enemy == null || enemy.player == null)
+            if (enemy == null || enemy.CurrentTarget == null)
                 return;
 
-            Vector2 direction = enemy.player.position - enemy.transform.position;
+            Vector2 direction = enemy.CurrentTarget.position - enemy.transform.position;
             FaceDirection(enemy, direction);
         }
 
@@ -446,6 +446,19 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (phase != ChargePhase.Dashing)
                 return;
+
+            var dummy = collision.collider.GetComponentInParent<Nytherion.GamePlay.Skills.DecoyDummy>();
+            if (dummy != null && dummy.IsAlive)
+            {
+                if (!damagedPlayerThisCharge)
+                {
+                    damagedPlayerThisCharge = true;
+                    float damage = enemyBase != null && enemyBase.enemyData != null ? enemyBase.enemyData.damageAmount : 0f;
+                    dummy.TakeDamage(damage * (statusEffectManager != null ? statusEffectManager.GetOutgoingDamageMultiplier() : 1f));
+                }
+                finishDashNextFixedUpdate = true;
+                return;
+            }
 
             PlayerHealth playerHealth = collision.collider.GetComponentInParent<PlayerHealth>();
             PlayerController playerController =

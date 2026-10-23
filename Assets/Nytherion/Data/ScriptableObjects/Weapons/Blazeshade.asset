@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Blazeshade
   m_EditorClassIdentifier: 
   uniqueID: 124ca32b-f029-46be-9c74-a980f61dddbd
-  itemName_KR: "\uBD88\uADF8\uB298 \uC9C0\uD321\uC774"
-  itemName_EN: Blazeshade Staff
+  itemName_KR: "\uBD88\uADF8\uB298"
+  itemName_EN: Blazeshade
   icon: {fileID: 21300000, guid: b63b2e1e6b354c9aa9e639776de7a175, type: 3}
   description_KR: "\uC9C1\uC811 \uACF5\uACA9 \uB300\uC2E0 \uC8FC\uBCC0 \uBD88\uAF43
     \uACE0\uB9AC\uB85C 1\uCD08\uB9C8\uB2E4 \uD53C\uD574."
@@ -31,6 +31,7 @@ MonoBehaviour:
   iconRotationOffset: 10
   iconSlotScale: 1.8
   inventoryIconScale: 1
+  inventoryIconSizeMultiplier: 1
   damage: 10
   range: 2.75
   cooldown: 1
@@ -57,6 +58,9 @@ MonoBehaviour:
   projectileRotationOffset: 0
   extraProjectileMode: 0
   maxChargeTime: 1
+  fullChargeProjectileCountMultiplier: 1
+  fullChargeProjectileInterval: 0
+  fullChargePreparationTime: 0
   hasHomingProjectiles: 0
   usePlayerCircleSpawn: 0
   playerCircleSpawnRadius: 0.65
@@ -75,6 +79,6 @@ MonoBehaviour:
   homingLifetime: 4
   chargeThresholdTime: 0.15
   requiredRelicId: 
-  hitEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 7264013050638333259, guid: ec2252bb4c7569e4f897d3bb11f852b0, type: 3}
   weaponPrefab: {fileID: 551700000000000104, guid: b2b1404db8bc42119757c7e378dd1b08, type: 3}
   isArchivable: 0

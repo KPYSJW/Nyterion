@@ -14,17 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Slime Specimen
   koreanName: "\uC2AC\uB77C\uC784 \uD45C\uBCF8"
-  description_KR: "장착 중 슬라임 소환: 플레이어를 따라다니며 적 자동 공격."
-  description_EN: "While equipped, summons slime that follows you and automatically attacks enemies."
+  description_KR: "\uC7A5\uCC29 \uC911 \uC801\uC744 \uC790\uB3D9 \uACF5\uACA9\uD558\uB294
+    \uC2AC\uB77C\uC784 \uC18C\uD658"
+  description_EN: While equipped, summons a slime that automatically attacks enemies.
   Image: {fileID: 21300000, guid: 2b5b64eb0e4c0e548af4a105d60d1001, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: -2
     effects:
     - rid: 2313383513706201099
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:

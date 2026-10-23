@@ -238,7 +238,7 @@ namespace Nytherion.Editor
                 "지면 공격용 피격 원 제공");
             Physics2D.SyncTransforms();
             Require(Physics2D.OverlapCircleAll(center, radius, 1 << target.gameObject.layer)
-                .Any(hit => hit.GetComponent<IDamageable>() == target), "Physics2D 검색에서 피해 대상으로 인식");
+                .Any(hit => (Object)hit.GetComponent<IDamageable>() == target), "Physics2D 검색에서 피해 대상으로 인식");
             Require(target.GetComponent<StatusEffectManager>().PlayerManager == player,
                 "씬 DI가 허수아비 전투 및 상태 효과 컨텍스트에 주입됨");
 

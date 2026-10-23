@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Relic_PortalGate
+  m_EditorClassIdentifier: 
+  relicName: Relic of Portal Gate
+  koreanName: "\ucc28\uc6d0\ubb38"
+  description_KR: "\uc11c\ub85c \uc655\ubcf5\ud560 \uc218 \uc788\ub294 \ucc28\uc6d0\ubb38 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
+  description_EN: "Grants a portal skill that lets you travel between linked portals."
+  Image: {fileID: -748852817, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: 
+    description_EN: 
+    condition:
+      rid: -2
+    effects:
+    - rid: 1314306040246042624
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1314306040246042624
+      type: {class: GrantSkillEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        skillData: {fileID: 11400000, guid: 65b2f51bcb0e12e42b0979b8a266652a, type: 2}

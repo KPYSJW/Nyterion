@@ -17,6 +17,7 @@ namespace Nytherion.UI.RelicBoard
         public RelicBlock blockData;
 
         public bool isPlaced = false;
+        public bool isDismantleStaged;
         public Vector2Int gridPosition;
 
         [SerializeField] private Image iconImage;
@@ -117,6 +118,7 @@ namespace Nytherion.UI.RelicBoard
         }
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (isDismantleStaged) return;
             if (eventData.button != PointerEventData.InputButton.Left) return;
 
             relicTooltip?.Hide();
@@ -198,6 +200,16 @@ namespace Nytherion.UI.RelicBoard
             }
 
             // 마지막 호버 셀 대신 실제 드롭 대상만 인정해 패널 밖 드롭을 취소한다.
+            RelicDismantlePanel targetPanel = eventData.pointerCurrentRaycast.gameObject != null
+                ? eventData.pointerCurrentRaycast.gameObject.GetComponentInParent<RelicDismantlePanel>() : null;
+            if (targetPanel != null && targetPanel == relicGridUI.DismantlePanel && targetPanel.IsOpen)
+            {
+                relicManager.EndDrag(null);
+                if (!isPlaced) targetPanel.TryStage(blockData);
+                else uiAudioManager?.RequestUISound(UISoundType.Error);
+                Destroy(gameObject);
+                return;
+            }
             relicGridUI.GetDropTarget(eventData, out Vector2Int? dropGridPosition, out int? dropStorageIndex);
             relicManager.EndDrag(dropGridPosition, dropStorageIndex);
             if (dropGridPosition.HasValue)
@@ -216,6 +228,13 @@ namespace Nytherion.UI.RelicBoard
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (eventData.button == PointerEventData.InputButton.Right && !isPlaced && !isDragging &&
+                relicGridUI?.DismantlePanel != null && relicGridUI.DismantlePanel.IsOpen)
+            {
+                if (isDismantleStaged) relicGridUI.DismantlePanel.ReturnItem(blockData);
+                else relicGridUI.DismantlePanel.TryStage(blockData);
+                return;
+            }
             if (eventData.button != PointerEventData.InputButton.Right ||
                 !isPlaced ||
                 isDragging ||

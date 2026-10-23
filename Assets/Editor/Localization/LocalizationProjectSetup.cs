@@ -292,11 +292,6 @@ namespace Nytherion.Editor.Localization
 
                 string koreanDescription = relic.description_KR;
                 string englishDescription = relic.description_EN;
-                if (relic.relicName == "Mystical Crystal")
-                {
-                    koreanDescription = "플레이어의 모든 기본 스탯(공격력, 방어력, 체력 등)을 6% 증가시킵니다.";
-                }
-
                 if (string.IsNullOrWhiteSpace(englishDescription) &&
                     LocalizationTranslationCatalog.RelicEnglishDescriptions.TryGetValue(
                         relic.relicName,
@@ -309,7 +304,7 @@ namespace Nytherion.Editor.Localization
                     LocalizationTables.Relics,
                     LocalizationKeys.RelicName(relic.relicName),
                     relic.koreanName,
-                    relic.relicName);
+                    relic.EnglishName);
                 SetEntry(
                     LocalizationTables.Relics,
                     LocalizationKeys.RelicDescription(relic.relicName),

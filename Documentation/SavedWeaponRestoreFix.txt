@@ -1,0 +1,37 @@
+저장 무기 재시작 복원 수정 (2026-10-16)
+
+증상과 원인
+- 저장 데이터의 장착칸에는 무기가 복원되지만 캐릭터는 빈손이며, 한 번 탈착하면 무기가 생성됐다.
+- 타이틀에서 EquipmentDataManager가 저장 데이터를 먼저 불러온 후 GameScene의 PlayerManager가 생성된다.
+- PlayerManager는 장비 변경 알림만 구독하고 초기화 시 현재 장착 무기를 생성하지 않았다. 캐릭터가 생기기 전에 끝난 로드 알림을 놓친 것이다.
+- 수정 전 실제 Title → GameScene 진입에서 장착 UI는 저장 무기와 일치하지만 캐릭터에 무기가 없음을 재현했다.
+
+수정
+- PlayerManager가 초기화될 때 EquipmentDataManager의 현재 상태로 능력치와 실제 무기를 동기화한다.
+- 의존성 주입·재활성화 시 장비 변경 구독을 보장하고, 초기화된 캐릭터는 즉시 현재 장비를 반영한다.
+- 반복 주입이나 활성화에서 이벤트를 중복 구독하지 않고, 같은 장비의 무기가 이미 있으면 재생성하지 않는다.
+- 무기가 없는 장착 상태도 반영해 이전 무기가 남지 않게 한다.
+- 런타임 수정 파일은 Assets/Nytherion/Core/Managers/PlayerManager.cs다. 저장 형식·ID·씬·프리팹 직렬화는 변경하지 않았다.
+
+검증
+- Tools/Nytherion/Scopes/Verify Saved Weapon Restart.
+- 실제 사용자 저장 경로와 분리한 임시 제품명에서 같은 JSON 파일로 플레이를 종료·재시작했다. 각 실행은 새 Root/Data 스코프와 새 캐릭터를 사용한다.
+- 1차: 희귀 ShamanStaff 저장 파일 로드 → 장착 UI·캐릭터 무기 일치 → 탈착 없이 마우스 클릭으로 실제 투사체 생성.
+- 2차: Afterglow로 교체 → SaveLoadManager로 실제 JSON 저장 → 플레이 종료·재시작 → 무기 ID·인스턴스 ID·등급 유지, 탈착 없이 투사체 생성.
+- 3차: 무기 해제 → 실제 JSON 저장 → 플레이 종료·재시작 → 장착 UI와 캐릭터 모두 무기 없음.
+- 반복 주입 후 같은 무기 유지와 구독 1회, 비활성 중 장비 변경 후 재활성화 동기화 및 구독 복구를 확인했다.
+- 플레이·종료 오류 기록은 비어 있으며 제품명·사용자 저장 경로·열린 씬을 복원했다.
+- Unity Editor 컴파일 및 Windows64 비개발 Player 스크립트 컴파일(36개 어셈블리)을 통과했다.
+- 검증 도구의 재시작은 편집 모드 전환이 완료된 뒤 EditorApplication.update에서 시작하도록 했다.
+
+기록
+- output/player-equipment-restore/before-fix.txt: 수정 전 재현.
+- output/scope-lifecycle/WeaponRestore.txt 및 WeaponRestore-errors.txt: 저장·재시작 결과.
+- output/review-player-compile/verification.txt: Player 스크립트 컴파일 결과.
+- Assets/Editor/Data/PlayerEquipmentRestoreVerification.cs: 재장착 없이 복원·발사 및 실제 JSON 검증.
+
+직접 확인
+1. 무기를 착용하고 저장한 뒤 Play 모드를 종료한다.
+2. 타이틀에서 다시 게임을 시작한다.
+3. 인벤토리에서 무기를 탈착하지 않고 캐릭터에 무기가 표시되고 발사되는지 확인한다.
+4. 다른 무기로 바꿔 종료·재시작했을 때 마지막 무기가 나오는지 확인한다.

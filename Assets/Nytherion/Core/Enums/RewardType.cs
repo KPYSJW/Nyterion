@@ -6,6 +6,7 @@ namespace Nytherion.Core.Enums
         Gold,
         Token,
         Item,
-        Relic
+        Relic,
+        RelicUnlock // 유물 지급 없이 뽑기 해금
     }
 }

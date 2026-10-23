@@ -20,8 +20,6 @@ namespace Nytherion.Editor
         public const string AttackPath = "Assets/Prefabs/Gameplay/Combat/VFX/BlazeShadeAttackEffect.prefab";
         private const string AnimationFolder = "Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade/";
         private const string SpriteFolder = "Assets/Nytherion/Art/Combat/VFX/Sprites/";
-        private const string DescriptionKR = "블레이즈셰이드와 수호자의 지팡이의 원형 공격 중심을 마우스 지정 위치로 변경합니다. 블레이즈셰이드는 소환 후 불꽃 고리를 한 번 펼치며 적마다 한 번 타격합니다. 연쇄 점화는 조준 지점을 중심으로 3단계 확산 폭발하며, 첫 단계에만 중심점에서도 1회 추가 폭발합니다.";
-        private const string DescriptionEN = "Centers Blazeshade and Guardian's Staff attacks on the selected cursor position. Blazeshade summons a flame circle for one animation, hitting each enemy once. Chain Ignition spreads in three waves around the aimed position, with one additional explosion at its center during the first wave only.";
 
         static TargetMakerSetup() => EditorApplication.update += Update;
 
@@ -35,8 +33,7 @@ namespace Nytherion.Editor
                 RelicData relic = AssetDatabase.LoadAssetAtPath<RelicData>(RelicPath);
                 if (relic != null)
                 {
-                    relic.description_KR = DescriptionKR;
-                    relic.description_EN = DescriptionEN;
+                    RelicDescriptionSetup.ApplyDescription(relic);
                     EditorUtility.SetDirty(relic);
                     AssetDatabase.SaveAssetIfDirty(relic);
                 }
@@ -97,8 +94,7 @@ namespace Nytherion.Editor
             }
             relic.relicName = "TargetMaker";
             relic.koreanName = "타겟 메이커";
-            relic.description_KR = DescriptionKR;
-            relic.description_EN = DescriptionEN;
+            RelicDescriptionSetup.ApplyDescription(relic);
             relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/TargetMaker.png");
             if (relic.Image == null) throw new InvalidOperationException("TargetMaker 아이콘 누락");
             RelicInfluencePolicy.Normalize(relic);

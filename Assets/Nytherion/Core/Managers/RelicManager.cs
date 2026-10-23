@@ -21,6 +21,14 @@ namespace Nytherion.Core.Managers
         [Header("Database")]
         [SerializeField] private RelicDatabaseSO relicDatabaseSO;
 
+        [Header("분해 보상")]
+        [SerializeField] private RelicDismantleRewards dismantleRewards;
+        private readonly HashSet<string> dismantleBlockIds = new HashSet<string>();
+        private SaveLoadManager saveLoadManager;
+
+        [Inject]
+        public void Construct(SaveLoadManager saveLoadManager) => this.saveLoadManager = saveLoadManager;
+
         [Header("Grid Settings")]
         [SerializeField] private int gridRows = 5;
         [SerializeField] private int gridColumns = 5;
@@ -86,7 +94,7 @@ namespace Nytherion.Core.Managers
 
         public void StartDraggingFromStorage(RelicBlock block)
         {
-            if (block == null || currentlyDraggedBlock != null || !storageBlocks.Contains(block)) return;
+            if (block == null || currentlyDraggedBlock != null || !storageBlocks.Contains(block) || IsStagedForDismantle(block)) return;
             currentlyDraggedBlock = block;
             isDraggingFromGrid = false;
             dragStartRotation = block.RotationState;
@@ -308,6 +316,114 @@ namespace Nytherion.Core.Managers
             return storageBlocks;
         }
 
+        public IEnumerable<RelicSetBonusData> GetAvailableSetBonuses()
+        {
+            if (relicDatabaseSO == null || relicDatabaseSO.allRelics == null)
+                return Enumerable.Empty<RelicSetBonusData>();
+
+            return relicDatabaseSO.allRelics
+                .Where(relic => relic != null && relic.IsRuntimeAvailable && relic.synergySetBonusData != null)
+                .Select(relic => relic.synergySetBonusData)
+                .Distinct()
+                .OrderBy(set => set.synergySeriesId);
+        }
+
+        #region 유물 분해
+
+        public bool IsStagedForDismantle(RelicBlock block) => block != null && dismantleBlockIds.Contains(block.BlockId);
+
+        public List<RelicBlock> GetDismantleBlocks() => storageBlocks.Where(IsStagedForDismantle).ToList();
+
+        public bool StageForDismantle(RelicBlock block)
+        {
+            if (!IsInitialized || dismantleRewards == null || currentlyDraggedBlock != null ||
+                block?.SourceData == null || !block.SourceData.IsRuntimeAvailable ||
+                !storageBlocks.Contains(block) || placedBlockPositions.ContainsKey(block.BlockId) ||
+                !dismantleBlockIds.Add(block.BlockId)) return false;
+
+            // 원본 목록에 남겨 중복 획득을 막고 기존 저장 형식을 유지한다.
+            OnRelicStateChanged?.Invoke();
+            return true;
+        }
+
+        public int StageForDismantleUpToRarity(Rarity maxRarity)
+        {
+            if (!IsInitialized || dismantleRewards == null || currentlyDraggedBlock != null ||
+                maxRarity < Rarity.Common || maxRarity > Rarity.Legendary) return 0;
+            int added = 0;
+            foreach (RelicBlock block in storageBlocks)
+            {
+                if (block?.SourceData != null && block.SourceData.IsRuntimeAvailable &&
+                    block.SourceData.rarity >= Rarity.Common && block.SourceData.rarity <= maxRarity &&
+                    !placedBlockPositions.ContainsKey(block.BlockId) && dismantleBlockIds.Add(block.BlockId)) added++;
+            }
+            if (added > 0) OnRelicStateChanged?.Invoke();
+            return added;
+        }
+
+        public bool UnstageForDismantle(RelicBlock block)
+        {
+            if (block == null || !dismantleBlockIds.Remove(block.BlockId)) return false;
+            OnRelicStateChanged?.Invoke();
+            return true;
+        }
+
+        public void ResetDismantle()
+        {
+            if (dismantleBlockIds.Count == 0) return;
+            dismantleBlockIds.Clear();
+            OnRelicStateChanged?.Invoke();
+        }
+
+        public long GetDismantleGold()
+        {
+            long total = 0;
+            if (dismantleRewards == null) return total;
+            foreach (RelicBlock block in GetDismantleBlocks())
+                if (block.SourceData != null) total += dismantleRewards.GetGold(block.SourceData.rarity);
+            return total;
+        }
+
+        public bool DismantleRelics(CurrencyDataManager currency)
+        {
+            if (!IsInitialized || dismantleRewards == null || currentlyDraggedBlock != null ||
+                currency == null || !currency.IsInitialized) return false;
+            List<RelicBlock> blocks = GetDismantleBlocks();
+            if (blocks.Count == 0 || blocks.Any(block => block.SourceData == null ||
+                placedBlockPositions.ContainsKey(block.BlockId))) return false;
+            long reward = GetDismantleGold();
+            if (reward > int.MaxValue - (long)currency.GetGold()) return false;
+
+            storageBlocks.RemoveAll(IsStagedForDismantle);
+            dismantleBlockIds.Clear();
+            // 통화 변경 즉시 자동 저장되므로 먼저 보유 목록에서 제거한다.
+            if (reward > 0) currency.AddUnmodifiedCurrency(CurrencyType.Gold, (int)reward);
+            OnRelicStateChanged?.Invoke();
+            saveLoadManager?.SaveGame();
+            return true;
+        }
+
+        #endregion
+
+        /// <summary>보관함 전체를 높은 등급, 표시 이름순으로 정렬한다. 장착 상태와 유물 인스턴스는 유지한다.</summary>
+        public bool SortStorageBlocks()
+        {
+            // 드래그 중에는 원래 슬롯과 드롭 대상의 순번을 유지한다.
+            if (storageBlocks == null || currentlyDraggedBlock != null) return false;
+
+            List<RelicBlock> sorted = storageBlocks
+                .OrderByDescending(block => block?.SourceData != null ? (int)block.SourceData.rarity : -1)
+                .ThenBy(block => block?.SourceData != null ? block.SourceData.DisplayName : string.Empty,
+                    StringComparer.CurrentCultureIgnoreCase)
+                .ToList();
+            if (storageBlocks.SequenceEqual(sorted)) return true;
+
+            storageBlocks.Clear();
+            storageBlocks.AddRange(sorted);
+            OnRelicStateChanged?.Invoke();
+            return true;
+        }
+
         public IEnumerable<KeyValuePair<string, Vector2Int>> GetPlacedBlocks()
         {
             return placedBlockPositions;
@@ -400,6 +516,8 @@ namespace Nytherion.Core.Managers
 
         private void LoadDataFromSave(RelicGridState state)
         {
+            dismantleBlockIds.Clear();
+            currentlyDraggedBlock = null;
             storageBlocks.Clear();
             logicGrid.Clear();
             placedBlockPositions.Clear();
@@ -412,7 +530,9 @@ namespace Nytherion.Core.Managers
 
             foreach (var savedBlock in state.placedBlocks)
             {
-                if (relicDatabase.TryGetValue(savedBlock.relicId, out RelicData originalData))
+                // 이름 변경 전 저장된 마력 충전기도 현재 유물로 복원합니다.
+                string relicId = savedBlock.relicId == "ChargeRelic" ? "ManaCharger" : savedBlock.relicId;
+                if (relicDatabase.TryGetValue(relicId, out RelicData originalData))
                 {
                     var instanceData = Instantiate(originalData);
                     var newBlock = new RelicBlock(instanceData);

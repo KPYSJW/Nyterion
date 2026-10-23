@@ -1,4 +1,3 @@
-using Nytherion.Core.Interfaces;
 using Nytherion.Core.Managers;
 using UnityEngine;
 using VContainer;
@@ -26,31 +25,21 @@ namespace Nytherion.Core.Systems
 
         protected override void Awake()
         {
-            if (Instance != null)
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
 
             Instance = this;
-            //DontDestroyOnLoad(gameObject);
-
+            // BootSystem 내의 Awake 순서가 달라도 VContainer가 Root 빌드 완료 후 재시도한다.
+            parentReference = ParentReference.Create<RootLifetimeScope>();
             base.Awake();
         }
 
-        private bool hasConfigured = false;
-
         protected override void Configure(IContainerBuilder builder)
         {
-            if (hasConfigured)
-            {
-                Debug.LogWarning($"[DataLifetimeScope] Configure가 이미 호출되었습니다. 중복 호출을 건너뜁니다.");
-                return;
-            }
-
             InstallDataManagers(builder);
-            RegisterISaveableEntities(builder);
-            hasConfigured = true;
         }
 
         private void InstallDataManagers(IContainerBuilder builder)
@@ -68,10 +57,7 @@ namespace Nytherion.Core.Systems
                 builder.RegisterComponentInNewPrefab(currencyDataManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
-                    .AsSelf()
-                    .As<ISaveable>()
-                    .As<IDataManager>()
-                    .As<ICurrencyDataNotifier>();
+                    .AsSelf();
             }
 
             if (inventoryDataManagerPrefab != null)
@@ -79,10 +65,7 @@ namespace Nytherion.Core.Systems
                 builder.RegisterComponentInNewPrefab(inventoryDataManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
-                    .AsSelf()
-                    .As<ISaveable>()
-                    .As<IDataManager>()
-                    .As<IInventoryDataNotifier>();
+                    .AsSelf();
             }
 
             if (relicManagerPrefab != null)
@@ -90,8 +73,7 @@ namespace Nytherion.Core.Systems
                 builder.RegisterComponentInNewPrefab(relicManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
-                    .AsSelf()
-                    .As<ISaveable>();
+                    .AsSelf();
             }
 
             if (equipmentDataManagerPrefab != null)
@@ -99,8 +81,7 @@ namespace Nytherion.Core.Systems
                 builder.RegisterComponentInNewPrefab(equipmentDataManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
-                    .AsSelf()
-                    .As<ISaveable>();
+                    .AsSelf();
             }
 
             if (shopManagerPrefab != null)
@@ -108,8 +89,7 @@ namespace Nytherion.Core.Systems
                 builder.RegisterComponentInNewPrefab(shopManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
-                    .AsSelf()
-                    .As<ISaveable>();
+                    .AsSelf();
             }
 
             if (stageManagerPrefab != null)
@@ -117,8 +97,7 @@ namespace Nytherion.Core.Systems
                 builder.RegisterComponentInNewPrefab(stageManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
-                    .AsSelf()
-                    .As<ISaveable>();
+                    .AsSelf();
             }
 
             if (skillDataManagerPrefab != null)
@@ -126,8 +105,7 @@ namespace Nytherion.Core.Systems
                 builder.RegisterComponentInNewPrefab(skillDataManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
-                    .AsSelf()
-                    .As<ISaveable>();
+                    .AsSelf();
             }
 
             if (progressionManagerPrefab != null)
@@ -135,22 +113,8 @@ namespace Nytherion.Core.Systems
                 builder.RegisterComponentInNewPrefab(progressionManagerPrefab, Lifetime.Singleton)
                     .UnderTransform(this.transform)
                     .AsImplementedInterfaces()
-                    .AsSelf()
-                    .As<ISaveable>();
+                    .AsSelf();
             }
-        }
-
-        private bool hasRegisteredISaveableCollection = false;
-
-        private void RegisterISaveableEntities(IContainerBuilder builder)
-        {
-            // 인스턴스별 중복 등록 방지
-            if (hasRegisteredISaveableCollection)
-            {
-                return;
-            }
-
-            hasRegisteredISaveableCollection = true;
         }
 
         /// <summary>
@@ -163,15 +127,26 @@ namespace Nytherion.Core.Systems
 
             try
             {
-                return container.TryResolve<SaveLoadManager>(out _) &&
-                       container.TryResolve<CurrencyDataManager>(out _) &&
-                       container.TryResolve<InventoryDataManager>(out _) &&
-                       container.TryResolve<ProgressionManager>(out _);
+                return container.TryResolve<SaveLoadManager>(out var saveManager) && saveManager.IsInitialized &&
+                       IsManagerInitialized<CurrencyDataManager>() &&
+                       IsManagerInitialized<InventoryDataManager>() &&
+                       IsManagerInitialized<RelicManager>() &&
+                       IsManagerInitialized<EquipmentDataManager>() &&
+                       IsManagerInitialized<ShopManager>() &&
+                       IsManagerInitialized<StageManager>() &&
+                       IsManagerInitialized<SkillDataManager>() &&
+                       IsManagerInitialized<ProgressionManager>() &&
+                       saveManager.HasLoadedData && !saveManager.IsSaveBlocked;
             }
             catch
             {
                 return false;
             }
+        }
+
+        private bool IsManagerInitialized<T>() where T : BaseManager
+        {
+            return Container.TryResolve<T>(out var manager) && manager.IsInitialized;
         }
 
         /// <summary>

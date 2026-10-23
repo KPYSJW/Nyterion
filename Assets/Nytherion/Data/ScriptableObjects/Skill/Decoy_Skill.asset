@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58000d53fa0812b40aeb7e74b1a85518, type: 3}
+  m_Name: Decoy_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_decoy
+  isDisabled: 0
+  skillType: 16
+  skillName: "\ud5c8\uc218\uc544\ube44"
+  description: "\uc8fc\ubcc0 \uc801\uc744 \uc720\uc778\ud558\ub294 \ud5c8\uc218\uc544\ube44\ub97c \uc18c\ud658\ud569\ub2c8\ub2e4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 45
+  manaCost: 0
+  damage: 0
+  range: 2.5
+  icon: {fileID: 21300000, guid: bef9346cfd8f0d3428b52bb1c8d0617e, type: 3}
+  skillPrefab: {fileID: 3326770841393440832, guid: faefaad7dab2bae42a544d23b9247f7d, type: 3}
+  unlockMilestoneID: 
+  spawnDistance: 1
+  collisionRadius: 0.22
+  tauntRadius: 2.5
+  blockingLayers:
+    serializedVersion: 2
+    m_Bits: 2560
+  baseDurability: 100
+  durabilityPerLevel: 25
+  baseLifetime: 8
+  lifetimePerLevel: 1
+  dummyPrefab: {fileID: 4859719315675422033, guid: 580ebb5cefd27814a8ca7f6abe84b70a, type: 3}
+  summonFrames:
+  - {fileID: -1722056694, guid: 1c3f4c136415d984097357642c154743, type: 3}
+  - {fileID: -79298692, guid: 1c3f4c136415d984097357642c154743, type: 3}
+  - {fileID: 126183433, guid: 1c3f4c136415d984097357642c154743, type: 3}
+  - {fileID: -488048773, guid: 1c3f4c136415d984097357642c154743, type: 3}
+  - {fileID: 309915486, guid: 1c3f4c136415d984097357642c154743, type: 3}
+  framesPerSecond: 10
+  dummySprite: {fileID: 21300000, guid: e3b96c9705004014dab441705f9f1c80, type: 3}

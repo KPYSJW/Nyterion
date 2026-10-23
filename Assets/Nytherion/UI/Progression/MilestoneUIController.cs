@@ -13,7 +13,7 @@ using UnityEngine.Localization.Settings;
 
 namespace Nytherion.UI.Progression
 {
-    public class MilestoneUIController : UIPanelBase
+    public class MilestoneUIController : UIPanelBase, IInitializable
     {
         [Header("Data & Prefabs")]
         [Tooltip("복사할 MilestoneSlotUI 프리팹")]
@@ -34,6 +34,8 @@ namespace Nytherion.UI.Progression
 
         private List<MilestoneSlotUI> spawnedSlots = new List<MilestoneSlotUI>();
         private bool isLocalizationSubscribed;
+        private bool isInitialized;
+        public bool IsInitialized => isInitialized;
         [Inject]
         public void Construct(
             IObjectResolver container,
@@ -68,11 +70,21 @@ namespace Nytherion.UI.Progression
 
         private void Start()
         {
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            if (isInitialized) return;
             if (container == null)
             {
                 Debug.LogError($"[{gameObject.name}] IObjectResolver(container)가 주입되지 않았습니다!");
                 return;
             }
+
+            isInitialized = true;
+            // 컨테이너 초기화에서 패널을 닫아 투명한 UI가 전투 입력을 가로채지 않게 한다.
+            if (mainPanel != null) mainPanel.SetActive(false);
 
             RefreshTitle();
             LocalizationText.LanguageChanged += OnTemporaryLanguageChanged;
@@ -109,9 +121,6 @@ namespace Nytherion.UI.Progression
                     spawnedSlots.Add(newSlot);
                 }
             }
-
-            // 시작 시 UI 패널 숨김 처리 (에디터에서 꺼져있을 수 있으므로 강제 동기화)
-            if (mainPanel != null) mainPanel.SetActive(false);
 
             if (InputManager.Instance != null) InputManager.Instance.onToggleProgressionUI += TogglePanel;
 

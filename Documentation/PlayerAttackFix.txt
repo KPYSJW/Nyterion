@@ -1,0 +1,37 @@
+무기 장착 후 공격 입력 미전달 수정 (2026-10-16)
+
+확인한 원인
+- 기존 UI 초기화 책임 정리에서 GameSceneUIManager 등록을 제거한 뒤, 마일스톤·스킬 컨트롤러의 생성 경로가 빠져 있었다.
+- 마일스톤 패널은 씬에서 활성 상태이고 CanvasGroup.alpha=0, blocksRaycasts=true였다. 컨트롤러가 생성되지 않아 투명한 패널이 화면의 클릭을 계속 가로챘다.
+- 실제 씬의 화면 중앙과 주변 9개 지점을 검사했을 때 모두 ProgressionPanel/Scroll View/Viewport가 클릭을 가로채는 현상을 재현했다.
+- 별도로 PlayerCombat은 Start 이후 의존성을 주입하거나 비활성화 후 다시 활성화하면 공격 이벤트가 연결되지 않는 문제도 있었다.
+
+수정
+- MilestoneUIController와 SkillUIController에 IInitializable을 구현해 VContainer가 씬 진입 시 생성하고 초기화한다.
+- 마일스톤 패널을 초기화 시 닫고, Start와 컨테이너 초기화가 겹쳐도 슬롯 생성·입력 이벤트 구독을 중복 실행하지 않는다.
+- PlayerCombat은 의존성 주입과 OnEnable에서 공격 누름·해제 이벤트를 연결하고 OnDisable에서 해제한다. 반복 주입 시 이전 구독을 먼저 정리한다.
+- 변경한 런타임 파일은 위 UI 컨트롤러 2개와 PlayerCombat이다. 씬·프리팹의 직렬화 참조는 변경하지 않았다.
+
+검증
+- 공격 입력 수명 검증 3개 그룹 통과: 늦은 주입, 반복 주입, 비활성화·재활성화, 입력 매니저 교체, 종료 정리.
+- 실제 GameScene에서 ShamanStaff·Afterglow 장착 후 가상 마우스 클릭 → Input System 공격 액션 → PlayerCombat → 실제 투사체 생성을 확인했다.
+- 마일스톤·스킬 UI 자동 초기화와 초기 숨김, 반복 초기화 시 슬롯·입력 구독 중복 방지를 확인했다.
+- 마일스톤·스킬 창의 토글 이벤트와 인벤토리 열기·닫기를 실행해, 창이 열려 있을 때 공격이 차단되고 닫은 후 발사되는 것을 확인했다.
+- GameScene 직접 진입과 Title → GameScene → Title → GameScene 재진입에서 같은 검증을 통과했다. 각 경로의 플레이·종료 오류 기록은 비어 있다.
+- 플레이 검증은 사용자 저장 경로와 분리해 실행하고 제품명·저장 경로·열린 씬을 복원했다.
+- Unity Editor 컴파일 및 Windows64 비개발 Player 스크립트 컴파일(36개 어셈블리)을 통과했다. 전체 Player 빌드는 실행하지 않았다.
+
+검증 기록
+- output/player-attack/verification.txt
+- output/player-attack/equipped-weapon-verification.txt
+- output/player-attack/before-fix.txt 및 before-ui-fix.txt: 수정 전 재현 기록.
+- output/scope-lifecycle/Attack.txt 및 Title.txt, 각 *-errors.txt.
+- output/review-player-compile/verification.txt.
+- 메뉴: Tools/Nytherion/Review/Verify Attack Input Lifecycle.
+- 메뉴: Tools/Nytherion/Scopes/Verify Equipped Weapon Attacks 및 Verify Title and Reentry.
+
+직접 확인
+1. 컴파일이 끝난 뒤 Play 모드를 다시 시작한다.
+2. 원거리 무기를 장착하고 인벤토리를 닫은 다음, 게임 화면의 빈 곳을 왼쪽 클릭한다.
+3. 다른 원거리 무기로 교체한 뒤 발사를 확인한다.
+4. 마일스톤·스킬·인벤토리 창을 열었다 닫은 뒤에도 발사가 가능한지 확인한다.

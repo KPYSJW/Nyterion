@@ -63,16 +63,12 @@ MonoBehaviour:
     weight: 100
   - item: {fileID: 11400000, guid: bdacc91078c24fd4fb0e9bfa222837dd, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: 1bf892a4c4587a0408abbf6cc8910fc3, type: 2}
-    weight: 100
-  - item: {fileID: 11400000, guid: 7b73db13d9cb690489c619d5b84a81f7, type: 2}
-    weight: 100
   - item: {fileID: 11400000, guid: 69b412b3948dc144baca8f9f3f0aca5c, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: 21915b07d256e544e9113b34e4a76341, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: 3cf25cce484487d4eaab681476a246ce, type: 2}
-    weight: 0
+    weight: 100
   - item: {fileID: 11400000, guid: 62b68285693a077438efec2c29e2e999, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: ea8fecb2e5e8414a9f472edee905eabe, type: 2}

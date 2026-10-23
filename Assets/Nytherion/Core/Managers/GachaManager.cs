@@ -31,16 +31,19 @@ namespace Nytherion.Core.Managers
         private CurrencyDataManager currencyDataManager;
         private InventoryDataManager inventoryDataManager;
         private RelicManager relicManager;
+        private IProgressionManager progressionManager;
 
         [Inject]
         public void Construct(
             CurrencyDataManager currencyDataManager,
             InventoryDataManager inventoryDataManager,
-            RelicManager relicManager)
+            RelicManager relicManager,
+            IProgressionManager progressionManager)
         {
             this.currencyDataManager = currencyDataManager;
             this.inventoryDataManager = inventoryDataManager;
             this.relicManager = relicManager;
+            this.progressionManager = progressionManager;
         }
 
         public override void Initialize()
@@ -171,8 +174,13 @@ namespace Nytherion.Core.Managers
             }
         }
 
-        private static bool IsRuntimeAvailable(ScriptableObject item)
+        private bool IsRuntimeAvailable(ScriptableObject item)
         {
+            if (item is Nytherion.Data.ScriptableObjects.Skill.SkillData skill)
+            {
+                return skill.IsRuntimeAvailable;
+            }
+
             if (item is WeaponData weapon)
             {
                 return weapon.IsRuntimeAvailable;
@@ -180,7 +188,7 @@ namespace Nytherion.Core.Managers
 
             if (item is RelicData relic)
             {
-                return relic.IsRuntimeAvailable;
+                return progressionManager != null && progressionManager.IsRelicUnlocked(relic);
             }
 
             return item != null;

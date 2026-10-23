@@ -81,6 +81,8 @@ namespace Nytherion.Core.Managers
                 {
                     if (col.TryGetComponent(out IInteractable interactableObject))
                     {
+                        if (interactableObject is IConditionalInteractable conditional &&
+                            !conditional.CanInteract(playerTransform)) continue;
                         closestDistanceSqr = distanceSqr;
                         closestInteractable = interactableObject;
                     }

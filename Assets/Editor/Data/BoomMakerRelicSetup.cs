@@ -506,8 +506,7 @@ namespace Nytherion.Editor
             relic.name = "BoomMaker";
             relic.relicName = "BoomMaker";
             relic.koreanName = "BoomMaker";
-            relic.description_KR = "BoomMaker를 소환합니다. BoomMaker는 적을 발견하면 회전하며 폭발 로봇을 내보내고, 폭발 로봇은 적에게 달려가 충돌 시 범위 피해를 줍니다.";
-            relic.description_EN = "Summons BoomMaker. When it finds an enemy, it spins to deploy an explosive robot that runs into the enemy and deals area damage.";
+            RelicDescriptionSetup.ApplyDescription(relic);
             relic.Image = icon;
             relic.rarity = Rarity.Epic;
             relic.level = 1;

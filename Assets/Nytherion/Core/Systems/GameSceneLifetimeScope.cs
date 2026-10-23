@@ -8,6 +8,7 @@ using Nytherion.GamePlay.Characters.Player;
 using Nytherion.GamePlay.Dungeon;
 using Nytherion.GamePlay.Relics;
 using Nytherion.UI.Controllers;
+using Nytherion.UI.Components;
 using Nytherion.UI.RelicBoard;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Map;
@@ -15,7 +16,6 @@ using Nytherion.UI.Presenters;
 using Nytherion.UI.Progression;
 using Nytherion.UI.Skill;
 using Nytherion.UI.Test;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -49,8 +49,6 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private PlayerManager playerManagerPrefab;
     [SerializeField] private MenuManager menuManagerPrefab;
     [SerializeField] private ItemUsageManager itemUsageManagerPrefab;
-    [SerializeField] private InventoryManager inventoryManagerPrefab;
-    [SerializeField] private CurrencyDataManager currencyManagerPrefab;
 
     [Header("Debug Systems")]
     [SerializeField] private RelicSystemDebugger relicSystemDebuggerPrefab;
@@ -59,33 +57,21 @@ public class GameSceneLifetimeScope : LifetimeScope
     [SerializeField] private FollowCamera followCameraPrefab;
     [SerializeField] private SettingsManager settingsManagerPrefab;
     [SerializeField] private InventoryPresenter inventoryPresenterPrefab;
-    [SerializeField] private GameSceneUIManager gameSceneUIManager;
     [SerializeField] private GlobalUIManager globalUIManagerPrefab;
 
     [Header("Test Progression")]
     [SerializeField] private ProgressionDebugUI progressionDebugUI;
     [SerializeField] private Nytherion.UI.Test.DebugPanelUI debugPanelUI;
 
-    protected DataLifetimeScope dataLifetimeScope;
-    protected bool isDataManagersReady = false;
-    protected bool waitForDataManagers = true;
-    protected float maxWaitTime = 10f;
-
     protected override void Awake()
     {
+        // Root → Data → GameScene의 컨테이너 상속으로 영속 매니저를 공유한다.
+        parentReference = ParentReference.Create<DataLifetimeScope>();
         base.Awake();
-
-        if (waitForDataManagers)
-        {
-            StartCoroutine(WaitForDataManagers());
-        }
     }
 
     protected override void Configure(IContainerBuilder builder)
     {
-        // 부모 scope의 의존성들을 현재 scope에서 사용할 수 있도록 등록
-        RegisterParentScopeDependencies(builder);
-
         // GameSceneUIRefs를 하이라키에서 자동으로 찾아서 등록 (UI 컨트롤러들이 필요로 함)
         RegisterUIReferences(builder);
 
@@ -104,106 +90,6 @@ public class GameSceneLifetimeScope : LifetimeScope
         }
     }
 
-    /// <summary>
-    /// 데이터 매니저들이 준비될 때까지 대기
-    /// </summary>
-    private IEnumerator WaitForDataManagers()
-    {
-        float elapsedTime = 0f;
-
-        while (elapsedTime < maxWaitTime)
-        {
-            dataLifetimeScope = DataLifetimeScope.Instance;
-
-            if (dataLifetimeScope != null && dataLifetimeScope.IsDataManagersReady())
-            {
-                isDataManagersReady = true;
-                OnDataManagersReady();
-                yield break;
-            }
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-    }
-
-    /// <summary>
-    /// 데이터 매니저들이 준비되었을 때 호출되는 콜백
-    /// </summary>
-    protected virtual void OnDataManagersReady()
-    {
-        // GameScene UI 초기화
-        InitializeGameSceneUI();
-    }
-
-    private void RegisterParentScopeDependencies(IContainerBuilder builder)
-    {
-        // RootLifetimeScope에서 기본 매니저들 가져오기
-        if (Parent != null)
-        {
-            // InputManager
-            if (Parent.Container.TryResolve<InputManager>(out var inputManager))
-            {
-                builder.RegisterInstance(inputManager);
-            }
-
-            // EventManager
-            if (Parent.Container.TryResolve<EventManager>(out var eventManager))
-            {
-                builder.RegisterInstance(eventManager);
-            }
-
-            // AudioManager
-            if (Parent.Container.TryResolve<AudioManager>(out var audioManager))
-            {
-                builder.RegisterInstance(audioManager);
-            }
-
-            // SceneTransitionManager
-            if (Parent.Container.TryResolve<SceneTransitionManager>(out var sceneTransitionManager))
-            {
-                builder.RegisterInstance(sceneTransitionManager);
-            }
-
-            if (Parent.Container.TryResolve<ILocalizationService>(out var localizationService))
-            {
-                builder.RegisterInstance(localizationService);
-            }
-        }
-
-        // DataLifetimeScope에서 데이터 매니저들 가져오기
-        dataLifetimeScope = DataLifetimeScope.Instance;
-        if (dataLifetimeScope != null && dataLifetimeScope.Container != null && dataLifetimeScope.IsDataManagersReady())
-        {
-            // SaveLoadManager를 GameSceneLifetimeScope에서도 접근 가능하도록 등록
-            RegisterDataManagerIfExists<SaveLoadManager>(builder);
-            RegisterDataManagerIfExists<CurrencyDataManager>(builder);
-            RegisterDataManagerIfExists<InventoryDataManager>(builder);
-            RegisterDataManagerIfExists<RelicManager>(builder);
-            RegisterDataManagerIfExists<EquipmentDataManager>(builder);
-            RegisterDataManagerIfExists<ShopManager>(builder);
-            RegisterDataManagerIfExists<StageManager>(builder);
-            RegisterDataManagerIfExists<SkillDataManager>(builder);
-            RegisterDataManagerIfExists<ProgressionManager>(builder);
-        }
-    }
-
-    /// <summary>
-    /// 데이터 매니저가 존재하면 현재 컨테이너에 등록
-    /// </summary>
-    private void RegisterDataManagerIfExists<T>(IContainerBuilder builder) where T : class
-    {
-        if (dataLifetimeScope.Container.TryResolve<T>(out var manager))
-        {
-            builder.RegisterInstance(manager).AsImplementedInterfaces().AsSelf();
-        }
-        else
-        {
-            Debug.LogWarning($"[GameSceneLifetimeScope] {typeof(T).Name}를 찾을 수 없습니다");
-        }
-    }
-
-
     private void RegisterUIReferences(IContainerBuilder builder)
     {
         builder.RegisterComponentInHierarchy<GameSceneUIRefs>()
@@ -214,8 +100,7 @@ public class GameSceneLifetimeScope : LifetimeScope
         {
             builder.RegisterComponentInNewPrefab(quickSlotManagerPrefab, Lifetime.Singleton)
                    .AsSelf()
-                   .AsImplementedInterfaces()
-                   .As<ISaveable>();
+                   .AsImplementedInterfaces();
         }
         else
         {
@@ -232,10 +117,6 @@ public class GameSceneLifetimeScope : LifetimeScope
         builder.RegisterComponentInNewPrefab(interactionManagerPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
                 .AsSelf();
-
-        /*builder.RegisterComponentInNewPrefab(stageManagerPrefab, Lifetime.Singleton)
-                .AsImplementedInterfaces()
-                .AsSelf();*/
 
         builder.RegisterComponentInHierarchy<WorldmapController>();
         builder.RegisterComponentInHierarchy<MinimapTileGenerator>();
@@ -256,11 +137,14 @@ public class GameSceneLifetimeScope : LifetimeScope
 
         InstallUIControllers(builder);
 
-        RegisterISaveableEntities(builder);
     }
 
     private void InstallGameSceneUI(IContainerBuilder builder)
     {
+        builder.RegisterComponentInHierarchy<TooltipPanel>()
+                .AsImplementedInterfaces()
+                .AsSelf();
+
         builder.RegisterComponentInNewPrefab(inventoryUIPrefab, Lifetime.Singleton)
                 .AsImplementedInterfaces()
                 .AsSelf();
@@ -282,11 +166,6 @@ public class GameSceneLifetimeScope : LifetimeScope
             builder.RegisterComponentInNewPrefab(relicUIControllerPrefab, Lifetime.Singleton)
                     .AsImplementedInterfaces()
                     .AsSelf();
-        }
-
-        if (gameSceneUIManager != null)
-        {
-            builder.RegisterComponent(gameSceneUIManager).AsImplementedInterfaces().AsSelf();
         }
 
         if (globalUIManagerPrefab != null)
@@ -438,20 +317,6 @@ public class GameSceneLifetimeScope : LifetimeScope
                     .AsSelf();
         }
 
-        if (inventoryManagerPrefab != null)
-        {
-            builder.RegisterComponentInNewPrefab(inventoryManagerPrefab, Lifetime.Singleton)
-                    .AsImplementedInterfaces()
-                    .AsSelf();
-        }
-
-        if (currencyManagerPrefab != null)
-        {
-            builder.RegisterComponentInNewPrefab(currencyManagerPrefab, Lifetime.Singleton)
-                    .AsImplementedInterfaces()
-                    .AsSelf();
-        }
-
     }
 
 
@@ -480,15 +345,6 @@ public class GameSceneLifetimeScope : LifetimeScope
             .AsSelf();
         }
 
-    }
-
-    private void RegisterISaveableEntities(IContainerBuilder builder)
-    {
-        // 모든 ISaveable 엔티티들을 개별적으로 등록하여 SaveLoadManager가 찾을 수 있도록 함
-        // 데이터 매니저들은 이미 .As<ISaveable>()로 등록되어 있음
-
-        // QuickSlotManager도 ISaveable로 추가 등록
-        builder.Register<ISaveable>(resolver => resolver.Resolve<QuickSlotManager>(), Lifetime.Singleton);
     }
 
     private void RegisterRelicSystemDebugger(IContainerBuilder builder)
@@ -521,15 +377,11 @@ public class GameSceneLifetimeScope : LifetimeScope
         builder.Register<PlayerSkillManager>(resolver => resolver.Resolve<PlayerManager>().GetComponent<PlayerSkillManager>(), Lifetime.Singleton);
         builder.Register<PlayerController>(resolver => resolver.Resolve<PlayerManager>().GetComponent<PlayerController>(), Lifetime.Singleton);
     }
-    private void InitializeGameSceneUI()
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void Start()
     {
-        // 아키텍처 검증 헬퍼 등록 (디버그 빌드에서만)
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
         RegisterArchitectureValidationHelper();
-#endif
     }
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
     private void RegisterArchitectureValidationHelper()
     {
         // 씬에서 ArchitectureValidationHelper 찾기

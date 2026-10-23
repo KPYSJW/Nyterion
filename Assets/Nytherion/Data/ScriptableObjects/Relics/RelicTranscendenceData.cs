@@ -27,11 +27,17 @@ namespace Nytherion.Data.ScriptableObjects.Relics
     [CreateAssetMenu(fileName = "NewRelicTranscendence", menuName = "Data/Relic Transcendence")]
     public class RelicTranscendenceData : ScriptableObject
     {
+        public const string RequirementLinkPrefix = "relic-set-";
+        private const string ActiveEffectColorHex = "#FFFFFF";
+        private const string InactiveEffectColorHex = "#808080";
+
         [Header("UI 표시")]
         public string effectName_KR;
         public string effectName_EN;
         [Tooltip("초월 효과 현황에 표시할 아이콘")]
         public Sprite statusIcon;
+        [Tooltip("초월 효과 현황과 툴팁 제목에 사용할 이름 색상")]
+        public Color nameColor = Color.white;
 
         [Header("툴팁 배지")]
         [Tooltip("유물 툴팁의 초월 배지 배경색")]
@@ -99,42 +105,48 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                     $"[{requirement.setBonusData.DisplayName} ({requirement.setBonusData.GetEquippedCount(relicManager)})]"));
         }
 
-        public string BuildTooltipText(RelicManager relicManager)
+        public string BuildTooltipText(RelicManager relicManager, bool includeRequirementLinks = false)
         {
             StringBuilder builder = new StringBuilder();
-            if (!string.IsNullOrEmpty(Description))
+            bool isActive = IsActive(relicManager);
+            string effectColor = isActive ? ActiveEffectColorHex : InactiveEffectColorHex;
+            List<string> effectDescriptions = !string.IsNullOrEmpty(Description)
+                ? new List<string> { Description }
+                : effectModules == null
+                    ? new List<string>()
+                    : effectModules.Where(module => module != null && !string.IsNullOrEmpty(module.Description))
+                        .Select(module => module.Description).ToList();
+
+            foreach (string effectDescription in effectDescriptions)
             {
-                builder.AppendLine(Description);
-                builder.AppendLine();
+                builder.Append("<color=").Append(effectColor).Append('>');
+                builder.Append(effectDescription).AppendLine("</color>");
             }
 
             if (requirements != null)
             {
-                foreach (RelicTranscendenceRequirement requirement in requirements)
+                if (builder.Length > 0) builder.AppendLine();
+                for (int i = 0; i < requirements.Count; i++)
                 {
+                    RelicTranscendenceRequirement requirement = requirements[i];
                     if (requirement?.setBonusData == null) continue;
 
                     int currentCount = requirement.setBonusData.GetEquippedCount(relicManager);
                     int requiredCount = Mathf.Max(1, requirement.requiredEquippedCount);
-                    builder.Append(requirement.setBonusData.DisplayName)
+                    if (includeRequirementLinks)
+                        builder.Append("<link=\"").Append(RequirementLinkPrefix).Append(i).Append("\">");
+                    builder.Append("<color=").Append(effectColor).Append('>')
+                        .Append(requirement.setBonusData.DisplayName)
                         .Append(": ")
                         .Append(currentCount)
                         .Append('/')
-                        .AppendLine(requiredCount.ToString());
+                        .Append(requiredCount)
+                        .Append("</color>");
+                    if (includeRequirementLinks) builder.Append("</link>");
+                    builder.AppendLine();
                 }
             }
 
-            builder.Append(IsActive(relicManager)
-                ? LocalizationText.Get(
-                    LocalizationTables.UI,
-                    "ui.relic.transcendence.active",
-                    "\n활성화됨",
-                    "\nActive")
-                : LocalizationText.Get(
-                    LocalizationTables.UI,
-                    "ui.relic.transcendence.inactive",
-                    "\n활성 조건 미달",
-                    "\nActivation requirements not met"));
             return builder.ToString().TrimEnd();
         }
 

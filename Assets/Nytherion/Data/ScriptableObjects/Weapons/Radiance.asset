@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: Radiance
+  m_EditorClassIdentifier: 
+  uniqueID: weapon_saints_staff
+  itemName_KR: "\uD718\uAD11"
+  itemName_EN: Radiance
+  icon: {fileID: 1503601313, guid: 0d9595b110364ad4895d4a5315701f70, type: 3}
+  description_KR: "\uC801\uC911 \uC2DC 15% \uD655\uB960\uB85C \uC544\uAD70 \uCCB4\uB825
+    2 \uD68C\uBCF5."
+  description_EN: Hits have a 15% chance to heal allies for 2 health.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 150
+  equipmentType: 0
+  traits: 06000000
+  statModifiers: []
+  useDiagonalIcon: 1
+  iconRotationOffset: 0
+  iconSlotScale: 1.5
+  inventoryIconScale: 1
+  inventoryIconSizeMultiplier: 1
+  damage: 20
+  range: 7
+  cooldown: 0.8
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: c3e562dc8fd1a0942b9bbcc6cba5cc59, type: 3}
+  firePointOffset: {x: -0.2, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: 0.35, y: -0.15, z: 0}
+  visualScale: 0.7
+  sortingOrderOffset: 5
+  useFixedFacingPose: 0
+  useStaffRecoil: 1
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 5657893911088244083, guid: e0728d80fb6048b4ba1dd0509236b339, type: 3}
+  chargeEffectPrefab: {fileID: 6645847367225884104, guid: 9e4424931cd841f392d22ef95e23ba11, type: 3}
+  chargeEffectRotationSpeed: 0
+  fireSound: {fileID: 8300000, guid: 561c08052411b3f44afd20d42e383596, type: 3}
+  fireSoundVolume: 0.6
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 7314511624029963599, guid: 170fd382884845442b60752bb65181a9, type: 3}
+  projectileAnimationVariants: []
+  projectileStartEffectVariants: []
+  projectileSpeed: 5
+  projectileRotationOffset: 180
+  extraProjectileMode: 0
+  maxChargeTime: 1
+  fullChargeProjectileCountMultiplier: 1
+  fullChargeProjectileInterval: 0
+  fullChargePreparationTime: 0
+  hasHomingProjectiles: 0
+  usePlayerCircleSpawn: 0
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 30
+  - 15
+  - 0
+  - -15
+  - -30
+  homingTurnSpeed: 180
+  useConstantHomingSpeed: 0
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 3323616655764642522, guid: 6e5b49bf4034d394280ed164e799e605, type: 3}
+  weaponPrefab: {fileID: -2914722070659980993, guid: 13f0acf08dec30a44b07ddd1938a7372, type: 3}
+  isArchivable: 1

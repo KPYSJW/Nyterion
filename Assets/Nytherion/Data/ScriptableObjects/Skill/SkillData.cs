@@ -9,6 +9,10 @@ namespace Nytherion.Data.ScriptableObjects.Skill
     {
         [Header("Skill ID")]
         public string skillID;
+
+        [Tooltip("폐기된 스킬은 획득, 장착 및 저장 데이터 복원에서 제외합니다.")]
+        public bool isDisabled;
+        public bool IsRuntimeAvailable => !isDisabled;
         
         [Header("Skill Type")]
         public SkillType skillType;

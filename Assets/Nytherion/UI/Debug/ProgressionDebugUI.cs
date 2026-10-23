@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using VContainer;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Progression;
@@ -11,17 +10,14 @@ namespace Nytherion.UI.Test
     public class ProgressionDebugUI : MonoBehaviour
     {
         [Header("UI References")]
-        [Tooltip("Å×½ºÆ®ÇÒ ¸¶ÀÏ½ºÅæÀ» ¼±ÅÃÇÒ µå·Ó´Ù¿î")]
-        [SerializeField] private TMP_Dropdown milestoneDropdown;
-
-        [Tooltip("ÁøÇàµµ¸¦ 1¾¿ ¿Ã¸®´Â ¹öÆ° (¿É¼Ç)")]
+        [Tooltip("ë“±ë¡ëœ ëª¨ë“  í…ŒìŠ¤íŠ¸ ë§ˆì¼ìŠ¤í†¤ì˜ ì§„í–‰ë„ë¥¼ 1ì”© ì˜¬ë¦¬ëŠ” ë²„íŠ¼ (ì˜µì…˜)")]
         [SerializeField] private Button addProgressButton;
 
-        [Tooltip("¸ñÇ¥°ªÀ» ÇÑ ¹ø¿¡ ´Ş¼ºÇÏ´Â(Max) ¹öÆ°")]
+        [Tooltip("ë“±ë¡ëœ ëª¨ë“  í…ŒìŠ¤íŠ¸ ë§ˆì¼ìŠ¤í†¤ì„ ëª©í‘œê°’ê¹Œì§€ ë‹¬ì„±í•˜ëŠ”(Max) ë²„íŠ¼")]
         [SerializeField] private Button maxProgressButton;
 
         [Header("Test Data")]
-        [Tooltip("µğ¹ö±× Ã¢¿¡¼­ Å×½ºÆ®ÇÒ ¸¶ÀÏ½ºÅæ µ¥ÀÌÅÍ ¸ñ·Ï")]
+        [Tooltip("ë””ë²„ê·¸ ì°½ì—ì„œ í…ŒìŠ¤íŠ¸í•  ë§ˆì¼ìŠ¤í†¤ ë°ì´í„° ëª©ë¡")]
         [SerializeField] private List<MilestoneData> testMilestones = new List<MilestoneData>();
 
         private IProgressionManager progressionManager;
@@ -36,11 +32,9 @@ namespace Nytherion.UI.Test
         {
             if (progressionManager == null)
             {
-                Debug.LogError("[ProgressionDebugUI] IProgressionManager°¡ ÁÖÀÔµÇÁö ¾Ê¾Ò½À´Ï´Ù!");
+                Debug.LogError("[ProgressionDebugUI] IProgressionManagerê°€ ì£¼ì…ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!");
                 return;
             }
-
-            InitializeDropdown();
 
             if (addProgressButton != null)
                 addProgressButton.onClick.AddListener(OnAddProgressClicked);
@@ -49,65 +43,37 @@ namespace Nytherion.UI.Test
                 maxProgressButton.onClick.AddListener(OnMaxProgressClicked);
         }
 
-        private void InitializeDropdown()
-        {
-            if (milestoneDropdown == null || testMilestones == null || testMilestones.Count == 0)
-            {
-                Debug.LogWarning("[ProgressionDebugUI] DropdownÀÌ ¾ø°Å³ª Å×½ºÆ®ÇÒ Milestone µ¥ÀÌÅÍ°¡ ºñ¾îÀÖ½À´Ï´Ù.");
-                return;
-            }
-
-            milestoneDropdown.ClearOptions();
-            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
-
-            foreach (var milestone in testMilestones)
-            {
-                string optionName = string.IsNullOrEmpty(milestone.title) ? milestone.milestoneID : milestone.title;
-                options.Add(new TMP_Dropdown.OptionData(optionName));
-            }
-
-            milestoneDropdown.AddOptions(options);
-        }
-
         private void OnAddProgressClicked()
         {
-            MilestoneData selectedMilestone = GetSelectedMilestone();
-            if (selectedMilestone != null)
+            if (progressionManager == null || testMilestones == null) return;
+
+            foreach (MilestoneData milestone in testMilestones)
             {
-                progressionManager.AddProgress(selectedMilestone, 1);
+                if (milestone == null) continue;
+
+                progressionManager.AddProgress(milestone, 1);
             }
         }
 
         private void OnMaxProgressClicked()
         {
-            MilestoneData selectedMilestone = GetSelectedMilestone();
-            if (selectedMilestone != null)
-            {
-                int currentProgress = progressionManager.GetCurrentProgress(selectedMilestone.milestoneID);
+            if (progressionManager == null || testMilestones == null) return;
 
-                if (currentProgress == -1 || progressionManager.IsMilestoneCompleted(selectedMilestone.milestoneID))
+            foreach (MilestoneData milestone in testMilestones)
+            {
+                if (milestone == null) continue;
+
+                int currentProgress = progressionManager.GetCurrentProgress(milestone.milestoneID);
+
+                if (currentProgress == -1 || progressionManager.IsMilestoneCompleted(milestone.milestoneID))
                 {
-                    Debug.Log($"[ProgressionDebugUI] '{selectedMilestone.title}' ¸¶ÀÏ½ºÅæÀº ÀÌ¹Ì ´Ş¼º ¿Ï·á »óÅÂÀÔ´Ï´Ù.");
-                    return;
+                    Debug.Log($"[ProgressionDebugUI] '{milestone.title}' ë§ˆì¼ìŠ¤í†¤ì€ ì´ë¯¸ ë‹¬ì„± ì™„ë£Œ ìƒíƒœì…ë‹ˆë‹¤.");
+                    continue;
                 }
 
-                int remainingAmount = selectedMilestone.targetValue - currentProgress;
-                progressionManager.AddProgress(selectedMilestone, remainingAmount);
-
+                int remainingAmount = milestone.targetValue - currentProgress;
+                progressionManager.AddProgress(milestone, remainingAmount);
             }
-        }
-
-        private MilestoneData GetSelectedMilestone()
-        {
-            if (testMilestones == null || testMilestones.Count == 0) return null;
-            if (milestoneDropdown == null) return null;
-
-            int selectedIndex = milestoneDropdown.value;
-            if (selectedIndex >= 0 && selectedIndex < testMilestones.Count)
-            {
-                return testMilestones[selectedIndex];
-            }
-            return null;
         }
 
         private void OnDestroy()

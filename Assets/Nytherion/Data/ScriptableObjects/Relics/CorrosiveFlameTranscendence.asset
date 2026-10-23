@@ -12,24 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
   m_Name: CorrosiveFlameTranscendence
   m_EditorClassIdentifier: 
-  effectName_KR: "부식성 화염"
+  effectName_KR: "\uBD80\uC2DD\uC131 \uD654\uC5FC"
   effectName_EN: Corrosive Flame
   statusIcon: {fileID: 21300000, guid: c5f36685c3ffda345a4856ed4b0aa3a8, type: 3}
+  nameColor: {r: 0.7137255, g: 0.9019608, b: 0.34117648, a: 1}
   badgeBackgroundColor: {r: 0.38, g: 0.3, b: 0.08, a: 0.96}
   badgeTextColor: {r: 0.95, g: 1, b: 0.75, a: 1}
-  description_KR: "화상과 중독이 함께 걸린 적이 죽으면 독 중첩에 비례해 강화된 화상을 주변 최대 3명에게 전염시킵니다."
-  description_EN: When an enemy affected by Fire and Poison dies, spread Fire enhanced by its Poison stacks to up to 3 nearby enemies.
+  description_KR: "\uD654\uC0C1\xB7\uC911\uB3C5\uC774 \uD568\uAED8 \uAC78\uB9B0 \uB3D9\uC548
+    \uB450 \uC9C0\uC18D \uD53C\uD574 +25%, \uD53C\uD574 \uAC04\uACA9 -25%."
+  description_EN: While an enemy has both Fire and Poison, both deal 25% more damage
+    with 25% shorter damage intervals.
   requirements:
   - setBonusData: {fileID: 11400000, guid: 3c69e18b6a8e48aca8ff2d1de1568b24, type: 2}
     requiredEquippedCount: 4
   - setBonusData: {fileID: 11400000, guid: 6a2c8fbd0e1b4d3da9c7b8e423e56712, type: 2}
     requiredEquippedCount: 4
   effectModules:
-  - condition: {rid: -2}
+  - description_KR: "\uD654\uC0C1\xB7\uC911\uB3C5\uC774 \uD568\uAED8 \uAC78\uB9B0
+      \uB3D9\uC548 \uB450 \uC9C0\uC18D \uD53C\uD574 +25%, \uD53C\uD574 \uAC04\uACA9
+      -25%."
+    description_EN: While an enemy has both Fire and Poison, both deal 25% more damage
+      with 25% shorter damage intervals.
+    condition:
+      rid: -2
     effects:
     - rid: 1001
-    description_KR: "화상+중독 적 처치 시 부식성 화염 전염"
-    description_EN: Fire+Poison kills spread corrosive Fire.
   references:
     version: 2
     RefIds:
@@ -38,7 +45,5 @@ MonoBehaviour:
     - rid: 1001
       type: {class: CorrosiveFlameEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        spreadFireDamageRatio: 0.5
-        spreadRadius: 5
-        maxTargets: 3
-        fireDuration: 4
+        tickDamageMultiplier: 1.25
+        tickIntervalMultiplier: 0.75

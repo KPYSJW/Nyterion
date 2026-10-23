@@ -32,7 +32,7 @@ MonoBehaviour:
   useDiagonalIcon: 1
   iconRotationOffset: 0
   iconSlotScale: 1.8
-  inventoryIconScale: 1
+  inventoryIconScale: 1.5
   damage: 20
   range: 0
   cooldown: 1.5
@@ -48,7 +48,7 @@ MonoBehaviour:
   weaponEffectPrefab: {fileID: 1638640853019598765, guid: dd4a8661b5e3dac43b8d7395a450fcf2, type: 3}
   fireEffectPrefab: {fileID: 6604706768557165360, guid: a927d799c53273b48bde69876b3147ca, type: 3}
   chargeEffectPrefab: {fileID: 7099819955533219938, guid: d3d95f8cca20e7340af51e1891f3bd62, type: 3}
-  chargeEffectRotationSpeed: 90
+  chargeEffectRotationSpeed: 0
   fireSound: {fileID: 8300000, guid: c07ea823b74354443b7b284df53cb610, type: 3}
   fireSoundVolume: 0.64
   animatorController: {fileID: 0}
@@ -76,7 +76,7 @@ MonoBehaviour:
   homingLaunchDuration: 0.15
   homingLifetime: 4
   chargeThresholdTime: 0.15
-  requiredRelicId: ChargeRelic
+  requiredRelicId: ManaCharger
   hitEffectPrefab: {fileID: 0}
   weaponPrefab: {fileID: -2914722070659980993, guid: c165cdc6ec48b154bb41137b680b0a65, type: 3}
   isArchivable: 1

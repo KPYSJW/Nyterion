@@ -177,7 +177,7 @@ MonoBehaviour:
   chargePercent: 0
   effectSizeMultiplier: 1
   traits: 
-  hitEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 8931144520979107329, guid: c5d247e72f571b04d8dc22e29a94d90c, type: 3}
   playHitEffectOnWall: 0
   isChainDamage: 0
   poolTag: Player_SlowMultiHit
@@ -194,9 +194,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slowSpeed: 1
-  tickRate: 0.5
+  tickRate: 0.25
   lifeTime: 1
-  playHitEffectOnTick: 0
+  playHitEffectOnTick: 1
 --- !u!95 &-1892721244787872312
 Animator:
   serializedVersion: 5

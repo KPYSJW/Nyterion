@@ -100,9 +100,8 @@ namespace Nytherion.Editor
             {
                 relic = ScriptableObject.CreateInstance<RelicData>();
                 relic.relicName = "Relic of Pyro Tank";
-                relic.koreanName = "폭열 전차 각인";
-                relic.description_KR = "[폭열 전차] 스킬을 얻습니다.\n[폭열 전차] : " + data.description;
-                relic.description_EN = "Grants Pyro Tank. A tank charges at the nearest enemy and explodes on contact or when its lifetime expires.";
+                relic.koreanName = "폭열 전차";
+                RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
                 relic.Image = idle[0];
                 relic.rarity = Rarity.Common;
                 relic.effectModules = new List<RelicEffectModule>

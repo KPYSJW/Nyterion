@@ -9,7 +9,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// <summary>
     /// 관통·도탄·분열 같은 투사체 상호작용을 누적 강화하고 마지막 충돌에 잔향탄을 생성한다.
     /// </summary>
-    [Serializable, RelicDisplayName("도탄 기술자 세트 강화")]
+    [Serializable, RelicDisplayName("난반사 세트 강화")]
     public sealed class TrickshotSetBonusEffect : RelicEffectBase
     {
         [Min(0f)] public float projectileDamageMultiplier = 1f;

@@ -97,7 +97,9 @@ Shader "Nytherion/Combat/Void Ray Additive"
                 textureColor.rgb = expandedPremultiplied / max(expandedAlpha, 0.0001h);
                 textureColor.a = expandedAlpha;
                 half alpha = textureColor.a * input.color.a;
-                return half4(textureColor.rgb * input.color.rgb * _Intensity, alpha);
+                // 원본의 청록색 대신 밝기와 알파만 사용해 공허 광선의 군청·보라색을 유지합니다.
+                half brightness = max(textureColor.r, max(textureColor.g, textureColor.b));
+                return half4(brightness * input.color.rgb * _Intensity, alpha);
             }
             ENDHLSL
         }

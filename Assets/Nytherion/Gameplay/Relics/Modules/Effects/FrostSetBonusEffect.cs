@@ -11,7 +11,7 @@ namespace Nytherion.Gameplay.Relics.Modules
     /// <summary>
     /// 냉기 중첩을 빙결로 전환하고, 빙결된 적을 공격하면 파쇄 피해를 발생시킨다.
     /// </summary>
-    [Serializable, RelicDisplayName("빙결 파수꾼 세트 강화")]
+    [Serializable, RelicDisplayName("만년서리 세트 강화")]
     public sealed class FrostSetBonusEffect : RelicEffectBase
     {
         [Min(1)] public int requiredStacksToFreeze = 4;

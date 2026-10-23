@@ -1,0 +1,61 @@
+후속 작업 3 — 인벤토리 상태·변경 알림·표시 책임 중복 정리
+적용일: 2026-10-16
+
+대상: 코드 리뷰 R03, R11
+
+변경 내용
+- GameSceneLifetimeScope에서 레거시 InventoryManager의 프리팹 필드와 DI 등록을 제거했다.
+  실제 게임 경로의 인벤토리 데이터·저장은 InventoryDataManager가 소유한다.
+  Inventory 수동 테스트 씬과 프리팹이 참조하는 레거시 스크립트/에셋은 보존했다.
+- InventoryModel이 변경된 슬롯과 변경 종류를 알리도록 했다.
+  매니저는 일반 모델 변경을 한 번 전달하며, 중복으로 보내던 알림은 제거했다.
+- 슬롯 교환은 두 슬롯 인덱스를 담은 SlotsSwapped 알림 한 번으로 전달한다.
+  잘못된 수량·빈 슬롯 제거·같은 칸/동일 내용 교환은 변경 알림을 보내지 않는다.
+- 앞 단계의 장비 교체도 완료된 보관 슬롯 한 칸만 알린다.
+  인스턴스 이동과 교체 완료 후 저장 정책은 유지했다.
+- 슬롯 생성·초기화·내용 갱신은 InventoryPresenter로 통일했다.
+  InventoryUI는 입력·패널·버튼·분해 패널 연결을 담당하고,
+  InventoryUIController는 외부 표시·새로고침 요청을 전달한다.
+- UI/Controller의 중복 데이터 구독, 전체 슬롯 갱신 코드, 미사용 전체 UI 갱신 문자열
+  이벤트 InventoryUIUpdated를 제거했다.
+- 상점도 같은 슬롯 부모를 참조하므로 ShopUI의 직접 인벤토리 표시 경로를 제거했다.
+  이 경로는 GetAllItems의 빈칸을 제외한 목록을 앞쪽 슬롯부터 표시하므로 실제 슬롯 위치와
+  표시 위치가 달라질 수 있었다. 이제 상점에서도 동일 Presenter가 실제 슬롯 위치를 표시한다.
+- 한 슬롯 변경은 한 칸, 교환은 두 칸을 갱신한다.
+  정렬·로드·확장 등 전체 알림에서도 내용이 같은 슬롯의 SetItem 호출은 생략한다.
+- Presenter가 풀로 자식을 반환할 때 역순으로 처리해 재초기화 중 자식 순회 누락을 피한다.
+- 모델 이벤트 형식 변경에 맞춰 보존된 레거시 InventoryManager의 이벤트 연결을 조정했다.
+- 저장 데이터 형식과 씬·프리팹 에셋은 이번 단계에서 변경하지 않았다.
+
+검증 결과
+- Unity 2022.3.62f2에서 Assembly-CSharp / Assembly-CSharp-Editor 컴파일 성공.
+- 새 InventoryUpdateVerification을 격리 PreviewScene에서 실행해 7개 검증 그룹 통과.
+  · 일반 추가, 중첩, ID 제거, 지정 슬롯 추가: 데이터 알림 한 번, 해당 슬롯 표시 한 번.
+  · 두 슬롯 교환: 알림 한 번, 해당 두 칸만 표시. 실패/변경 없음은 알림·표시 없음.
+  · 모델 직접 변경, 분해 예약·초기화: 매니저 전달과 표시 한 번.
+  · 24 → 30 슬롯 확장과 새 슬롯의 부분 갱신, UI/Controller 중복 초기화 방어.
+  · 정렬 완료 알림 한 번, 변경 슬롯만 표시, 재정렬/재열기/수동 요청의 같은 표시 보존.
+  · 로드 후 새 모델 구독, 이전 모델 구독 해제.
+  · Presenter 정리·재초기화 뒤 표시 복구와 단일 구독 유지.
+- 기존 장비 교체 검증 9개 그룹 통과: 인스턴스·등급·수량·실패 상태 보존과 JSON 저장/복원.
+- 기존 정렬 검증 5개 그룹 통과: 데이터/저장 복원 및 실제 씬 참조를 사용한 격리 버튼·UI 연결.
+- 기존 분해 데이터 검증 3개 그룹과 분해 UI 검증 1개 그룹 통과.
+  격리 UI에서 반복 초기화·버튼 토글·우클릭/드롭·예약·초기화·보상 지급·닫기 복귀 확인.
+- 변경 소스의 git diff --check 통과.
+
+검증 기록
+- output/inventory-updates/verification.txt
+- output/inventory-equipment-swap/verification.txt
+- output/inventory-sort/verification.txt
+- output/inventory-dismantle/verification.txt
+- output/inventory-dismantle/ui-verification.txt
+
+검증 범위와 수동 확인
+- 자동 검증은 편집 모드의 격리 PreviewScene과 기존 검증용 JSON 파일을 사용했다.
+  실제 사용자 세이브 파일은 변경하지 않았다.
+- GameScene 원본은 Inspector 참조 확인을 위해 열고 저장 없이 닫았다.
+  실제 플레이에서의 씬 DI 전체 진입 및 상점 구매·판매 연동은 자동 검증에 포함하지 않았다.
+- Title → GameScene에서 아이템 획득/소모, 빈칸이 있는 상태의 드래그, 장비 교체,
+  정렬, 분해·초기화·닫기, 상점에서의 보관함 표시를 확인한다.
+  슬롯 표시가 실제 데이터와 같은 위치인지, Console에 새 오류가 없는지 확인하면 된다.
+- 다음 순서는 후속 작업 4인 스코프와 UI 초기화 책임(R01/R02) 정리다.

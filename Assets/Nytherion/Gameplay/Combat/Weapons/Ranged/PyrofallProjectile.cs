@@ -214,7 +214,8 @@ namespace Nytherion.GamePlay.Combat
                 }
 
                 float targetZ = targetBehaviour.transform.position.z;
-                target.TakeDamage(damage);
+                if (sourceWeapon != null) sourceWeapon.DealAttackDamage(target, damage);
+                else target.TakeDamage(damage);
                 sourceWeapon?.ApplyStatusEffects(target);
                 PlayHitEffect(closestPoint, targetZ);
             }

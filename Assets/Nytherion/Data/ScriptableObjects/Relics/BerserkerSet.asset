@@ -17,8 +17,8 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: aad697d883498a541bc9e5d494af5d28, type: 3}
   badgeBackgroundColor: {r: 0.45, g: 0.08, b: 0.08, a: 0.96}
   badgeTextColor: {r: 1, g: 0.9, b: 0.86, a: 1}
-  description_KR: "상처와 위험을 힘으로 바꾸는 근접 전투 유물 세트입니다."
-  description_EN: A melee relic set that turns wounds and danger into power.
+  description_KR: "근거리 공격력을 높이고, 피격 시 공격 속도와 낮은 체력에서 흡혈·치명타 확률을 높입니다."
+  description_EN: "Increase melee damage, gain attack speed after taking damage, and gain lifesteal and critical chance at low health."
   synergySeriesId: BerserkerSeries
   bonusModules:
   - condition:

@@ -13,7 +13,8 @@ namespace Nytherion.GamePlay.Characters.Enemy.States
 
         public override void UpdateState(EnemyAIController enemy)
         {
-            if (Vector3.Distance(enemy.transform.position, enemy.player.position) < enemy.detectRange)
+            if (enemy.CurrentTarget != null && (enemy.CurrentTarget != enemy.player ||
+                Vector3.Distance(enemy.transform.position, enemy.CurrentTarget.position) < enemy.detectRange))
             {
                 enemy.TransitionToState(enemy.chaseState);
             }

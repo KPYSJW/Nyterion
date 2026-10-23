@@ -30,6 +30,7 @@ namespace Nytherion.UI.Skill
 
         // 슬롯 상호작용 이벤트
         public event Action<SkillSlotUI> OnDoubleClick;
+        public event Action<SkillSlotUI> OnRightClick;
         public event Action<SkillSlotUI, SkillSlotUI> OnDropSkill;
 
         // 드래그 시 아이콘의 원래 부모를 기억하기 위한 변수
@@ -117,10 +118,17 @@ namespace Nytherion.UI.Skill
         // --- 클릭 이벤트 ---
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (currentSkill != null && eventData.button == PointerEventData.InputButton.Left)
-                uiAudioManager?.RequestUISound(UISoundType.Click);
+            if (currentSkill == null || isDragging || eventData.dragging) return;
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                OnRightClick?.Invoke(this);
+                return;
+            }
+            if (eventData.button != PointerEventData.InputButton.Left) return;
+
+            uiAudioManager?.RequestUISound(UISoundType.Click);
             // 더블 클릭 감지
-            if (eventData.clickCount == 2 && currentSkill != null)
+            if (eventData.clickCount == 2)
             {
                 OnDoubleClick?.Invoke(this);
             }

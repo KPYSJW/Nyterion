@@ -52,6 +52,7 @@ namespace Nytherion.Core.Interfaces
     public struct InventoryChangeData
     {
         public int slotIndex;
+        public int otherSlotIndex; // SlotsSwapped일 때 함께 변경된 슬롯
         public string itemId;
         public int newCount;
         public InventoryChangeType changeType;
@@ -83,7 +84,8 @@ namespace Nytherion.Core.Interfaces
         ItemRemoved,
         ItemCountChanged,
         SlotCleared,
-        InventoryLoaded
+        InventoryLoaded,
+        SlotsSwapped
     }
 
     public enum PuzzleChangeType

@@ -27,6 +27,7 @@ namespace Nytherion.Editor
 
         private string relicName = "NewRelic";
         private string koreanName = "새 유물";
+        private string englishName = "";
         private string description_KR = "";
         private string description_EN = "";
         private Sprite relicImage;
@@ -148,8 +149,9 @@ namespace Nytherion.Editor
 
             EditorGUILayout.BeginVertical("box");
             GUILayout.Label("Basic Info", EditorStyles.miniBoldLabel);
-            relicName = EditorGUILayout.TextField("Name (EN/ID)", relicName);
+            relicName = EditorGUILayout.TextField("ID", relicName);
             koreanName = EditorGUILayout.TextField("Name (KR)", koreanName);
+            englishName = EditorGUILayout.TextField("Name (EN)", englishName);
             
             GUILayout.Label("Description (KR)");
             description_KR = EditorGUILayout.TextArea(description_KR, GUILayout.Height(60));
@@ -461,7 +463,8 @@ namespace Nytherion.Editor
             // Left: Info
             EditorGUILayout.BeginVertical(GUILayout.Width(position.width * 0.45f));
             selectedRelic.koreanName = EditorGUILayout.TextField("Name (KR)", selectedRelic.koreanName);
-            selectedRelic.relicName = EditorGUILayout.TextField("Name (EN)", selectedRelic.relicName);
+            selectedRelic.relicName = EditorGUILayout.TextField("ID", selectedRelic.relicName);
+            selectedRelic.englishName = EditorGUILayout.TextField("Name (EN)", selectedRelic.englishName);
             
             GUILayout.Label("Description (KR)");
             selectedRelic.description_KR = EditorGUILayout.TextArea(selectedRelic.description_KR, GUILayout.Height(60));
@@ -647,6 +650,7 @@ namespace Nytherion.Editor
             RelicData newData = ScriptableObject.CreateInstance<RelicData>();
             newData.relicName = relicName;
             newData.koreanName = koreanName;
+            newData.englishName = englishName;
             newData.description_KR = description_KR;
             newData.description_EN = description_EN;
             newData.Image = relicImage;
@@ -714,6 +718,7 @@ namespace Nytherion.Editor
 
             relicName = "NewRelic";
             koreanName = "새 유물";
+            englishName = "";
             description_KR = "";
             description_EN = "";
             relicImage = null;

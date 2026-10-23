@@ -105,6 +105,7 @@ namespace Nytherion.Editor
                 body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
                 root.GetComponent<CircleCollider2D>().radius = 0.22f;
                 var movement = new SerializedObject(root.GetComponent<HomingProj>());
+                movement.FindProperty("useConstantSpeed").boolValue = true;
                 movement.FindProperty("rotateSpeed").floatValue = 180f;
                 movement.FindProperty("initialStraightDuration").floatValue = 0.01f;
                 movement.FindProperty("trackingRadius").floatValue = 10f;
@@ -122,6 +123,9 @@ namespace Nytherion.Editor
             data.hasHomingProjectiles = true;
             data.useConstantHomingSpeed = true;
             data.usePlayerCircleSpawn = true;
+            data.fullChargeProjectileCountMultiplier = 3;
+            data.fullChargeProjectileInterval = 0.04f;
+            data.fullChargePreparationTime = 0f;
             data.playerCircleSpawnRadius = 0.65f;
             data.playerCircleSpawnPointCount = 12;
             data.useHomingLaunchAngles = true;
@@ -141,8 +145,8 @@ namespace Nytherion.Editor
 
         private static void SetBalanceDescription(WeaponData data)
         {
-            data.description_KR = "플레이어 주변 원의 무작위 지점에서 마법탄을 발사해 선택한 적을 추적합니다. 투사체 증가 효과에 따라 서로 다른 지점에서 한 발씩 발사합니다.";
-            data.description_EN = "Fires a homing magic bolt from a random point on a circle around the player. Extra projectile effects add bolts from distinct points.";
+            data.description_KR = "주변에서 유도탄을 발사하며, 최대 충전 시 세 배의 탄을 순차 발사합니다.";
+            data.description_EN = "Fires homing bolts from nearby points, firing three times as many in sequence at full charge.";
         }
 
         [MenuItem("Tools/Nytherion/Homing Magic/Apply Flight Settings")]

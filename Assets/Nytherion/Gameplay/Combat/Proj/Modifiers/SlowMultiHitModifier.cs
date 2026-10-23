@@ -21,7 +21,7 @@ namespace Nytherion.GamePlay.Combat
         private float tickTimer;
         private bool hasHit = false;
 
-        private HashSet<IDamageable> targetsInRange = new HashSet<IDamageable>();
+        private Dictionary<IDamageable, Collider2D> targetsInRange = new Dictionary<IDamageable, Collider2D>();
         private List<IDamageable> removeList = new List<IDamageable>();
         private void Awake()
         {
@@ -62,14 +62,19 @@ namespace Nytherion.GamePlay.Combat
         {
             removeList.Clear();
 
-            foreach (var target in targetsInRange)
+            foreach (var entry in targetsInRange)
             {
-                if (target != null && target is MonoBehaviour mb && mb.gameObject.activeInHierarchy)
+                IDamageable target = entry.Key;
+                Collider2D targetCollider = entry.Value;
+                if (target != null && target is MonoBehaviour mb && mb.gameObject.activeInHierarchy &&
+                    targetCollider != null && targetCollider.isActiveAndEnabled)
                 {
+                    // 처치로 적이 비활성화되기 전에 현재 탄환과의 접촉 위치를 보관합니다.
+                    Vector2 hitPoint = targetCollider.ClosestPoint(transform.position);
                     target.TakeDamage(collisionObject.damage, collisionObject.isChainDamage);
                     if (playHitEffectOnTick)
                     {
-                        WeaponVFXHelper.PlayHitEffect(collisionObject.hitEffectPrefab, mb.transform.position);
+                        WeaponVFXHelper.PlayHitEffect(collisionObject.hitEffectPrefab, hitPoint, collisionObject.chargePercent);
                     }
                 }
                 else
@@ -97,7 +102,7 @@ namespace Nytherion.GamePlay.Combat
                         tickTimer = tickRate;
                     }
 
-                    targetsInRange.Add(target);
+                    targetsInRange[target] = targetCollider;
                 }
 
                 return true;
@@ -109,7 +114,7 @@ namespace Nytherion.GamePlay.Combat
             if (collision.CompareTag("Enemy"))
             {
                 var target = collision.GetComponentInParent<IDamageable>();
-                if (target != null && targetsInRange.Contains(target))
+                if (target != null && targetsInRange.ContainsKey(target))
                 {
                     targetsInRange.Remove(target);
                 }

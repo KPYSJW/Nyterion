@@ -178,6 +178,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (Time.time < nextKnockbackTime)
                 return;
 
+            if (TryDamageDecoy(collision.collider)) return;
+
             PlayerController playerController =
                 collision.collider.GetComponentInParent<PlayerController>();
 
@@ -245,6 +247,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (bossCombat == null || !bossCombat.IsOverchargePursuing ||
                 Time.time < nextKnockbackTime || playerCollider == null) return false;
+            if (TryDamageDecoy(playerCollider)) return true;
             PlayerController playerController = playerCollider.GetComponentInParent<PlayerController>();
             PlayerHealth playerHealth = playerCollider.GetComponentInParent<PlayerHealth>();
             if (playerController == null || playerController.IsDashing || playerHealth == null ||
@@ -264,6 +267,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (bossCombat == null || bossCombat.CurrentAttack != BossKnightCombatBehavior.BossAttackType.LightningCrossing ||
                 !bossCombat.TryGetDashMotion(out Vector2 direction, out float speed) ||
                 Time.time < nextKnockbackTime || playerCollider == null) return false;
+            if (TryDamageDecoy(playerCollider)) return true;
             PlayerController playerController = playerCollider.GetComponentInParent<PlayerController>();
             PlayerHealth playerHealth = playerCollider.GetComponentInParent<PlayerHealth>();
             if (playerController == null || playerController.IsDashing || playerHealth == null ||
@@ -275,6 +279,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
             Vector2 knockbackDirection = (-direction * BackwardWeight + side * SideWeight).normalized;
             float knockbackSpeed = Mathf.Clamp(speed * KnockbackMultiplier, MinimumKnockback, MaximumKnockback);
             ApplyPlayerImpact(playerController, playerHealth, hitPoint, knockbackDirection, knockbackSpeed);
+            return true;
+        }
+
+        private bool TryDamageDecoy(Collider2D collider)
+        {
+            var dummy = collider.GetComponentInParent<Nytherion.GamePlay.Skills.DecoyDummy>();
+            if (dummy == null || !dummy.IsAlive) return false;
+            dummy.TakeDamage(GetCollisionDamage());
+            nextKnockbackTime = Time.time + KnockbackCooldown;
             return true;
         }
 

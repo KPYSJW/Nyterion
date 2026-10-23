@@ -168,8 +168,7 @@ namespace Nytherion.Editor
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.SaveAndReimport();
             Sprite background = AssetDatabase.LoadAssetAtPath<Sprite>(imagePath);
-            TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(
-                AssetDatabase.GUIDToAssetPath("3ea9213abafbd9147b85db3b64237362"));
+            TMP_FontAsset font = TMP_Settings.defaultFontAsset;
             if (background == null || font == null) throw new InvalidOperationException("툴팁 이미지 또는 기존 UI 폰트가 없습니다.");
 
             GameObject root = new GameObject("SkillTooltip", typeof(RectTransform), typeof(Canvas),

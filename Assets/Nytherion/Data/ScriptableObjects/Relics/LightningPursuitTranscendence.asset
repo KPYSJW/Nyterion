@@ -12,24 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
   m_Name: LightningPursuitTranscendence
   m_EditorClassIdentifier: 
-  effectName_KR: "뇌광 추적"
-  effectName_EN: Lightning Pursuit
+  effectName_KR: "\uC5F0\uC1C4 \uD3ED\uD48D"
+  effectName_EN: Chain Storm
   statusIcon: {fileID: 21300000, guid: 5e47aa5232424b6dad0ccdfdcc01b6f9, type: 3}
+  nameColor: {r: 0.49411765, g: 0.60784316, b: 1, a: 1}
   badgeBackgroundColor: {r: 0.16, g: 0.28, b: 0.58, a: 0.96}
   badgeTextColor: {r: 0.88, g: 0.94, b: 1, a: 1}
-  description_KR: "대시 후 첫 원거리 공격이 적중하면 주변 최대 4명에게 적중 피해의 45% 연쇄 번개를 방출합니다."
-  description_EN: The first ranged attack after dashing releases chain lightning for 45% of hit damage to up to 4 nearby enemies.
+  description_KR: "\uB300\uC2DC\uB85C \uCDA9\uC804\uD55C \uACF5\uACA9\uC740 \uC8FC\uBCC0\uC5D0
+    \uBC88\uAC1C\uB97C \uD37C\uB728\uB9AC\uACE0, \uC801\uC911 \uC2DC \uBC88\uAC1C\uAC00
+    \uD655\uC0B0\uB418\uB294 \uB3CC\uD48D \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  description_EN: Dashing charges attacks that spread lightning and fire a wind projectile
+    that also spreads lightning on impact.
   requirements:
   - setBonusData: {fileID: 11400000, guid: 2b58d07a0be049d0ae64c7aad4390f1a, type: 2}
     requiredEquippedCount: 4
   - setBonusData: {fileID: 11400000, guid: 7b3d90ce1f2c4e4ebab8c9f534f67823, type: 2}
     requiredEquippedCount: 4
   effectModules:
-  - condition: {rid: -2}
+  - description_KR: "\uB300\uC2DC\uB85C \uCDA9\uC804\uD55C \uACF5\uACA9\uC740 \uC8FC\uBCC0\uC5D0
+      \uBC88\uAC1C\uB97C \uD37C\uB728\uB9AC\uACE0, \uC801\uC911 \uC2DC \uBC88\uAC1C\uAC00
+      \uD655\uC0B0\uB418\uB294 \uB3CC\uD48D \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+    description_EN: Dashing charges attacks that spread lightning and fire a wind
+      projectile that also spreads lightning on impact.
+    condition:
+      rid: -2
     effects:
     - rid: 1001
-    description_KR: "대시 후 첫 원거리 적중에 연쇄 번개"
-    description_EN: Chain lightning on the first ranged hit after a dash.
   references:
     version: 2
     RefIds:
@@ -42,3 +50,7 @@ MonoBehaviour:
         searchRadius: 6
         maxTargets: 4
         hitWaitDuration: 2
+        chargesPerDash: 3
+        projectilePrefab: {fileID: 4542487117723958544, guid: b9966f24225e6f640b2cd9e2463f6ad1, type: 3}
+        lightningEffectPrefab: {fileID: 6856125335028078497, guid: 49e4afd1439a0e148a3ec68f9931dc41, type: 3}
+        projectileDamageRatio: 1

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Nytherion.Core.Interfaces;
+using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.GamePlay.Characters.Player;
@@ -16,6 +17,9 @@ namespace Nytherion.GamePlay.Combat
     /// </summary>
     public sealed class BlazeshadeWeapon : WeaponBase, IChargeableWeapon
     {
+        // 64px 프레임에서 불꽃 고리의 실제 지름은 약 45px입니다. 투명 여백은 판정에서 제외합니다.
+        private const float DamageRadiusRatio = 45f / 64f;
+
         [Header("Blazeshade Aura")]
         [SerializeField] private GameObject auraVisualPrefab;
         [SerializeField] private LayerMask enemyLayers;
@@ -326,6 +330,7 @@ namespace Nytherion.GamePlay.Combat
         private void DealDamage(Vector2 center, float radius, float damage)
         {
             if (damage <= 0f) return;
+            radius *= DamageRadiusRatio;
             bool dealtDamage = false;
             int hitCount;
             do
@@ -344,7 +349,8 @@ namespace Nytherion.GamePlay.Combat
                 }
 
                 IDamageable target = hit.GetComponentInParent<IDamageable>();
-                if (target == null || !damagedTargets.Add(target))
+                if (target == null || !IsWithinDamageRange(target, hit, center, radius) ||
+                    !damagedTargets.Add(target))
                 {
                     continue;
                 }
@@ -356,12 +362,43 @@ namespace Nytherion.GamePlay.Combat
 
                 if (target is EnemyBase enemy && enemy.isDead) continue;
 
+                // 사망 처리로 본체가 비활성화되기 전에 발 위치를 확정합니다.
+                Vector3 footPosition = target is EnemyBase hitEnemy
+                    ? hitEnemy.GetFootPosition()
+                    : new Vector3(hit.bounds.center.x, hit.bounds.min.y, hit.transform.position.z);
                 target.TakeDamage(damage);
+                PlayHitEffect(footPosition);
                 dealtDamage = true;
             }
             Array.Clear(overlapBuffer, 0, hitCount);
             // 일반 오라는 실제 타격한 주기에만 한 번, 지정 공격은 소환 시에만 재생합니다.
             if (dealtDamage && !HasTargetMaker) PlayFireSound();
+        }
+
+        private static bool IsWithinDamageRange(IDamageable target, Collider2D hit, Vector2 center, float radius)
+        {
+            if (target is IGroundDamageable groundTarget)
+            {
+                // 검색에 공격 감지용 트리거가 잡혀도 실제 몸체가 불꽃에 닿아야 피해를 줍니다.
+                if (!groundTarget.TryGetGroundHitBounds(out Bounds bounds)) return false;
+                Vector2 closest = new Vector2(
+                    Mathf.Clamp(center.x, bounds.min.x, bounds.max.x),
+                    Mathf.Clamp(center.y, bounds.min.y, bounds.max.y));
+                return (closest - center).sqrMagnitude <= radius * radius;
+            }
+            return (hit.ClosestPoint(center) - center).sqrMagnitude <= radius * radius;
+        }
+
+        private void PlayHitEffect(Vector3 footPosition)
+        {
+            GameObject prefab = weaponData.hitEffectPrefab;
+            if (prefab == null) return;
+
+            // 하단 피벗이 발에 고정되도록 공용 타격 효과의 무작위 회전을 사용하지 않습니다.
+            GameObject effect = ObjectPoolManager.Instance != null
+                ? ObjectPoolManager.Instance.SpawnFromPool(prefab, footPosition, Quaternion.identity)
+                : Instantiate(prefab, footPosition, Quaternion.identity);
+            if (effect != null) WeaponVFXHelper.ApplyHitEffectSorting(effect);
         }
 
         private void OnDestroy()
@@ -375,7 +412,7 @@ namespace Nytherion.GamePlay.Combat
 
         private void OnDrawGizmosSelected()
         {
-            float radius = (weaponData != null ? Mathf.Max(0.1f, weaponData.range) : 2.75f) * EffectSizeMultiplier;
+            float radius = (weaponData != null ? Mathf.Max(0.1f, weaponData.range) : 2.75f) * EffectSizeMultiplier * DamageRadiusRatio;
             Vector3 center = playerManager != null ? playerManager.transform.position : transform.position;
             Gizmos.color = new Color(1f, 0.25f, 0.05f, 0.45f);
             Gizmos.DrawWireSphere(center, radius);

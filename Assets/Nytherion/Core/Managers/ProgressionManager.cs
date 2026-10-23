@@ -21,6 +21,7 @@ namespace Nytherion.Core.Managers
         void LockSkill(SkillData skillData);
         void LockSkill(string skillId);
         bool IsMilestoneCompleted(string milestoneId);
+        bool IsRelicUnlocked(RelicData relicData);
         void CompleteMilestone(string milestoneId);
         void CompleteMilestone(MilestoneData milestone);
         bool IsMilestoneAvailable(MilestoneData milestone);
@@ -221,7 +222,7 @@ namespace Nytherion.Core.Managers
         
         public bool IsSkillUnlocked(SkillData skillData)
         {
-            return skillData != null && state.unlockedSkills.Contains(skillData.skillID);
+            return skillData != null && skillData.IsRuntimeAvailable && state.unlockedSkills.Contains(skillData.skillID);
         }
 
         public bool IsSkillUnlocked(string skillId)
@@ -231,7 +232,7 @@ namespace Nytherion.Core.Managers
 
         public void UnlockSkill(SkillData skillData)
         {
-            if (skillData == null || string.IsNullOrEmpty(skillData.skillID)) return;
+            if (skillData == null || !skillData.IsRuntimeAvailable || string.IsNullOrEmpty(skillData.skillID)) return;
 
             string skillId = skillData.skillID;
             if (!skillUnlockRefCount.ContainsKey(skillId))
@@ -327,6 +328,30 @@ namespace Nytherion.Core.Managers
             return state.completedMilestones.Contains(milestoneId);
         }
 
+        public bool IsRelicUnlocked(RelicData relicData)
+        {
+            if (relicData == null || !relicData.IsRuntimeAvailable) return false;
+
+            bool hasUnlockReward = false;
+            foreach (MilestoneData milestone in milestoneLookup.Values)
+            {
+                if (milestone.rewards == null) continue;
+                foreach (RewardData reward in milestone.rewards)
+                {
+                    if (reward == null || reward.rewardType != RewardType.RelicUnlock ||
+                        reward.relicData != relicData) continue;
+
+                    hasUnlockReward = true;
+                    // 같은 유물을 해금하는 업적이 여러 개면 하나만 완료해도 해금합니다.
+                    if (IsMilestoneCompleted(milestone.milestoneID)) return true;
+                }
+            }
+
+            // 완료 업적 기록을 그대로 사용하므로 기존 저장 파일에도 즉시 적용됩니다.
+            return !hasUnlockReward && (string.IsNullOrEmpty(relicData.unlockMilestoneID) ||
+                IsMilestoneCompleted(relicData.unlockMilestoneID));
+        }
+
         public void CompleteMilestone(string milestoneId)
         {
             if (!state.completedMilestones.Contains(milestoneId))
@@ -360,6 +385,7 @@ namespace Nytherion.Core.Managers
 
         private void GiveReward(RewardData reward)
         {
+            if (reward == null) return;
             switch (reward.rewardType)
             {
                 case RewardType.Skill:
@@ -376,6 +402,9 @@ namespace Nytherion.Core.Managers
                     break;
                 case RewardType.Relic:
                     if (relicManager != null && reward.relicData != null) relicManager.AddNewRelicToStorage(reward.relicData);
+                    break;
+                case RewardType.RelicUnlock:
+                    // 완료 기록을 IsRelicUnlocked에서 조회합니다. 스킬은 유물 장착 시에만 부여합니다.
                     break;
             }
         }

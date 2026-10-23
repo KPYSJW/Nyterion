@@ -69,7 +69,7 @@ namespace Nytherion.Editor
             var results = new List<string>();
             var source = AssetDatabase.LoadAssetAtPath<WeaponData>("Assets/Nytherion/Data/ScriptableObjects/Weapons/EvilEye.asset");
             Require(source != null && source.weaponPrefab is GenericChargeableWeapon &&
-                source.requiredRelicId == "ChargeRelic" && source.chargeEffectPrefab != null,
+                source.requiredRelicId == "ManaCharger" && source.chargeEffectPrefab != null,
                 "이빌아이 무기/유물 조건/차징 이펙트 Inspector 참조");
             results.Add("PASS 이빌아이 프리팹 및 차징의 구/이펙트 참조");
 
@@ -93,7 +93,7 @@ namespace Nytherion.Editor
             var pool = new GameObject("[검증] 이빌아이 전용 풀").AddComponent<ObjectPoolManager>();
             pool.Initialize();
             RelicData chargeRelic = Object.Instantiate(AssetDatabase.LoadAssetAtPath<RelicData>(
-                "Assets/Nytherion/Data/ScriptableObjects/Relics/CombatUtility/ChargeRelic.asset"));
+                "Assets/Nytherion/Data/ScriptableObjects/Relics/CombatUtility/ManaCharger.asset"));
             try
             {
                 combat.EquipWeapon(source.weaponPrefab, source);
@@ -108,7 +108,7 @@ namespace Nytherion.Editor
                 results.Add("PASS 유물 미장착: 즉시 일반 발사");
 
                 relics.AddRelic(chargeRelic);
-                Require(relics.IsRelicActive("ChargeRelic"), "유물 장착 스냅샷");
+                Require(relics.IsRelicActive("ManaCharger"), "유물 장착 스냅샷");
                 // 첫 발사 직후 쿨다운 도중 누르고, 쿨다운이 끝난 프레임을 재현합니다.
                 Call(combat, "HandleAttackDown");
                 Require(!Pressing(weapon), "쿨다운 도중 차징 대기");

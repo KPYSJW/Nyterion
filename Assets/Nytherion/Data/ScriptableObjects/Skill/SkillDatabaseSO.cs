@@ -11,12 +11,12 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         public SkillData GetSkillById(string id)
         {
             if (allSkills == null) return null;
-            return allSkills.Find(skill => skill != null && skill.skillID == id);
+            return allSkills.Find(skill => skill != null && skill.IsRuntimeAvailable && skill.skillID == id);
         }
         public SkillData GetSkillByType(Nytherion.Core.Enums.SkillType type)
         {
             if (allSkills == null) return null;
-            return allSkills.Find(skill => skill != null && skill.skillType == type);
+            return allSkills.Find(skill => skill != null && skill.IsRuntimeAvailable && skill.skillType == type);
         }
     }
 }

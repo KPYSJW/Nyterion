@@ -19,6 +19,28 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private bool hasForcedFacingDirection;
         private Vector2 forcedFacingDirection;
         public Transform player;
+        private readonly List<Nytherion.GamePlay.Skills.DecoyDummy> decoys = new();
+        public Transform CurrentTarget
+        {
+            get
+            {
+                Transform target = player;
+                float nearest = Mathf.Infinity;
+                for (int i = decoys.Count - 1; i >= 0; i--)
+                {
+                    var dummy = decoys[i];
+                    if (dummy == null || !dummy.CanTaunt(transform.position))
+                    { decoys.RemoveAt(i); continue; }
+                    float distance = ((Vector2)(dummy.transform.position - transform.position)).sqrMagnitude;
+                    if (distance < nearest) { nearest = distance; target = dummy.transform; }
+                }
+                return target;
+            }
+        }
+
+        public void AddDecoy(Nytherion.GamePlay.Skills.DecoyDummy dummy)
+        { if (dummy != null && !decoys.Contains(dummy)) decoys.Add(dummy); }
+        public void RemoveDecoy(Nytherion.GamePlay.Skills.DecoyDummy dummy) => decoys.Remove(dummy);
         public NavMeshAgent agent; 
        // public NavMeshObstacle Obstacle;
         public Rigidbody2D rb; 
@@ -29,6 +51,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private IEnemyCombatBehavior combatBehavior;
 
         private bool movementAllowed = true;
+        private bool isUpdatingState;
+        private bool hasPendingDestination;
+        private Vector3 pendingDestination;
 
         private EnemyBaseState currentState;
         public EnemyIdleState idleState;
@@ -86,14 +111,38 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void Update()
         {
-            currentState.UpdateState(this);
-
-            if (hasForcedDestination)
+            isUpdatingState = true;
+            try
             {
-                TryMoveToForcedDestination();
+                currentState?.UpdateState(this);
+
+                // 상태 로직에서 여러 번 요청해도 강제 목적지를 우선해 한 번만 이동한다.
+                if (hasForcedDestination) TryMoveToForcedDestination();
+            }
+            finally
+            {
+                isUpdatingState = false;
             }
 
+            if (hasPendingDestination && movementAllowed)
+                movementBehavior?.MoveTowards(pendingDestination);
+            hasPendingDestination = false;
             UpdateDirection();
+        }
+
+        private void RequestMovement(Vector3 destination)
+        {
+            if (isUpdatingState)
+            {
+                pendingDestination = destination;
+                hasPendingDestination = true;
+            }
+            else
+            {
+                // 상태 갱신 밖에서 호출하는 기존 API는 즉시 적용한다.
+                movementBehavior.MoveTowards(destination);
+                UpdateDirection();
+            }
         }
 
         public void TransitionToState(EnemyBaseState newState)
@@ -120,7 +169,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (!movementAllowed || !hasForcedDestination || movementBehavior == null)
                 return false;
 
-            movementBehavior.MoveTowards(forcedDestination);
+            RequestMovement(forcedDestination);
             return true;
         }
         public void SetForcedFacingDirection(Vector2 direction)
@@ -166,15 +215,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             if (!movementAllowed) return;
             if (movementBehavior == null) return;
-            if (!hasForcedDestination && player == null) return;
+            if (!hasForcedDestination && CurrentTarget == null) return;
 
             Vector3 destination = hasForcedDestination
                 ? forcedDestination
-                : player.position;
+                : CurrentTarget.position;
 
-            movementBehavior.MoveTowards(destination);
-
-            UpdateDirection();
+            RequestMovement(destination);
         }
 
         public void MoveToTarget(Vector2 targetPosition)
@@ -182,15 +229,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (!movementAllowed) return;
             if (movementBehavior == null) return;
 
-            movementBehavior.MoveTowards(targetPosition);
-
-            UpdateDirection();
+            RequestMovement(targetPosition);
         }
 
         public float GetDistanceToPlayer()
         {
-            if (player == null) return Mathf.Infinity;
-            return Vector2.Distance(transform.position, player.position);
+            if (CurrentTarget == null) return Mathf.Infinity;
+            return Vector2.Distance(transform.position, CurrentTarget.position);
         }
 
         public void MoveInDirection(Vector2 direction, float distance = 1.5f)
@@ -206,9 +251,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             direction.Normalize();
             Vector2 target = (Vector2)transform.position + direction * distance;
 
-            movementBehavior.MoveTowards(target);
-
-            UpdateDirection();
+            RequestMovement(target);
         }
 
         
@@ -332,6 +375,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void StopMovement()
         {
+            hasPendingDestination = false;
             movementBehavior?.StopMovement();
         }
 
@@ -359,6 +403,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void ResetForReuse(EnemyData data)
         {
+            decoys.Clear();
             if (player == null)
             {
                 GameObject playerInstance = GameObject.FindWithTag(Tags.Player);
@@ -481,6 +526,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void PrepareForPoolReturn()
         {
+            decoys.Clear();
             if (currentState != null)
             {
                 currentState.ExitState(this);
@@ -597,9 +643,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public void MoveAwayFromPlayer(float retreatDistance = 4f)
         {
             if (!movementAllowed) return;
-            if (player == null || movementBehavior == null) return;
+            if (CurrentTarget == null || movementBehavior == null) return;
 
-            Vector2 direction = ((Vector2)transform.position - (Vector2)player.position).normalized;
+            Vector2 direction = ((Vector2)transform.position - (Vector2)CurrentTarget.position).normalized;
             Vector2 target = (Vector2)transform.position + direction * retreatDistance;
 
             movementBehavior.MoveTowards(target);

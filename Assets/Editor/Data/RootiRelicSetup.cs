@@ -270,23 +270,30 @@ namespace Nytherion.Editor
             RelicData relic = AssetDatabase.LoadAssetAtPath<RelicData>(LegacyRelicPath);
             if (relic == null) return;
 
-            // 기존 세이브의 유물 ID와 GUID는 유지하되 더 이상 소환하거나 뽑히지 않도록 합니다.
+            // 구형 ID와 GUID는 보존하고 현재 루티와 혼동되는 표시 및 획득 참조를 정리합니다.
+            relic.koreanName = "루티 (사용 중단)";
+            relic.englishName = "Rooti (Retired)";
+            relic.Image = null;
             relic.effectModules = new List<RelicEffectModule>();
             relic.isDisabled = true;
-            relic.description_KR = "루티는 포탑 스킬로 전환되었습니다. 이 유물은 더 이상 소환수를 생성하지 않습니다.";
-            relic.description_EN = "Rooti is now deployed by the turret skill. This legacy relic no longer summons a companion.";
+            relic.synergySeriesId = string.Empty;
+            relic.synergySetBonusData = null;
+            relic.description_KR = "사용이 중단된 구형 루티 유물입니다.";
+            relic.description_EN = "This legacy Rooti relic has been retired.";
             EditorUtility.SetDirty(relic);
+            RelicDatabaseSO database = AssetDatabase.LoadAssetAtPath<RelicDatabaseSO>(
+                "Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset");
+            if (database != null && database.allRelics != null && database.allRelics.RemoveAll(item => item == relic) > 0)
+            {
+                EditorUtility.SetDirty(database);
+            }
             GachaPoolSO pool = AssetDatabase.LoadAssetAtPath<GachaPoolSO>(
                 "Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Epic_Relic.asset");
             if (pool != null && pool.items != null)
             {
-                foreach (GachaItemRate rate in pool.items)
+                if (pool.items.RemoveAll(rate => rate != null && rate.item == relic) > 0)
                 {
-                    if (rate.item == relic)
-                    {
-                        rate.weight = 0;
-                        EditorUtility.SetDirty(pool);
-                    }
+                    EditorUtility.SetDirty(pool);
                 }
             }
         }

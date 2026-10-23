@@ -153,12 +153,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69a976ddf71a2a04698c1ee69f97ccc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RoomFirstDungeonGenerator: {fileID: 119956676}
-  minimapGenerator: {fileID: 746675963}
   playerObject: {fileID: 1474220875}
-  activeEnemies: []
-  worldMapUI: {fileID: 2083577592}
-  portalTilemap: {fileID: 786564355}
+  roomFirstDungeonGenerator: {fileID: 0}
+  tilemapVisualizer: {fileID: 0}
+  ignoreSavedDungeonMapForTest: 0
+  playBossIntro: 1
+  disablePlayerControlDuringBossIntro: 1
+  bossIntroTitle: WARNING
+  bossIntroFadeDuration: 0.25
+  bossIntroHoldDuration: 1.25
+  bossIntroPostDelay: 0.25
+  _objectPoolManager: {fileID: 0}
+  _stageManager: {fileID: 0}
 --- !u!4 &119956675
 Transform:
   m_ObjectHideFlags: 0
@@ -189,8 +195,9 @@ MonoBehaviour:
   tilemapVisualizer: {fileID: 360195986}
   startPosition: {x: 0, y: 0}
   dungeonData: {fileID: 11400000, guid: 75cd5ba9acac4b6429392bfac87700db, type: 2}
-  worldmapController: {fileID: 2083577594}
-  minimapGenerator: {fileID: 746675963}
+  _worldmapController: {fileID: 0}
+  _minimapGenerator: {fileID: 0}
+  dungeonNavMeshBuilder: {fileID: 0}
 --- !u!114 &119956677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,6 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2c33c68d52ff6341b859349ae0bc6d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
   pools:
   - tag: Goblin
     prefab: {fileID: 6406644339438500767, guid: 17fde502d382da64a805f35f8d770687, type: 3}
@@ -270,7 +278,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 488166347}
-  - component: {fileID: 488166346}
   m_Layer: 0
   m_Name: GameInstaller
   m_TagString: Untagged
@@ -278,38 +285,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &488166346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 488166345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4726c4df8b507024da03d2139986d8af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 5097942217742227509, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-  inputManagerPrefab: {fileID: 178222708281695647, guid: a165060af635a7843a8762e0718dbdf0, type: 3}
-  audioManagerPrefab: {fileID: 4032553791337175984, guid: a4a4b80b1b905474e8ab3602db3af216, type: 3}
-  currencyManagerPrefab: {fileID: 6285464529572977786, guid: 23db7a4c2083b2948abdcf714592835a, type: 3}
-  inventoryManagerPrefab: {fileID: 3390760140847560181, guid: 11aa81630269e4f4e92480efeb209fb8, type: 3}
-  relicManagerPrefab: {fileID: 8983768238779572109, guid: be365ae38fcb2ba43a8d2cf8bd40b734, type: 3}
-  equipmentDataManagerPrefab: {fileID: 7867078577052160200, guid: 9311b1800f5824644b55b53778611aa8, type: 3}
-  gachaManagerPrefab: {fileID: 6324277345916687726, guid: 11f9d19a26b69664c853ec605580bf08, type: 3}
-  shopManagerPrefab: {fileID: 1390811192013356754, guid: 042319ee8ea599a4e89a84078ead7944, type: 3}
-  saveLoadManagerPrefab: {fileID: 1223338905626847151, guid: d1dc8b91acef336499702f2dedaf5330, type: 3}
-  objectPoolManagerPrefab: {fileID: 2073554065287845231, guid: 43b2dead484a1fa43aa9656366557b9b, type: 3}
-  interactionManagerPrefab: {fileID: 698421397120775284, guid: 33122866e9f99104786f6979d96cafc0, type: 3}
-  stageManagerPrefab: {fileID: 4387082605596328283, guid: d2ff92c066939ba4588e74e845593f2d, type: 3}
-  eventManagerPrefab: {fileID: 6703879477207762094, guid: 42b39eabf4bd1a34db877fb5adf9535f, type: 3}
-  menuManagerPrefab: {fileID: 6608873119349783215, guid: 90efe44687fa77d47992eda89fe23188, type: 3}
-  gameUIInstaller: {fileID: 0}
-  gameSceneUIManager: {fileID: 0}
-  followCameraPrefab: {fileID: 1351506084518171216, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
-  settingsManagerPrefab: {fileID: 4138314269914204220, guid: eeba13ee7e7671f419b4bdc59a0604e9, type: 3}
-  itemDatabase: {fileID: 11400000, guid: f9b21e1c662560447a97d34c43a8f038, type: 2}
 --- !u!4 &488166347
 Transform:
   m_ObjectHideFlags: 0
@@ -541,6 +516,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17edee5eab0e7624eac3dfe1c4056fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
+  relicUIToggleKey: 35
 --- !u!1 &746675962
 GameObject:
   m_ObjectHideFlags: 0
@@ -577,7 +554,7 @@ MonoBehaviour:
   obstacleColor: {r: 0.6, g: 0.4, b: 0.2, a: 1}
   portalColor: {r: 1, g: 0, b: 1, a: 1}
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.5}
-  fixedViewHeightInTiles: 80
+  viewPaddingInTiles: 10
   playerIconPrefab: {fileID: 5505683442110060723, guid: af282e69b28cd2c4ea48f547b4138330, type: 3}
   enemyIconPrefab: {fileID: 5505683442110060723, guid: 866521b032fe8fe478385ed438ac6b12, type: 3}
 --- !u!4 &746675964
@@ -730,7 +707,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aaf9afbaadd7024fbdc51d8ecca61f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floorTilemap: {fileID: 2100739753}
 --- !u!50 &786564359
 Rigidbody2D:
   serializedVersion: 4
@@ -1336,7 +1312,6 @@ GameObject:
   - component: {fileID: 1306631108}
   - component: {fileID: 1306631107}
   - component: {fileID: 1306631110}
-  - component: {fileID: 1306631109}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1356,6 +1331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26630484c6b28f241926e1cc7da85317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
 --- !u!4 &1306631108
 Transform:
   m_ObjectHideFlags: 0
@@ -1372,28 +1348,6 @@ Transform:
   - {fileID: 738896778}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1306631109
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1306631106}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25d988b58de695f4289286a57359159e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputManager: {fileID: 738896779}
-  audioManager: {fileID: 0}
-  currencyManager: {fileID: 0}
-  inventoryManager: {fileID: 0}
-  relicManager: {fileID: 0}
-  playerManager: {fileID: 1474220888}
-  gachaManager: {fileID: 0}
-  shopManager: {fileID: 0}
-  saveLoadManager: {fileID: 0}
-  itemDatabase: {fileID: 0}
 --- !u!114 &1306631110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1406,6 +1360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a217cf67cfc3c4e93b40d792b86c28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoInitializeOnAwake: 0
 --- !u!1 &1474220875 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5097942217742227509, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
@@ -1423,7 +1378,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2480bd2a519f9004f85628d0cb508f1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  spriteRenderer: {fileID: 0}
+  hitColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashDuration: 0.1
+  whiteFlashDuration: 0.04
+  damageEffectScale: {x: 1, y: 1, z: 1}
+  damageEffectSortingOffset: 10
 --- !u!95 &1474220877
 Animator:
   serializedVersion: 5
@@ -1495,17 +1455,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 16, y: 16}
   m_Direction: 0
---- !u!114 &1474220888 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -2891475838477974602, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
-  m_PrefabInstance: {fileID: 1254756027}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1474220875}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aecc2587fc6efe84496d9142a0be9289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1777804486
 GameObject:
   m_ObjectHideFlags: 0
@@ -1772,6 +1721,7 @@ MonoBehaviour:
   roomIconPrefab: {fileID: 667391318892503220, guid: eb998911152d6da419bfbe833a8dbed4, type: 3}
   playerIcon: {fileID: 1777804487}
   linePrefab: {fileID: 7129129202584483886, guid: d7a5a3a96c249b04497328987f919e6e, type: 3}
+  StageNumber: {fileID: 0}
   roomIconSize: 20
   iconSpacing: 50
   mapPadding: 50

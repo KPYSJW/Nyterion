@@ -56,7 +56,7 @@ namespace Nytherion.Editor
                 string source = "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProjStart" + (i == 0 ? "" : i.ToString()) + ".png";
                 Sprite[] frames = AssetDatabase.LoadAllAssetsAtPath(source).OfType<Sprite>()
                     .OrderBy(sprite => sprite.name, StringComparer.Ordinal).ToArray();
-                if (frames.Length != 4) throw new InvalidOperationException("시작 이펙트의 4프레임을 확인해 주세요: " + source);
+                if (frames.Length != 6) throw new InvalidOperationException("시작 이펙트의 6프레임을 확인해 주세요: " + source);
                 string clipPath = Folder + "/" + name + ".anim";
                 AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
                 if (clip == null)
@@ -74,10 +74,12 @@ namespace Nytherion.Editor
                     EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite"), keys);
                 var clipSettings = AnimationUtility.GetAnimationClipSettings(clip);
                 clipSettings.loopTime = false;
+                clipSettings.startTime = 0f;
+                clipSettings.stopTime = frames.Length / clip.frameRate;
                 AnimationUtility.SetAnimationClipSettings(clip, clipSettings);
                 AnimationUtility.SetAnimationEvents(clip, new[]
                 {
-                    new AnimationEvent { time = clip.length, functionName = nameof(ProjectileStartEffect.OnAnimationComplete) }
+                    new AnimationEvent { time = frames.Length / clip.frameRate, functionName = nameof(ProjectileStartEffect.OnAnimationComplete) }
                 });
                 EditorUtility.SetDirty(clip);
                 AssetDatabase.SaveAssetIfDirty(clip);

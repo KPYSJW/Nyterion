@@ -24,6 +24,22 @@ namespace Nytherion.UI.RelicBoard
 
         private RelicManager relicManager;
         private IObjectResolver container;
+        private CurrencyDataManager currency;
+        private AudioManager uiAudio;
+        private RelicTooltip tooltip;
+
+        [Header("유물 분해")]
+        [SerializeField] private Button storageDismantleButton;
+        [SerializeField] private RelicDismantlePanel dismantlePanel;
+        public RelicDismantlePanel DismantlePanel => dismantlePanel;
+
+        [Inject]
+        public void BindDismantle(CurrencyDataManager currency, AudioManager audio, RelicTooltip tooltip)
+        {
+            this.currency = currency;
+            uiAudio = audio;
+            this.tooltip = tooltip;
+        }
 
         [Header("UI 구성요소")]
         [SerializeField] private GameObject slotCellPrefab;
@@ -38,10 +54,18 @@ namespace Nytherion.UI.RelicBoard
         [Header("보관소 설정")]
         [SerializeField] public RectTransform blockStorageParent;
         [SerializeField] public GameObject storageSlotPrefab;
+        [Header("보관소 페이지 UI")]
+        [SerializeField] private RectTransform paginationRoot;
+        [SerializeField] private Button previousPageButton;
+        [SerializeField] private Button nextPageButton;
+        [SerializeField] private Button storageSortButton;
+        [SerializeField] private TextMeshProUGUI pageText;
 
         [Header("장착 유물 수")]
         [Tooltip("현재 장착 유물 수를 표시할 텍스트입니다. 비어 있으면 같은 캔버스의 RelicCountText를 자동으로 찾습니다.")]
         [SerializeField] private TextMeshProUGUI relicCountText;
+        private bool relicCountHiddenForDismantle;
+        private bool relicCountWasActive;
 
         [Header("영향 범위 기즈모")]
         [Tooltip("레벨 업 효과를 표시할 프리팹")]
@@ -60,10 +84,6 @@ namespace Nytherion.UI.RelicBoard
         private Coroutine refreshRoutine;
         private int storagePage;
         private int storagePageCount = 1;
-        private RectTransform paginationRoot;
-        private Button previousPageButton;
-        private Button nextPageButton;
-        private TextMeshProUGUI pageText;
         private sealed class PreviewGizmo
         {
             public GameObject prefab;
@@ -108,6 +128,12 @@ namespace Nytherion.UI.RelicBoard
 
             if (slotCells == null) InitializeGridCells();
             InitializeStorageSlots();
+            if (dismantlePanel != null && currency != null)
+            {
+                dismantlePanel.Initialize(relicManager, currency, this, uiAudio, tooltip);
+                storageDismantleButton.onClick.RemoveListener(dismantlePanel.Toggle);
+                storageDismantleButton.onClick.AddListener(dismantlePanel.Toggle);
+            }
             HandleRelicStateChanged();
             yield return null;
 
@@ -126,6 +152,7 @@ namespace Nytherion.UI.RelicBoard
         private void OnDisable()
         {
             CancelActiveDrag();
+            CloseDismantle();
             if (refreshRoutine != null) StopCoroutine(refreshRoutine);
             refreshRoutine = null;
             ClearPreview();
@@ -151,7 +178,8 @@ namespace Nytherion.UI.RelicBoard
             ClearAllVisuals();
 
             List<RelicBlock> storageBlocks = relicManager.GetStorageBlocks()
-                .Where(block => block != null && block.SourceData != null && block.SourceData.IsRuntimeAvailable)
+                .Where(block => block != null && block.SourceData != null && block.SourceData.IsRuntimeAvailable &&
+                    !relicManager.IsStagedForDismantle(block))
                 .ToList();
             storagePageCount = Mathf.Max(1, Mathf.CeilToInt(storageBlocks.Count / (float)StorageSlotsPerPage));
             storagePage = Mathf.Clamp(storagePage, 0, storagePageCount - 1);
@@ -180,6 +208,7 @@ namespace Nytherion.UI.RelicBoard
 
             UpdateRelicCountText();
             UpdatePagination();
+            if (storageSortButton != null) storageSortButton.interactable = storageBlocks.Count > 1;
             refreshRoutine = null;
 
         }
@@ -207,6 +236,17 @@ namespace Nytherion.UI.RelicBoard
                     return;
                 }
             }
+        }
+
+        public void SetRelicCountHiddenForDismantle(bool hidden)
+        {
+            if (relicCountHiddenForDismantle == hidden) return;
+            ResolveRelicCountText();
+            if (relicCountText == null) return;
+
+            if (hidden) relicCountWasActive = relicCountText.gameObject.activeSelf;
+            relicCountHiddenForDismantle = hidden;
+            relicCountText.gameObject.SetActive(hidden ? false : relicCountWasActive);
         }
 
         private void InitializeGridCells()
@@ -241,8 +281,10 @@ namespace Nytherion.UI.RelicBoard
         private void ClearAllVisuals()
         {
             foreach (Transform child in placedBlocksContainer) RetireVisual(child.gameObject);
+            foreach (RelicSlotCell cell in slotCells) cell?.ClearCell();
             foreach (GameObject slot in storageSlots)
             {
+                slot.GetComponent<RelicSlotVisual>()?.SetRarity(null);
                 foreach (RelicBlockDraggable draggable in slot.GetComponentsInChildren<RelicBlockDraggable>())
                     RetireVisual(draggable.gameObject);
                 Image icon = slot.transform.Find("Icon")?.GetComponent<Image>();
@@ -275,7 +317,7 @@ namespace Nytherion.UI.RelicBoard
                 Image frame = slot.GetComponent<Image>();
                 PixelPerfectSlotFrame.Apply(frame);
             }
-            CreatePagination();
+            InitializePagination();
         }
 
         public static void ConfigureStorageLayout(RectTransform storageRoot)
@@ -306,7 +348,7 @@ namespace Nytherion.UI.RelicBoard
 
         private void CreateBlockInStorage(RelicBlock blockData, GameObject slotObj)
         {
-
+            slotObj.GetComponent<RelicSlotVisual>()?.SetRarity(blockData.SourceData.rarity);
             try
             {
                 GameObject blockObj = container.Instantiate(draggableBlockPrefab, slotObj.transform);
@@ -331,8 +373,26 @@ namespace Nytherion.UI.RelicBoard
             }
         }
 
+        public GameObject CreateDismantleSlot(RelicBlock block, Transform parent)
+        {
+            GameObject slot = Instantiate(storageSlotPrefab, parent);
+            PixelPerfectSlotFrame.Apply(slot.GetComponent<Image>());
+            CreateBlockInStorage(block, slot);
+            RelicBlockDraggable draggable = slot.GetComponentInChildren<RelicBlockDraggable>();
+            if (draggable != null)
+            {
+                draggable.isDismantleStaged = true;
+                GridLayoutGroup layout = parent.GetComponent<GridLayoutGroup>();
+                if (layout != null) ((RectTransform)draggable.transform).sizeDelta = layout.cellSize;
+            }
+            return slot;
+        }
+
+        public void CloseDismantle() => dismantlePanel?.Close();
+
         private void CreateBlockOnGrid(RelicBlock blockData, Vector2Int position)
         {
+            slotCells[position.y, position.x]?.SetRarity(blockData.SourceData.rarity);
             GameObject blockObj = container.Instantiate(draggableBlockPrefab, placedBlocksContainer);
             RelicBlockDraggable draggable = blockObj.GetComponent<RelicBlockDraggable>();
 
@@ -358,56 +418,42 @@ namespace Nytherion.UI.RelicBoard
             HandleRelicStateChanged();
         }
 
-        private void CreatePagination()
+        public void SortStorage()
         {
-            GameObject controls = new GameObject("RelicStoragePages", typeof(RectTransform));
-            paginationRoot = controls.GetComponent<RectTransform>();
-            paginationRoot.SetParent(blockStorageParent.parent, false);
-            paginationRoot.anchorMin = blockStorageParent.anchorMin;
-            paginationRoot.anchorMax = blockStorageParent.anchorMin;
-            paginationRoot.sizeDelta = new Vector2(220f, 36f);
-            previousPageButton = CreatePageButton("Previous", "<", -80f, -1);
-            nextPageButton = CreatePageButton("Next", ">", 80f, 1);
-            pageText = CreatePageLabel(controls.transform, "Page", Vector2.zero);
+            if (relicManager == null || !relicManager.SortStorageBlocks()) return;
+
+            storagePage = 0;
+            HandleRelicStateChanged();
         }
 
-        private Button CreatePageButton(string name, string label, float x, int direction)
+        private void InitializePagination()
         {
-            GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
-            RectTransform rect = go.GetComponent<RectTransform>();
-            rect.SetParent(paginationRoot, false);
-            rect.sizeDelta = new Vector2(48f, 36f);
-            rect.anchoredPosition = new Vector2(x, 0f);
-            go.GetComponent<Image>().color = new Color(0.18f, 0.18f, 0.18f, 1f);
-            Button button = go.GetComponent<Button>();
-            button.onClick.AddListener(() => ChangeStoragePage(direction));
-            CreatePageLabel(go.transform, "Label", Vector2.zero).text = label;
-            return button;
+            if (paginationRoot == null || previousPageButton == null || nextPageButton == null ||
+                storageSortButton == null || pageText == null)
+            {
+                Debug.LogError("[RelicGridUI] 하이라키의 보관소 페이지 UI를 Inspector에 연결해 주세요.", this);
+                return;
+            }
+
+            previousPageButton.onClick.RemoveListener(ShowPreviousStoragePage);
+            previousPageButton.onClick.AddListener(ShowPreviousStoragePage);
+            nextPageButton.onClick.RemoveListener(ShowNextStoragePage);
+            nextPageButton.onClick.AddListener(ShowNextStoragePage);
+            storageSortButton.onClick.RemoveListener(SortStorage);
+            storageSortButton.onClick.AddListener(SortStorage);
         }
 
-        private static TextMeshProUGUI CreatePageLabel(Transform parent, string name, Vector2 position)
-        {
-            GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
-            RectTransform rect = go.GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            rect.sizeDelta = new Vector2(64f, 36f);
-            rect.anchoredPosition = position;
-            TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
-            label.font = TMP_Settings.defaultFontAsset;
-            label.fontSize = 22f;
-            label.alignment = TextAlignmentOptions.Center;
-            label.color = Color.white;
-            label.raycastTarget = false;
-            return label;
-        }
+        private void ShowPreviousStoragePage() => ChangeStoragePage(-1);
+        private void ShowNextStoragePage() => ChangeStoragePage(1);
 
         private void UpdatePagination()
         {
-            if (paginationRoot == null) return;
-            LayoutRebuilder.ForceRebuildLayoutImmediate(blockStorageParent);
-            paginationRoot.anchoredPosition = blockStorageParent.anchoredPosition +
-                new Vector2(0f, -blockStorageParent.rect.height - 28f);
-            paginationRoot.gameObject.SetActive(storagePageCount > 1);
+            if (paginationRoot == null || previousPageButton == null || nextPageButton == null ||
+                pageText == null) return;
+            // 정렬 버튼은 보관함이 한 페이지일 때도 표시한다.
+            previousPageButton.gameObject.SetActive(storagePageCount > 1);
+            nextPageButton.gameObject.SetActive(storagePageCount > 1);
+            pageText.gameObject.SetActive(storagePageCount > 1);
             previousPageButton.interactable = storagePage > 0;
             nextPageButton.interactable = storagePage + 1 < storagePageCount;
             pageText.text = $"{storagePage + 1}/{storagePageCount}";
@@ -429,7 +475,8 @@ namespace Nytherion.UI.RelicBoard
                 {
                     List<RelicBlock> blocks = relicManager.GetStorageBlocks().ToList();
                     List<RelicBlock> visibleBlocks = blocks
-                        .Where(block => block != null && block.SourceData != null && block.SourceData.IsRuntimeAvailable)
+                        .Where(block => block != null && block.SourceData != null && block.SourceData.IsRuntimeAvailable &&
+                            !relicManager.IsStagedForDismantle(block))
                         .ToList();
                     int visibleIndex = storagePage * StorageSlotsPerPage + i;
                     storageIndex = visibleIndex < visibleBlocks.Count

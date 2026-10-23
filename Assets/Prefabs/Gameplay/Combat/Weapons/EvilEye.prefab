@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4675783994163180397}
   - component: {fileID: 6616113549787161100}
   m_Layer: 0
-  m_Name: VenomousStaffCharge
+  m_Name: CorrosionCharge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

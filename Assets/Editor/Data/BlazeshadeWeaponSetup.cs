@@ -76,7 +76,7 @@ namespace Nytherion.Editor
         private static WeaponData CreateData(Sprite weaponSprite, Sprite iconSprite)
         {
             WeaponData data = ScriptableObject.CreateInstance<WeaponData>();
-            data.itemName_KR = "블레이즈셰이드";
+            data.itemName_KR = "불그늘";
             data.itemName_EN = "Blazeshade";
             data.description_KR = "공격하지 않는 대신, 장착 중 플레이어 주위에 불꽃 고리를 펼쳐 범위 안의 적에게 1초마다 피해를 줍니다.";
             data.description_EN = "Instead of attacking, surrounds the player with a ring of fire that damages nearby enemies every second.";

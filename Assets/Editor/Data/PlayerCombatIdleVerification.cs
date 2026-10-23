@@ -152,7 +152,7 @@ namespace Nytherion.Editor
                     (animator.HasState(0, Animator.StringToHash("Dash")) ? " 이동·대시" : " 이동") +
                     " 재생 속도 복구");
 
-                WeaponBase weapon = root.AddComponent<LaserWeapon>();
+                WeaponBase weapon = root.AddComponent<CrimsonLotusWeapon>();
                 weapon.enabled = false;
                 combat.currentWeapon = weapon;
                 Field(combat, "isAttackHeld", true);

@@ -12,25 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b479c86868448168ab7acdc2ded71e3, type: 3}
   m_Name: LegionTranscendence
   m_EditorClassIdentifier: 
-  effectName_KR: "군단"
+  effectName_KR: "\uAD70\uB2E8"
   effectName_EN: Legion
   statusIcon: {fileID: 21300000, guid: 869b965e4ae74f2d85871b0246ec1f25, type: 3}
+  nameColor: {r: 0.72156864, g: 0.54901963, b: 1, a: 1}
   badgeBackgroundColor: {r: 0.35686275, g: 0.24705882, b: 0.50980395, a: 0.9607843}
   badgeTextColor: {r: 0.9529412, g: 0.9137255, b: 1, a: 1}
-  description_KR: "소환물과 소환수가 군단으로 연계됩니다. 모든 소환 피해 +25%, 소환물 투사체 1발 추가, 소환수 공격 속도 +15%."
-  description_EN: Summons and companions form a legion. All summon damage +25%, Summon relics fire 1 extra projectile, and companions attack 15% faster.
+  description_KR: "\uC18C\uD658\uBB3C\xB7\uC18C\uD658\uC218 \uD53C\uD574 +25%, \uC18C\uD658\uBB3C
+    \uD22C\uC0AC\uCCB4 1\uBC1C \uCD94\uAC00, \uC18C\uD658\uC218 \uACF5\uACA9 \uAC04\uACA9
+    -15%."
+  description_EN: Summon and companion damage +25%, summon projectiles +1, and companion
+    attack interval -15%.
   requirements:
   - setBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
     requiredEquippedCount: 6
   - setBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
     requiredEquippedCount: 2
   effectModules:
-  - condition: {rid: -2}
+  - description_KR: "\uC18C\uD658\uBB3C\xB7\uC18C\uD658\uC218 \uD53C\uD574 +25%,
+      \uC18C\uD658\uBB3C \uD22C\uC0AC\uCCB4 1\uBC1C \uCD94\uAC00, \uC18C\uD658\uC218
+      \uACF5\uACA9 \uAC04\uACA9 -15%."
+    description_EN: Summon and companion damage +25%, summon projectiles +1, and
+      companion attack interval -15%.
+    condition:
+      rid: -2
     effects:
     - rid: 1001
     - rid: 1002
-    description_KR: "모든 소환 계열 공격을 함께 강화"
-    description_EN: Strengthen all summon-family attacks together.
   references:
     version: 2
     RefIds:

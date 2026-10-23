@@ -75,7 +75,8 @@ namespace Nytherion.GamePlay.Combat
             currentTurnSpeed = Mathf.Max(0f, turnSpeed);
             launchTimeRemaining = Mathf.Max(0f, straightDuration);
             rotationOffset = spriteRotationOffset;
-            constantSpeed = keepSpeed;
+            // 투사체 자체의 일정 속도 설정도 유지해 발사 경로에 따라 감속이 다시 켜지지 않게 합니다.
+            constantSpeed = useConstantSpeed || keepSpeed;
             moveDirection = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
             initialized = true;
             rb.angularVelocity = 0f;

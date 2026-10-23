@@ -5,7 +5,6 @@ using Nytherion.UI.Controllers;
 using Nytherion.UI.Components;
 using Nytherion.UI.Inventory.Utils;
 using Nytherion.Data.ScriptableObjects.Weapons;
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -69,7 +68,8 @@ namespace Nytherion.UI.Inventory
         {
             if (item != null && count > 0 && iconImage != null && iconImage.transform != transform)
                 PixelPerfectItemIcon.Apply(iconImage, transform as RectTransform,
-                    item is WeaponData weaponData ? weaponData.inventoryIconScale : 1f);
+                    item is WeaponData weaponData ? weaponData.inventoryIconScale : 1f, item is WeaponData,
+                    item is WeaponData weapon ? weapon.inventoryIconSizeMultiplier : 1f);
             base.UpdateVisuals(item, count);
         }
 
@@ -179,48 +179,8 @@ namespace Nytherion.UI.Inventory
                     return;
                 }
 
-                try
-                {
-                    (ItemData itemToUnequip, int itemQuantity) = equipmentSourceSlot.GetItemInfo();
-                    if (itemToUnequip == null) return;
-
-                    ItemData itemInThisSlot = CurrentItem;
-
-                    // 인벤토리 대상 슬롯에 이미 아이템이 있고 스왑할 수 없는 조건인 경우 취소하여 증발 방지
-                    if (itemInThisSlot != null)
-                    {
-                        bool canSwap = itemInThisSlot is EquipmentData &&
-                                       equipmentSourceSlot.CanReceiveItem(itemInThisSlot as EquipmentData);
-                        if (!canSwap)
-                        {
-                            Debug.LogWarning("[InventorySlotUI] Cannot swap: target slot item is not compatible with equipment slot.");
-                            return;
-                        }
-                    }
-
-                    equipmentSourceSlot.ClearSlot();
-
-                    if (inventoryDataManager != null)
-                    {
-                        bool addSuccess = inventoryDataManager.AddItemToSlot(itemToUnequip, 1, this.SlotIndex, true);
-
-                        if (addSuccess)
-                        {
-                            this.SetItem(itemToUnequip, 1);
-
-                            if (itemInThisSlot != null)
-                            {
-                                equipmentDataManager.SetEquipment(equipmentSourceSlot.SlotType, itemInThisSlot as EquipmentData, false);
-                            }
-                        }
-                    }
-                    DragDropUIHandler.dropHandled = true;
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Error in OnDrop (EquipmentSlot): {e.Message}");
-                    return;
-                }
+                DragDropUIHandler.dropHandled = true;
+                equipmentSourceSlot.TryMoveToInventory(this);
             }
             else if (sourceSlot is QuickSlotUI quickSourceSlot)
             {
@@ -287,24 +247,10 @@ namespace Nytherion.UI.Inventory
                     return;
                 }
 
-                if (inventoryDataManager.RemoveItemFromSlot(SlotIndex, 1))
+                if (equipmentDataManager != null &&
+                    equipmentDataManager.TryEquipFromInventory(targetSlotType, SlotIndex, equipment))
                 {
-                    EquipmentData previouslyEquipped = equipmentDataManager.GetEquipment(targetSlotType);
-
-                    if (string.IsNullOrEmpty(equipment.instanceId))
-                    {
-                        equipment.instanceId = System.Guid.NewGuid().ToString();
-                    }
-
-                    // 보관 슬롯 이동은 여기서 처리하므로 매니저의 자동 반환/제거를 중복 실행하지 않는다.
-                    equipmentDataManager.SetEquipment(targetSlotType, equipment, false);
                     PlayUISound(UISoundType.Place);
-
-                    if (previouslyEquipped != null)
-                    {
-                        // 기존 장비 인스턴스를 클릭했던 보관 슬롯으로 반환한다.
-                        inventoryDataManager.AddItemToSlot(previouslyEquipped, 1, SlotIndex);
-                    }
                 }
             }
             else if (CurrentItem is ConsumableData consumable)

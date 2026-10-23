@@ -17,23 +17,34 @@ namespace Nytherion.UI.RelicBoard
     /// </summary>
     public sealed class RelicEffectStatusUI : MonoBehaviour
     {
+        private static readonly Color[] SetTierNameColors =
+        {
+            new Color32(39, 232, 106, 255),
+            new Color32(21, 154, 232, 255),
+            new Color32(181, 65, 238, 255),
+            new Color32(255, 196, 0, 255)
+        };
+
         private sealed class SetStatusDisplayData
         {
             public Sprite Icon { get; }
             public string Label { get; }
             public string TooltipTitle { get; }
             public string TooltipBody { get; }
+            public Color NameColor { get; }
 
             public SetStatusDisplayData(
                 Sprite icon,
                 string label,
                 string tooltipTitle,
-                string tooltipBody)
+                string tooltipBody,
+                Color nameColor)
             {
                 Icon = icon;
                 Label = label;
                 TooltipTitle = tooltipTitle;
                 TooltipBody = tooltipBody;
+                NameColor = nameColor;
             }
         }
 
@@ -43,17 +54,23 @@ namespace Nytherion.UI.RelicBoard
             public string Label { get; }
             public string TooltipTitle { get; }
             public string TooltipBody { get; }
+            public Color NameColor { get; }
+            public IReadOnlyList<Sprite> RequirementIcons { get; }
 
             public TranscendenceStatusDisplayData(
                 Sprite icon,
                 string label,
                 string tooltipTitle,
-                string tooltipBody)
+                string tooltipBody,
+                Color nameColor,
+                IReadOnlyList<Sprite> requirementIcons)
             {
                 Icon = icon;
                 Label = label;
                 TooltipTitle = tooltipTitle;
                 TooltipBody = tooltipBody;
+                NameColor = nameColor;
+                RequirementIcons = requirementIcons;
             }
         }
 
@@ -154,7 +171,8 @@ namespace Nytherion.UI.RelicBoard
                     setBonus.statusIcon,
                     $"{setBonus.DisplayName} ({setBonus.GetEquippedCount(relicManager)})",
                     setBonus.DisplayName,
-                    setBonus.BuildTooltipText(relicManager)))
+                    setBonus.BuildTooltipText(relicManager),
+                    GetSetNameColor(setBonus.GetActiveTierIndex(relicManager))))
                 .ToList();
 
             UpdateSetEntries(activeSetDisplays);
@@ -197,22 +215,23 @@ namespace Nytherion.UI.RelicBoard
             LayoutRebuilder.ForceRebuildLayoutImmediate(transcendenceStatusPanel);
         }
 
+        private static Color GetSetNameColor(int tierIndex)
+        {
+            return tierIndex < 0
+                ? new Color32(128, 128, 128, 255)
+                : SetTierNameColors[Mathf.Min(tierIndex, SetTierNameColors.Length - 1)];
+        }
+
         private TranscendenceStatusDisplayData BuildTranscendenceDisplayData(
             RelicTranscendenceData transcendence)
         {
-            IEnumerable<RelicTranscendenceRequirement> requirementSource =
-                transcendence.requirements ?? Enumerable.Empty<RelicTranscendenceRequirement>();
-
-            int totalEquippedCount = requirementSource
-                .Where(requirement => requirement?.setBonusData != null &&
-                                      requirement.setBonusData.IsAnyTierActive(relicManager))
-                .Sum(requirement => requirement.setBonusData.GetEquippedCount(relicManager));
-
             return new TranscendenceStatusDisplayData(
                 transcendence.statusIcon,
-                $"{transcendence.DisplayName} ({totalEquippedCount})",
                 transcendence.DisplayName,
-                transcendence.BuildTooltipText(relicManager));
+                transcendence.DisplayName,
+                transcendence.BuildTooltipText(relicManager, true),
+                transcendence.nameColor,
+                transcendence.requirements?.Select(requirement => requirement?.setBonusData?.statusIcon).ToArray());
         }
 
         private void UpdateSetEntries(IReadOnlyList<SetStatusDisplayData> displayData)
@@ -252,7 +271,7 @@ namespace Nytherion.UI.RelicBoard
             for (int i = 0; i < displayData.Count; i++)
             {
                 SetStatusDisplayData data = displayData[i];
-                setEntries[i].Bind(data.Icon, data.Label, data.TooltipTitle, data.TooltipBody);
+                setEntries[i].Bind(data.Icon, data.Label, data.TooltipTitle, data.TooltipBody, data.NameColor);
             }
         }
 
@@ -301,7 +320,9 @@ namespace Nytherion.UI.RelicBoard
                     data.Icon,
                     data.Label,
                     data.TooltipTitle,
-                    data.TooltipBody);
+                    data.TooltipBody,
+                    data.NameColor,
+                    data.RequirementIcons);
             }
         }
 
@@ -342,6 +363,10 @@ namespace Nytherion.UI.RelicBoard
         private RelicTooltip tooltip;
         private string tooltipTitle;
         private string tooltipBody;
+        private Color defaultLabelColor;
+        private Color tooltipTitleColor;
+        private Sprite tooltipIcon;
+        private bool hovering;
         private bool initialized;
 
         public bool Initialize(RelicTooltip assignedTooltip)
@@ -356,31 +381,40 @@ namespace Nytherion.UI.RelicBoard
                 : null;
             tooltip = assignedTooltip;
             initialized = iconImage != null && labelText != null && tooltip != null;
+            if (initialized) defaultLabelColor = labelText.color;
             return initialized;
         }
 
-        public void Bind(Sprite icon, string label, string title, string body)
+        public void Bind(Sprite icon, string label, string title, string body, Color? nameColor = null)
         {
             if (!initialized) return;
 
             RelicStatusIconUtility.Apply(iconImage, icon);
             labelText.text = label;
+            labelText.color = nameColor ?? defaultLabelColor;
+            tooltipTitleColor = labelText.color;
+            tooltipIcon = icon;
             tooltipTitle = title;
             tooltipBody = body;
+            if (hovering) tooltip.ShowStatus(tooltipTitle, tooltipBody, false, tooltipTitleColor, tooltipIcon);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (initialized) tooltip.ShowStatus(tooltipTitle, tooltipBody);
+            if (!initialized) return;
+            hovering = true;
+            tooltip.ShowStatus(tooltipTitle, tooltipBody, false, tooltipTitleColor, tooltipIcon);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            hovering = false;
             tooltip?.Hide();
         }
 
         private void OnDisable()
         {
+            hovering = false;
             tooltip?.Hide();
         }
     }
@@ -391,6 +425,7 @@ namespace Nytherion.UI.RelicBoard
         private TextMeshProUGUI labelText;
         private RelicStatusTooltipTrigger headerTooltipTrigger;
         private RelicTooltip tooltip;
+        private Color defaultLabelColor;
         private bool initialized;
 
         public bool Initialize(RelicTooltip assignedTooltip)
@@ -419,6 +454,7 @@ namespace Nytherion.UI.RelicBoard
             initialized = iconImage != null && labelText != null &&
                           tooltip != null && headerTooltipTrigger != null &&
                           headerTooltipTrigger.Initialize(tooltip);
+            if (initialized) defaultLabelColor = labelText.color;
             return initialized;
         }
 
@@ -426,13 +462,16 @@ namespace Nytherion.UI.RelicBoard
             Sprite icon,
             string label,
             string title,
-            string body)
+            string body,
+            Color? nameColor = null,
+            IReadOnlyList<Sprite> requirementIcons = null)
         {
             if (!initialized) return;
 
             RelicStatusIconUtility.Apply(iconImage, icon);
             labelText.text = label;
-            headerTooltipTrigger.Bind(title, body);
+            labelText.color = nameColor ?? defaultLabelColor;
+            headerTooltipTrigger.Bind(title, body, true, labelText.color, icon, requirementIcons);
 
             RebuildLayout();
         }
@@ -457,6 +496,11 @@ namespace Nytherion.UI.RelicBoard
         private RelicTooltip tooltip;
         private string tooltipTitle;
         private string tooltipBody;
+        private bool isTranscendence;
+        private Color? tooltipTitleColor;
+        private Sprite tooltipIcon;
+        private IReadOnlyList<Sprite> tooltipRequirementIcons;
+        private bool hovering;
         private bool initialized;
 
         public bool Initialize(RelicTooltip assignedTooltip)
@@ -468,24 +512,34 @@ namespace Nytherion.UI.RelicBoard
             return initialized;
         }
 
-        public void Bind(string title, string body)
+        public void Bind(string title, string body, bool isTranscendence = false,
+            Color? titleColor = null, Sprite icon = null, IReadOnlyList<Sprite> requirementIcons = null)
         {
             tooltipTitle = title;
             tooltipBody = body;
+            this.isTranscendence = isTranscendence;
+            tooltipTitleColor = titleColor;
+            tooltipIcon = icon;
+            tooltipRequirementIcons = requirementIcons;
+            if (hovering) tooltip.ShowStatus(tooltipTitle, tooltipBody, isTranscendence, tooltipTitleColor, tooltipIcon, tooltipRequirementIcons);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (initialized) tooltip.ShowStatus(tooltipTitle, tooltipBody);
+            if (!initialized) return;
+            hovering = true;
+            tooltip.ShowStatus(tooltipTitle, tooltipBody, isTranscendence, tooltipTitleColor, tooltipIcon, tooltipRequirementIcons);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            hovering = false;
             tooltip?.Hide();
         }
 
         private void OnDisable()
         {
+            hovering = false;
             tooltip?.Hide();
         }
     }

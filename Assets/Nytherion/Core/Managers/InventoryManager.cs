@@ -5,6 +5,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Systems;
 using Nytherion.Core.Data;
 using Nytherion.Core.Utils;
+using Nytherion.Core.Interfaces;
 
 namespace Nytherion.Core.Managers
 {
@@ -40,8 +41,10 @@ namespace Nytherion.Core.Managers
                 InventoryModel = new InventoryModel(maxSlotCount);
             }
 
-            InventoryModel.OnInventoryUpdated += () => OnInventoryUpdated?.Invoke();
+            InventoryModel.OnInventoryUpdated += HandleInventoryUpdated;
         }
+
+        private void HandleInventoryUpdated(InventoryChangeData changeData) => OnInventoryUpdated?.Invoke();
 
         /// <summary>
         /// 수동으로 인벤토리 업데이트 이벤트를 발생 
@@ -295,7 +298,7 @@ namespace Nytherion.Core.Managers
 
             if (InventoryModel != null)
             {
-                InventoryModel.OnInventoryUpdated -= () => OnInventoryUpdated?.Invoke();
+                InventoryModel.OnInventoryUpdated -= HandleInventoryUpdated;
                 InventoryModel = null;
             }
         }

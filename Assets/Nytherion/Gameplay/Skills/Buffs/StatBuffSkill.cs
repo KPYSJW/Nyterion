@@ -66,7 +66,7 @@ namespace Nytherion.GamePlay.Skills
                 foreach (StatModifier modifier in statBuffData.statModifiers)
                 {
                     // 스킬 레벨에 비례하여 증가치 계산
-                    float finalValue = modifier.value + (modifier.valuePerLevel * Mathf.Max(0, statBuffData.skillLevel - 1));
+                    float finalValue = modifier.value + (modifier.valuePerLevel * Mathf.Max(0, playerManager.GetSkillLevel(statBuffData) - 1));
                     
                     // 적용할 모디파이어 인스턴스 생성
                     StatModifier scaledModifier = new StatModifier {

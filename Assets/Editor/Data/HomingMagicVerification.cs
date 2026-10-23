@@ -152,7 +152,8 @@ namespace Nytherion.Editor
                         AnimationUtility.GetAnimationEvents(clip)[0].functionName == nameof(ProjectileStartEffect.OnAnimationComplete),
                         "시작 애니메이션 종료 이벤트 연결");
                     var keys = AnimationUtility.GetObjectReferenceCurve(clip, EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite"));
-                    Require(keys.Length == 5 && keys[0].value.name.Contains("ProjStart" + (i == 0 ? "_" : i.ToString() + "_")), "시작 이미지 대응 및 마지막 프레임 유지");
+                    Require(keys.Length == 7 && keys[0].value.name.Contains("ProjStart" + (i == 0 ? "_" : i.ToString() + "_")), "시작 이미지 6프레임 대응 및 마지막 프레임 유지");
+                    Equal(clip.length, AnimationUtility.GetAnimationEvents(clip)[0].time, 0.0001f);
                 }
                 if (attack == 0)
                 {

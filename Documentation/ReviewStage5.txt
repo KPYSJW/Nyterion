@@ -1,0 +1,28 @@
+후속 작업 5 — 중복 평가·이동·풀 조회 정리 (2026-10-16)
+
+적 이동 (R06)
+- EnemyAIController는 상태 갱신 동안의 이동 요청을 모아 마지막 요청을 적용한다.
+- 강제 목적지가 있으면 최종 목적지로 우선하며 이동과 방향 갱신을 각각 한 번 실행한다.
+- StopMovement는 대기 중인 이동도 취소한다. 상태 갱신 밖의 공개 이동 API는 즉시 동작한다.
+
+유물 효과 (R10)
+- PlayerRelicManager는 보드의 최종 OnRelicStateChanged에서 목록과 전투 스냅샷을 동기화한다.
+- 능력치 동기화가 끝난 뒤 OnRelicEffectsChanged를 한 번 발행한다. 목록이 같아도 레벨·비활성화 변경을 전달한다.
+- RelicEffectController는 이 최종 알림을 사용하며, 능력치 동기화 중 발생한 체력 알림의 중간 평가는 생략한다.
+- 평가용 Dictionary, HashSet, List를 재사용한다. 체인 조건 키는 소유자·측정 방식·시리즈의 값 튜플을 사용한다.
+
+오브젝트 풀 (R07)
+- 풀을 만들 때 설정을 태그별 Dictionary에 보관한다. 매 Spawn의 List.Find를 제거했다.
+- 검증의 조회 전용 계측: 풀 128개, 마지막 태그 10만 회에서 List.Find 163.05ms, Dictionary 4.48ms (대표 실행).
+- 해당 수치는 조회 부분만의 에디터 계측이다. 전체 게임 프레임 성능 향상을 의미하지 않는다.
+
+검증
+- Assets/Editor/Data/RuntimeReviewVerification.cs → Tools/Nytherion/Review/Verify Movement And Pool Lookup.
+- 결과: output/runtime-review/verification.txt.
+- 이동·방향 횟수, 강제 이동 우선순위, 정지, 이동 금지, 외부 API, 풀 반환 검증 통과.
+- 직렬화 풀·동적 풀 생성, 소진 후 확장, 등록 태그로 반환, 동일 객체 재사용·크기 복원 통과.
+- 유물 로드, 레벨 변경, 비활성화·재활성화, 빈 저장 데이터 복원, 직접 장착·해제와 중간 체력 알림 차단 통과.
+- 플레이 모드의 실제 유물·투사체·UI 통합 검증은 ReviewStage4.txt의 최종 결과를 참고한다.
+
+보류
+- 사용자의 '던전은 건들지 말고 보류하자' 지시에 따라 R09의 던전 Dictionary 중복 변환과 NavMesh 진단용 삼각분할 변경은 적용하지 않았다.

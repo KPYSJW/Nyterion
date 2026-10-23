@@ -6,6 +6,9 @@ Shader "Custom/SpriteFlash"
         _Color ("Tint", Color) = (1,1,1,1)
         _FlashColor ("Flash Color", Color) = (1,1,1,1)
         _FlashAmount ("Flash Amount", Range(0,1)) = 0
+        [Toggle] _PreserveHighlights ("Preserve Highlights", Float) = 0
+        _HighlightColor ("Highlight Color", Color) = (1,0.95,0.8,1)
+        _HighlightStrength ("Highlight Strength", Range(0,1)) = 0.8
         _OutlineColor ("Outline Color", Color) = (0.15,0.65,1,1)
         _OutlineWidth ("Outline Width (Pixels)", Range(0,4)) = 1
         _OutlineEnabled ("Outline Enabled", Float) = 0
@@ -55,6 +58,9 @@ Shader "Custom/SpriteFlash"
             fixed4 _Color;
             fixed4 _FlashColor;
             float _FlashAmount;
+            float _PreserveHighlights;
+            fixed4 _HighlightColor;
+            float _HighlightStrength;
             float4 _MainTex_TexelSize;
             fixed4 _OutlineColor;
             float _OutlineWidth;
@@ -81,9 +87,17 @@ Shader "Custom/SpriteFlash"
 
             fixed4 frag(v2f IN) : SV_Target
             {
-                fixed4 c = tex2D(_MainTex, IN.texcoord) * IN.color;
+                fixed4 texColor = tex2D(_MainTex, IN.texcoord);
+                fixed4 c = texColor * IN.color;
                 // Straight Alpha 상태에서 원래 이미지 색상과 플래시 색상을 부드럽게 Lerp
                 c.rgb = lerp(c.rgb, _FlashColor.rgb, _FlashAmount);
+                // 선택한 이펙트만 원본의 밝은 픽셀을 살려 작은 크기에서도 명암을 유지합니다.
+                if (_PreserveHighlights > 0.5)
+                {
+                    float brightness = max(texColor.r, max(texColor.g, texColor.b));
+                    float highlight = smoothstep(0.45, 0.95, brightness) * _HighlightStrength;
+                    c.rgb = lerp(c.rgb, _HighlightColor.rgb, highlight);
+                }
                 // 최종 출력 시 Premultiplied Alpha(스프라이트 기본 블렌딩)를 위해 알파를 곱해줌
                 c.rgb *= c.a;
                 if (_OutlineEnabled > 0.5 && _OutlineWidth > 0.0)

@@ -11,6 +11,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Weapons;
 using Nytherion.UI.Inventory;
 using Nytherion.UI.Controllers;
+using Nytherion.UI.Components;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -82,6 +83,28 @@ namespace Nytherion.Editor
                 return;
             }
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            if (File.Exists(Output + "/bulk-setup.request"))
+            {
+                File.Delete(Output + "/bulk-setup.request");
+                try { ApplyBulkSelection(); }
+                catch (Exception error)
+                {
+                    File.WriteAllText(Output + "/bulk-result.txt", "FAIL " + error);
+                    Debug.LogException(error);
+                }
+                return;
+            }
+            if (File.Exists("output/inventory-buttons/pixels48.request"))
+            {
+                File.Delete("output/inventory-buttons/pixels48.request");
+                try { MatchButtonSizes(); }
+                catch (Exception error)
+                {
+                    File.WriteAllText("output/inventory-buttons/result.txt", "FAIL " + error);
+                    Debug.LogException(error);
+                }
+                return;
+            }
             if (File.Exists(Output + "/rounded.request"))
             {
                 File.Delete(Output + "/rounded.request");
@@ -98,6 +121,12 @@ namespace Nytherion.Editor
                 File.Delete(Output + "/verify.request");
                 try { Verify(); }
                 catch (Exception error) { File.WriteAllText(Output + "/verification.txt", "FAIL " + error); }
+                return;
+            }
+            if (File.Exists(Output + "/ui-verify.request"))
+            {
+                File.Delete(Output + "/ui-verify.request");
+                VerifyUIOnly();
                 return;
             }
             if (!File.Exists(Output + "/setup.request")) return;
@@ -131,6 +160,195 @@ namespace Nytherion.Editor
             }
             File.WriteAllLines(Output + "/setup.txt", report);
             Verify();
+        }
+
+        [MenuItem("Tools/Nytherion/Inventory/정렬·분해 버튼 크기 맞추기")]
+        public static void MatchButtonSizes()
+        {
+            const string output = "output/inventory-buttons";
+            const string path = "Assets/Scenes/GameScene.unity";
+            Directory.CreateDirectory(output);
+            Scene scene = SceneManager.GetSceneByPath(path);
+            bool loaded = scene.IsValid() && scene.isLoaded;
+            if (!loaded) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+            try
+            {
+                GameSceneUIRefs refs = scene.GetRootGameObjects().SelectMany(root =>
+                    root.GetComponentsInChildren<GameSceneUIRefs>(true)).Single();
+                Button sort = refs.InventorySortButton;
+                Button dismantle = refs.InventoryDismantleButton;
+                Require(sort != null && dismantle != null, "정렬·분해 버튼 Inspector 참조");
+                RectTransform sortRect = (RectTransform)sort.transform;
+                RectTransform dismantleRect = (RectTransform)dismantle.transform;
+                Image sortImage = sort.GetComponent<Image>();
+                Image dismantleImage = dismantle.GetComponent<Image>();
+                Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(
+                    "Assets/Nytherion/Art/UI/Inventory/SalvageButton.png");
+                Require(sortImage.sprite != null && sprite != null && sprite.rect.size == sortImage.sprite.rect.size,
+                    "정렬·분해 스프라이트의 원본 크기 일치");
+                Require(sortRect.parent == dismantleRect.parent, "버튼의 부모 배율 일치");
+                // 열려 있는 씬의 미저장 변경도 복사본으로 보존한다.
+                string backup = output + "/GameScene-before-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".unity";
+                Require(EditorSceneManager.SaveScene(scene, backup, true), "변경 전 씬 백업");
+                File.WriteAllText(output + "/before.txt",
+                    $"sort={sortRect.sizeDelta}, dismantle={dismantleRect.sizeDelta}, backup={backup}");
+                Undo.RecordObjects(new Object[] { sortRect, dismantleRect, sortImage, dismantleImage, dismantle },
+                    "정렬·분해 버튼 크기 맞추기");
+                sortRect.sizeDelta = new Vector2(48f, 48f);
+                dismantleRect.anchorMin = sortRect.anchorMin;
+                dismantleRect.anchorMax = sortRect.anchorMax;
+                dismantleRect.pivot = sortRect.pivot;
+                dismantleRect.localScale = sortRect.localScale;
+                dismantleRect.localRotation = sortRect.localRotation;
+                dismantleRect.sizeDelta = sortRect.sizeDelta;
+                dismantleImage.sprite = sprite;
+                dismantleImage.overrideSprite = null;
+                dismantleImage.color = Color.white;
+                sortImage.type = dismantleImage.type = Image.Type.Simple;
+                sortImage.preserveAspect = dismantleImage.preserveAspect = true;
+                sortImage.useSpriteMesh = dismantleImage.useSpriteMesh = false;
+                // 분해 아이콘의 1픽셀 선까지 보존하도록 두 원본의 24×24 픽셀 격자를 기준으로 맞춘다.
+                foreach (Image image in new[] { sortImage, dismantleImage })
+                {
+                    PixelPerfectButtonImage effect = image.GetComponent<PixelPerfectButtonImage>();
+                    if (effect != null)
+                    {
+                        Undo.RecordObject(effect, "버튼 원본 픽셀 보정 복원");
+                    }
+                    PixelPerfectButtonImage.Apply(image, 1);
+                    image.raycastPadding = Vector4.zero;
+                }
+                dismantle.targetGraphic = dismantleImage;
+                Transform label = dismantle.transform.Find("Label");
+                if (label != null)
+                {
+                    Undo.RecordObject(label.gameObject, "분해 아이콘의 기존 글자 숨김");
+                    label.gameObject.SetActive(false);
+                }
+                EditorSceneManager.MarkSceneDirty(scene);
+                Require(EditorSceneManager.SaveScene(scene), "버튼 설정 씬 저장");
+                Require(sortRect.rect.size == dismantleRect.rect.size &&
+                    sortImage.sprite.rect.size == dismantleImage.sprite.rect.size &&
+                    sortImage.GetComponent<PixelPerfectButtonImage>().enabled &&
+                    dismantleImage.GetComponent<PixelPerfectButtonImage>().enabled,
+                    "버튼 영역·스프라이트·원본 픽셀 보정 일치");
+                VerifyButtonSizes(sort, dismantle, output);
+                File.WriteAllText(output + "/result.txt",
+                    "PASS GameScene 정렬·분해 버튼: 48×48, 두 원본의 24×24 격자 기준 정수 배율 보정 활성, 같은 렌더 크기와 원본 픽셀/검은 선 보존 검증, 씬 저장 완료");
+            }
+            finally { if (!loaded) EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        private static void VerifyButtonSizes(Button sort, Button dismantle, string output)
+        {
+            Scene preview = EditorSceneManager.NewPreviewScene();
+            RenderTexture target = null;
+            Texture2D pixels = null;
+            var originals = new List<Texture2D>();
+            try
+            {
+                GameObject cameraObject = new GameObject("버튼 크기 검증 카메라", typeof(Camera));
+                SceneManager.MoveGameObjectToScene(cameraObject, preview);
+                Camera camera = cameraObject.GetComponent<Camera>();
+                camera.scene = preview;
+                camera.enabled = false;
+                camera.orthographic = true;
+                camera.orthographicSize = 80f;
+                camera.transform.position = new Vector3(20000f, 20000f, -5f);
+                camera.clearFlags = CameraClearFlags.SolidColor;
+                camera.backgroundColor = new Color(0.9f, 0.83f, 0.68f);
+                target = new RenderTexture(320, 160, 24);
+                camera.targetTexture = target;
+                GameObject root = new GameObject("버튼 크기 검증", typeof(RectTransform), typeof(Canvas));
+                SceneManager.MoveGameObjectToScene(root, preview);
+                Canvas canvas = root.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                canvas.worldCamera = camera;
+                canvas.planeDistance = 1f;
+                Button[] buttons = { Object.Instantiate(sort, root.transform), Object.Instantiate(dismantle, root.transform) };
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    Texture2D original = new Texture2D(2, 2);
+                    originals.Add(original);
+                    Require(original.LoadImage(File.ReadAllBytes(AssetDatabase.GetAssetPath(buttons[i].image.sprite))),
+                        "버튼 원본 픽셀 읽기");
+                    RectTransform rect = (RectTransform)buttons[i].transform;
+                    rect.anchorMin = rect.anchorMax = Vector2.one * 0.5f;
+                    rect.anchoredPosition = new Vector2(i == 0 ? -48f : 48f, 0f);
+                    buttons[i].gameObject.SetActive(true);
+                }
+                pixels = new Texture2D(320, 160, TextureFormat.RGB24, false);
+                var report = new List<string>();
+                foreach (float scale in new[] { 0.5f, 0.75f, 1.25f, 1.5f, 2f, 1f })
+                {
+                    canvas.scaleFactor = scale;
+                    foreach (Button button in buttons) button.image.SetVerticesDirty();
+                    Canvas.ForceUpdateCanvases();
+                    camera.Render();
+                    Mesh sortMesh = buttons[0].image.canvasRenderer.GetMesh();
+                    Require(sortMesh != null && sortMesh.vertexCount > 0, "정렬 버튼 렌더 메시");
+                    Vector3 sortSize = sortMesh.bounds.size;
+                    Mesh dismantleMesh = buttons[1].image.canvasRenderer.GetMesh();
+                    Require(dismantleMesh != null && dismantleMesh.vertexCount > 0, "분해 버튼 렌더 메시");
+                    Require(Vector3.Distance(sortSize, dismantleMesh.bounds.size) < 0.01f, "배율별 렌더 크기 일치: " + scale);
+                    RenderTexture previousTarget = RenderTexture.active;
+                    try
+                    {
+                        RenderTexture.active = target;
+                        pixels.ReadPixels(new Rect(0, 0, 320, 160), 0, 0);
+                        pixels.Apply();
+                    }
+                    finally { RenderTexture.active = previousTarget; }
+                    for (int i = 0; i < buttons.Length; i++)
+                    {
+                        Image image = buttons[i].image;
+                        Bounds bounds = image.canvasRenderer.GetMesh().bounds;
+                        Vector2 min = RectTransformUtility.WorldToScreenPoint(camera, image.rectTransform.TransformPoint(bounds.min));
+                        Vector2 max = RectTransformUtility.WorldToScreenPoint(camera, image.rectTransform.TransformPoint(bounds.max));
+                        int pixelScale = Mathf.RoundToInt((max.x - min.x) / originals[i].width);
+                        Require(pixelScale >= 1 && Mathf.Abs(max.x - min.x - originals[i].width * pixelScale) < 0.01f &&
+                            Mathf.Abs(max.y - min.y - originals[i].height * pixelScale) < 0.01f,
+                            "원본 픽셀의 가로·세로 정수 배율 일치");
+                        Require(Mathf.Abs(min.x - Mathf.Round(min.x)) < 0.01f && Mathf.Abs(min.y - Mathf.Round(min.y)) < 0.01f,
+                            "화면 픽셀 격자 정렬");
+                        int left = Mathf.RoundToInt(min.x);
+                        int bottom = Mathf.RoundToInt(min.y);
+                        for (int y = 0; y < originals[i].height; y++)
+                            for (int x = 0; x < originals[i].width; x++)
+                            {
+                                Color32 rendered = pixels.GetPixel(left + x * pixelScale, bottom + y * pixelScale);
+                                for (int dy = 0; dy < pixelScale; dy++)
+                                    for (int dx = 0; dx < pixelScale; dx++)
+                                        Require(((Color32)pixels.GetPixel(left + x * pixelScale + dx, bottom + y * pixelScale + dy)).Equals(rendered),
+                                            "원본 픽셀 블록의 균일한 확대");
+                                Color32 source = originals[i].GetPixel(x, y);
+                                bool sourceBlack = source.a == 255 && source.r == 0 && source.g == 0 && source.b == 0;
+                                bool renderedBlack = rendered.r == 0 && rendered.g == 0 && rendered.b == 0;
+                                Require(sourceBlack == renderedBlack, "원본의 검은 외곽선과 세부 선 보존");
+                            }
+                    }
+                    Require(scale != 1f || (Mathf.Abs(sortSize.x - 48f) < 0.01f && Mathf.Abs(sortSize.y - 48f) < 0.01f),
+                        "화면 배율 1에서 48×48 표시");
+                    report.Add($"PASS Canvas 배율 {scale}: 같은 렌더 크기, 원본의 모든 픽셀 블록 균일, 외곽선·세부 선 보존");
+                }
+                RenderTexture previous = RenderTexture.active;
+                try
+                {
+                    RenderTexture.active = target;
+                    pixels.ReadPixels(new Rect(0, 0, 320, 160), 0, 0);
+                    pixels.Apply();
+                    File.WriteAllBytes(output + "/preview.png", pixels.EncodeToPNG());
+                }
+                finally { RenderTexture.active = previous; }
+                File.WriteAllLines(output + "/render-verification.txt", report);
+            }
+            finally
+            {
+                EditorSceneManager.ClosePreviewScene(preview);
+                if (target != null) { target.Release(); Object.DestroyImmediate(target); }
+                if (pixels != null) Object.DestroyImmediate(pixels);
+                foreach (Texture2D original in originals) Object.DestroyImmediate(original);
+            }
         }
 
         [MenuItem("Tools/Nytherion/Inventory/분해 Scroll 둥근 배경 적용")]
@@ -221,7 +439,7 @@ namespace Nytherion.Editor
             Require(font != null, "기존 UI 폰트");
             Transform existing = inventoryPanel.parent.Find("InventoryDismantlePanel");
             // 재실행 시 이미 연결한 보상 비율과 UI를 보존한다.
-            if (existing != null) { UpdatePresentation(refs); return; }
+            if (existing != null) { UpdatePresentation(refs); BuildBulkSelection(refs.DismantlePanel); return; }
             RectTransform panel = Rect("InventoryDismantlePanel", inventoryPanel.parent);
             panel.anchorMin = inventoryPanel.anchorMin;
             panel.anchorMax = inventoryPanel.anchorMax;
@@ -295,6 +513,97 @@ namespace Nytherion.Editor
             Set(refs, "inventoryDismantleButton", toggle);
             Set(refs, "dismantlePanel", controller);
             UpdatePresentation(refs);
+            BuildBulkSelection(controller);
+        }
+
+        [MenuItem("Tools/Nytherion/Inventory/분해 등급 선택·일괄 등록 설정")]
+        public static void ApplyBulkSelection()
+        {
+            Directory.CreateDirectory(Output);
+            const string path = "Assets/Scenes/GameScene.unity";
+            Scene scene = SceneManager.GetSceneByPath(path);
+            bool loaded = scene.IsValid() && scene.isLoaded;
+            if (!loaded) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+            try
+            {
+                GameSceneUIRefs refs = scene.GetRootGameObjects().SelectMany(root =>
+                    root.GetComponentsInChildren<GameSceneUIRefs>(true)).Single();
+                Require(refs.DismantlePanel != null, "기존 분해 패널 Inspector 참조");
+                Require(EditorSceneManager.SaveScene(scene, Output + "/GameScene-before-bulk-" +
+                    DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".unity", true), "미저장 변경 포함 씬 백업");
+                BuildBulkSelection(refs.DismantlePanel);
+                Verify();
+                VerifyUI(refs, EditorSceneManager.NewPreviewScene());
+                EditorSceneManager.MarkSceneDirty(scene);
+                Require(EditorSceneManager.SaveScene(scene), "일괄 등록 UI 씬 저장");
+                Capture(refs);
+                File.WriteAllText(Output + "/bulk-result.txt",
+                    "PASS GameScene 등급 선택·일괄 등록 Inspector 연결, 전체 등급 경계/중복/복귀/장비 필터, UI 버튼 검증 및 씬 저장");
+            }
+            finally { if (!loaded) EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        private static void BuildBulkSelection(InventoryDismantlePanel controller)
+        {
+            Transform panel = controller.transform;
+            TMP_Text sourceLabel = panel.Find("ResetButton/Label").GetComponent<TMP_Text>();
+            Color ink = panel.Find("Header").GetComponent<TMP_Text>().color;
+            Transform existingDropdown = panel.Find("MaxRarityDropdown");
+            TMP_Dropdown dropdown;
+            if (existingDropdown != null) dropdown = existingDropdown.GetComponent<TMP_Dropdown>();
+            else
+            {
+                // TMP 표준 템플릿을 사용해 키보드 선택, 목록 스크롤, 외부 클릭 닫기를 유지한다.
+                GameObject dropdownObject = TMP_DefaultControls.CreateDropdown(new TMP_DefaultControls.Resources());
+                dropdownObject.name = "MaxRarityDropdown";
+                dropdownObject.transform.SetParent(panel, false);
+                foreach (Transform child in dropdownObject.GetComponentsInChildren<Transform>(true))
+                    child.gameObject.layer = panel.gameObject.layer;
+                dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
+                RectTransform rect = (RectTransform)dropdown.transform;
+                Place(rect, new Vector2(0.5f, 1f), new Vector2(-94f, -91f), new Vector2(216f, 40f));
+                dropdown.GetComponent<Image>().color = new Color(0.89f, 0.8f, 0.65f);
+                dropdown.template.GetComponent<Image>().color = new Color(0.94f, 0.86f, 0.71f);
+                dropdown.transform.Find("Arrow").GetComponent<Image>().enabled = false;
+                RectTransform arrow = Rect("ArrowLabel", dropdown.transform);
+                Place(arrow, new Vector2(1f, 0.5f), new Vector2(-17f, 0f), new Vector2(24f, 32f));
+                Text(arrow, "▼", sourceLabel.font, 16f, ink);
+                foreach (TMP_Text label in dropdown.GetComponentsInChildren<TMP_Text>(true))
+                {
+                    label.font = sourceLabel.font;
+                    label.fontSize = 20f;
+                    label.fontStyle = sourceLabel.fontStyle;
+                    label.color = ink;
+                    label.raycastTarget = false;
+                }
+                dropdown.captionText.alignment = TextAlignmentOptions.MidlineLeft;
+                dropdown.itemText.alignment = TextAlignmentOptions.MidlineLeft;
+                RectTransform item = (RectTransform)dropdown.itemText.transform.parent;
+                item.sizeDelta = new Vector2(0f, 36f);
+                ((RectTransform)item.parent).sizeDelta = new Vector2(0f, 44f);
+                dropdown.template.sizeDelta = new Vector2(0f, 210f);
+                dropdown.ClearOptions();
+                dropdown.AddOptions(new List<string> { "일반 이하", "고급 이하", "희귀 이하", "영웅 이하", "전설 이하" });
+                dropdown.SetValueWithoutNotify((int)Rarity.Common);
+                dropdown.RefreshShownValue();
+            }
+            Transform existingButton = panel.Find("BulkStageButton");
+            Button bulk;
+            if (existingButton != null) bulk = existingButton.GetComponent<Button>();
+            else
+            {
+                bulk = Object.Instantiate(panel.Find("ResetButton").GetComponent<Button>(), panel);
+                bulk.name = "BulkStageButton";
+                bulk.onClick = new Button.ButtonClickedEvent();
+                Place((RectTransform)bulk.transform, new Vector2(0.5f, 1f), new Vector2(128f, -91f), new Vector2(200f, 40f));
+                bulk.GetComponentInChildren<TMP_Text>(true).text = "일괄 등록";
+            }
+            // 제목 아래 한 줄을 확보하고 기존 골드/확정/초기화 영역은 유지한다.
+            RectTransform scroll = (RectTransform)panel.Find("Scroll");
+            scroll.offsetMax = new Vector2(scroll.offsetMax.x, -126f);
+            Set(controller, "maxRarityDropdown", dropdown);
+            Set(controller, "bulkStageButton", bulk);
+            EditorUtility.SetDirty(controller);
         }
 
         private static void UpdatePresentation(GameSceneUIRefs refs)
@@ -378,6 +687,8 @@ namespace Nytherion.Editor
                     assets.Add(item);
                     Require(inventory.AddItemToSlot(item, 1, i), "장비 배치");
                 }
+                VerifyBulkModel(assets);
+                report.Add("PASS 모든 등급 이하 경계, 같은 종류의 개별 장비, 비장비/빈 슬롯 제외, 기존 대기 유지, 중복 방지, 일괄 갱신 1회, 원래 슬롯 복귀");
                 Require(inventory.StageForDismantle(3, assets[3]), "장비 이동");
                 Require(inventory.GetSlot(3).item == null && inventory.GetDismantleItems()[0].item == assets[3], "정확한 인스턴스 이동");
                 Require(!inventory.StageForDismantle(3, assets[3]), "중복 이동 방지");
@@ -427,6 +738,62 @@ namespace Nytherion.Editor
             File.WriteAllLines(Output + "/verification.txt", report);
         }
 
+        private static void VerifyBulkModel(List<EquipmentData> assets)
+        {
+            var model = new InventoryModel(8);
+            ConsumableData consumable = ScriptableObject.CreateInstance<ConsumableData>();
+            try
+            {
+                for (int i = 0; i < 6; i++) model.AddItemToSlot(assets[i], 1, i);
+                model.AddItemToSlot(consumable, 3, 6);
+                int notifications = 0;
+                model.OnInventoryUpdated += _ => notifications++;
+                foreach (Rarity rarity in Enum.GetValues(typeof(Rarity)))
+                {
+                    notifications = 0;
+                    int expected = assets.Take(6).Count(item => item.rarity <= rarity);
+                    Require(model.StageForDismantleUpToRarity(rarity) == expected &&
+                        model.DismantleSlots.Count == expected && notifications == 1, "등급 이하 경계/일괄 갱신: " + rarity);
+                    Require(model.StageForDismantleUpToRarity(rarity) == 0 && notifications == 1,
+                        "동일 버튼 반복 등록/알림 방지: " + rarity);
+                    Require(model.GetItemAt(6).item == consumable && model.GetItemAt(6).count == 3 &&
+                        model.GetItemAt(7).item == null, "소모품/빈 슬롯 제외");
+                    model.ResetDismantle();
+                    for (int i = 0; i < 6; i++) Require(model.GetItemAt(i).item == assets[i], "원래 장비 인스턴스 복귀");
+                }
+                Require(model.StageForDismantle(4, assets[4]), "기존 전설 장비 수동 등록");
+                Require(model.StageForDismantleUpToRarity(Rarity.Common) == 2 &&
+                    model.DismantleSlots.Count == 3 && model.IsDismantleReserved(4), "기존 상위 등급 대기 유지");
+                Require(model.StageForDismantleUpToRarity((Rarity)(-1)) == 0 &&
+                    model.StageForDismantleUpToRarity((Rarity)99) == 0, "유효하지 않은 등급 거부");
+                model.ResetDismantle();
+            }
+            finally { Object.DestroyImmediate(consumable); }
+        }
+
+        [MenuItem("Tools/Nytherion/Inventory/Verify Dismantle UI")]
+        public static void VerifyUIOnly()
+        {
+            Directory.CreateDirectory(Output);
+            const string path = "Assets/Scenes/GameScene.unity";
+            Scene scene = SceneManager.GetSceneByPath(path);
+            bool alreadyOpen = scene.IsValid() && scene.isLoaded;
+            try
+            {
+                if (!alreadyOpen) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                GameSceneUIRefs refs = scene.GetRootGameObjects().SelectMany(root =>
+                    root.GetComponentsInChildren<GameSceneUIRefs>(true)).First();
+                VerifyUI(refs, EditorSceneManager.NewPreviewScene());
+                File.WriteAllText(Output + "/ui-verification.txt", "PASS 격리 UI의 초기화·버튼 토글·우클릭/드롭·예약/복귀·보상 지급. 원본 씬과 소지품 미수정.");
+            }
+            catch (Exception error)
+            {
+                File.WriteAllText(Output + "/ui-verification.txt", "FAIL " + error);
+                Debug.LogException(error);
+            }
+            finally { if (!alreadyOpen && scene.IsValid() && scene.isLoaded) EditorSceneManager.CloseScene(scene, true); }
+        }
+
         private static void VerifyUI(GameSceneUIRefs source, Scene? preview)
         {
             GameObject root = Object.Instantiate(source.InventoryCanvasGroup.gameObject);
@@ -462,7 +829,9 @@ namespace Nytherion.Editor
                     slot.Initialize(i); sourceSlots.Add(slot);
                 }
                 InventoryUI ui = root.AddComponent<InventoryUI>();
-                ui.Construct(resolver, refs, null);
+                var presenter = root.AddComponent<Nytherion.UI.Presenters.InventoryPresenter>();
+                presenter.Construct(resolver, refs, null);
+                ui.Construct(resolver, refs);
                 ui.Initialize(); ui.Initialize(); ui.Open(false);
                 foreach (var slot in sourceSlots) { slot.Construct(null, null, inventory, null, null); slot.BindInventoryUI(ui); }
                 refs.EquipmentPanel.SetActive(true); refs.StatsPanel.SetActive(true);
@@ -484,6 +853,26 @@ namespace Nytherion.Editor
                 Require(staged[0].CurrentItem == assets[0] && staged[0].CurrentSlotBackgroundSprite != staged[1].CurrentSlotBackgroundSprite, "장비 인스턴스/등급 배경");
                 Find("ResetButton").GetComponent<Button>().onClick.Invoke();
                 Require(inventory.GetSlot(0).item == assets[0] && inventory.GetSlot(1).item == assets[1], "초기화 버튼 복귀");
+                TMP_Dropdown rarityDropdown = Find("MaxRarityDropdown").GetComponent<TMP_Dropdown>();
+                Button bulkButton = Find("BulkStageButton").GetComponent<Button>();
+                Require(rarityDropdown.options.Count == 5 && rarityDropdown.value == (int)Rarity.Common &&
+                    !bulkButton.interactable, "전체 등급 목록/일반 기본값/대상 없을 때 버튼 비활성화");
+                rarityDropdown.value = (int)Rarity.Epic;
+                Require(bulkButton.interactable && inventory.GetDismantleItems().Count == 0, "등급 변경만으로 등록하지 않음");
+                int goldBeforeStage = currency.GetGold();
+                bulkButton.onClick.Invoke();
+                Require(inventory.GetDismantleItems().Count == 1 && inventory.GetDismantleItems()[0].item == assets[0] &&
+                    inventory.GetSlot(1).item == assets[1] && !bulkButton.interactable && currency.GetGold() == goldBeforeStage,
+                    "선택 등급 이하만 일괄 등록/상위 등급 보존/즉시 분해 방지");
+                bulkButton.onClick.Invoke();
+                Require(inventory.GetDismantleItems().Count == 1, "버튼 중복 호출 방지");
+                rarityDropdown.value = (int)Rarity.Legendary;
+                Require(bulkButton.interactable, "등급 변경 후 추가 대상 반영");
+                bulkButton.onClick.Invoke();
+                Require(inventory.GetDismantleItems().Count == 2 && !bulkButton.interactable, "기존 대기 유지/전설까지 추가 등록");
+                Find("ResetButton").GetComponent<Button>().onClick.Invoke();
+                Require(bulkButton.interactable && inventory.GetSlot(0).item == assets[0] && inventory.GetSlot(1).item == assets[1],
+                    "초기화 후 일괄 등록 대상 복구");
                 sourceSlots[0].OnPointerClick(new PointerEventData(null) { button = PointerEventData.InputButton.Right });
                 long expected = inventory.GetDismantleGold(0.7f);
                 int gold = currency.GetGold();
@@ -497,7 +886,7 @@ namespace Nytherion.Editor
                 ui.Close();
                 Require(!ui.IsDismantleOpen && inventory.GetSlot(1).item == assets[1], "인벤토리 닫기 복귀");
                 File.WriteAllText(Output + "/" + source.gameObject.scene.name + "-ui-verification.txt",
-                    "PASS 버튼 토글, 우클릭/드래그 이동, 동적 슬롯과 등급 배경, 초기화 복귀, 분해 지급, 재클릭/닫기 복귀");
+                    "PASS 버튼 토글, 우클릭/드래그 이동, 등급 선택/일괄 등록/중복 방지/상위 등급 보존, 동적 슬롯과 등급 배경, 초기화 복귀, 분해 지급, 재클릭/닫기 복귀");
             }
             finally
             {

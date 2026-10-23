@@ -75,6 +75,9 @@ namespace Nytherion.GamePlay.Combat.Behaviors
         {
             if (!useProjectileVisual) return;
             if (projectilePrefab == null || firePoint == null) return;
+            EnemyAIController controller = GetComponent<EnemyAIController>();
+            if (controller != null) player = controller.CurrentTarget;
+            if (player == null) return;
 
             Vector2 direction = (player.position - firePoint.position).normalized;
             GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);

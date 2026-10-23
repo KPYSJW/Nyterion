@@ -1,3 +1,4 @@
+using Nytherion.Core.Managers;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat.Weapons
@@ -5,23 +6,24 @@ namespace Nytherion.GamePlay.Combat.Weapons
     public class FrenzyWeapon : RangedWeapon, IChargeableWeapon
     {
         [Header("Frenzy Spin-up Settings")]
-        [Tooltip("스핀업 완료에 걸리는 시간")]
-        [SerializeField] private float spinUpTime = 1.0f;
-
-        [Tooltip("투사체 발사를 시작하기 위한 스핀업 진행도 임계값 (0.0 ~ 1.0)")]
-        [SerializeField] private float fireThreshold = 0.9f;
+        [Tooltip("동력장치가 없을 때 풀차징 연사를 유지하는 시간입니다.")]
+        [SerializeField, Min(0f)] private float burstDuration = 3f;
 
         [Header("Frenzy 탄착군 설정")]
         [Tooltip("조준 방향에서 탄환이 좌우로 벗어날 수 있는 최대 각도. 0이면 정확히 직진합니다.")]
         [SerializeField, Min(0f)] private float spreadHalfAngle = 4f;
 
-        private bool isAttacking = false;
-        private float currentSpinUpProgress = 0f;
+        private readonly FrenzyAttackState attackState = new FrenzyAttackState();
+        private GameObject chargeEffect;
+        private GameObject chargeEffectPrefab;
+        private ObjectPoolManager chargeEffectPool;
         private float lastProjectileFireTime = 0f;
         private Vector2 lastAimDirection = Vector2.right;
 
-        public bool IsCharging => isAttacking && HasChargeRelic();
-        public float ChargePercent => currentSpinUpProgress;
+        public bool IsCharging => attackState.IsCharging;
+        public float ChargePercent => attackState.ChargePercent;
+        public bool IsFiring => attackState.IsFiring;
+        public override bool AllowHeldAttackRetry => true;
 
         protected override Vector2 GetProjectileDirection(Vector2 direction)
         {
@@ -38,56 +40,110 @@ namespace Nytherion.GamePlay.Combat.Weapons
 
         public override void Attack(Vector2 direction, Vector3 targetPosition = default)
         {
-            if (firePoint == null || weaponData == null) return;
+            if (firePoint == null || weaponData == null || !CanAttack()) return;
             lastAimDirection = direction;
-
-            if (!isAttacking)
-            {
-                isAttacking = true;
-                currentSpinUpProgress = 0f;
-                lastProjectileFireTime = 0f;
-            }
+            attackState.Begin(Time.time);
+            if (attackState.IsFiring) lastProjectileFireTime = float.NegativeInfinity;
+            AdvanceAttack(Time.time);
         }
 
         public override void AttackEnd()
         {
-            ResetFrenzyState();
+            if (!attackState.IsFiring) AdvanceAttack(Time.time);
+            bool wasFiring = attackState.IsFiring;
+            bool singleShot = attackState.Release(Time.time, burstDuration, HasPowerDevice());
+            if (!attackState.IsFiring)
+            {
+                StopAllCoroutines();
+                damageMultiplier = 1f;
+            }
+            UpdateChargeEffect();
+            if (singleShot) FireShot(false);
+            else if (!wasFiring && attackState.IsFiring) FireShot(true);
         }
 
-        private void Update()
+        private void Update() => AdvanceAttack(Time.time);
+
+        private void AdvanceAttack(float now)
         {
-            if (isAttacking && firePoint != null && weaponData != null)
+            if (firePoint == null || weaponData == null) return;
+            bool wasFiring = attackState.IsFiring;
+            float reduction = playerManager != null && playerManager.currentPlayerData != null
+                ? playerManager.currentPlayerData.chargeTimeReduction : 0f;
+            float chargeTime = Mathf.Max(0f, weaponData.maxChargeTime * (1f - reduction));
+            attackState.Advance(now, weaponData.chargeThresholdTime, chargeTime, HasPowerDevice());
+            UpdateChargeEffect();
+            if (wasFiring && !attackState.IsFiring)
             {
-                lastAimDirection = firePoint.right;
+                StopAllCoroutines();
+                damageMultiplier = 1f;
+            }
+            if (attackState.IsFiring && (!wasFiring || now - lastProjectileFireTime >= weaponData.cooldown))
+                FireShot(true);
+        }
 
-                // 스핀업 진행도 가속
-                if (currentSpinUpProgress < 1f)
-                {
-                    currentSpinUpProgress += Time.deltaTime / Mathf.Max(0.01f, spinUpTime);
-                    currentSpinUpProgress = Mathf.Clamp01(currentSpinUpProgress);
-                }
+        private void FireShot(bool charged)
+        {
+            if (firePoint == null || weaponData == null) return;
+            lastAimDirection = firePoint.right;
+            damageMultiplier = charged && HasChargeRelic() ? 2f : 1f;
+            FireProjectiles(lastAimDirection, 1);
+            lastProjectileFireTime = Time.time;
+            lastAttackTime = Time.time;
+        }
 
-                damageMultiplier = HasChargeRelic()
-                    ? Mathf.Lerp(1f, 2f, currentSpinUpProgress)
-                    : 1f;
+        public override bool CanAttack() => attackState.CanBegin && base.CanAttack();
 
-                // 스핀업 임계치 도달 후 연사 쿨다운마다 투사체 발사
-                if (currentSpinUpProgress >= fireThreshold)
-                {
-                    if (Time.time - lastProjectileFireTime >= weaponData.cooldown)
-                    {
-                        FireProjectiles(lastAimDirection, 1);
-                        lastProjectileFireTime = Time.time;
-                        lastAttackTime = Time.time;
-                    }
-                }
+        private bool HasPowerDevice()
+        {
+            return playerManager != null && playerManager.playerRelicManager != null &&
+                playerManager.playerRelicManager.IsRelicActive("PowerDevice");
+        }
+
+        private void UpdateChargeEffect()
+        {
+            if (!attackState.IsCharging)
+            {
+                HideChargeEffect();
+                return;
+            }
+            if (chargeEffect != null || weaponData == null || weaponData.chargeEffectPrefab == null) return;
+            chargeEffectPrefab = weaponData.chargeEffectPrefab;
+            chargeEffectPool = ObjectPoolManager.Instance;
+            chargeEffect = chargeEffectPool != null
+                ? chargeEffectPool.SpawnFromPool(chargeEffectPrefab, transform.position, transform.rotation)
+                : Instantiate(chargeEffectPrefab, transform.position, transform.rotation);
+            if (chargeEffect == null) return;
+            chargeEffect.transform.SetParent(transform, false);
+            SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+            Vector3 center = renderer != null ? renderer.localBounds.center : Vector3.zero;
+            chargeEffect.transform.localPosition = center + chargeEffectPrefab.transform.localPosition;
+            chargeEffect.transform.localRotation = chargeEffectPrefab.transform.localRotation;
+            chargeEffect.transform.localScale = chargeEffectPrefab.transform.localScale;
+            foreach (SpriteRenderer effectRenderer in chargeEffect.GetComponentsInChildren<SpriteRenderer>())
+            {
+                if (renderer == null) break;
+                effectRenderer.sortingLayerID = renderer.sortingLayerID;
+                effectRenderer.sortingOrder = renderer.sortingOrder + 1;
+            }
+            foreach (Animator effectAnimator in chargeEffect.GetComponentsInChildren<Animator>())
+            {
+                effectAnimator.Rebind();
+                effectAnimator.Play(0, 0, 0f);
+                effectAnimator.Update(0f);
             }
         }
 
-        public override bool CanAttack()
+        private void HideChargeEffect()
         {
-            // 차징 중에도 조준 방향 업데이트를 매 프레임 호출받기 위해 항상 true 반환
-            return true;
+            if (chargeEffect != null)
+            {
+                if (chargeEffectPool != null) chargeEffectPool.ReturnToPool(chargeEffectPrefab.name, chargeEffect);
+                else Destroy(chargeEffect);
+            }
+            chargeEffect = null;
+            chargeEffectPrefab = null;
+            chargeEffectPool = null;
         }
 
         protected override bool ShouldSpawnFireEffect()
@@ -115,15 +171,15 @@ namespace Nytherion.GamePlay.Combat.Weapons
         {
             return playerManager != null &&
                    playerManager.playerRelicManager != null &&
-                   playerManager.playerRelicManager.IsRelicActive("ChargeRelic");
+                   playerManager.playerRelicManager.IsRelicActive("ManaCharger");
         }
 
         private void ResetFrenzyState()
         {
-            isAttacking = false;
-            currentSpinUpProgress = 0f;
+            attackState.Reset();
+            HideChargeEffect();
             damageMultiplier = 1f;
-            // 버튼을 놓거나 무기를 교체하면 아직 대기 중인 추가 연사도 중단합니다.
+            // 무기를 비활성화하면 대기 중인 추가 연사도 중단합니다.
             StopAllCoroutines();
         }
 

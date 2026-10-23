@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using Nytherion.Core.Enums;
 
 namespace Nytherion.UI.RelicBoard
 {
@@ -12,6 +13,17 @@ namespace Nytherion.UI.RelicBoard
 
         public Vector2Int GridPosition { get; private set; }
         public Image BackgroundImage => backgroundImage;
+        private RelicSlotVisual slotVisual;
+
+        private RelicSlotVisual SlotVisual
+        {
+            get
+            {
+                if (slotVisual == null && backgroundImage != null)
+                    slotVisual = backgroundImage.GetComponent<RelicSlotVisual>();
+                return slotVisual;
+            }
+        }
         
         public event Action<RelicSlotCell> OnCellPointerEnter;
         public event Action<RelicSlotCell> OnCellPointerExit;
@@ -40,11 +52,15 @@ namespace Nytherion.UI.RelicBoard
         {
             relicIcon.enabled = false;
             relicIcon.sprite = null;
+            SlotVisual?.SetRarity(null);
         }
+
+        public void SetRarity(Rarity rarity) => SlotVisual?.SetRarity(rarity);
 
         public void Highlight(bool active)
         {
-            backgroundImage.color = active ? Color.yellow : Color.white;
+            if (SlotVisual != null) SlotVisual.Highlight(active);
+            else backgroundImage.color = active ? Color.yellow : Color.white;
         }
     }
 }

@@ -96,8 +96,7 @@ namespace Nytherion.Editor
             }
             relic.relicName = "WindStone";
             relic.koreanName = "풍석";
-            relic.description_KR = "공격 적중 시 20% 확률로 플레이어 주변에서 공격 방향으로 풍석을 발사합니다. 풍석은 적과 충돌하면 느려지며 0.25초마다 반복 타격합니다. 타격 피해는 적중 피해의 50%이며 유물 레벨마다 10%p 증가합니다.";
-            relic.description_EN = "Hits have a 20% chance to launch a Wind Stone around the player in the player's attack direction. It slows on contact and hits every 0.25 seconds, dealing 50% of the triggering damage (+10 percentage points per relic level).";
+            RelicDescriptionSetup.ApplyDescription(relic);
             relic.Image = icon;
             relic.rarity = Rarity.Rare;
             relic.level = 1;

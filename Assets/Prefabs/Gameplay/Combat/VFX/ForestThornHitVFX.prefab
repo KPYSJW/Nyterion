@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6496784436322708192}
   - component: {fileID: 4851216565521633563}
   - component: {fileID: 7488027733765975483}
+  - component: {fileID: 5798917261246538102}
   m_Layer: 0
   m_Name: ForestThornHitVFX
   m_TagString: Untagged
@@ -73,8 +74,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 10
-  m_Sprite: {fileID: -1435109236, guid: cd97c846d9b37934580666f930d59195, type: 3}
+  m_SortingOrder: 100
+  m_Sprite: {fileID: 340434026, guid: cd97c846d9b37934580666f930d59195, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -106,3 +107,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5798917261246538102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7501527366971250573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1fca1ac4de4496bc478b0ccfe3ae11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolTag: ForestThornHitVFX

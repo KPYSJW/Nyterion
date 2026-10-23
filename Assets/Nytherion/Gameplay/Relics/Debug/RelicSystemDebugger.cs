@@ -4,6 +4,7 @@ using Nytherion.UI.RelicBoard;
 using VContainer;
 using System.Collections;
 using System.Linq;
+using TMPro;
 
 namespace Nytherion.GamePlay.Relics
 {
@@ -19,6 +20,9 @@ namespace Nytherion.GamePlay.Relics
         private RelicManager relicManager;
         private RelicGridUI relicGridUI;
         private RelicTooltip relicTooltip;
+        private GUIStyle debugLabelStyle;
+        private GUIStyle debugBoxStyle;
+        private GUIStyle debugButtonStyle;
 
         [Inject]
         public void Construct(RelicManager relicManager)
@@ -139,25 +143,33 @@ namespace Nytherion.GamePlay.Relics
         {
             if (!enableDebugMode) return;
 
+            if (debugLabelStyle == null)
+            {
+                Font font = TMP_Settings.defaultFontAsset != null ? TMP_Settings.defaultFontAsset.sourceFontFile : GUI.skin.font;
+                debugLabelStyle = new GUIStyle(GUI.skin.label) { font = font };
+                debugBoxStyle = new GUIStyle(GUI.skin.box) { font = font };
+                debugButtonStyle = new GUIStyle(GUI.skin.button) { font = font };
+            }
+
             GUILayout.BeginArea(new Rect(10, 10, 300, 200));
-            GUILayout.Label("각인 시스템 디버그", GUI.skin.box);
+            GUILayout.Label("각인 시스템 디버그", debugBoxStyle);
 
             if (relicManager != null)
             {
-                GUILayout.Label($"보관소 블록: {relicManager.GetStorageBlocks()?.Count() ?? 0}");
-                GUILayout.Label($"배치된 블록: {relicManager.GetPlacedBlocks()?.Count() ?? 0}");
+                GUILayout.Label($"보관소 블록: {relicManager.GetStorageBlocks()?.Count() ?? 0}", debugLabelStyle);
+                GUILayout.Label($"배치된 블록: {relicManager.GetPlacedBlocks()?.Count() ?? 0}", debugLabelStyle);
             }
             else
             {
-                GUILayout.Label("RelicManager: 연결 안됨", GUI.skin.GetStyle("Label"));
+                GUILayout.Label("RelicManager: 연결 안됨", debugLabelStyle);
             }
 
-            if (GUILayout.Button("시스템 재연결 테스트"))
+            if (GUILayout.Button("시스템 재연결 테스트", debugButtonStyle))
             {
                 ForceSystemReconnectionTest();
             }
 
-            if (GUILayout.Button("UI 강제 새로고침"))
+            if (GUILayout.Button("UI 강제 새로고침", debugButtonStyle))
             {
                 ForceRefreshRelicUI();
             }

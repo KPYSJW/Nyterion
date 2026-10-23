@@ -26,15 +26,6 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (playerCombat == null || chargeSlider == null) return;
 
-            if (playerCombat.currentWeapon is FrenzyWeapon)
-            {
-                if (chargeSlider.gameObject.activeSelf)
-                {
-                    chargeSlider.gameObject.SetActive(false);
-                }
-                return;
-            }
-
             if (playerCombat.IsGenericCharging)
             {
                 if (!chargeSlider.gameObject.activeSelf)

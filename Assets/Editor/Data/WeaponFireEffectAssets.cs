@@ -119,7 +119,7 @@ namespace Nytherion.Editor
             clipSettings.stopTime = count / fps;
             AnimationUtility.SetAnimationClipSettings(clip, clipSettings);
             AnimationUtility.SetAnimationEvents(clip, new[] { new AnimationEvent
-                { time = count / fps, functionName = nameof(SpriteMuzzleFlashEffect.AnimationFinished) } });
+                { time = keys[count - 1].time, functionName = nameof(SpriteMuzzleFlashEffect.AnimationFinished) } });
             EditorUtility.SetDirty(clip);
             AssetDatabase.SaveAssetIfDirty(clip);
 

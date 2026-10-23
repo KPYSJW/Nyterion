@@ -33,6 +33,7 @@ namespace Nytherion.Core.Managers
         private float lastAutoSaveAttemptTime = float.NegativeInfinity;
 
         public bool IsSaveBlocked => isSaveBlocked;
+        public bool HasLoadedData => hasLoadedData;
         public string LastError { get; private set; }
         public SaveLoadStatus LastLoadStatus { get; private set; } = SaveLoadStatus.Missing;
 
@@ -380,10 +381,8 @@ namespace Nytherion.Core.Managers
 
         protected override void OnDestroy()
         {
-            if (!isLoadingData && hasLoadedData)
-            {
-                ForceSaveGame();
-            }
+            // 종료 저장은 OnApplicationQuit에서 처리한다. 스코프 파괴 중 Resolve하면
+            // 이미 제거된 매니저가 다시 생성될 수 있으므로 여기서는 저장하지 않는다.
             base.OnDestroy();
         }
 

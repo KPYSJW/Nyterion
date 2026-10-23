@@ -12,35 +12,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66ec21aca54c46cf9bedfe6d1a690647, type: 3}
   m_Name: MobileWarriorSet
   m_EditorClassIdentifier: 
-  setName_KR: "기동 전사"
-  setName_EN: Mobile Warrior
+  setName_KR: "\uB3CC\uD48D"
+  setName_EN: WindBlast
   statusIcon: {fileID: 21300000, guid: 06d9fc9a421e428491e941c67379f89f, type: 3}
   badgeBackgroundColor: {r: 0.08, g: 0.42, b: 0.38, a: 0.96}
   badgeTextColor: {r: 0.86, g: 1, b: 0.94, a: 1}
-  description_KR: "빠른 이동과 대시를 공격 기회로 전환하는 기동형 유물 세트입니다."
-  description_EN: A mobile relic set that turns movement and dashes into attack opportunities.
+  description_KR: "\uAE30\uB3D9\uB825\uC744 \uB192\uC774\uACE0 \uB300\uC2DC \uD6C4
+    \uACF5\uACA9\uC744 \uAC15\uD654\uD558\uBA70 \uB3CC\uD48D \uD22C\uC0AC\uCCB4\uB97C
+    \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  description_EN: Improve mobility and empower attacks after dashing with a wind
+    projectile.
   synergySeriesId: MobileWarriorSeries
   bonusModules:
-  - condition:
+  - description_KR: "\uC774\uB3D9 \uC18D\uB3C4 +6%, \uB300\uC2DC \uC7AC\uC0AC\uC6A9
+      \uB300\uAE30\uC2DC\uAC04 -8%"
+    description_EN: Move speed +6% and dash cooldown -8%
+    condition:
       rid: 2001
     effects:
     - rid: 2002
-    description_KR: "이동 속도 +6%, 대시 재사용 대기시간 -8%"
-    description_EN: Move speed +6% and dash cooldown -8%
-  - condition:
+  - description_KR: "\uC774\uB3D9 \uC18D\uB3C4 +10%, \uB300\uC2DC \uC7AC\uC0AC\uC6A9
+      \uB300\uAE30\uC2DC\uAC04 -12%. \uB300\uC2DC \uD6C4 3\uCD08 \uB3D9\uC548 \uADFC\uAC70\uB9AC\xB7\uC6D0\uAC70\uB9AC
+      \uACF5\uACA9\uB825 +12% \uB300\uC2DC \uD6C4 \uACF5\uACA9 \uC2DC \uB3CC\uD48D
+      \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+    description_EN: Move speed +10% and dash cooldown -12%. Dashing grants +12% melee
+      and ranged damage for 3 seconds. An attack after dashing fires a wind projectile.
+    condition:
       rid: 4001
     effects:
     - rid: 4002
     - rid: 4003
-    description_KR: "이동 속도 +10%, 대시 재사용 대기시간 -12%. 대시 후 3초 동안 근거리·원거리 공격력 +12%"
-    description_EN: Move speed +10% and dash cooldown -12%. Dashing grants +12% melee and ranged damage for 3 seconds.
-  - condition:
+    - rid: 1314306106538328064
+  - description_KR: "\uC774\uB3D9 \uC18D\uB3C4 +12%, \uB300\uC2DC \uC7AC\uC0AC\uC6A9
+      \uB300\uAE30\uC2DC\uAC04 -15%. \uB300\uC2DC \uD6C4 3\uCD08 \uB3D9\uC548 \uADFC\uAC70\uB9AC\xB7\uC6D0\uAC70\uB9AC
+      \uACF5\uACA9\uB825 +15%, \uCE58\uBA85\uD0C0 \uD655\uB960 +5%p \uB300\uC2DC
+      \uD6C4 \uACF5\uACA9 \uC2DC \uB3CC\uD48D \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+    description_EN: Move speed +12% and dash cooldown -15%. Dashing grants +15% melee
+      and ranged damage and +5%p critical chance for 3 seconds. An attack after dashing
+      fires a wind projectile.
+    condition:
       rid: 6001
     effects:
     - rid: 6002
     - rid: 6003
-    description_KR: "이동 속도 +12%, 대시 재사용 대기시간 -15%. 대시 후 3초 동안 근거리·원거리 공격력 +15%, 치명타 확률 +5%p"
-    description_EN: Move speed +12% and dash cooldown -15%. Dashing grants +15% melee and ranged damage and +5%p critical chance for 3 seconds.
+    - rid: 1314306106538328065
   linkedTranscendenceEffects:
   - {fileID: 11400000, guid: a71d5f6c85b449f1b76e2c432a95d038, type: 2}
   - {fileID: 11400000, guid: d61a1e7a4f5a4514aa12a683bf9cc027, type: 2}
@@ -131,3 +146,15 @@ MonoBehaviour:
           value: 0.05
           valuePerLevel: 0
           isPercentage: 0
+    - rid: 1314306106538328064
+      type: {class: DashWindProjectileEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        projectilePrefab: {fileID: 4542487117723958544, guid: b9966f24225e6f640b2cd9e2463f6ad1, type: 3}
+        damageRatio: 0.75
+        chargesPerDash: 1
+    - rid: 1314306106538328065
+      type: {class: DashWindProjectileEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        projectilePrefab: {fileID: 4542487117723958544, guid: b9966f24225e6f640b2cd9e2463f6ad1, type: 3}
+        damageRatio: 1
+        chargesPerDash: 1

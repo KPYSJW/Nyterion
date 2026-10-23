@@ -12,7 +12,7 @@ namespace Nytherion.Editor
     public static class FiveWeaponMuzzleSetup
     {
         public const string Output = "output/weapon-muzzle-links";
-        public static readonly string[] Names = { "ArcaneDart", "EvilEye", "GuardianStaff", "Icicle", "VenomousStaff" };
+        public static readonly string[] Names = { "ArcaneDart", "EvilEye", "Isolation", "Icicle", "Corrosion" };
         static readonly int[] ExpectedCounts = { 5, 6, 6, 4, 5 };
 
         static FiveWeaponMuzzleSetup() => EditorApplication.update += Update;
@@ -52,7 +52,7 @@ namespace Nytherion.Editor
                 float scale = 0.56f / (frames[i][0].rect.height / frames[i][0].pixelsPerUnit);
                 GameObject prefab = WeaponFireEffectAssets.CreateAndAssign(data[i], frames[i], 0, frames[i].Length - 1,
                     60f, scale, Vector3.zero);
-                if (Names[i] == "GuardianStaff")
+                if (Names[i] == "Isolation")
                 {
                     string effectPath = AssetDatabase.GetAssetPath(prefab);
                     GameObject effectRoot = PrefabUtility.LoadPrefabContents(effectPath);
@@ -81,8 +81,8 @@ namespace Nytherion.Editor
             GameObject root = PrefabUtility.LoadPrefabContents(path);
             try
             {
-                var weapon = root.GetComponent<GuardianStaffWeapon>();
-                if (weapon == null) throw new InvalidOperationException("GuardianStaff 프리팹 타입이 다릅니다.");
+                var weapon = root.GetComponent<IsolationWeapon>();
+                if (weapon == null) throw new InvalidOperationException("Isolation 프리팹 타입이 다릅니다.");
                 Transform point = weapon.firePoint != null ? weapon.firePoint : root.transform.Find("FirePoint");
                 if (point == null)
                 {

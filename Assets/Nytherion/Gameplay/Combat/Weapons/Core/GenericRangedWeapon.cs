@@ -15,6 +15,7 @@ namespace Nytherion.GamePlay.Combat
         private Vector3 rightFacingLocalScale;
         private float rightFacingRotation;
         private bool facingPoseCached;
+        private float genericChargePercent;
 
         public override bool OverrideRotation => weaponData != null && weaponData.useFixedFacingPose;
 
@@ -72,7 +73,7 @@ namespace Nytherion.GamePlay.Combat
 
             // RangedWeapon의 FireProjectiles를 호출하여 투사체를 발사
             // 기본 발사 개수는 1개이며, 추가 투사체 각인 등이 있다면 내부 로직에 의해 자동으로 증가
-            FireProjectiles(direction, 1);
+            FireProjectiles(direction, 1, chargePercent: genericChargePercent);
             
             lastAttackTime = Time.time;
             
@@ -80,6 +81,29 @@ namespace Nytherion.GamePlay.Combat
 
         public override void AttackEnd()
         {
+        }
+
+        private void OnDisable()
+        {
+            genericChargePercent = 0f;
+            CancelPendingProjectileSpawns();
+        }
+
+        public override void AttackWithGenericCharge(Vector2 direction, Vector3 targetPosition, float chargePercent)
+        {
+            // 별도 차징 발사 설정이 있는 무기만 공용 발사에 충전량을 전달합니다.
+            genericChargePercent = weaponData != null &&
+                (weaponData.chargedProjectilePrefab != null || weaponData.fullChargeProjectileCountMultiplier > 1 ||
+                 weaponData.fullChargeProjectileInterval > 0f)
+                ? Mathf.Clamp01(chargePercent) : 0f;
+            try
+            {
+                base.AttackWithGenericCharge(direction, targetPosition, chargePercent);
+            }
+            finally
+            {
+                genericChargePercent = 0f;
+            }
         }
     }
 }

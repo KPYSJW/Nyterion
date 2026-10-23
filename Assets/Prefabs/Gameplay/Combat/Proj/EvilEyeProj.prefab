@@ -237,4 +237,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionDamageMultiplier: 100
-  explosionVisualPoolTag: Player_ExplosionVFX
+  explosionVisualPoolTag: Player_EvilEyeHitVFX

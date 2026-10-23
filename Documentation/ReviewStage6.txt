@@ -1,0 +1,15 @@
+후속 작업 6 — 미사용 코드 정리 및 던전 보류 (2026-10-16)
+
+R14 완료
+- VContainerBootstrap, SimpleStartButton, StartButtonHandler의 C# 소비자·직렬화 GUID 참조를 재검색했다.
+- ICurrencySaveService, IInventorySaveService, IRelicSaveService의 구현·소비자가 없음을 재확인했다.
+- 후보 6개만 Unity AssetDatabase.DeleteAsset으로 제거했다. 현재 저장 경로인 ISaveable·JsonSaveService는 유지한다.
+- 원본 6개와 .meta 6개는 Documentation/ReviewStage6Originals.zip에 보관했다.
+- 자동화 도구: Assets/Editor/Data/ReviewUnusedCodeCleanup.cs.
+- 참조 검사·삭제 결과: output/review-unused-code/verification.txt (12개 PASS).
+- 수동 테스트 씬이 참조하는 레거시 InventoryManager 등은 삭제 범위에 포함하지 않았다.
+
+R08 보류
+- 사용자가 '던전은 건들지 말고 보류하자'고 명시했다.
+- 저장 맵 복원 정책, 스테이지 저장·식별, ignoreSavedDungeonMapForTest 및 던전 프리팹 설정을 변경하지 않았다.
+- R09의 던전·NavMesh 최적화도 같은 범위로 보류했다.

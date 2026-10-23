@@ -124,8 +124,15 @@ namespace Nytherion.Editor
             weapon.extraProjectileMode = ExtraProjectileMode.Spread;
             typeof(RangedWeapon).GetMethod("FireProjectiles", BindingFlags.Instance | BindingFlags.NonPublic)
                 .Invoke(weapon, new object[] { Vector2.right, 1, 15f, 0f, 1f });
+            // 현재 무기는 시작 애니메이션 완료 이벤트 뒤에 실제 탄을 생성한다.
+            float startDelay = guidance.projectileStartEffectVariants == null ? 0f :
+                guidance.projectileStartEffectVariants.Where(effect => effect != null)
+                    .Select(effect => effect.GetComponent<ProjectileStartEffect>()?.Duration ?? 0f).DefaultIfEmpty(0f).Max();
+            yield return new WaitForSeconds(startDelay + 0.15f);
             CollisionObject[] bolts = ActiveBolts();
-            Require(bolts.Length == 2, "풍요의 주머니 장착 시 실제 원거리 투사체 2발 생성");
+            Require(bolts.Length == 2, "풍요의 주머니 장착 시 실제 원거리 투사체 2발 생성 (검출=" + bolts.Length +
+                ", 플레이어=" + playerRoot.transform.position + ", 총구=" + weapon.firePoint.position +
+                ", 풀 활성=" + string.Join(",", pool.GetComponentsInChildren<CollisionObject>().Select(value => value.name + "@" + value.transform.position)) + ")");
             var enemyA = Track(new GameObject("검증 적 A"));
             enemyA.tag = "Enemy";
             Collider2D targetA = enemyA.AddComponent<BoxCollider2D>();
@@ -169,7 +176,7 @@ namespace Nytherion.Editor
                 charged.extraProjectileMode = ExtraProjectileMode.Spread;
                 type.GetMethod("FireChargedAttack", BindingFlags.NonPublic | BindingFlags.Instance)
                     .Invoke(charged, new object[] { Vector2.right, 0f });
-                yield return new WaitForSeconds(0.12f);
+                yield return new WaitForSeconds(startDelay + 0.15f);
                 Require(ActiveBolts().Length == 2 && ActiveBolts().All(projectile => projectile.GetComponent<PiercingModifier>().enabled),
                     type.Name + ": 비차징 발사에서도 추가 투사체·유물 관통 유지");
                 ReturnBolts();
@@ -223,6 +230,7 @@ namespace Nytherion.Editor
             builder.RegisterInstance(manager);
             builder.RegisterInstance(ui);
             builder.RegisterInstance(input);
+            builder.RegisterInstance(RootLifetimeScope.Instance.Container.Resolve<AudioManager>());
             RelicTooltip tooltip = Object.FindObjectOfType<RelicTooltip>(true);
             Require(tooltip != null, "씬의 비활성 툴팁 Inspector 참조 확인");
             builder.RegisterInstance(tooltip);
@@ -234,6 +242,7 @@ namespace Nytherion.Editor
             yield return null;
             Require(ui.blockStorageParent.childCount == 16 && storageLayout.constraintCount == 4,
                 "전체 유물 보유 상태에도 보관함은 페이지당 정확히 16칸·4열");
+            VerifySlotRarity(ui);
             Require(ui.blockStorageParent.rect.size == Vector2.one * 547f &&
                 ui.blockStorageParent.anchorMin == ui.blockStorageParent.anchorMax,
                 "늘어나는 앵커를 고정하고 4×4 슬롯·여백을 포함한 547×547 규격 적용");
@@ -303,16 +312,21 @@ namespace Nytherion.Editor
                 ui.blockStorageParent.GetComponentInChildren<RelicBlockDraggable>().blockData.BlockId != firstPageRelic,
                 "다음 페이지로 16개 초과 유물 접근 가능");
             Sprite equippedFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/UI/Relics/EquipedRelic_Slot.png");
-            Require(ui.gridRoot.GetChild(0).GetComponent<Image>().sprite == equippedFrame,
-                "유물 장착 칸에 EquipedRelic_Slot.png 적용");
+            VerifySlotRarity(ui);
+            foreach (RelicSlotCell cell in ui.gridRoot.GetComponentsInChildren<RelicSlotCell>())
+                if (manager.GetBlockAt(cell.GridPosition.y, cell.GridPosition.x) == null)
+                    Require(cell.BackgroundImage.sprite == equippedFrame, "장착·해제·페이지 변경 후 빈 장착 칸은 기존 기본 프레임 복원");
             Sprite common = ui.storageSlotPrefab.GetComponent<Image>().sprite;
             foreach (string prefab in new[] { "SkillStorageSlot", "SkillEquipSlot", "SkillEquipSlot 1", "SkillEquipSlot 2" })
             {
                 GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Skills/" + prefab + ".prefab");
-                Require(asset.GetComponent<Image>().sprite == common && asset.GetComponent<Image>().type == Image.Type.Sliced &&
+                // 스킬 보관함은 기존 전용 이미지를 사용한다. 유물 등급 프레임으로 바꾸지 않는다.
+                Sprite expectedFrame = prefab == "SkillStorageSlot" ? AssetDatabase.LoadAssetAtPath<Sprite>(
+                    "Assets/Nytherion/Art/UI/Skills/SkillStorageSlot.png") : common;
+                Require(asset.GetComponent<Image>().sprite == expectedFrame && asset.GetComponent<Image>().type == Image.Type.Sliced &&
                     asset.GetComponent<PixelPerfectSlotFrame>() != null && asset.GetComponent<RectTransform>().sizeDelta ==
                     Vector2.one * (prefab == "SkillStorageSlot" ? 128f : 160f),
-                    prefab + ": 유물 슬롯과 동일한 배경 이미지·비율 보존");
+                    prefab + ": 기존 배경 이미지·비율 보존");
             }
             Sprite iconSprite = AssetDatabase.LoadAssetAtPath<RelicData>(Relics + "SimpleStats/PouchOfAbundance.asset").Image;
             var skill = Track(ScriptableObject.CreateInstance<Nytherion.Data.ScriptableObjects.Skill.SkillData>());
@@ -321,6 +335,7 @@ namespace Nytherion.Editor
                 "Assets/Prefabs/UI/Skills/SkillEquipSlot.prefab"), relicCanvasRoot));
             var skillSlot = skillObject.GetComponent<SkillSlotUI>();
             skillSlot.Setup(skill);
+            Vector2 originalSkillIconSize = ((Image)Get(skillSlot, "skillIcon")).rectTransform.sizeDelta;
             skillSlot.OnBeginDrag(pointer);
             Image skillIcon = (Image)Get(skillSlot, "skillIcon");
             Canvas.ForceUpdateCanvases();
@@ -332,8 +347,8 @@ namespace Nytherion.Editor
             skillSlot.OnEndDrag(pointer);
             Require(skillIcon.transform.parent == skillObject.transform,
                 "스킬 드래그 종료 시 원래 슬롯으로 아이콘 복원");
-            Require(skillIcon.rectTransform.sizeDelta == Vector2.one * 64f,
-                "스킬 드래그 종료 시 장착 아이콘 64×64 복원");
+            Require(skillIcon.rectTransform.sizeDelta == originalSkillIconSize,
+                "스킬 드래그 종료 시 드래그 전 아이콘 크기 복원");
             tooltip.Show(manager.GetBlockAt(0, 0));
             Require(((TextMeshProUGUI)Get(tooltip, "nameText")).color == Color.white,
                 "유물 툴팁 제목 흰색");
@@ -564,6 +579,25 @@ namespace Nytherion.Editor
             ui.ChangeStoragePage(-1);
             yield return null;
             yield return null;
+        }
+
+        private static void VerifySlotRarity(RelicGridUI ui)
+        {
+            var inventory = new SerializedObject(AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Prefabs/UI/Inventory/InventorySlot.prefab").GetComponent<Nytherion.UI.Inventory.InventorySlotUI>());
+            string[] fields = { "commonSlotSprite", "uncommonSlotSprite", "rareSlotSprite", "epicSlotSprite", "legendarySlotSprite" };
+            foreach (RelicBlockDraggable block in ui.blockStorageParent.GetComponentsInChildren<RelicBlockDraggable>())
+            {
+                Sprite expected = (Sprite)inventory.FindProperty(fields[(int)block.blockData.SourceData.rarity]).objectReferenceValue;
+                Require(block.transform.parent.GetComponent<Image>().sprite == expected, "보관 슬롯 실제 유물 등급 프레임: " + block.blockData.RelicId);
+            }
+            var cells = (RelicSlotCell[,])Get(ui, "slotCells");
+            foreach (RelicBlockDraggable block in ui.placedBlocksContainer.GetComponentsInChildren<RelicBlockDraggable>())
+            {
+                Sprite expected = (Sprite)inventory.FindProperty(fields[(int)block.blockData.SourceData.rarity]).objectReferenceValue;
+                Require(cells[block.gridPosition.y, block.gridPosition.x].BackgroundImage.sprite == expected,
+                    "장착 슬롯 실제 유물 등급 프레임: " + block.blockData.RelicId);
+            }
         }
 
         private static void Finish(Exception error)

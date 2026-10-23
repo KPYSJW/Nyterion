@@ -355,12 +355,7 @@ namespace Nytherion.Editor
             relic.name = "ComradeBlast";
             relic.relicName = "Comrade Blast";
             relic.koreanName = "블래스트";
-            relic.description_KR =
-                "플레이어를 따라다니며 가장 가까운 적에게 미사일을 발사하는 블래스트 소환수를 부릅니다.\n" +
-                "유물을 장착하는 동안 유지됩니다.";
-            relic.description_EN =
-                "Summons Blast, a companion that follows the player and fires missiles at the nearest enemy. " +
-                "It remains while equipped.";
+            RelicDescriptionSetup.ApplyDescription(relic);
             relic.Image = icon;
             relic.rarity = Rarity.Epic;
             relic.level = 1;

@@ -55,12 +55,18 @@ namespace Nytherion.Core.Managers
             SkillDataManager skillDataManager = null,
             IObjectResolver objectResolver = null)
         {
+            UnsubscribeEquipmentChanges();
             this.equipmentDataManager = equipmentDataManager;
             this.inputManager = inputManager;
             this.eventManager = eventManager;
             this.relicManager = relicManager;
             this.skillDataManager = skillDataManager;
             this.objectResolver = objectResolver;
+            if (isActiveAndEnabled)
+            {
+                SubscribeEquipmentChanges();
+                if (IsInitialized) SynchronizeEquipment();
+            }
         }
 
         public int GetSkillLevel(SkillData skill)
@@ -118,7 +124,9 @@ namespace Nytherion.Core.Managers
             }
 
             CurrentRunKillCount = 0;
-            RecalculateStats();
+            SubscribeEquipmentChanges();
+            // 타이틀에서 먼저 로드된 장비는 변경 알림을 다시 보내지 않으므로 현재 상태를 반영한다.
+            SynchronizeEquipment();
         }
 
         private void HandlePlayerDied()
@@ -169,18 +177,30 @@ namespace Nytherion.Core.Managers
 
         private void OnEnable()
         {
+            SubscribeEquipmentChanges();
+            if (IsInitialized) SynchronizeEquipment();
+        }
+
+        private void SubscribeEquipmentChanges()
+        {
             if (equipmentDataManager != null)
             {
+                UnsubscribeEquipmentChanges();
                 equipmentDataManager.OnEquipmentChanged += HandleEquipmentChanged;
             }
         }
 
-        private void OnDisable()
+        private void UnsubscribeEquipmentChanges()
         {
             if (equipmentDataManager != null)
             {
                 equipmentDataManager.OnEquipmentChanged -= HandleEquipmentChanged;
             }
+        }
+
+        private void OnDisable()
+        {
+            UnsubscribeEquipmentChanges();
             if (playerRelicManager != null)
             {
                 playerRelicManager.OnRelicsChanged -= RecalculateStats;
@@ -198,23 +218,38 @@ namespace Nytherion.Core.Managers
 
         private void HandleEquipmentChanged(EquipmentSlotType slotType, EquipmentData newItem, EquipmentData oldItem)
         {
+            if (!IsInitialized) return;
             RecalculateStats();
+            if (slotType == EquipmentSlotType.Weapon) SynchronizeWeapon();
+        }
 
-            if (newItem != null && newItem is WeaponData weaponData)
+        private void SynchronizeEquipment()
+        {
+            RecalculateStats();
+            SynchronizeWeapon();
+        }
+
+        private void SynchronizeWeapon()
+        {
+            if (PlayerCombat == null || equipmentDataManager == null) return;
+            var weaponData = equipmentDataManager.GetEquipment(EquipmentSlotType.Weapon) as WeaponData;
+            if (weaponData == null)
             {
-                if (PlayerCombat != null)
-                {
-                    // 수정된 EquipWeapon을 사용하여 프리팹과 데이터를 함께 전달
-                    PlayerCombat.EquipWeapon(weaponData.weaponPrefab, weaponData);
-                }
+                if (PlayerCombat.currentWeapon != null) PlayerCombat.EquipWeapon(null);
             }
-            else if (slotType == EquipmentSlotType.Weapon)
-            {
-                PlayerCombat?.EquipWeapon(null);
-            }
+            else if (PlayerCombat.currentWeapon == null || PlayerCombat.currentWeapon.weaponData != weaponData)
+                PlayerCombat.EquipWeapon(weaponData.weaponPrefab, weaponData);
         }
 
         private List<StatModifier> temporaryModifiers = new List<StatModifier>();
+        private bool debugGuaranteedCritical;
+
+        public void SetDebugGuaranteedCritical(bool active)
+        {
+            if (debugGuaranteedCritical == active) return;
+            debugGuaranteedCritical = active;
+            if (currentPlayerData != null) RecalculateStats();
+        }
         
         // 반전시켜야 할 장비 태그(Trait) 목록
         private List<EquipmentTrait> traitsToInvert = new List<EquipmentTrait>();
@@ -370,6 +405,9 @@ namespace Nytherion.Core.Managers
                     ApplyModifierToPlayer(st, totalSum, true);
                 }
             }
+
+            // 테스트 중에도 장비 변경이나 능력치 재계산 후 치명타 확률을 정확히 100%로 유지한다.
+            if (debugGuaranteedCritical) currentPlayerData.critChance = 1f;
 
             // 유리 칼 (Glass Sword) 유물 효과 적용: 최대 체력 50 고정
             if (playerRelicManager != null && playerRelicManager.IsRelicActive("Glass Sword"))
