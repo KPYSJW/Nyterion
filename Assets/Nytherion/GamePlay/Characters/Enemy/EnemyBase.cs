@@ -42,7 +42,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private Color originalColor = Color.white;
         private Coroutine hitFlashCoroutine;
         private MaterialPropertyBlock hitFlashProperties;
-        private MaterialPropertyBlock originalHitProperties;
+        private Color flashColorBeforeHit;
+        private float flashAmountBeforeHit;
         private Material materialBeforeHitFlash;
         private bool isHitFlashMaterialApplied;
 
@@ -102,7 +103,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private void Awake()
         {
             hitFlashProperties = new MaterialPropertyBlock();
-            originalHitProperties = new MaterialPropertyBlock();
 
             if (spriteRenderer == null)
             {
@@ -380,19 +380,18 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             materialBeforeHitFlash = spriteRenderer.sharedMaterial;
-            originalHitProperties.Clear();
-            spriteRenderer.GetPropertyBlock(originalHitProperties);
-
-            hitFlashProperties.Clear();
             spriteRenderer.GetPropertyBlock(hitFlashProperties);
+            flashColorBeforeHit = hitFlashProperties.GetColor(FlashColorId);
+            flashAmountBeforeHit = hitFlashProperties.GetFloat(FlashAmountId);
             spriteRenderer.sharedMaterial = sharedHitFlashMaterial;
-            spriteRenderer.SetPropertyBlock(hitFlashProperties);
             isHitFlashMaterialApplied = true;
             return true;
         }
 
         private void SetHitFlash(Color flashColor)
         {
+            // Read the current sprite properties instead of reapplying an earlier texture.
+            spriteRenderer.GetPropertyBlock(hitFlashProperties);
             hitFlashProperties.SetColor(FlashColorId, flashColor);
             hitFlashProperties.SetFloat(FlashAmountId, 1f);
             spriteRenderer.SetPropertyBlock(hitFlashProperties);
@@ -406,7 +405,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             spriteRenderer.sharedMaterial = materialBeforeHitFlash;
-            spriteRenderer.SetPropertyBlock(originalHitProperties);
+            spriteRenderer.GetPropertyBlock(hitFlashProperties);
+            hitFlashProperties.SetColor(FlashColorId, flashColorBeforeHit);
+            hitFlashProperties.SetFloat(FlashAmountId, flashAmountBeforeHit);
+            spriteRenderer.SetPropertyBlock(hitFlashProperties);
             materialBeforeHitFlash = null;
             isHitFlashMaterialApplied = false;
         }
