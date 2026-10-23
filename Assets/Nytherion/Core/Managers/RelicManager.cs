@@ -530,7 +530,9 @@ namespace Nytherion.Core.Managers
 
             foreach (var savedBlock in state.placedBlocks)
             {
-                if (relicDatabase.TryGetValue(savedBlock.relicId, out RelicData originalData))
+                // 이름 변경 전 저장된 마력 충전기도 현재 유물로 복원합니다.
+                string relicId = savedBlock.relicId == "ChargeRelic" ? "ManaCharger" : savedBlock.relicId;
+                if (relicDatabase.TryGetValue(relicId, out RelicData originalData))
                 {
                     var instanceData = Instantiate(originalData);
                     var newBlock = new RelicBlock(instanceData);

@@ -227,6 +227,9 @@ namespace Nytherion.Core.Managers
         /// <param name="newStorage">변경된 보관함 스킬 배열</param>
         public void UpdateSkills(SkillData[] newEquipped, SkillData[] newStorage)
         {
+            // UI 보관함이 더 큰 경우에도 뒤쪽 슬롯의 스킬이 잘리지 않도록 공간을 확보한다.
+            EnsureStorageCapacity(newStorage.Length);
+
             // 전달받은 배열 길이만큼 복사하되 범위를 넘으면 null 처리
             for (int i = 0; i < equippedSkills.Length; i++)
                 equippedSkills[i] = (i < newEquipped.Length && newEquipped[i] != null && newEquipped[i].IsRuntimeAvailable) ? newEquipped[i] : null;

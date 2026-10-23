@@ -84,8 +84,8 @@ namespace Nytherion.Editor
                 data = ScriptableObject.CreateInstance<BubbleShieldSkillData>();
                 data.skillID = "skill_bubble_shield";
                 data.skillType = SkillType.BubbleShield;
-                data.skillName = "버블 실드";
-                data.description = "피해를 흡수하는 실드 생성";
+                data.skillName = "비눗방울";
+                data.description = "피해를 흡수하는 비눗방울을 생성합니다.";
                 data.skillLevel = 1;
                 data.coolDown = 20f;
                 AssetDatabase.CreateAsset(data, DataPath);
@@ -250,9 +250,8 @@ namespace Nytherion.Editor
             {
                 relic = ScriptableObject.CreateInstance<RelicData>();
                 relic.relicName = "Relic of Bubble Shield";
-                relic.koreanName = "버블 실드 각인";
-                relic.description_KR = "피해를 흡수하는 버블 실드 스킬 획득";
-                relic.description_EN = "Grants a bubble shield skill that absorbs damage.";
+                relic.koreanName = "비눗방울";
+                RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
                 relic.Image = data.icon;
                 relic.rarity = Rarity.Rare;
                 relic.effectModules = new List<RelicEffectModule>
@@ -266,7 +265,7 @@ namespace Nytherion.Editor
 
         private static void RegisterLocalization(BubbleShieldSkillData data)
         {
-            SetTranslation(LocalizationTables.Skills, LocalizationKeys.SkillName(data.skillID), "버블 실드", "Bubble Shield");
+            SetTranslation(LocalizationTables.Skills, LocalizationKeys.SkillName(data.skillID), "비눗방울", "Bubble Shield");
             SetTranslation(LocalizationTables.Skills, LocalizationKeys.SkillDescription(data.skillID), data.description,
                 "Creates a damage-absorbing shield.");
             SetTranslation(LocalizationTables.UI, "ui.skill_tooltip.bubble_shield_stats",

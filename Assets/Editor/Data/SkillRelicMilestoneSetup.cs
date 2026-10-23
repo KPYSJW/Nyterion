@@ -135,7 +135,7 @@ namespace Nytherion.Editor
 
             relic = ScriptableObject.CreateInstance<RelicData>();
             relic.relicName = "Relic of " + skill.skillID;
-            relic.koreanName = skill.skillName + " 각인";
+            relic.koreanName = RelicDescriptionSetup.GetSkillRelicName(skill);
             relic.Image = skill.icon;
             RelicDescriptionSetup.GetSkillDescriptions(skill, out relic.description_KR, out relic.description_EN);
             relic.rarity = Rarity.Rare;

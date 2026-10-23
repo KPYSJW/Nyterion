@@ -143,7 +143,7 @@ namespace Nytherion.Editor
             {
                 relic = ScriptableObject.CreateInstance<RelicData>();
                 relic.relicName = "Relic of Chain Ignition";
-                relic.koreanName = "연쇄 점화 각인";
+                relic.koreanName = "연쇄 점화";
                 RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
                 relic.Image = icon;
                 relic.rarity = Rarity.Common;

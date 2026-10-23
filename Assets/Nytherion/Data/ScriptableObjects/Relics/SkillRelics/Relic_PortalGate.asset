@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Relic_PortalGate
   m_EditorClassIdentifier: 
   relicName: Relic of Portal Gate
-  koreanName: "\uCC28\uC6D0\uBB38 \uAC01\uC778"
-  description_KR: "[F]\uB85C \uC655\uBCF5\uD558\uB294 \uCC28\uC6D0\uBB38 \uC0DD\uC131"
-  description_EN: Creates portals you can travel between with [F].
+  koreanName: "\ucc28\uc6d0\ubb38"
+  description_KR: "\uc11c\ub85c \uc655\ubcf5\ud560 \uc218 \uc788\ub294 \ucc28\uc6d0\ubb38 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
+  description_EN: "Grants a portal skill that lets you travel between linked portals."
   Image: {fileID: -748852817, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
   rarity: 2
   level: 1

@@ -116,11 +116,8 @@ namespace Nytherion.Editor
                     isNew = true;
                 }
 
-                string skillName = string.IsNullOrEmpty(skill.skillName) ? skill.name : skill.skillName;
-
                 relicData.relicName = $"Relic of {cleanName}";
-                relicData.koreanName = $"{skillName} 각인";
-                if (skill.skillID == "skill_turret") relicData.koreanName = "루티";
+                relicData.koreanName = RelicDescriptionSetup.GetSkillRelicName(skill);
                 GetSkillRelicDescriptions(skill, out string descriptionKR, out string descriptionEN);
                 relicData.description_KR = descriptionKR;
                 relicData.description_EN = descriptionEN;
@@ -246,11 +243,13 @@ namespace Nytherion.Editor
                         {
                             GetSkillRelicDescriptions(grantEffect.skillData, out string newKR, out string newEN);
 
-                            // 구형 루티 유물은 은퇴했으므로 현재 스킬 유물에 루티의 이름과 아이콘을 표시합니다.
+                            string newName = RelicDescriptionSetup.GetSkillRelicName(grantEffect.skillData, relic.koreanName);
+                            // 현재 루티의 아이콘을 유지하고 스킬 유물의 표시 이름을 함께 갱신합니다.
                             bool updateRooti = grantEffect.skillData.skillID == "skill_turret" &&
                                 (relic.koreanName != "루티" || relic.Image != grantEffect.skillData.icon);
-                            if (relic.description_KR != newKR || relic.description_EN != newEN || updateRooti)
+                            if (relic.description_KR != newKR || relic.description_EN != newEN || relic.koreanName != newName || updateRooti)
                             {
+                                relic.koreanName = newName;
                                 relic.description_KR = newKR;
                                 relic.description_EN = newEN;
                                 if (updateRooti)

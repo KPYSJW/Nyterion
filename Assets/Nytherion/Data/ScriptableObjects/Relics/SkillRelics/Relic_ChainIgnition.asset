@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: Relic_ChainIgnition
   m_EditorClassIdentifier: 
   relicName: Relic of Chain Ignition
-  koreanName: "\uC5F0\uC1C4 \uC810\uD654 \uAC01\uC778"
-  description_KR: "\uC870\uC900 \uBC29\uD5A5\uC73C\uB85C \uC5F0\uC18D \uD654\uC5FC
-    \uD3ED\uBC1C"
-  description_EN: Unleashes successive fire explosions toward your aim.
+  koreanName: "\uc5f0\uc1c4 \uc810\ud654"
+  description_KR: "\uc870\uc900 \ubc29\ud5a5\uc73c\ub85c \uc5f0\uc18d \ud654\uc5fc \ud3ed\ubc1c\uc744 \uc77c\uc73c\ud0a4\ub294 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
+  description_EN: "Grants a skill that unleashes successive fire explosions toward your aim."
   Image: {fileID: 21300000, guid: 2f9eb43b8ebfbac46a1aca9c42d36a58, type: 3}
   rarity: 0
   level: 1

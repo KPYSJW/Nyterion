@@ -507,7 +507,7 @@ namespace Nytherion.GamePlay.Characters.Player
                    !(currentWeapon is IChargeableWeapon) &&
                    playerManager != null &&
                    playerManager.playerRelicManager != null &&
-                   playerManager.playerRelicManager.IsRelicActive("ChargeRelic");
+                   playerManager.playerRelicManager.IsRelicActive("ManaCharger");
         }
 
         private void BeginGenericCharge()

@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: GravityStone
   m_EditorClassIdentifier: 
   relicName: 'Gravity Stone '
-  koreanName: "\uC911\uB825\uC758 \uB3CC"
-  description_KR: "\uC801\uC744 \uB04C\uC5B4\uB2F9\uAE30\uBA70 \uD53C\uD574\uB97C
-    \uC8FC\uB294 \uBE14\uB799\uD640 \uC0DD\uC131"
-  description_EN: Creates a black hole that pulls in and damages enemies.
+  koreanName: "\uc911\ub825\uc758 \ub3cc"
+  description_KR: "\uc801\uc744 \ub04c\uc5b4\ub2f9\uae30\uba70 \ud53c\ud574\ub97c \uc8fc\ub294 \ube14\ub799\ud640 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
+  description_EN: "Grants a black hole skill that pulls in and damages enemies."
   Image: {fileID: 21300000, guid: 1e7fd743d7cd7d5489c73ab3730c29b5, type: 3}
   rarity: 3
   level: 1

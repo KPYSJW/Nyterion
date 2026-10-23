@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: RainbowSyrup
   m_EditorClassIdentifier: 
   relicName: Rainbow Syrup
-  koreanName: "\uBB34\uC9C0\uAC1C \uC2DC\uB7FD"
-  description_KR: "\uC77C\uC815 \uC2DC\uAC04 \uBAA8\uB4E0 \uB2A5\uB825\uCE58 \uC99D\uAC00"
-  description_EN: Temporarily boosts all stats.
+  koreanName: "\ubb34\uc9c0\uac1c \uc2dc\ub7fd"
+  description_KR: "\uc77c\uc815 \uc2dc\uac04 \ubaa8\ub4e0 \ub2a5\ub825\uce58\ub97c \ub192\uc774\ub294 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
+  description_EN: "Grants a skill that temporarily boosts all stats."
   Image: {fileID: 21300000, guid: c249435e0bab507408fb278edf911a9d, type: 3}
   rarity: 3
   level: 3

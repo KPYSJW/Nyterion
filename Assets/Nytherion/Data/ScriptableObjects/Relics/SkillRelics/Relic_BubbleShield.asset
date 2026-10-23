@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: Relic_BubbleShield
   m_EditorClassIdentifier: 
   relicName: Relic of Bubble Shield
-  koreanName: "\uBC84\uBE14 \uC2E4\uB4DC \uAC01\uC778"
-  description_KR: "\uD53C\uD574\uB97C \uD761\uC218\uD558\uB294 \uBC84\uBE14 \uC2E4\uB4DC
-    \uC2A4\uD0AC \uD68D\uB4DD"
-  description_EN: Grants a bubble shield skill that absorbs damage.
+  koreanName: "\ube44\ub217\ubc29\uc6b8"
+  description_KR: "\ud53c\ud574\ub97c \ud761\uc218\ud558\ub294 \ube44\ub217\ubc29\uc6b8 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
+  description_EN: "Grants a bubble shield skill that absorbs damage."
   Image: {fileID: 184623147, guid: 1680c2c5c307f284c8177d20079a8bc2, type: 3}
   rarity: 2
   level: 1

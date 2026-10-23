@@ -53,8 +53,8 @@ namespace Nytherion.Editor
                     data = ScriptableObject.CreateInstance<DecoySkillData>();
                     data.skillID = "skill_decoy";
                     data.skillType = SkillType.Decoy;
-                    data.skillName = "유인 더미";
-                    data.description = "마우스 방향으로 1 떨어진 위치에 소환 연출 후 더미를 생성합니다.\n더미 주변 반경 2.5 안의 적을 유인하며, 내구도가 소진되거나 지속시간이 끝나면 사라집니다.\n레벨마다 내구도 +25, 지속시간 +1초.";
+                    data.skillName = "허수아비";
+                    data.description = "주변 적을 유인하는 허수아비를 소환합니다.";
                     data.skillLevel = 1;
                     data.coolDown = 45f;
                     data.range = 2.5f;
@@ -160,7 +160,7 @@ namespace Nytherion.Editor
             {
                 relic = ScriptableObject.CreateInstance<RelicData>();
                 relic.relicName = "Relic of Decoy";
-                relic.koreanName = "유인 더미 각인";
+                relic.koreanName = "허수아비";
                 RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
                 relic.Image = data.icon;
                 relic.rarity = Rarity.Rare;

@@ -15,8 +15,8 @@ MonoBehaviour:
   skillID: skill_bubble_shield
   isDisabled: 0
   skillType: 17
-  skillName: "\uBC84\uBE14 \uC2E4\uB4DC"
-  description: "\uD53C\uD574\uB97C \uD761\uC218\uD558\uB294 \uC2E4\uB4DC \uC0DD\uC131"
+  skillName: "\ube44\ub217\ubc29\uc6b8"
+  description: "\ud53c\ud574\ub97c \ud761\uc218\ud558\ub294 \ube44\ub217\ubc29\uc6b8\uc744 \uc0dd\uc131\ud569\ub2c8\ub2e4."
   skillLevel: 1
   exp: 0
   coolDown: 20

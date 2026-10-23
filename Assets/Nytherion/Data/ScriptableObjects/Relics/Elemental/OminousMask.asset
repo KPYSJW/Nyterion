@@ -10,21 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: CorruptedFace
+  m_Name: OminousMask
   m_EditorClassIdentifier: 
   relicName: Corrupted Face
-  koreanName: "\uD0C0\uB77D\uD55C \uC5BC\uAD74"
-  description_KR: "\uB9C8\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uADFC\uC811/\uC6D0\uAC70\uB9AC \uACF5\uACA9 +20% (\uB808\uBCA8\uB2F9 +4%), \uCE58\uBA85\uD0C0 \uD655\uB960 +8%p (\uB808\uBCA8\uB2F9 +1%p), \uCE58\uBA85\uD0C0 \uD53C\uD574 +30% (\uB808\uBCA8\uB2F9 +6%)."
-  description_EN: "With Demonic equipment: melee/ranged attack +20% (+4% per level), critical chance +8%p (+1%p per level), critical damage +30% (+6% per level)."
+  koreanName: "\uBD88\uAE38\uD55C \uAC00\uBA74"
+  englishName: Ominous Mask
+  description_KR: "\uB9C8\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uADFC\uC811/\uC6D0\uAC70\uB9AC
+    \uACF5\uACA9 +20% (\uB808\uBCA8\uB2F9 +4%), \uCE58\uBA85\uD0C0 \uD655\uB960 +8%p
+    (\uB808\uBCA8\uB2F9 +1%p), \uCE58\uBA85\uD0C0 \uD53C\uD574 +30% (\uB808\uBCA8\uB2F9
+    +6%)."
+  description_EN: 'With Demonic equipment: melee/ranged attack +20% (+4% per level),
+    critical chance +8%p (+1%p per level), critical damage +30% (+6% per level).'
   Image: {fileID: 21300000, guid: 86d9103ea9574494984f782cbbe4e52b, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0
   effectModules:
-  - condition:
+  - description_KR: 
+    description_EN: 
+    condition:
       rid: 6716071130084147380
     effects:
     - rid: 6716071130084147381
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -41,6 +50,7 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
   references:
     version: 2

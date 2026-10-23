@@ -195,7 +195,7 @@ namespace Nytherion.Editor
             {
                 relic = ScriptableObject.CreateInstance<RelicData>();
                 relic.relicName = "Relic of Portal Gate";
-                relic.koreanName = "차원문 각인";
+                relic.koreanName = "차원문";
                 RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
                 relic.Image = data.icon;
                 relic.rarity = Rarity.Rare;

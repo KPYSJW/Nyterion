@@ -45,7 +45,7 @@ namespace Nytherion.Editor
                 ["Zenith"] = ("파이로폴 추가 화염구가 화면 내 적을 자동 조준", "Pyrofall's extra fireballs automatically target enemies in view."),
                 ["Rubber Ball"] = ("투사체가 주변 적에게 최대 3회 도탄", "Projectiles bounce to nearby enemies up to 3 times."),
                 ["Globe"] = ("투사체가 적을 관통", "Projectiles pierce enemies."),
-                ["ChargeRelic"] = ("무기 차징 공격 활성화", "Enables charged weapon attacks."),
+                ["ManaCharger"] = ("무기 차징 공격 활성화", "Enables charged weapon attacks."),
                 ["Haste Rune"] = ("충전 시간 -10%", "Charge time -10%."),
                 ["Fire Pepper"] = ("화염 상태이상 피해 주기 -30%", "Burn damage interval -30%."),
                 ["Trigger Piece"] = ("추가 투사체 +1", "Extra projectiles +1."),
@@ -74,39 +74,94 @@ namespace Nytherion.Editor
             }
         }
 
+        public static string GetSkillRelicName(SkillData skill, string currentName = null)
+        {
+            switch (skill.skillID)
+            {
+                case "skill_bubble_shield": return "비눗방울";
+                case "skill_decoy": return "허수아비";
+                case "skill_turret": return "루티";
+                case "skill_spiral": return "나선";
+            }
+            string name = string.IsNullOrWhiteSpace(currentName) ? skill.skillName : currentName;
+            return name == null ? skill.name : name.Replace(" 각인", "").Trim();
+        }
+
+        // 스킬 자체의 효과 설명과 구분하여 유물로 스킬을 얻는다는 점을 표시합니다.
         public static void GetSkillDescriptions(SkillData skill, out string korean, out string english)
         {
             switch (skill.skillID)
             {
+                case "skill_all_stat_up":
+                    korean = "일정 시간 모든 능력치를 높이는 스킬을 얻는다.";
+                    english = "Grants a skill that temporarily boosts all stats.";
+                    return;
+                case "skill_blackhole":
+                    korean = "적을 끌어당기며 피해를 주는 블랙홀 스킬을 얻는다.";
+                    english = "Grants a black hole skill that pulls in and damages enemies.";
+                    return;
                 case "skill_bubble_shield":
-                    korean = "피해를 흡수하는 버블 실드 스킬 획득";
+                    korean = "피해를 흡수하는 비눗방울 스킬을 얻는다.";
                     english = "Grants a bubble shield skill that absorbs damage.";
                     return;
-                case "skill_meteor_strike":
-                    korean = "화면 내 모든 적에게 운석을 순차 낙하";
-                    english = "Drops meteors on all enemies in view in succession.";
+                case "skill_chain_ignition":
+                    korean = "조준 방향으로 연속 화염 폭발을 일으키는 스킬을 얻는다.";
+                    english = "Grants a skill that unleashes successive fire explosions toward your aim.";
                     return;
                 case "skill_decoy":
-                    korean = "주변 적을 유인하는 더미 소환";
-                    english = "Summons a decoy that taunts nearby enemies.";
+                    korean = "주변 적을 유인하는 허수아비 스킬을 얻는다.";
+                    english = "Grants a Decoy skill that taunts nearby enemies.";
+                    return;
+                case "skill_lifesteal":
+                    korean = "공격 피해로 체력을 회복하는 생명력 흡수 스킬을 얻는다.";
+                    english = "Grants a lifesteal skill that restores health by dealing damage.";
+                    return;
+                case "skill_meteor_strike":
+                    korean = "화면 내 모든 적에게 운석을 떨어뜨리는 스킬을 얻는다.";
+                    english = "Grants a skill that drops meteors on all enemies in view.";
+                    return;
+                case "skill_multishot":
+                    korean = "추가 투사체를 발사하는 다중 사격 스킬을 얻는다.";
+                    english = "Grants a multi shot skill that fires extra projectiles.";
+                    return;
+                case "skill_overdrive":
+                    korean = "일정 시간 공격력, 공격 속도와 대시 속도를 높이는 스킬을 얻는다.";
+                    english = "Grants a skill that temporarily boosts attack, attack speed and dash speed.";
                     return;
                 case "skill_portal_gate":
-                    korean = "[F]로 왕복하는 차원문 생성";
-                    english = "Creates portals you can travel between with [F].";
+                    korean = "서로 왕복할 수 있는 차원문 스킬을 얻는다.";
+                    english = "Grants a portal skill that lets you travel between linked portals.";
                     return;
                 case "skill_projectile_gate":
-                    korean = "투사체를 분열시키는 게이트 생성";
-                    english = "Creates a gate that splits projectiles.";
+                    korean = "투사체를 분열시키는 분광 게이트 스킬을 얻는다.";
+                    english = "Grants a gate skill that splits projectiles.";
+                    return;
+                case "skill_pyro_tank":
+                    korean = "적에게 돌진해 폭발하는 폭열 전차 스킬을 얻는다.";
+                    english = "Grants a tank skill that charges at enemies and explodes.";
+                    return;
+                case "skill_shadow_clone":
+                    korean = "함께 공격하는 그림자 분신 스킬을 얻는다.";
+                    english = "Grants a shadow clone skill that attacks alongside you.";
+                    return;
+                case "skill_souleater":
+                    korean = "적을 처치할수록 강해지는 투사체 스킬을 얻는다.";
+                    english = "Grants a projectile skill that grows stronger with each kill.";
+                    return;
+                case "skill_spiral":
+                    korean = "회전 구체로 주변 적을 공격하는 나선 스킬을 얻는다.";
+                    english = "Grants a skill that summons spinning orbs to attack nearby enemies.";
+                    return;
+                case "skill_turret":
+                    korean = "적을 자동으로 공격하는 루티 포탑 스킬을 얻는다.";
+                    english = "Grants a Rooti turret skill that automatically attacks enemies.";
                     return;
             }
-
-            korean = skill.description == null ? "" : skill.description.Trim();
-            english = "";
-            if (string.IsNullOrEmpty(skill.skillID)) return;
-            if (LocalizationTranslationCatalog.SkillKoreanDescriptions.TryGetValue(skill.skillID, out string summary))
-                korean = summary;
-            if (LocalizationTranslationCatalog.SkillEnglishDescriptions.TryGetValue(skill.skillID, out string translation))
-                english = translation;
+            string name = GetSkillRelicName(skill);
+            korean = $"{name} 스킬을 얻는다.";
+            string englishName = LocalizationTranslationCatalog.Skills.TryGetValue(skill.skillID, out var names)
+                ? names.English : skill.skillName;
+            english = $"Grants the {englishName} skill.";
         }
 
         public static void ApplyDescription(RelicData relic)
@@ -128,6 +183,7 @@ namespace Nytherion.Editor
                 if (!relic.IsRuntimeAvailable) continue;
                 string beforeKorean = relic.description_KR;
                 string beforeEnglish = relic.description_EN;
+                string beforeName = relic.koreanName;
                 Undo.RecordObject(relic, "유물 설명 간소화");
                 ApplyDescription(relic);
                 if (relic.effectModules != null)
@@ -136,9 +192,12 @@ namespace Nytherion.Editor
                         if (module?.effects == null) continue;
                         foreach (RelicEffectBase effect in module.effects)
                             if (effect is GrantSkillEffect grant && grant.skillData != null && grant.skillData.IsRuntimeAvailable)
+                            {
+                                relic.koreanName = GetSkillRelicName(grant.skillData, relic.koreanName);
                                 GetSkillDescriptions(grant.skillData, out relic.description_KR, out relic.description_EN);
+                            }
                     }
-                if (beforeKorean != relic.description_KR || beforeEnglish != relic.description_EN)
+                if (beforeKorean != relic.description_KR || beforeEnglish != relic.description_EN || beforeName != relic.koreanName)
                 {
                     EditorUtility.SetDirty(relic);
                     AssetDatabase.SaveAssetIfDirty(relic);
@@ -151,6 +210,8 @@ namespace Nytherion.Editor
                             !code.StartsWith("en", StringComparison.OrdinalIgnoreCase)) continue;
                         table.AddEntry(LocalizationKeys.RelicDescription(relic.relicName),
                             code.StartsWith("ko", StringComparison.OrdinalIgnoreCase) ? relic.description_KR : relic.description_EN);
+                        table.AddEntry(LocalizationKeys.RelicName(relic.relicName),
+                            code.StartsWith("ko", StringComparison.OrdinalIgnoreCase) ? relic.koreanName : relic.EnglishName);
                         EditorUtility.SetDirty(table);
                         AssetDatabase.SaveAssetIfDirty(table);
                     }

@@ -171,7 +171,7 @@ namespace Nytherion.GamePlay.Combat.Weapons
         {
             return playerManager != null &&
                    playerManager.playerRelicManager != null &&
-                   playerManager.playerRelicManager.IsRelicActive("ChargeRelic");
+                   playerManager.playerRelicManager.IsRelicActive("ManaCharger");
         }
 
         private void ResetFrenzyState()

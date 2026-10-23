@@ -76,7 +76,7 @@ MonoBehaviour:
   homingLaunchDuration: 0.15
   homingLifetime: 4
   chargeThresholdTime: 0.15
-  requiredRelicId: ChargeRelic
+  requiredRelicId: ManaCharger
   hitEffectPrefab: {fileID: 5277606065596536386, guid: d5ec2c95f7686d547985b21803ba8ec3, type: 3}
   weaponPrefab: {fileID: -2914722070659980993, guid: d36f87945e7b4c38b4e8509f92f0e61a, type: 3}
   isArchivable: 1

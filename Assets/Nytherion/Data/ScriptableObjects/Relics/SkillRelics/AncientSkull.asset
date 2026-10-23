@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: AncientSkull
   m_EditorClassIdentifier: 
   relicName: Ancient Skull
-  koreanName: "\uACE0\uB300\uD574\uACE8"
-  description_KR: "\uC801\uC744 \uCC98\uCE58\uD560\uC218\uB85D \uAC15\uD574\uC9C0\uB294
-    \uD22C\uC0AC\uCCB4 \uBC1C\uC0AC"
-  description_EN: Fires a projectile that grows stronger with each kill.
+  koreanName: "\uace0\ub300\ud574\uace8"
+  description_KR: "\uc801\uc744 \ucc98\uce58\ud560\uc218\ub85d \uac15\ud574\uc9c0\ub294 \ud22c\uc0ac\uccb4 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
+  description_EN: "Grants a projectile skill that grows stronger with each kill."
   Image: {fileID: 21300000, guid: 605854ef5826a5e4ba9bcbc7341e1d55, type: 3}
   rarity: 3
   level: 1

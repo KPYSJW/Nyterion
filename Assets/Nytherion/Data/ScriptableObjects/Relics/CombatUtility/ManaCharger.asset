@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: ChargeRelic
+  m_Name: ManaCharger
   m_EditorClassIdentifier: 
-  relicName: ChargeRelic
-  koreanName: "\uCC28\uC9D5\uC758 \uAD6C"
+  relicName: ManaCharger
+  koreanName: "\uB9C8\uB825 \uCDA9\uC804\uAE30"
+  englishName: Mana Charger
   description_KR: "\uBB34\uAE30 \uCC28\uC9D5 \uACF5\uACA9 \uD65C\uC131\uD654"
   description_EN: Enables charged weapon attacks.
-  Image: {fileID: 21300000, guid: d8edc57c276626f449084ba691022a1c, type: 3}
+  Image: {fileID: 21300000, guid: 539871f87750f5949b0d513f79a78a6b, type: 3}
   rarity: 1
   level: 1
   isDisabled: 0
