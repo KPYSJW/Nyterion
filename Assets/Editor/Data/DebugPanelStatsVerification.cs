@@ -105,16 +105,16 @@ namespace Nytherion.Editor
                 panel.SelectCategory("능력치");
                 ScrollRect statPage = pages.Single(page => page.name == "Page_능력치");
                 Button[] buttons = statPage.content.GetComponentsInChildren<Button>(true);
-                Require(buttons.Length == 17, "능력치 16개와 초기화 버튼이 필요합니다.");
-                foreach (StatType stat in Enum.GetValues(typeof(StatType)))
+                Require(buttons.Length == 15, "능력치 14개와 초기화 버튼이 필요합니다.");
+                Require(!buttons.Any(b => b.name == "IncreaseStat_MeleeDamage" || b.name == "IncreaseStat_MeleeSpeed"), "폐기된 근접 능력치 버튼이 남았습니다.");
+                foreach (Button button in buttons.Where(b => b.name.StartsWith("IncreaseStat_")))
                 {
-                    if (stat == StatType.All) continue;
+                    StatType stat = (StatType)Enum.Parse(typeof(StatType), button.name.Substring("IncreaseStat_".Length));
                     string fieldName = stat == StatType.CritDamage ? "critDamageMultiplier"
                         : stat == StatType.ProjectileSize ? "projectileSizeMultiplier"
                         : char.ToLowerInvariant(stat.ToString()[0]) + stat.ToString().Substring(1);
                     FieldInfo field = typeof(PlayerData).GetField(fieldName);
                     float before = (float)field.GetValue(player.currentPlayerData);
-                    Button button = buttons.Single(b => b.name == "IncreaseStat_" + stat);
                     Require(button.onClick.GetPersistentEventCount() == 0, "원본 버튼의 영구 이벤트가 복제됐습니다.");
                     button.onClick.Invoke();
                     float after = (float)field.GetValue(player.currentPlayerData);
@@ -122,12 +122,12 @@ namespace Nytherion.Editor
                     if (stat == StatType.CritChance) Require(Mathf.Approximately(after - before, 0.05f), "치명타 5%p 증가 실패");
                     if (stat == StatType.ExtraProjectiles) Require(Mathf.Approximately(after - before, 1f), "투사체 1개 증가 실패");
                 }
-                float damage = player.currentPlayerData.meleeDamage;
-                buttons.Single(b => b.name == "IncreaseStat_MeleeDamage").onClick.Invoke();
-                Require(player.currentPlayerData.meleeDamage > damage, "반복 클릭 누적 실패");
+                float damage = player.currentPlayerData.rangedDamage;
+                buttons.Single(b => b.name == "IncreaseStat_RangedDamage").onClick.Invoke();
+                Require(player.currentPlayerData.rangedDamage > damage, "반복 클릭 누적 실패");
                 panel.Close();
                 panel.Open(false);
-                Require(statPage.content.GetComponentsInChildren<Button>(true).Length == 17, "패널 재열기 시 중복 버튼 발생");
+                Require(statPage.content.GetComponentsInChildren<Button>(true).Length == 15, "패널 재열기 시 중복 버튼 발생");
                 Canvas.ForceUpdateCanvases();
                 RectTransform container = statPage.content;
                 LayoutRebuilder.ForceRebuildLayoutImmediate(container);

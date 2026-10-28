@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 837be90cc32cf054fb2adcc7f2bf2d05, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 49cea840310d93741b08a2f5b277f035, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -539,6 +539,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chargeSlider: {fileID: 3457027639552196742}
+  fullChargeFillSprite: {fileID: 21300000, guid: 4b8e7dbe973e1b6448c6f0058b950d41, type: 3}
 --- !u!114 &-1890013820121428733
 MonoBehaviour:
   m_ObjectHideFlags: 0

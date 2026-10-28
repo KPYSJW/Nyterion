@@ -1,3 +1,5 @@
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -627,5 +629,136 @@ namespace Nytherion.Editor
     {
         public int Hits { get; private set; }
         public void TakeDamage(float damageAmount, bool isChain = false) { Hits++; }
+    }
+}
+
+namespace Nytherion.Editor
+{
+    /// <summary>유물 선택의 월드 안내 UI 간섭과 2D 평면 판정을 임시 프리뷰 씬에서 검증합니다.</summary>
+    [InitializeOnLoad]
+    public static class RelicHoverVerification
+    {
+        private const string Output = "output/relic-hover";
+        private static readonly MethodInfo BlocksSelection = typeof(RelicPickupDetector)
+            .GetMethod("BlocksWorldSelection", BindingFlags.Static | BindingFlags.NonPublic);
+        private static readonly MethodInfo PointerDistance = typeof(RelicPickupDetector)
+            .GetMethod("TryGetPointerDistance", BindingFlags.Static | BindingFlags.NonPublic);
+
+        static RelicHoverVerification()
+        {
+            EditorApplication.update += CheckRequest;
+        }
+
+        private static void CheckRequest()
+        {
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating ||
+                !File.Exists(Output + "/verify.request")) return;
+            File.Delete(Output + "/verify.request");
+            Verify();
+        }
+
+        [MenuItem("Tools/Nytherion/유물/마우스 선택 판정 검증")]
+        public static void Verify()
+        {
+            var results = new List<string>();
+            Scene preview = EditorSceneManager.NewPreviewScene();
+            Texture2D texture = null;
+            Sprite sprite = null;
+            try
+            {
+                GameObject canvasObject = Create(preview, "검증용 월드 안내", typeof(Canvas), typeof(GraphicRaycaster));
+                Canvas canvas = canvasObject.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.WorldSpace;
+                GraphicRaycaster raycaster = canvasObject.GetComponent<GraphicRaycaster>();
+                GameObject label = Create(preview, "입력이 없는 안내 이미지", typeof(RectTransform), typeof(Image));
+                label.transform.SetParent(canvasObject.transform, false);
+                var hit = new RaycastResult { gameObject = label, module = raycaster };
+                Require(hit.module is GraphicRaycaster && !Blocks(hit),
+                    "기존에는 막히던 월드 안내 이미지 위에서 유물 선택 허용", results);
+
+                GameObject button = Create(preview, "월드 버튼", typeof(RectTransform), typeof(Image), typeof(Button));
+                button.transform.SetParent(canvasObject.transform, false);
+                hit.gameObject = button;
+                Require(Blocks(hit), "실제 월드 버튼은 유물 선택 차단", results);
+                GameObject buttonIcon = Create(preview, "버튼 내부 이미지", typeof(RectTransform), typeof(Image));
+                buttonIcon.transform.SetParent(button.transform, false);
+                hit.gameObject = buttonIcon;
+                Require(Blocks(hit), "부모 버튼이 있는 이미지도 유물 선택 차단", results);
+
+                hit.gameObject = label;
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                Require(Blocks(hit), "화면 UI의 입력 차단 유지", results);
+
+                GameObject chest = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Gacha/GachaChest.prefab");
+                int promptCount = 0;
+                foreach (GraphicRaycaster prompt in chest.GetComponentsInChildren<GraphicRaycaster>(true))
+                {
+                    if (prompt.GetComponent<Canvas>().renderMode != RenderMode.WorldSpace) continue;
+                    foreach (Graphic graphic in prompt.GetComponentsInChildren<Graphic>(true))
+                    {
+                        if (!graphic.raycastTarget) continue;
+                        Require(!Blocks(new RaycastResult { gameObject = graphic.gameObject, module = prompt }),
+                            "실제 상자 안내 제외: " + graphic.name, results);
+                        promptCount++;
+                    }
+                }
+                Require(promptCount > 0, "실제 상자 프리팹의 안내 그래픽 검사", results);
+
+                GameObject relic = Create(preview, "평면 판정용 유물", typeof(SpriteRenderer));
+                SpriteRenderer renderer = relic.GetComponent<SpriteRenderer>();
+                texture = new Texture2D(32, 32);
+                sprite = Sprite.Create(texture, new Rect(0, 0, 32, 32), new Vector2(0.2f, 0.7f), 32);
+                renderer.sprite = sprite;
+                for (int i = 0; i < 1000; i++)
+                {
+                    relic.transform.position = new Vector3(420.1f + i * 0.001f, 342.03f - i * 0.002f, -2.369109f);
+                    relic.transform.rotation = Quaternion.Euler(0, 0, i % 360);
+                    relic.transform.localScale = new Vector3(i % 2 == 0 ? 0.5f : -0.5f, 0.75f, 1f);
+                    renderer.flipX = i % 3 == 0;
+                    renderer.flipY = i % 5 == 0;
+                    Vector3 localCenter = sprite.bounds.center;
+                    if (renderer.flipX) localCenter.x = -localCenter.x;
+                    if (renderer.flipY) localCenter.y = -localCenter.y;
+                    Vector3 center = relic.transform.TransformPoint(localCenter);
+                    if (!Hits(renderer, new Ray(center - Vector3.forward * 10, Vector3.forward)))
+                        throw new InvalidOperationException("유물 중심 판정 실패: " + i);
+                    Vector3 outside = relic.transform.TransformPoint(localCenter + Vector3.right * 2);
+                    if (Hits(renderer, new Ray(outside - Vector3.forward * 10, Vector3.forward)))
+                        throw new InvalidOperationException("유물 바깥 판정 실패: " + i);
+                }
+                results.Add("PASS 이동·회전·반전·비중앙 피벗의 유물 안/밖 판정 2,000회");
+            }
+            catch (Exception error)
+            {
+                results.Add("FAIL " + error);
+                Debug.LogException(error);
+            }
+            finally
+            {
+                EditorSceneManager.ClosePreviewScene(preview);
+                if (sprite != null) Object.DestroyImmediate(sprite);
+                if (texture != null) Object.DestroyImmediate(texture);
+                Directory.CreateDirectory(Output);
+                File.WriteAllLines(Output + "/verification.txt", results);
+            }
+        }
+
+        private static GameObject Create(Scene scene, string name, params Type[] components)
+        {
+            var instance = new GameObject(name, components);
+            SceneManager.MoveGameObjectToScene(instance, scene);
+            return instance;
+        }
+
+        private static bool Blocks(RaycastResult hit) => (bool)BlocksSelection.Invoke(null, new object[] { hit });
+
+        private static bool Hits(SpriteRenderer renderer, Ray ray) =>
+            (bool)PointerDistance.Invoke(null, new object[] { renderer, ray, 0f });
+
+        private static void Require(bool condition, string message, List<string> results)
+        {
+            if (!condition) throw new InvalidOperationException(message);
+            results.Add("PASS " + message);
+        }
     }
 }

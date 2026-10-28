@@ -42,10 +42,10 @@ namespace Nytherion.GamePlay.Skills
                 }
             }
             GetAvailableWave(data, castPosition).Begin(data, castPosition, aimDirection,
-                projectileCount, data.GetDamage(level), size, range);
+                projectileCount, ApplySkillDamage(data.GetDamage(level)), size, range);
             if (addTargetExplosion)
                 GetAvailableWave(data, mousePosition).Begin(data, mousePosition, aimDirection,
-                    1, data.GetDamage(level), size, range, true);
+                    1, ApplySkillDamage(data.GetDamage(level)), size, range, true);
         }
 
         private ChainIgnitionWave GetAvailableWave(ChainIgnitionSkillData data, Vector3 position)

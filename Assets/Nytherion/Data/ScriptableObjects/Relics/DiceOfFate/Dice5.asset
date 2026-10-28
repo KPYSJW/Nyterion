@@ -15,11 +15,8 @@ MonoBehaviour:
   relicName: Fifth Pip
   koreanName: "\uC8FC\uC0AC\uC704 5"
   englishName: Dice 5
-  description_KR: "\uADFC\uC811 \uACF5\uACA9 \uC18D\uB3C4 +10% (\uB808\uBCA8\uB2F9
-    +2%). \uCD94\uAC00 \uD53C\uD574: 2\uC138\uD2B8 -10~20% / 4\uC138\uD2B8 0~40%
-    / 6\uC138\uD2B8 20~60%"
-  description_EN: "Melee attack speed +10% (+2% per level). Bonus damage: 2 dice
-    -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."
+  description_KR: "\uc2a4\ud0ac \ucfe8\ud0c0\uc784 -10% (\ub808\ubca8\ub2f9 -2%p). \ucd94\uac00 \ud53c\ud574: 2\uc138\ud2b8 -10~20% / 4\uc138\ud2b8 0~40% / 6\uc138\ud2b8 20~60%"
+  description_EN: "Skill cooldown -10% (-2pp per level). Bonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."
   Image: {fileID: 21300000, guid: 4d2c8becf3fa3584cbe48cfabf765d7b, type: 3}
   rarity: 3
   level: 1
@@ -47,7 +44,7 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 5
-          value: 0.1
-          valuePerLevel: 0.02
+        - stat: 20
+          value: -0.1
+          valuePerLevel: -0.02
           isPercentage: 1

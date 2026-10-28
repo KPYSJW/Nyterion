@@ -15,12 +15,8 @@ MonoBehaviour:
   relicName: Corrupted Face
   koreanName: "\uBD88\uAE38\uD55C \uAC00\uBA74"
   englishName: Ominous Mask
-  description_KR: "\uB9C8\uC131 \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uADFC\uC811/\uC6D0\uAC70\uB9AC
-    \uACF5\uACA9 +20% (\uB808\uBCA8\uB2F9 +4%), \uCE58\uBA85\uD0C0 \uD655\uB960 +8%p
-    (\uB808\uBCA8\uB2F9 +1%p), \uCE58\uBA85\uD0C0 \uD53C\uD574 +30% (\uB808\uBCA8\uB2F9
-    +6%)."
-  description_EN: 'With Demonic equipment: melee/ranged attack +20% (+4% per level),
-    critical chance +8%p (+1%p per level), critical damage +30% (+6% per level).'
+  description_KR: "\ub9c8\uc131 \uc7a5\ube44 \uc7a5\ucc29 \uc2dc \uacf5\uaca9 +20% (\ub808\ubca8\ub2f9 +4%), \uce58\uba85\ud0c0 \ud655\ub960 +8%p (\ub808\ubca8\ub2f9 +1%p), \uce58\uba85\ud0c0 \ud53c\ud574 +30% (\ub808\ubca8\ub2f9 +6%)."
+  description_EN: "With Demonic equipment: attack +20% (+4% per level), critical chance +8%p (+1%p per level), critical damage +30% (+6% per level)."
   Image: {fileID: 21300000, guid: 86d9103ea9574494984f782cbbe4e52b, type: 3}
   rarity: 4
   level: 1
@@ -63,10 +59,6 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 3
-          value: 0.2
-          valuePerLevel: 0.04
-          isPercentage: 1
         - stat: 4
           value: 0.2
           valuePerLevel: 0.04

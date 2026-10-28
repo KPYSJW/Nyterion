@@ -63,10 +63,6 @@ MonoBehaviour:
           value: 15
           valuePerLevel: 4
           isPercentage: 0
-        - stat: 3
-          value: 0.1
-          valuePerLevel: 0.03
-          isPercentage: 1
         - stat: 4
           value: 0.1
           valuePerLevel: 0.03

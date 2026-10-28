@@ -13,6 +13,42 @@ namespace Nytherion.GamePlay.Characters.NPC
 {
     public class GachaChest : MonoBehaviour
     {
+        private static readonly HashSet<GachaChest> activeChests = new HashSet<GachaChest>();
+        private static int lastInputFrame = -1;
+        private static GachaChest inputTarget;
+
+        private void OnEnable() => activeChests.Add(this);
+        private void OnDisable() => activeChests.Remove(this);
+
+        public static GachaChest FindAvailableChest(Transform player)
+        {
+            if (player == null || Time.timeScale <= 0f || UIPanelBase.IsAnyPanelOpen) return null;
+            GachaChest closest = null;
+            float closestDistance = float.MaxValue;
+            foreach (GachaChest chest in activeChests)
+            {
+                if (chest == null || !chest.isActiveAndEnabled || chest.isAnimating || chest.playerTransform != player)
+                    continue;
+                float distance = ((Vector2)(player.position - chest.transform.position)).sqrMagnitude;
+                if (distance > chest.interactionDistance * chest.interactionDistance || distance >= closestDistance)
+                    continue;
+                closest = chest;
+                closestDistance = distance;
+            }
+            return closest;
+        }
+
+        private static GachaChest GetInputTarget(Transform player)
+        {
+            // 먼저 뽑기를 시작한 상자가 바빠져도 같은 입력으로 다른 상자가 연이어 실행되지 않습니다.
+            if (lastInputFrame != Time.frameCount)
+            {
+                lastInputFrame = Time.frameCount;
+                inputTarget = FindAvailableChest(player);
+            }
+            return inputTarget;
+        }
+
         [Header("Gacha Chest Settings")]
         [SerializeField] private float interactionDistance = 2.0f;
         [SerializeField] private GameObject worldPromptUI; // "1회: X / 10회: C" 월드 UI
@@ -112,7 +148,7 @@ namespace Nytherion.GamePlay.Characters.NPC
             }
 
             // 범위 내에 있고 애니메이션 진행 중이 아닐 때 키보드 입력 감지
-            if (isPlayerInRange && !isAnimating)
+            if (isPlayerInRange && !isAnimating && GetInputTarget(playerTransform) == this)
             {
                 if (Input.GetKeyDown(KeyCode.X))
                 {
@@ -121,21 +157,6 @@ namespace Nytherion.GamePlay.Characters.NPC
                 else if (Input.GetKeyDown(KeyCode.C))
                 {
                     TryPerformGacha(10);
-                }
-            }
-        }
-
-        private void OnMouseDown()
-        {
-            if (isAnimating) return;
-
-            // 마우스 클릭 시 플레이어가 범위 내에 있다면 가이드 UI 활성화
-            if (playerTransform != null)
-            {
-                float distance = Vector2.Distance(transform.position, playerTransform.position);
-                if (distance <= interactionDistance)
-                {
-                    RefreshWorldPromptUI();
                 }
             }
         }
@@ -266,10 +287,10 @@ namespace Nytherion.GamePlay.Characters.NPC
                 return;
             }
 
-            bool shouldShow = isPlayerInRange && !isAnimating;
-            if (worldPromptUI.activeSelf != shouldShow)
+            // 키 안내는 화면 하단 HUD에서 함께 표시합니다.
+            if (worldPromptUI.activeSelf)
             {
-                worldPromptUI.SetActive(shouldShow);
+                worldPromptUI.SetActive(false);
             }
         }
 

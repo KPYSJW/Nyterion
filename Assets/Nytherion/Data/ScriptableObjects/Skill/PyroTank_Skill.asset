@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PyroTank_Skill
   m_EditorClassIdentifier: 
   skillID: skill_pyro_tank
+  isDisabled: 0
   skillType: 13
   skillName: "\uD3ED\uC5F4 \uC804\uCC28"
   description: "\uC801\uC5D0\uAC8C \uB3CC\uC9C4\uD574 \uD3ED\uBC1C\uD558\uB294 \uC804\uCC28
@@ -20,7 +21,7 @@ MonoBehaviour:
   skillLevel: 1
   exp: 0
   coolDown: 1
-  manaCost: 0
+  manaCost: 25
   damage: 25
   range: 8
   icon: {fileID: 21300000, guid: 64723e6225b2c194e8fda2b0635e9f0e, type: 3}

@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Palyer
   m_EditorClassIdentifier: 
   maxHealth: 100
+  maxMana: 100
+  manaRegenPerSecond: 5
+  skillDamageMultiplier: 1
+  skillCooldownMultiplier: 1
   moveSpeed: 5
   meleeDamage: 1
   rangedDamage: 1
@@ -24,6 +28,7 @@ MonoBehaviour:
   dashCooldown: 1
   defense: 0
   extraProjectiles: 0
+  projectileSizeMultiplier: 1
   lifesteal: 0
   chargeTimeReduction: 0
   critChance: 0.1

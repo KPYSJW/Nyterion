@@ -24,6 +24,77 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private IProgressionManager progressionManager;
 
+        public float MaxMana { get; private set; } = 100f;
+        public float CurrentMana { get; private set; } = 100f;
+        public event System.Action<float, float> ManaChanged;
+        public event System.Action<SkillBase> SkillUsed;
+
+        internal void NotifySkillUsed(SkillBase skill) => SkillUsed?.Invoke(skill);
+        private float manaRegenPerSecond = 5f;
+        public float ManaRegenPerSecond => manaRegenPerSecond;
+        private PlayerHealth health;
+
+        private void Awake() => health = GetComponent<PlayerHealth>();
+
+        public void InitializeMana(float maximum, float regeneration)
+        {
+            MaxMana = Mathf.Max(0f, maximum);
+            CurrentMana = MaxMana;
+            manaRegenPerSecond = Mathf.Max(0f, regeneration);
+            ManaChanged?.Invoke(CurrentMana, MaxMana);
+        }
+
+        public void UpdateManaStats(float maximum, float regeneration)
+        {
+            MaxMana = Mathf.Max(0f, maximum);
+            manaRegenPerSecond = Mathf.Max(0f, regeneration);
+            // 최대 마나가 늘어도 현재 마나는 충전하지 않아 반복 장착으로 회복할 수 없습니다.
+            CurrentMana = Mathf.Min(CurrentMana, MaxMana);
+            ManaChanged?.Invoke(CurrentMana, MaxMana);
+        }
+
+        public bool HasMana(float cost) => !float.IsNaN(cost) && !float.IsInfinity(cost) &&
+            CurrentMana >= Mathf.Max(0f, cost);
+
+        public bool TrySpendMana(float cost)
+        {
+            if (!HasMana(cost)) return false;
+            if (cost <= 0f) return true;
+            CurrentMana -= cost;
+            ManaChanged?.Invoke(CurrentMana, MaxMana);
+            return true;
+        }
+
+        public float RestoreMana(float amount)
+        {
+            if (float.IsNaN(amount) || float.IsInfinity(amount) || amount <= 0f) return 0f;
+            float restored = Mathf.Min(amount, Mathf.Max(0f, MaxMana - CurrentMana));
+            if (restored <= 0f) return 0f;
+            CurrentMana += restored;
+            ManaChanged?.Invoke(CurrentMana, MaxMana);
+            return restored;
+        }
+
+        private void Update()
+        {
+            if (CurrentMana >= MaxMana || manaRegenPerSecond <= 0f || Time.deltaTime <= 0f ||
+                (health != null && health.CurrentHealth <= 0f)) return;
+            CurrentMana = Mathf.Min(MaxMana, CurrentMana + manaRegenPerSecond * Time.deltaTime);
+            ManaChanged?.Invoke(CurrentMana, MaxMana);
+        }
+
+        public float DebugCooldownReduction { get; private set; }
+
+        public void SetDebugCooldownReduction(float reduction)
+        {
+            if (float.IsNaN(reduction) || float.IsInfinity(reduction)) return;
+            DebugCooldownReduction = Mathf.Clamp01(reduction);
+            foreach (SkillBase skill in equippedSkills)
+            {
+                if (skill != null) skill.SetDebugCooldownReduction(DebugCooldownReduction);
+            }
+        }
+
         // 슬롯을 옮기거나 보관함으로 돌려도 동일한 스킬의 쿨타임·충전 상태를 재사용한다.
         private readonly Dictionary<string, SkillBase.CooldownState> cooldownStates =
             new Dictionary<string, SkillBase.CooldownState>();
@@ -130,6 +201,7 @@ namespace Nytherion.GamePlay.Characters.Player
                     skillBase.skillData = newSkillData;
                     skillBase.caster = transform;
                     skillBase.firePoint = weaponPoint;
+                    skillBase.SetDebugCooldownReduction(DebugCooldownReduction);
 
                     if (cooldownStates.TryGetValue(GetSkillKey(newSkillData), out SkillBase.CooldownState state))
                         skillBase.RestoreCooldownState(state);

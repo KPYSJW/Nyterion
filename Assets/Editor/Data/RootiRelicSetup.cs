@@ -28,8 +28,6 @@ namespace Nytherion.Editor
         private const string ProjectilePrefabPath =
             "Assets/Prefabs/Gameplay/Combat/Proj/RootiSeedProjectile.prefab";
         private const string SkillPath = "Assets/Nytherion/Data/ScriptableObjects/Skill/Turret_Skill.asset";
-        private const string LegacyRelicPath =
-            "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Rooti.asset";
         private const float FrameRate = 10f;
 
         static RootiRelicSetup()
@@ -76,13 +74,12 @@ namespace Nytherion.Editor
             skill.projectilePrefab = projectilePrefab;
             skill.projectilePoolTag = projectilePrefab.name;
             skill.projectileSpawnOffset = new Vector3(0f, 0.46f, 0f);
-            skill.skillName = "루티 포탑";
-            skill.description = "루티가 플레이어의 조준 방향으로 날아가 착지한 뒤, 제자리에서 공격 범위 내의 적에게 씨앗을 발사합니다.";
-            Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/Rooti.png");
+            skill.skillName = "루티";
+            skill.description = "적을 자동으로 공격하는 루티를 소환합니다.";
+            Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Skills/Sprites/Rooti.png");
             if (icon != null) skill.icon = icon;
             EditorUtility.SetDirty(skill);
 
-            RetireLegacyRelic();
             AssetDatabase.SaveAssets();
             Debug.Log("[RootiRelicSetup] 루티를 Jump → Landed → Idle 순서로 배치하는 포탑 스킬로 전환했습니다.", skill);
         }
@@ -265,37 +262,5 @@ namespace Nytherion.Editor
             }
         }
 
-        private static void RetireLegacyRelic()
-        {
-            RelicData relic = AssetDatabase.LoadAssetAtPath<RelicData>(LegacyRelicPath);
-            if (relic == null) return;
-
-            // 구형 ID와 GUID는 보존하고 현재 루티와 혼동되는 표시 및 획득 참조를 정리합니다.
-            relic.koreanName = "루티 (사용 중단)";
-            relic.englishName = "Rooti (Retired)";
-            relic.Image = null;
-            relic.effectModules = new List<RelicEffectModule>();
-            relic.isDisabled = true;
-            relic.synergySeriesId = string.Empty;
-            relic.synergySetBonusData = null;
-            relic.description_KR = "사용이 중단된 구형 루티 유물입니다.";
-            relic.description_EN = "This legacy Rooti relic has been retired.";
-            EditorUtility.SetDirty(relic);
-            RelicDatabaseSO database = AssetDatabase.LoadAssetAtPath<RelicDatabaseSO>(
-                "Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset");
-            if (database != null && database.allRelics != null && database.allRelics.RemoveAll(item => item == relic) > 0)
-            {
-                EditorUtility.SetDirty(database);
-            }
-            GachaPoolSO pool = AssetDatabase.LoadAssetAtPath<GachaPoolSO>(
-                "Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Relic/Epic_Relic.asset");
-            if (pool != null && pool.items != null)
-            {
-                if (pool.items.RemoveAll(rate => rate != null && rate.item == relic) > 0)
-                {
-                    EditorUtility.SetDirty(pool);
-                }
-            }
-        }
     }
 }

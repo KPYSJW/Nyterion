@@ -21,7 +21,7 @@ MonoBehaviour:
   skillLevel: 0
   exp: 0
   coolDown: 1
-  manaCost: 0
+  manaCost: 10
   damage: 10
   range: 20
   icon: {fileID: 21300000, guid: 36c1e236c80bd8441aebb22c9d81181f, type: 3}

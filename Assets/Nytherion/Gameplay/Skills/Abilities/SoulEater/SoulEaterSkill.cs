@@ -31,7 +31,7 @@ namespace Nytherion.GamePlay.Skills
                     projectileInstance.SetActive(true);
                     projectileInstance.transform.localScale *= EffectSizeMultiplier;
                     
-                    float totalDamage = skillData.damage + permanentBonusDamage;
+                    float totalDamage = ApplySkillDamage(skillData.damage + permanentBonusDamage);
                     
                     projectile.Initialize(totalDamage, speed, skillData.range, poolTag, OnEnemyKilled);
                 }

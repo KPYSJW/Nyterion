@@ -31,7 +31,7 @@ namespace Nytherion.Editor
             { "Shadow_Clone_Skill", "함께 공격하는 그림자 분신 소환." },
             { "Soul_Eater_Skill", "적 처치 시 체력 회복 및 일시적 능력 강화." },
             { "Spiral_Skill", "회전 구체로 주변 적에게 지속 피해." },
-            { "Turret_Skill", "루티 포탑을 배치해 범위 내 적 공격." }
+            { "Turret_Skill", "적을 자동으로 공격하는 루티를 소환합니다." }
         };
 
         static GenerateSkillRelics()
@@ -102,9 +102,8 @@ namespace Nytherion.Editor
             {
                 string cleanName = string.IsNullOrEmpty(skill.skillName) ? skill.name : skill.skillName;
                 cleanName = cleanName.Replace(" ", "_");
-                // 루티 포탑은 기존 유물 경로와 저장 ID를 유지합니다.
-                if (skill.skillID == "skill_turret") cleanName = "Turret";
-                string assetName = $"Relic_{cleanName}.asset";
+                bool isRooti = skill.skillID == "skill_turret";
+                string assetName = isRooti ? "Rooti.asset" : $"Relic_{cleanName}.asset";
                 string fullPath = Path.Combine(SKILL_RELIC_SAVE_DIR, assetName).Replace("\\", "/");
 
                 RelicData relicData = AssetDatabase.LoadAssetAtPath<RelicData>(fullPath);
@@ -116,12 +115,18 @@ namespace Nytherion.Editor
                     isNew = true;
                 }
 
-                relicData.relicName = $"Relic of {cleanName}";
+                // 표시 이름과 파일명은 Rooti를 사용하고 기존 저장 데이터의 ID는 유지합니다.
+                relicData.relicName = isRooti ? "Relic of Turret" : $"Relic of {cleanName}";
+                if (isRooti) relicData.englishName = "Rooti";
                 relicData.koreanName = RelicDescriptionSetup.GetSkillRelicName(skill);
                 GetSkillRelicDescriptions(skill, out string descriptionKR, out string descriptionEN);
                 relicData.description_KR = descriptionKR;
                 relicData.description_EN = descriptionEN;
-                relicData.Image = skill.icon;
+                relicData.Image = isRooti
+                    ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/Rooti.png")
+                    : skill.icon;
+                if (skill.skillID == "skill_portal_gate")
+                    relicData.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/WarpGear.png") ?? relicData.Image;
                 relicData.rarity = Core.Enums.Rarity.Rare;
                 relicData.level = 1;
                 relicData.shape = new List<Vector2Int> { Vector2Int.zero };
@@ -244,9 +249,11 @@ namespace Nytherion.Editor
                             GetSkillRelicDescriptions(grantEffect.skillData, out string newKR, out string newEN);
 
                             string newName = RelicDescriptionSetup.GetSkillRelicName(grantEffect.skillData, relic.koreanName);
-                            // 현재 루티의 아이콘을 유지하고 스킬 유물의 표시 이름을 함께 갱신합니다.
+                            // 루티 유물은 스킬과 다른 전용 아이콘을 사용합니다.
+                            Sprite rootiRelicIcon = grantEffect.skillData.skillID == "skill_turret"
+                                ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/Rooti.png") : null;
                             bool updateRooti = grantEffect.skillData.skillID == "skill_turret" &&
-                                (relic.koreanName != "루티" || relic.Image != grantEffect.skillData.icon);
+                                (relic.koreanName != "루티" || relic.Image != rootiRelicIcon);
                             if (relic.description_KR != newKR || relic.description_EN != newEN || relic.koreanName != newName || updateRooti)
                             {
                                 relic.koreanName = newName;
@@ -255,7 +262,7 @@ namespace Nytherion.Editor
                                 if (updateRooti)
                                 {
                                     relic.koreanName = "루티";
-                                    relic.Image = grantEffect.skillData.icon;
+                                    relic.Image = rootiRelicIcon;
                                 }
                                 EditorUtility.SetDirty(relic);
                                 updateCount++;

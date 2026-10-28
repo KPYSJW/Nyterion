@@ -66,7 +66,8 @@ namespace Nytherion.Editor
                     AssetDatabase.CreateAsset(data, DataPath);
                 }
                 data.animationFrames = frames;
-                data.icon = frames[0];
+                data.icon = AssetDatabase.LoadAllAssetsAtPath(SheetPath).OfType<Sprite>()
+                    .FirstOrDefault(sprite => sprite.name == "PortalGateIcon") ?? frames[0];
                 GameObject portal = AssetDatabase.LoadAssetAtPath<GameObject>(PortalPath);
                 if (portal == null) portal = CreatePortalPrefab(frames[0]);
                 data.portalPrefab = portal.GetComponent<PortalGateEndpoint>();
@@ -145,12 +146,14 @@ namespace Nytherion.Editor
                     pivot = new Vector2(0.5f, 0.5f), spriteID = existing != null ? existing.spriteID : GUID.Generate()
                 });
             }
+            rects.AddRange(previous.Where(rect => rect.name == "PortalGateIcon"));
             provider.SetSpriteRects(rects.ToArray());
             provider.GetDataProvider<ISpriteNameFileIdDataProvider>().SetNameFileIdPairs(
                 rects.Select(rect => new SpriteNameFileIdPair(rect.name, rect.spriteID)));
             provider.Apply();
             importer.SaveAndReimport();
-            return AssetDatabase.LoadAllAssetsAtPath(SheetPath).OfType<Sprite>().OrderBy(sprite => sprite.name).ToArray();
+            return AssetDatabase.LoadAllAssetsAtPath(SheetPath).OfType<Sprite>()
+                .Where(sprite => sprite.name.StartsWith("PortalGate_")).OrderBy(sprite => sprite.name).ToArray();
         }
 
         private static GameObject CreatePortalPrefab(Sprite sprite)
@@ -197,7 +200,7 @@ namespace Nytherion.Editor
                 relic.relicName = "Relic of Portal Gate";
                 relic.koreanName = "차원문";
                 RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
-                relic.Image = data.icon;
+                relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/WarpGear.png") ?? data.icon;
                 relic.rarity = Rarity.Rare;
                 relic.effectModules = new List<RelicEffectModule>
                 {

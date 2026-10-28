@@ -28,7 +28,7 @@ namespace Nytherion.Editor
                 AssetDatabase.Refresh();
                 return;
             }
-            if (EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode ||
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating ||
                 (!File.Exists(Output + "/setup.request") && !File.Exists(Output + "/layout.request"))) return;
             if (File.Exists(Output + "/layout.request"))
             {
@@ -37,6 +37,7 @@ namespace Nytherion.Editor
                 catch (Exception error) { File.WriteAllText(Output + "/layout.txt", "FAIL " + error); Debug.LogException(error); }
                 return;
             }
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             File.Delete(Output + "/setup.request");
             try { Create(); }
             catch (Exception error) { File.WriteAllText(Output + "/setup.txt", "FAIL " + error); Debug.LogException(error); }
@@ -62,7 +63,7 @@ namespace Nytherion.Editor
                 string[] keys = { "Q", "R", "E" }; // InputManager의 슬롯 0·1·2와 같은 순서.
                 for (int i = 0; i < 3; i++)
                 {
-                    RectTransform slotRoot = Rect("Cooldown_" + keys[i], root.transform, Vector2.one * 100f, Vector2.zero);
+                    RectTransform slotRoot = Rect("Cooldown_" + keys[i], root.transform, Vector2.one * 96f, Vector2.zero);
                     Image overlay = Image("CooldownOverlay", slotRoot, Vector2.one * 80f, Vector2.zero, new Color(0f, 0f, 0f, 0.72f));
                     ConfigureOverlay(overlay, squareSprite);
                     overlay.enabled = false;
@@ -121,7 +122,7 @@ namespace Nytherion.Editor
                 {
                     SerializedProperty slot = slots.GetArrayElementAtIndex(i);
                     var root = (RectTransform)slot.FindPropertyRelative("root").objectReferenceValue;
-                    root.sizeDelta = Vector2.one * 100f;
+                    root.sizeDelta = Vector2.one * 96f;
                     ConfigureOverlay((Image)slot.FindPropertyRelative("cooldownOverlay").objectReferenceValue, square);
                 }
                 PrefabUtility.SaveAsPrefabAsset(prefab, PrefabPath);

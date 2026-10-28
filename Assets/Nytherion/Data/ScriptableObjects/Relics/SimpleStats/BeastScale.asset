@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Beast Scale
   koreanName: "\uAD34\uC218\uC758 \uBE44\uB298"
-  description_KR: "\uBC29\uC5B4\uB825 +2 (\uB808\uBCA8\uB2F9 +0.5)"
-  description_EN: Increases defense.
+  description_KR: "\ud53c\uaca9 \uc2dc 4\ucd08 \ub3d9\uc548 \ubc29\uc5b4\ub825 +3 (\ub808\ubca8\ub2f9 +1), \ucd5c\ub300 3\uc911\ucca9. \uc7ac\ubc1c\ub3d9 \uc2dc \uc9c0\uc18d \uc2dc\uac04 \uac31\uc2e0."
+  description_EN: "Taking damage grants +3 defense for 4 seconds (+1 per level), up to 3 stacks. Repeated triggers refresh the duration."
   Image: {fileID: 21300000, guid: 7dbcbddcc245d08438dc5cf6af546391, type: 3}
   rarity: 0
   level: 1
@@ -24,7 +24,7 @@ MonoBehaviour:
   - condition:
       rid: -2
     effects:
-    - rid: 6716071699098894346
+    - rid: 1001
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -43,21 +43,14 @@ MonoBehaviour:
   synergySeriesId: GuardianSeries
   synergySetBonusData: {fileID: 11400000, guid: 5f1b7eac9d0a4c2c9eb8a7f312d45601, type: 2}
   unlockMilestoneID: 
-  simpleStatModifiers:
-  - stat: 1
-    value: 2
-    valuePerLevel: 0.5
-    isPercentage: 0
+  simpleStatModifiers: []
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 6716071699098894346
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+    - rid: 1001
+      type: {class: ConsecutiveHitDefenseEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        statModifiers:
-        - stat: 1
-          value: 2
-          valuePerLevel: 0.5
-          isPercentage: 0
+        defensePerHit: 3
+        defensePerLevel: 1
+        maxStacks: 3
+        duration: 4

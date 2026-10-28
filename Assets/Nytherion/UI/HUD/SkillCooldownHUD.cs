@@ -40,16 +40,19 @@ namespace Nytherion.UI.Skill
                 bool available = hudSlots != null && i < hudSlots.Length && hudSlots[i] != null;
                 slots[i].root.gameObject.SetActive(available);
                 if (!available) continue;
-                // 기존 Q/R/E 슬롯과 아이콘을 유지하고 표시 효과만 그 위에 붙인다.
-                slots[i].root.SetParent(hudSlots[i].transform, false);
-                slots[i].root.anchorMin = Vector2.zero;
-                slots[i].root.anchorMax = Vector2.one;
-                slots[i].root.sizeDelta = Vector2.zero;
+                // 아이콘 위에 그리되 덮개 크기는 슬롯 배경 전체에 맞춘다.
+                Transform target = hudSlots[i].IconImage != null
+                    ? hudSlots[i].IconImage.transform : hudSlots[i].transform;
+                slots[i].root.SetParent(target, false);
+                slots[i].root.anchorMin = slots[i].root.anchorMax = Vector2.one * 0.5f;
+                slots[i].root.pivot = Vector2.one * 0.5f;
+                slots[i].root.sizeDelta = hudSlots[i].SkillBackgroundSize;
                 slots[i].root.anchoredPosition = Vector2.zero;
-                Sprite frame = hudSlots[i].CurrentSlotBackgroundSprite;
-                if (frame != null) slots[i].readyFlash.sprite = frame;
-                if (hudSlots[i].transform is RectTransform slotRect)
-                    slots[i].readyFlash.rectTransform.sizeDelta = slotRect.rect.size;
+                slots[i].readyFlash.sprite = slots[i].cooldownOverlay.sprite;
+                slots[i].readyFlash.rectTransform.anchorMin = Vector2.zero;
+                slots[i].readyFlash.rectTransform.anchorMax = Vector2.one;
+                slots[i].readyFlash.rectTransform.sizeDelta = Vector2.zero;
+                slots[i].readyFlash.rectTransform.anchoredPosition = Vector2.zero;
             }
             Refresh();
         }

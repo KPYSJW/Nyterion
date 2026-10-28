@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: RitualDagger
+  m_EditorClassIdentifier: 
+  relicName: RitualDagger
+  koreanName: "\uC758\uC2DD\uC6A9 \uB2E8\uAC80"
+  englishName: Ritual Dagger
+  description_KR: "\uCD5C\uB300 \uCCB4\uB825 -20%. \uC801 \uCC98\uCE58\uB2F9 \uACF5\uACA9\uB825
+    +0.5%(\uCD5C\uB300 +50%, \uB808\uBCA8\uB2F9 \uC0C1\uD55C +10%p), \uC0DD\uBA85\uB825
+    \uD761\uC218 +0.1%p(\uCD5C\uB300 +10%p, \uB808\uBCA8\uB2F9 \uC0C1\uD55C +2.5%p)."
+  description_EN: Max Health -20%. Each kill grants +0.5% Attack (cap +50%, +10%p
+    per level) and +0.1%p Lifesteal (cap +10%p, +2.5%p per level).
+  Image: {fileID: 21300000, guid: 2d7114440c008e744aed13f364bec1e4, type: 3}
+  rarity: 3
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: 
+    description_EN: 
+    condition:
+      rid: -2
+    effects:
+    - rid: 1314306264876711957
+    - rid: 1314306264876711958
+    - rid: 1314306264876711960
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 2
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: -1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1314306264876711957
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 0
+          value: -0.2
+          valuePerLevel: 0
+          isPercentage: 1
+    - rid: 1314306264876711958
+      type: {class: KillCountGrowthStatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetStat: 4
+        valuePerKill: 0.005
+        maxBonusBase: 0.5
+        maxBonusPerLevel: 0.1
+        isPercentage: 1
+    - rid: 1314306264876711960
+      type: {class: KillCountGrowthStatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        targetStat: 11
+        valuePerKill: 0.001
+        maxBonusBase: 0.1
+        maxBonusPerLevel: 0.025
+        isPercentage: 0

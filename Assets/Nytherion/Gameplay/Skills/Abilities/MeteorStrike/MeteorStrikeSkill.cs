@@ -66,7 +66,7 @@ namespace Nytherion.GamePlay.Skills
             PlayerManager player = caster != null ? caster.GetComponentInParent<PlayerManager>() : GetComponentInParent<PlayerManager>();
             int level = player != null ? player.GetSkillLevel(data) : Mathf.Max(1, data.skillLevel);
             // 중첩 시전 중에도 이전 시전의 대상 목록과 피해량을 유지합니다.
-            StartCoroutine(StrikeTargets(targets.ToArray(), data, data.GetDamage(level), EffectSizeMultiplier));
+            StartCoroutine(StrikeTargets(targets.ToArray(), data, ApplySkillDamage(data.GetDamage(level)), EffectSizeMultiplier));
         }
 
         private IEnumerator StrikeTargets(EnemyBase[] castTargets, MeteorStrikeSkillData data, float damage, float size)

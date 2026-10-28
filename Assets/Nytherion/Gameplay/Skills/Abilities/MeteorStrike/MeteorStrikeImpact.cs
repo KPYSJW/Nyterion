@@ -15,6 +15,7 @@ namespace Nytherion.GamePlay.Skills
         private float yOffset;
         private float expiresAt;
         private float remainingHeight;
+        private float horizontalSlope;
         private bool falling;
         private bool damageApplied;
 
@@ -31,7 +32,10 @@ namespace Nytherion.GamePlay.Skills
             falling = true;
             damageApplied = false;
             remainingHeight = Mathf.Max(0.01f, data.dropHeight);
-            transform.position = GetTargetPosition() + Vector3.up * remainingHeight;
+            horizontalSlope = data.dropHorizontalOffset / remainingHeight;
+            transform.position = GetTargetPosition() + new Vector3(data.dropHorizontalOffset, remainingHeight);
+            // 원본 불꽃의 꼬리는 위쪽이므로 낙하 경로의 반대 방향으로 향하게 합니다.
+            transform.rotation = Quaternion.Euler(0f, 0f, -Mathf.Atan(horizontalSlope) * Mathf.Rad2Deg);
             gameObject.SetActive(true);
             if (animator == null) animator = GetComponent<Animator>();
             animator.Rebind();
@@ -56,11 +60,13 @@ namespace Nytherion.GamePlay.Skills
             }
 
             Vector3 destination = GetTargetPosition();
-            // 수평 이동을 따라가되 수직 낙하 거리는 매 프레임 줄여 이동하는 적도 타격합니다.
+            // 목표의 이동을 따라가면서 가로·세로 거리를 함께 줄여 대각선으로 낙하합니다.
             remainingHeight = Mathf.Max(0f, remainingHeight - fallSpeed * Time.deltaTime);
-            transform.position = destination + Vector3.up * remainingHeight;
+            transform.position = destination + new Vector3(horizontalSlope * remainingHeight, remainingHeight);
             if (remainingHeight > 0f) return;
             falling = false;
+            transform.rotation = Quaternion.identity;
+            // 폭발 시트의 위치 보정은 착탄 후에만 적용해 낙하 궤적과 분리합니다.
             transform.position = destination - Vector3.up * yOffset;
             expiresAt = Time.time + 2f;
             animator.SetTrigger("Explode");

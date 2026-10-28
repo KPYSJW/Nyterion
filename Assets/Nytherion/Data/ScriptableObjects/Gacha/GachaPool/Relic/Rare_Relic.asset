@@ -15,8 +15,6 @@ MonoBehaviour:
   rarity: 2
   drawWeight: 40
   items:
-  - item: {fileID: 11400000, guid: c11e7a5c8dbfe61438756d24e8480016, type: 2}
-    weight: 100
   - item: {fileID: 11400000, guid: 9651e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: 7990afec806287d449dc3ef11f514b9b, type: 2}
@@ -25,8 +23,6 @@ MonoBehaviour:
     weight: 100
   - item: {fileID: 11400000, guid: a521e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: d628de4d42cd4c309871f265dea04332, type: 2}
-    weight: 100
   - item: {fileID: 11400000, guid: d9ffae38f96240838912a5b6c4ce34a5, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: d01ed9576e9d41e682784cd8ce28be3a, type: 2}
@@ -34,6 +30,8 @@ MonoBehaviour:
   - item: {fileID: 11400000, guid: c4f9e88e3e39df74d980ff30efd7a512, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: a621e2760ade8e4cae771239b9c1d0ef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 37ad7920ae6f4fadbf209cfdee020c0c, type: 2}
     weight: 100
   - item: {fileID: 11400000, guid: 20b3a47cfd8ce244da6c6c33ec54b38b, type: 2}
     weight: 100
@@ -71,9 +69,15 @@ MonoBehaviour:
     weight: 100
   - item: {fileID: 11400000, guid: 9451e2760ade8e4cae771239b9c1d0ef, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: 25efcac3ec405c0498d93c7f8d01f2d9, type: 2}
-    weight: 100
   - item: {fileID: 11400000, guid: 2b4c0f05e44b45619db45b408c65dcc3, type: 2}
     weight: 100
-  - item: {fileID: 11400000, guid: 37ad7920ae6f4fadbf209cfdee020c0c, type: 2}
+  - item: {fileID: 11400000, guid: 35550439e490ebf48810a791a38fecef, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 219014bbafb5c254ea2e9dab711c7307, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: fe012baa464e12744b0fc59e99a04973, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 791171bb2a53f194ca7bf615356f0ca5, type: 2}
+    weight: 100
+  - item: {fileID: 11400000, guid: 39c71b119aa947f49ad0e3e07cadd30b, type: 2}
     weight: 100

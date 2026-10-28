@@ -8,6 +8,7 @@ namespace Nytherion.GamePlay.Combat
     public class SpiritsGuidanceChargeEffect : MonoBehaviour
     {
         [SerializeField] private Sprite[] stageSprites;
+        [SerializeField] private bool showGatherParticles = true;
         [SerializeField] private Sprite[] particleSprites;
         [Tooltip("무기 SpriteRenderer 기준 보석 중심입니다. 주황·초록·파랑 순서입니다.")]
         [SerializeField] private Vector3[] gemPositions;
@@ -51,11 +52,11 @@ namespace Nytherion.GamePlay.Combat
 
         private void ApplyCharge(float chargePercent)
         {
-            if (weaponRenderer == null || stageSprites == null || stageSprites.Length != 3 ||
-                particleSprites == null || particleSprites.Length != 3 ||
-                gemPositions == null || gemPositions.Length != 3) return;
+            if (weaponRenderer == null || stageSprites == null || stageSprites.Length != 3) return;
             int stage = chargePercent >= thirdStageThreshold ? 3 : chargePercent >= secondStageThreshold ? 2 : 1;
             weaponRenderer.sprite = stageSprites[stage - 1];
+            if (!showGatherParticles || particleSprites == null || particleSprites.Length != 3 ||
+                gemPositions == null || gemPositions.Length != 3) return;
             EnsureParticles();
             for (int i = 0; i < particles.Length; i++)
             {

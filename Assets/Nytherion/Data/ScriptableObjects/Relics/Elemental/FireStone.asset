@@ -56,11 +56,7 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 5
-          value: 0.1
-          valuePerLevel: 0.02
-          isPercentage: 1
-        - stat: 3
+        - stat: 6
           value: 0.1
           valuePerLevel: 0.02
           isPercentage: 1

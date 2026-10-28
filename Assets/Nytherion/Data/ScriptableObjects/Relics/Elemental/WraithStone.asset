@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: WraithStone
+  m_EditorClassIdentifier: 
+  relicName: Wraith Stone
+  koreanName: "\uC6D0\uD63C\uC11D"
+  englishName: 
+  description_KR: "\uc800\uc8fc\ubc1b\uc740 \uc801 \ucc98\uce58 \uc2dc \ubc18\uacbd 3 \uc548\uc758 \uc800\uc8fc\ubc1b\uc9c0 \uc54a\uc740 \uc801\uc5d0\uac8c \ub0a8\uc740 \uc800\uc8fc \uc804\ud30c (\ub808\ubca8\ub2f9 \ubc18\uacbd +0.25)."
+  description_EN: "When a cursed enemy dies, spread its remaining curse to uncursed enemies within 3 units (+0.25 radius per level)."
+  Image: {fileID: 21300000, guid: 2f54325af6ec927468dac129dcd0a23f, type: 3}
+  rarity: 1
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - condition:
+      rid: -2
+    effects:
+    - rid: 1001
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 1, y: 0}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: 1}
+    type: 2
+    levelAmount: 1
+  - offset: {x: -1, y: 0}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: 1001
+      type: {class: CurseSpreadOnKillEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        radius: 3
+        radiusPerLevel: 0.25

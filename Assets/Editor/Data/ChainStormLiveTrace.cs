@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -105,7 +105,7 @@ namespace Nytherion.Editor
         {
             DashStormRuntime runtime = player != null ? player.GetComponent<DashStormRuntime>() : null;
             string state = runtime == null ? "폭풍 런타임 없음" :
-                $"폭풍 충전={runtime.RemainingStormCharges}, 폭풍 모듈={DictionaryCount(runtime, "stormCharges")}, 돌풍 모듈={DictionaryCount(runtime, "windCharges")}";
+                $"폭풍 모듈={DictionaryCount(runtime, "stormEffects")}, 돌풍 모듈={DictionaryCount(runtime, "windEffects")}";
             WindBlastProjectile[] winds = Object.FindObjectsOfType<WindBlastProjectile>();
             return state + "; 돌풍=[" + string.Join(",", winds.Select(wind =>
                 $"{wind.GetInstanceID()} 피해량={Field(wind, "damage")} 번개배율={Field(wind, "chainRatio")} 대상수={Field(wind, "chainTargets")} 프리팹={Field(wind, "lightningPrefab")}")) + "]";
@@ -167,7 +167,11 @@ namespace Nytherion.Editor
         }
 
         private static object Field(object value, string name) => value.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(value);
-        private static int DictionaryCount(object value, string name) => (Field(value, name) as System.Collections.IDictionary)?.Count ?? 0;
+        private static int DictionaryCount(object value, string name)
+        {
+            object collection = Field(value, name);
+            return collection != null ? (int)collection.GetType().GetProperty("Count").GetValue(collection) : 0;
+        }
         private static void Record(string message)
         {
             history.Enqueue($"frame={Time.frameCount} t={Time.time:F3} {message}");

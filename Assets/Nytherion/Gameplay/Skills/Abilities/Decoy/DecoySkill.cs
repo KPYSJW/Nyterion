@@ -53,10 +53,10 @@ namespace Nytherion.GamePlay.Skills
         private void Update()
         {
             if (dummy != null && dummy.gameObject.activeSelf &&
-                (caster == null || !caster.gameObject.activeInHierarchy)) dummy.Close();
+                (caster == null || !caster.gameObject.activeInHierarchy)) dummy.Close(false);
         }
 
-        private void OnDisable() { if (dummy != null) dummy.Close(); }
+        private void OnDisable() { if (dummy != null) dummy.Close(false); }
         private void OnDestroy() { if (dummy != null) Destroy(dummy.gameObject); }
     }
 }

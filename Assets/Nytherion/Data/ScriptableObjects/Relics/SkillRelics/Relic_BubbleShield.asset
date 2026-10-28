@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Relic_BubbleShield
   m_EditorClassIdentifier: 
   relicName: Relic of Bubble Shield
-  koreanName: "\ube44\ub217\ubc29\uc6b8"
-  description_KR: "\ud53c\ud574\ub97c \ud761\uc218\ud558\ub294 \ube44\ub217\ubc29\uc6b8 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
-  description_EN: "Grants a bubble shield skill that absorbs damage."
-  Image: {fileID: 184623147, guid: 1680c2c5c307f284c8177d20079a8bc2, type: 3}
+  koreanName: "\uBE44\uB217\uBC29\uC6B8"
+  englishName: 
+  description_KR: "\uD53C\uD574\uB97C \uD761\uC218\uD558\uB294 \uBE44\uB217\uBC29\uC6B8
+    \uC2A4\uD0AC\uC744 \uC5BB\uB294\uB2E4."
+  description_EN: Grants a bubble shield skill that absorbs damage.
+  Image: {fileID: 21300000, guid: 3afbac5dff4761947a127b2787a484b2, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

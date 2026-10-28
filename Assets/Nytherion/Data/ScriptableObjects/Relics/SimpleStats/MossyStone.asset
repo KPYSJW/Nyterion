@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Mossy Stone
   koreanName: "\uC774\uB07C\uB3CC"
-  description_KR: "\uCD5C\uB300 \uCCB4\uB825 +15 (\uB808\uBCA8\uB2F9 +4)"
-  description_EN: Increases max health.
+  description_KR: "\ucd5c\ub300 \uccb4\ub825 +45 (\ub808\ubca8\ub2f9 +9)."
+  description_EN: "Max health +45 (+9 per level)."
   Image: {fileID: 21300000, guid: fafef5eafe0807c49b26a1fdc3b906b3, type: 3}
   rarity: 0
   level: 1
@@ -24,7 +24,7 @@ MonoBehaviour:
   - condition:
       rid: -2
     effects:
-    - rid: 6716071610150551552
+    - rid: 1001
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -45,19 +45,17 @@ MonoBehaviour:
   unlockMilestoneID: 
   simpleStatModifiers:
   - stat: 0
-    value: 15
-    valuePerLevel: 4
+    value: 45
+    valuePerLevel: 9
     isPercentage: 0
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 6716071610150551552
+    - rid: 1001
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
         - stat: 0
-          value: 15
-          valuePerLevel: 4
+          value: 45
+          valuePerLevel: 9
           isPercentage: 0

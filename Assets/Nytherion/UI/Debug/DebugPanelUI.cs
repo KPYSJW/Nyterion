@@ -8,6 +8,7 @@ using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Data;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.GamePlay.Characters.NPC;
 using Nytherion.UI.Controllers;
 using Nytherion.Data.ScriptableObjects.Shop;
 using System.Collections.Generic;
@@ -50,6 +51,12 @@ namespace Nytherion.UI.Test
         [SerializeField, Min(0.5f)] private float trainingDummySpawnDistance = 1.5f;
         private readonly List<TrainingDummy> trainingDummies = new List<TrainingDummy>();
         private Vector2 trainingDummySpawnDirection = Vector2.right;
+
+        [Header("가챠 상자 소환")]
+        [SerializeField] private GachaChest gachaChestPrefab;
+        [SerializeField, Min(0.5f)] private float gachaChestSpawnDistance = 1.5f;
+        private GachaChest spawnedGachaChest;
+
         private InputManager inputManager;
         private IObjectResolver objectResolver;
 
@@ -85,10 +92,8 @@ namespace Nytherion.UI.Test
             (StatType.MaxHealth, "최대 체력", 10f, false),
             (StatType.Defense, "방어력", 1f, false),
             (StatType.MoveSpeed, "이동 속도", 0.5f, false),
-            (StatType.MeleeDamage, "근접 공격력", 5f, false),
-            (StatType.RangedDamage, "원거리 공격력", 5f, false),
-            (StatType.MeleeSpeed, "근접 공격 속도", 0.1f, false),
-            (StatType.RangedSpeed, "원거리 공격 속도", 0.1f, false),
+            (StatType.RangedDamage, "공격력", 5f, false),
+            (StatType.RangedSpeed, "공격 속도", 0.1f, false),
             (StatType.DashSpeed, "대시 속도", 0.5f, false),
             (StatType.DashDuration, "대시 지속 시간", 0.1f, false),
             (StatType.DashCooldown, "대시 쿨타임", 0.1f, false),
@@ -596,6 +601,13 @@ namespace Nytherion.UI.Test
             CreateRuntimeButton(templateButton, parentTransform,
                 "AddAllSkillsButton", "모든 스킬 획득", AddAllSkills);
 
+            CreateRuntimeButton(templateButton, parentTransform,
+                "IncreaseSkillCooldownReductionButton", "스킬 쿨타임 감소 +10%p", IncreaseSkillCooldownReduction);
+            CreateRuntimeButton(templateButton, parentTransform,
+                "MaxSkillCooldownReductionButton", "스킬 쿨타임 즉시 100% 감소", MaxSkillCooldownReduction);
+            CreateRuntimeButton(templateButton, parentTransform,
+                "ResetSkillCooldownReductionButton", "스킬 쿨타임 감소 초기화", ResetSkillCooldownReduction);
+
             languageToggleButton = CreateRuntimeButton(
                 templateButton,
                 parentTransform,
@@ -614,6 +626,10 @@ namespace Nytherion.UI.Test
                 .transform.SetSiblingIndex(1);
             CreateRuntimeButton(templateButton, parentTransform, "RemoveTrainingDummiesButton", "허수아비 제거", RemoveTrainingDummies)
                 .transform.SetSiblingIndex(2);
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnGachaChestButton", "가챠 상자 소환", SpawnGachaChest)
+                .transform.SetSiblingIndex(3);
+            CreateRuntimeButton(templateButton, parentTransform, "RemoveSpawnedGachaChestButton", "소환한 가챠 상자 제거", RemoveSpawnedGachaChest)
+                .transform.SetSiblingIndex(4);
         }
 
         private Button CreateRuntimeButton(
@@ -1118,6 +1134,33 @@ namespace Nytherion.UI.Test
             button.gameObject.SetActive(true);
         }
 
+        public void IncreaseSkillCooldownReduction()
+        {
+            var skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬이 아직 준비되지 않았습니다.");
+                return;
+            }
+            SetSkillCooldownReduction(skills.DebugCooldownReduction + 0.1f);
+        }
+
+        public void MaxSkillCooldownReduction() => SetSkillCooldownReduction(1f);
+
+        public void ResetSkillCooldownReduction() => SetSkillCooldownReduction(0f);
+
+        private void SetSkillCooldownReduction(float reduction)
+        {
+            var skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.SetDebugCooldownReduction(reduction);
+            UpdateStatusText($"테스트 스킬 쿨타임 감소 → 현재 {skills.DebugCooldownReduction * 100f:0}%");
+        }
+
         public void IncreaseDebugStat(StatType stat, float amount)
         {
             if (playerManager == null || playerManager.currentPlayerData == null)
@@ -1151,6 +1194,8 @@ namespace Nytherion.UI.Test
                     playerManager.RemoveTemporaryStatModifier(modifier);
             }
             debugStatModifiers.Clear();
+            if (playerManager != null)
+                playerManager.GetComponent<PlayerSkillManager>()?.SetDebugCooldownReduction(0f);
             UpdateStatusText("테스트로 추가한 능력치를 초기화했습니다.");
         }
 
@@ -1162,9 +1207,7 @@ namespace Nytherion.UI.Test
                 StatType.MaxHealth => data.maxHealth,
                 StatType.Defense => data.defense,
                 StatType.MoveSpeed => data.moveSpeed,
-                StatType.MeleeDamage => data.meleeDamage,
                 StatType.RangedDamage => data.rangedDamage,
-                StatType.MeleeSpeed => data.meleeSpeed,
                 StatType.RangedSpeed => data.rangedSpeed,
                 StatType.DashSpeed => data.dashSpeed,
                 StatType.DashDuration => data.dashDuration,
@@ -1231,6 +1274,38 @@ namespace Nytherion.UI.Test
                    localizationService.CurrentLanguage == SupportedLanguage.English
                 ? "Language: English → 한국어"
                 : "언어: 한국어 → English";
+        }
+
+        public void SpawnGachaChest()
+        {
+            if (playerManager == null || objectResolver == null)
+            {
+                UpdateStatusText("플레이어 또는 소환 의존성이 준비되지 않았습니다.");
+                return;
+            }
+            if (gachaChestPrefab == null)
+            {
+                UpdateStatusText("가챠 상자 프리팹이 연결되지 않았습니다.");
+                return;
+            }
+            // 여러 상자가 같은 X/C 입력에 동시에 반응하지 않도록 테스트 상자는 하나만 유지합니다.
+            if (spawnedGachaChest != null)
+            {
+                UpdateStatusText("이미 테스트 상자가 있습니다. 제거한 뒤 다시 소환해 주세요.");
+                return;
+            }
+
+            Vector3 position = playerManager.transform.position
+                + (Vector3)(trainingDummySpawnDirection * gachaChestSpawnDistance);
+            spawnedGachaChest = objectResolver.Instantiate(gachaChestPrefab, position, Quaternion.identity);
+            UpdateStatusText("플레이어 앞에 가챠 상자 소환 완료 · X: 1회 / C: 10회 (토큰 필요)");
+        }
+
+        public void RemoveSpawnedGachaChest()
+        {
+            if (spawnedGachaChest != null) Destroy(spawnedGachaChest.gameObject);
+            spawnedGachaChest = null;
+            UpdateStatusText("테스트로 소환한 가챠 상자를 제거했습니다.");
         }
 
         public void SpawnTrainingDummy()

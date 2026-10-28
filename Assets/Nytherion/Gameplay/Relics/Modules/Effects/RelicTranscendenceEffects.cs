@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Nytherion.Core.Enums;
 using Nytherion.Core.Interfaces;
@@ -274,11 +274,15 @@ namespace Nytherion.Gameplay.Relics.Modules
     [Serializable, RelicDisplayName("연쇄 폭풍")]
     public sealed class DashChainLightningEffect : RelicEffectBase
     {
+        [Range(0f, 1f), InspectorName("번개 발동 확률")] public float triggerChance = 0.25f;
+        [Range(0f, 1f), InspectorName("번개 피격 적의 돌풍 생성 확률")] public float windSpawnChance = 0.25f;
+        [Min(0.1f), InspectorName("대시 대상 탐색 반경")] public float dashTargetSearchRadius = 8f;
         [Min(0f)] public float damageRatio = 0.45f;
         [Min(0.1f)] public float searchRadius = 6f;
         [Min(1)] public int maxTargets = 4;
-        [Min(0.1f)] public float hitWaitDuration = 2f;
-        [Min(1), InspectorName("대시 충전 횟수")] public int chargesPerDash = 3;
+        // 이전 에셋의 직렬화 값을 보존하며 적중 대기와 대시 충전은 사용하지 않습니다.
+        [HideInInspector] public float hitWaitDuration = 2f;
+        [HideInInspector] public int chargesPerDash = 3;
         public WindBlastProjectile projectilePrefab;
         [Tooltip("번개부르미와 공유하는 번개 연결 이펙트")]
         public ChainLightningVFX lightningEffectPrefab;

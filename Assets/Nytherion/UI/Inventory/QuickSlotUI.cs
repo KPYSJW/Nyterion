@@ -3,6 +3,7 @@ using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Nytherion.UI.Inventory
 {
@@ -11,6 +12,12 @@ namespace Nytherion.UI.Inventory
     {
         public int SlotIndex { get; private set; }
         public SkillData CurrentSkill { get; private set; }
+        [SerializeField] private Image skillIconBackground;
+        [Tooltip("슬롯 이미지에서 아이콘이 들어갈 내부 영역입니다. 좌측 하단 기준의 정규화 좌표입니다.")]
+        [SerializeField] private Rect skillIconArea = new Rect(0f, 0f, 1f, 1f);
+        [Tooltip("아이콘 배경의 크기입니다. Canvas 배율 적용 전 UI 단위입니다.")]
+        [SerializeField] private Vector2 skillBackgroundSize = new Vector2(96f, 96f);
+        public Vector2 SkillBackgroundSize => skillBackgroundSize;
 
         public void Initialize(int index)
         {
@@ -36,7 +43,25 @@ namespace Nytherion.UI.Inventory
             iconImage.color = Color.white;
             iconImage.preserveAspect = true;
             iconImage.raycastTarget = false;
+            UpdateIconBackground();
             ApplyIconLayout();
+        }
+
+        private void UpdateIconBackground()
+        {
+            if (iconImage.transform == transform) return;
+            if (skillIconBackground == null)
+            {
+                // 기존 씬과 프리팹의 참조를 유지하며 아이콘 바로 뒤에 배경을 추가합니다.
+                GameObject background = new GameObject("SkillIconBackground", typeof(RectTransform), typeof(Image));
+                background.layer = iconImage.gameObject.layer;
+                background.transform.SetParent(iconImage.transform.parent, false);
+                background.transform.SetSiblingIndex(iconImage.transform.GetSiblingIndex());
+                skillIconBackground = background.GetComponent<Image>();
+                skillIconBackground.raycastTarget = false;
+            }
+            skillIconBackground.color = new Color32(43, 33, 28, 255);
+            skillIconBackground.enabled = iconImage.enabled;
         }
 
         protected override void ApplyIconLayout()
@@ -45,11 +70,25 @@ namespace Nytherion.UI.Inventory
             RectTransform rect = iconImage.rectTransform;
             rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
             rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition = Vector2.zero;
-            if (rect.sizeDelta != new Vector2(80f, 80f))
-                rect.sizeDelta = new Vector2(80f, 80f);
+            RectTransform slotRect = transform as RectTransform;
+            Vector2 slotSize = slotRect != null ? slotRect.rect.size : Vector2.one * 96f;
+            rect.anchoredPosition = Vector2.Scale(skillIconArea.center - Vector2.one * 0.5f, slotSize);
+            Vector2 iconSize = Vector2.Scale(skillIconArea.size, slotSize);
+            if (rect.sizeDelta != iconSize)
+                rect.sizeDelta = iconSize;
             rect.localScale = Vector3.one;
             rect.localRotation = Quaternion.identity;
+            if (skillIconBackground != null)
+            {
+                RectTransform backgroundRect = skillIconBackground.rectTransform;
+                backgroundRect.anchorMin = rect.anchorMin;
+                backgroundRect.anchorMax = rect.anchorMax;
+                backgroundRect.pivot = rect.pivot;
+                backgroundRect.anchoredPosition = rect.anchoredPosition;
+                backgroundRect.sizeDelta = skillBackgroundSize;
+                backgroundRect.localScale = rect.localScale;
+                backgroundRect.localRotation = rect.localRotation;
+            }
         }
 
 #if UNITY_EDITOR

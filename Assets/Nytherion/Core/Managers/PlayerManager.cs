@@ -102,6 +102,8 @@ namespace Nytherion.Core.Managers
 
             currentPlayerData = Instantiate(basePlayerData);
 
+            GetComponent<PlayerSkillManager>()?.InitializeMana(currentPlayerData.maxMana, currentPlayerData.manaRegenPerSecond);
+
             if (playerHealth != null)
             {
                 playerHealth.InitializeHealth(currentPlayerData.maxHealth);
@@ -304,10 +306,9 @@ namespace Nytherion.Core.Managers
                 {
                     if (equippedItem != null)
                     {
-                        if (equippedItem is WeaponData weaponData)
+                        if (equippedItem is WeaponData weaponData && weaponData.IsRuntimeAvailable)
                         {
-                            StatType dmgStat = weaponData.weaponType == WeaponType.Melee ? StatType.MeleeDamage : StatType.RangedDamage;
-                            allModifiers.Add(new StatModifier { stat = dmgStat, value = weaponData.damage, isPercentage = false });
+                            allModifiers.Add(new StatModifier { stat = StatType.RangedDamage, value = weaponData.damage, isPercentage = false });
                         }
 
                         if (equippedItem.statModifiers != null)
@@ -398,7 +399,7 @@ namespace Nytherion.Core.Managers
                 if (st == StatType.All) continue;
 
                 float specificSum = percentageSums.ContainsKey(st) ? percentageSums[st] : 0f;
-                float totalSum = specificSum + allStatsPercentage;
+                float totalSum = specificSum + (st == StatType.SkillCooldown ? 0f : allStatsPercentage);
 
                 if (totalSum != 0)
                 {
@@ -416,6 +417,9 @@ namespace Nytherion.Core.Managers
             }
 
             if (playerHealth != null) playerHealth.UpdateMaxHealth(currentPlayerData.maxHealth);
+            currentPlayerData.maxMana = Mathf.Max(0f, currentPlayerData.maxMana);
+            currentPlayerData.manaRegenPerSecond = Mathf.Max(0f, currentPlayerData.manaRegenPerSecond);
+            GetComponent<PlayerSkillManager>()?.UpdateManaStats(currentPlayerData.maxMana, currentPlayerData.manaRegenPerSecond);
 
             // 이동 속도 및 대시 속도 최대치 상한선(Safety Cap) 적용하여 물리 엔진 오작동 방지
             currentPlayerData.moveSpeed = Mathf.Clamp(currentPlayerData.moveSpeed, 0f, 8.0f);
@@ -426,11 +430,30 @@ namespace Nytherion.Core.Managers
 
         private void ApplyModifierToPlayer(StatType stat, float value, bool isPercentage)
         {
+            // 구형 데이터에 남은 근접 보정과 전체 능력치 효과가 폐기된 능력치를 변경하지 않게 합니다.
+            if (stat.IsRetired()) return;
+
             switch (stat)
             {
                 case StatType.MaxHealth:
                     if (isPercentage) currentPlayerData.maxHealth *= (1 + value);
                     else currentPlayerData.maxHealth += value;
+                    break;
+                case StatType.MaxMana:
+                    if (isPercentage) currentPlayerData.maxMana *= (1 + value);
+                    else currentPlayerData.maxMana += value;
+                    break;
+                case StatType.ManaRegenPerSecond:
+                    if (isPercentage) currentPlayerData.manaRegenPerSecond *= (1 + value);
+                    else currentPlayerData.manaRegenPerSecond += value;
+                    break;
+                case StatType.SkillDamage:
+                    if (isPercentage) currentPlayerData.skillDamageMultiplier *= (1 + value);
+                    else currentPlayerData.skillDamageMultiplier += value;
+                    break;
+                case StatType.SkillCooldown:
+                    if (isPercentage) currentPlayerData.skillCooldownMultiplier *= (1 + value);
+                    else currentPlayerData.skillCooldownMultiplier += value;
                     break;
                 case StatType.Defense:
                     if (isPercentage) currentPlayerData.defense *= (1 + value);
@@ -440,17 +463,9 @@ namespace Nytherion.Core.Managers
                     if (isPercentage) currentPlayerData.moveSpeed *= (1 + value);
                     else currentPlayerData.moveSpeed += value;
                     break;
-                case StatType.MeleeDamage:
-                    if (isPercentage) currentPlayerData.meleeDamage *= (1 + value);
-                    else currentPlayerData.meleeDamage += value;
-                    break;
                 case StatType.RangedDamage:
                     if (isPercentage) currentPlayerData.rangedDamage *= (1 + value);
                     else currentPlayerData.rangedDamage += value;
-                    break;
-                case StatType.MeleeSpeed:
-                    if (isPercentage) currentPlayerData.meleeSpeed *= (1 + value);
-                    else currentPlayerData.meleeSpeed += value;
                     break;
                 case StatType.RangedSpeed:
                     if (isPercentage) currentPlayerData.rangedSpeed *= (1 + value);

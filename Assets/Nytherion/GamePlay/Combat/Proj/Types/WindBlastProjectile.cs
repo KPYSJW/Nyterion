@@ -19,6 +19,10 @@ namespace Nytherion.GamePlay.Combat
         private float chainRadius;
         private int chainTargets;
         private ChainLightningVFX lightningPrefab;
+        private float chainChance;
+        private DashStormRuntime stormRuntime;
+        private bool usesStormRuntime;
+        private EnemyBase sourceEnemy;
         private float remaining;
         private bool flying;
 
@@ -26,7 +30,8 @@ namespace Nytherion.GamePlay.Combat
 
         public void Launch(ObjectPoolManager ownerPool, Vector2 travelDirection, float hitDamage,
             float size, float lightningRatio, float lightningRadius, int lightningTargets,
-            ChainLightningVFX lightningEffectPrefab = null)
+            ChainLightningVFX lightningEffectPrefab = null, float lightningChance = 1f,
+            DashStormRuntime runtime = null, EnemyBase source = null)
         {
             pool = ownerPool;
             direction = travelDirection.normalized;
@@ -35,6 +40,10 @@ namespace Nytherion.GamePlay.Combat
             chainRadius = lightningRadius;
             chainTargets = lightningTargets;
             lightningPrefab = lightningEffectPrefab;
+            chainChance = Mathf.Clamp01(lightningChance);
+            stormRuntime = runtime;
+            usesStormRuntime = runtime != null;
+            sourceEnemy = source;
             remaining = lifetime;
             transform.localScale = Vector3.one * Mathf.Max(0.01f, size);
             // 시트의 회오리는 세로로 서 있는 모습을 유지합니다.
@@ -54,12 +63,18 @@ namespace Nytherion.GamePlay.Combat
             foreach (RaycastHit2D hit in hits)
             {
                 EnemyBase enemy = hit.collider.GetComponentInParent<EnemyBase>();
+                if (enemy != null && enemy == sourceEnemy) continue;
                 if (enemy != null && !enemy.isDead)
                 {
-                    // 보조 피해로 표시해 치명타 번개·초월 효과를 재귀 발동시키지 않습니다.
+                    // 보조 피해 이벤트의 재귀를 막고 연쇄 폭풍의 확률 판정만 직접 실행합니다.
                     flying = false;
                     enemy.TakeDamage(damage, true);
-                    DashStormRuntime.SpreadLightning(enemy, damage * Mathf.Max(0f, chainRatio), chainRadius, chainTargets, lightningPrefab);
+                    if (usesStormRuntime)
+                    {
+                        if (stormRuntime != null) stormRuntime.TryProjectileLightning(enemy, damage);
+                    }
+                    else if (DashStormRuntime.RollLightning(chainChance))
+                        DashStormRuntime.SpreadLightning(enemy, damage * Mathf.Max(0f, chainRatio), chainRadius, chainTargets, lightningPrefab);
                     ReturnToPool();
                     return;
                 }
@@ -88,6 +103,10 @@ namespace Nytherion.GamePlay.Combat
             damage = chainRatio = chainRadius = 0f;
             chainTargets = 0;
             lightningPrefab = null;
+            chainChance = 0f;
+            stormRuntime = null;
+            usesStormRuntime = false;
+            sourceEnemy = null;
         }
     }
 }

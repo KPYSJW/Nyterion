@@ -10,10 +10,12 @@ namespace Nytherion.GamePlay.Combat
         private float damageMultiplier = 1.1f; // 받는 피해 10% 증가
 
         public float DamageMultiplier => damageMultiplier;
+        public float BaseDamageMultiplier { get; }
 
         public CurseEffect(float multiplier, float duration)
         {
             this.damageMultiplier = multiplier;
+            BaseDamageMultiplier = multiplier;
             this.Duration = duration;
         }
 

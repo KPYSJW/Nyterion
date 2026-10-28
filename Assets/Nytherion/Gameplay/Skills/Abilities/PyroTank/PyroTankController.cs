@@ -39,6 +39,7 @@ namespace Nytherion.GamePlay.Skills
         private float jumpStartedAt;
         private float jumpProgress;
         private float effectSizeMultiplier = 1f;
+        private float skillDamageMultiplier = 1f;
         private Vector3 baseScale;
         private bool hasBaseScale;
 
@@ -65,10 +66,11 @@ namespace Nytherion.GamePlay.Skills
         }
 
         public void Begin(PyroTankSkillData skill, Vector3 position, Vector2 launchDirection,
-            float sizeMultiplier = 1f)
+            float sizeMultiplier = 1f, float damageMultiplier = 1f)
         {
             CacheComponents();
             effectSizeMultiplier = Mathf.Max(0.01f, sizeMultiplier);
+            skillDamageMultiplier = Mathf.Max(0f, damageMultiplier);
             transform.localScale = baseScale * effectSizeMultiplier;
             data = skill;
             hasExploded = false;
@@ -332,7 +334,7 @@ namespace Nytherion.GamePlay.Skills
                     damageTargets.Add(damageable);
             foreach (IDamageable damageable in damageTargets)
                 if (damageable is MonoBehaviour behaviour && behaviour.isActiveAndEnabled)
-                    damageable.TakeDamage(Mathf.Max(0f, data.damage));
+                    damageable.TakeDamage(Mathf.Max(0f, data.damage) * skillDamageMultiplier);
         }
 
         public void OnExplosionEnd()

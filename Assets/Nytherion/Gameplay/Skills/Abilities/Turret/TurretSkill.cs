@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using Nytherion.Core.Managers;
+using Nytherion.GamePlay.Characters.Player;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -24,6 +25,7 @@ namespace Nytherion.GamePlay.Skills
             public int Capacity;
             public float NextRechargeTime;
             public float NextSummonTime;
+            public float DebugReduction;
         }
 
         public override CooldownState CaptureCooldownState()
@@ -32,7 +34,8 @@ namespace Nytherion.GamePlay.Skills
             return new ChargeCooldownState
             {
                 Initialized = chargesInitialized, Charges = charges, Capacity = chargeCapacity,
-                NextRechargeTime = nextRechargeTime, NextSummonTime = nextSummonTime
+                NextRechargeTime = nextRechargeTime, NextSummonTime = nextSummonTime,
+                DebugReduction = DebugCooldownReduction
             };
         }
 
@@ -45,7 +48,34 @@ namespace Nytherion.GamePlay.Skills
             chargeCapacity = chargeState.Capacity;
             nextRechargeTime = chargeState.NextRechargeTime;
             nextSummonTime = chargeState.NextSummonTime;
+            RescaleDebugCooldown(chargeState.DebugReduction);
             RefreshCharges();
+        }
+
+        public override void SetDebugCooldownReduction(float reduction)
+        {
+            RefreshCharges();
+            float previousReduction = DebugCooldownReduction;
+            base.SetDebugCooldownReduction(reduction);
+            RescaleDebugCooldown(previousReduction);
+        }
+
+        private void RescaleDebugCooldown(float previousReduction)
+        {
+            if (DebugCooldownReduction >= 1f)
+            {
+                charges = chargeCapacity;
+                nextRechargeTime = Mathf.Infinity;
+                nextSummonTime = -Mathf.Infinity;
+                return;
+            }
+
+            float scale = previousReduction < 1f
+                ? (1f - DebugCooldownReduction) / (1f - previousReduction) : 1f;
+            if (!float.IsPositiveInfinity(nextRechargeTime))
+                nextRechargeTime = Time.time + Mathf.Max(0f, nextRechargeTime - Time.time) * scale;
+            if (nextSummonTime > Time.time)
+                nextSummonTime = Time.time + (nextSummonTime - Time.time) * scale;
         }
 
         private RootiUpgradeRuntime Upgrades => caster != null ? caster.GetComponent<RootiUpgradeRuntime>() : null;
@@ -67,19 +97,20 @@ namespace Nytherion.GamePlay.Skills
             if (!(skillData is TurretSkillData data) || caster == null || data.turretPrefab == null ||
                 data.turretPrefab.GetComponent<TurretController>() == null) return false;
             RefreshCharges();
-            return charges > 0 && Time.time >= nextSummonTime;
+            return data.IsRuntimeAvailable && HasRequiredMana() && charges > 0 && Time.time >= nextSummonTime;
         }
 
         public override bool TryUse()
         {
-            if (!CanUse()) return false;
+            if (!CanUse() || !TrySpendMana()) return false;
             Activate();
             charges--;
             TurretSkillData data = (TurretSkillData)skillData;
-            nextSummonTime = Time.time + Mathf.Max(0.5f, data.minimumSummonInterval);
+            nextSummonTime = Time.time + ApplyDebugCooldownReduction(Mathf.Max(0.5f, data.minimumSummonInterval));
             // 두 번째 충전을 사용해도 이미 진행 중인 첫 번째 회복은 초기화하지 않습니다.
             if (float.IsPositiveInfinity(nextRechargeTime))
-                nextRechargeTime = Time.time + Mathf.Max(0.01f, data.coolDown);
+                nextRechargeTime = Time.time + GetCooldownTime();
+            caster.GetComponentInParent<PlayerSkillManager>()?.NotifySkillUsed(this);
             return true;
         }
 
@@ -101,7 +132,14 @@ namespace Nytherion.GamePlay.Skills
                 charges = chargeCapacity = capacity;
                 return;
             }
-            float rechargeDuration = Mathf.Max(0.01f, data.coolDown);
+            if (DebugCooldownReduction >= 1f)
+            {
+                chargeCapacity = charges = capacity;
+                nextRechargeTime = Mathf.Infinity;
+                nextSummonTime = -Mathf.Infinity;
+                return;
+            }
+            float rechargeDuration = Mathf.Max(0.01f, GetCooldownTime());
             while (charges < chargeCapacity && Time.time >= nextRechargeTime)
             {
                 charges++;
@@ -194,6 +232,7 @@ namespace Nytherion.GamePlay.Skills
                         TurretController controller = turretInstance.GetComponent<TurretController>();
                         controller.SetPool(pool, turretData.turretPrefab.name);
                         controller.Initialize(turretData);
+                        controller.SetSkillDamageMultiplier(SkillDamageMultiplier);
                         controller.EffectSizeMultiplier = EffectSizeMultiplier;
                         if (controller is RootiTurretController rooti) rooti.SetUpgradeOwner(caster);
                         controller.Deploy(launchPosition, destination);

@@ -17,31 +17,31 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: aad697d883498a541bc9e5d494af5d28, type: 3}
   badgeBackgroundColor: {r: 0.45, g: 0.08, b: 0.08, a: 0.96}
   badgeTextColor: {r: 1, g: 0.9, b: 0.86, a: 1}
-  description_KR: "근거리 공격력을 높이고, 피격 시 공격 속도와 낮은 체력에서 흡혈·치명타 확률을 높입니다."
-  description_EN: "Increase melee damage, gain attack speed after taking damage, and gain lifesteal and critical chance at low health."
+  description_KR: "\uacf5\uaca9\ub825\uc744 \ub192\uc774\uace0, \ud53c\uaca9 \uc2dc \uacf5\uaca9 \uc18d\ub3c4\uc640 \ub0ae\uc740 \uccb4\ub825\uc5d0\uc11c \ud761\ud608\u00b7\uce58\uba85\ud0c0 \ud655\ub960\uc744 \ub192\uc785\ub2c8\ub2e4."
+  description_EN: "Increase attack damage, gain attack speed after taking damage, and gain lifesteal and critical chance at low health."
   synergySeriesId: BerserkerSeries
   bonusModules:
   - condition:
       rid: 2001
     effects:
     - rid: 2002
-    description_KR: "근거리 공격력 +8%"
-    description_EN: Melee damage +8%
+    description_KR: "\uacf5\uaca9\ub825 +8%"
+    description_EN: "Attack damage +8%"
   - condition:
       rid: 4001
     effects:
     - rid: 4002
     - rid: 4003
-    description_KR: "근거리 공격력 +12%. 피격 시 4초 동안 근거리 공격 속도 +15%"
-    description_EN: Melee damage +12%. Taking damage grants +15% melee attack speed for 4 seconds.
+    description_KR: "\uacf5\uaca9\ub825 +12%. \ud53c\uaca9 \uc2dc 4\ucd08 \ub3d9\uc548 \uacf5\uaca9 \uc18d\ub3c4 +15%"
+    description_EN: "Attack damage +12%. Taking damage grants +15% attack speed for 4 seconds."
   - condition:
       rid: 6001
     effects:
     - rid: 6002
     - rid: 6003
     - rid: 6004
-    description_KR: "근거리 공격력 +15%. 피격 시 4초 동안 근거리 공격 속도 +20%. 체력 40% 이하에서 흡혈 +5%p, 치명타 확률 +6%p"
-    description_EN: Melee damage +15%. Taking damage grants +20% melee attack speed for 4 seconds. At 40% HP or below, lifesteal +5%p and critical chance +6%p.
+    description_KR: "\uacf5\uaca9\ub825 +15%. \ud53c\uaca9 \uc2dc 4\ucd08 \ub3d9\uc548 \uacf5\uaca9 \uc18d\ub3c4 +20%. \uccb4\ub825 40% \uc774\ud558\uc5d0\uc11c \ud761\ud608 +5%p, \uce58\uba85\ud0c0 \ud655\ub960 +6%p"
+    description_EN: "Attack damage +15%. Taking damage grants +20% attack speed for 4 seconds. At 40% HP or below, lifesteal +5%p and critical chance +6%p."
   linkedTranscendenceEffects:
   - {fileID: 11400000, guid: 9e3f23b2189249a6b5ca73fd01fa4d11, type: 2}
   references:
@@ -57,7 +57,7 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 3
+        - stat: 4
           value: 0.08
           valuePerLevel: 0
           isPercentage: 1
@@ -71,7 +71,7 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 3
+        - stat: 4
           value: 0.12
           valuePerLevel: 0
           isPercentage: 1
@@ -80,7 +80,7 @@ MonoBehaviour:
       data:
         duration: 4
         statModifiers:
-        - stat: 5
+        - stat: 6
           value: 0.15
           valuePerLevel: 0
           isPercentage: 1
@@ -94,7 +94,7 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 3
+        - stat: 4
           value: 0.15
           valuePerLevel: 0
           isPercentage: 1
@@ -103,7 +103,7 @@ MonoBehaviour:
       data:
         duration: 4
         statModifiers:
-        - stat: 5
+        - stat: 6
           value: 0.2
           valuePerLevel: 0
           isPercentage: 1

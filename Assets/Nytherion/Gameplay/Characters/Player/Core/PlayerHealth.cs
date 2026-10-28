@@ -19,6 +19,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public static event Action<float, float> OnHealthChanged;
         public static event Action<float> OnPlayerDamaged;
+        public event Action<float> DamageTaken;
         public static event Action OnPlayerDied;
 
         public float MaxHealth { get; private set; }
@@ -112,6 +113,11 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             if (IsInvulnerable || amount <= 0f || CurrentHealth <= 0f) return;
 
+            PlayerManager owner = GetComponent<PlayerManager>();
+            float defense = owner != null && owner.currentPlayerData != null ? owner.currentPlayerData.defense : 0f;
+            // 방어력 100은 피해를 절반으로 줄이며, 음수 방어력은 같은 곡선으로 피해를 늘립니다.
+            amount *= defense >= 0f ? 100f / (100f + defense) : 2f - 100f / (100f - defense);
+
             float absorbed = Mathf.Min(CurrentShield, amount);
             if (absorbed > 0f)
             {
@@ -135,6 +141,7 @@ namespace Nytherion.GamePlay.Characters.Player
                 PlayHitFlash();
                 PlayDamageEffect(hitPoint);
                 OnPlayerDamaged?.Invoke(appliedDamage);
+                DamageTaken?.Invoke(appliedDamage);
             }
 
             // 받은 데미지 진척도 업데이트
@@ -179,6 +186,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void PlayDamageEffect(Vector2 hitPoint)
         {
+            if (!Application.isPlaying) return;
             if (sharedDamageEffectController == null)
             {
                 sharedDamageEffectController =

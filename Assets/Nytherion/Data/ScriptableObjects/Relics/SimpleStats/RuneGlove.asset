@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Rune Glove
   koreanName: "\uB8EC\uC7A5\uAC11"
-  description_KR: "\uADFC\uC811 \uACF5\uACA9\uB825 +6 (\uB808\uBCA8\uB2F9 +2), \uC6D0\uAC70\uB9AC
-    \uACF5\uACA9\uB825 +6 (\uB808\uBCA8\uB2F9 +2)"
-  description_EN: Increases melee and ranged damage.
+  description_KR: "\uc6d0\uac70\ub9ac \uacf5\uaca9\ub825 +6 (\ub808\ubca8\ub2f9 +2)"
+  description_EN: "Increases damage."
   Image: {fileID: 21300000, guid: 144a82c134dbce94d955708b654a6013, type: 3}
   rarity: 1
   level: 1
@@ -39,10 +38,6 @@ MonoBehaviour:
   synergySeriesId: 
   unlockMilestoneID: 
   simpleStatModifiers:
-  - stat: 3
-    value: 6
-    valuePerLevel: 2
-    isPercentage: 0
   - stat: 4
     value: 6
     valuePerLevel: 2
@@ -56,10 +51,6 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 3
-          value: 6
-          valuePerLevel: 2
-          isPercentage: 0
         - stat: 4
           value: 6
           valuePerLevel: 2

@@ -27,6 +27,16 @@ public class GameSceneUIRefs : MonoBehaviour
     [SerializeField] private RelicTooltip relicTooltip;
     public RelicTooltip RelicTooltip => relicTooltip;
 
+    [Header("유물 모두 획득 안내")]
+    [SerializeField] private Sprite relicCollectAllKeyIcon;
+    public Sprite RelicCollectAllKeyIcon => relicCollectAllKeyIcon;
+    [SerializeField] private Sprite interactionKeyIcon;
+    public Sprite InteractionKeyIcon => interactionKeyIcon;
+    [SerializeField] private Sprite gachaSingleKeyIcon;
+    public Sprite GachaSingleKeyIcon => gachaSingleKeyIcon;
+    [SerializeField] private Sprite gachaTenKeyIcon;
+    public Sprite GachaTenKeyIcon => gachaTenKeyIcon;
+
 
     [Header("Quick Slot References")]
     [SerializeField] private QuickSlotUI[] quickSlots;

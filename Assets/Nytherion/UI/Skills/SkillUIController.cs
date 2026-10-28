@@ -88,6 +88,7 @@ namespace Nytherion.UI.Skill
                 skillTooltip = Instantiate(skillTooltipPrefab, rootCanvas.transform, false);
                 ownsSkillTooltip = true;
             }
+            if (skillTooltip != null) skillTooltip.BindPlayer(playerSkillManager.GetComponent<PlayerManager>());
 
             // --- UIPanelBase 연동을 위한 설정 추가 ---
             if (uiPanel != null)

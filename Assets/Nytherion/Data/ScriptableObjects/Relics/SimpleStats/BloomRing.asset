@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: Bloom Ring
   koreanName: "\uAF43\uBC18\uC9C0"
-  description_KR: "\uADFC\uC811 \uACF5\uACA9 \uC18D\uB3C4 +8% (\uB808\uBCA8\uB2F9
-    +2%), \uC6D0\uAC70\uB9AC \uACF5\uACA9 \uC18D\uB3C4 +8% (\uB808\uBCA8\uB2F9 +2%)"
-  description_EN: Slightly increases melee and ranged attack speed.
+  description_KR: "\uc2a4\ud0ac \uc0ac\uc6a9 \ud6c4 3\ucd08 \ub3d9\uc548 \uacf5\uaca9 \uc18d\ub3c4 +20% (\ub808\ubca8\ub2f9 +4%p). \uc7ac\ubc1c\ub3d9 \uc2dc \uc9c0\uc18d \uc2dc\uac04 \uac31\uc2e0."
+  description_EN: "After using a skill, attack speed +20% for 3 seconds (+4pp per level). Repeated triggers refresh the duration."
   Image: {fileID: 21300000, guid: 78aedf68b04bce846b5cd9a21326c24d, type: 3}
   rarity: 1
   level: 1
@@ -25,7 +24,7 @@ MonoBehaviour:
   - condition:
       rid: -2
     effects:
-    - rid: 6716071652329783299
+    - rid: 1001
   shape:
   - {x: 0, y: 0}
   influenceZones:
@@ -40,29 +39,13 @@ MonoBehaviour:
     levelAmount: 1
   synergySeriesId: 
   unlockMilestoneID: 
-  simpleStatModifiers:
-  - stat: 5
-    value: 0.08
-    valuePerLevel: 0.02
-    isPercentage: 1
-  - stat: 6
-    value: 0.08
-    valuePerLevel: 0.02
-    isPercentage: 1
+  simpleStatModifiers: []
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 6716071652329783299
-      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+    - rid: 1001
+      type: {class: SkillUseAttackSpeedEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        statModifiers:
-        - stat: 5
-          value: 0.08
-          valuePerLevel: 0.02
-          isPercentage: 1
-        - stat: 6
-          value: 0.08
-          valuePerLevel: 0.02
-          isPercentage: 1
+        attackSpeedBonus: 0.2
+        bonusPerLevel: 0.04
+        duration: 3

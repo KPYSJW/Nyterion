@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Relic_PortalGate
   m_EditorClassIdentifier: 
   relicName: Relic of Portal Gate
-  koreanName: "\ucc28\uc6d0\ubb38"
-  description_KR: "\uc11c\ub85c \uc655\ubcf5\ud560 \uc218 \uc788\ub294 \ucc28\uc6d0\ubb38 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
-  description_EN: "Grants a portal skill that lets you travel between linked portals."
-  Image: {fileID: -748852817, guid: d6c0af1a09c2f8d44bd0290a73d45adc, type: 3}
+  koreanName: "\uCC28\uC6D0\uBB38"
+  englishName: 
+  description_KR: "\uC11C\uB85C \uC655\uBCF5\uD560 \uC218 \uC788\uB294 \uCC28\uC6D0\uBB38
+    \uC2A4\uD0AC\uC744 \uC5BB\uB294\uB2E4."
+  description_EN: Grants a portal skill that lets you travel between linked portals.
+  Image: {fileID: 21300000, guid: 79ea3a7594f396f48a41f10a079f6662, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

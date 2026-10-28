@@ -17,39 +17,26 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: 06d9fc9a421e428491e941c67379f89f, type: 3}
   badgeBackgroundColor: {r: 0.08, g: 0.42, b: 0.38, a: 0.96}
   badgeTextColor: {r: 0.86, g: 1, b: 0.94, a: 1}
-  description_KR: "\uAE30\uB3D9\uB825\uC744 \uB192\uC774\uACE0 \uB300\uC2DC \uD6C4
-    \uACF5\uACA9\uC744 \uAC15\uD654\uD558\uBA70 \uB3CC\uD48D \uD22C\uC0AC\uCCB4\uB97C
-    \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
-  description_EN: Improve mobility and empower attacks after dashing with a wind
-    projectile.
+  description_KR: "기동력을 높이고 대시 시 돌풍 투사체를 발사합니다."
+  description_EN: "Improve mobility and fire a wind projectile when dashing."
   synergySeriesId: MobileWarriorSeries
   bonusModules:
-  - description_KR: "\uC774\uB3D9 \uC18D\uB3C4 +6%, \uB300\uC2DC \uC7AC\uC0AC\uC6A9
-      \uB300\uAE30\uC2DC\uAC04 -8%"
-    description_EN: Move speed +6% and dash cooldown -8%
+  - description_KR: "이동 속도를 높이고 대시 재사용 대기시간을 줄입니다."
+    description_EN: "Increase movement speed and reduce dash cooldown."
     condition:
       rid: 2001
     effects:
     - rid: 2002
-  - description_KR: "\uC774\uB3D9 \uC18D\uB3C4 +10%, \uB300\uC2DC \uC7AC\uC0AC\uC6A9
-      \uB300\uAE30\uC2DC\uAC04 -12%. \uB300\uC2DC \uD6C4 3\uCD08 \uB3D9\uC548 \uADFC\uAC70\uB9AC\xB7\uC6D0\uAC70\uB9AC
-      \uACF5\uACA9\uB825 +12% \uB300\uC2DC \uD6C4 \uACF5\uACA9 \uC2DC \uB3CC\uD48D
-      \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
-    description_EN: Move speed +10% and dash cooldown -12%. Dashing grants +12% melee
-      and ranged damage for 3 seconds. An attack after dashing fires a wind projectile.
+  - description_KR: "기동력을 높이고 대시 시 공격을 강화하며 돌풍 투사체를 발사합니다."
+    description_EN: "Improve mobility, empower attacks after dashing, and fire a wind projectile when dashing."
     condition:
       rid: 4001
     effects:
     - rid: 4002
     - rid: 4003
     - rid: 1314306106538328064
-  - description_KR: "\uC774\uB3D9 \uC18D\uB3C4 +12%, \uB300\uC2DC \uC7AC\uC0AC\uC6A9
-      \uB300\uAE30\uC2DC\uAC04 -15%. \uB300\uC2DC \uD6C4 3\uCD08 \uB3D9\uC548 \uADFC\uAC70\uB9AC\xB7\uC6D0\uAC70\uB9AC
-      \uACF5\uACA9\uB825 +15%, \uCE58\uBA85\uD0C0 \uD655\uB960 +5%p \uB300\uC2DC
-      \uD6C4 \uACF5\uACA9 \uC2DC \uB3CC\uD48D \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
-    description_EN: Move speed +12% and dash cooldown -15%. Dashing grants +15% melee
-      and ranged damage and +5%p critical chance for 3 seconds. An attack after dashing
-      fires a wind projectile.
+  - description_KR: "기동력을 높이고 대시 시 공격과 치명타를 강화하며 돌풍 투사체를 발사합니다."
+    description_EN: "Improve mobility, empower attacks and critical chance after dashing, and fire a wind projectile when dashing."
     condition:
       rid: 6001
     effects:
@@ -103,10 +90,6 @@ MonoBehaviour:
       data:
         duration: 3
         statModifiers:
-        - stat: 3
-          value: 0.12
-          valuePerLevel: 0
-          isPercentage: 1
         - stat: 4
           value: 0.12
           valuePerLevel: 0
@@ -134,10 +117,6 @@ MonoBehaviour:
       data:
         duration: 3
         statModifiers:
-        - stat: 3
-          value: 0.15
-          valuePerLevel: 0
-          isPercentage: 1
         - stat: 4
           value: 0.15
           valuePerLevel: 0
@@ -152,9 +131,11 @@ MonoBehaviour:
         projectilePrefab: {fileID: 4542487117723958544, guid: b9966f24225e6f640b2cd9e2463f6ad1, type: 3}
         damageRatio: 0.75
         chargesPerDash: 1
+        targetSearchRadius: 8
     - rid: 1314306106538328065
       type: {class: DashWindProjectileEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         projectilePrefab: {fileID: 4542487117723958544, guid: b9966f24225e6f640b2cd9e2463f6ad1, type: 3}
         damageRatio: 1
         chargesPerDash: 1
+        targetSearchRadius: 8

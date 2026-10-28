@@ -445,14 +445,17 @@ namespace Nytherion.GamePlay.Characters.Companions
 
             if (TryAttack(target))
             {
-                float intervalMultiplier = 1f;
-                if (ownerManager != null &&
-                    ownerManager.TryGetComponent(out LegionCompanionRuntime legionRuntime))
-                {
-                    intervalMultiplier = legionRuntime.AttackIntervalMultiplier;
-                }
-                nextAttackTime = Time.time + Mathf.Max(0.01f, attackInterval * intervalMultiplier);
+                nextAttackTime = Time.time + GetAttackInterval();
             }
+        }
+
+        protected float GetAttackInterval()
+        {
+            float intervalMultiplier = ownerManager != null &&
+                ownerManager.TryGetComponent(out LegionCompanionRuntime legionRuntime)
+                ? legionRuntime.AttackIntervalMultiplier
+                : 1f;
+            return Mathf.Max(0.01f, attackInterval * intervalMultiplier);
         }
 
         protected virtual bool TryAttack(Transform target)
@@ -471,6 +474,12 @@ namespace Nytherion.GamePlay.Characters.Companions
         /// </summary>
         protected virtual void OnInitialized()
         {
+        }
+
+        /// <summary>유물 해제 시 소환수별 퇴장 처리를 수행합니다.</summary>
+        public virtual void Dismiss()
+        {
+            Destroy(gameObject);
         }
 
         /// <summary>

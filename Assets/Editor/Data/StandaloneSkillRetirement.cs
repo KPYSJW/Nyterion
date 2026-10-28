@@ -241,8 +241,8 @@ namespace Nytherion.Editor
         {
             PlayerManager player = root.AddComponent<PlayerManager>();
             PlayerData baseline = ScriptableObject.CreateInstance<PlayerData>();
-            baseline.meleeDamage = baseline.rangedDamage = 100f;
-            baseline.meleeSpeed = baseline.rangedSpeed = 1f;
+            baseline.rangedDamage = 100f;
+            baseline.rangedSpeed = 1f;
             baseline.dashSpeed = 5f;
             baseline.dashCooldown = 3f;
             typeof(PlayerManager).GetField("basePlayerData", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(player, baseline);
@@ -256,22 +256,20 @@ namespace Nytherion.Editor
             {
                 var routine = (IEnumerator)typeof(StatBuffSkill).GetMethod("BuffRoutine", flags).Invoke(skill, null);
                 Require(routine.MoveNext(), "오버드라이브 버프 시작", results);
-                Require(Mathf.Approximately(player.currentPlayerData.meleeDamage, 140f) &&
-                    Mathf.Approximately(player.currentPlayerData.rangedDamage, 140f) &&
-                    Mathf.Approximately(player.currentPlayerData.meleeSpeed, 1.4f) &&
+                Require(Mathf.Approximately(player.currentPlayerData.rangedDamage, 140f) &&
                     Mathf.Approximately(player.currentPlayerData.rangedSpeed, 1.4f) &&
                     Mathf.Approximately(player.currentPlayerData.dashSpeed, 7f) &&
                     Mathf.Approximately(player.currentPlayerData.dashCooldown, 3f),
                     "저장된 3레벨 적용: 공격력·공속·대시 속도 +40%, 대시 쿨타임 유지", results);
-                Require(!routine.MoveNext() && Mathf.Approximately(player.currentPlayerData.meleeDamage, 100f) &&
-                    Mathf.Approximately(player.currentPlayerData.meleeSpeed, 1f) && Mathf.Approximately(player.currentPlayerData.dashSpeed, 5f),
+                Require(!routine.MoveNext() && Mathf.Approximately(player.currentPlayerData.rangedDamage, 100f) &&
+                    Mathf.Approximately(player.currentPlayerData.rangedSpeed, 1f) && Mathf.Approximately(player.currentPlayerData.dashSpeed, 5f),
                     "지속 종료 후 버프 해제", results);
                 routine = (IEnumerator)typeof(StatBuffSkill).GetMethod("BuffRoutine", flags).Invoke(skill, null);
                 routine.MoveNext();
                 // 비활성 미리보기 객체에는 Unity가 OnDestroy를 보내지 않으므로 해제 콜백을 직접 검증합니다.
                 typeof(StatBuffSkill).GetMethod("OnDestroy", flags).Invoke(skill, null);
                 Object.DestroyImmediate(skill);
-                Require(Mathf.Approximately(player.currentPlayerData.meleeDamage, 100f) &&
+                Require(Mathf.Approximately(player.currentPlayerData.rangedDamage, 100f) &&
                     Mathf.Approximately(player.currentPlayerData.rangedSpeed, 1f), "장착 해제·파괴 시 버프 잔류 없음", results);
             }
             finally

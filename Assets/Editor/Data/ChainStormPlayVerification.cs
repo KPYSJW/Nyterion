@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -133,14 +133,9 @@ namespace Nytherion.Editor
             PlayerManager player = controller.GetComponent<PlayerManager>();
             HashSet<WindBlastProjectile> before = new HashSet<WindBlastProjectile>(Object.FindObjectsOfType<WindBlastProjectile>());
             player.EventManager.TriggerPlayerDashStarted();
-            Action<Vector2, Vector3> attack = (Action<Vector2, Vector3>)typeof(PlayerCombat)
-                .GetField("OnPlayerAttackStarted", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(player.PlayerCombat);
-            attack?.Invoke(Vector2.right, source.transform.position);
-            if (player.GetComponent<DashStormRuntime>().RemainingStormCharges == 3)
-                player.EventManager.TriggerPlayerRangedAttack(Vector2.right, 1, attackDamage, player.transform, "");
             player.currentPlayerData.critChance = 1f;
             WindBlastProjectile wind = Object.FindObjectsOfType<WindBlastProjectile>().FirstOrDefault(item => !before.Contains(item));
-            Require(wind != null, "대시 후 공격 이벤트로 돌풍 자동 발사");
+            Require(wind != null, "대시 이벤트로 돌풍 즉시 발사");
             float windDamage = (float)typeof(WindBlastProjectile).GetField("damage", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(wind);
             if (SessionState.GetBool(Pending + ".ZeroDamage", false))
                 Require(windDamage == 0f, "숲의 가시 데이터로 자동 발사된 돌풍 피해량 0");
@@ -193,14 +188,13 @@ namespace Nytherion.Editor
             Physics2D.SyncTransforms();
             if (archerOnly) return;
             player.EventManager.TriggerPlayerDashStarted();
-            Require(runtime.RemainingStormCharges == 3, "실제 대시 이벤트 3회 충전");
+            Require(Object.FindObjectsOfType<WindBlastProjectile>().Length > 0, "실제 대시 이벤트 돌풍 발사");
             Action<Vector2, Vector3> attack = (Action<Vector2, Vector3>)typeof(PlayerCombat)
                 .GetField("OnPlayerAttackStarted", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(player.PlayerCombat);
             attack?.Invoke(Vector2.right, source.transform.position);
             // 차징 무기는 공격 시작 대신 실제 원거리 발사 이벤트를 사용합니다.
-            if (runtime.RemainingStormCharges == 3)
-                player.EventManager.TriggerPlayerRangedAttack(Vector2.right, 1, attackDamage, player.transform, "");
-            Require(runtime.RemainingStormCharges == 2, "실제 공격 이벤트 충전 1회 소모");
+
+
             player.currentPlayerData.critChance = 1f;
             results.Add("검증 구성: 폭풍사수 6세트·돌풍 6세트·연쇄 폭풍·대시 후 공격·치명타 100%");
             results.Add("일반 적중 입력 피해량=" + attackDamage);

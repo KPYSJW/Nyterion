@@ -21,6 +21,12 @@ namespace Nytherion.Core.Managers
         [SerializeField, Tooltip("유물 창을 열고 닫는 키")]
         private Key relicUIToggleKey = Key.U;
 
+        [SerializeField, Tooltip("주변 유물을 모두 획득하는 키")]
+        private Key collectAllRelicsKey = Key.G;
+        public Key CollectAllRelicsKey => collectAllRelicsKey;
+        public bool CanCollectAllRelics => isActiveAndEnabled && playerActions != null &&
+            playerActions.Player.Interact.enabled && Time.timeScale > 0f && !UIPanelBase.IsAnyPanelOpen;
+
         public Vector2 MoveInput { get; private set; }
         public bool Dash { get; private set; }
         public bool IsControlPressed { get; private set; }
@@ -40,6 +46,7 @@ namespace Nytherion.Core.Managers
         public event Action OnPausePressed;
 
         public event Action onInteract;
+        public event Action onCollectAllRelics;
 
         public event Action onMap;
 
@@ -221,6 +228,12 @@ namespace Nytherion.Core.Managers
                 Keyboard.current[relicUIToggleKey].wasPressedThisFrame)
             {
                 onToggleRelicUI?.Invoke();
+            }
+
+            if (Keyboard.current != null && collectAllRelicsKey != Key.None && CanCollectAllRelics &&
+                Keyboard.current[collectAllRelicsKey].wasPressedThisFrame)
+            {
+                onCollectAllRelics?.Invoke();
             }
         }
     }

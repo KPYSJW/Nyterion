@@ -30,11 +30,12 @@ namespace Nytherion.Data.ScriptableObjects.Skill
             LocalizationTables.Skills,
             LocalizationKeys.SkillDescription(skillID),
             description,
-            description);
+            description) + "\n" + LocalizationText.Get(LocalizationTables.UI,
+                "ui.skill.mana_cost", "마나 : [{0}]", "Mana : [{0}]", Mathf.Max(0, manaCost));
         public int skillLevel;
         public int exp;
         public float coolDown;
-        public int manaCost;
+        [Min(0)] public int manaCost;
         public float damage;
         public float range;
 

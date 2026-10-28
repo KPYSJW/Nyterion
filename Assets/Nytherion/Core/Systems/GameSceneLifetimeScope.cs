@@ -83,6 +83,7 @@ public class GameSceneLifetimeScope : LifetimeScope
         InstallGameSceneSystems(builder);
 
         builder.RegisterEntryPoint<GameSceneInitializer>();
+        builder.RegisterEntryPoint<RelicCollectAllController>();
 
         if (progressionDebugUI != null)
         {
@@ -239,6 +240,7 @@ public class GameSceneLifetimeScope : LifetimeScope
 
     private void RegisterUIComponents(IContainerBuilder builder)
     {
+        builder.RegisterComponentInHierarchy<Nytherion.UI.Components.HPBarUI>();
         // 인벤토리 UI 슬롯 컴포넌트들을 씬에서 찾아서 등록
         builder.RegisterComponentInHierarchy<InventorySlotUI>()
                 .AsImplementedInterfaces()

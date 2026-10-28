@@ -960,7 +960,7 @@ namespace Nytherion.Editor
 
                     if (entry.ContainsKey("Stat1_Type") && !string.IsNullOrEmpty(entry["Stat1_Type"]))
                     {
-                        if (System.Enum.TryParse(entry["Stat1_Type"], out StatType stat1Type))
+                        if (System.Enum.TryParse(entry["Stat1_Type"], out StatType stat1Type) && !stat1Type.IsRetired())
                         {
                             float val = 0f;
                             float valPerLvl = 0f;
@@ -987,7 +987,7 @@ namespace Nytherion.Editor
 
                     if (entry.ContainsKey("Stat2_Type") && !string.IsNullOrEmpty(entry["Stat2_Type"]))
                     {
-                        if (System.Enum.TryParse(entry["Stat2_Type"], out StatType stat2Type))
+                        if (System.Enum.TryParse(entry["Stat2_Type"], out StatType stat2Type) && !stat2Type.IsRetired())
                         {
                             float val = 0f;
                             float valPerLvl = 0f;
@@ -1155,7 +1155,7 @@ namespace Nytherion.Editor
 
                     if (entry.ContainsKey("Stat1_Type") && !string.IsNullOrEmpty(entry["Stat1_Type"]))
                     {
-                        if (System.Enum.TryParse(entry["Stat1_Type"], out StatType stat1Type))
+                        if (System.Enum.TryParse(entry["Stat1_Type"], out StatType stat1Type) && !stat1Type.IsRetired())
                         {
                             float val = 0f;
                             float valPerLvl = 0f;
@@ -1182,7 +1182,7 @@ namespace Nytherion.Editor
 
                     if (entry.ContainsKey("Stat2_Type") && !string.IsNullOrEmpty(entry["Stat2_Type"]))
                     {
-                        if (System.Enum.TryParse(entry["Stat2_Type"], out StatType stat2Type))
+                        if (System.Enum.TryParse(entry["Stat2_Type"], out StatType stat2Type) && !stat2Type.IsRetired())
                         {
                             float val = 0f;
                             float valPerLvl = 0f;

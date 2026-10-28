@@ -8,10 +8,14 @@ namespace Nytherion.Data.ScriptableObjects.Player
     public class PlayerData : ScriptableObject
     {
         public float maxHealth;
+        [Min(0f)] public float maxMana = 100f;
+        [Min(0f)] public float manaRegenPerSecond = 5f;
+        [Min(0f)] public float skillDamageMultiplier = 1f;
+        [Min(0f)] public float skillCooldownMultiplier = 1f;
         public float moveSpeed;
-        public float meleeDamage;
+        [HideInInspector] public float meleeDamage; // 기존 데이터 호환용, 전투 계산에서 사용하지 않습니다.
         public float rangedDamage;
-        public float meleeSpeed;
+        [HideInInspector] public float meleeSpeed; // 기존 데이터 호환용, 전투 계산에서 사용하지 않습니다.
         public float rangedSpeed;
         public float dashSpeed;
         public float dashDuration;

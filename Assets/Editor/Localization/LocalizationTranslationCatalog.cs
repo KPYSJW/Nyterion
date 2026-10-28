@@ -63,6 +63,11 @@ namespace Nytherion.Editor.Localization
                 ["ui.relic.transcendence.active"] = new TranslationEntry("ui.relic.transcendence.active", "\n활성화됨", "\nActive"),
                 ["ui.relic.transcendence.inactive"] = new TranslationEntry("ui.relic.transcendence.inactive", "\n활성 조건 미달", "\nActivation requirements not met"),
                 ["ui.stat.maxHealth"] = new TranslationEntry("ui.stat.maxHealth", "최대 체력", "Max Health"),
+                ["ui.stat.maxMana"] = new TranslationEntry("ui.stat.maxMana", "최대 마나", "Max Mana"),
+                ["ui.stat.skillDamageMultiplier"] = new TranslationEntry("ui.stat.skillDamageMultiplier", "스킬 피해", "Skill Damage"),
+                ["ui.stat.skillCooldownMultiplier"] = new TranslationEntry("ui.stat.skillCooldownMultiplier", "스킬 쿨타임", "Skill Cooldown"),
+                ["ui.skill.mana_cost"] = new TranslationEntry("ui.skill.mana_cost", "마나 : [{0}]", "Mana : [{0}]"),
+                ["ui.stat.manaRegenPerSecond"] = new TranslationEntry("ui.stat.manaRegenPerSecond", "초당 마나 회복", "Mana Regen / sec"),
                 ["ui.stat.defense"] = new TranslationEntry("ui.stat.defense", "방어력", "Defense"),
                 ["ui.stat.moveSpeed"] = new TranslationEntry("ui.stat.moveSpeed", "이동 속도", "Move Speed"),
                 ["ui.stat.meleeDamage"] = new TranslationEntry("ui.stat.meleeDamage", "근접 공격력", "Melee Damage"),
@@ -123,7 +128,7 @@ namespace Nytherion.Editor.Localization
                 ["skill_shadow_clone"] = ("그림자 분신", "Shadow Clone"),
                 ["skill_souleater"] = ("영혼 포식자", "Soul Eater"),
                 ["skill_spiral"] = ("나선", "Spiral"),
-                ["skill_turret"] = ("루티 포탑", "Rooti Turret"),
+                ["skill_turret"] = ("루티", "Rooti"),
                 ["skill_pyro_tank"] = ("폭열 전차", "Pyro Tank"),
                 ["skill_chain_ignition"] = ("연쇄 점화", "Chain Ignition")
             };
@@ -143,7 +148,7 @@ namespace Nytherion.Editor.Localization
                 ["skill_shadow_clone"] = "함께 공격하는 그림자 분신 소환",
                 ["skill_souleater"] = "적을 처치할수록 강해지는 투사체 발사",
                 ["skill_spiral"] = "주변 적을 공격하는 회전 구체 소환",
-                ["skill_turret"] = "적을 자동으로 공격하는 루티 포탑 설치",
+                ["skill_turret"] = "적을 자동으로 공격하는 루티를 소환합니다.",
                 ["skill_pyro_tank"] = "적에게 돌진해 폭발하는 전차 소환",
                 ["skill_chain_ignition"] = "조준 방향으로 연속 화염 폭발"
             };
@@ -163,7 +168,7 @@ namespace Nytherion.Editor.Localization
                 ["skill_shadow_clone"] = "Summons a shadow clone that attacks alongside you.",
                 ["skill_souleater"] = "Fires a projectile that grows stronger with each kill.",
                 ["skill_spiral"] = "Summons spinning orbs that attack nearby enemies.",
-                ["skill_turret"] = "Deploys a Rooti turret that automatically attacks enemies.",
+                ["skill_turret"] = "Summons Rooti to automatically attack enemies.",
                 ["skill_pyro_tank"] = "Summons a tank that charges at enemies and explodes.",
                 ["skill_chain_ignition"] = "Unleashes successive fire explosions toward your aim."
             };

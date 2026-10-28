@@ -25,6 +25,7 @@ namespace Nytherion.Gameplay.Relics.Modules
 
         [Tooltip("레벨이 1 오를 때마다 추가되는 최대치 한도")]
         public float maxBonusPerLevel = 0.05f;
+        public bool isPercentage;
 
         private PlayerManager cachedPlayerManager;
         private int currentLevel;
@@ -56,6 +57,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                     cachedPlayerManager.RemoveTemporaryStatModifier(currentModifier);
                     currentModifier = null;
                 }
+                cachedPlayerManager = null;
             }
             Debug.Log($"[KillCountGrowth] 성장형 스탯({targetStat}) 효과 해제.");
         }
@@ -82,6 +84,13 @@ namespace Nytherion.Gameplay.Relics.Modules
             // 최대치 한도 적용
             float finalBonus = Mathf.Min(rawBonus, currentMaxBonus);
 
+            // 복수 성장 효과가 능력치 알림으로 서로 같은 값을 반복 적용하지 않게 합니다.
+            if (currentModifier != null && Mathf.Approximately(currentModifier.value, finalBonus))
+            {
+                isUpdating = false;
+                return;
+            }
+
             if (currentModifier != null)
             {
                 cachedPlayerManager.RemoveTemporaryStatModifier(currentModifier);
@@ -93,7 +102,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                 stat = targetStat,
                 value = finalBonus,
                 valuePerLevel = 0f,
-                isPercentage = false
+                isPercentage = isPercentage
             };
 
             cachedPlayerManager.AddTemporaryStatModifier(currentModifier);

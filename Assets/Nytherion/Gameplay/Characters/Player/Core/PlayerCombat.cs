@@ -182,6 +182,10 @@ namespace Nytherion.GamePlay.Characters.Player
 
         public void EquipWeapon(WeaponBase weaponPrefab, WeaponData data = null)
         {
+            // 구형 저장 데이터나 프리팹을 직접 전달해도 플레이어 근접 무기는 장착하지 않습니다.
+            WeaponData requestedData = data != null ? data : weaponPrefab != null ? weaponPrefab.weaponData : null;
+            if (requestedData != null && !requestedData.IsRuntimeAvailable) return;
+
             CancelGenericCharge();
             if (currentWeapon != null)
             {

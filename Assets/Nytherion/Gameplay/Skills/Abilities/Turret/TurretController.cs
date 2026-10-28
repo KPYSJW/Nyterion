@@ -30,6 +30,7 @@ namespace Nytherion.GamePlay.Skills
         private string poolTag;
         private bool isReturning;
         public float EffectSizeMultiplier { get; set; } = 1f;
+        public void SetSkillDamageMultiplier(float multiplier) => damage *= Mathf.Max(0f, multiplier);
 
         public void SetPool(ObjectPoolManager pool, string tag)
         {
