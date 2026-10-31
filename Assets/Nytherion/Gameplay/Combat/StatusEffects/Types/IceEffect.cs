@@ -6,7 +6,6 @@ namespace Nytherion.GamePlay.Combat
     public class IceEffect : StatusEffect
     {
         public override string EffectId => "Ice";
-        public override Color EffectColor => new Color(0.75f, 0.95f, 1.0f); // 전격과의 톤 분리를 위한 차가운 백하늘색 서리 빛
 
         private int currentStacks = 1;
         private int maxStacks = 5;

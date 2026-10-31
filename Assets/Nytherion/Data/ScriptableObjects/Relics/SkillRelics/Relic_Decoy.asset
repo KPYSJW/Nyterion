@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Relic_Decoy
   m_EditorClassIdentifier: 
   relicName: Relic of Decoy
-  koreanName: "\ud5c8\uc218\uc544\ube44"
-  englishName: Decoy
-  description_KR: "\uc8fc\ubcc0 \uc801\uc744 \uc720\uc778\ud558\ub294 \ud5c8\uc218\uc544\ube44 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
-  description_EN: "Grants a Decoy skill that taunts nearby enemies."
-  Image: {fileID: -1722056694, guid: 1c3f4c136415d984097357642c154743, type: 3}
+  koreanName: "\uD5C8\uC218\uC544\uBE44 \uB9C8\uBC95 \uCC45"
+  englishName: Decoy Magic Book
+  description_KR: "\uC8FC\uBCC0 \uC801\uC744 \uC720\uC778\uD558\uB294 \uD5C8\uC218\uC544\uBE44
+    \uC2A4\uD0AC\uC744 \uC5BB\uB294\uB2E4."
+  description_EN: Grants a Decoy skill that taunts nearby enemies.
+  Image: {fileID: 21300000, guid: 5a6e6de35a01543499ee54d27fe38069, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0

@@ -84,9 +84,14 @@ namespace Nytherion.Editor
         {
             switch (skill.skillID)
             {
+                case "skill_blackhole": return "블랙홀 마법 책";
                 case "skill_bubble_shield": return "비눗방울";
-                case "skill_decoy": return "허수아비";
-                case "skill_turret": return "루티";
+                case "skill_chain_ignition": return "연쇄 점화 마법 책";
+                case "skill_decoy": return "허수아비 마법 책";
+                case "skill_fire_bolt": return "파이어볼 마법 책";
+                case "skill_meteor_strike": return "메테오 마법 책";
+                case "skill_shadow_clone": return "그림자 분신 마법 책";
+                case "skill_turret": return "루티 마법 책";
                 case "skill_spiral": return "나선";
             }
             string name = string.IsNullOrWhiteSpace(currentName) ? skill.skillName : currentName;
@@ -117,6 +122,14 @@ namespace Nytherion.Editor
                 case "skill_decoy":
                     korean = "주변 적을 유인하는 허수아비 스킬을 얻는다.";
                     english = "Grants a Decoy skill that taunts nearby enemies.";
+                    return;
+                case "skill_fire_bolt":
+                    korean = "적에게 피해와 화상을 주는 파이어볼 스킬을 얻는다.";
+                    english = "Grants a fireball skill that damages and burns enemies.";
+                    return;
+                case "skill_ice_shot":
+                    korean = "적에게 피해와 빙결을 주는 아이스샷 스킬을 얻는다.";
+                    english = "Grants an ice shot skill that damages and chills enemies.";
                     return;
                 case "skill_lifesteal":
                     korean = "공격 피해로 체력을 회복하는 생명력 흡수 스킬을 얻는다.";

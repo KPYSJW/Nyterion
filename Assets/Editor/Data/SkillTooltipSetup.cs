@@ -67,7 +67,6 @@ namespace Nytherion.Editor
                     PrefabUtility.SaveAsPrefabAsset(tooltip, PrefabPath);
                 }
                 finally { PrefabUtility.UnloadPrefabContents(tooltip); }
-                SkillTooltipVerification.RefreshPreview();
                 return;
             }
             string request = Output + "/setup.request";
@@ -282,7 +281,6 @@ namespace Nytherion.Editor
             Directory.CreateDirectory(Output);
             File.WriteAllLines(Output + "/descriptions.txt", results);
             GenerateSkillRelics.UpdateAllSkillRelicDescriptions(silent: true);
-            SkillTooltipVerification.RefreshPreview();
         }
 
         private static TextMeshProUGUI CreateText(Transform parent, string name, TMP_FontAsset font,

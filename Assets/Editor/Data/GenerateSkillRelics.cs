@@ -117,13 +117,13 @@ namespace Nytherion.Editor
 
                 // 표시 이름과 파일명은 Rooti를 사용하고 기존 저장 데이터의 ID는 유지합니다.
                 relicData.relicName = isRooti ? "Relic of Turret" : $"Relic of {cleanName}";
-                if (isRooti) relicData.englishName = "Rooti";
+                if (isRooti) relicData.englishName = "Rooti Magic Book";
                 relicData.koreanName = RelicDescriptionSetup.GetSkillRelicName(skill);
                 GetSkillRelicDescriptions(skill, out string descriptionKR, out string descriptionEN);
                 relicData.description_KR = descriptionKR;
                 relicData.description_EN = descriptionEN;
                 relicData.Image = isRooti
-                    ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/Rooti.png")
+                    ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicRooti.png")
                     : skill.icon;
                 if (skill.skillID == "skill_portal_gate")
                     relicData.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/WarpGear.png") ?? relicData.Image;
@@ -251,9 +251,9 @@ namespace Nytherion.Editor
                             string newName = RelicDescriptionSetup.GetSkillRelicName(grantEffect.skillData, relic.koreanName);
                             // 루티 유물은 스킬과 다른 전용 아이콘을 사용합니다.
                             Sprite rootiRelicIcon = grantEffect.skillData.skillID == "skill_turret"
-                                ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/Rooti.png") : null;
+                                ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicRooti.png") : null;
                             bool updateRooti = grantEffect.skillData.skillID == "skill_turret" &&
-                                (relic.koreanName != "루티" || relic.Image != rootiRelicIcon);
+                                (relic.koreanName != "루티 마법 책" || relic.Image != rootiRelicIcon);
                             if (relic.description_KR != newKR || relic.description_EN != newEN || relic.koreanName != newName || updateRooti)
                             {
                                 relic.koreanName = newName;
@@ -261,7 +261,7 @@ namespace Nytherion.Editor
                                 relic.description_EN = newEN;
                                 if (updateRooti)
                                 {
-                                    relic.koreanName = "루티";
+                                    relic.koreanName = "루티 마법 책";
                                     relic.Image = rootiRelicIcon;
                                 }
                                 EditorUtility.SetDirty(relic);

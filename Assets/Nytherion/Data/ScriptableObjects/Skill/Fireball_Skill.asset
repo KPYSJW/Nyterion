@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89459c6e9ce74364baff0021ef567456, type: 3}
+  m_Name: Fireball_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_fire_bolt
+  isDisabled: 0
+  skillType: 18
+  skillName: "\uD30C\uC774\uC5B4\uBCFC"
+  description: "\uc801\uc5d0\uac8c \ud53c\ud574\ub97c \uc8fc\uace0 \ud654\uc0c1\uc744 \uc785\ud788\ub294 \ud654\uc5fc \ud22c\uc0ac\uccb4\ub97c \ubc1c\uc0ac\ud569\ub2c8\ub2e4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 1
+  manaCost: 10
+  damage: 10
+  range: 12
+  icon: {fileID: 21300000, guid: 468a78cabfab3f5428a630f629084993, type: 3}
+  skillPrefab: {fileID: 5300384103703289168, guid: b540c8bdbe467854ca02e7a779c5c98e, type: 3}
+  unlockMilestoneID: 
+  projectilePrefab: {fileID: 5703923900086445739, guid: 82678d7f59c7864439b7c68a05e68046, type: 3}
+  projectileFrames:
+  - {fileID: -1836640416, guid: b724c9ad2367c6040b763a6f1745d7b8, type: 3}
+  - {fileID: -2022041696, guid: b724c9ad2367c6040b763a6f1745d7b8, type: 3}
+  - {fileID: 1854902596, guid: b724c9ad2367c6040b763a6f1745d7b8, type: 3}
+  - {fileID: -67482135, guid: b724c9ad2367c6040b763a6f1745d7b8, type: 3}
+  hitFrames:
+  - {fileID: 1254909560, guid: fe39388fa89063e47bb800c53089a835, type: 3}
+  - {fileID: -587841119, guid: fe39388fa89063e47bb800c53089a835, type: 3}
+  - {fileID: 1162837399, guid: fe39388fa89063e47bb800c53089a835, type: 3}
+  - {fileID: -701922669, guid: fe39388fa89063e47bb800c53089a835, type: 3}
+  - {fileID: -2086324415, guid: fe39388fa89063e47bb800c53089a835, type: 3}
+  - {fileID: 578880803, guid: fe39388fa89063e47bb800c53089a835, type: 3}
+  - {fileID: 1893087440, guid: fe39388fa89063e47bb800c53089a835, type: 3}
+  projectileVisualScale: 0.6
+  hitVisualScale: 0.5
+  hitVerticalScale: 1
+  speed: 7
+  projectileLifetime: 1
+  projectileSpreadAngle: 60
+  collisionRadius: 0.25
+  projectileFps: 12
+  hitFps: 14
+  damagePerLevel: 2
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 2568

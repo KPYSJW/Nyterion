@@ -15,7 +15,6 @@ namespace Nytherion.GamePlay.Combat
         private bool randomWhenNoTarget;
         private bool enemyHitsOnly;
         private HashSet<Transform> hitTargets = new HashSet<Transform>();
-        private static readonly Collider2D[] bounceBuffer = new Collider2D[10];
         private readonly List<Collider2D> enemyHits = new List<Collider2D>(16);
 
         private void OnEnable()
@@ -51,35 +50,36 @@ namespace Nytherion.GamePlay.Combat
             if (enemyHitsOnly) hitTargets.Add(ResolveTarget(target));
             if (currentBounces <= 0) return false;
 
-            Transform hitTarget = enemyHitsOnly ? ResolveTarget(target) : target.transform;
+            Transform hitTarget = ResolveTarget(target);
             hitTargets.Add(hitTarget);
 
             enemyHits.Clear();
-            int hitCount = enemyHitsOnly
-                ? Physics2D.OverlapCircle(transform.position, searchRadius, new ContactFilter2D { useTriggers = true }, enemyHits)
-                : Physics2D.OverlapCircleNonAlloc(transform.position, bounceRadius, bounceBuffer);
-            Transform nextTarget = null;
+            int hitCount = Physics2D.OverlapCircle(transform.position,
+                enemyHitsOnly ? searchRadius : bounceRadius,
+                new ContactFilter2D { useTriggers = true }, enemyHits);
+            Collider2D nextTarget = null;
             float closestDistSqr = Mathf.Infinity;
 
             for (int i = 0; i < hitCount; i++)
             {
-                Collider2D hit = enemyHitsOnly ? enemyHits[i] : bounceBuffer[i];
+                Collider2D hit = enemyHits[i];
                 if (!CollisionObject.IsEnemyCollider(hit)) continue;
-                Transform candidate = enemyHitsOnly ? ResolveTarget(hit) : hit.transform;
+                Transform candidate = ResolveTarget(hit);
+                IDamageable damageable = hit.GetComponentInParent<IDamageable>();
+                if (damageable is MonoBehaviour owner &&
+                    (!owner.isActiveAndEnabled || (owner is EnemyBase enemy && enemy.isDead))) continue;
                 if (enemyHitsOnly)
                 {
-                    IDamageable damageable = hit.GetComponentInParent<IDamageable>();
                     if (!(damageable is MonoBehaviour behaviour) || !behaviour.isActiveAndEnabled ||
-                        (behaviour is EnemyBase enemy && enemy.isDead) ||
                         (hit.isTrigger && hit.transform != candidate)) continue;
                 }
                 if (candidate != hitTarget && !hitTargets.Contains(candidate))
                 {
-                    float distSqr = (transform.position - hit.transform.position).sqrMagnitude;
+                    float distSqr = ((Vector2)transform.position - (Vector2)hit.bounds.center).sqrMagnitude;
                     if (distSqr < closestDistSqr)
                     {
                         closestDistSqr = distSqr;
-                        nextTarget = candidate;
+                        nextTarget = hit;
                     }
                 }
             }
@@ -88,7 +88,7 @@ namespace Nytherion.GamePlay.Combat
             {
                 currentBounces--;
                 Vector2 direction;
-                if (nextTarget != null) direction = (nextTarget.position - transform.position).normalized;
+                if (nextTarget != null) direction = ((Vector2)nextTarget.bounds.center - (Vector2)transform.position).normalized;
                 else
                 {
                     float randomAngle = Random.Range(0f, Mathf.PI * 2f);
@@ -103,6 +103,7 @@ namespace Nytherion.GamePlay.Combat
 
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                if (TryGetComponent(out HomingProj homing)) homing.SetBounceTarget(nextTarget);
                 if (enemyHitsOnly && TryGetComponent(out ProjDistanceLimit distanceLimit) && distanceLimit.enabled)
                     distanceLimit.Initialize(searchRadius);
 

@@ -38,8 +38,8 @@ MonoBehaviour:
   - offset: {x: -1, y: 0}
     type: 2
     levelAmount: 1
-  synergySeriesId: TrickshotEngineerSeries
-  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
+  synergySeriesId:
+  synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
   references:
     version: 2

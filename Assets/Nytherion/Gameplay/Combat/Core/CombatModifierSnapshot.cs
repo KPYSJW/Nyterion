@@ -5,7 +5,7 @@ using Nytherion.Data.ScriptableObjects.Relics;
 namespace Nytherion.GamePlay.Combat
 {
     /// <summary>
-    /// 장착 유물이 바뀔 때만 다시 계산되는 전투 보정값입니다.
+    /// 장착 유물 또는 디버그 전투 설정이 바뀔 때만 다시 계산되는 전투 보정값입니다.
     /// 발사·충돌·피격 경로에서는 목록 순회 없이 이 스냅샷만 조회합니다.
     /// </summary>
     public sealed class CombatModifierSnapshot
@@ -19,15 +19,17 @@ namespace Nytherion.GamePlay.Combat
         public bool HasProjectileBounce { get; }
         public bool HasProjectileHoming { get; }
 
-        private CombatModifierSnapshot(Dictionary<string, int> activeRelicLevels, bool hasProjectileHoming, bool hasProjectilePiercing)
+        private CombatModifierSnapshot(Dictionary<string, int> activeRelicLevels, bool hasProjectileHoming,
+            bool hasProjectilePiercing, bool debugProjectileBounce = false)
         {
             this.activeRelicLevels = activeRelicLevels;
             HasProjectilePiercing = hasProjectilePiercing || IsAnyActive("Piercing", "관통", "TangledYarn", "꼬인 실타래");
-            HasProjectileBounce = IsAnyActive("Bounce", "튕김", "SqueakyGear", "삐걱이는 톱니");
+            HasProjectileBounce = debugProjectileBounce ||
+                IsAnyActive("Bounce", "튕김", "SqueakyGear", "삐걱이는 톱니", "RubberBall", "Rubber Ball", "고무공");
             HasProjectileHoming = hasProjectileHoming;
         }
 
-        public static CombatModifierSnapshot Create(IReadOnlyList<RelicData> relics)
+        public static CombatModifierSnapshot Create(IReadOnlyList<RelicData> relics, bool debugProjectileBounce = false)
         {
             Dictionary<string, int> levels = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             bool hasProjectileHoming = false;
@@ -47,7 +49,7 @@ namespace Nytherion.GamePlay.Combat
                 }
             }
 
-            return new CombatModifierSnapshot(levels, hasProjectileHoming, hasProjectilePiercing);
+            return new CombatModifierSnapshot(levels, hasProjectileHoming, hasProjectilePiercing, debugProjectileBounce);
         }
 
         public bool IsActive(string relicId)

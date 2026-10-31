@@ -28,13 +28,6 @@ namespace Nytherion.Editor
         {
             if (EditorApplication.isCompiling || EditorApplication.isUpdating ||
                 EditorApplication.isPlayingOrWillChangePlaymode) return;
-            string verification = Output + "/verify-authoring.request";
-            if (File.Exists(verification))
-            {
-                File.Delete(verification);
-                WeaponFireEffectVerification.Run();
-                return;
-            }
             string request = Output + "/cleanup-particles.request";
             if (!File.Exists(request)) return;
             File.Delete(request);

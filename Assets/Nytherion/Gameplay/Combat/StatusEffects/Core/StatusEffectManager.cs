@@ -16,8 +16,11 @@ namespace Nytherion.GamePlay.Combat
         private EnemyStatusDisplayUI statusDisplay;
         private StatusEffectDatabase database;
         private PlayerManager playerManager;
+        private BurnTickVFX burnTickVFX;
+        private ShockPulseVFX shockPulseVFX;
 
         public PlayerManager PlayerManager => playerManager;
+        public StatusEffectDatabase Database => database;
 
         [Inject]
         public void Construct(StatusEffectDatabase database)
@@ -43,7 +46,8 @@ namespace Nytherion.GamePlay.Combat
 
         private void Start()
         {
-            SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+            SpriteRenderer sr = owner != null && owner.BodyRenderer != null
+                ? owner.BodyRenderer : GetComponentInChildren<SpriteRenderer>();
             statusDisplay = GetComponent<EnemyStatusDisplayUI>();
             if (statusDisplay == null)
             {
@@ -107,6 +111,16 @@ namespace Nytherion.GamePlay.Combat
 
         public void PlayVFX(string effectId)
         {
+            if (effectId == "Lightning")
+            {
+                PlayShockPulseVFX();
+                return;
+            }
+            if (effectId == "Fire")
+            {
+                PlayBurnTickVFX();
+                return;
+            }
             // 속성 이펙트 재생 비활성화
             /*
             GameObject go;
@@ -134,6 +148,8 @@ namespace Nytherion.GamePlay.Combat
 
         public void StopVFX(string effectId)
         {
+            if (effectId == "Lightning" && shockPulseVFX != null) shockPulseVFX.Stop();
+            if (effectId == "Fire" && burnTickVFX != null) burnTickVFX.Stop();
             // 속성 이펙트 정지 비활성화
             /*
             GameObject go;
@@ -142,6 +158,27 @@ namespace Nytherion.GamePlay.Combat
                 go.SetActive(false);
             }
             */
+        }
+
+        private void PlayBurnTickVFX()
+        {
+            if (owner == null || owner.isDead || !gameObject.activeInHierarchy ||
+                database == null || database.burnTickPrefab == null) return;
+            SpriteRenderer body = owner.BodyRenderer;
+            if (body == null || body.sprite == null) return;
+            // 적마다 하나만 생성하고 재사용합니다. 적이 풀에 반환될 때 함께 정지합니다.
+            if (burnTickVFX == null) burnTickVFX = Instantiate(database.burnTickPrefab, transform);
+            burnTickVFX.Play(body);
+        }
+
+        private void PlayShockPulseVFX()
+        {
+            if (owner == null || owner.isDead || !gameObject.activeInHierarchy ||
+                database == null || database.shockPulsePrefab == null) return;
+            SpriteRenderer body = owner.BodyRenderer;
+            if (body == null || body.sprite == null) return;
+            if (shockPulseVFX == null) shockPulseVFX = Instantiate(database.shockPulsePrefab, transform);
+            shockPulseVFX.Play(body);
         }
 
         public void ApplyEffect(StatusEffect newEffect)
@@ -169,12 +206,6 @@ namespace Nytherion.GamePlay.Combat
                 playerManager.TryGetComponent(out PoisonSetBonusRuntime poisonSetBonusRuntime))
             {
                 poisonSetBonusRuntime.ApplyTo(poisonEffect);
-            }
-
-            if (newEffect is IceEffect iceEffect && playerManager != null &&
-                playerManager.TryGetComponent(out FrostSetBonusRuntime frostSetBonusRuntime))
-            {
-                frostSetBonusRuntime.ApplyTo(iceEffect);
             }
 
             if (database != null)
@@ -209,11 +240,6 @@ namespace Nytherion.GamePlay.Combat
             newEffect.OnApply();
             RefreshCorrosiveFlameBonus();
 
-            if (owner != null)
-            {
-                owner.UpdateStatusColor();
-            }
-
             if (statusDisplay != null)
             {
                 statusDisplay.UpdateDisplay(activeEffects);
@@ -232,6 +258,21 @@ namespace Nytherion.GamePlay.Combat
             }
 
             result = null;
+            return false;
+        }
+
+        public bool RemoveEffect<T>() where T : StatusEffect
+        {
+            for (int i = activeEffects.Count - 1; i >= 0; i--)
+            {
+                if (!(activeEffects[i] is T effect)) continue;
+                effect.OnRemove();
+                activeEffects.RemoveAt(i);
+                RefreshCorrosiveFlameBonus();
+                if (statusDisplay != null) statusDisplay.UpdateDisplay(activeEffects);
+                if (activeEffects.Count == 0) enabled = false;
+                return true;
+            }
             return false;
         }
 
@@ -257,10 +298,6 @@ namespace Nytherion.GamePlay.Combat
             if (anyRemoved)
             {
                 RefreshCorrosiveFlameBonus();
-                if (owner != null)
-                {
-                    owner.UpdateStatusColor();
-                }
                 if (statusDisplay != null)
                 {
                     statusDisplay.UpdateDisplay(activeEffects);
@@ -362,22 +399,13 @@ namespace Nytherion.GamePlay.Combat
             return false;
         }
 
-        public Color GetStatusEffectColor()
-        {
-            if (activeEffects.Count == 0)
-            {
-                return Color.white;
-            }
-            return activeEffects[activeEffects.Count - 1].EffectColor;
-        }
-
-        public void TriggerLightningChain(float damageAmount)
+        public void TriggerLightningBonusDamage(float damageAmount)
         {
             for (int i = 0; i < activeEffects.Count; i++)
             {
                 if (activeEffects[i] is LightningEffect shock)
                 {
-                    shock.TriggerChainLightning(damageAmount);
+                    shock.ApplyBonusDamage(damageAmount);
                     break;
                 }
             }

@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Relic_ChainIgnition
   m_EditorClassIdentifier: 
   relicName: Relic of Chain Ignition
-  koreanName: "\uC5F0\uC1C4 \uC810\uD654"
-  englishName: 
+  koreanName: "\uC5F0\uC1C4 \uC810\uD654 \uB9C8\uBC95 \uCC45"
+  englishName: Chain Ignition Magic Book
   description_KR: "\uC870\uC900 \uBC29\uD5A5\uC73C\uB85C \uC5F0\uC18D \uD654\uC5FC
     \uD3ED\uBC1C\uC744 \uC77C\uC73C\uD0A4\uB294 \uC2A4\uD0AC\uC744 \uC5BB\uB294\uB2E4."
   description_EN: Grants a skill that unleashes successive fire explosions toward
     your aim.
-  Image: {fileID: 21300000, guid: 6d6d12706e2d0ad4496b60c51177abba, type: 3}
+  Image: {fileID: 21300000, guid: 6f8d72220b992d44c8fb96c97e69f901, type: 3}
   rarity: 0
   level: 1
   isDisabled: 0

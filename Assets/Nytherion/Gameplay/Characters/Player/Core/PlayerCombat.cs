@@ -99,8 +99,7 @@ namespace Nytherion.GamePlay.Characters.Player
              (currentWeapon is IChargeableWeapon chargeable && chargeable.IsCharging) ||
              (currentWeapon is FrenzyWeapon frenzy && frenzy.IsFiring) ||
              (currentWeapon is CrimsonLotusWeapon laser && laser.IsFiring) ||
-             (currentWeapon is ObliterationWeapon layLaser && layLaser.IsFiring) ||
-             (currentWeapon is VoidRayWeapon voidRay && voidRay.IsFiring));
+             (currentWeapon is ObliterationWeapon layLaser && layLaser.IsFiring));
         public float GenericChargePercent
         {
             get
@@ -279,9 +278,7 @@ namespace Nytherion.GamePlay.Characters.Player
                     }
                 }
 
-                // Void Ray는 WeaponItem처럼 프리팹만 전달되는 장착 경로에서도
-                // 프리팹에 연결된 DataAsset으로 반드시 초기화해야 고정 자세 값을 유지합니다.
-                if (equippedData != null && (data != null || currentWeapon is VoidRayWeapon))
+                if (equippedData != null && data != null)
                 {
                     currentWeapon.Initialize(equippedData);
                 }
@@ -405,15 +402,6 @@ namespace Nytherion.GamePlay.Characters.Player
 
                 Vector3 playerCenter = transform.position + centerOffset;
 
-                if (currentWeapon is VoidRayWeapon voidRayWeapon)
-                {
-                    weaponPoint.localPosition = Vector3.zero;
-                    weaponPoint.localRotation = Quaternion.identity;
-                    weaponPoint.localScale = Vector3.one;
-                    voidRayWeapon.UpdateAimAndPose(mouseWorldPos, playerCenter);
-                    return;
-                }
-
                 if (currentWeapon != null && currentWeapon.OverrideRotation)
                 {
                     weaponPoint.localPosition = Vector3.zero;
@@ -430,13 +418,8 @@ namespace Nytherion.GamePlay.Characters.Player
                 }
 
                 Vector2 mouseVector = mouseWorldPos - playerCenter;
-                bool keepVoidRayDirection = currentWeapon is VoidRayWeapon voidRay &&
-                    voidRay.firePoint != null &&
-                    ((Vector2)(mouseWorldPos - voidRay.firePoint.position)).sqrMagnitude < 0.0064f;
-
                 float targetAngle = currentAngle;
-                // 총구와 조준점이 거의 겹치면 atan2의 불안정한 값 대신 마지막 유효 각도를 유지합니다.
-                if (!keepVoidRayDirection && mouseVector.magnitude >= deadZoneRadius)
+                if (mouseVector.magnitude >= deadZoneRadius)
                 {
                     targetAngle = Mathf.Atan2(mouseVector.y, mouseVector.x) * Mathf.Rad2Deg;
                 }
@@ -478,11 +461,9 @@ namespace Nytherion.GamePlay.Characters.Player
             {
                 playerController?.NotifyCombatActivity();
                 currentWeapon.ResetGenericChargeMultiplier();
-                Vector2 fireDirection = currentWeapon is VoidRayWeapon voidRay
-                    ? voidRay.CurrentFireDirection
-                    : currentWeapon is CrimsonLotusWeapon laserWeapon
-                        ? laserWeapon.CurrentFireDirection
-                        : (Vector2)weaponPoint.right;
+                Vector2 fireDirection = currentWeapon is CrimsonLotusWeapon laserWeapon
+                    ? laserWeapon.CurrentFireDirection
+                    : (Vector2)weaponPoint.right;
                 Vector2 mouseScreenPos = inputManager.MousePosition;
                 Vector3 targetWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
                 targetWorldPos.z = 0f;
@@ -507,7 +488,6 @@ namespace Nytherion.GamePlay.Characters.Player
         private bool ShouldUseGenericCharging()
         {
             return currentWeapon != null &&
-                   !(currentWeapon is VoidRayWeapon) &&
                    !(currentWeapon is IChargeableWeapon) &&
                    playerManager != null &&
                    playerManager.playerRelicManager != null &&

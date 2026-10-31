@@ -7,29 +7,9 @@ using UnityEngine;
 
 namespace Nytherion.Editor
 {
-    [InitializeOnLoad]
     public static class ReviewPlayerCompilation
     {
         private const string Output = "output/review-player-compile";
-        static ReviewPlayerCompilation() => EditorApplication.update += Update;
-        private static void Update()
-        {
-            if (EditorApplication.isCompiling || EditorApplication.isUpdating) return;
-            if (File.Exists(Output + "/clear-progress.request"))
-            {
-                File.Delete(Output + "/clear-progress.request");
-                EditorUtility.ClearProgressBar();
-                File.WriteAllText(Output + "/progress-recovery.txt", "PASS 진행 표시 해제 요청 완료\n" +
-                    "isCompiling=" + EditorApplication.isCompiling + "\nisUpdating=" + EditorApplication.isUpdating +
-                    "\nisPlaying=" + EditorApplication.isPlaying + "\nisPaused=" + EditorApplication.isPaused +
-                    "\nscene=" + UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-                return;
-            }
-            if (EditorApplication.isPlayingOrWillChangePlaymode ||
-                !File.Exists(Output + "/compile.request")) return;
-            File.Delete(Output + "/compile.request");
-            Compile();
-        }
 
         [MenuItem("Tools/Nytherion/Review/Compile Windows Player Scripts")]
         public static void Compile()

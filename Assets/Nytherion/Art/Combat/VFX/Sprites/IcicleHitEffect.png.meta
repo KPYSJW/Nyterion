@@ -103,7 +103,7 @@ TextureImporter:
         x: 0
         y: 0
         width: 64
-        height: 32
+        height: 64
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,7 +124,7 @@ TextureImporter:
         x: 64
         y: 0
         width: 64
-        height: 32
+        height: 64
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,7 +145,7 @@ TextureImporter:
         x: 128
         y: 0
         width: 64
-        height: 32
+        height: 64
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,7 +166,7 @@ TextureImporter:
         x: 192
         y: 0
         width: 64
-        height: 32
+        height: 64
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -176,48 +176,6 @@ TextureImporter:
       bones: []
       spriteID: c1e14d8833706aa4993bd28f337c9252
       internalID: 1054471281
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: IcicleHitEffect_4
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 0
-        width: 64
-        height: 32
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cee1b9d037d51a54480f77a1b3d68e11
-      internalID: 1658730528
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: IcicleHitEffect_5
-      rect:
-        serializedVersion: 2
-        x: 320
-        y: 0
-        width: 64
-        height: 32
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 633c739c91be1864aa49df1e671eafd1
-      internalID: 1719299563
       vertices: []
       indices: 
       edges: []
@@ -237,8 +195,6 @@ TextureImporter:
       IcicleHitEffect_1: 910180980
       IcicleHitEffect_2: 730827887
       IcicleHitEffect_3: 1054471281
-      IcicleHitEffect_4: 1658730528
-      IcicleHitEffect_5: 1719299563
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

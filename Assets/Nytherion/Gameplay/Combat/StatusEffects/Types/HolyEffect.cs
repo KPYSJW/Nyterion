@@ -6,7 +6,6 @@ namespace Nytherion.GamePlay.Combat
     public class HolyEffect : StatusEffect
     {
         public override string EffectId => "Holy";
-        public override Color EffectColor => new Color(1.0f, 0.9f, 0.5f); // 신성 황금색
 
         private float outgoingDamageMultiplier = 0.9f; // 적이 가하는 피해 10% 감소
         private float healChance = 0.15f; // 15% 확률

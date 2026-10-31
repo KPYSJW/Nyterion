@@ -39,7 +39,7 @@ namespace Nytherion.Editor
             ("LightningPursuitTranscendence", "LightningPursuit", "연쇄 폭풍", "Chain Storm"),
             ("FrostWardenSet", "FrostWarden", "만년서리", "Everfrost"),
             ("TrickshotEngineerSet", "TrickshotEngineer", "난반사", "Ricochet"),
-            ("CrystalBallisticsTranscendence", "CrystalBallistics", "얼음 파편", "Ice Splinter")
+            ("IceSplinterTranscendence", "IceSplinter", "얼음 파편", "Ice Splinter")
         };
 
         static RelicSetRevision()

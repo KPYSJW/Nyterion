@@ -14,6 +14,13 @@ namespace Nytherion.Data.ScriptableObjects
         public Sprite holyIcon;
         public Sprite demonicIcon;
 
+        [Header("화상 피해 이펙트")]
+        public Nytherion.GamePlay.Combat.BurnTickVFX burnTickPrefab;
+
+        [Header("감전 이펙트")]
+        public Nytherion.GamePlay.Combat.ShockPulseVFX shockPulsePrefab;
+        [Min(0f)] public float lightningBonusDamageRatio = 0.3f;
+
         public Sprite GetIcon(string effectId)
         {
             switch (effectId)

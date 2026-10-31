@@ -4,14 +4,14 @@ namespace Nytherion.GamePlay.Combat
 {
     public class FireEffect : StatusEffect
     {
+        private const float BaseTickInterval = 1.5f;
         public override string EffectId => "Fire";
-        public override Color EffectColor => new Color(1.0f, 0.4f, 0.2f); // 주황빛 붉은색
 
         private float baseTickDamage;
         private float setDamageMultiplier = 1f;
         private int stackCount = 1;
         private int maximumStacks = 1;
-        private float tickInterval = 0.5f;
+        private float tickInterval = BaseTickInterval;
         private float nextTickTime;
         private float corrosiveDamageMultiplier = 1f;
         private float corrosiveIntervalMultiplier = 1f;
@@ -48,7 +48,7 @@ namespace Nytherion.GamePlay.Combat
             if (catalystLevel > 0)
             {
                 float reduction = 0.3f + (catalystLevel - 1) * 0.05f;
-                tickInterval = 0.5f * (1f - Mathf.Clamp(reduction, 0f, 0.6f));
+                tickInterval = BaseTickInterval * (1f - Mathf.Clamp(reduction, 0f, 0.6f));
             }
         }
 
@@ -85,7 +85,6 @@ namespace Nytherion.GamePlay.Combat
             float previousInterval = TickInterval;
             corrosiveDamageMultiplier = damageMultiplier;
             corrosiveIntervalMultiplier = intervalMultiplier;
-            // 다음 틱까지 남은 비율을 유지해 강화 시작·종료 시 틱이 초기화되지 않게 한다.
             if (previousInterval > 0f && nextTickTime > Time.time)
                 nextTickTime = Time.time + (nextTickTime - Time.time) * TickInterval / previousInterval;
         }
@@ -96,6 +95,7 @@ namespace Nytherion.GamePlay.Combat
             {
                 if (target != null && !target.isDead)
                 {
+                    manager?.PlayVFX(EffectId);
                     target.TakeDamageOverTime(TickDamage);
                 }
                 nextTickTime = Time.time + TickInterval;

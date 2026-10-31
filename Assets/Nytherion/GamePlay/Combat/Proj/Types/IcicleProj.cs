@@ -224,7 +224,14 @@ namespace Nytherion.GamePlay.Combat
                 if (ObjectPoolManager.Instance != null)
                 {
                     GameObject effectObj = ObjectPoolManager.Instance.SpawnFromPool("IcicleHitVFX", hitPoint, rotation);
-                    if (effectObj != null) WeaponVFXHelper.ApplyHitEffectSorting(effectObj);
+                    if (effectObj != null)
+                    {
+                        WeaponVFXHelper.ApplyHitEffectSorting(effectObj);
+                        if (effectObj.TryGetComponent(out SpriteRenderer effectRenderer))
+                        {
+                            effectRenderer.flipX = Random.value < 0.5f;
+                        }
+                    }
                 }
             }
 

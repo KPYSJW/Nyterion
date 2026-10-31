@@ -7,19 +7,19 @@ using UnityEngine;
 namespace Nytherion.Gameplay.Relics.Modules
 {
     /// <summary>
-    /// 관통·도탄·분열 같은 투사체 상호작용을 누적 강화하고 마지막 충돌에 잔향탄을 생성한다.
+    /// 도탄 피해와 속도를 강화하고 추가 탄환을 생성한다.
     /// </summary>
     [Serializable, RelicDisplayName("난반사 세트 강화")]
     public sealed class TrickshotSetBonusEffect : RelicEffectBase
     {
-        [Min(0f)] public float projectileDamageMultiplier = 1f;
-        [Min(0f)] public float interactionDamageBonus;
-        [Min(0)] public int maxInteractionStacks;
+        [Range(0f, 1f)] public float firstBounceDamageMultiplier = 0.5f;
+        [Range(0f, 1f)] public float laterBounceDamageMultiplier = 0.8f;
+        [Min(1f)] public float bounceSpeedMultiplier = 1f;
+        [Min(1f)] public float bounceDamageIncreaseMultiplier = 1f;
 
-        [Header("잔향탄")]
-        [Min(0)] public int echoProjectileCount;
-        [Min(0f)] public float echoDamageRatio;
-        [Min(0.1f)] public float echoSearchRadius = 6f;
+        [Header("추가 탄환")]
+        [Min(0)] public int extraProjectileCount;
+        [Min(0f)] public float extraProjectileDamageRatio;
 
         [NonSerialized] private TrickshotSetBonusRuntime appliedRuntime;
 
@@ -36,12 +36,12 @@ namespace Nytherion.Gameplay.Relics.Modules
 
             appliedRuntime.SetBonus(this, new TrickshotSetBonusValues
             {
-                ProjectileDamageMultiplier = projectileDamageMultiplier,
-                InteractionDamageBonus = interactionDamageBonus,
-                MaxInteractionStacks = maxInteractionStacks,
-                EchoProjectileCount = echoProjectileCount,
-                EchoDamageRatio = echoDamageRatio,
-                EchoSearchRadius = echoSearchRadius
+                FirstBounceDamageMultiplier = firstBounceDamageMultiplier,
+                LaterBounceDamageMultiplier = laterBounceDamageMultiplier,
+                BounceSpeedMultiplier = bounceSpeedMultiplier,
+                BounceDamageIncreaseMultiplier = bounceDamageIncreaseMultiplier,
+                ExtraProjectileCount = extraProjectileCount,
+                ExtraProjectileDamageRatio = extraProjectileDamageRatio
             });
         }
 
@@ -59,12 +59,12 @@ namespace Nytherion.Gameplay.Relics.Modules
 
     public struct TrickshotSetBonusValues
     {
-        public float ProjectileDamageMultiplier;
-        public float InteractionDamageBonus;
-        public int MaxInteractionStacks;
-        public int EchoProjectileCount;
-        public float EchoDamageRatio;
-        public float EchoSearchRadius;
+        public float FirstBounceDamageMultiplier;
+        public float LaterBounceDamageMultiplier;
+        public float BounceSpeedMultiplier;
+        public float BounceDamageIncreaseMultiplier;
+        public int ExtraProjectileCount;
+        public float ExtraProjectileDamageRatio;
     }
 
     public sealed class TrickshotSetBonusRuntime : MonoBehaviour
@@ -72,12 +72,12 @@ namespace Nytherion.Gameplay.Relics.Modules
         private readonly Dictionary<TrickshotSetBonusEffect, TrickshotSetBonusValues> bonuses =
             new Dictionary<TrickshotSetBonusEffect, TrickshotSetBonusValues>();
 
-        public float ProjectileDamageMultiplier { get; private set; } = 1f;
-        public float InteractionDamageBonus { get; private set; }
-        public int MaxInteractionStacks { get; private set; }
-        public int EchoProjectileCount { get; private set; }
-        public float EchoDamageRatio { get; private set; }
-        public float EchoSearchRadius { get; private set; } = 6f;
+        public float FirstBounceDamageMultiplier { get; private set; } = 0.5f;
+        public float LaterBounceDamageMultiplier { get; private set; } = 0.8f;
+        public float BounceSpeedMultiplier { get; private set; } = 1f;
+        public float BounceDamageIncreaseMultiplier { get; private set; } = 1f;
+        public int ExtraProjectileCount { get; private set; }
+        public float ExtraProjectileDamageRatio { get; private set; }
 
         public void SetBonus(TrickshotSetBonusEffect source, TrickshotSetBonusValues values)
         {
@@ -94,27 +94,21 @@ namespace Nytherion.Gameplay.Relics.Modules
 
         private void Recalculate()
         {
-            ProjectileDamageMultiplier = 1f;
-            InteractionDamageBonus = 0f;
-            MaxInteractionStacks = 0;
-            EchoProjectileCount = 0;
-            EchoDamageRatio = 0f;
-            EchoSearchRadius = 6f;
+            FirstBounceDamageMultiplier = 0.5f;
+            LaterBounceDamageMultiplier = 0.8f;
+            BounceSpeedMultiplier = 1f;
+            BounceDamageIncreaseMultiplier = 1f;
+            ExtraProjectileCount = 0;
+            ExtraProjectileDamageRatio = 0f;
 
             foreach (TrickshotSetBonusValues bonus in bonuses.Values)
             {
-                ProjectileDamageMultiplier = Mathf.Max(
-                    ProjectileDamageMultiplier,
-                    bonus.ProjectileDamageMultiplier);
-                InteractionDamageBonus = Mathf.Max(
-                    InteractionDamageBonus,
-                    bonus.InteractionDamageBonus);
-                MaxInteractionStacks = Mathf.Max(
-                    MaxInteractionStacks,
-                    bonus.MaxInteractionStacks);
-                EchoProjectileCount = Mathf.Max(EchoProjectileCount, bonus.EchoProjectileCount);
-                EchoDamageRatio = Mathf.Max(EchoDamageRatio, bonus.EchoDamageRatio);
-                EchoSearchRadius = Mathf.Max(EchoSearchRadius, bonus.EchoSearchRadius);
+                FirstBounceDamageMultiplier = Mathf.Max(FirstBounceDamageMultiplier, bonus.FirstBounceDamageMultiplier);
+                LaterBounceDamageMultiplier = Mathf.Max(LaterBounceDamageMultiplier, bonus.LaterBounceDamageMultiplier);
+                BounceSpeedMultiplier = Mathf.Max(BounceSpeedMultiplier, bonus.BounceSpeedMultiplier);
+                BounceDamageIncreaseMultiplier = Mathf.Max(BounceDamageIncreaseMultiplier, bonus.BounceDamageIncreaseMultiplier);
+                ExtraProjectileCount = Mathf.Max(ExtraProjectileCount, bonus.ExtraProjectileCount);
+                ExtraProjectileDamageRatio = Mathf.Max(ExtraProjectileDamageRatio, bonus.ExtraProjectileDamageRatio);
             }
         }
     }

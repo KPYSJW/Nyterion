@@ -19,6 +19,8 @@ namespace Nytherion.GamePlay.Characters.Player
         private RelicManager relicManager;
         private EventManager eventManager;
         private bool hasStarted;
+        // 테스트 도탄은 장착 유물과 별도로 관리하며 저장하지 않는다.
+        private bool debugProjectileBounce;
 
         public event Action OnRelicsChanged;
         // 목록과 전투 스냅샷, 능력치 동기화가 끝난 뒤 효과 조건을 한 번 평가한다.
@@ -159,9 +161,16 @@ namespace Nytherion.GamePlay.Characters.Player
             return CombatModifiers.IsActive(relicId);
         }
 
+        public void SetDebugProjectileBounce(bool active)
+        {
+            if (debugProjectileBounce == active) return;
+            debugProjectileBounce = active;
+            RebuildCombatModifiers();
+        }
+
         private void RebuildCombatModifiers()
         {
-            CombatModifiers = CombatModifierSnapshot.Create(equippedRelics);
+            CombatModifiers = CombatModifierSnapshot.Create(equippedRelics, debugProjectileBounce);
         }
 
         private void PublishChanges(bool listChanged, bool hasAdded = false)

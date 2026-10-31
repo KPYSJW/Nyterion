@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: ScrollofShadowClone
   m_EditorClassIdentifier: 
   relicName: Scroll of Shadow Clone
-  koreanName: "\ubd84\uc2e0 \uc18c\ud658\uc11c"
-  description_KR: "\ud568\uaed8 \uacf5\uaca9\ud558\ub294 \uadf8\ub9bc\uc790 \ubd84\uc2e0 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
-  description_EN: "Grants a shadow clone skill that attacks alongside you."
-  Image: {fileID: 21300000, guid: bc77d90dce3a1d9419269720e47db5f6, type: 3}
+  koreanName: "\uADF8\uB9BC\uC790 \uBD84\uC2E0 \uB9C8\uBC95 \uCC45"
+  englishName: Shadow Clone Magic Book
+  description_KR: "\uD568\uAED8 \uACF5\uACA9\uD558\uB294 \uADF8\uB9BC\uC790 \uBD84\uC2E0
+    \uC2A4\uD0AC\uC744 \uC5BB\uB294\uB2E4."
+  description_EN: Grants a shadow clone skill that attacks alongside you.
+  Image: {fileID: 21300000, guid: 4b5cf089eb741814eaf4baf6db6bf5d4, type: 3}
   rarity: 4
   level: 1
   isDisabled: 0

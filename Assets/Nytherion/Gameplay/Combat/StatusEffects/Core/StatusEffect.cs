@@ -6,7 +6,6 @@ namespace Nytherion.GamePlay.Combat
     public abstract class StatusEffect
     {
         public abstract string EffectId { get; }
-        public virtual Color EffectColor => Color.white;
         public Sprite EffectIcon { get; set; }
         public float Duration { get; protected set; }
         public float Timer { get; protected set; }

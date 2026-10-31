@@ -13,23 +13,24 @@ using UnityEngine;
 namespace Nytherion.Gameplay.Relics.Modules
 {
     [Serializable, RelicDisplayName("얼음 파편")]
-    public sealed class CrystalBallisticsEffect : RelicEffectBase
+    public sealed class IceSplinterEffect : RelicEffectBase
     {
+        public Texture2D projectileTexture;
         [Min(0f)] public float shardDamageRatio = 0.35f;
         [Min(1)] public int maxShardTargets = 2;
         [Min(0.1f)] public float searchRadius = 7f;
 
-        [NonSerialized] private CrystalBallisticsRuntime appliedRuntime;
+        [NonSerialized] private IceSplinterRuntime appliedRuntime;
 
         public override void ApplyEffect(PlayerManager playerManager, int level)
         {
             RemoveEffect(playerManager, level);
             if (playerManager == null) return;
 
-            appliedRuntime = playerManager.GetComponent<CrystalBallisticsRuntime>();
+            appliedRuntime = playerManager.GetComponent<IceSplinterRuntime>();
             if (appliedRuntime == null)
             {
-                appliedRuntime = playerManager.gameObject.AddComponent<CrystalBallisticsRuntime>();
+                appliedRuntime = playerManager.gameObject.AddComponent<IceSplinterRuntime>();
             }
             appliedRuntime.SetBonus(this, shardDamageRatio, maxShardTargets, searchRadius);
         }
@@ -38,30 +39,31 @@ namespace Nytherion.Gameplay.Relics.Modules
         {
             if (appliedRuntime == null && playerManager != null)
             {
-                appliedRuntime = playerManager.GetComponent<CrystalBallisticsRuntime>();
+                appliedRuntime = playerManager.GetComponent<IceSplinterRuntime>();
             }
             appliedRuntime?.RemoveBonus(this);
             appliedRuntime = null;
         }
     }
 
-    public sealed class CrystalBallisticsRuntime : MonoBehaviour
+    public sealed class IceSplinterRuntime : MonoBehaviour
     {
-        private readonly Dictionary<CrystalBallisticsEffect, Vector3> bonuses =
-            new Dictionary<CrystalBallisticsEffect, Vector3>();
-
+        private readonly Dictionary<IceSplinterEffect, Vector3> bonuses = new Dictionary<IceSplinterEffect, Vector3>();
+        private readonly List<IceSplinterProjectile> projectiles = new List<IceSplinterProjectile>();
+        private Transform projectileRoot;
+        private Sprite[] frames;
+        private Texture2D texture;
         public float ShardDamageRatio { get; private set; }
-        public int MaxShardTargets { get; private set; }
-        public float SearchRadius { get; private set; } = 7f;
+        public bool IsActive => bonuses.Count > 0;
 
-        public void SetBonus(CrystalBallisticsEffect source, float ratio, int targets, float radius)
+        public void SetBonus(IceSplinterEffect source, float ratio, int targets, float radius)
         {
             if (source == null) return;
             bonuses[source] = new Vector3(ratio, targets, radius);
             Recalculate();
         }
 
-        public void RemoveBonus(CrystalBallisticsEffect source)
+        public void RemoveBonus(IceSplinterEffect source)
         {
             if (source == null || !bonuses.Remove(source)) return;
             Recalculate();
@@ -70,14 +72,137 @@ namespace Nytherion.Gameplay.Relics.Modules
         private void Recalculate()
         {
             ShardDamageRatio = 0f;
-            MaxShardTargets = 0;
-            SearchRadius = 7f;
-            foreach (Vector3 bonus in bonuses.Values)
+            foreach (var bonus in bonuses)
             {
-                ShardDamageRatio = Mathf.Max(ShardDamageRatio, bonus.x);
-                MaxShardTargets = Mathf.Max(MaxShardTargets, Mathf.RoundToInt(bonus.y));
-                SearchRadius = Mathf.Max(SearchRadius, bonus.z);
+                ShardDamageRatio = Mathf.Max(ShardDamageRatio, bonus.Value.x);
+                if (bonus.Key.projectileTexture != null) SetTexture(bonus.Key.projectileTexture);
             }
+        }
+
+        private void SetTexture(Texture2D value)
+        {
+            if (texture == value) return;
+            if (frames != null) foreach (Sprite frame in frames) if (frame != null) Destroy(frame);
+            texture = value;
+            frames = new Sprite[4];
+            for (int i = 0; i < frames.Length; i++)
+                frames[i] = Sprite.Create(texture, new Rect(i * 32, 0, 32, 32), new Vector2(0.5f, 0.5f), 32f);
+        }
+
+        public void Fire(Vector3 origin, IDamageable source, float damage, int count, float speed)
+        {
+            if (!IsActive || frames == null) return;
+            if (projectileRoot == null)
+            {
+                // 플레이어 이동을 물려받지 않도록 같은 씬의 독립된 루트에서 관리합니다.
+                GameObject root = new GameObject("서리 파편 투사체 루트");
+                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(root, gameObject.scene);
+                projectileRoot = root.transform;
+                root.SetActive(gameObject.activeInHierarchy);
+            }
+            for (int i = 0; i < count; i++)
+            {
+                IceSplinterProjectile projectile = projectiles.Find(item => item != null && !item.gameObject.activeSelf);
+                if (projectile == null)
+                {
+                    GameObject instance = new GameObject("서리 파편 투사체");
+                    instance.transform.SetParent(projectileRoot, false);
+                    projectile = instance.AddComponent<IceSplinterProjectile>();
+                    projectiles.Add(projectile);
+                }
+                float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+                projectile.Launch(origin, new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)), speed,
+                    damage, source, GetComponent<PlayerManager>(), frames);
+            }
+        }
+
+        private void OnEnable()
+        {
+            if (projectileRoot != null) projectileRoot.gameObject.SetActive(true);
+        }
+
+        private void OnDisable()
+        {
+            if (projectileRoot != null) projectileRoot.gameObject.SetActive(false);
+        }
+
+        private void OnDestroy()
+        {
+            if (projectileRoot != null) Destroy(projectileRoot.gameObject);
+            if (frames != null) foreach (Sprite frame in frames) if (frame != null) Destroy(frame);
+        }
+    }
+
+    public sealed class IceSplinterProjectile : MonoBehaviour
+    {
+        private readonly List<RaycastHit2D> hits = new List<RaycastHit2D>();
+        private SpriteRenderer spriteRenderer;
+        private Sprite[] frames;
+        private Vector2 direction;
+        private float speed, damage, elapsed;
+        private IDamageable source;
+        private PlayerManager player;
+
+        public void Launch(Vector3 origin, Vector2 aim, float flightSpeed, float hitDamage,
+            IDamageable sourceTarget, PlayerManager owner, Sprite[] animation)
+        {
+            direction = aim.normalized;
+            speed = Mathf.Max(0.1f, flightSpeed);
+            damage = Mathf.Max(0f, hitDamage);
+            source = sourceTarget;
+            player = owner;
+            frames = animation;
+            elapsed = 0f;
+            transform.SetPositionAndRotation(origin, Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg));
+            transform.localScale = Vector3.one * 0.6f;
+            if (spriteRenderer == null) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+            spriteRenderer.sortingOrder = 10;
+            spriteRenderer.sprite = frames[0];
+            gameObject.SetActive(true);
+        }
+
+        private void Update()
+        {
+            float step = Mathf.Min(Time.deltaTime, 2f - elapsed);
+            if (step <= 0f) { gameObject.SetActive(false); return; }
+            float distance = speed * step;
+            ContactFilter2D filter = new ContactFilter2D { useTriggers = true };
+            hits.Clear();
+            Physics2D.CircleCast(transform.position, 0.12f, direction, filter, hits, distance);
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (hit.collider == null) continue;
+                EnemyBase enemy = hit.collider.GetComponentInParent<EnemyBase>();
+                if (enemy == null || ReferenceEquals(enemy, source) || enemy.isDead || !enemy.isActiveAndEnabled ||
+                    !CollisionObject.IsEnemyCollider(hit.collider)) continue;
+                PlayHitEffect(hit.point);
+                if (damage > 0f) enemy.TakeDamage(damage, true);
+                if (!enemy.isDead && enemy.TryGetComponent(out StatusEffectManager status))
+                {
+                    status.ConfigureCombatContext(player);
+                    status.ApplyEffect(new IceEffect(5f));
+                }
+                gameObject.SetActive(false);
+                return;
+            }
+            transform.position += (Vector3)(direction * distance);
+            elapsed += step;
+            spriteRenderer.sprite = frames[Mathf.FloorToInt(elapsed * 12f) % frames.Length];
+        }
+
+        private void PlayHitEffect(Vector2 hitPoint)
+        {
+            ObjectPoolManager pool = player != null ? player.ObjectPool : null;
+            if (pool == null) return;
+
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            GameObject effect = pool.SpawnFromPool("IcicleHitVFX", hitPoint, Quaternion.Euler(0f, 0f, angle));
+            if (effect == null) return;
+
+            effect.transform.localScale *= 0.5f;
+            WeaponVFXHelper.ApplyHitEffectSorting(effect);
+            if (effect.TryGetComponent(out SpriteRenderer effectRenderer))
+                effectRenderer.flipX = UnityEngine.Random.value < 0.5f;
         }
     }
 

@@ -72,18 +72,19 @@ namespace Nytherion.Editor
                 if (!string.IsNullOrEmpty(error)) throw new InvalidOperationException(error);
             }
             Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>(IconPath);
-            Sprite relicIcon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/Rooti.png");
+            Sprite relicIcon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicRooti.png");
             if (icon == null || relicIcon == null) throw new InvalidOperationException("루티의 스킬 또는 유물 아이콘이 없습니다.");
             SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>("Assets/Nytherion/Data/ScriptableObjects/Skill/Turret_Skill.asset");
             skill.icon = icon;
             skill.skillName = "루티";
             skill.description = "적을 자동으로 공격하는 루티를 소환합니다.";
             active.name = "Rooti";
-            active.koreanName = "루티";
-            active.englishName = "Rooti";
+            active.koreanName = "루티 마법 책";
+            active.englishName = "Rooti Magic Book";
             active.Image = relicIcon;
             active.description_KR = "적을 자동으로 공격하는 루티 소환 스킬을 얻는다.";
             active.description_EN = "Grants a skill that summons Rooti to automatically attack enemies.";
+            ManaRelicSetup.Localize(active);
             EditorUtility.SetDirty(skill);
             EditorUtility.SetDirty(active);
             AssetDatabase.SaveAssetIfDirty(skill);
@@ -96,7 +97,7 @@ namespace Nytherion.Editor
             if (AssetDatabase.AssetPathToGUID(RelicRoot + "Rooti.asset") != ActiveGuid || active.relicName != "Relic of Turret")
                 throw new InvalidOperationException("현재 루티의 GUID 또는 저장 ID가 변경됐습니다.");
             File.WriteAllText(Output + "/result.txt",
-                "PASS 루티 스킬 아이콘 Art/Skills/Sprites/Rooti.png, 유물 아이콘 Art/Relics/Sprites/Rooti.png 연결, GUID/저장 ID 유지");
+                "PASS 루티 스킬 아이콘과 전용 유물 아이콘 연결, GUID/저장 ID 유지");
         }
     }
 }

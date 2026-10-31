@@ -146,7 +146,7 @@ namespace Nytherion.Editor
             {
                 ("BloodFortressTranscendence", new Color32(255, 102, 127, 255)),
                 ("CorrosiveFlameTranscendence", new Color32(182, 230, 87, 255)),
-                ("CrystalBallisticsTranscendence", new Color32(105, 216, 255, 255)),
+                ("IceSplinterTranscendence", new Color32(105, 216, 255, 255)),
                 ("GoldenRushTranscendence", new Color32(255, 210, 74, 255)),
                 ("LegionTranscendence", new Color32(184, 140, 255, 255)),
                 ("LightningPursuitTranscendence", new Color32(126, 155, 255, 255)),

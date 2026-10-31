@@ -36,6 +36,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         [Header("Hit Flash")]
         [SerializeField] private SpriteRenderer spriteRenderer;
+        public SpriteRenderer BodyRenderer => spriteRenderer;
         [SerializeField] private Color hitColor = Color.red;
         [SerializeField] private float hitFlashDuration = 0.08f;
         [SerializeField, Min(0f)] private float whiteFlashDuration = 0.04f;
@@ -167,7 +168,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 statusEffectManager.ClearAllEffects();
                 statusEffectManager.ConfigureCombatContext(playerManager);
             }
-            UpdateStatusColor();
         }
 
         public void TakeDamage(float damageAmount, bool isChain = false)
@@ -221,8 +221,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             PlayHitFlash();
-            // 이번 적중 이벤트에서 새로 부여한 감전은 같은 타격을 다시 확산시키지 않습니다.
-            bool hadLightningBeforeHit = !isChain && statusEffectManager != null && statusEffectManager.HasEffect("Lightning");
+            // 이번 적중 이벤트에서 처음 부여한 감전은 다음 직접 타격부터 추가 피해를 줍니다.
+            bool hadLightningBeforeHit = !isChain && !isDamageOverTime && statusEffectManager != null && statusEffectManager.HasEffect("Lightning");
             if (eventManager != null)
             {
                 eventManager.TriggerEnemyDamagedByPlayerWithCrit(
@@ -240,10 +240,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 statusEffectManager.TriggerHolyHeal();
             }
 
-            // 감전 전격 체인 트리거 (체인 공격이 아닌 원래 공격일 때만 작동)
+            // 감전된 적의 직접 피격에만 추가 피해를 주며 추가 피해는 재귀 발동하지 않습니다.
             if (hadLightningBeforeHit && statusEffectManager != null && statusEffectManager.HasEffect("Lightning"))
             {
-                statusEffectManager.TriggerLightningChain(damageAmount);
+                statusEffectManager.TriggerLightningBonusDamage(damageAmount);
             }
 
             // 허수아비도 피격 효과와 전투 이벤트는 처리하되 체력은 소모하지 않습니다.
@@ -357,7 +357,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 }
             }
 
-            spriteRenderer.color = GetCurrentBaseColor();
+            spriteRenderer.color = originalColor;
             hitFlashCoroutine = null;
         }
 
@@ -411,21 +411,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             spriteRenderer.SetPropertyBlock(hitFlashProperties);
             materialBeforeHitFlash = null;
             isHitFlashMaterialApplied = false;
-        }
-
-        public void UpdateStatusColor()
-        {
-            if (spriteRenderer == null) return;
-
-            if (hitFlashCoroutine == null)
-            {
-                spriteRenderer.color = GetCurrentBaseColor();
-            }
-        }
-
-        private Color GetCurrentBaseColor()
-        {
-            return originalColor;
         }
 
         private void DropItems()

@@ -119,6 +119,7 @@ namespace Nytherion.Editor.Localization
                 ["skill_all_stat_up"] = ("모든 능력치 증가", "All Stat Up"),
                 ["skill_bubble_shield"] = ("비눗방울", "Bubble Shield"),
                 ["skill_decoy"] = ("허수아비", "Decoy"),
+                ["skill_fire_bolt"] = ("파이어볼", "Fireball"),
                 ["skill_aura"] = ("오라", "Aura"),
                 ["skill_blackhole"] = ("블랙홀", "Black Hole"),
                 ["skill_lifesteal"] = ("생명력 흡수", "Lifesteal"),

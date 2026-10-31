@@ -35,20 +35,56 @@ namespace Nytherion.GamePlay.Characters.Player
         public bool IsDebugTranscendenceActive(RelicTranscendenceData transcendence) =>
             transcendence != null && debugTranscendences.Contains(transcendence);
 
+        public bool IsDebugRicochetActive
+        {
+            get
+            {
+                foreach (var entry in debugSetRequirements)
+                {
+                    if (entry.Key != null && entry.Key.synergySeriesId == "TrickshotEngineerSeries" && entry.Value > 0)
+                        return true;
+                }
+                return false;
+            }
+        }
+
         public void SetDebugSetBonus(RelicSetBonusData setBonus, int requirement)
         {
             if (setBonus == null) return;
             if (requirement > 0) debugSetRequirements[setBonus] = requirement;
             else debugSetRequirements.Remove(setBonus);
-            RefreshDebugCriticalChance();
+            RefreshDebugCombatModifiers();
             ReevaluateAllConditions();
         }
 
         public void SetDebugTranscendence(RelicTranscendenceData transcendence, bool active)
         {
             if (transcendence == null) return;
-            if (active) debugTranscendences.Add(transcendence);
+            if (active)
+            {
+                debugTranscendences.Add(transcendence);
+                if (transcendence.requirements != null)
+                {
+                    foreach (RelicTranscendenceRequirement requirement in transcendence.requirements)
+                    {
+                        if (requirement?.setBonusData == null) continue;
+                        RelicSetBonusData set = requirement.setBonusData;
+                        int count = Mathf.Max(1, requirement.requiredEquippedCount);
+                        // 추가 탄환 등 초월 효과의 테스트에 필요한 최종 세트 단계까지 켭니다.
+                        if (set.bonusModules != null)
+                        {
+                            foreach (RelicEffectModule module in set.bonusModules)
+                            {
+                                if (module?.condition is ChainSynergyCondition condition)
+                                    count = Mathf.Max(count, condition.requiredChainLength);
+                            }
+                        }
+                        debugSetRequirements[set] = Mathf.Max(GetDebugSetRequirement(set), count);
+                    }
+                }
+            }
             else debugTranscendences.Remove(transcendence);
+            RefreshDebugCombatModifiers();
             ReevaluateAllConditions();
         }
 
@@ -56,12 +92,13 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             debugSetRequirements.Clear();
             debugTranscendences.Clear();
-            RefreshDebugCriticalChance();
+            RefreshDebugCombatModifiers();
             ReevaluateAllConditions();
         }
 
-        private void RefreshDebugCriticalChance()
+        private void RefreshDebugCombatModifiers()
         {
+            relicManager?.SetDebugProjectileBounce(IsDebugRicochetActive);
             if (playerManager == null) return;
             bool guaranteeCritical = false;
             foreach (var entry in debugSetRequirements)
@@ -137,6 +174,7 @@ namespace Nytherion.GamePlay.Characters.Player
             }
             
             if (playerManager != null) playerManager.SetDebugGuaranteedCritical(false);
+            if (relicManager != null) relicManager.SetDebugProjectileBounce(false);
             RemoveAllActiveEffects();
         }
 

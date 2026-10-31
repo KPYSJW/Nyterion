@@ -160,7 +160,7 @@ namespace Nytherion.Editor
             {
                 relic = ScriptableObject.CreateInstance<RelicData>();
                 relic.relicName = "Relic of Decoy";
-                relic.koreanName = "허수아비";
+                relic.koreanName = "허수아비 마법 책";
                 RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
                 relic.Image = data.icon;
                 relic.rarity = Rarity.Rare;

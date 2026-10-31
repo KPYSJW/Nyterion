@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Rooti
   m_EditorClassIdentifier: 
   relicName: Relic of Turret
-  koreanName: "\uB8E8\uD2F0"
-  englishName: Rooti
+  koreanName: "\uB8E8\uD2F0 \uB9C8\uBC95 \uCC45"
+  englishName: Rooti Magic Book
   description_KR: "\uC801\uC744 \uC790\uB3D9\uC73C\uB85C \uACF5\uACA9\uD558\uB294
     \uB8E8\uD2F0 \uC18C\uD658 \uC2A4\uD0AC\uC744 \uC5BB\uB294\uB2E4."
   description_EN: Grants a skill that summons Rooti to automatically attack enemies.
-  Image: {fileID: 21300000, guid: c0cfa8eb448663441811f8c9bd7a6b93, type: 3}
+  Image: {fileID: 21300000, guid: a6b1cb3012f48fe4cb829e0be7ae53b9, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0

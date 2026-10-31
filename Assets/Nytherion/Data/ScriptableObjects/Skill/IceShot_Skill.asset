@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5183ca567ac5f6459515ce9d893dfa6, type: 3}
+  m_Name: IceShot_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_ice_shot
+  isDisabled: 0
+  skillType: 19
+  skillName: "\uC544\uC774\uC2A4\uC0F7"
+  description: "\uC801\uC5D0\uAC8C \uD53C\uD574\uB97C \uC8FC\uACE0 \uBE59\uACB0\uC744
+    \uBD80\uC5EC\uD558\uB294 \uC5BC\uC74C \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 1
+  manaCost: 10
+  damage: 10
+  range: 12
+  icon: {fileID: 21300000, guid: 85e7ac47af43cdf4b86efe73ee1f133a, type: 3}
+  skillPrefab: {fileID: 3939332376692414595, guid: 675d2e8b5a0091d4a8aaa5aaf9691198, type: 3}
+  unlockMilestoneID: 
+  projectilePrefab: {fileID: 4488278459653285115, guid: 562c9775b6cd19c46be286b9ac8a1db3, type: 3}
+  projectileFrames:
+  - {fileID: -1757581349, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  - {fileID: 732600153, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  - {fileID: 1664081078, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  - {fileID: -1886498705, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  - {fileID: 708104563, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  - {fileID: -1474950296, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  - {fileID: -1724089619, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  - {fileID: 15289356, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  - {fileID: 1965081251, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  hitFrames:
+  - {fileID: 2103495046, guid: 0d24dedd62bb20c44ab1e424fa854dd9, type: 3}
+  - {fileID: 236772867, guid: 0d24dedd62bb20c44ab1e424fa854dd9, type: 3}
+  - {fileID: 1175239487, guid: 0d24dedd62bb20c44ab1e424fa854dd9, type: 3}
+  hitFps: 14
+  hitVisualScale: 0.5
+  speed: 8
+  projectileLifetime: 1
+  collisionRadius: 0.25
+  visualScale: 0.6
+  projectileSpreadAngle: 60
+  projectileFps: 12
+  damagePerLevel: 2
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 2568

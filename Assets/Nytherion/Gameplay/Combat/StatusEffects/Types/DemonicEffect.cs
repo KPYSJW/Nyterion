@@ -5,7 +5,6 @@ namespace Nytherion.GamePlay.Combat
     public class DemonicEffect : StatusEffect
     {
         public override string EffectId => "Demonic";
-        public override Color EffectColor => new Color(0.6f, 0.1f, 0.6f); // 마성 자주색
 
         private float defenseReduction = 0.10f; // 방어력 10% 감소
         private float extraCritDamageMultiplier = 0.20f; // 치명타 피해 20%p 증가

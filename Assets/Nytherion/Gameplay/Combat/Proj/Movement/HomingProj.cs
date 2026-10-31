@@ -93,6 +93,17 @@ namespace Nytherion.GamePlay.Combat
             targetDamageable = null;
         }
 
+        public void SetFlightSpeed(float speed)
+        {
+            currentSpeed = Mathf.Max(0f, speed);
+        }
+
+        public void SetBounceTarget(Collider2D target)
+        {
+            targetCollider = target;
+            targetDamageable = target != null ? target.GetComponentInParent<IDamageable>() as MonoBehaviour : null;
+        }
+
         private void FixedUpdate()
         {
             if (!initialized) return;

@@ -84,6 +84,25 @@ namespace Nytherion.GamePlay.Characters.Player
         }
 
         public float DebugCooldownReduction { get; private set; }
+        public bool DebugFireballHoming { get; private set; }
+        public bool DebugIceShotHoming { get; private set; }
+        public bool DebugThunderboltHoming { get; private set; }
+        public float DebugFireballHomingTurnSpeed { get; private set; } = 180f;
+        public float DebugFireballHomingStraightTime { get; private set; } = 0f;
+
+        public void SetDebugFireballHoming(bool enabled) => DebugFireballHoming = enabled;
+        public void SetDebugIceShotHoming(bool enabled) => DebugIceShotHoming = enabled;
+        public void SetDebugThunderboltHoming(bool enabled) => DebugThunderboltHoming = enabled;
+
+        public void SetDebugFireballHomingSettings(float turnSpeed, float straightTime)
+        {
+            if (float.IsNaN(turnSpeed) || float.IsInfinity(turnSpeed) ||
+                float.IsNaN(straightTime) || float.IsInfinity(straightTime)) return;
+            DebugFireballHomingTurnSpeed = Mathf.Clamp(turnSpeed, 45f, 720f);
+            DebugFireballHomingStraightTime = Mathf.Clamp(straightTime, 0f, 1f);
+        }
+
+        public void ResetDebugFireballHomingSettings() => SetDebugFireballHomingSettings(180f, 0f);
 
         public void SetDebugCooldownReduction(float reduction)
         {

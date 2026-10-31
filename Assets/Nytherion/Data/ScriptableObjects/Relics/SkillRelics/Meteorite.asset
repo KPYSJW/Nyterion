@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Meteorite
   m_EditorClassIdentifier: 
   relicName: Meteorite
-  koreanName: "\uc6b4\uc11d"
-  description_KR: "\ud654\uba74 \ub0b4 \ubaa8\ub4e0 \uc801\uc5d0\uac8c \uc6b4\uc11d\uc744 \ub5a8\uc5b4\ub728\ub9ac\ub294 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
-  description_EN: "Grants a skill that drops meteors on all enemies in view."
-  Image: {fileID: 21300000, guid: 95e6ae23f702d7a4bae52fd53ddc1055, type: 3}
+  koreanName: "\uBA54\uD14C\uC624 \uB9C8\uBC95 \uCC45"
+  englishName: Meteor Magic Book
+  description_KR: "\uD654\uBA74 \uB0B4 \uBAA8\uB4E0 \uC801\uC5D0\uAC8C \uC6B4\uC11D\uC744
+    \uB5A8\uC5B4\uB728\uB9AC\uB294 \uC2A4\uD0AC\uC744 \uC5BB\uB294\uB2E4."
+  description_EN: Grants a skill that drops meteors on all enemies in view.
+  Image: {fileID: 21300000, guid: 6df3068747762464bbc7389349355198, type: 3}
   rarity: 3
   level: 1
   isDisabled: 0
