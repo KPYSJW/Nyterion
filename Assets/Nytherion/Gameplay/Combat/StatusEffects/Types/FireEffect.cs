@@ -95,7 +95,6 @@ namespace Nytherion.GamePlay.Combat
             {
                 if (target != null && !target.isDead)
                 {
-                    manager?.PlayVFX(EffectId);
                     target.TakeDamageOverTime(TickDamage);
                 }
                 nextTickTime = Time.time + TickInterval;

@@ -48,6 +48,10 @@ namespace Nytherion.Editor
                 (data.hitFrames == null || data.hitFrames.Length == 0 || data.hitFrames.Any(frame => frame == null)) &&
                 AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Hit.png") != null)
                 UpdateHitAnimation();
+            if (!EditorApplication.isPlayingOrWillChangePlaymode && data != null &&
+                (data.castFrames == null || data.castFrames.Length != 5 || data.castFrames.Any(frame => frame == null)) &&
+                AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Cast.png") != null)
+                UpdateCastAnimation();
         }
 
         [MenuItem("Tools/Nytherion/IceShot/Update Hit Animation")]
@@ -58,6 +62,16 @@ namespace Nytherion.Editor
             data.hitFrames = ConfigureHitFrames();
             Save(data);
             Debug.Log("[IceShotSkillSetup] 타격 이펙트 3프레임 연결 완료.", data);
+        }
+
+        [MenuItem("Tools/Nytherion/IceShot/Update Cast Animation")]
+        public static void UpdateCastAnimation()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            IceShotSkillData data = Require<IceShotSkillData>(DataPath);
+            data.castFrames = ConfigureCastFrames();
+            Save(data);
+            Debug.Log("[IceShotSkillSetup] 시전 이펙트 5프레임 연결 완료.", data);
         }
 
         [MenuItem("Tools/Nytherion/IceShot/Create Assets")]
@@ -85,6 +99,9 @@ namespace Nytherion.Editor
             data.icon = icon;
             data.projectileFrames = projectileFrames;
             if (AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Hit.png") != null) data.hitFrames = ConfigureHitFrames();
+            if (AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Cast.png") != null &&
+                (data.castFrames == null || data.castFrames.Length != 5 || data.castFrames.Any(frame => frame == null)))
+                data.castFrames = ConfigureCastFrames();
             GameObject projectile = AssetDatabase.LoadAssetAtPath<GameObject>(ProjectilePath);
             if (projectile == null) projectile = CreatePrefab(false, data);
             data.projectilePrefab = projectile.GetComponent<IceShotProjectile>();
@@ -170,6 +187,36 @@ namespace Nytherion.Editor
                 return new SpriteRect { name = name, rect = new Rect(i * 64, 0, 64, 64),
                     alignment = SpriteAlignment.Custom, pivot = new Vector2(0.5f, bottomPadding[i] / 64f),
                     spriteID = previous != null ? previous.spriteID : GUID.Generate() };
+            }).ToArray();
+            provider.SetSpriteRects(rects);
+            provider.GetDataProvider<ISpriteNameFileIdDataProvider>().SetNameFileIdPairs(
+                rects.Select(rect => new SpriteNameFileIdPair(rect.name, rect.spriteID)));
+            provider.Apply();
+            importer.SaveAndReimport();
+            return AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().OrderBy(sprite => sprite.rect.x).ToArray();
+        }
+
+        private static Sprite[] ConfigureCastFrames()
+        {
+            string path = Sprites + "Cast.png";
+            Texture2D sheet = Require<Texture2D>(path);
+            if (sheet.width != 320 || sheet.height != 64)
+                throw new InvalidOperationException("시전 이펙트는 64×64 프레임 5개여야 합니다.");
+            TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
+            ConfigureImporter(importer, SpriteImportMode.Multiple, 32f);
+            SpriteDataProviderFactories factory = new SpriteDataProviderFactories();
+            factory.Init();
+            ISpriteEditorDataProvider provider = factory.GetSpriteEditorDataProviderFromObject(importer);
+            provider.InitSpriteEditorDataProvider();
+            SpriteRect[] old = provider.GetSpriteRects();
+            SpriteRect[] rects = Enumerable.Range(0, 5).Select(i =>
+            {
+                string name = "IceShot_Cast_" + i;
+                Rect bounds = new Rect(i * 64, 0, 64, 64);
+                SpriteRect previous = old.FirstOrDefault(rect => rect.name == name) ??
+                    old.FirstOrDefault(rect => rect.rect == bounds);
+                return new SpriteRect { name = name, rect = bounds, alignment = SpriteAlignment.Center,
+                    pivot = new Vector2(0.5f, 0.5f), spriteID = previous != null ? previous.spriteID : GUID.Generate() };
             }).ToArray();
             provider.SetSpriteRects(rects);
             provider.GetDataProvider<ISpriteNameFileIdDataProvider>().SetNameFileIdPairs(

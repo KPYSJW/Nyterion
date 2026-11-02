@@ -17,6 +17,9 @@ namespace Nytherion.Data.ScriptableObjects
         [Header("화상 피해 이펙트")]
         public Nytherion.GamePlay.Combat.BurnTickVFX burnTickPrefab;
 
+        [Header("냉기 이펙트")]
+        public Nytherion.GamePlay.Combat.ChillSnowVFX chillSnowPrefab;
+
         [Header("감전 이펙트")]
         public Nytherion.GamePlay.Combat.ShockPulseVFX shockPulsePrefab;
         [Min(0f)] public float lightningBonusDamageRatio = 0.3f;

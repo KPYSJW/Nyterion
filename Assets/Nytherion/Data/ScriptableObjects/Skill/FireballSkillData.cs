@@ -10,6 +10,12 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         public FireballProjectile projectilePrefab;
         public Sprite[] projectileFrames;
         public Sprite[] hitFrames;
+        [Min(0f)] public float launchOffset = 0.5f;
+        [Header("시전 이펙트")]
+        public Sprite[] castFrames;
+        [Min(1f)] public float castFps = 14f;
+        [Min(0.01f)] public float castVisualScale = 0.75f;
+        [Header("투사체 설정")]
         [Tooltip("투사체 이미지의 기본 크기입니다. 충돌 반경에는 영향을 주지 않습니다.")]
         [Min(0.01f)] public float projectileVisualScale = 0.6f;
         [Tooltip("타격 불꽃 이미지의 기본 크기입니다.")]

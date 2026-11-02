@@ -1,166 +1,251 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat
 {
-    /// <summary>몸체 크기에 맞춘 짧은 화상 불꽃을 재사용합니다.</summary>
+    /// <summary>화상 지속 중 몸체 주변에 작은 불꽃을 반복해서 표시합니다.</summary>
     [DefaultExecutionOrder(1100)]
     public sealed class BurnTickVFX : MonoBehaviour
     {
         [SerializeField] private Sprite[] frames;
-        [SerializeField] private SpriteRenderer[] flames;
-        [SerializeField, Min(1f)] private float framesPerSecond = 16f;
-        [SerializeField, Range(0.1f, 1f)] private float bodyHeightRatio = 0.6f;
-        [SerializeField, Min(0.01f)] private float minimumHeight = 0.5f;
-        [SerializeField, Min(0.01f)] private float maximumHeight = 0.85f;
-        [Tooltip("몸체 너비가 이 값의 2배 이상이면 불꽃 2개, 3배 이상이면 3개를 표시합니다.")]
-        [SerializeField, Min(0.01f)] private float bodyWidthPerFlame = 0.9f;
-        [SerializeField, Min(0f)] private float stagger = 0.025f;
-        [Tooltip("몸체의 짧은 변에 대한 중심 이동 거리의 최솟값입니다.")]
-        [SerializeField, Range(0f, 0.48f)] private float minimumCenterOffsetRatio = 0.12f;
-        [Tooltip("몸체의 짧은 변에 대한 중심 이동 거리의 최댓값입니다.")]
-        [SerializeField, Range(0f, 0.48f)] private float maximumCenterOffsetRatio = 0.48f;
+        [SerializeField, Min(0f), InspectorName("초당 불꽃 수")]
+        [Tooltip("몬스터 한 마리에 초당 생성할 불꽃 수입니다.")]
+        private float emissionPerSecond = 6f;
+        [SerializeField, Min(1), InspectorName("최대 불꽃 수")]
+        [Tooltip("몬스터 한 마리에 동시에 표시할 수 있는 불꽃의 최대 개수입니다.")]
+        private int maxParticles = 24;
+        [SerializeField, Min(0f), InspectorName("최소 상승 속도")]
+        private float minRiseSpeed = 0.45f;
+        [SerializeField, Min(0f), InspectorName("최대 상승 속도")]
+        private float maxRiseSpeed = 0.8f;
+        [SerializeField, Min(0.01f), InspectorName("최소 수명 (초)")]
+        private float minLifetime = 0.2f;
+        [SerializeField, Min(0.01f), InspectorName("최대 수명 (초)")]
+        private float maxLifetime = 0.4f;
 
         private SpriteRenderer body;
-        private float elapsed;
-        private int flameCount;
-        private int spawnFrame;
-        private bool playing;
+        private ParticleSystem particles;
+        private ParticleSystemRenderer particleRenderer;
+        private Material particleMaterial;
         private readonly SpriteBodyBounds bodyBounds = new SpriteBodyBounds();
-        private Vector2[] positionJitters;
-        private Vector2[] placementSizes;
-        private float[] flameHeights;
+        private readonly List<List<Vector2>> outlines = new List<List<Vector2>>();
+        private Sprite cachedSprite;
+        private Bounds localBounds;
+        private float emissionTimer;
+        private float appliedMinRiseSpeed = -1f;
+        private float appliedMaxRiseSpeed = -1f;
+        private float appliedMinLifetime = -1f;
+        private float appliedMaxLifetime = -1f;
+        private int appliedMaxParticles;
 
         public void Play(SpriteRenderer source)
         {
-            // 강화로 틱이 빨라져도 마지막 불티까지 재생한 뒤 다음 틱을 받습니다.
-            if (playing || source == null || frames == null || frames.Length == 0 ||
-                flames == null || flames.Length == 0) return;
+            if (source == null || source.sprite == null || frames == null || frames.Length == 0) return;
+            if (particles != null && particles.isPlaying) return;
             body = source;
-            flameCount = Mathf.Clamp(Mathf.FloorToInt(body.bounds.size.x / bodyWidthPerFlame), 1, flames.Length);
-            if (positionJitters == null || positionJitters.Length != flames.Length)
-            {
-                positionJitters = new Vector2[flames.Length];
-                placementSizes = new Vector2[flames.Length];
-                flameHeights = new float[flames.Length];
-            }
-            Bounds bounds = bodyBounds.GetBounds(body);
-            float shortSide = Mathf.Min(bounds.size.x, bounds.size.y);
-            float height = Mathf.Clamp(bounds.size.y * bodyHeightRatio, minimumHeight, maximumHeight);
-            float aspect = 0f;
-            foreach (Sprite frame in frames)
-                aspect = Mathf.Max(aspect, frame.bounds.size.x / Mathf.Max(0.001f, frame.bounds.size.y));
-            for (int i = 0; i < flameCount; i++)
-            {
-                flameHeights[i] = Mathf.Max(minimumHeight, height * (i == 1 ? 0.88f : 1f));
-                placementSizes[i] = new Vector2(flameHeights[i] * aspect, flameHeights[i]);
-            }
-            // 작은 대상은 중앙 고정. 여러 불꽃은 전체 배치를 다시 뽑고 멀리 밀어내지 않습니다.
-            bool placed = flameCount == 1;
-            for (int layout = 0; !placed && layout < 128; layout++)
-                placed = TryPlaceFlames(shortSide);
-            if (!placed) flameCount = 1;
-            if (flameCount == 1) positionJitters[0] = Vector2.zero;
-            elapsed = 0f;
-            spawnFrame = Time.frameCount;
-            playing = true;
+            EnsureParticles();
             gameObject.SetActive(true);
             enabled = true;
-            UpdateFlames();
+            UpdatePlacement();
+            particles.Play();
+            emissionTimer = 0f;
+        }
+
+        private void EnsureParticles()
+        {
+            if (particles != null) return;
+            GameObject child = new GameObject("화상 불꽃 입자");
+            child.transform.SetParent(transform, false);
+            particles = child.AddComponent<ParticleSystem>();
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ParticleSystem.MainModule main = particles.main;
+            main.playOnAwake = false;
+            main.loop = true;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local;
+            main.scalingMode = ParticleSystemScalingMode.Hierarchy;
+            main.startSpeed = 0f;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.45f, 0.85f);
+            ParticleSystem.EmissionModule emission = particles.emission;
+            emission.enabled = false;
+            ParticleSystem.ShapeModule shape = particles.shape;
+            shape.enabled = false;
+            ParticleSystem.VelocityOverLifetimeModule velocity = particles.velocityOverLifetime;
+            velocity.enabled = true;
+            velocity.space = ParticleSystemSimulationSpace.Local;
+            velocity.x = new ParticleSystem.MinMaxCurve(-0.08f, 0.08f);
+            velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
+            ApplyParticleSettings();
+            ParticleSystem.SizeOverLifetimeModule sizeOverLifetime = particles.sizeOverLifetime;
+            sizeOverLifetime.enabled = true;
+            sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f,
+                new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(0.65f, 0.8f), new Keyframe(1f, 0.15f)));
+            ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particles.colorOverLifetime;
+            colorOverLifetime.enabled = true;
+            Gradient fade = new Gradient();
+            fade.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(1f, 0.6f), new GradientAlphaKey(0f, 1f) });
+            colorOverLifetime.color = fade;
+            ParticleSystem.TextureSheetAnimationModule animation = particles.textureSheetAnimation;
+            animation.enabled = true;
+            animation.mode = ParticleSystemAnimationMode.Sprites;
+            foreach (Sprite frame in frames) if (frame != null) animation.AddSprite(frame);
+            particleRenderer = child.GetComponent<ParticleSystemRenderer>();
+            particleRenderer.renderMode = ParticleSystemRenderMode.Billboard;
+            particleRenderer.alignment = ParticleSystemRenderSpace.View;
+            particleMaterial = new Material(body.sharedMaterial);
+            particleMaterial.mainTexture = frames[0].texture;
+            particleRenderer.sharedMaterial = particleMaterial;
         }
 
         private void LateUpdate()
         {
-            if (!playing) return;
-            if (body == null || !body.enabled || !body.gameObject.activeInHierarchy)
+            if (body == null || body.sprite == null || !body.enabled || !body.gameObject.activeInHierarchy)
             {
                 Stop();
                 return;
             }
-            if (Time.frameCount != spawnFrame) elapsed += Time.deltaTime;
-            if (elapsed >= frames.Length / framesPerSecond + (flameCount - 1) * stagger)
+            UpdatePlacement();
+            ApplyParticleSettings();
+            if (emissionPerSecond <= 0f) return;
+            emissionTimer += Time.deltaTime;
+            float interval = 1f / emissionPerSecond;
+            while (emissionTimer >= interval)
             {
-                Stop();
-                return;
+                emissionTimer -= interval;
+                if (particles.particleCount >= maxParticles || !TryGetBodyPoint(out Vector2 point)) continue;
+                if (body.flipX) point.x = -point.x;
+                if (body.flipY) point.y = -point.y;
+                Vector3 worldPoint = body.transform.TransformPoint(point);
+                ParticleSystem.EmitParams parameters = new ParticleSystem.EmitParams();
+                parameters.position = particles.transform.InverseTransformPoint(worldPoint);
+                particles.Emit(parameters, 1);
             }
-            UpdateFlames();
         }
 
-        private void UpdateFlames()
+        private void ApplyParticleSettings()
+        {
+            float minimumSpeed = Mathf.Max(0f, minRiseSpeed);
+            float maximumSpeed = Mathf.Max(minimumSpeed, maxRiseSpeed);
+            float minimumLifetime = Mathf.Max(0.01f, minLifetime);
+            float maximumLifetime = Mathf.Max(minimumLifetime, maxLifetime);
+            int maximumParticles = Mathf.Max(1, maxParticles);
+            if (appliedMinRiseSpeed == minimumSpeed && appliedMaxRiseSpeed == maximumSpeed &&
+                appliedMinLifetime == minimumLifetime && appliedMaxLifetime == maximumLifetime &&
+                appliedMaxParticles == maximumParticles) return;
+
+            ParticleSystem.MainModule main = particles.main;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(minimumLifetime, maximumLifetime);
+            main.maxParticles = maximumParticles;
+            ParticleSystem.VelocityOverLifetimeModule velocity = particles.velocityOverLifetime;
+            velocity.y = new ParticleSystem.MinMaxCurve(minimumSpeed, maximumSpeed);
+            appliedMinRiseSpeed = minimumSpeed;
+            appliedMaxRiseSpeed = maximumSpeed;
+            appliedMinLifetime = minimumLifetime;
+            appliedMaxLifetime = maximumLifetime;
+            appliedMaxParticles = maximumParticles;
+        }
+
+        private void OnValidate()
+        {
+            emissionPerSecond = Mathf.Max(0f, emissionPerSecond);
+            maxParticles = Mathf.Max(1, maxParticles);
+            minRiseSpeed = Mathf.Max(0f, minRiseSpeed);
+            maxRiseSpeed = Mathf.Max(minRiseSpeed, maxRiseSpeed);
+            minLifetime = Mathf.Max(0.01f, minLifetime);
+            maxLifetime = Mathf.Max(minLifetime, maxLifetime);
+        }
+
+        private void UpdatePlacement()
         {
             Bounds bounds = bodyBounds.GetBounds(body);
-            for (int i = 0; i < flames.Length; i++)
-            {
-                SpriteRenderer flame = flames[i];
-                float age = elapsed - i * stagger;
-                int frame = Mathf.FloorToInt(age * framesPerSecond);
-                flame.enabled = i < flameCount && frame >= 0 && frame < frames.Length;
-                if (!flame.enabled) continue;
-                Sprite sprite = frames[frame];
-                flame.sprite = sprite;
-                float flameHeight = flameHeights[i];
-                // 좌·중앙·우 기준점 없이 각 불꽃을 중심 주변에서 독립적으로 배치합니다.
-                Vector2 offset = positionJitters[i];
-                flame.transform.position = new Vector3(bounds.center.x + offset.x, bounds.center.y + offset.y, body.transform.position.z);
-                flame.transform.rotation = Quaternion.identity;
-                // 월드 크기로 맞춰 부모 적의 확대·좌우 반전 배율을 중복 적용하지 않습니다.
-                Vector3 parentScale = flame.transform.parent.lossyScale;
-                float scale = flameHeight / Mathf.Max(0.001f, sprite.bounds.size.y);
-                flame.transform.localScale = new Vector3(scale / SafeScale(parentScale.x),
-                    scale / SafeScale(parentScale.y), 1f);
-                flame.flipX = i % 2 != 0;
-                flame.sortingLayerID = body.sortingLayerID;
-                flame.sortingOrder = body.sortingOrder + 1;
-            }
+            Transform emitter = particles.transform;
+            float size = Mathf.Clamp(bounds.size.y, 0.6f, 1.8f);
+            emitter.position = bounds.center;
+            emitter.rotation = Quaternion.identity;
+            Vector3 parentScale = emitter.parent.lossyScale;
+            emitter.localScale = new Vector3(InverseScale(parentScale.x), InverseScale(parentScale.y), InverseScale(parentScale.z));
+            ParticleSystem.MainModule main = particles.main;
+            main.startSize = new ParticleSystem.MinMaxCurve(size * 0.45f, size * 0.85f);
+            particleRenderer.sortingLayerID = body.sortingLayerID;
+            particleRenderer.sortingOrder = body.sortingOrder + 1;
         }
 
-        private bool TryPlaceFlames(float shortSide)
+        private bool TryGetBodyPoint(out Vector2 point)
         {
-            float maximum = Mathf.Clamp(maximumCenterOffsetRatio, 0f, 0.48f);
-            float minimum = Mathf.Clamp(minimumCenterOffsetRatio, 0f, maximum);
-            for (int i = 0; i < flameCount; i++)
+            Sprite sprite = body.sprite;
+            if (cachedSprite != sprite) CacheOutlines(sprite);
+            point = default;
+            if (outlines.Count == 0) return false;
+
+            // 발 아래에 입자가 걸리지 않도록 몸체의 아래쪽 일부는 제외합니다.
+            float minY = body.flipY ? localBounds.min.y : Mathf.Lerp(localBounds.min.y, localBounds.max.y, 0.18f);
+            float maxY = body.flipY ? Mathf.Lerp(localBounds.min.y, localBounds.max.y, 0.82f) : localBounds.max.y;
+            for (int attempt = 0; attempt < 32; attempt++)
             {
-                bool placed = false;
-                for (int attempt = 0; attempt < 32; attempt++)
+                // 대부분 아래쪽에서 시작하되 머리 쪽도 가끔 선택합니다.
+                float height = Random.value;
+                if (Random.value < 0.75f) height = Mathf.Min(height, Random.value);
+                if (body.flipY) height = 1f - height;
+                Vector2 candidate = new Vector2(Random.Range(localBounds.min.x, localBounds.max.x), Mathf.Lerp(minY, maxY, height));
+                foreach (List<Vector2> outline in outlines)
                 {
-                    float direction = Random.Range(0f, Mathf.PI * 2f);
-                    float distance = Random.Range(minimum, maximum) * shortSide;
-                    Vector2 candidate = new Vector2(Mathf.Cos(direction), Mathf.Sin(direction)) * distance;
-                    if (OverlapsEarlier(candidate, i)) continue;
-                    positionJitters[i] = candidate;
-                    placed = true;
-                    break;
+                    if (!ContainsPoint(outline, candidate)) continue;
+                    point = candidate;
+                    return true;
                 }
-                if (!placed) return false;
-            }
-            return true;
-        }
-
-        private bool OverlapsEarlier(Vector2 candidate, int index)
-        {
-            for (int i = 0; i < index; i++)
-            {
-                Vector2 separation = candidate - positionJitters[i];
-                Vector2 required = (placementSizes[index] + placementSizes[i]) * 0.5f + Vector2.one * 0.04f;
-                if (Mathf.Abs(separation.x) < required.x && Mathf.Abs(separation.y) < required.y) return true;
             }
             return false;
         }
 
-        private static float SafeScale(float value)
+        private void CacheOutlines(Sprite sprite)
         {
-            return Mathf.Abs(value) < 0.001f ? 0.001f : value;
+            cachedSprite = sprite;
+            outlines.Clear();
+            bool hasPoint = false;
+            localBounds = default;
+            for (int i = 0; i < sprite.GetPhysicsShapeCount(); i++)
+            {
+                List<Vector2> outline = new List<Vector2>();
+                sprite.GetPhysicsShape(i, outline);
+                if (outline.Count < 3) continue;
+                outlines.Add(outline);
+                foreach (Vector2 vertex in outline)
+                {
+                    if (hasPoint) localBounds.Encapsulate(vertex);
+                    else { localBounds = new Bounds(vertex, Vector3.zero); hasPoint = true; }
+                }
+            }
         }
+
+        private static bool ContainsPoint(List<Vector2> outline, Vector2 point)
+        {
+            bool inside = false;
+            for (int i = 0, previous = outline.Count - 1; i < outline.Count; previous = i++)
+            {
+                Vector2 a = outline[i];
+                Vector2 b = outline[previous];
+                if ((a.y > point.y) != (b.y > point.y) &&
+                    point.x < (b.x - a.x) * (point.y - a.y) / (b.y - a.y) + a.x)
+                    inside = !inside;
+            }
+            return inside;
+        }
+
+        private static float InverseScale(float value) => Mathf.Abs(value) < 0.001f ? 1f : 1f / value;
 
         public void Stop()
         {
-            playing = false;
+            if (particles != null) particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            emissionTimer = 0f;
             body = null;
-            if (flames != null)
-                foreach (SpriteRenderer flame in flames)
-                    if (flame != null) flame.enabled = false;
             enabled = false;
         }
 
         private void OnDisable() => Stop();
+
+        private void OnDestroy()
+        {
+            if (particleMaterial != null) Destroy(particleMaterial);
+        }
     }
 }

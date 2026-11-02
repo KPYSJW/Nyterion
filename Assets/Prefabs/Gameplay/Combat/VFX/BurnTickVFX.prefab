@@ -132,23 +132,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   frames:
-  - {fileID: -777599294, guid: e8ac1815beae119489761eeb3fa67946, type: 3}
-  - {fileID: -1061421660, guid: e8ac1815beae119489761eeb3fa67946, type: 3}
-  - {fileID: -1953847053, guid: e8ac1815beae119489761eeb3fa67946, type: 3}
-  - {fileID: -1650368425, guid: e8ac1815beae119489761eeb3fa67946, type: 3}
-  - {fileID: -530291891, guid: e8ac1815beae119489761eeb3fa67946, type: 3}
-  flames:
-  - {fileID: 7324625374679074515}
-  - {fileID: 7256044936073682546}
-  - {fileID: 1588642452898519819}
-  framesPerSecond: 16
-  bodyHeightRatio: 0.6
-  minimumHeight: 0.5
-  maximumHeight: 0.85
-  bodyWidthPerFlame: 0.9
-  stagger: 0.025
-  minimumCenterOffsetRatio: 0.12
-  maximumCenterOffsetRatio: 0.48
+  - {fileID: 981378305, guid: 60838953101e4c844958c4187340fa6e, type: 3}
+  - {fileID: 463682659, guid: 60838953101e4c844958c4187340fa6e, type: 3}
+  - {fileID: 944166840, guid: 60838953101e4c844958c4187340fa6e, type: 3}
+  - {fileID: -1427618769, guid: 60838953101e4c844958c4187340fa6e, type: 3}
+  - {fileID: -71429372, guid: 60838953101e4c844958c4187340fa6e, type: 3}
+  emissionPerSecond: 16
+  maxParticles: 48
+  minRiseSpeed: 1.2
+  maxRiseSpeed: 1.5
+  minLifetime: 0.2
+  maxLifetime: 0.3
 --- !u!1 &4627736977925385856
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,7 +16,8 @@ MonoBehaviour:
   isDisabled: 0
   skillType: 18
   skillName: "\uD30C\uC774\uC5B4\uBCFC"
-  description: "\uc801\uc5d0\uac8c \ud53c\ud574\ub97c \uc8fc\uace0 \ud654\uc0c1\uc744 \uc785\ud788\ub294 \ud654\uc5fc \ud22c\uc0ac\uccb4\ub97c \ubc1c\uc0ac\ud569\ub2c8\ub2e4."
+  description: "\uC801\uC5D0\uAC8C \uD53C\uD574\uB97C \uC8FC\uACE0 \uD654\uC0C1\uC744
+    \uC785\uD788\uB294 \uD654\uC5FC \uD22C\uC0AC\uCCB4\uB97C \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
   skillLevel: 1
   exp: 0
   coolDown: 1
@@ -40,6 +41,15 @@ MonoBehaviour:
   - {fileID: -2086324415, guid: fe39388fa89063e47bb800c53089a835, type: 3}
   - {fileID: 578880803, guid: fe39388fa89063e47bb800c53089a835, type: 3}
   - {fileID: 1893087440, guid: fe39388fa89063e47bb800c53089a835, type: 3}
+  launchOffset: 0.5
+  castFrames:
+  - {fileID: 1615607718, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
+  - {fileID: 1588577202, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
+  - {fileID: 1773380895, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
+  - {fileID: 533117149, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
+  - {fileID: 927855427, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
+  castFps: 14
+  castVisualScale: 0.25
   projectileVisualScale: 0.6
   hitVisualScale: 0.5
   hitVerticalScale: 1

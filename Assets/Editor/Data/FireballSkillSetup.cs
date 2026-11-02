@@ -36,6 +36,21 @@ namespace Nytherion.Editor
                 AssetDatabase.LoadAssetAtPath<FireballSkillData>(DataPath) == null &&
                 AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Projectile.png") != null)
                 CreateAssets();
+            FireballSkillData data = AssetDatabase.LoadAssetAtPath<FireballSkillData>(DataPath);
+            if (!EditorApplication.isPlayingOrWillChangePlaymode && data != null &&
+                (data.castFrames == null || data.castFrames.Length != 5 || data.castFrames.Any(frame => frame == null)) &&
+                AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Cast.png") != null)
+                UpdateCastAnimation();
+        }
+
+        [MenuItem("Tools/Nytherion/Fireball/Update Cast Animation")]
+        public static void UpdateCastAnimation()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            FireballSkillData data = Require<FireballSkillData>(DataPath);
+            data.castFrames = ConfigureFrames(Sprites + "Cast.png", 64, 5);
+            Save(data);
+            Debug.Log("[FireballSkillSetup] 시전 이펙트 5프레임 연결 완료.", data);
         }
 
         [MenuItem("Tools/Nytherion/Fireball/Create Assets")]
@@ -64,6 +79,9 @@ namespace Nytherion.Editor
             data.icon = icon;
             data.projectileFrames = projectileFrames;
             data.hitFrames = hitFrames;
+            if (AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Cast.png") != null &&
+                (data.castFrames == null || data.castFrames.Length != 5 || data.castFrames.Any(frame => frame == null)))
+                data.castFrames = ConfigureFrames(Sprites + "Cast.png", 64, 5);
             GameObject projectile = AssetDatabase.LoadAssetAtPath<GameObject>(ProjectilePath);
             if (projectile == null) projectile = CreatePrefab(false, data);
             data.projectilePrefab = projectile.GetComponent<FireballProjectile>();

@@ -8,6 +8,11 @@ namespace Nytherion.Data.ScriptableObjects.Skill
     {
         public ThunderboltProjectile projectilePrefab;
         public Sprite[] projectileFrames;
+        [Min(0f)] public float launchOffset = 0.5f;
+        [Header("시전 이펙트")]
+        public Sprite[] castFrames;
+        [Min(1f)] public float castFps = 14f;
+        [Min(0.01f)] public float castVisualScale = 0.75f;
         [Header("타격 이펙트")]
         public Sprite[] hitFrames;
         [Min(1f)] public float hitFps = 14f;

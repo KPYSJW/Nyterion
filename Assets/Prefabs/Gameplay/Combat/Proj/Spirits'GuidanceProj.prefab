@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2262732730235523378}
   - component: {fileID: -7250911551776495090}
   - component: {fileID: 3917050932710338110}
+  - component: {fileID: 7420221117320881001}
   m_Layer: 0
   m_Name: Spirits'GuidanceProj
   m_TagString: Untagged
@@ -226,3 +227,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolTag: Spirits'GuidanceProj
   returnDelay: 4
+--- !u!114 &7420221117320881001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2677180847099711197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06f0e405583641b481e23cd9121f2086, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  trailSprites:
+  - {fileID: 537664914, guid: 811709515eec44f7a8b251759bb09aa0, type: 3}
+  - {fileID: 325105380, guid: 811709515eec44f7a8b251759bb09aa0, type: 3}
+  - {fileID: 1104765726, guid: 811709515eec44f7a8b251759bb09aa0, type: 3}
+  - {fileID: 592665648, guid: 811709515eec44f7a8b251759bb09aa0, type: 3}
+  - {fileID: 1284237196, guid: 811709515eec44f7a8b251759bb09aa0, type: 3}
+  - {fileID: 1712285504, guid: edcd14a29c2341a8b8c3a7c9c422279b, type: 3}
+  - {fileID: 1103456823, guid: edcd14a29c2341a8b8c3a7c9c422279b, type: 3}
+  - {fileID: 640050969, guid: edcd14a29c2341a8b8c3a7c9c422279b, type: 3}
+  - {fileID: 1274187871, guid: edcd14a29c2341a8b8c3a7c9c422279b, type: 3}
+  - {fileID: 1737746197, guid: edcd14a29c2341a8b8c3a7c9c422279b, type: 3}
+  - {fileID: 1070186271, guid: ebcac884b15442a4916df799cd2abd46, type: 3}
+  - {fileID: 1458704383, guid: ebcac884b15442a4916df799cd2abd46, type: 3}
+  - {fileID: 1887413657, guid: ebcac884b15442a4916df799cd2abd46, type: 3}
+  - {fileID: 701069552, guid: ebcac884b15442a4916df799cd2abd46, type: 3}
+  - {fileID: 761387799, guid: ebcac884b15442a4916df799cd2abd46, type: 3}
+  localOffset: {x: -0.8, y: 0}
+  frameInterval: 0.1
+  trailScale: 3
+  trailSpacing: 1.35

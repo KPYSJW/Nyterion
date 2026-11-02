@@ -17,11 +17,6 @@ namespace Nytherion.GamePlay.Combat
         private EnemyAIController aiController;
         private Animator animator;
 
-        private float vfxDuration = 0.67f; // 애니메이션 1회 재생에 걸리는 시간 (0.333초 / 0.5배속 = 약 0.67초)
-        private float vfxCooldown = 1.2f; // 재생 완료 후 다음 재생까지의 텀(대기 시간)
-        private float vfxTimer;
-        private bool isVfxActive = false;
-
         public float SpeedReduction => currentStacks * slowPerStack;
         public int StackCount => currentStacks;
         public bool IsFrozen => freezeTimer > 0f;
@@ -45,8 +40,6 @@ namespace Nytherion.GamePlay.Combat
 
             ApplyReduction();
 
-            isVfxActive = true;
-            vfxTimer = vfxDuration;
             if (manager != null)
             {
                 manager.PlayVFX(EffectId);
@@ -99,29 +92,6 @@ namespace Nytherion.GamePlay.Combat
                 if (freezeTimer <= 0f)
                 {
                     ApplyReduction();
-                }
-            }
-
-            vfxTimer -= deltaTime;
-            if (vfxTimer <= 0f)
-            {
-                if (isVfxActive)
-                {
-                    isVfxActive = false;
-                    vfxTimer = vfxCooldown;
-                    if (manager != null)
-                    {
-                        manager.StopVFX(EffectId);
-                    }
-                }
-                else
-                {
-                    isVfxActive = true;
-                    vfxTimer = vfxDuration;
-                    if (manager != null)
-                    {
-                        manager.PlayVFX(EffectId);
-                    }
                 }
             }
         }

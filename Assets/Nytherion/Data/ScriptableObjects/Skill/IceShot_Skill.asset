@@ -38,6 +38,15 @@ MonoBehaviour:
   - {fileID: -1724089619, guid: f91beae4cf938c84ca375e032db61219, type: 3}
   - {fileID: 15289356, guid: f91beae4cf938c84ca375e032db61219, type: 3}
   - {fileID: 1965081251, guid: f91beae4cf938c84ca375e032db61219, type: 3}
+  launchOffset: 0.5
+  castFrames:
+  - {fileID: 1313636293, guid: 070369cecb13492fa8d05d2aa580d710, type: 3}
+  - {fileID: 1953217328, guid: 070369cecb13492fa8d05d2aa580d710, type: 3}
+  - {fileID: 219816942, guid: 070369cecb13492fa8d05d2aa580d710, type: 3}
+  - {fileID: 1328297499, guid: 070369cecb13492fa8d05d2aa580d710, type: 3}
+  - {fileID: 1407339961, guid: 070369cecb13492fa8d05d2aa580d710, type: 3}
+  castFps: 14
+  castVisualScale: 0.25
   hitFrames:
   - {fileID: 2103495046, guid: 0d24dedd62bb20c44ab1e424fa854dd9, type: 3}
   - {fileID: 236772867, guid: 0d24dedd62bb20c44ab1e424fa854dd9, type: 3}

@@ -18,6 +18,7 @@ namespace Nytherion.GamePlay.Combat
         private PlayerManager playerManager;
         private BurnTickVFX burnTickVFX;
         private ShockPulseVFX shockPulseVFX;
+        private ChillSnowVFX chillSnowVFX;
 
         public PlayerManager PlayerManager => playerManager;
         public StatusEffectDatabase Database => database;
@@ -111,6 +112,11 @@ namespace Nytherion.GamePlay.Combat
 
         public void PlayVFX(string effectId)
         {
+            if (effectId == "Ice")
+            {
+                PlayChillSnowVFX();
+                return;
+            }
             if (effectId == "Lightning")
             {
                 PlayShockPulseVFX();
@@ -148,6 +154,7 @@ namespace Nytherion.GamePlay.Combat
 
         public void StopVFX(string effectId)
         {
+            if (effectId == "Ice" && chillSnowVFX != null) chillSnowVFX.Stop();
             if (effectId == "Lightning" && shockPulseVFX != null) shockPulseVFX.Stop();
             if (effectId == "Fire" && burnTickVFX != null) burnTickVFX.Stop();
             // 속성 이펙트 정지 비활성화
@@ -169,6 +176,16 @@ namespace Nytherion.GamePlay.Combat
             // 적마다 하나만 생성하고 재사용합니다. 적이 풀에 반환될 때 함께 정지합니다.
             if (burnTickVFX == null) burnTickVFX = Instantiate(database.burnTickPrefab, transform);
             burnTickVFX.Play(body);
+        }
+
+        private void PlayChillSnowVFX()
+        {
+            if (owner == null || owner.isDead || !gameObject.activeInHierarchy ||
+                database == null || database.chillSnowPrefab == null) return;
+            SpriteRenderer body = owner.BodyRenderer;
+            if (body == null || body.sprite == null) return;
+            if (chillSnowVFX == null) chillSnowVFX = Instantiate(database.chillSnowPrefab, transform);
+            chillSnowVFX.Play(body);
         }
 
         private void PlayShockPulseVFX()
