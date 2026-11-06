@@ -11,8 +11,10 @@ namespace Nytherion.UI.RelicBoard
 {
     public class RelicBlockDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        public const float StorageIconSize = 96f;
+        public const float StorageIconSize = 64f;
         public const float EquippedIconSize = 64f;
+        public const float DragIconSize = 96f;
+        public const float DismantleIconSize = 96f;
 
         public RelicBlock blockData;
 
@@ -142,11 +144,11 @@ namespace Nytherion.UI.RelicBoard
             transform.SetAsLastSibling();
             rectTransform.anchorMin = rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
             rectTransform.localScale = Vector3.one;
-            rectTransform.sizeDelta = Vector2.one * StorageIconSize;
+            rectTransform.sizeDelta = Vector2.one * DragIconSize;
             iconImage.sprite = blockData.SourceData.Image;
             iconImage.enabled = iconImage.sprite != null;
-            ApplyIconSize(iconImage, StorageIconSize);
-            UpdateMissingIcon(StorageIconSize);
+            ApplyIconSize(iconImage, DragIconSize);
+            UpdateMissingIcon(DragIconSize);
             canvasGroup.blocksRaycasts = false;
             rectTransform.rotation = Quaternion.Euler(0, 0, blockData.RotationState * 90);
             UpdateDragPosition(eventData);
@@ -251,6 +253,7 @@ namespace Nytherion.UI.RelicBoard
 
         public void BuildVisualFromShape()
         {
+            float iconSize = isPlaced ? EquippedIconSize : isDismantleStaged ? DismantleIconSize : StorageIconSize;
             Image displayIcon = storageIcon != null && !isPlaced ? storageIcon : iconImage;
             if (displayIcon != null)
             {
@@ -261,7 +264,7 @@ namespace Nytherion.UI.RelicBoard
 
                     if (displayIcon.sprite != null)
                     {
-                        ApplyIconSize(displayIcon, isPlaced ? EquippedIconSize : StorageIconSize);
+                        ApplyIconSize(displayIcon, iconSize);
                     }
                 }
                 else
@@ -274,7 +277,7 @@ namespace Nytherion.UI.RelicBoard
             {
                 levelText.gameObject.SetActive(false);
             }
-            UpdateMissingIcon(isPlaced ? EquippedIconSize : StorageIconSize);
+            UpdateMissingIcon(iconSize);
         }
 
         private void UpdateMissingIcon(float size)

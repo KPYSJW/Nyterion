@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 240f0f6fa3167a546a07014fb521cce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickupDistance: 1.25
+  pickupDistance: 3
   outlineThickness: 2
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
   currentSpriteTexture: {fileID: 0}

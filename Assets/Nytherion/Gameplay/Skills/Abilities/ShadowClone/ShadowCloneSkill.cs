@@ -48,7 +48,7 @@ namespace Nytherion.GamePlay.Skills
             // 분신 시각 효과 활성화 및 초기화 
             currentClone.ActivateVisuals();
             PlayerCombat pCombat = caster.GetComponent<PlayerCombat>();
-            currentClone.Initialize(pCombat, finalDamageRatio);
+            currentClone.Initialize(pCombat, ApplySkillDamage(finalDamageRatio));
             
             // 이전 타이머를 초기화하고 지속 시간 후에 분신 제거 코루틴 시작
             StopAllCoroutines();

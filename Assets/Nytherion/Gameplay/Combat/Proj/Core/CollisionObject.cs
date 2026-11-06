@@ -37,11 +37,10 @@ namespace Nytherion.GamePlay.Combat
         private bool hasBasePiercingModifier;
         private bool hasBaseBounceModifier;
         private CombatModifierSnapshot modifierSnapshot = CombatModifierSnapshot.Empty;
-        private int trickshotInteractionCount;
+        private int bounceCount;
+        private bool suppressBounce;
+        private IDamageable extraProjectileSourceTarget;
         private bool isSecondaryProjectile;
-        private bool hasEnemyHit;
-        private bool hasSpawnedTrickshotEchoes;
-        private Vector3 lastHitPosition;
         private LayerMask obstacleCollisionLayers;
         private bool useObstacleCollision;
         private bool hasReturnedToPool;
@@ -58,7 +57,8 @@ namespace Nytherion.GamePlay.Combat
 
         public void CopyGatePayloadTo(CollisionObject output)
         {
-            output.Configure(damage, traits, chargePercent, hitEffectPrefab, ModifierSnapshot, true);
+            output.Configure(damage, traits, chargePercent, hitEffectPrefab, ModifierSnapshot, true, suppressBounce);
+            output.extraProjectileSourceTarget = extraProjectileSourceTarget;
             output.projectileOwner = ProjectileOwner;
             output.HasPassedProjectileGate = true;
             output.isChainDamage = isChainDamage;
@@ -111,10 +111,10 @@ namespace Nytherion.GamePlay.Combat
             hasReturnedToPool = false;
             useObstacleCollision = false;
             obstacleCollisionLayers = 0;
-            trickshotInteractionCount = 0;
+            bounceCount = 0;
+            suppressBounce = false;
+            extraProjectileSourceTarget = null;
             isSecondaryProjectile = false;
-            hasEnemyHit = false;
-            hasSpawnedTrickshotEchoes = false;
             CombatModifierSnapshot currentSnapshot = playerManager != null && playerManager.playerRelicManager != null
                 ? playerManager.playerRelicManager.CombatModifiers
                 : CombatModifierSnapshot.Empty;
@@ -127,19 +127,14 @@ namespace Nytherion.GamePlay.Combat
             float projectileChargePercent,
             GameObject projectileHitEffect,
             CombatModifierSnapshot currentSnapshot,
-            bool secondaryProjectile = false)
+            bool secondaryProjectile = false,
+            bool disableBounce = false)
         {
-            trickshotInteractionCount = 0;
+            bounceCount = 0;
+            suppressBounce = disableBounce;
+            extraProjectileSourceTarget = null;
             isSecondaryProjectile = secondaryProjectile;
-            hasEnemyHit = false;
-            hasSpawnedTrickshotEchoes = false;
-            float damageMultiplier = 1f;
-            if (!secondaryProjectile && playerManager != null &&
-                playerManager.TryGetComponent(out TrickshotSetBonusRuntime trickshotRuntime))
-            {
-                damageMultiplier = trickshotRuntime.ProjectileDamageMultiplier;
-            }
-            damage = projectileDamage * Mathf.Max(0f, damageMultiplier);
+            damage = projectileDamage;
             traits = projectileTraits;
             chargePercent = projectileChargePercent;
             if (hitEffectPrefab == null)
@@ -170,7 +165,8 @@ namespace Nytherion.GamePlay.Combat
         {
             modifierSnapshot = currentSnapshot ?? CombatModifierSnapshot.Empty;
             piercingModifier.enabled = hasBasePiercingModifier || modifierSnapshot.HasProjectilePiercing;
-            bounceModifier.enabled = hasBaseBounceModifier || modifierSnapshot.HasProjectileBounce;
+            bounceModifier.enabled = !suppressBounce &&
+                (hasBaseBounceModifier || modifierSnapshot.HasProjectileBounce);
         }
 
         public void ConfigureObstacleCollision(LayerMask layers)
@@ -222,6 +218,8 @@ namespace Nytherion.GamePlay.Combat
             }
             bool isEnemy = IsEnemyCollider(collision);
             bool isWall = HasTagInParents(collision.transform, "Wall") || IsObstacleCollision(collision);
+            if (isEnemy && extraProjectileSourceTarget != null &&
+                ReferenceEquals(collision.GetComponentInParent<IDamageable>(), extraProjectileSourceTarget)) return;
             if (isEnemy && bounceModifier.enabled && bounceModifier.ShouldIgnoreHit(collision)) return;
 
             if (isEnemy || isWall)
@@ -235,11 +233,11 @@ namespace Nytherion.GamePlay.Combat
                     incomingDirection = -hitRigidbody.velocity.normalized;
                 if (isEnemy)
                 {
-                    hasEnemyHit = true;
-                    lastHitPosition = hitPoint;
                     IDamageable target = collision.GetComponentInParent<IDamageable>();
                     if (target is EnemyBase enemy) enemy.TakeDamage(damage, isChainDamage, traits);
                     else target?.TakeDamage(damage, isChainDamage);
+                    if (!isSecondaryProjectile && bounceModifier.enabled)
+                        SpawnRicochetExtraProjectiles(hitPoint, target);
                     if (TryGetComponent(out HomingProj homingProjectile))
                         homingProjectile.StopTrackingHitTarget(target);
 
@@ -285,7 +283,7 @@ namespace Nytherion.GamePlay.Combat
                 }
 
                 bool shouldSurvive = false;
-                bool triggeredTrickshotInteraction = false;
+                bool bounced = false;
                 for (int i = 0; i < projModifiers.Count; i++)
                 {
                     IProjModifier effect = projModifiers[i];
@@ -297,18 +295,16 @@ namespace Nytherion.GamePlay.Combat
                         shouldSurvive = true;
                     }
 
-                    if ((modifierSurvives && (effect is PiercingModifier || effect is BounceModifier)) ||
-                        effect is SplitModifier)
+                    if (modifierSurvives && effect is BounceModifier)
                     {
-                        triggeredTrickshotInteraction = true;
+                        bounced = true;
                     }
                 }
 
-                ApplyTrickshotInteraction(triggeredTrickshotInteraction);
+                if (bounced && !isSecondaryProjectile) ApplyBounceBonus();
 
                 if (!shouldSurvive)
                 {
-                    SpawnTrickshotEchoes();
                     ReturnToPool();
                 }
             }
@@ -345,99 +341,61 @@ namespace Nytherion.GamePlay.Combat
             }
         }
 
-        private void ApplyTrickshotInteraction(bool interactionTriggered)
+        private void ApplyBounceBonus()
         {
-            if (!interactionTriggered || isSecondaryProjectile || playerManager == null ||
-                !playerManager.TryGetComponent(out TrickshotSetBonusRuntime trickshotRuntime) ||
-                trickshotInteractionCount >= trickshotRuntime.MaxInteractionStacks)
-            {
-                return;
-            }
+            TrickshotSetBonusRuntime bonus = null;
+            if (playerManager != null) playerManager.TryGetComponent(out bonus);
+            float damageMultiplier = bonus != null
+                ? (bounceCount == 0 ? bonus.FirstBounceDamageMultiplier : bonus.LaterBounceDamageMultiplier)
+                : (bounceCount == 0 ? 0.5f : 0.8f);
+            if (bonus != null) damageMultiplier *= bonus.BounceDamageIncreaseMultiplier;
+            // 양수 피해는 0.5에서 올림하여 도탄할 때마다 정수 피해를 적용합니다.
+            damage = Mathf.Floor(Mathf.Max(0f, damage * damageMultiplier) + 0.5f);
+            bounceCount++;
 
-            trickshotInteractionCount++;
-            damage *= 1f + Mathf.Max(0f, trickshotRuntime.InteractionDamageBonus);
-            if (trickshotInteractionCount >= trickshotRuntime.MaxInteractionStacks)
-            {
-                SpawnTrickshotEchoes();
-            }
+            if (bonus == null || bonus.BounceSpeedMultiplier <= 1f ||
+                !TryGetComponent(out Rigidbody2D body)) return;
+            body.velocity *= bonus.BounceSpeedMultiplier;
+            if (TryGetComponent(out HomingProj homing)) homing.SetFlightSpeed(body.velocity.magnitude);
         }
 
-        private void SpawnTrickshotEchoes()
+        private void SpawnRicochetExtraProjectiles(Vector2 origin, IDamageable hitTarget)
         {
-            if (hasSpawnedTrickshotEchoes || isSecondaryProjectile || !hasEnemyHit || playerManager == null ||
-                ObjectPoolManager.Instance == null || string.IsNullOrEmpty(poolTag) ||
-                !playerManager.TryGetComponent(out TrickshotSetBonusRuntime trickshotRuntime) ||
-                trickshotRuntime.EchoProjectileCount <= 0 || trickshotRuntime.EchoDamageRatio <= 0f)
+            if (playerManager == null || ObjectPoolManager.Instance == null || string.IsNullOrEmpty(poolTag) ||
+                !playerManager.TryGetComponent(out TrickshotSetBonusRuntime bonus) ||
+                bonus.ExtraProjectileCount <= 0) return;
+
+            float projectileSpeed = TryGetComponent(out Rigidbody2D sourceBody) && sourceBody.velocity.sqrMagnitude > 0.01f
+                ? sourceBody.velocity.magnitude : 8f;
+            if (playerManager.TryGetComponent(out IceSplinterRuntime splinter) && splinter.IsActive)
             {
+                splinter.Fire(origin, hitTarget, damage * bonus.ExtraProjectileDamageRatio,
+                    bonus.ExtraProjectileCount, projectileSpeed);
                 return;
             }
-
-            hasSpawnedTrickshotEchoes = true;
-
-            Vector2 originalDirection = transform.right;
-            float projectileSpeed = 8f;
-            if (TryGetComponent(out Rigidbody2D sourceRigidbody) && sourceRigidbody.velocity.sqrMagnitude > 0.01f)
+            if (bonus.ExtraProjectileDamageRatio <= 0f) return;
+            for (int i = 0; i < bonus.ExtraProjectileCount; i++)
             {
-                originalDirection = sourceRigidbody.velocity.normalized;
-                projectileSpeed = sourceRigidbody.velocity.magnitude;
-            }
-
-            List<Transform> targets = FindEchoTargets(
-                lastHitPosition,
-                trickshotRuntime.EchoSearchRadius,
-                trickshotRuntime.EchoProjectileCount);
-            for (int i = 0; i < trickshotRuntime.EchoProjectileCount; i++)
-            {
-                Vector2 direction = i < targets.Count
-                    ? ((Vector2)targets[i].position - (Vector2)lastHitPosition).normalized
-                    : (Vector2)(Quaternion.Euler(0f, 0f, (i == 0 ? -1f : 1f) * 18f) * originalDirection);
-                GameObject echo = ObjectPoolManager.Instance.SpawnFromPool(
-                    poolTag,
-                    lastHitPosition,
-                    Quaternion.identity);
-                if (echo == null) continue;
-                echo.transform.localScale *= effectSizeMultiplier;
-
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                echo.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-                if (echo.TryGetComponent(out Rigidbody2D echoRigidbody))
+                float angle = Random.Range(0f, 360f);
+                float radians = angle * Mathf.Deg2Rad;
+                Vector2 direction = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
+                GameObject extra = ObjectPoolManager.Instance.SpawnFromPool(poolTag, origin, Quaternion.Euler(0f, 0f, angle));
+                if (extra == null) continue;
+                // 난반사 추가 탄환은 원본 탄환과 구분되도록 작게 표시합니다.
+                extra.transform.localScale *= effectSizeMultiplier * 0.6f;
+                if (extra.TryGetComponent(out IProj projectile)) projectile.SetSpeed(projectileSpeed);
+                if (extra.TryGetComponent(out Rigidbody2D body)) body.velocity = direction * projectileSpeed;
+                if (extra.TryGetComponent(out CollisionObject extraCollision))
                 {
-                    echoRigidbody.velocity = direction * projectileSpeed;
-                }
-                if (echo.TryGetComponent(out IProj echoProjectile))
-                {
-                    echoProjectile.SetSpeed(projectileSpeed);
-                }
-                if (echo.TryGetComponent(out CollisionObject echoCollision))
-                {
-                    echoCollision.Configure(
-                        damage * trickshotRuntime.EchoDamageRatio,
-                        traits,
-                        chargePercent,
-                        hitEffectPrefab,
-                        ModifierSnapshot,
-                        true);
-                    echoCollision.effectSizeMultiplier = effectSizeMultiplier;
+                    float extraDamage = Mathf.Floor(Mathf.Max(0f, damage * bonus.ExtraProjectileDamageRatio) + 0.5f);
+                    extraCollision.Configure(extraDamage, traits, chargePercent,
+                        hitEffectPrefab, ModifierSnapshot, true, true);
+                    extraCollision.effectSizeMultiplier = effectSizeMultiplier;
+                    extraCollision.SetProjectileOwner(ProjectileOwner);
+                    extraCollision.isChainDamage = isChainDamage;
+                    extraCollision.extraProjectileSourceTarget = hitTarget;
                 }
             }
-        }
-
-        private static List<Transform> FindEchoTargets(Vector3 center, float radius, int maxTargets)
-        {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(center, Mathf.Max(0.1f, radius));
-            HashSet<Transform> uniqueTargets = new HashSet<Transform>();
-            List<Transform> result = new List<Transform>();
-            foreach (Collider2D hit in hits)
-            {
-                if (hit == null || !hit.CompareTag("Enemy") || !uniqueTargets.Add(hit.transform))
-                {
-                    continue;
-                }
-
-                result.Add(hit.transform);
-                if (result.Count >= maxTargets) break;
-            }
-            return result;
         }
     }
 }

@@ -28,18 +28,19 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: 1, y: 0}
+  - offset: {x: 0, y: 1}
     type: 1
     levelAmount: 1
-  - offset: {x: 0, y: 1}
+  - offset: {x: 0, y: 2}
     type: 2
     levelAmount: 1
-  - offset: {x: -1, y: 0}
+  - offset: {x: 0, y: 3}
     type: 2
     levelAmount: 1
-  - offset: {x: 0, y: -1}
+  - offset: {x: 0, y: 4}
     type: 2
     levelAmount: 1
+  preserveCustomInfluenceZones: 1
   synergySeriesId: PyromancerSeries
   synergySetBonusData: {fileID: 11400000, guid: 6a2c8fbd0e1b4d3da9c7b8e423e56712, type: 2}
   unlockMilestoneID: 
@@ -62,10 +63,6 @@ MonoBehaviour:
           value: 1
           valuePerLevel: 0
           isPercentage: 0
-        - stat: 3
-          value: 0.15
-          valuePerLevel: 0.05
-          isPercentage: 1
         - stat: 4
           value: 0.15
           valuePerLevel: 0.05

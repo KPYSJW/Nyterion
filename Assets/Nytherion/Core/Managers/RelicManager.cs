@@ -42,7 +42,6 @@ namespace Nytherion.Core.Managers
         private Dictionary<string, RelicData> relicDatabase;
         private List<RelicBlock> storageBlocks;
         private Dictionary<string, Vector2Int> placedBlockPositions;
-        private Dictionary<string, int> maxChainLengthPerSeries = new Dictionary<string, int>();
 
         private RelicBlock currentlyDraggedBlock;
         private bool isDraggingFromGrid;
@@ -229,19 +228,9 @@ namespace Nytherion.Core.Managers
             return logicGrid?.GetInfluenceAt(row, col) ?? InfluenceType.None;
         }
 
-        public int GetMaxChainLength(string seriesId)
-        {
-            if (string.IsNullOrEmpty(seriesId)) return 0;
-            if (maxChainLengthPerSeries.TryGetValue(seriesId, out int length))
-            {
-                return length;
-            }
-            return 0;
-        }
-
         /// <summary>
         /// 보드에 장착된 각인 중 같은 시너지 시리즈에 속하는 개수를 반환한다.
-        /// 배치 위치나 SynergyLink 연결 방향은 영향을 주지 않는다.
+        /// 배치 위치는 영향을 주지 않는다.
         /// </summary>
         public int GetEquippedSeriesRelicCount(string seriesId)
         {
@@ -280,11 +269,6 @@ namespace Nytherion.Core.Managers
                     yield return block.SourceData;
                 }
             }
-        }
-
-        public void UpdateSynergyChains(Dictionary<string, int> newChainData)
-        {
-            maxChainLengthPerSeries = newChainData ?? new Dictionary<string, int>();
         }
 
         #endregion
@@ -479,6 +463,34 @@ namespace Nytherion.Core.Managers
             }
         }
 
+        /// <summary>현재 보유한 유물의 기본 레벨을 테스트용으로 1 증가시킨다.</summary>
+        public int IncreaseAllRelicLevelsForTest()
+        {
+            if (!IsInitialized || storageBlocks == null || placedBlockPositions == null ||
+                logicGrid == null || currentlyDraggedBlock != null) return -1;
+
+            int count = 0;
+            foreach (RelicBlock block in storageBlocks)
+            {
+                if (block?.SourceData == null) continue;
+                if (block.IncreaseBaseLevel()) count++;
+            }
+
+            foreach (Vector2Int position in placedBlockPositions.Values)
+            {
+                RelicBlock block = logicGrid.GetBlockAt(position.y, position.x);
+                if (block?.SourceData == null) continue;
+                if (block.IncreaseBaseLevel()) count++;
+            }
+
+            if (count > 0)
+            {
+                RefreshRelicLogic();
+                OnRelicStateChanged?.Invoke();
+            }
+            return count;
+        }
+
         private RelicGridState GetRelicsForSave()
         {
             var state = new RelicGridState();
@@ -561,7 +573,6 @@ namespace Nytherion.Core.Managers
         {
             if (logicGrid == null) return;
             logicGrid.RecalculateAllInfluences();
-            UpdateSynergyChains(logicGrid.EvaluateSynergyChains());
         }
 
         public override void PopulateSaveData(SaveData saveData)

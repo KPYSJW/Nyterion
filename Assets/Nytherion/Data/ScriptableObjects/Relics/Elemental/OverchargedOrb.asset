@@ -30,15 +30,16 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: 1, y: 0}
+  - offset: {x: 0, y: 1}
     type: 1
     levelAmount: 1
-  - offset: {x: 0, y: 1}
+  - offset: {x: 1, y: 1}
     type: 2
     levelAmount: 1
-  - offset: {x: -1, y: 0}
+  - offset: {x: 1, y: 2}
     type: 2
     levelAmount: 1
+  preserveCustomInfluenceZones: 1
   synergySeriesId: StormArcherSeries
   synergySetBonusData: {fileID: 11400000, guid: 2b58d07a0be049d0ae64c7aad4390f1a, type: 2}
   unlockMilestoneID: 
@@ -53,15 +54,7 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 5
-          value: 0.15
-          valuePerLevel: 0.05
-          isPercentage: 1
         - stat: 6
-          value: 0.15
-          valuePerLevel: 0.05
-          isPercentage: 1
-        - stat: 3
           value: 0.15
           valuePerLevel: 0.05
           isPercentage: 1

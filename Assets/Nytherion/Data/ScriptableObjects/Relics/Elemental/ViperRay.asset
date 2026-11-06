@@ -33,15 +33,16 @@ MonoBehaviour:
   - offset: {x: 0, y: 1}
     type: 1
     levelAmount: 1
-  - offset: {x: 1, y: 0}
+  - offset: {x: 2, y: 0}
     type: 1
     levelAmount: 1
   - offset: {x: 0, y: -1}
     type: 2
     levelAmount: 1
-  - offset: {x: -1, y: 0}
+  - offset: {x: -2, y: 0}
     type: 2
     levelAmount: 1
+  preserveCustomInfluenceZones: 1
   synergySeriesId: PlagueAlchemistSeries
   synergySetBonusData: {fileID: 11400000, guid: 3c69e18b6a8e48aca8ff2d1de1568b24, type: 2}
   unlockMilestoneID: 
@@ -56,10 +57,6 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 3
-          value: 0.25
-          valuePerLevel: 0.08
-          isPercentage: 1
         - stat: 4
           value: 0.25
           valuePerLevel: 0.08

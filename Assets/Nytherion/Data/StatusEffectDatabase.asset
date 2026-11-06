@@ -19,3 +19,11 @@ MonoBehaviour:
   curseIcon: {fileID: 21300000, guid: bce2d2921d569194ca7b6a9e0c842a8b, type: 3}
   holyIcon: {fileID: 21300000, guid: 48c44d0fd6b0a0c48a6e558d920526af, type: 3}
   demonicIcon: {fileID: 0}
+  burnTickPrefab: {fileID: 2703828024012662956, guid: fdb0596e39178d44b80724ea92d7a272, type: 3}
+  chillSnowPrefab: {fileID: 7349372936597365941, guid: 5ac1489d4d2047d8ab854fd8de7da4f5, type: 3}
+  shockPulsePrefab: {fileID: 7349372936597365941, guid: c49724b78f469914292c46577be9ebd0, type: 3}
+  poisonCloudPrefab: {fileID: 7349372936597365941, guid: 2d19e8dc90fd49a6b838617f904d3f72, type: 3}
+  curseAuraPrefab: {fileID: 7349372936597365941, guid: 6d3e4be3e4d7419ca431fc1d7d7f6eaa, type: 3}
+  holySparklePrefab: {fileID: 7349372936597365941, guid: aacb3edf699949299a983b0bca315cd2, type: 3}
+  darknessEffectPrefab: {fileID: 8283562940581624940, guid: ba4be9f2de6c45df953b69656c1776db, type: 3}
+  lightningBonusDamageRatio: 0.3

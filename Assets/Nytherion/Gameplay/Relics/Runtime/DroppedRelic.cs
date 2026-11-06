@@ -153,6 +153,34 @@ namespace Nytherion.GamePlay.Relics
             }
         }
 
+        public static int CountNearbyCollectible(Transform player)
+        {
+            int count = 0;
+            foreach (DroppedRelic relic in activeDroppedRelics)
+            {
+                if (relic != null && relic.CanCollectNearby(player)) count++;
+            }
+            return count;
+        }
+
+        public static int BeginAutoCollectNearby(Transform player)
+        {
+            // 감지기를 끄면 선택 상태가 바뀌므로 획득 대상을 먼저 확정합니다.
+            var targets = new List<DroppedRelic>();
+            foreach (DroppedRelic relic in activeDroppedRelics)
+            {
+                if (relic != null && relic.CanCollectNearby(player)) targets.Add(relic);
+            }
+            foreach (DroppedRelic relic in targets) relic.BeginAutoCollect(player);
+            return targets.Count;
+        }
+
+        private bool CanCollectNearby(Transform player)
+        {
+            return IsAwaitingCollection() && !isAutoCollecting && !isLaunching && !isConcealed && !isRevealing &&
+                   relicPickupDetector != null && relicPickupDetector.IsInPickupRange(player);
+        }
+
         public void Init(RelicData data, Transform player, RelicManager manager)
         {
             relicData = data;
@@ -446,7 +474,7 @@ namespace Nytherion.GamePlay.Relics
 
             foreach (DroppedRelic other in activeDroppedRelics)
             {
-                if (other == null || other == this || other.isLaunching || other.isCollected || other.relicData == null || other.rb == null)
+                if (other == null || other == this || other.isLaunching || other.isAutoCollecting || other.isCollected || other.relicData == null || other.rb == null)
                 {
                     continue;
                 }
@@ -520,7 +548,7 @@ namespace Nytherion.GamePlay.Relics
 
         private void ActivatePickupDetector()
         {
-            if (relicPickupDetector == null) return;
+            if (relicPickupDetector == null || isAutoCollecting) return;
 
             relicPickupDetector.enabled = true;
             relicPickupDetector.Initialize(playerTransform, CollectRelic);

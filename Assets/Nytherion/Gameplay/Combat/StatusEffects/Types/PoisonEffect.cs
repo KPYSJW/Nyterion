@@ -5,7 +5,6 @@ namespace Nytherion.GamePlay.Combat
     public class PoisonEffect : StatusEffect
     {
         public override string EffectId => "Poison";
-        public override Color EffectColor => new Color(0.2f, 0.8f, 0.2f); // 독성 초록색
 
         private const int MaximumStacks = 5;
 

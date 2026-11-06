@@ -23,8 +23,18 @@ namespace Nytherion.GamePlay.Characters.Enemy
         
         public EnemyData enemyData;
         private float currentHealth;
+        protected float CurrentHealth => currentHealth;
         public bool isDead { get; private set; } = false;
         protected virtual bool HasUnlimitedHealth => false;
+        protected virtual float InitialHealth => enemyData != null ? enemyData.maxHealth : 0f;
+        protected virtual bool CanReceiveDamage => true;
+
+        protected virtual bool TryHandleLethalDamage() => false;
+
+        protected void SetPhaseHealth(float health)
+        {
+            currentHealth = Mathf.Max(1f, health);
+        }
 
         public RoomFirstDungeonGenerator.Room homeRoom { get; set; }
         private CurrencyDataManager currencyDataManager;
@@ -36,9 +46,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         [Header("Hit Flash")]
         [SerializeField] private SpriteRenderer spriteRenderer;
+        public SpriteRenderer BodyRenderer => spriteRenderer;
         [SerializeField] private Color hitColor = Color.red;
         [SerializeField] private float hitFlashDuration = 0.08f;
-        [SerializeField, Min(0f)] private float whiteFlashDuration = 0.04f;
+        [SerializeField, Range(0f, 1f)] private float hitFlashStrength = 0.9f;
+        [SerializeField, Min(0f)] private float hitFlashHoldDuration = 0.03f;
         private Color originalColor = Color.white;
         private Coroutine hitFlashCoroutine;
         private MaterialPropertyBlock hitFlashProperties;
@@ -133,13 +145,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
             this.currencyDataManager = currencyDataManager;
             this.playerManager = playerManager;
         }
-        public void Initialize(EnemyData data)
+        public virtual void Initialize(EnemyData data)
         {
             if (data == null) return;
 
             enemyData = data;
             poolTag = data.enemyName;
-            currentHealth = data.maxHealth;
+            currentHealth = InitialHealth;
             isDead = false;
             homeRoom = null;
             gameObject.SetActive(true);
@@ -167,7 +179,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 statusEffectManager.ClearAllEffects();
                 statusEffectManager.ConfigureCombatContext(playerManager);
             }
-            UpdateStatusColor();
         }
 
         public void TakeDamage(float damageAmount, bool isChain = false)
@@ -185,10 +196,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
             ApplyDamage(damageAmount, false, true);
         }
 
+        protected virtual float ModifyIncomingDamage(float damageAmount) => damageAmount;
+
         private void ApplyDamage(float damageAmount, bool isChain, bool isDamageOverTime,
             IReadOnlyList<EquipmentTrait> attackTraits = null)
         {
-            if (isDead) return;
+            if (isDead || !CanReceiveDamage) return;
 
             // 같은 적중 안에서 합산하므로 치명타와 적중 효과를 다시 발동시키지 않습니다.
             // 지속 피해와 유물·번개의 연쇄 피해는 새 주사위 추첨에서 제외합니다.
@@ -220,9 +233,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 }
             }
 
+            damageAmount = ModifyIncomingDamage(damageAmount);
             PlayHitFlash();
-            // 이번 적중 이벤트에서 새로 부여한 감전은 같은 타격을 다시 확산시키지 않습니다.
-            bool hadLightningBeforeHit = !isChain && statusEffectManager != null && statusEffectManager.HasEffect("Lightning");
+            // 이번 적중 이벤트에서 처음 부여한 감전은 다음 직접 타격부터 추가 피해를 줍니다.
+            bool hadLightningBeforeHit = !isChain && !isDamageOverTime && statusEffectManager != null && statusEffectManager.HasEffect("Lightning");
             if (eventManager != null)
             {
                 eventManager.TriggerEnemyDamagedByPlayerWithCrit(
@@ -240,17 +254,17 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 statusEffectManager.TriggerHolyHeal();
             }
 
-            // 감전 전격 체인 트리거 (체인 공격이 아닌 원래 공격일 때만 작동)
+            // 감전된 적의 직접 피격에만 추가 피해를 주며 추가 피해는 재귀 발동하지 않습니다.
             if (hadLightningBeforeHit && statusEffectManager != null && statusEffectManager.HasEffect("Lightning"))
             {
-                statusEffectManager.TriggerLightningChain(damageAmount);
+                statusEffectManager.TriggerLightningBonusDamage(damageAmount);
             }
 
             // 허수아비도 피격 효과와 전투 이벤트는 처리하되 체력은 소모하지 않습니다.
             if (!HasUnlimitedHealth)
             {
                 currentHealth -= damageAmount;
-                if (currentHealth <= 0) Die();
+                if (currentHealth <= 0 && !TryHandleLethalDamage()) Die();
             }
         }
 
@@ -326,38 +340,30 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private IEnumerator HitFlashRoutine()
         {
             float totalDuration = Mathf.Max(0f, hitFlashDuration);
-            float whiteDuration = Mathf.Min(
-                Mathf.Max(0f, whiteFlashDuration),
-                totalDuration);
-            float redDuration = Mathf.Max(0f, totalDuration - whiteDuration);
-
-            if (TryApplyHitFlashMaterial())
+            float holdDuration = Mathf.Min(totalDuration, Mathf.Max(0f, hitFlashHoldDuration));
+            Color baseColor = originalColor;
+            spriteRenderer.color = baseColor;
+            bool useFlashMaterial = TryApplyHitFlashMaterial();
+            float elapsed = 0f;
+            while (elapsed < totalDuration)
             {
-                SetHitFlash(Color.white);
-                if (whiteDuration > 0f)
+                float fadeProgress = elapsed <= holdDuration ? 0f :
+                    (elapsed - holdDuration) / Mathf.Max(0.0001f, totalDuration - holdDuration);
+                float amount = Mathf.Clamp01(hitFlashStrength) *
+                    (1f - Mathf.SmoothStep(0f, 1f, fadeProgress));
+                if (useFlashMaterial) SetHitFlash(hitColor, amount);
+                else
                 {
-                    yield return new WaitForSeconds(whiteDuration);
+                    Color tint = Color.Lerp(baseColor, hitColor, amount);
+                    tint.a = baseColor.a;
+                    spriteRenderer.color = tint;
                 }
-
-                SetHitFlash(hitColor);
-                if (redDuration > 0f)
-                {
-                    yield return new WaitForSeconds(redDuration);
-                }
-
-                RestoreHitFlashMaterial();
-            }
-            else
-            {
-                // 셰이더를 찾지 못한 경우에도 기존 빨간 피격 표시는 유지합니다.
-                spriteRenderer.color = hitColor;
-                if (totalDuration > 0f)
-                {
-                    yield return new WaitForSeconds(totalDuration);
-                }
+                yield return null;
+                elapsed += Time.deltaTime;
             }
 
-            spriteRenderer.color = GetCurrentBaseColor();
+            RestoreHitFlashMaterial();
+            spriteRenderer.color = originalColor;
             hitFlashCoroutine = null;
         }
 
@@ -388,12 +394,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
             return true;
         }
 
-        private void SetHitFlash(Color flashColor)
+        private void SetHitFlash(Color flashColor, float amount)
         {
             // Read the current sprite properties instead of reapplying an earlier texture.
             spriteRenderer.GetPropertyBlock(hitFlashProperties);
             hitFlashProperties.SetColor(FlashColorId, flashColor);
-            hitFlashProperties.SetFloat(FlashAmountId, 1f);
+            hitFlashProperties.SetFloat(FlashAmountId, Mathf.Clamp01(amount));
             spriteRenderer.SetPropertyBlock(hitFlashProperties);
         }
 
@@ -411,21 +417,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
             spriteRenderer.SetPropertyBlock(hitFlashProperties);
             materialBeforeHitFlash = null;
             isHitFlashMaterialApplied = false;
-        }
-
-        public void UpdateStatusColor()
-        {
-            if (spriteRenderer == null) return;
-
-            if (hitFlashCoroutine == null)
-            {
-                spriteRenderer.color = GetCurrentBaseColor();
-            }
-        }
-
-        private Color GetCurrentBaseColor()
-        {
-            return originalColor;
         }
 
         private void DropItems()

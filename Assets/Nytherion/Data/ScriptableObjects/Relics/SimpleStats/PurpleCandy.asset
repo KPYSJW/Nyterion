@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: PurpleCandy
+  m_EditorClassIdentifier: 
+  relicName: Purple Candy
+  koreanName: "\uBCF4\uB77C\uC0C9 \uC0AC\uD0D5"
+  englishName: 
+  description_KR: "\uCD94\uAC00 \uD22C\uC0AC\uCCB4 +1"
+  description_EN: Extra projectiles +1.
+  Image: {fileID: 21300000, guid: 07e3028f5e69dbc4abde2435c1de12b2, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: 
+    description_EN: 
+    condition:
+      rid: -2
+    effects:
+    - rid: 6716071107867705345
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  preserveCustomInfluenceZones: 1
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: 2}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: 3}
+    type: 2
+    levelAmount: 1
+  - offset: {x: 0, y: 4}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: TrickshotEngineerSeries
+  synergySetBonusData: {fileID: 11400000, guid: 37f8c0c11e534f409d420d1de6d5cb90, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 6716071107867705345
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 10
+          value: 1
+          valuePerLevel: 0
+          isPercentage: 0

@@ -267,12 +267,12 @@ namespace Nytherion.UI.Components
                                 modValue = Mathf.Abs(modValue);
                             }
 
-                            if (mod.stat == StatType.MeleeDamage || mod.stat == StatType.RangedDamage)
+                            if (mod.stat == StatType.RangedDamage)
                             {
                                 if (!mod.isPercentage) finalDamage += modValue;
                                 else finalDamage *= (1 + modValue);
                             }
-                            else if (mod.stat == StatType.MeleeSpeed || mod.stat == StatType.RangedSpeed)
+                            else if (mod.stat == StatType.RangedSpeed)
                             {
                                 // 쿨타임은 스피드가 오를수록 줄어드는 방식이거나 직접 합산일 수 있으므로 플랫 수치로 계산
                                 if (!mod.isPercentage) finalCooldown -= modValue; // 속도가 플러스면 쿨타임 감소
@@ -314,6 +314,7 @@ namespace Nytherion.UI.Components
                     finalDesc += $"\n\n<color={DescriptionDefaultColorHex}><{additionalStats}></color>";
                     foreach (var mod in equipData.statModifiers)
                     {
+                        if (mod.stat.IsRetired()) continue;
                         float displayValue = mod.value;
                         bool inverted = false;
 
@@ -466,8 +467,8 @@ namespace Nytherion.UI.Components
                         content += LocalizationText.Get(
                             LocalizationTables.UI,
                             "ui.tooltip.reward.relic_unlock",
-                            "\n보상: {0} 유물 해금",
-                            "\nReward: Unlock {0} relic",
+                            "\n보상: {0} 유물이 상자 뽑기에 추가",
+                            "\nReward: {0} relic added to chest pool",
                             reward.relicData.DisplayName);
                     }
                     else if (reward.rewardType == RewardType.Gold)

@@ -21,6 +21,12 @@ namespace Nytherion.Editor
         private static readonly Dictionary<string, (string Korean, string English)> Descriptions =
             new Dictionary<string, (string, string)>
             {
+                ["Bloom Ring"] = ("스킬 사용 후 3초 동안 공격 속도 +20% (레벨당 +4%p). 재발동 시 지속 시간 갱신.", "After using a skill, attack speed +20% for 3 seconds (+4pp per level). Repeated triggers refresh the duration."),
+                ["Stardust"] = ("적 처치 시 마나 3 회복 (레벨당 +1).", "Restore 3 mana on kill (+1 per level)."),
+                ["Beast Scale"] = ("피격 시 4초 동안 방어력 +3 (레벨당 +1), 최대 3중첩. 재발동 시 지속 시간 갱신.", "Taking damage grants +3 defense for 4 seconds (+1 per level), up to 3 stacks. Repeated triggers refresh the duration."),
+                ["Mossy Stone"] = ("최대 체력 +45 (레벨당 +9).", "Max health +45 (+9 per level)."),
+                ["Wraith Stone"] = ("저주받은 적 처치 시 반경 3 안의 저주받지 않은 적에게 남은 저주 전파 (레벨당 반경 +0.25).", "When a cursed enemy dies, spread its remaining curse to uncursed enemies within 3 units (+0.25 radius per level)."),
+                ["Grimoire"] = ("저주 장비 장착 시 공격력 +15% (레벨당 +5%p).", "With Cursed equipment, attack +15% (+5pp per level)."),
                 ["CatEyes"] = ("공격 시 일반 투사체를 발사하는 소환물 생성", "Summons a companion that fires normal projectiles when you attack."),
                 ["Daemon"] = ("공격 시 마성 투사체를 발사하는 소환물 생성", "Summons a companion that fires demonic projectiles when you attack."),
                 ["Fulmen"] = ("공격 시 번개 투사체를 발사하는 소환물 생성", "Summons a companion that fires lightning projectiles when you attack."),
@@ -51,9 +57,9 @@ namespace Nytherion.Editor
                 ["Trigger Piece"] = ("추가 투사체 +1", "Extra projectiles +1."),
                 ["First Pip"] = ("치명타 확률 +4%p (레벨당 +1%p)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Critical chance +4pp (+1pp per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
                 ["Second Pip"] = ("치명타 피해 +15% (레벨당 +4%)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Critical damage +15% (+4% per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
-                ["Third Pip"] = ("근접 공격력 +3 (레벨당 +1)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Melee attack +3 (+1 per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
+                ["Third Pip"] = ("스킬 피해 +15% (레벨당 +5%p)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Skill damage +15% (+5pp per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
                 ["Fourth Pip"] = ("원거리 공격력 +3 (레벨당 +1)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Ranged attack +3 (+1 per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
-                ["Fifth Pip"] = ("근접 공격 속도 +10% (레벨당 +2%)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Melee attack speed +10% (+2% per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
+                ["Fifth Pip"] = ("스킬 쿨타임 -10% (레벨당 -2%p)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Skill cooldown -10% (-2pp per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%."),
                 ["Six Pip"] = ("원거리 공격 속도 +10% (레벨당 +2%)\n추가 피해: 2세트 -10~20% / 4세트 0~40% / 6세트 20~60%", "Ranged attack speed +10% (+2% per level).\nBonus damage: 2 dice -10% to +20% / 4 dice 0% to +40% / 6 dice +20% to +60%.")
             };
 
@@ -78,9 +84,14 @@ namespace Nytherion.Editor
         {
             switch (skill.skillID)
             {
+                case "skill_blackhole": return "블랙홀 마법 책";
                 case "skill_bubble_shield": return "비눗방울";
-                case "skill_decoy": return "허수아비";
-                case "skill_turret": return "루티";
+                case "skill_chain_ignition": return "연쇄 점화 마법 책";
+                case "skill_decoy": return "허수아비 마법 책";
+                case "skill_fire_bolt": return "파이어볼 마법 책";
+                case "skill_meteor_strike": return "메테오 마법 책";
+                case "skill_shadow_clone": return "그림자 분신 마법 책";
+                case "skill_turret": return "루티 마법 책";
                 case "skill_spiral": return "나선";
             }
             string name = string.IsNullOrWhiteSpace(currentName) ? skill.skillName : currentName;
@@ -111,6 +122,14 @@ namespace Nytherion.Editor
                 case "skill_decoy":
                     korean = "주변 적을 유인하는 허수아비 스킬을 얻는다.";
                     english = "Grants a Decoy skill that taunts nearby enemies.";
+                    return;
+                case "skill_fire_bolt":
+                    korean = "적에게 피해와 화상을 주는 파이어볼 스킬을 얻는다.";
+                    english = "Grants a fireball skill that damages and burns enemies.";
+                    return;
+                case "skill_ice_shot":
+                    korean = "적에게 피해와 빙결을 주는 아이스샷 스킬을 얻는다.";
+                    english = "Grants an ice shot skill that damages and chills enemies.";
                     return;
                 case "skill_lifesteal":
                     korean = "공격 피해로 체력을 회복하는 생명력 흡수 스킬을 얻는다.";
@@ -153,8 +172,8 @@ namespace Nytherion.Editor
                     english = "Grants a skill that summons spinning orbs to attack nearby enemies.";
                     return;
                 case "skill_turret":
-                    korean = "적을 자동으로 공격하는 루티 포탑 스킬을 얻는다.";
-                    english = "Grants a Rooti turret skill that automatically attacks enemies.";
+                    korean = "적을 자동으로 공격하는 루티 소환 스킬을 얻는다.";
+                    english = "Grants a skill that summons Rooti to automatically attack enemies.";
                     return;
             }
             string name = GetSkillRelicName(skill);

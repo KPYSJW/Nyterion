@@ -72,7 +72,6 @@ namespace Nytherion.Data.ScriptableObjects.Relics
             foreach (RelicEffectModule module in bonusModules)
             {
                 if (module?.condition is ChainSynergyCondition condition &&
-                    condition.measure == ChainSynergyMeasure.EquippedSeriesRelicCount &&
                     string.Equals(condition.targetSeriesId, synergySeriesId, StringComparison.Ordinal))
                 {
                     minimum = Mathf.Min(minimum, condition.requiredChainLength);
@@ -96,7 +95,6 @@ namespace Nytherion.Data.ScriptableObjects.Relics
             int equippedCount = GetEquippedCount(relicManager);
             return bonusModules
                 .Where(module => module?.condition is ChainSynergyCondition condition &&
-                    condition.measure == ChainSynergyMeasure.EquippedSeriesRelicCount &&
                     string.Equals(condition.targetSeriesId, synergySeriesId, StringComparison.Ordinal))
                 .Select(module => ((ChainSynergyCondition)module.condition).requiredChainLength)
                 .Distinct()
@@ -123,10 +121,8 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                 var activeTiers = orderedModules
                     .Select(module => (ChainSynergyCondition)module.condition)
                     .Where(condition => relicManager != null &&
-                        (condition.measure == ChainSynergyMeasure.EquippedSeriesRelicCount
-                            ? relicManager.GetEquippedSeriesRelicCount(condition.targetSeriesId)
-                            : relicManager.GetMaxChainLength(condition.targetSeriesId)) >= condition.requiredChainLength)
-                    .GroupBy(condition => (condition.measure, condition.targetSeriesId))
+                        relicManager.GetEquippedSeriesRelicCount(condition.targetSeriesId) >= condition.requiredChainLength)
+                    .GroupBy(condition => condition.targetSeriesId ?? string.Empty)
                     .ToDictionary(group => group.Key, group => group.Max(condition => condition.requiredChainLength));
 
                 foreach (RelicEffectModule module in orderedModules)
@@ -140,7 +136,7 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                             "효과 설명이 설정되지 않았습니다.",
                             "No effect description has been configured.");
                     string tierColor = activeTiers.TryGetValue(
-                        (condition.measure, condition.targetSeriesId), out int activeRequirement) &&
+                        condition.targetSeriesId ?? string.Empty, out int activeRequirement) &&
                         condition.requiredChainLength == activeRequirement
                         ? ActiveTierColorHex
                         : InactiveTierColorHex;

@@ -31,7 +31,6 @@ namespace Nytherion.GamePlay.Skills
         private Transform target;
         private ContactFilter2D enemyFilter;
         private float expiresAt;
-        private float explosionEndsAt;
         private bool hasExploded;
         private bool isJumping;
         private Vector2 jumpDirection;
@@ -39,6 +38,7 @@ namespace Nytherion.GamePlay.Skills
         private float jumpStartedAt;
         private float jumpProgress;
         private float effectSizeMultiplier = 1f;
+        private float skillDamageMultiplier = 1f;
         private Vector3 baseScale;
         private bool hasBaseScale;
 
@@ -65,17 +65,17 @@ namespace Nytherion.GamePlay.Skills
         }
 
         public void Begin(PyroTankSkillData skill, Vector3 position, Vector2 launchDirection,
-            float sizeMultiplier = 1f)
+            float sizeMultiplier = 1f, float damageMultiplier = 1f)
         {
             CacheComponents();
             effectSizeMultiplier = Mathf.Max(0.01f, sizeMultiplier);
+            skillDamageMultiplier = Mathf.Max(0f, damageMultiplier);
             transform.localScale = baseScale * effectSizeMultiplier;
             data = skill;
             hasExploded = false;
             target = null;
             targetCollider = null;
             expiresAt = Time.time + Mathf.Max(0.01f, data.lifetime);
-            explosionEndsAt = 0f;
             body.simulated = false;
             body.velocity = Vector2.zero;
             transform.SetPositionAndRotation(position, Quaternion.identity);
@@ -332,7 +332,7 @@ namespace Nytherion.GamePlay.Skills
                     damageTargets.Add(damageable);
             foreach (IDamageable damageable in damageTargets)
                 if (damageable is MonoBehaviour behaviour && behaviour.isActiveAndEnabled)
-                    damageable.TakeDamage(Mathf.Max(0f, data.damage));
+                    damageable.TakeDamage(Mathf.Max(0f, data.damage) * skillDamageMultiplier);
         }
 
         public void OnExplosionEnd()

@@ -11,7 +11,7 @@ using Nytherion.Core.Systems;
 namespace Nytherion.Gameplay.Relics.Modules
 {
     /// <summary>
-    /// 보유 골드량에 비례하여 근접/원거리 공격력을 강화하는 효과
+    /// 보유 골드량에 비례하여 공격력을 강화하는 효과
     /// </summary>
     [Serializable, RelicDisplayName("골드 비례 공격력 강화 효과")]
     public class GoldProportionalEffect : RelicEffectBase
@@ -88,14 +88,6 @@ namespace Nytherion.Gameplay.Relics.Modules
 
             ClearModifiers();
 
-            StatModifier meleeMod = new StatModifier
-            {
-                stat = StatType.MeleeDamage,
-                value = damageIncrease,
-                valuePerLevel = 0f,
-                isPercentage = false
-            };
-
             StatModifier rangedMod = new StatModifier
             {
                 stat = StatType.RangedDamage,
@@ -104,10 +96,8 @@ namespace Nytherion.Gameplay.Relics.Modules
                 isPercentage = false
             };
 
-            appliedModifiers.Add(meleeMod);
             appliedModifiers.Add(rangedMod);
 
-            cachedPlayerManager.AddTemporaryStatModifier(meleeMod);
             cachedPlayerManager.AddTemporaryStatModifier(rangedMod);
 
             isUpdating = false;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Spiral_Skill
   m_EditorClassIdentifier: 
   skillID: skill_spiral
+  isDisabled: 0
   skillType: 4
   skillName: Spiral
   description: "\uC8FC\uBCC0 \uC801\uC744 \uACF5\uACA9\uD558\uB294 \uD68C\uC804 \uAD6C\uCCB4
@@ -20,7 +21,7 @@ MonoBehaviour:
   skillLevel: 0
   exp: 0
   coolDown: 10
-  manaCost: 0
+  manaCost: 20
   damage: 1
   range: 1
   icon: {fileID: 21300000, guid: 2641987862f4dbd4da2fef9e117d24b6, type: 3}

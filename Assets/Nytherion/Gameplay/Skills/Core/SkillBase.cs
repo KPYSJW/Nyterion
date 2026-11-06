@@ -1,5 +1,6 @@
 using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
+using Nytherion.GamePlay.Characters.Player;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -32,6 +33,29 @@ namespace Nytherion.GamePlay.Skills
         /// <summary> 마지막으로 스킬을 사용한 시간 (초기값은 게임 시작 즉시 사용 가능하도록 음수 무한대로 설정/// </summary>
         [System.NonSerialized] private float lastUseTime = -Mathf.Infinity;
 
+        // 테스트 감소율은 스킬 에셋이나 저장 데이터에 기록하지 않습니다.
+        public float DebugCooldownReduction { get; private set; }
+
+        public virtual void SetDebugCooldownReduction(float reduction)
+        {
+            if (float.IsNaN(reduction) || float.IsInfinity(reduction)) return;
+            DebugCooldownReduction = Mathf.Clamp01(reduction);
+        }
+
+        protected Nytherion.Core.Managers.PlayerManager SkillOwner => caster != null
+            ? caster.GetComponentInParent<Nytherion.Core.Managers.PlayerManager>()
+            : GetComponentInParent<Nytherion.Core.Managers.PlayerManager>();
+
+        protected float SkillDamageMultiplier => SkillOwner != null && SkillOwner.currentPlayerData != null
+            ? Mathf.Max(0f, SkillOwner.currentPlayerData.skillDamageMultiplier) : 1f;
+
+        protected float ApplySkillDamage(float damage) => Mathf.Max(0f, damage) * SkillDamageMultiplier;
+
+        protected float ApplyDebugCooldownReduction(float duration) =>
+            Mathf.Max(0f, duration) * (1f - DebugCooldownReduction) *
+            (SkillOwner != null && SkillOwner.currentPlayerData != null
+                ? Mathf.Max(0f, SkillOwner.currentPlayerData.skillCooldownMultiplier) : 1f);
+
         /// <summary>장착 해제 중에도 게임 시간 기준으로 유지되는 쿨타임 상태.</summary>
         public class CooldownState
         {
@@ -50,7 +74,17 @@ namespace Nytherion.GamePlay.Skills
         ///  스킬 사용을 시도. 사용 가능하다면 스킬을 활성화하고 쿨다운을 초기화
         /// </summary>
         /// <returns></returns>
-        public virtual bool CanUse() => skillData != null && skillData.IsRuntimeAvailable && Time.time >= lastUseTime + GetCooldownTime();
+        public virtual bool CanUse() => skillData != null && skillData.IsRuntimeAvailable &&
+            HasRequiredMana() && Time.time >= lastUseTime + GetCooldownTime();
+
+        private PlayerSkillManager ManaOwner => caster != null
+            ? caster.GetComponentInParent<PlayerSkillManager>() : GetComponentInParent<PlayerSkillManager>();
+
+        protected bool HasRequiredMana() => skillData != null && (skillData.manaCost <= 0 ||
+            (ManaOwner != null && ManaOwner.HasMana(skillData.manaCost)));
+
+        protected bool TrySpendMana() => skillData != null && (skillData.manaCost <= 0 ||
+            (ManaOwner != null && ManaOwner.TrySpendMana(skillData.manaCost)));
 
         /// <summary>
         /// 실제 스킬의 효과나 로직이 구현되는 메서드
@@ -59,10 +93,11 @@ namespace Nytherion.GamePlay.Skills
         public virtual bool TryUse()
         {
 
-            if (CanUse())
+            if (CanUse() && TrySpendMana())
             {
                 Activate();
                 lastUseTime = Time.time;
+                ManaOwner?.NotifySkillUsed(this);
                 return true;
             }
             return false;
@@ -76,7 +111,7 @@ namespace Nytherion.GamePlay.Skills
         /// <summary>
         /// 스킬의 전체 쿨다운 시간을 반환
         /// </summary>
-        public virtual float GetCooldownTime() => skillData.coolDown;
+        public virtual float GetCooldownTime() => ApplyDebugCooldownReduction(skillData.coolDown);
 
         /// <summary>
         /// 스킬이 다시 사용 가능해질 때까지 남은 시간을 반환

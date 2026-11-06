@@ -19,6 +19,12 @@ namespace Nytherion.Core.Enums
         ProjectileGate,
         PortalGate,
         Decoy,
-        BubbleShield
+        BubbleShield,
+        Fireball,
+        IceShot,
+        Thunderbolt,
+        DarkBolt,
+        LightBolt,
+        MagicMissile
     }
 }

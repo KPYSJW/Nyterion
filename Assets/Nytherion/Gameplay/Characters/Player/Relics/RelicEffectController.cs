@@ -23,7 +23,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private readonly HashSet<RelicSetBonusData> equippedSetBonuses = new();
         private readonly HashSet<RelicTranscendenceData> linkedTranscendenceEffects = new();
         private readonly List<RelicEffectModule> activeModules = new();
-        private readonly Dictionary<(Object, ChainSynergyMeasure, string), int> maxSatisfiedChains = new();
+        private readonly Dictionary<(Object, string), int> maxSatisfiedChains = new();
 
         // 디버그 강제 활성 상태는 플레이어 수명 동안만 유지하며 저장하지 않는다.
         private readonly Dictionary<RelicSetBonusData, int> debugSetRequirements = new();
@@ -35,20 +35,56 @@ namespace Nytherion.GamePlay.Characters.Player
         public bool IsDebugTranscendenceActive(RelicTranscendenceData transcendence) =>
             transcendence != null && debugTranscendences.Contains(transcendence);
 
+        public bool IsDebugRicochetActive
+        {
+            get
+            {
+                foreach (var entry in debugSetRequirements)
+                {
+                    if (entry.Key != null && entry.Key.synergySeriesId == "TrickshotEngineerSeries" && entry.Value > 0)
+                        return true;
+                }
+                return false;
+            }
+        }
+
         public void SetDebugSetBonus(RelicSetBonusData setBonus, int requirement)
         {
             if (setBonus == null) return;
             if (requirement > 0) debugSetRequirements[setBonus] = requirement;
             else debugSetRequirements.Remove(setBonus);
-            RefreshDebugCriticalChance();
+            RefreshDebugCombatModifiers();
             ReevaluateAllConditions();
         }
 
         public void SetDebugTranscendence(RelicTranscendenceData transcendence, bool active)
         {
             if (transcendence == null) return;
-            if (active) debugTranscendences.Add(transcendence);
+            if (active)
+            {
+                debugTranscendences.Add(transcendence);
+                if (transcendence.requirements != null)
+                {
+                    foreach (RelicTranscendenceRequirement requirement in transcendence.requirements)
+                    {
+                        if (requirement?.setBonusData == null) continue;
+                        RelicSetBonusData set = requirement.setBonusData;
+                        int count = Mathf.Max(1, requirement.requiredEquippedCount);
+                        // 추가 탄환 등 초월 효과의 테스트에 필요한 최종 세트 단계까지 켭니다.
+                        if (set.bonusModules != null)
+                        {
+                            foreach (RelicEffectModule module in set.bonusModules)
+                            {
+                                if (module?.condition is ChainSynergyCondition condition)
+                                    count = Mathf.Max(count, condition.requiredChainLength);
+                            }
+                        }
+                        debugSetRequirements[set] = Mathf.Max(GetDebugSetRequirement(set), count);
+                    }
+                }
+            }
             else debugTranscendences.Remove(transcendence);
+            RefreshDebugCombatModifiers();
             ReevaluateAllConditions();
         }
 
@@ -56,12 +92,13 @@ namespace Nytherion.GamePlay.Characters.Player
         {
             debugSetRequirements.Clear();
             debugTranscendences.Clear();
-            RefreshDebugCriticalChance();
+            RefreshDebugCombatModifiers();
             ReevaluateAllConditions();
         }
 
-        private void RefreshDebugCriticalChance()
+        private void RefreshDebugCombatModifiers()
         {
+            relicManager?.SetDebugProjectileBounce(IsDebugRicochetActive);
             if (playerManager == null) return;
             bool guaranteeCritical = false;
             foreach (var entry in debugSetRequirements)
@@ -137,6 +174,7 @@ namespace Nytherion.GamePlay.Characters.Player
             }
             
             if (playerManager != null) playerManager.SetDebugGuaranteedCritical(false);
+            if (relicManager != null) relicManager.SetDebugProjectileBounce(false);
             RemoveAllActiveEffects();
         }
 
@@ -255,6 +293,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
                 // 1. 기존에 활성화되었던 모듈 중, 장착 해제되었거나, 레벨이 변했거나, 비활성화되었거나, 조건이 불충족된 모듈 비활성화 (Remove)
                 // Dictionary를 순회하면서 DeactivateModule을 통해 요소를 제거하므로, Key 목록을 복사하여 순회
+                Dictionary<RelicEffectModule, int> retainedSkillModules = new Dictionary<RelicEffectModule, int>();
                 activeModules.Clear();
                 activeModules.AddRange(activeModuleLevels.Keys);
                 foreach (RelicEffectModule activeModule in activeModules)
@@ -262,17 +301,15 @@ namespace Nytherion.GamePlay.Characters.Player
                     int oldLevel = activeModuleLevels[activeModule];
 
                     bool isStillEquipped = currentlyEquippedModules.TryGetValue(activeModule, out EquippedModuleData data);
-                    // 장착 해제, 레벨 변경, 혹은 비활성화 상태가 된 경우 제거 대상으로 지정
-                    if (!isStillEquipped || oldLevel != data.Level || data.IsDisabled)
+                    if (!isStillEquipped || data.IsDisabled ||
+                        !IsModuleConditionMet(activeModule, data, maxSatisfiedChains))
                     {
                         DeactivateModule(activeModule, oldLevel);
                     }
-                    else
+                    else if (oldLevel != data.Level)
                     {
-                        if (!IsModuleConditionMet(activeModule, data, maxSatisfiedChains))
-                        {
-                            DeactivateModule(activeModule, oldLevel);
-                        }
+                        DeactivateModule(activeModule, oldLevel, true);
+                        retainedSkillModules[activeModule] = oldLevel;
                     }
                 }
 
@@ -288,7 +325,17 @@ namespace Nytherion.GamePlay.Characters.Player
                         if (IsModuleConditionMet(module, data, maxSatisfiedChains))
                         {
                             ActivateModule(module, currentLevel);
+                            retainedSkillModules.Remove(module);
                         }
+                    }
+                }
+
+                // 재평가 중 조건이 불충족된 경우 유지해 둔 스킬도 해제한다.
+                foreach (KeyValuePair<RelicEffectModule, int> retained in retainedSkillModules)
+                {
+                    foreach (var effect in retained.Key.effects)
+                    {
+                        if (effect is GrantSkillEffect) effect.RemoveEffect(playerManager, retained.Value);
                     }
                 }
             }
@@ -306,7 +353,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private bool IsModuleConditionMet(
             RelicEffectModule module,
             EquippedModuleData data,
-            Dictionary<(Object, ChainSynergyMeasure, string), int> maxSatisfiedChains)
+            Dictionary<(Object, string), int> maxSatisfiedChains)
         {
             if (data.Owner is RelicTranscendenceData transcendence && debugTranscendences.Contains(transcendence))
                 return true;
@@ -322,9 +369,9 @@ namespace Nytherion.GamePlay.Characters.Player
             return module.condition.IsConditionMet(playerManager, data.Level);
         }
 
-        private static (Object, ChainSynergyMeasure, string) GetChainTierGroup(Object owner, ChainSynergyCondition condition)
+        private static (Object, string) GetChainTierGroup(Object owner, ChainSynergyCondition condition)
         {
-            return (owner, condition.measure, condition.targetSeriesId ?? string.Empty);
+            return (owner, condition.targetSeriesId ?? string.Empty);
         }
 
         private void ActivateModule(RelicEffectModule module, int level)
@@ -349,13 +396,14 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
-        private void DeactivateModule(RelicEffectModule module, int level)
+        private void DeactivateModule(RelicEffectModule module, int level, bool retainGrantedSkills = false)
         {
             if (module == null || module.effects == null) return;
 
             foreach (var effect in module.effects)
             {
-                if (effect != null)
+                // 레벨 변경 중에는 스킬 장착 슬롯과 경험치를 유지한다.
+                if (effect != null && !(retainGrantedSkills && effect is GrantSkillEffect))
                 {
                     effect.RemoveEffect(playerManager, level);
                 }

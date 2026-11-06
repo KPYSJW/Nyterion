@@ -20,7 +20,7 @@ namespace Nytherion.Editor
     {
         private const string Output = "output/relic-slot-rarity";
         private const string Inventory = "Assets/Prefabs/UI/Inventory/InventorySlot.prefab";
-        private static readonly string[] Paths = { "Assets/Prefabs/UI/Relic/StorageSlot.prefab", "Assets/Prefabs/UI/Relic/RelicSlotCell.prefab" };
+        private static readonly string[] Paths = { "Assets/Prefabs/UI/Relic/StorageSlot.prefab" };
         private static readonly string[] Fields = { "commonSlotSprite", "uncommonSlotSprite", "rareSlotSprite", "epicSlotSprite", "legendarySlotSprite" };
         static RelicSlotRaritySetup() => EditorApplication.update += Update;
 
@@ -56,8 +56,7 @@ namespace Nytherion.Editor
                     GameObject root = PrefabUtility.LoadPrefabContents(path);
                     try
                     {
-                        RelicSlotCell cell = root.GetComponent<RelicSlotCell>();
-                        Image frame = cell != null ? cell.BackgroundImage : root.GetComponent<Image>();
+                        Image frame = root.GetComponent<Image>();
                         Require(frame != null, "프레임 Inspector 참조 누락: " + path);
                         var visual = frame.GetComponent<RelicSlotVisual>();
                         if (visual == null) visual = frame.gameObject.AddComponent<RelicSlotVisual>();
@@ -73,8 +72,8 @@ namespace Nytherion.Editor
                     results.Add("PASS 인벤토리 5등급 스프라이트 연결·기존 빈 슬롯 유지: " + path);
                 }
                 VerifyAndRender(inventory);
-                results.Add("PASS 5등급 × 보관·장착 슬롯: 이미지 일치, 강조 해제 시 등급 유지, 비우기 시 기본 프레임·아이콘 복원");
-                results.Add("PASS 실제 프리팹 렌더링: inventory-storage-equipped.png (위: 인벤토리 / 중간: 보관 / 아래: 장착)");
+                results.Add("PASS 5등급 보관 슬롯: 이미지 일치, 비우기 시 기본 프레임 복원");
+                results.Add("PASS 실제 프리팹 렌더링: inventory-storage.png (위: 인벤토리 / 아래: 보관)");
             }
             catch (Exception error) { results.Add("FAIL " + error); }
             File.WriteAllLines(Output + "/verification.txt", results);
@@ -110,7 +109,7 @@ namespace Nytherion.Editor
                 canvas.worldCamera = camera;
                 canvas.planeDistance = 1f;
                 Sprite inventoryDefault = (Sprite)inventory.FindProperty("defaultSlotSprite").objectReferenceValue;
-                for (int row = 0; row < 3; row++)
+                for (int row = 0; row < 2; row++)
                 for (int column = 0; column < 6; column++)
                 {
                     string path = row == 0 ? Inventory : Paths[row - 1];
@@ -119,8 +118,8 @@ namespace Nytherion.Editor
                     foreach (Transform child in slot.GetComponentsInChildren<Transform>(true)) child.gameObject.layer = 31;
                     var rect = slot.GetComponent<RectTransform>();
                     rect.anchorMin = rect.anchorMax = Vector2.one * 0.5f;
-                    rect.anchoredPosition = new Vector2(-390 + column * 156, 170 - row * 170);
-                    rect.sizeDelta = Vector2.one * (row == 2 ? 96 : 128);
+                    rect.anchoredPosition = new Vector2(-390 + column * 156, 85 - row * 170);
+                    rect.sizeDelta = Vector2.one * (row == 0 ? 128 : RelicGridUI.StorageSlotSize);
                     Rarity? rarity = column == 0 ? (Rarity?)null : (Rarity)(column - 1);
                     Sprite expected = rarity.HasValue ? (Sprite)inventory.FindProperty(Fields[(int)rarity.Value]).objectReferenceValue : inventoryDefault;
                     if (row == 0)
@@ -131,24 +130,12 @@ namespace Nytherion.Editor
                     }
                     else
                     {
-                        var cell = slot.GetComponent<RelicSlotCell>();
-                        Image frame = cell != null ? cell.BackgroundImage : slot.GetComponent<Image>();
+                        Image frame = slot.GetComponent<Image>();
                         var visual = frame.GetComponent<RelicSlotVisual>();
                         Sprite empty = (Sprite)new SerializedObject(visual).FindProperty("defaultSlotSprite").objectReferenceValue;
                         visual.SetRarity(rarity);
                         Require(frame.sprite == (rarity.HasValue ? expected : empty), "등급 프레임 불일치: " + path + " " + rarity);
-                        Color original = frame.color;
-                        visual.Highlight(true);
-                        visual.Highlight(false);
-                        Require(frame.color == original, "강조 색상 복원");
-                        if (cell != null)
-                        {
-                            cell.SetRelic(expected);
-                            cell.ClearCell();
-                            var icon = (Image)new SerializedObject(cell).FindProperty("relicIcon").objectReferenceValue;
-                            Require(!icon.enabled && icon.sprite == null, "비운 장착 슬롯의 아이콘 제거");
-                        }
-                        else visual.SetRarity(null);
+                        visual.SetRarity(null);
                         Require(frame.sprite == empty, "비운 슬롯의 기본 프레임 복원");
                         visual.SetRarity(rarity);
                     }
@@ -164,7 +151,7 @@ namespace Nytherion.Editor
                     readback.Apply();
                 }
                 finally { RenderTexture.active = previous; }
-                File.WriteAllBytes(Output + "/inventory-storage-equipped.png", readback.EncodeToPNG());
+                File.WriteAllBytes(Output + "/inventory-storage.png", readback.EncodeToPNG());
             }
             finally
             {

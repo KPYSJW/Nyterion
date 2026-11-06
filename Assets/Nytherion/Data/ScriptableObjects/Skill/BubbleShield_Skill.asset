@@ -15,12 +15,13 @@ MonoBehaviour:
   skillID: skill_bubble_shield
   isDisabled: 0
   skillType: 17
-  skillName: "\ube44\ub217\ubc29\uc6b8"
-  description: "\ud53c\ud574\ub97c \ud761\uc218\ud558\ub294 \ube44\ub217\ubc29\uc6b8\uc744 \uc0dd\uc131\ud569\ub2c8\ub2e4."
+  skillName: "\uBE44\uB217\uBC29\uC6B8"
+  description: "\uD53C\uD574\uB97C \uD761\uC218\uD558\uB294 \uBE44\uB217\uBC29\uC6B8\uC744
+    \uC0DD\uC131\uD569\uB2C8\uB2E4."
   skillLevel: 1
   exp: 0
   coolDown: 20
-  manaCost: 0
+  manaCost: 30
   damage: 0
   range: 0
   icon: {fileID: 184623147, guid: 1680c2c5c307f284c8177d20079a8bc2, type: 3}

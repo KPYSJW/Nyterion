@@ -10,9 +10,9 @@ using Nytherion.Core.Enums;
 namespace Nytherion.Gameplay.Relics.Modules
 {
     /// <summary>
-    /// 활성화된 시너지 체인의 총 개수가 짝수(0개 초과)인지 검사하는 조건 모듈 (삐걱이는 톱니 전용)
+    /// 같은 시리즈 유물을 2개 이상 장착한 시리즈의 수가 짝수인지 검사한다.
     /// </summary>
-    [Serializable, RelicDisplayName("활성화 체인 개수 짝수 조건")]
+    [Serializable, RelicDisplayName("활성 시너지 세트 개수 짝수 조건")]
     public class EvenChainCountCondition : RelicConditionBase
     {
         public override bool IsConditionMet(PlayerManager playerManager, int level)
@@ -33,8 +33,8 @@ namespace Nytherion.Gameplay.Relics.Modules
             int activeChainCount = 0;
             foreach (string seriesId in seriesIds)
             {
-                int length = relicManager.GetMaxChainLength(seriesId);
-                if (length >= 2)
+                int count = relicManager.GetEquippedSeriesRelicCount(seriesId);
+                if (count >= 2)
                 {
                     activeChainCount++;
                 }

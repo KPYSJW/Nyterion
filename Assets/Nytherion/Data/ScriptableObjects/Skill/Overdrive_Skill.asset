@@ -29,15 +29,7 @@ MonoBehaviour:
   unlockMilestoneID: milestone_giant_slayer
   buffDuration: 5
   statModifiers:
-  - stat: 3
-    value: 0.2
-    valuePerLevel: 0.1
-    isPercentage: 1
   - stat: 4
-    value: 0.2
-    valuePerLevel: 0.1
-    isPercentage: 1
-  - stat: 5
     value: 0.2
     valuePerLevel: 0.1
     isPercentage: 1

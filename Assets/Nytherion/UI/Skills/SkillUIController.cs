@@ -15,6 +15,8 @@ namespace Nytherion.UI.Skill
     /// </summary>
     public class SkillUIController : UIPanelBase, IInitializable
     {
+        public const float StorageSlotSize = 128f;
+
         protected override bool UsesBookOpenSound => true;
         [Header("Toggle Settings")]
         [Tooltip("스킬 UI 전체를 담고 있는 패널 오브젝트")]
@@ -88,6 +90,7 @@ namespace Nytherion.UI.Skill
                 skillTooltip = Instantiate(skillTooltipPrefab, rootCanvas.transform, false);
                 ownsSkillTooltip = true;
             }
+            if (skillTooltip != null) skillTooltip.BindPlayer(playerSkillManager.GetComponent<PlayerManager>());
 
             // --- UIPanelBase 연동을 위한 설정 추가 ---
             if (uiPanel != null)
@@ -238,7 +241,7 @@ namespace Nytherion.UI.Skill
         private void InitializeStorageSlots()
         {
             GridLayoutGroup layout = storageContent.GetComponent<GridLayoutGroup>();
-            if (layout != null) layout.cellSize = Vector2.one * Nytherion.UI.RelicBoard.RelicGridUI.StorageSlotSize;
+            if (layout != null) layout.cellSize = Vector2.one * StorageSlotSize;
             EnsureStorageSlots(Mathf.Max(maxStorageSlots, skillDataManager.storageSkills.Length));
         }
 
@@ -274,7 +277,7 @@ namespace Nytherion.UI.Skill
         public void SyncUIFromData()
         {
             if (skillDataManager == null) return;
-            if (storageSlots == null || equipSlots == null) return;
+            if (storageSlots == null || equipSlots == null || storageContent == null) return;
 
             EnsureStorageSlots(skillDataManager.storageSkills.Length);
 
@@ -282,6 +285,7 @@ namespace Nytherion.UI.Skill
             int equipCount = 0;
             for (int i = 0; i < equipSlots.Length; i++)
             {
+                if (equipSlots[i] == null) continue;
                 equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager, skillTooltip);
                 if (skillDataManager.equippedSkills[i] != null) equipCount++;
             }
@@ -290,6 +294,7 @@ namespace Nytherion.UI.Skill
             int storageCount = 0;
             for (int i = 0; i < storageSlots.Length; i++)
             {
+                if (storageSlots[i] == null) continue;
                 if (i < skillDataManager.storageSkills.Length)
                 {
                     storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager, skillTooltip);
@@ -302,7 +307,7 @@ namespace Nytherion.UI.Skill
         private void HandleSkillDataChanged()
         {
             if (skillDataManager == null) return;
-            playerSkillManager?.SetEquippedSkills(skillDataManager.equippedSkills);
+            if (playerSkillManager != null) playerSkillManager.SetEquippedSkills(skillDataManager.equippedSkills);
             SyncUIFromData();
         }
 

@@ -6,6 +6,8 @@ namespace Nytherion.GamePlay.Relics
 {
     public class RelicBlock
     {
+        public const int MaxLevel = 7;
+
         public RelicData SourceData { get; private set; }
         public string BlockId { get; private set; }
         public string RelicId => SourceData.relicName;
@@ -13,13 +15,15 @@ namespace Nytherion.GamePlay.Relics
         public int Level => SourceData.level;
 
         private int baseLevel;
+        private bool influenceWarningIssued;
         public int RotationState { get; private set; }
 
         public RelicBlock(RelicData data)
         {
             SourceData = data;
             BlockId = System.Guid.NewGuid().ToString();
-            baseLevel = data.level;
+            baseLevel = Mathf.Min(data.level, MaxLevel);
+            SourceData.level = baseLevel;
             RotationState = 0;
         }
 
@@ -27,14 +31,24 @@ namespace Nytherion.GamePlay.Relics
         {
             SourceData = data;
             BlockId = System.Guid.NewGuid().ToString();
-            baseLevel = level;
-            SourceData.level = level;
+            baseLevel = Mathf.Min(level, MaxLevel);
+            SourceData.level = baseLevel;
             RotationState = 0;
         }
 
         public void ChangeLevel(int amount)
         {
-            SourceData.level += amount;
+            long changedLevel = (long)SourceData.level + amount;
+            SourceData.level = (int)System.Math.Max(int.MinValue, System.Math.Min(changedLevel, MaxLevel));
+        }
+
+        public bool IncreaseBaseLevel()
+        {
+            if (baseLevel >= MaxLevel) return false;
+
+            baseLevel++;
+            SourceData.level = Mathf.Min(SourceData.level + 1, MaxLevel);
+            return true;
         }
 
         public void SetDisabled(bool disabled)
@@ -58,8 +72,21 @@ namespace Nytherion.GamePlay.Relics
         public List<InfluenceZone> GetRotatedInfluenceZones()
         {
             var rotatedZones = new List<InfluenceZone>();
+            if (!RelicInfluencePolicy.TryValidateInfluenceZones(SourceData.influenceZones, out string error))
+            {
+                if (!influenceWarningIssued)
+                {
+                    Debug.LogWarning($"[유물] {SourceData.name}: 영향 범위가 올바르지 않아 적용하지 않습니다. {error}", SourceData);
+                    influenceWarningIssued = true;
+                }
+                return rotatedZones;
+            }
+
+            influenceWarningIssued = false;
+            if (SourceData.influenceZones == null) return rotatedZones;
             foreach (var zone in SourceData.influenceZones)
             {
+                if (zone == null || zone.type == InfluenceType.None) continue;
                 Vector2Int rotatedOffset = zone.offset;
                 for (int i = 0; i < RotationState; i++)
                 {

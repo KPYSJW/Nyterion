@@ -507,7 +507,7 @@ MonoBehaviour:
   interactionDistance: 2
   worldPromptUI: {fileID: 5440849141089196055}
   droppedRelicPrefab: {fileID: 856826060757629303, guid: 5831febf48721aa4aafea6b9b09a5668, type: 3}
-  droppedRelicPoolSize: 30
+  droppedRelicPoolSize: 40
   animator: {fileID: 8600147374344743192}
   closeDelay: 1
   relicLandingClearance: 0.65
@@ -613,10 +613,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4744369212901968471}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 7, y: 0}
+  m_SizeDelta: {x: 50, y: 33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1748988774421262719
 CanvasRenderer:
@@ -750,7 +750,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 15, y: 0}
+  m_AnchoredPosition: {x: 20, y: 0}
   m_SizeDelta: {x: 40, y: 33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &911973584601606381
@@ -793,10 +793,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 29236534297373445}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 7, y: 0}
+  m_SizeDelta: {x: 50, y: 33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2513392803413366162
 CanvasRenderer:

@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: Turret_Skill
   m_EditorClassIdentifier: 
   skillID: skill_turret
+  isDisabled: 0
   skillType: 10
-  skillName: "\uB8E8\uD2F0 \uD3EC\uD0D1"
-  description: "\uC801\uC744 \uC790\uB3D9\uC73C\uB85C \uACF5\uACA9\uD558\uB294 \uB8E8\uD2F0
-    \uD3EC\uD0D1 \uC124\uCE58"
+  skillName: "\uB8E8\uD2F0"
+  description: "\uC801\uC744 \uC790\uB3D9\uC73C\uB85C \uACF5\uACA9\uD558\uB294 \uB8E8\uD2F0\uB97C
+    \uC18C\uD658\uD569\uB2C8\uB2E4."
   skillLevel: 0
   exp: 0
   coolDown: 5
-  manaCost: 0
+  manaCost: 20
   damage: 10
   range: 4
-  icon: {fileID: 21300000, guid: c0cfa8eb448663441811f8c9bd7a6b93, type: 3}
+  icon: {fileID: 21300000, guid: 591962a6177062c4cacfd63ce26e9ce1, type: 3}
   skillPrefab: {fileID: 7070122076843720504, guid: d5e07efaa793d714db124737e82b5879, type: 3}
   unlockMilestoneID: 
   turretPrefab: {fileID: 6520110675917699172, guid: d24628c345cf3c54e95f63319f611bf4, type: 3}

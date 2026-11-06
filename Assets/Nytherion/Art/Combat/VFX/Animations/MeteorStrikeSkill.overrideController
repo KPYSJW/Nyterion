@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MeteorStrikeSkill
+  m_Controller: {fileID: 9100000, guid: 3f04d0b83c84279429e8a11cb7a142ea, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 778e5619f3d6e4545bcb265177bb5e77, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: cafb067b9ccc9fe4d8b864f283f9901f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: f2a0d5f3843131c48aed3c3c1ead0706, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ef36fda12319f00468b9c41ab7c6a36a, type: 2}

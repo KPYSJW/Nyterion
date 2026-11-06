@@ -96,17 +96,13 @@ namespace Nytherion.UI.Skill
             if (currentSkill != null && skillTooltip != null && !isDragging)
             {
                 int level = 1;
-                int exp = 0;
-                int reqExp = 1;
 
                 if (skillDataManager != null && skillDataManager.skillStates.TryGetValue(currentSkill.skillID, out var state))
                 {
                     level = state.level;
-                    exp = state.exp;
-                    reqExp = state.GetRequiredExp(level);
                 }
 
-                skillTooltip.Show(this, currentSkill, level, exp, reqExp);
+                skillTooltip.Show(this, currentSkill, level);
             }
         }
 

@@ -17,25 +17,25 @@ MonoBehaviour:
   statusIcon: {fileID: 21300000, guid: 13de074211234cd9bd28cffabdc548a6, type: 3}
   badgeBackgroundColor: {r: 0.12, g: 0.38, b: 0.42, a: 0.96}
   badgeTextColor: {r: 0.86, g: 1, b: 0.96, a: 1}
-  description_KR: "투사체 피해를 높이고, 관통·도탄·분열 시 피해를 강화하며 잔향탄을 생성합니다."
-  description_EN: "Increase projectile damage, amplify damage through piercing, ricochets, and splitting, and create echo projectiles."
+  description_KR: "도탄 피해 감소를 완화하고 도탄 투사체를 강화합니다."
+  description_EN: "Reduce ricochet damage loss and enhance bouncing projectiles."
   synergySeriesId: TrickshotEngineerSeries
   bonusModules:
   - condition: {rid: 3001}
     effects:
     - rid: 3002
-    description_KR: "투사체 피해 +10%"
-    description_EN: Projectile damage +10%
+    description_KR: "첫 도탄 피해 감소 25%, 이후 도탄 피해 감소 10%"
+    description_EN: First ricochet loses 25% damage; later ricochets lose 10%
   - condition: {rid: 5001}
     effects:
     - rid: 5002
-    description_KR: "투사체 피해 +10%. 관통·도탄·분열이 발동할 때 이후 피해 +7%(최대 3회)"
-    description_EN: Projectile damage +10%. Pierce, bounce, or split grants +7% subsequent damage, up to 3 times.
+    description_KR: "도탄 피해 감소 없음. 도탄할 때마다 속도 10% 증가"
+    description_EN: Ricochets no longer lose damage and gain 10% speed per bounce.
   - condition: {rid: 7001}
     effects:
     - rid: 7002
-    description_KR: "5세트 효과. 마지막 충돌 또는 3번째 상호작용에서 피해 35%의 잔향탄 2발 생성(잔향탄은 재생성 불가)"
-    description_EN: Tier 5 effect. The final collision or third interaction creates 2 echo shots at 35% damage; echoes cannot create more echoes.
+    description_KR: "도탄할 때마다 속도와 피해 10% 증가. 충돌 시 피해 35%의 추가 탄환 2발 발사(도탄 불가)"
+    description_EN: Ricochets gain 10% speed and damage per bounce. Collisions fire 2 extra shots at 35% damage; extra shots cannot ricochet.
   linkedTranscendenceEffects:
   - {fileID: 11400000, guid: f2d8c3a9167f4c1aade53b210e8597c4, type: 2}
   references:
@@ -50,12 +50,12 @@ MonoBehaviour:
     - rid: 3002
       type: {class: TrickshotSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        projectileDamageMultiplier: 1.1
-        interactionDamageBonus: 0
-        maxInteractionStacks: 0
-        echoProjectileCount: 0
-        echoDamageRatio: 0
-        echoSearchRadius: 6
+        firstBounceDamageMultiplier: 0.75
+        laterBounceDamageMultiplier: 0.9
+        bounceSpeedMultiplier: 1
+        bounceDamageIncreaseMultiplier: 1
+        extraProjectileCount: 0
+        extraProjectileDamageRatio: 0
     - rid: 5001
       type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
@@ -65,12 +65,12 @@ MonoBehaviour:
     - rid: 5002
       type: {class: TrickshotSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        projectileDamageMultiplier: 1.1
-        interactionDamageBonus: 0.07
-        maxInteractionStacks: 3
-        echoProjectileCount: 0
-        echoDamageRatio: 0
-        echoSearchRadius: 6
+        firstBounceDamageMultiplier: 1
+        laterBounceDamageMultiplier: 1
+        bounceSpeedMultiplier: 1.1
+        bounceDamageIncreaseMultiplier: 1
+        extraProjectileCount: 0
+        extraProjectileDamageRatio: 0
     - rid: 7001
       type: {class: ChainSynergyCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
@@ -80,9 +80,9 @@ MonoBehaviour:
     - rid: 7002
       type: {class: TrickshotSetBonusEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        projectileDamageMultiplier: 1.1
-        interactionDamageBonus: 0.07
-        maxInteractionStacks: 3
-        echoProjectileCount: 2
-        echoDamageRatio: 0.35
-        echoSearchRadius: 6
+        firstBounceDamageMultiplier: 1
+        laterBounceDamageMultiplier: 1
+        bounceSpeedMultiplier: 1.1
+        bounceDamageIncreaseMultiplier: 1.1
+        extraProjectileCount: 2
+        extraProjectileDamageRatio: 0.35

@@ -30,15 +30,16 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: 1, y: 0}
+  - offset: {x: 0, y: 1}
     type: 1
     levelAmount: 1
-  - offset: {x: 0, y: 1}
+  - offset: {x: -1, y: 2}
     type: 2
     levelAmount: 1
-  - offset: {x: -1, y: 0}
+  - offset: {x: 1, y: 2}
     type: 2
     levelAmount: 1
+  preserveCustomInfluenceZones: 1
   synergySeriesId: 
   unlockMilestoneID: 
   references:
@@ -60,10 +61,6 @@ MonoBehaviour:
           value: 30
           valuePerLevel: 8
           isPercentage: 0
-        - stat: 3
-          value: 0.25
-          valuePerLevel: 0.08
-          isPercentage: 1
         - stat: 4
           value: 0.25
           valuePerLevel: 0.08

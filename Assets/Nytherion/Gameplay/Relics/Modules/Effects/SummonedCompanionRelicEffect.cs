@@ -49,7 +49,7 @@ namespace Nytherion.Gameplay.Relics.Modules
         {
             if (activeCompanion != null)
             {
-                UnityEngine.Object.Destroy(activeCompanion.gameObject);
+                activeCompanion.Dismiss();
             }
             activeCompanion = null;
         }

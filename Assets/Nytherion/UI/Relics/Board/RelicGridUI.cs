@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.GamePlay.Relics;
 using VContainer;
@@ -17,9 +18,9 @@ namespace Nytherion.UI.RelicBoard
     public class RelicGridUI : MonoBehaviour
     {
         private const float PreviewInfluenceAmountFontSize = 30f;
-        public const int StorageColumns = 4;
+        public const int StorageColumns = 5;
         public const int StorageSlotsPerPage = StorageColumns * StorageColumns;
-        public const float StorageSlotSize = 128f;
+        public const float StorageSlotSize = 96f;
         public const float EquippedSlotSize = 96f;
 
         private RelicManager relicManager;
@@ -74,8 +75,6 @@ namespace Nytherion.UI.RelicBoard
         [SerializeField] private GameObject levelDownGizmoPrefab;
         [Tooltip("비활성화(Silence) 효과를 표시할 프리팹")]
         [SerializeField] private GameObject silenceGizmoPrefab;
-        [Tooltip("시너지 연결(SynergyLink) 효과를 표시할 프리팹")]
-        [SerializeField] private GameObject synergyLinkGizmoPrefab;
 
 
         private RelicSlotCell[,] slotCells;
@@ -346,7 +345,7 @@ namespace Nytherion.UI.RelicBoard
             storageRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
         }
 
-        private void CreateBlockInStorage(RelicBlock blockData, GameObject slotObj)
+        private void CreateBlockInStorage(RelicBlock blockData, GameObject slotObj, bool isDismantleStaged = false)
         {
             slotObj.GetComponent<RelicSlotVisual>()?.SetRarity(blockData.SourceData.rarity);
             try
@@ -358,12 +357,13 @@ namespace Nytherion.UI.RelicBoard
                 if (draggable != null)
                 {
                     draggable.isPlaced = false;
+                    draggable.isDismantleStaged = isDismantleStaged;
                     draggable.blockData = blockData;
                     draggable.BindStorageIcon(slotObj.transform.Find("Icon")?.GetComponent<Image>());
                     RectTransform blockRect = blockObj.GetComponent<RectTransform>();
                     blockRect.anchoredPosition = Vector2.zero;
                     blockRect.localScale = Vector3.one;
-                    blockRect.sizeDelta = Vector2.one * StorageSlotSize;
+                    blockRect.sizeDelta = Vector2.one * (isDismantleStaged ? 128f : StorageSlotSize);
                     draggable.BuildVisualFromShape();
                 }
             }
@@ -377,11 +377,10 @@ namespace Nytherion.UI.RelicBoard
         {
             GameObject slot = Instantiate(storageSlotPrefab, parent);
             PixelPerfectSlotFrame.Apply(slot.GetComponent<Image>());
-            CreateBlockInStorage(block, slot);
+            CreateBlockInStorage(block, slot, true);
             RelicBlockDraggable draggable = slot.GetComponentInChildren<RelicBlockDraggable>();
             if (draggable != null)
             {
-                draggable.isDismantleStaged = true;
                 GridLayoutGroup layout = parent.GetComponent<GridLayoutGroup>();
                 if (layout != null) ((RectTransform)draggable.transform).sizeDelta = layout.cellSize;
             }
@@ -392,7 +391,6 @@ namespace Nytherion.UI.RelicBoard
 
         private void CreateBlockOnGrid(RelicBlock blockData, Vector2Int position)
         {
-            slotCells[position.y, position.x]?.SetRarity(blockData.SourceData.rarity);
             GameObject blockObj = container.Instantiate(draggableBlockPrefab, placedBlocksContainer);
             RelicBlockDraggable draggable = blockObj.GetComponent<RelicBlockDraggable>();
 
@@ -504,11 +502,6 @@ namespace Nytherion.UI.RelicBoard
             if (block == null || !gridPos.HasValue || slotCells == null || previewContainer == null) return;
 
             Vector2Int pos = gridPos.Value;
-            if (pos.x >= 0 && pos.x < columns && pos.y >= 0 && pos.y < rows)
-            {
-                slotCells[pos.y, pos.x].Highlight(true);
-            }
-
             foreach (var zone in block.GetRotatedInfluenceZones())
             {
                 int targetRow = pos.y - zone.offset.y;
@@ -526,10 +519,6 @@ namespace Nytherion.UI.RelicBoard
                         prefabToUse = silenceGizmoPrefab != null ? silenceGizmoPrefab : levelDownGizmoPrefab;
                         isSilence = true;
                     }
-                    else if (zone.type == InfluenceType.SynergyLink)
-                    {
-                        prefabToUse = synergyLinkGizmoPrefab != null ? synergyLinkGizmoPrefab : levelUpGizmoPrefab;
-                    }
 
                     if (prefabToUse != null)
                     {
@@ -544,7 +533,6 @@ namespace Nytherion.UI.RelicBoard
                         {
                             Color color;
                             if (isSilence && silenceGizmoPrefab == null) color = new Color(0.5f, 0, 0.5f);
-                            else if (zone.type == InfluenceType.SynergyLink && synergyLinkGizmoPrefab == null) color = new Color(1f, 0.8f, 0f);
                             else color = preview.originalColor;
 
                             color.a = 0.5f;
@@ -651,11 +639,6 @@ namespace Nytherion.UI.RelicBoard
                 previewPools[preview.prefab].Push(preview);
             }
             activePreviewGizmos.Clear();
-            if (slotCells == null) return;
-            foreach (var cell in slotCells)
-            {
-                if (cell != null) cell.Highlight(false);
-            }
         }
 
         public Vector2 GetLocalPositionFromGridCell(Vector2Int gridPos)

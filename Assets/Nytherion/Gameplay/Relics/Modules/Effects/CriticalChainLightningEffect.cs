@@ -15,6 +15,13 @@ namespace Nytherion.Gameplay.Relics.Modules
     [Serializable, RelicDisplayName("치명타 연쇄 번개")]
     public class CriticalChainLightningEffect : RelicEffectBase
     {
+        [Range(0f, 1f), InspectorName("번개 발동 확률")]
+        public float triggerChance = 0.25f;
+        [Range(0f, 1f), InspectorName("번개 피격 적의 돌풍 생성 확률")]
+        public float windSpawnChance = 0.25f;
+        public WindBlastProjectile projectilePrefab;
+        [Min(0f), InspectorName("돌풍 투사체 피해 배율")]
+        public float projectileDamageRatio = 0.75f;
         [Range(0f, 2f)]
         [Tooltip("원래 치명타 피해 대비 연쇄 피해 배율")]
         public float damageRatio = 0.3f;
@@ -35,12 +42,14 @@ namespace Nytherion.Gameplay.Relics.Modules
         public ChainLightningVFX lightningEffectPrefab;
 
         [NonSerialized] private EventManager cachedEventManager;
+        [NonSerialized] private DashStormRuntime runtime;
 
         public override void ApplyEffect(PlayerManager playerManager, int level)
         {
             RemoveEffect(playerManager, level);
             cachedEventManager = playerManager != null ? playerManager.EventManager : null;
             if (cachedEventManager == null) return;
+            runtime = DashStormRuntime.GetOrCreate(playerManager);
 
             cachedEventManager.OnEnemyDamagedByPlayerDetailed -= HandlePlayerDamage;
             cachedEventManager.OnEnemyDamagedByPlayerDetailed += HandlePlayerDamage;
@@ -53,11 +62,18 @@ namespace Nytherion.Gameplay.Relics.Modules
                 cachedEventManager.OnEnemyDamagedByPlayerDetailed -= HandlePlayerDamage;
             }
             cachedEventManager = null;
+            runtime = null;
         }
 
         private void HandlePlayerDamage(PlayerDamageEventData eventData)
         {
-            if (!eventData.IsCritical || eventData.IsChainDamage || eventData.Target == null) return;
+            if (!eventData.IsCritical || eventData.IsChainDamage || eventData.IsDamageOverTime ||
+                eventData.Target == null || !DashStormRuntime.RollLightning(triggerChance)) return;
+
+            float lightningDamage = eventData.DamageAmount * Mathf.Max(0f, damageRatio);
+            if (runtime != null)
+                runtime.SpawnLightningWind(eventData.Target, eventData.Target.transform.position,
+                    lightningDamage, projectilePrefab, projectileDamageRatio, windSpawnChance);
 
             Collider2D[] colliders = Physics2D.OverlapCircleAll(
                 eventData.Target.transform.position,
@@ -76,7 +92,10 @@ namespace Nytherion.Gameplay.Relics.Modules
                 }
 
                 lightningAnchors.Add(enemy.transform);
-                enemy.TakeDamage(eventData.DamageAmount * Mathf.Max(0f, damageRatio), true);
+                Vector3 position = enemy.transform.position;
+                enemy.TakeDamage(lightningDamage, true);
+                if (runtime != null)
+                    runtime.SpawnLightningWind(enemy, position, lightningDamage, projectilePrefab, projectileDamageRatio, windSpawnChance);
                 if (!enemy.isDead && enemy.TryGetComponent(out StatusEffectManager statusEffectManager))
                 {
                     statusEffectManager.ApplyEffect(new LightningEffect(

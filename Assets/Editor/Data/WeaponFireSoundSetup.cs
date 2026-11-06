@@ -20,11 +20,11 @@ namespace Nytherion.Editor
             "Afterglow", "ArcaneDart", "Blazeshade", "Capricious", "EvilEye", "ForestThorn",
             "Frenzy", "Isolation", "Icicle", "CrimsonLotus", "Obliteration", "Pyrofall",
             "Ignition", "Radiance", "ShamanStaff", "SpiritsGuidance", "Stormbringer",
-            "Corrosion", "VoidRay"
+            "Corrosion"
         };
         private static readonly float[] Volumes = {
             0.64f, 0.48f, 0.62f, 0.6f, 0.64f, 0.48f, 0.4f, 0.65f, 0.58f,
-            0.53f, 0.6f, 0.62f, 0.5f, 0.6f, 0.6f, 0.55f, 0.58f, 0.57f, 0.52f
+            0.53f, 0.6f, 0.62f, 0.5f, 0.6f, 0.6f, 0.55f, 0.58f, 0.57f
         };
 
         static WeaponFireSoundSetup() => EditorApplication.update += Update;
@@ -143,7 +143,7 @@ namespace Nytherion.Editor
             ConnectBlazeshadeSummon();
             report.Add("Scene: " + UnityEngine.SceneManagement.SceneManager.GetActiveScene().path);
             File.WriteAllLines(Output + "/setup.txt", report);
-            Debug.Log("[WeaponFireSoundSetup] 19종 무기와 심연의 불꽃 발사 효과음 연결 완료.");
+            Debug.Log($"[WeaponFireSoundSetup] {Names.Length}종 무기와 심연의 불꽃 발사 효과음 연결 완료.");
         }
 
         private static AudioClip ImportClip(string path)

@@ -5,6 +5,10 @@ using Nytherion.Core.Data;
 using VContainer;
 using VContainer.Unity;
 using System;
+using Nytherion.Core.Enums;
+using Nytherion.GamePlay.Characters.NPC;
+using Nytherion.GamePlay.Relics;
+using Nytherion.GamePlay.Skills;
 
 namespace Nytherion.Core.Managers
 {
@@ -66,10 +70,38 @@ namespace Nytherion.Core.Managers
                 relicUIController.Close();
                 return;
             }
-            if (playerTransform == null) return;
+            if (Time.timeScale <= 0f || UIPanelBase.IsAnyPanelOpen ||
+                RelicPickupDetector.HasSelectedRelic(playerTransform)) return;
+
+            GetCurrentTarget()?.Interact();
+        }
+
+        public string GetInteractionPrompt()
+        {
+            IInteractable target = GetCurrentTarget();
+            if (target == null) return null;
+            if (target is PortalGateEndpoint || target is VillagePortal) return null;
+            switch (target.Type)
+            {
+                case InteractableType.ShopDealer: return "상점 열기";
+                case InteractableType.RelicAltar: return "유물 관리";
+                default: return "상호작용";
+            }
+        }
+
+        public Transform GetPortalTarget()
+        {
+            IInteractable target = GetCurrentTarget();
+            return target is PortalGateEndpoint || target is VillagePortal
+                ? ((Component)target).transform : null;
+        }
+
+        private IInteractable GetCurrentTarget()
+        {
+            if (playerTransform == null) return null;
 
             int hitCount = Physics2D.OverlapCircleNonAlloc(playerTransform.position, interactionDistance, interactionBuffer, interactableLayer);
-            if (hitCount == 0) return;
+            if (hitCount == 0) return null;
 
             IInteractable closestInteractable = null;
             float closestDistanceSqr = float.MaxValue;
@@ -81,6 +113,8 @@ namespace Nytherion.Core.Managers
                 {
                     if (col.TryGetComponent(out IInteractable interactableObject))
                     {
+                        if (interactableObject is ShopDealer dealer && !dealer.IsInteractable) continue;
+                        if (interactableObject is RelicAltar altar && !altar.IsInteractable) continue;
                         if (interactableObject is IConditionalInteractable conditional &&
                             !conditional.CanInteract(playerTransform)) continue;
                         closestDistanceSqr = distanceSqr;
@@ -89,14 +123,7 @@ namespace Nytherion.Core.Managers
                 }
             }
 
-            if (closestInteractable != null)
-            {
-                closestInteractable.Interact();
-            }
-            else
-            {
-                Debug.Log("[InteractionManager] 상호작용 가능한 객체를 찾지 못했습니다");
-            }
+            return closestInteractable;
         }
 
         public override void PopulateSaveData(SaveData saveData)

@@ -72,7 +72,7 @@ namespace Nytherion.Editor
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 RelicData relic = AssetDatabase.LoadAssetAtPath<RelicData>(path);
-                if (relic != null && (relic.effectModules == null || !relic.effectModules.Any(module =>
+                if (relic != null && relic.IsRuntimeAvailable && (relic.effectModules == null || !relic.effectModules.Any(module =>
                     module != null && module.effects != null && module.effects.Any(effect =>
                         effect is GrantSkillEffect grant && grant.skillData != null && !grant.skillData.IsRuntimeAvailable))))
                 {

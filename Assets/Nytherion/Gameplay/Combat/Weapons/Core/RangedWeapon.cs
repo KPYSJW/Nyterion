@@ -514,6 +514,8 @@ namespace Nytherion.GamePlay.Combat
             projectileAnimator.runtimeAnimatorController = selected;
             projectileAnimator.Rebind();
             projectileAnimator.Update(0f);
+            if (projectile.TryGetComponent(out SpiritsGuidanceTrail trail))
+                trail.SetVariant(index % variants.Length);
         }
 
         protected virtual void ConfigureSpawnedProjectile(GameObject projectile, Vector2 direction, float chargePercent) { }

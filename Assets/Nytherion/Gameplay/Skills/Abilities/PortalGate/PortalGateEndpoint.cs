@@ -14,6 +14,8 @@ namespace Nytherion.GamePlay.Skills
         private TMP_Text prompt;
         private float animationStarted;
         public InteractableType Type => InteractableType.None;
+        public string InteractionPrompt => owner != null
+            ? $"이동 · {owner.RemainingTraversals}회 · {Mathf.CeilToInt(owner.RemainingLifetime)}초" : "이동";
 
         public void Begin(PortalGateSkill skill, PortalGateSkillData settings, Vector3 position)
         {
@@ -49,8 +51,7 @@ namespace Nytherion.GamePlay.Skills
             }
             if (prompt != null)
             {
-                prompt.gameObject.SetActive(CanInteract(owner.caster));
-                prompt.text = $"[F] 이동 · {owner.RemainingTraversals}회 · {Mathf.CeilToInt(owner.RemainingLifetime)}초";
+                prompt.gameObject.SetActive(false);
             }
         }
 

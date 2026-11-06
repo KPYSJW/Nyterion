@@ -4,6 +4,7 @@ using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.GamePlay.Characters.Enemy;
 using Nytherion.GamePlay.Characters.Player;
 using UnityEngine;
+using Nytherion.Gameplay.Relics.Modules;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -42,9 +43,9 @@ namespace Nytherion.GamePlay.Skills
         private void Update()
         {
             if (data == null || owner == null || !owner.gameObject.activeInHierarchy)
-            { Close(); return; }
+            { Close(false); return; }
             PlayerHealth health = owner.GetComponent<PlayerHealth>();
-            if (health != null && health.CurrentHealth <= 0f) { Close(); return; }
+            if (health != null && health.CurrentHealth <= 0f) { Close(false); return; }
             if (!IsAlive)
             {
                 int frame = Mathf.FloorToInt((Time.time - summonStartedAt) * Mathf.Max(1f, data.framesPerSecond));
@@ -59,6 +60,7 @@ namespace Nytherion.GamePlay.Skills
                 visual.color = new Color(0.65f, 0.9f, 1f, 1f);
                 body.enabled = true;
                 IsAlive = true;
+                owner.GetComponentInParent<OminousDollRuntime>()?.NotifyActivated(this);
                 expiresAt = Time.time + lifetime;
                 nextScanAt = Time.time;
             }
@@ -91,9 +93,12 @@ namespace Nytherion.GamePlay.Skills
             if (CurrentDurability <= 0f) Close();
         }
 
-        public void Close()
+        public void Close(bool explode = true)
         {
+            bool wasAlive = IsAlive;
             IsAlive = false;
+            if (wasAlive && owner != null)
+                owner.GetComponentInParent<OminousDollRuntime>()?.NotifyClosed(this, explode);
             if (body != null) body.enabled = false;
             foreach (EnemyAIController enemy in affectedEnemies)
                 if (enemy != null) enemy.RemoveDecoy(this);
@@ -101,6 +106,6 @@ namespace Nytherion.GamePlay.Skills
             if (gameObject.activeSelf) gameObject.SetActive(false);
         }
 
-        private void OnDisable() => Close();
+        private void OnDisable() => Close(false);
     }
 }

@@ -130,7 +130,15 @@ namespace Nytherion.UI.Inventory
                     {
                         displayValue = $"{Mathf.RoundToInt(floatValue * 100f)}%";
                     }
+                    else if (field.Name == "skillDamageMultiplier" || field.Name == "skillCooldownMultiplier")
+                    {
+                        displayValue = $"{floatValue * 100f:0.##}%";
+                    }
                     else if (field.Name == "rangedSpeed")
+                    {
+                        displayValue = $"{floatValue:0.##}";
+                    }
+                    else if (field.Name == "maxMana" || field.Name == "manaRegenPerSecond")
                     {
                         displayValue = $"{floatValue:0.##}";
                     }
@@ -144,6 +152,20 @@ namespace Nytherion.UI.Inventory
                 if (cell != null)
                 {
                     statCells.Add(cell);
+                }
+            }
+
+            // 마나 항목이 추가돼도 마지막 능력치 행이 패널 아래로 넘치지 않게 합니다.
+            GridLayoutGroup grid = statsContainer.GetComponent<GridLayoutGroup>();
+            if (grid != null && grid.constraint == GridLayoutGroup.Constraint.FixedColumnCount)
+            {
+                int rows = Mathf.CeilToInt((float)statCells.Count / Mathf.Max(1, grid.constraintCount));
+                if (rows > 1)
+                {
+                    float available = statsContainer.rect.height - grid.padding.vertical - rows * grid.cellSize.y;
+                    Vector2 spacing = grid.spacing;
+                    spacing.y = Mathf.Min(spacing.y, Mathf.Max(0f, available / (rows - 1)));
+                    grid.spacing = spacing;
                 }
             }
         }
@@ -200,6 +222,10 @@ namespace Nytherion.UI.Inventory
             (string korean, string english) = statName switch
             {
                 "maxHealth" => ("최대 체력", "Max Health"),
+                "maxMana" => ("최대 마나", "Max Mana"),
+                "skillDamageMultiplier" => ("스킬 피해", "Skill Damage"),
+                "skillCooldownMultiplier" => ("스킬 쿨타임", "Skill Cooldown"),
+                "manaRegenPerSecond" => ("초당 마나 회복", "Mana Regen / sec"),
                 "defense" => ("방어력", "Defense"),
                 "moveSpeed" => ("이동 속도", "Move Speed"),
                 "rangedDamage" => ("공격력", "Attack"),

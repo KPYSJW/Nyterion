@@ -11,6 +11,25 @@ namespace Nytherion.UI.Components
         [SerializeField] private Image hpFillImage;
         [SerializeField] private TextMeshProUGUI hpText;
         [SerializeField] private Image shieldFillImage;
+        [SerializeField] private Image mpFillImage;
+        [SerializeField] private TextMeshProUGUI mpText;
+        private PlayerSkillManager manaOwner;
+
+        [Inject]
+        public void ConstructMana(PlayerSkillManager skills)
+        {
+            if (manaOwner != null) manaOwner.ManaChanged -= UpdateMana;
+            manaOwner = skills;
+            if (manaOwner == null) return;
+            if (isActiveAndEnabled) manaOwner.ManaChanged += UpdateMana;
+            UpdateMana(manaOwner.CurrentMana, manaOwner.MaxMana);
+        }
+
+        private void UpdateMana(float current, float maximum)
+        {
+            if (mpFillImage != null) mpFillImage.fillAmount = maximum > 0f ? Mathf.Clamp01(current / maximum) : 0f;
+            if (mpText != null) mpText.SetText("{0:0}", Mathf.Floor(current));
+        }
         private float displayedHealth;
 
         private PlayerHealth playerHealth;
@@ -40,6 +59,12 @@ namespace Nytherion.UI.Components
         }
         private void OnEnable()
         {
+            if (manaOwner != null)
+            {
+                manaOwner.ManaChanged -= UpdateMana;
+                manaOwner.ManaChanged += UpdateMana;
+                UpdateMana(manaOwner.CurrentMana, manaOwner.MaxMana);
+            }
             PlayerHealth.OnHealthChanged += UpdateHP;
             if (playerHealth != null)
             {
@@ -51,6 +76,7 @@ namespace Nytherion.UI.Components
 
         private void OnDisable()
         {
+            if (manaOwner != null) manaOwner.ManaChanged -= UpdateMana;
             PlayerHealth.OnHealthChanged -= UpdateHP;
             if (playerHealth != null) playerHealth.ShieldChanged -= UpdateShield;
         }

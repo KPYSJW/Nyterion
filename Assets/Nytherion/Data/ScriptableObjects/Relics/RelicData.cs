@@ -11,7 +11,7 @@ namespace Nytherion.Data.ScriptableObjects.Relics
     [System.Serializable]
     public class InfluenceZone
     {
-        [Tooltip("중심(0,0)으로부터의 상대 위치. x, y 모두 -1 ~ 1 사이의 값만 유효")]
+        [Tooltip("유물 위치(0,0)로부터의 상대 위치입니다. 모든 영향 칸과 유물을 포함하는 영역은 최대 5×5입니다.")]
         public Vector2Int offset;
         [Tooltip("해당 위치에 부여할 효과 종류 (레벨 업/다운)")]
         public InfluenceType type;
@@ -29,7 +29,7 @@ namespace Nytherion.Data.ScriptableObjects.Relics
     /// <summary>
     /// 유물 등급별 영향 범위를 한 곳에서 관리합니다.
     /// 일반 유물은 최대 다섯 칸 안에서 레벨 업/다운을 함께 사용하고,
-    /// 침묵 또는 시너지 연결을 가진 특수 유물은 고유 영향권을 유지합니다.
+    /// 침묵 또는 고유 설정을 가진 특수 유물은 고유 영향권을 유지합니다.
     /// </summary>
     public static class RelicInfluencePolicy
     {
@@ -73,18 +73,6 @@ namespace Nytherion.Data.ScriptableObjects.Relics
             CreateZone(-1, 0, InfluenceType.LevelDown, 1)
         };
 
-        private static readonly Vector2Int[] SpecialOffsets =
-        {
-            new Vector2Int(-1, 1),
-            Vector2Int.up,
-            Vector2Int.one,
-            Vector2Int.left,
-            Vector2Int.right,
-            new Vector2Int(-1, -1),
-            Vector2Int.down,
-            new Vector2Int(1, -1)
-        };
-
         public static IReadOnlyList<InfluenceZone> GetDefaultZones(Rarity rarity)
         {
             switch (rarity)
@@ -106,12 +94,13 @@ namespace Nytherion.Data.ScriptableObjects.Relics
 
         public static bool IsSpecialRelic(RelicData relic)
         {
-            if (relic == null || relic.influenceZones == null) return false;
+            if (relic == null) return false;
+            if (relic.preserveCustomInfluenceZones) return true;
+            if (relic.influenceZones == null) return false;
 
             foreach (InfluenceZone zone in relic.influenceZones)
             {
-                if (zone != null &&
-                    (zone.type == InfluenceType.Silence || zone.type == InfluenceType.SynergyLink))
+                if (zone != null && zone.type == InfluenceType.Silence)
                 {
                     return true;
                 }
@@ -124,12 +113,9 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         {
             if (IsSpecialRelic(relic))
             {
-                for (int i = 0; i < SpecialOffsets.Length; i++)
-                {
-                    if (SpecialOffsets[i] == offset) return true;
-                }
-
-                return false;
+                return offset != Vector2Int.zero &&
+                       offset.x >= -4 && offset.x <= 4 &&
+                       offset.y >= -4 && offset.y <= 4;
             }
 
             foreach (InfluenceZone zone in GetDefaultZones(rarity))
@@ -138,6 +124,53 @@ namespace Nytherion.Data.ScriptableObjects.Relics
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// 데이터를 변경하지 않고 영향 칸의 중복과 전체 범위를 검사합니다.
+        /// None은 실제 효과가 없으므로 범위 계산에서 제외합니다.
+        /// </summary>
+        public static bool TryValidateInfluenceZones(IReadOnlyList<InfluenceZone> zones, out string error)
+        {
+            error = null;
+            if (zones == null) return true;
+
+            var offsets = new HashSet<Vector2Int>();
+            long minX = 0, maxX = 0, minY = 0, maxY = 0;
+            for (int i = 0; i < zones.Count; i++)
+            {
+                InfluenceZone zone = zones[i];
+                if (zone == null)
+                {
+                    error = $"영향 칸 {i + 1}이 비어 있습니다.";
+                    return false;
+                }
+
+                if (zone.type == InfluenceType.None) continue;
+                if (zone.offset == Vector2Int.zero)
+                {
+                    error = $"영향 칸 {i + 1}은 유물 위치 (0, 0)에 설정할 수 없습니다.";
+                    return false;
+                }
+
+                if (!offsets.Add(zone.offset))
+                {
+                    error = $"영향 칸 {i + 1}의 위치 {zone.offset}가 중복되었습니다.";
+                    return false;
+                }
+
+                minX = System.Math.Min(minX, zone.offset.x);
+                maxX = System.Math.Max(maxX, zone.offset.x);
+                minY = System.Math.Min(minY, zone.offset.y);
+                maxY = System.Math.Max(maxY, zone.offset.y);
+                if (maxX - minX > 4 || maxY - minY > 4)
+                {
+                    error = "유물과 영향 칸을 포함한 영역은 최대 5×5여야 합니다.";
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public static bool Normalize(RelicData relic)
@@ -149,9 +182,14 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                 relic.influenceZones = new List<InfluenceZone>();
             }
 
+            // 기존 데이터의 연결 칸을 제거하면서 다른 고유 영향권은 유지한다.
+            bool removedLegacyLinks = relic.influenceZones.RemoveAll(
+                zone => zone != null && zone.type == InfluenceType.SynergyLink) > 0;
+            if (removedLegacyLinks) relic.preserveCustomInfluenceZones = true;
+
             if (IsSpecialRelic(relic))
             {
-                bool changedSpecialAmount = false;
+                bool changedSpecialAmount = removedLegacyLinks;
                 foreach (InfluenceZone zone in relic.influenceZones)
                 {
                     if (zone == null ||
@@ -255,8 +293,11 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         [Header("각인 모양 (1x1 고정)")]
         public List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };
 
-        [Header("영향 범위 설정 (등급별 고정)")]
-        [Tooltip("일반 유물은 최대 다섯 칸의 레벨 업/다운 조합을 사용합니다. 침묵·시너지 연결 유물은 고유 영향권을 유지합니다.")]
+        [Header("영향 범위 설정")]
+        [Tooltip("활성화하면 등급 기본값 대신 직접 설정한 영향 칸을 유지합니다. 끄면 등급 기본값으로 바뀝니다. 침묵 유물은 항상 고유 영향권을 유지합니다.")]
+        public bool preserveCustomInfluenceZones;
+
+        [Tooltip("유물 위치를 포함한 최대 5×5 영역 안에서 영향 칸을 설정합니다. 직접 설정을 끄면 등급 기본값을 사용합니다.")]
         public List<InfluenceZone> influenceZones = new List<InfluenceZone>();
 
         [Header("시너지 설정")]
@@ -284,6 +325,10 @@ namespace Nytherion.Data.ScriptableObjects.Relics
             }
 
             RelicInfluencePolicy.Normalize(this);
+            if (!RelicInfluencePolicy.TryValidateInfluenceZones(influenceZones, out string error))
+            {
+                Debug.LogWarning($"유물 '{name}'의 영향 범위 설정 오류: {error}", this);
+            }
         }
     }
 }

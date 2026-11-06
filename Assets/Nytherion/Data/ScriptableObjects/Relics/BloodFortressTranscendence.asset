@@ -18,22 +18,16 @@ MonoBehaviour:
   nameColor: {r: 1, g: 0.4, b: 0.49803922, a: 1}
   badgeBackgroundColor: {r: 0.36, g: 0.08, b: 0.12, a: 0.96}
   badgeTextColor: {r: 1, g: 0.9, b: 0.86, a: 1}
-  description_KR: "\uBC1B\uC740 \uD53C\uD574\uC758 15% \uD68C\uBCF5. \uD53C\uACA9
-    \uD6C4 4\uCD08\uAC04 \uBC29\uC5B4\uB825\xB7\uADFC\uAC70\uB9AC \uACF5\uACA9\uB825
-    +12%."
-  description_EN: Recover 15% of damage taken. Gain 12% defense and melee damage
-    for 4 seconds after taking damage.
+  description_KR: "\ubc1b\uc740 \ud53c\ud574\uc758 15% \ud68c\ubcf5. \ud53c\uaca9 \ud6c4 4\ucd08\uac04 \ubc29\uc5b4\ub825\u00b7\uacf5\uaca9\ub825 +12%."
+  description_EN: "Recover 15% of damage taken. Gain 12% defense and attack damage for 4 seconds after taking damage."
   requirements:
   - setBonusData: {fileID: 11400000, guid: 1a47cf69e43d4aec9e0c1b323806637d, type: 2}
     requiredEquippedCount: 4
   - setBonusData: {fileID: 11400000, guid: 5f1b7eac9d0a4c2c9eb8a7f312d45601, type: 2}
     requiredEquippedCount: 4
   effectModules:
-  - description_KR: "\uBC1B\uC740 \uD53C\uD574\uC758 15% \uD68C\uBCF5. \uD53C\uACA9
-      \uD6C4 4\uCD08\uAC04 \uBC29\uC5B4\uB825\xB7\uADFC\uAC70\uB9AC \uACF5\uACA9\uB825
-      +12%."
-    description_EN: Recover 15% of damage taken. Gain 12% defense and melee damage
-      for 4 seconds after taking damage.
+  - description_KR: "\ubc1b\uc740 \ud53c\ud574\uc758 15% \ud68c\ubcf5. \ud53c\uaca9 \ud6c4 4\ucd08\uac04 \ubc29\uc5b4\ub825\u00b7\uacf5\uaca9\ub825 +12%."
+    description_EN: "Recover 15% of damage taken. Gain 12% defense and attack damage for 4 seconds after taking damage."
     condition:
       rid: -2
     effects:
@@ -57,7 +51,7 @@ MonoBehaviour:
           value: 0.12
           valuePerLevel: 0
           isPercentage: 1
-        - stat: 3
+        - stat: 4
           value: 0.12
           valuePerLevel: 0
           isPercentage: 1

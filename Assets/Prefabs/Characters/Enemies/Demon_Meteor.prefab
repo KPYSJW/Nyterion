@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7692483418629133086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3800785279649273352}
+  - component: {fileID: 1140000700}
+  m_Layer: 2
+  m_Name: Demon_Meteor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3800785279649273352
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692483418629133086}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1140000700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692483418629133086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2deac9c78fa4048a18fdbe7a30b5a57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meteorFrames:
+  - {fileID: 626585043, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: 1381469942, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: 1143955515, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: -1263708505, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: -1076493504, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: 2114611751, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: 414498669, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: -2100142994, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: -481753165, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: -1466445081, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: 1453345311, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  - {fileID: -4525393, guid: e507694c4ee62ce44ad77f89a9a0c90c, type: 3}
+  impactFrames:
+  - {fileID: 797096349, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: -960089197, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: 390874031, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: -402834639, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: -14920252, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: -1468392676, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: 151137047, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: 974258779, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: -958287900, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  - {fileID: 338460059, guid: 61c711e6281bee449a44bcd25e3b2059, type: 3}
+  effectMaterial: {fileID: 2100000, guid: 0b1c01953f3b4f1c913b0daf941e0e5f, type: 2}
+  impactPixelRadius: 97.5833

@@ -1,0 +1,68 @@
+{
+  "assets": [
+    {
+      "path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/VoidRayWeaponData.cs",
+      "guid": "0de32b50a9a84c44a5d63b7fe8bc2012"
+    },
+    {
+      "path": "Assets/Nytherion/Data/ScriptableObjects/Weapons/VoidRay.asset",
+      "guid": "54a9f112087b46ff97d3902a9ce6aa53"
+    },
+    {
+      "path": "Assets/Prefabs/Gameplay/Combat/Weapons/VoidRay.prefab",
+      "guid": "b9ed14c8da534091a8b7ba674fd68c89"
+    },
+    {
+      "path": "Assets/Prefabs/Gameplay/Combat/Proj/Player_VoidRay.prefab",
+      "guid": "e3d7af8295f947708a9ef1c16e7392bb"
+    },
+    {
+      "path": "Assets/Nytherion/Gameplay/Combat/Weapons/Ranged/VoidRayWeapon.cs",
+      "guid": "a9c1f8e2dd0e4ff680ea8ac6fa4cc239"
+    },
+    {
+      "path": "Assets/Nytherion/Gameplay/Combat/Weapons/Ranged/VoidRayBeam.cs",
+      "guid": "4db6c17ab5874191a24bcd09b0742f0d"
+    },
+    {
+      "path": "Assets/Nytherion/Audio/Weapons/VoidRay_Fire.wav",
+      "guid": "cadf7f807db53c140ace31365a721cbf"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Common/Shaders/VoidRayLine.shader",
+      "guid": "a3db901d58824e4893fa57e244df12b0"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Common/Materials/VoidRay_Body_Additive.mat",
+      "guid": "1f7eaafdd0484e16a91b29fce18e2a47"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Common/Materials/VoidRay_Additive.mat",
+      "guid": "9f80384e3fdd4d9a84ac45c191f8f930"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/Weapons/Sprites/VoidRay.png",
+      "guid": "7a4e1f9433f84eb8b8120c7df090c611"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/Weapons/Icons/VoidRay_Icon.png",
+      "guid": "9cb3ff8a231e472489ec43bdc96b1274"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/VoidRayStart.png",
+      "guid": "1931ef34a34dd6645815fc9841d26c30"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/VoidRayHit.png",
+      "guid": "239cf16e1526271499a0efcc86781545"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/VoidRayEffect2.png",
+      "guid": "c6f9e27535084b4468aced7f458d54fd"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/VoidRayEffect.png",
+      "guid": "e979b7ce490a16242a9fe7c699ad316e"
+    }
+  ]
+}

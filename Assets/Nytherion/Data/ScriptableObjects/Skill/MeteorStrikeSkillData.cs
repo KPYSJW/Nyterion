@@ -16,8 +16,10 @@ namespace Nytherion.Data.ScriptableObjects.Skill
 
         [Header("운석 연출")]
         [Min(0.01f)] public float dropHeight = 10f;
+        [Tooltip("목표 기준 낙하 시작점의 가로 거리입니다. 음수는 왼쪽 위, 양수는 오른쪽 위, 0은 수직 낙하입니다.")]
+        public float dropHorizontalOffset = -6f;
         [Min(0.01f)] public float fallSpeed = 20f;
-        [Tooltip("기존 운석 애니메이션의 폭발 중심 보정입니다.")]
+        [Tooltip("착탄 후 폭발만 세로로 보정합니다. 양수는 아래, 음수는 위로 이동하며 낙하 경로에는 영향을 주지 않습니다.")]
         public float explosionYOffset = 0.4f;
         public MeteorStrikeImpact impactPrefab;
 

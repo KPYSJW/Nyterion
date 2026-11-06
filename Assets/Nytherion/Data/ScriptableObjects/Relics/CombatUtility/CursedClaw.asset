@@ -35,10 +35,7 @@ MonoBehaviour:
   - offset: {x: 0, y: -1}
     type: 1
     levelAmount: 1
-  - offset: {x: -1, y: 0}
-    type: 4
-  - offset: {x: 1, y: 0}
-    type: 4
+  preserveCustomInfluenceZones: 1
   synergySeriesId: 
   unlockMilestoneID: 
   references:
@@ -52,18 +49,10 @@ MonoBehaviour:
       type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
         statModifiers:
-        - stat: 5
-          value: 0.25
-          valuePerLevel: 0.05
-          isPercentage: 1
         - stat: 6
           value: 0.25
           valuePerLevel: 0.05
           isPercentage: 1
-        - stat: 3
-          value: 10
-          valuePerLevel: 3
-          isPercentage: 0
         - stat: 4
           value: 10
           valuePerLevel: 3

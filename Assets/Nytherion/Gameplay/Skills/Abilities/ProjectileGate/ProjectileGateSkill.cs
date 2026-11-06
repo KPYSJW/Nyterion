@@ -19,7 +19,7 @@ namespace Nytherion.GamePlay.Skills
             PlayerManager player = caster != null ? caster.GetComponentInParent<PlayerManager>() :
                 GetComponentInParent<PlayerManager>();
             int level = player != null ? player.GetSkillLevel(data) : Mathf.Max(1, data.skillLevel);
-            return data.GetCooldown(level);
+            return ApplyDebugCooldownReduction(data.GetCooldown(level));
         }
 
         protected override void Activate()

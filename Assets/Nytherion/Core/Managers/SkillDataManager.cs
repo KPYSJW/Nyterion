@@ -12,6 +12,7 @@ namespace Nytherion.Core.Managers
     /// </summary>
     public class SkillState
     {
+        public const int MaxLevel = 10;
         public int level = 1;
         public int exp = 0;
 
@@ -29,8 +30,7 @@ namespace Nytherion.Core.Managers
         /// </summary>
         private void CheckLevelUp()
         {
-            int maxLevel = 10;
-            while (level < maxLevel && exp >= GetRequiredExp(level))
+            while (level < MaxLevel && exp >= GetRequiredExp(level))
             {
                 exp -= GetRequiredExp(level); // 사용된 경험치 차감
                 level++;

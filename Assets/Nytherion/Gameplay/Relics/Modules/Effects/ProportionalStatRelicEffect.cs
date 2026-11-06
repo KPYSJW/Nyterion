@@ -18,7 +18,7 @@ namespace Nytherion.Gameplay.Relics.Modules
         public StatType sourceStat = StatType.MoveSpeed;
 
         [Tooltip("변경할 스탯 ")]
-        public StatType targetStat = StatType.MeleeDamage;
+        public StatType targetStat = StatType.RangedDamage;
 
         [Tooltip("기준 스탯의 1당 변경할 스탯의 비율 ")]
         public float ratio = 0.5f;
@@ -99,9 +99,7 @@ namespace Nytherion.Gameplay.Relics.Modules
                 case StatType.MaxHealth: return data.maxHealth;
                 case StatType.Defense: return data.defense;
                 case StatType.MoveSpeed: return data.moveSpeed;
-                case StatType.MeleeDamage: return data.meleeDamage;
                 case StatType.RangedDamage: return data.rangedDamage;
-                case StatType.MeleeSpeed: return data.meleeSpeed;
                 case StatType.RangedSpeed: return data.rangedSpeed;
                 case StatType.DashSpeed: return data.dashSpeed;
                 case StatType.DashDuration: return data.dashDuration;

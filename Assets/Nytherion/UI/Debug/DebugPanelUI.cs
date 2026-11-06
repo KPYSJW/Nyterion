@@ -8,6 +8,7 @@ using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Items;
 using Nytherion.Core.Data;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.GamePlay.Characters.NPC;
 using Nytherion.UI.Controllers;
 using Nytherion.Data.ScriptableObjects.Shop;
 using System.Collections.Generic;
@@ -50,6 +51,12 @@ namespace Nytherion.UI.Test
         [SerializeField, Min(0.5f)] private float trainingDummySpawnDistance = 1.5f;
         private readonly List<TrainingDummy> trainingDummies = new List<TrainingDummy>();
         private Vector2 trainingDummySpawnDirection = Vector2.right;
+
+        [Header("가챠 상자 소환")]
+        [SerializeField] private GachaChest gachaChestPrefab;
+        [SerializeField, Min(0.5f)] private float gachaChestSpawnDistance = 1.5f;
+        private GachaChest spawnedGachaChest;
+
         private InputManager inputManager;
         private IObjectResolver objectResolver;
 
@@ -65,6 +72,13 @@ namespace Nytherion.UI.Test
         private SkillDataManager skillDataManager;
         private ILocalizationService localizationService;
         private Button languageToggleButton;
+        private Button fireballHomingButton;
+        private Button iceShotHomingButton;
+        private Button thunderboltHomingButton;
+        private Button fireballTurnDecreaseButton;
+        private Button fireballTurnIncreaseButton;
+        private Button fireballStraightDecreaseButton;
+        private Button fireballStraightIncreaseButton;
         private readonly List<StatModifier> debugStatModifiers = new List<StatModifier>();
         private readonly Dictionary<string, GameObject> categoryPages = new Dictionary<string, GameObject>();
         private readonly Dictionary<string, Button> categoryButtons = new Dictionary<string, Button>();
@@ -85,10 +99,8 @@ namespace Nytherion.UI.Test
             (StatType.MaxHealth, "최대 체력", 10f, false),
             (StatType.Defense, "방어력", 1f, false),
             (StatType.MoveSpeed, "이동 속도", 0.5f, false),
-            (StatType.MeleeDamage, "근접 공격력", 5f, false),
-            (StatType.RangedDamage, "원거리 공격력", 5f, false),
-            (StatType.MeleeSpeed, "근접 공격 속도", 0.1f, false),
-            (StatType.RangedSpeed, "원거리 공격 속도", 0.1f, false),
+            (StatType.RangedDamage, "공격력", 5f, false),
+            (StatType.RangedSpeed, "공격 속도", 0.1f, false),
             (StatType.DashSpeed, "대시 속도", 0.5f, false),
             (StatType.DashDuration, "대시 지속 시간", 0.1f, false),
             (StatType.DashCooldown, "대시 쿨타임", 0.1f, false),
@@ -203,6 +215,14 @@ namespace Nytherion.UI.Test
             ResetDebugStats();
             GetRelicEffectController()?.ResetDebugEffects();
             if (playerManager != null) playerManager.PlayerCombat?.ResetDebugAttackTraits();
+            if (playerManager != null)
+            {
+                var skills = playerManager.GetComponent<PlayerSkillManager>();
+                skills?.SetDebugFireballHoming(false);
+                skills?.SetDebugIceShotHoming(false);
+                skills?.SetDebugThunderboltHoming(false);
+                skills?.ResetDebugFireballHomingSettings();
+            }
             if (localizationService != null)
             {
                 localizationService.LanguageChanged -= OnLanguageChanged;
@@ -224,6 +244,7 @@ namespace Nytherion.UI.Test
                 CreateRelicEffectButtons();
                 RefreshEffectButtonLabels();
                 RefreshAttackTraitButtonLabels();
+                RefreshFireballHomingButton();
                 UpdateStatusText("디버그 패널 활성화됨");
                 // 패널이 열릴 때 게임 시간 정지 (선택 사항)
                 // Time.timeScale = 0f;
@@ -404,6 +425,34 @@ namespace Nytherion.UI.Test
             UpdateStatusText("루티 포탑 획득 완료! 스킬 UI에서 장착해 주세요.");
         }
 
+        public void AcquireFireballSkill()
+        {
+            if (skillDataManager == null) TryManualInject();
+            if (skillDataManager == null || skillDataManager.skillDatabase == null)
+            {
+                UpdateStatusText("스킬 매니저 또는 데이터베이스가 준비되지 않았습니다.");
+                return;
+            }
+            SkillData skill = skillDataManager.skillDatabase.GetSkillById("skill_fire_bolt");
+            if (skill == null)
+            {
+                UpdateStatusText("데이터베이스에서 파이어볼 스킬을 찾을 수 없습니다.");
+                return;
+            }
+            if (skillDataManager.skillStates.ContainsKey(skill.skillID))
+            {
+                UpdateStatusText("파이어볼 스킬을 이미 보유하고 있습니다.");
+                return;
+            }
+            if (skillDataManager.storageSkills == null || System.Array.IndexOf(skillDataManager.storageSkills, null) < 0)
+            {
+                UpdateStatusText("스킬 보관함이 가득 찼습니다. 빈 슬롯을 확보해 주세요.");
+                return;
+            }
+            skillDataManager.AcquireSkill(skill);
+            UpdateStatusText("파이어볼 획득 완료! 스킬 UI에서 장착해 주세요.");
+        }
+
         /// <summary>
         /// 데이터베이스의 모든 스킬 중 아직 보유하지 않은 스킬을 보관함에 지급합니다.
         /// </summary>
@@ -555,6 +604,24 @@ namespace Nytherion.UI.Test
             }
         }
 
+        public void IncreaseAllRelicLevels()
+        {
+            if (relicManager == null) TryManualInject();
+            if (relicManager == null)
+            {
+                UpdateStatusText("RelicManager를 찾을 수 없습니다.");
+                return;
+            }
+
+            int count = relicManager.IncreaseAllRelicLevelsForTest();
+            if (count < 0)
+                UpdateStatusText("유물 매니저가 준비되지 않았거나 유물을 이동 중입니다.");
+            else if (count == 0)
+                UpdateStatusText("보유한 유물이 없거나 모두 최대 레벨입니다.");
+            else
+                UpdateStatusText($"보유 유물 {count}개의 레벨을 1 증가했습니다. (저장되지 않음)");
+        }
+
         private void UpdateStatusText(string message)
         {
             if (statusText != null)
@@ -594,7 +661,17 @@ namespace Nytherion.UI.Test
                 "AcquireRootiTurretSkillButton", "루티 포탑 획득", AcquireRootiTurretSkill);
 
             CreateRuntimeButton(templateButton, parentTransform,
+                "AcquireFireballSkillButton", "파이어볼 스킬 획득", AcquireFireballSkill);
+
+            CreateRuntimeButton(templateButton, parentTransform,
                 "AddAllSkillsButton", "모든 스킬 획득", AddAllSkills);
+
+            CreateRuntimeButton(templateButton, parentTransform,
+                "IncreaseSkillCooldownReductionButton", "스킬 쿨타임 감소 +10%p", IncreaseSkillCooldownReduction);
+            CreateRuntimeButton(templateButton, parentTransform,
+                "MaxSkillCooldownReductionButton", "스킬 쿨타임 즉시 100% 감소", MaxSkillCooldownReduction);
+            CreateRuntimeButton(templateButton, parentTransform,
+                "ResetSkillCooldownReductionButton", "스킬 쿨타임 감소 초기화", ResetSkillCooldownReduction);
 
             languageToggleButton = CreateRuntimeButton(
                 templateButton,
@@ -610,10 +687,20 @@ namespace Nytherion.UI.Test
             // 하이브리드 몬스터 소환 버튼 생성
             CreateRuntimeButton(templateButton, parentTransform, "SpawnButton_Hybrid", "몬스터 (하이브리드)", SpawnEnemyHybrid);
             // 소환/제거 버튼은 작은 해상도에서도 바로 누를 수 있도록 앞쪽에 배치합니다.
-            CreateRuntimeButton(templateButton, parentTransform, "SpawnTrainingDummyButton", "허수아비 소환", SpawnTrainingDummy)
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnTrainingDummyButton", "허수아비 (기본 · 1배)", SpawnTrainingDummy)
                 .transform.SetSiblingIndex(1);
-            CreateRuntimeButton(templateButton, parentTransform, "RemoveTrainingDummiesButton", "허수아비 제거", RemoveTrainingDummies)
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnSmallTrainingDummyButton", "허수아비 (소형 · 0.5배)", SpawnSmallTrainingDummy)
                 .transform.SetSiblingIndex(2);
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnLargeTrainingDummyButton", "허수아비 (대형 · 2배)", SpawnLargeTrainingDummy)
+                .transform.SetSiblingIndex(3);
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnHugeTrainingDummyButton", "허수아비 (초대형 · 4배)", SpawnHugeTrainingDummy)
+                .transform.SetSiblingIndex(4);
+            CreateRuntimeButton(templateButton, parentTransform, "RemoveTrainingDummiesButton", "허수아비 제거", RemoveTrainingDummies)
+                .transform.SetSiblingIndex(5);
+            CreateRuntimeButton(templateButton, parentTransform, "SpawnGachaChestButton", "가챠 상자 소환", SpawnGachaChest)
+                .transform.SetSiblingIndex(6);
+            CreateRuntimeButton(templateButton, parentTransform, "RemoveSpawnedGachaChestButton", "소환한 가챠 상자 제거", RemoveSpawnedGachaChest)
+                .transform.SetSiblingIndex(7);
         }
 
         private Button CreateRuntimeButton(
@@ -696,10 +783,50 @@ namespace Nytherion.UI.Test
                 statusText.fontSizeMax = 22f;
                 statusText.raycastTarget = false;
             }
+            AddCategoryButton("유물", "IncreaseAllRelicLevelsButton", "보유 유물 전체 레벨 +1", IncreaseAllRelicLevels);
             CreateRelicEffectButtons();
             CreateAttackTraitButtons();
+            fireballHomingButton = AddCategoryButton("스킬", "DebugFireballHomingButton", "", ToggleDebugFireballHoming);
+            iceShotHomingButton = AddCategoryButton("스킬", "DebugIceShotHomingButton", "", ToggleDebugIceShotHoming);
+            thunderboltHomingButton = AddCategoryButton("스킬", "DebugThunderboltHomingButton", "", ToggleDebugThunderboltHoming);
+            fireballTurnDecreaseButton = AddCategoryButton("스킬", "DebugFireballTurnDecreaseButton", "",
+                () => AdjustDebugFireballHoming(-45f, 0f));
+            fireballTurnIncreaseButton = AddCategoryButton("스킬", "DebugFireballTurnIncreaseButton", "",
+                () => AdjustDebugFireballHoming(45f, 0f));
+            fireballStraightDecreaseButton = AddCategoryButton("스킬", "DebugFireballStraightDecreaseButton", "",
+                () => AdjustDebugFireballHoming(0f, -0.05f));
+            fireballStraightIncreaseButton = AddCategoryButton("스킬", "DebugFireballStraightIncreaseButton", "",
+                () => AdjustDebugFireballHoming(0f, 0.05f));
+            AddCategoryButton("스킬", "ResetDebugFireballHomingSettingsButton", "공통 유도 설정 초기화",
+                ResetDebugFireballHomingSettings);
+            RefreshFireballHomingButton();
+            AddCategoryButton("스킬", "DebugFireballExtraProjectileButton", "추가 투사체 +1 (공통)",
+                () => IncreaseDebugStat(StatType.ExtraProjectiles, 1f));
+            AddCategoryButton("스킬", "ResetFireballExtraProjectileButton", "테스트 추가 투사체 초기화", ResetDebugExtraProjectiles);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            AddCategoryButton("시스템", "PreviewMilestoneProgressButton", "업적 알림 진행 미리보기",
+                () => PreviewMilestoneNotification(false));
+            AddCategoryButton("시스템", "PreviewMilestoneCompletedButton", "업적 알림 완료 미리보기",
+                () => PreviewMilestoneNotification(true));
+#endif
             SelectCategory(selectedCategory);
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private void PreviewMilestoneNotification(bool completed)
+        {
+            if (objectResolver != null &&
+                objectResolver.TryResolve<Nytherion.UI.Progression.MilestoneNotificationController>(out var notification) &&
+                notification != null &&
+                notification.TryShowDebugPreview(completed))
+            {
+                Close();
+                return;
+            }
+
+            UpdateStatusText("업적 알림을 표시할 수 없습니다.");
+        }
+#endif
 
         private static void StretchRect(RectTransform rect, Vector2 offsetMin, Vector2 offsetMax)
         {
@@ -860,6 +987,105 @@ namespace Nytherion.UI.Test
             RefreshAttackTraitButtonLabels();
         }
 
+        public void ToggleDebugFireballHoming()
+        {
+            PlayerSkillManager skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬 기능이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.SetDebugFireballHoming(!skills.DebugFireballHoming);
+            RefreshFireballHomingButton();
+            UpdateStatusText($"파이어볼 유도 테스트 {(skills.DebugFireballHoming ? "활성화" : "해제")} · 다음 발사부터 적용됩니다.");
+        }
+
+        public void ToggleDebugIceShotHoming()
+        {
+            PlayerSkillManager skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬 기능이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.SetDebugIceShotHoming(!skills.DebugIceShotHoming);
+            RefreshFireballHomingButton();
+            UpdateStatusText($"아이스샷 유도 테스트 {(skills.DebugIceShotHoming ? "활성화" : "해제")} · 다음 발사부터 적용됩니다.");
+        }
+
+        public void ToggleDebugThunderboltHoming()
+        {
+            PlayerSkillManager skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬 기능이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.SetDebugThunderboltHoming(!skills.DebugThunderboltHoming);
+            RefreshFireballHomingButton();
+            UpdateStatusText($"썬더볼트 유도 테스트 {(skills.DebugThunderboltHoming ? "활성화" : "해제")} · 다음 발사부터 적용됩니다.");
+        }
+
+        private void RefreshFireballHomingButton()
+        {
+            if (fireballHomingButton == null) return;
+            PlayerSkillManager skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            SetButtonLabel(fireballHomingButton, $"[{(skills != null && skills.DebugFireballHoming ? "ON" : "OFF")}] 파이어볼 유도 테스트");
+            if (iceShotHomingButton != null)
+                SetButtonLabel(iceShotHomingButton, $"[{(skills != null && skills.DebugIceShotHoming ? "ON" : "OFF")}] 아이스샷 유도 테스트");
+            if (thunderboltHomingButton != null)
+                SetButtonLabel(thunderboltHomingButton, $"[{(skills != null && skills.DebugThunderboltHoming ? "ON" : "OFF")}] 썬더볼트 유도 테스트");
+            float turnSpeed = skills != null ? skills.DebugFireballHomingTurnSpeed : 180f;
+            float straightTime = skills != null ? skills.DebugFireballHomingStraightTime : 0f;
+            if (fireballTurnDecreaseButton != null) SetButtonLabel(fireballTurnDecreaseButton, $"유도 회전 -45°/초 (현재 {turnSpeed:0}°/초)");
+            if (fireballTurnIncreaseButton != null) SetButtonLabel(fireballTurnIncreaseButton, $"유도 회전 +45°/초 (현재 {turnSpeed:0}°/초)");
+            if (fireballStraightDecreaseButton != null) SetButtonLabel(fireballStraightDecreaseButton, $"직진 시간 -0.05초 (현재 {straightTime:0.00}초)");
+            if (fireballStraightIncreaseButton != null) SetButtonLabel(fireballStraightIncreaseButton, $"직진 시간 +0.05초 (현재 {straightTime:0.00}초)");
+        }
+
+        private void AdjustDebugFireballHoming(float turnDelta, float straightDelta)
+        {
+            PlayerSkillManager skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬 기능이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.SetDebugFireballHomingSettings(skills.DebugFireballHomingTurnSpeed + turnDelta,
+                skills.DebugFireballHomingStraightTime + straightDelta);
+            RefreshFireballHomingButton();
+            UpdateStatusText($"공통 유도: 회전 {skills.DebugFireballHomingTurnSpeed:0}°/초, 직진 {skills.DebugFireballHomingStraightTime:0.00}초 · 다음 발사부터 적용됩니다.");
+        }
+
+        private void ResetDebugFireballHomingSettings()
+        {
+            PlayerSkillManager skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬 기능이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.ResetDebugFireballHomingSettings();
+            RefreshFireballHomingButton();
+            UpdateStatusText("공통 유도 설정을 회전 180°/초, 직진 0초로 초기화했습니다. 다음 발사부터 적용됩니다.");
+        }
+
+        public void ResetDebugExtraProjectiles()
+        {
+            for (int i = debugStatModifiers.Count - 1; i >= 0; i--)
+            {
+                StatModifier modifier = debugStatModifiers[i];
+                if (modifier.stat != StatType.ExtraProjectiles) continue;
+                if (playerManager != null && playerManager.currentPlayerData != null)
+                    playerManager.RemoveTemporaryStatModifier(modifier);
+                debugStatModifiers.RemoveAt(i);
+            }
+            if (playerManager != null && playerManager.currentPlayerData != null)
+                UpdateStatusText($"테스트 추가 투사체 초기화 → 현재 {GetDebugStatValue(StatType.ExtraProjectiles):0.##}");
+            else
+                UpdateStatusText("테스트 추가 투사체를 초기화했습니다.");
+        }
+
         public void ToggleDebugAttackTrait(EquipmentTrait trait)
         {
             PlayerCombat combat = playerManager != null ? playerManager.PlayerCombat : null;
@@ -996,7 +1222,8 @@ namespace Nytherion.UI.Test
             controller.SetDebugSetBonus(set, activate ? requirement : 0);
             RefreshEffectButtonLabels();
             string criticalNotice = activate && set.synergySeriesId == "StormArcherSeries" ? " · 치명타 100%" : "";
-            UpdateStatusText($"{set.DisplayName} {requirement}세트 테스트 {(activate ? "활성화" : "해제")}{criticalNotice} (보드·저장에는 반영되지 않음)");
+            string ricochetNotice = activate && set.synergySeriesId == "TrickshotEngineerSeries" ? " · 도탄 활성화" : "";
+            UpdateStatusText($"{set.DisplayName} {requirement}세트 테스트 {(activate ? "활성화" : "해제")}{criticalNotice}{ricochetNotice} (보드·저장에는 반영되지 않음)");
         }
 
         public void ToggleDebugTranscendence(RelicTranscendenceData transcendence)
@@ -1011,7 +1238,8 @@ namespace Nytherion.UI.Test
             bool activate = !controller.IsDebugTranscendenceActive(transcendence);
             controller.SetDebugTranscendence(transcendence, activate);
             RefreshEffectButtonLabels();
-            UpdateStatusText($"{transcendence.DisplayName} 테스트 {(activate ? "활성화" : "해제")} (보드·저장에는 반영되지 않음)");
+            string setNotice = activate ? " · 하위 세트 함께 활성화" : "";
+            UpdateStatusText($"{transcendence.DisplayName} 테스트 {(activate ? "활성화" : "해제")}{setNotice} (보드·저장에는 반영되지 않음)");
         }
 
         public void ResetDebugRelicEffects()
@@ -1118,6 +1346,33 @@ namespace Nytherion.UI.Test
             button.gameObject.SetActive(true);
         }
 
+        public void IncreaseSkillCooldownReduction()
+        {
+            var skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬이 아직 준비되지 않았습니다.");
+                return;
+            }
+            SetSkillCooldownReduction(skills.DebugCooldownReduction + 0.1f);
+        }
+
+        public void MaxSkillCooldownReduction() => SetSkillCooldownReduction(1f);
+
+        public void ResetSkillCooldownReduction() => SetSkillCooldownReduction(0f);
+
+        private void SetSkillCooldownReduction(float reduction)
+        {
+            var skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 스킬이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.SetDebugCooldownReduction(reduction);
+            UpdateStatusText($"테스트 스킬 쿨타임 감소 → 현재 {skills.DebugCooldownReduction * 100f:0}%");
+        }
+
         public void IncreaseDebugStat(StatType stat, float amount)
         {
             if (playerManager == null || playerManager.currentPlayerData == null)
@@ -1151,6 +1406,8 @@ namespace Nytherion.UI.Test
                     playerManager.RemoveTemporaryStatModifier(modifier);
             }
             debugStatModifiers.Clear();
+            if (playerManager != null)
+                playerManager.GetComponent<PlayerSkillManager>()?.SetDebugCooldownReduction(0f);
             UpdateStatusText("테스트로 추가한 능력치를 초기화했습니다.");
         }
 
@@ -1162,9 +1419,7 @@ namespace Nytherion.UI.Test
                 StatType.MaxHealth => data.maxHealth,
                 StatType.Defense => data.defense,
                 StatType.MoveSpeed => data.moveSpeed,
-                StatType.MeleeDamage => data.meleeDamage,
                 StatType.RangedDamage => data.rangedDamage,
-                StatType.MeleeSpeed => data.meleeSpeed,
                 StatType.RangedSpeed => data.rangedSpeed,
                 StatType.DashSpeed => data.dashSpeed,
                 StatType.DashDuration => data.dashDuration,
@@ -1233,7 +1488,48 @@ namespace Nytherion.UI.Test
                 : "언어: 한국어 → English";
         }
 
+        public void SpawnGachaChest()
+        {
+            if (playerManager == null || objectResolver == null)
+            {
+                UpdateStatusText("플레이어 또는 소환 의존성이 준비되지 않았습니다.");
+                return;
+            }
+            if (gachaChestPrefab == null)
+            {
+                UpdateStatusText("가챠 상자 프리팹이 연결되지 않았습니다.");
+                return;
+            }
+            // 여러 상자가 같은 X/C 입력에 동시에 반응하지 않도록 테스트 상자는 하나만 유지합니다.
+            if (spawnedGachaChest != null)
+            {
+                UpdateStatusText("이미 테스트 상자가 있습니다. 제거한 뒤 다시 소환해 주세요.");
+                return;
+            }
+
+            Vector3 position = playerManager.transform.position
+                + (Vector3)(trainingDummySpawnDirection * gachaChestSpawnDistance);
+            spawnedGachaChest = objectResolver.Instantiate(gachaChestPrefab, position, Quaternion.identity);
+            UpdateStatusText("플레이어 앞에 가챠 상자 소환 완료 · X: 1회 / C: 10회 (토큰 필요)");
+        }
+
+        public void RemoveSpawnedGachaChest()
+        {
+            if (spawnedGachaChest != null) Destroy(spawnedGachaChest.gameObject);
+            spawnedGachaChest = null;
+            UpdateStatusText("테스트로 소환한 가챠 상자를 제거했습니다.");
+        }
+
         public void SpawnTrainingDummy()
+        {
+            SpawnTrainingDummy(1f, "기본");
+        }
+
+        public void SpawnSmallTrainingDummy() => SpawnTrainingDummy(0.5f, "소형");
+        public void SpawnLargeTrainingDummy() => SpawnTrainingDummy(2f, "대형");
+        public void SpawnHugeTrainingDummy() => SpawnTrainingDummy(4f, "초대형");
+
+        private void SpawnTrainingDummy(float sizeMultiplier, string sizeLabel)
         {
             if (playerManager == null || objectResolver == null)
             {
@@ -1249,10 +1545,22 @@ namespace Nytherion.UI.Test
             Vector3 position = playerManager.transform.position
                 + (Vector3)(trainingDummySpawnDirection * trainingDummySpawnDistance);
             TrainingDummy dummy = objectResolver.Instantiate(trainingDummyPrefab, position, Quaternion.identity);
+            // 루트 배율을 바꿔 스프라이트와 피격 범위를 함께 확대합니다.
+            dummy.transform.localScale = trainingDummyPrefab.transform.localScale * sizeMultiplier;
+            dummy.name = $"허수아비 ({sizeLabel} · {sizeMultiplier:0.##}배)";
+            if (sizeMultiplier > 1f && dummy.BodyRenderer != null)
+            {
+                Vector3 extents = dummy.BodyRenderer.bounds.extents;
+                float halfSize = Mathf.Abs(trainingDummySpawnDirection.x) * extents.x
+                    + Mathf.Abs(trainingDummySpawnDirection.y) * extents.y;
+                float distance = Mathf.Max(trainingDummySpawnDistance, halfSize + 0.75f);
+                dummy.transform.position = playerManager.transform.position
+                    + (Vector3)(trainingDummySpawnDirection * distance);
+            }
             dummy.Initialize(trainingDummyPrefab.enemyData);
             trainingDummies.RemoveAll(target => target == null);
             trainingDummies.Add(dummy);
-            UpdateStatusText($"플레이어 앞에 허수아비 소환 완료 ({trainingDummies.Count}개)");
+            UpdateStatusText($"{sizeLabel} 허수아비 ({sizeMultiplier:0.##}배) 소환 완료 ({trainingDummies.Count}개)");
         }
 
         public void RemoveTrainingDummies()

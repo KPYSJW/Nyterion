@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dd18c1193b7433abedc0dbc440b5a48, type: 3}
+  m_Name: Lightbolt_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_lightbolt
+  isDisabled: 0
+  skillType: 22
+  skillName: "\uB77C\uC774\uD2B8\uBCFC\uD2B8"
+  description: "\uC801\uC5D0\uAC8C \uD53C\uD574\uB97C \uC8FC\uB294 \uBE5B \uD22C\uC0AC\uCCB4\uB97C
+    \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 1
+  manaCost: 10
+  damage: 10
+  range: 12
+  icon: {fileID: 21300000, guid: 95724ee6e45458848a41b289d9a4ddbb, type: 3}
+  skillPrefab: {fileID: 6400087458926368648, guid: e017d2ea52d5f4640baa4cd10107ecbb, type: 3}
+  unlockMilestoneID: 
+  projectilePrefab: {fileID: 7064132656247450933, guid: a42fcb084e1c8d245981f94ab68608b7, type: 3}
+  projectileFrames:
+  - {fileID: 21300000, guid: c133d6e5ffba4b87b5eed12976201174, type: 3}
+  hitFrames:
+  - {fileID: 233609700, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  - {fileID: 1985988969, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  - {fileID: -1129731488, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  - {fileID: 780782636, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  - {fileID: 1871246932, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  - {fileID: -1171673460, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  - {fileID: 1990953554, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  - {fileID: -1617321479, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  - {fileID: -1754447326, guid: 5e713cd905fcb7b4f981403e5699a8b9, type: 3}
+  launchOffset: 0.3
+  castFrames:
+  - {fileID: 1615607718, guid: c940b35a8d1953247b0b8846e9e9162b, type: 3}
+  - {fileID: 1588577202, guid: c940b35a8d1953247b0b8846e9e9162b, type: 3}
+  - {fileID: 1773380895, guid: c940b35a8d1953247b0b8846e9e9162b, type: 3}
+  - {fileID: 533117149, guid: c940b35a8d1953247b0b8846e9e9162b, type: 3}
+  - {fileID: 927855427, guid: c940b35a8d1953247b0b8846e9e9162b, type: 3}
+  castFps: 14
+  castVisualScale: 0.3
+  projectileVisualScale: 0.6
+  hitVisualScale: 0.5
+  hitVerticalScale: 1
+  speed: 8
+  projectileLifetime: 1
+  projectileSpreadAngle: 60
+  collisionRadius: 0.25
+  projectileFps: 12
+  hitFps: 14
+  damagePerLevel: 2
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 2568

@@ -8,12 +8,12 @@ using Nytherion.GamePlay.Relics;
 namespace Nytherion.Gameplay.Relics.Modules
 {
     /// <summary>
-    /// 활성화된 전체 시너지 체인의 총 링크 수(연결고리 수)가 일정 개수 이상인지 검사하는 조건 모듈 (꼬인 실타래 전용)
+    /// 시리즈별 첫 유물을 제외한 추가 장착 유물의 합계를 검사한다.
     /// </summary>
-    [Serializable, RelicDisplayName("총 체인 링크 수 조건")]
+    [Serializable, RelicDisplayName("시리즈별 추가 장착 유물 수 조건")]
     public class TotalChainLinksCondition : RelicConditionBase
     {
-        [Tooltip("요구되는 최소 활성화된 체인 링크 수")]
+        [Tooltip("시리즈별 첫 유물을 제외한 추가 장착 유물의 최소 합계")]
         public int requiredTotalLinks = 3;
 
         public override bool IsConditionMet(PlayerManager playerManager, int level)
@@ -34,10 +34,10 @@ namespace Nytherion.Gameplay.Relics.Modules
             int totalLinks = 0;
             foreach (string seriesId in seriesIds)
             {
-                int length = relicManager.GetMaxChainLength(seriesId);
-                if (length >= 2)
+                int count = relicManager.GetEquippedSeriesRelicCount(seriesId);
+                if (count >= 2)
                 {
-                    totalLinks += (length - 1);
+                    totalLinks += (count - 1);
                 }
             }
 
