@@ -38,7 +38,8 @@ namespace Nytherion.GamePlay.Characters.Player
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Color hitColor = Color.red;
         [SerializeField, Min(0f)] private float hitFlashDuration = 0.1f;
-        [SerializeField, Min(0f)] private float whiteFlashDuration = 0.04f;
+        [SerializeField, Range(0f, 1f)] private float hitFlashStrength = 0.9f;
+        [SerializeField, Min(0f)] private float hitFlashHoldDuration = 0.03f;
 
         [Header("Damage Effect")]
         [SerializeField] private Vector3 damageEffectScale = Vector3.one;
@@ -227,34 +228,26 @@ namespace Nytherion.GamePlay.Characters.Player
         private IEnumerator HitFlashRoutine()
         {
             float totalDuration = Mathf.Max(0f, hitFlashDuration);
-            float whiteDuration = Mathf.Min(
-                Mathf.Max(0f, whiteFlashDuration),
-                totalDuration);
-            float redDuration = Mathf.Max(0f, totalDuration - whiteDuration);
-
+            float holdDuration = Mathf.Min(totalDuration, Mathf.Max(0f, hitFlashHoldDuration));
             colorBeforeHitFlash = spriteRenderer.color;
-            if (TryApplyHitFlashMaterial())
+            bool useFlashMaterial = TryApplyHitFlashMaterial();
+            isFallbackColorApplied = !useFlashMaterial;
+            float elapsed = 0f;
+            while (elapsed < totalDuration)
             {
-                SetHitFlash(Color.white);
-                if (whiteDuration > 0f)
+                float fadeProgress = elapsed <= holdDuration ? 0f :
+                    (elapsed - holdDuration) / Mathf.Max(0.0001f, totalDuration - holdDuration);
+                float amount = Mathf.Clamp01(hitFlashStrength) *
+                    (1f - Mathf.SmoothStep(0f, 1f, fadeProgress));
+                if (useFlashMaterial) SetHitFlash(hitColor, amount);
+                else
                 {
-                    yield return new WaitForSeconds(whiteDuration);
+                    Color tint = Color.Lerp(colorBeforeHitFlash, hitColor, amount);
+                    tint.a = colorBeforeHitFlash.a;
+                    spriteRenderer.color = tint;
                 }
-
-                SetHitFlash(hitColor);
-                if (redDuration > 0f)
-                {
-                    yield return new WaitForSeconds(redDuration);
-                }
-            }
-            else
-            {
-                spriteRenderer.color = hitColor;
-                isFallbackColorApplied = true;
-                if (totalDuration > 0f)
-                {
-                    yield return new WaitForSeconds(totalDuration);
-                }
+                yield return null;
+                elapsed += Time.deltaTime;
             }
 
             RestoreHitFlashVisual();
@@ -288,12 +281,12 @@ namespace Nytherion.GamePlay.Characters.Player
             return true;
         }
 
-        private void SetHitFlash(Color flashColor)
+        private void SetHitFlash(Color flashColor, float amount)
         {
             // Read the current sprite properties instead of reapplying an earlier texture.
             spriteRenderer.GetPropertyBlock(hitFlashProperties);
             hitFlashProperties.SetColor(FlashColorId, flashColor);
-            hitFlashProperties.SetFloat(FlashAmountId, 1f);
+            hitFlashProperties.SetFloat(FlashAmountId, Mathf.Clamp01(amount));
             spriteRenderer.SetPropertyBlock(hitFlashProperties);
         }
 

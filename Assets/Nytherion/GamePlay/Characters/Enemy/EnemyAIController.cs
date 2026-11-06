@@ -192,6 +192,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
             Vector3 velocity = hasForcedFacingDirection
                 ? forcedFacingDirection
                 : movementBehavior?.CurrentVelocity ?? agent.desiredVelocity;
+            if (movementBehavior is IEnemyFacingBehavior facingBehavior)
+            {
+                facingBehavior.UpdateFacing(velocity);
+                return;
+            }
             if (velocity.sqrMagnitude <= 0.01f) return;
             Vector3 scale = RootDefaultScale;
            
