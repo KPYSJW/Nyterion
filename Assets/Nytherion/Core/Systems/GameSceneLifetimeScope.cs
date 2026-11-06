@@ -84,6 +84,7 @@ public class GameSceneLifetimeScope : LifetimeScope
 
         builder.RegisterEntryPoint<GameSceneInitializer>();
         builder.RegisterEntryPoint<RelicCollectAllController>();
+        builder.RegisterEntryPoint<MilestoneNotificationController>().AsSelf();
 
         if (progressionDebugUI != null)
         {

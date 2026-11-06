@@ -332,6 +332,10 @@ namespace Nytherion.Core.Managers
         {
             if (relicData == null || !relicData.IsRuntimeAvailable) return false;
 
+            // 이전 해금 업적의 완료 기록도 유지합니다.
+            if (!string.IsNullOrEmpty(relicData.unlockMilestoneID) &&
+                IsMilestoneCompleted(relicData.unlockMilestoneID)) return true;
+
             bool hasUnlockReward = false;
             foreach (MilestoneData milestone in milestoneLookup.Values)
             {
@@ -348,8 +352,7 @@ namespace Nytherion.Core.Managers
             }
 
             // 완료 업적 기록을 그대로 사용하므로 기존 저장 파일에도 즉시 적용됩니다.
-            return !hasUnlockReward && (string.IsNullOrEmpty(relicData.unlockMilestoneID) ||
-                IsMilestoneCompleted(relicData.unlockMilestoneID));
+            return !hasUnlockReward && string.IsNullOrEmpty(relicData.unlockMilestoneID);
         }
 
         public void CompleteMilestone(string milestoneId)
@@ -401,10 +404,10 @@ namespace Nytherion.Core.Managers
                     if (inventoryDataManager != null && reward.itemData != null) inventoryDataManager.AddItem(reward.itemData, reward.amount);
                     break;
                 case RewardType.Relic:
-                    if (relicManager != null && reward.relicData != null) relicManager.AddNewRelicToStorage(reward.relicData);
+                    // 해금 조건이 준비되지 않은 기존 보상은 유물을 지급하거나 뽑기를 잠그지 않습니다.
                     break;
                 case RewardType.RelicUnlock:
-                    // 완료 기록을 IsRelicUnlocked에서 조회합니다. 스킬은 유물 장착 시에만 부여합니다.
+                    // 업적 완료 기록으로 뽑기 해금을 판정합니다.
                     break;
             }
         }

@@ -30,7 +30,7 @@ namespace Nytherion.GamePlay.Characters.Player
         public event System.Action<SkillBase> SkillUsed;
 
         internal void NotifySkillUsed(SkillBase skill) => SkillUsed?.Invoke(skill);
-        private float manaRegenPerSecond = 5f;
+        private float manaRegenPerSecond = 1f;
         public float ManaRegenPerSecond => manaRegenPerSecond;
         private PlayerHealth health;
 

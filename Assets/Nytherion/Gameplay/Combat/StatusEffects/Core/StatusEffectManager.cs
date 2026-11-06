@@ -19,6 +19,10 @@ namespace Nytherion.GamePlay.Combat
         private BurnTickVFX burnTickVFX;
         private ShockPulseVFX shockPulseVFX;
         private ChillSnowVFX chillSnowVFX;
+        private PoisonCloudVFX poisonCloudVFX;
+        private CurseAuraVFX curseAuraVFX;
+        private HolySparkleVFX holySparkleVFX;
+        private DarknessStatusVFX darknessStatusVFX;
 
         public PlayerManager PlayerManager => playerManager;
         public StatusEffectDatabase Database => database;
@@ -76,11 +80,7 @@ namespace Nytherion.GamePlay.Combat
 
                 string name = child.name;
 
-                if (name == "Electricity")
-                {
-                    CacheAndResetVFX("Lightning", child.gameObject);
-                }
-                else if (name == "Freezing")
+                if (name == "Freezing")
                 {
                     CacheAndResetVFX("Ice", child.gameObject);
                 }
@@ -112,6 +112,26 @@ namespace Nytherion.GamePlay.Combat
 
         public void PlayVFX(string effectId)
         {
+            if (effectId == "Demonic")
+            {
+                PlayDarknessStatusVFX();
+                return;
+            }
+            if (effectId == "Holy")
+            {
+                PlayHolySparkleVFX();
+                return;
+            }
+            if (effectId == "Curse")
+            {
+                PlayCurseAuraVFX();
+                return;
+            }
+            if (effectId == "Poison")
+            {
+                PlayPoisonCloudVFX();
+                return;
+            }
             if (effectId == "Ice")
             {
                 PlayChillSnowVFX();
@@ -154,6 +174,10 @@ namespace Nytherion.GamePlay.Combat
 
         public void StopVFX(string effectId)
         {
+            if (effectId == "Demonic" && darknessStatusVFX != null) darknessStatusVFX.Stop();
+            if (effectId == "Holy" && holySparkleVFX != null) holySparkleVFX.Stop();
+            if (effectId == "Curse" && curseAuraVFX != null) curseAuraVFX.Stop();
+            if (effectId == "Poison" && poisonCloudVFX != null) poisonCloudVFX.Stop();
             if (effectId == "Ice" && chillSnowVFX != null) chillSnowVFX.Stop();
             if (effectId == "Lightning" && shockPulseVFX != null) shockPulseVFX.Stop();
             if (effectId == "Fire" && burnTickVFX != null) burnTickVFX.Stop();
@@ -165,6 +189,56 @@ namespace Nytherion.GamePlay.Combat
                 go.SetActive(false);
             }
             */
+        }
+
+        private void PlayDarknessStatusVFX()
+        {
+            if (owner == null || owner.isDead || !gameObject.activeInHierarchy ||
+                database == null || database.darknessEffectPrefab == null) return;
+            SpriteRenderer body = owner.BodyRenderer;
+            if (body == null || body.sprite == null) return;
+            if (darknessStatusVFX == null)
+            {
+                GameObject effect = Instantiate(database.darknessEffectPrefab, transform);
+                darknessStatusVFX = effect.GetComponent<DarknessStatusVFX>();
+                if (darknessStatusVFX == null)
+                {
+                    Debug.LogError("어둠 이펙트 프리팹에 DarknessStatusVFX가 없습니다.", effect);
+                    Destroy(effect);
+                    return;
+                }
+            }
+            darknessStatusVFX.Play(body);
+        }
+
+        private void PlayHolySparkleVFX()
+        {
+            if (owner == null || owner.isDead || !gameObject.activeInHierarchy ||
+                database == null || database.holySparklePrefab == null) return;
+            SpriteRenderer body = owner.BodyRenderer;
+            if (body == null || body.sprite == null) return;
+            if (holySparkleVFX == null) holySparkleVFX = Instantiate(database.holySparklePrefab, transform);
+            holySparkleVFX.Play(body);
+        }
+
+        private void PlayCurseAuraVFX()
+        {
+            if (owner == null || owner.isDead || !gameObject.activeInHierarchy ||
+                database == null || database.curseAuraPrefab == null) return;
+            SpriteRenderer body = owner.BodyRenderer;
+            if (body == null || body.sprite == null) return;
+            if (curseAuraVFX == null) curseAuraVFX = Instantiate(database.curseAuraPrefab, transform);
+            curseAuraVFX.Play(body);
+        }
+
+        private void PlayPoisonCloudVFX()
+        {
+            if (owner == null || owner.isDead || !gameObject.activeInHierarchy ||
+                database == null || database.poisonCloudPrefab == null) return;
+            SpriteRenderer body = owner.BodyRenderer;
+            if (body == null || body.sprite == null) return;
+            if (poisonCloudVFX == null) poisonCloudVFX = Instantiate(database.poisonCloudPrefab, transform);
+            poisonCloudVFX.Play(body);
         }
 
         private void PlayBurnTickVFX()

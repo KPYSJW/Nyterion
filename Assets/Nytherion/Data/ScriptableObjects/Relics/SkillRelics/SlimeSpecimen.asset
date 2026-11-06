@@ -50,7 +50,7 @@ MonoBehaviour:
     levelAmount: 1
   synergySeriesId: SummonedCreatureSeries
   synergySetBonusData: {fileID: 11400000, guid: c8dd4f60b0b84dbda16774328e1a99ff, type: 2}
-  unlockMilestoneID: 
+  unlockMilestoneID: Drone
   references:
     version: 2
     RefIds:

@@ -108,7 +108,7 @@ namespace Nytherion.Editor
             PlayerData player = AssetDatabase.LoadAssetAtPath<PlayerData>(
                 "Assets/Nytherion/Data/ScriptableObjects/Player/Palyer.asset");
             player.maxMana = 100f;
-            player.manaRegenPerSecond = 5f;
+            player.manaRegenPerSecond = 1f;
             EditorUtility.SetDirty(player);
             foreach (string guid in AssetDatabase.FindAssets("t:SkillData", new[] { "Assets/Nytherion/Data/ScriptableObjects/Skill" }))
             {
@@ -166,7 +166,7 @@ namespace Nytherion.Editor
                 VerifyMana();
                 EditorSceneManager.MarkSceneDirty(scene);
                 Require(EditorSceneManager.SaveScene(scene), "씬 저장");
-                File.WriteAllText(Output + "/result.txt", "PASS 마나 100 / 초당 회복 5, 기존 40·60 비용 유지 / 나머지 활성 스킬 비용 20\n" +
+                File.WriteAllText(Output + "/result.txt", "PASS 마나 100 / 초당 회복 1, 기존 40·60 비용 유지 / 나머지 활성 스킬 비용 20\n" +
                     "GameScene MPBar/MPBarFill 연결, HP 아래 간격 2, 위치=" + rect.anchoredPosition + " 크기=" + rect.sizeDelta +
                     "\n마나 소비·부족·무료·쿨타임 중 미소비·재초기화 검증 통과 / Editor 컴파일 완료");
             }

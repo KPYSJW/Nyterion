@@ -9,7 +9,7 @@ namespace Nytherion.Data.ScriptableObjects.Player
     {
         public float maxHealth;
         [Min(0f)] public float maxMana = 100f;
-        [Min(0f)] public float manaRegenPerSecond = 5f;
+        [Min(0f)] public float manaRegenPerSecond = 1f;
         [Min(0f)] public float skillDamageMultiplier = 1f;
         [Min(0f)] public float skillCooldownMultiplier = 1f;
         public float moveSpeed;

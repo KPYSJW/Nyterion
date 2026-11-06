@@ -13738,6 +13738,7 @@ MonoBehaviour:
   tooltipPanel: {fileID: 1260613761}
   nameText: {fileID: 221284349}
   levelText: {fileID: 0}
+  levelIcon: {fileID: 21300000, guid: 9280aa81dc23b524ca69817436d2ec85, type: 3}
   setText: {fileID: 0}
   setBadgeBackground: {fileID: 0}
   setBadgeContainer: {fileID: 0}

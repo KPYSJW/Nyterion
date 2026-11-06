@@ -691,7 +691,7 @@ namespace Nytherion.Editor
 
                 RewardData reward = new RewardData
                 {
-                    rewardType = RewardType.Relic,
+                    rewardType = RewardType.RelicUnlock,
                     relicData = newData,
                     amount = 1
                 };

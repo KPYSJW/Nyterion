@@ -74,9 +74,38 @@ namespace Nytherion.Editor
                 return;
             }
             if (EditorApplication.isCompiling || EditorApplication.isUpdating ||
-                EditorApplication.isPlayingOrWillChangePlaymode || !File.Exists(Output + "/apply.request")) return;
+                EditorApplication.isPlayingOrWillChangePlaymode) return;
+            if (File.Exists(Output + "/verify.request"))
+            {
+                File.Delete(Output + "/verify.request");
+                VerifyOnly();
+                return;
+            }
+            if (!File.Exists(Output + "/apply.request")) return;
             File.Delete(Output + "/apply.request");
             Apply();
+        }
+
+        [MenuItem("Tools/Nytherion/Progression/Verify Relic Unlocks")]
+        public static void VerifyOnly()
+        {
+            Directory.CreateDirectory(Output);
+            var results = new List<string>();
+            UnityEngine.Random.State randomState = UnityEngine.Random.state;
+            try
+            {
+                Verify(results);
+            }
+            catch (Exception error)
+            {
+                results.Add("FAIL " + error);
+                Debug.LogException(error);
+            }
+            finally
+            {
+                UnityEngine.Random.state = randomState;
+                File.WriteAllLines(Output + "/verification-only.txt", results);
+            }
         }
 
         [MenuItem("Tools/Nytherion/Progression/Convert Skill Rewards To Relic Unlocks")]
@@ -222,6 +251,28 @@ namespace Nytherion.Editor
                         "업적 달성 즉시 각인 해금: " + milestone.milestoneID, results);
                 }
                 Require(skillsGranted == 0, "업적 달성으로 스킬 직접 부여 없음", results);
+
+                MilestoneData kill100 = AssetDatabase.LoadAssetAtPath<MilestoneData>(DataRoot + "Progression/Kill100_Milestone.asset");
+                RelicData slime = AssetDatabase.LoadAssetAtPath<RelicData>(DataRoot + "Relics/SkillRelics/SlimeSpecimen.asset");
+                manager.LoadFromSaveData(new SaveData());
+                manager.AddProgress(kill100, 99);
+                Require(!manager.IsRelicUnlocked(slime) && !canDraw(slime), "적 99마리 처치: 슬라임 표본 뽑기 차단", results);
+                manager.AddProgress(kill100, 1);
+                Require(manager.IsRelicUnlocked(slime) && canDraw(slime), "적 100마리 처치: 슬라임 표본 뽑기 해금", results);
+
+                var oldSlimeSave = new SaveData();
+                oldSlimeSave.progressionState.completedMilestones.Add("Drone");
+                manager.LoadFromSaveData(JsonUtility.FromJson<SaveData>(JsonUtility.ToJson(oldSlimeSave)));
+                Require(manager.IsRelicUnlocked(slime) && canDraw(slime) && !manager.IsMilestoneCompleted(kill100.milestoneID),
+                    "기존 슬라임 업적 완료 기록의 뽑기 해금 유지", results);
+
+                manager.LoadFromSaveData(new SaveData());
+                foreach (string path in new[] { "Relics/SimpleStats/BeastScale.asset", "Relics/SimpleStats/WindGuide.asset" })
+                {
+                    RelicData relic = AssetDatabase.LoadAssetAtPath<RelicData>(DataRoot + path);
+                    Require(relic != null && manager.IsRelicUnlocked(relic) && canDraw(relic),
+                        "조건 준비 전 기존 유물 뽑기 유지: " + path, results);
+                }
 
                 var legacy = new SaveData();
                 legacy.progressionState.completedMilestones = unlocks.Select(m => m.milestoneID).ToList();

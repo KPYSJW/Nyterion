@@ -167,8 +167,11 @@ namespace Nytherion.Editor
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.SaveAndReimport();
             Sprite background = AssetDatabase.LoadAssetAtPath<Sprite>(imagePath);
+            Sprite levelIcon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/UI/Relics/LevelIcon.png");
+            Sprite levelEmptyIcon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/UI/Relics/LevelEmptyIcon.png");
             TMP_FontAsset font = TMP_Settings.defaultFontAsset;
-            if (background == null || font == null) throw new InvalidOperationException("툴팁 이미지 또는 기존 UI 폰트가 없습니다.");
+            if (background == null || levelIcon == null || levelEmptyIcon == null || font == null)
+                throw new InvalidOperationException("툴팁 이미지, 레벨 아이콘 또는 기존 UI 폰트가 없습니다.");
 
             GameObject root = new GameObject("SkillTooltip", typeof(RectTransform), typeof(Canvas),
                 typeof(CanvasGroup), typeof(Image), typeof(VerticalLayoutGroup), typeof(SkillTooltip));
@@ -177,7 +180,7 @@ namespace Nytherion.Editor
                 RectTransform rect = (RectTransform)root.transform;
                 rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
                 rect.pivot = new Vector2(0f, 1f);
-                rect.sizeDelta = new Vector2(400f, 640f);
+                rect.sizeDelta = new Vector2(680f, 600f);
                 Canvas canvas = root.GetComponent<Canvas>();
                 canvas.overrideSorting = true;
                 canvas.sortingOrder = 1000;
@@ -186,8 +189,8 @@ namespace Nytherion.Editor
                 group.interactable = group.blocksRaycasts = false;
                 Image image = root.GetComponent<Image>();
                 image.sprite = background;
-                image.type = Image.Type.Sliced;
-                image.pixelsPerUnitMultiplier = 0.5f;
+                image.type = Image.Type.Simple;
+                image.pixelsPerUnitMultiplier = 1f;
                 image.raycastTarget = false;
                 VerticalLayoutGroup layout = root.GetComponent<VerticalLayoutGroup>();
                 layout.padding = new RectOffset(48, 48, 44, 32);
@@ -196,23 +199,32 @@ namespace Nytherion.Editor
                 layout.childControlWidth = layout.childControlHeight = true;
                 layout.childForceExpandWidth = true;
                 layout.childForceExpandHeight = false;
+                layout.enabled = false;
 
                 var title = CreateText(root.transform, "Name", font, 30f, TextAlignmentOptions.Center);
+                SetChildRect(title.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(415f, -65f), new Vector2(320f, 40f));
                 var iconObject = new GameObject("Icon", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
                 iconObject.transform.SetParent(root.transform, false);
+                SetChildRect((RectTransform)iconObject.transform, new Vector2(0.5f, 0.5f), new Vector2(84f, -84f), new Vector2(98f, 98f));
                 Image icon = iconObject.GetComponent<Image>();
                 icon.preserveAspect = true;
                 icon.raycastTarget = false;
                 iconObject.GetComponent<LayoutElement>().preferredHeight = 96f;
-                var progress = CreateText(root.transform, "Progress", font, 22f, TextAlignmentOptions.Center);
-                progress.color = new Color32(180, 197, 240, 255);
-                var stats = CreateText(root.transform, "Stats", font, 24f, TextAlignmentOptions.Left);
-                var description = CreateText(root.transform, "Description", font, 24f, TextAlignmentOptions.Left);
+                var levelPanelObject = new GameObject("LevelIconPanel", typeof(RectTransform));
+                levelPanelObject.transform.SetParent(root.transform, false);
+                RectTransform levelIconPanel = (RectTransform)levelPanelObject.transform;
+                SetChildRect(levelIconPanel, new Vector2(0.5f, 0.5f), new Vector2(415f, -110f), new Vector2(400f, 32f));
+                var stats = CreateText(root.transform, "Stats", font, 24f, TextAlignmentOptions.TopLeft);
+                SetChildRect(stats.rectTransform, new Vector2(0f, 1f), new Vector2(50f, -175f), new Vector2(580f, 120f));
+                var description = CreateText(root.transform, "Description", font, 24f, TextAlignmentOptions.TopLeft);
+                SetChildRect(description.rectTransform, new Vector2(0f, 1f), new Vector2(50f, -310f), new Vector2(580f, 240f));
                 SerializedObject serialized = new SerializedObject(root.GetComponent<SkillTooltip>());
                 Assign(serialized, "canvasGroup", group);
                 Assign(serialized, "nameText", title);
                 Assign(serialized, "skillIcon", icon);
-                Assign(serialized, "progressText", progress);
+                Assign(serialized, "levelIconPanel", levelIconPanel);
+                Assign(serialized, "levelIcon", levelIcon);
+                Assign(serialized, "levelEmptyIcon", levelEmptyIcon);
                 Assign(serialized, "statsText", stats);
                 Assign(serialized, "descriptionText", description);
                 serialized.ApplyModifiedPropertiesWithoutUndo();
@@ -281,6 +293,14 @@ namespace Nytherion.Editor
             Directory.CreateDirectory(Output);
             File.WriteAllLines(Output + "/descriptions.txt", results);
             GenerateSkillRelics.UpdateAllSkillRelicDescriptions(silent: true);
+        }
+
+        private static void SetChildRect(RectTransform rect, Vector2 pivot, Vector2 position, Vector2 size)
+        {
+            rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = pivot;
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
         }
 
         private static TextMeshProUGUI CreateText(Transform parent, string name, TMP_FontAsset font,

@@ -56,7 +56,7 @@ namespace Nytherion.Editor.Localization
                 ["ui.tooltip.milestone.in_progress"] = new TranslationEntry("ui.tooltip.milestone.in_progress", "진행 중 ({0} / {1})", "In progress ({0} / {1})"),
                 ["ui.tooltip.milestone.content"] = new TranslationEntry("ui.tooltip.milestone.content", "{0}\n\n상태: {1}", "{0}\n\nStatus: {1}"),
                 ["ui.tooltip.reward.skill"] = new TranslationEntry("ui.tooltip.reward.skill", "\n보상: {0} 스킬 획득", "\nReward: Unlock {0}"),
-                ["ui.tooltip.reward.relic_unlock"] = new TranslationEntry("ui.tooltip.reward.relic_unlock", "\n보상: {0} 유물 해금", "\nReward: Unlock {0} relic"),
+                ["ui.tooltip.reward.relic_unlock"] = new TranslationEntry("ui.tooltip.reward.relic_unlock", "\n보상: {0} 유물이 상자 뽑기에 추가", "\nReward: {0} relic added to chest pool"),
                 ["ui.tooltip.reward.gold"] = new TranslationEntry("ui.tooltip.reward.gold", "\n보상: 골드 {0}", "\nReward: {0} Gold"),
                 ["ui.tooltip.reward.token"] = new TranslationEntry("ui.tooltip.reward.token", "\n보상: 토큰 {0}", "\nReward: {0} Tokens"),
                 ["ui.relic.effect_description_missing"] = new TranslationEntry("ui.relic.effect_description_missing", "효과 설명이 설정되지 않았습니다.", "No effect description has been configured."),

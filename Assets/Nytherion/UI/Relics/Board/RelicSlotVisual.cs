@@ -25,9 +25,8 @@ namespace Nytherion.UI.RelicBoard
             originalColor = frame.color;
         }
 
-        public void SetRarity(Rarity? rarity)
+        public Sprite GetRaritySprite(Rarity? rarity)
         {
-            EnsureFrame();
             Sprite sprite = rarity switch
             {
                 Rarity.Common => commonSlotSprite,
@@ -37,7 +36,13 @@ namespace Nytherion.UI.RelicBoard
                 Rarity.Legendary => legendarySlotSprite,
                 _ => defaultSlotSprite
             };
-            frame.sprite = sprite != null ? sprite : defaultSlotSprite;
+            return sprite != null ? sprite : defaultSlotSprite;
+        }
+
+        public void SetRarity(Rarity? rarity)
+        {
+            EnsureFrame();
+            frame.sprite = GetRaritySprite(rarity);
             PixelPerfectSlotFrame.Apply(frame);
         }
 

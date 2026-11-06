@@ -467,8 +467,8 @@ namespace Nytherion.UI.Components
                         content += LocalizationText.Get(
                             LocalizationTables.UI,
                             "ui.tooltip.reward.relic_unlock",
-                            "\n보상: {0} 유물 해금",
-                            "\nReward: Unlock {0} relic",
+                            "\n보상: {0} 유물이 상자 뽑기에 추가",
+                            "\nReward: {0} relic added to chest pool",
                             reward.relicData.DisplayName);
                     }
                     else if (reward.rewardType == RewardType.Gold)

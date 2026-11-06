@@ -5,7 +5,10 @@ namespace Nytherion.GamePlay.Combat
     public class SpiritsGuidanceTrail : MonoBehaviour
     {
         private const int FrameCount = 5;
-        private const int VisibleCount = 3;
+        private const int DefaultVisibleCount = 3;
+        private const int MaxVisibleCount = 5;
+        private const float WorldTrailInterval = 0.08f;
+        private const float WorldTrailLifetime = 0.32f;
 
         [Header("꼬리 설정")]
         [SerializeField] private Sprite[] trailSprites;
@@ -14,11 +17,18 @@ namespace Nytherion.GamePlay.Combat
         [SerializeField, Min(0.01f)] private float trailScale = 3f;
         [SerializeField, Min(0.01f)] private float trailSpacing = 1.35f;
 
-        private readonly SpriteRenderer[] trailRenderers = new SpriteRenderer[VisibleCount];
+        private readonly SpriteRenderer[] trailRenderers = new SpriteRenderer[MaxVisibleCount];
+        private readonly Vector3[] trailPositions = new Vector3[MaxVisibleCount];
+        private readonly float[] trailAges = new float[MaxVisibleCount];
+        private readonly bool[] activeTrails = new bool[MaxVisibleCount];
         private SpriteRenderer projectileRenderer;
         private int variant = -1;
+        private int visibleCount = DefaultVisibleCount;
         private int animationPhase;
+        private int nextTrail;
         private float frameTimer;
+        private bool worldSpaceTrail;
+        private Vector3 previousPosition;
 
         private void OnEnable()
         {
@@ -26,7 +36,7 @@ namespace Nytherion.GamePlay.Combat
         }
 
         // 발사할 때 투사체 애니메이션과 동일한 인덱스를 전달합니다.
-        public void SetVariant(int index)
+        public void SetVariant(int index, int count = DefaultVisibleCount, bool leaveWorldTrail = false)
         {
             ClearTrail();
             int firstFrame = index * FrameCount;
@@ -41,17 +51,24 @@ namespace Nytherion.GamePlay.Combat
             if (projectileRenderer == null) projectileRenderer = GetComponent<SpriteRenderer>();
             if (projectileRenderer == null) return;
 
+            worldSpaceTrail = leaveWorldTrail;
+            visibleCount = worldSpaceTrail ? MaxVisibleCount : Mathf.Clamp(count, 1, DefaultVisibleCount);
             CreateRenderers();
             variant = index;
             animationPhase = 0;
             frameTimer = 0f;
-            ApplyFrames();
-            for (int i = 0; i < VisibleCount; i++) trailRenderers[i].enabled = isActiveAndEnabled;
+            nextTrail = 0;
+            previousPosition = transform.position;
+            if (!worldSpaceTrail)
+            {
+                ApplyFrames();
+                for (int i = 0; i < visibleCount; i++) trailRenderers[i].enabled = isActiveAndEnabled;
+            }
         }
 
         private void Update()
         {
-            if (variant < 0) return;
+            if (variant < 0 || worldSpaceTrail) return;
 
             frameTimer += Time.deltaTime;
             float interval = Mathf.Max(0.01f, frameInterval);
@@ -66,7 +83,8 @@ namespace Nytherion.GamePlay.Combat
         private void LateUpdate()
         {
             if (variant < 0 || projectileRenderer == null) return;
-            for (int i = 0; i < VisibleCount; i++)
+            if (worldSpaceTrail) UpdateWorldTrail();
+            for (int i = 0; i < visibleCount; i++)
             {
                 trailRenderers[i].sortingLayerID = projectileRenderer.sortingLayerID;
                 trailRenderers[i].sortingOrder = projectileRenderer.sortingOrder - 1;
@@ -82,15 +100,16 @@ namespace Nytherion.GamePlay.Combat
         {
             variant = -1;
             frameTimer = 0f;
-            for (int i = 0; i < VisibleCount; i++)
+            for (int i = 0; i < MaxVisibleCount; i++)
             {
+                activeTrails[i] = false;
                 if (trailRenderers[i] != null) trailRenderers[i].enabled = false;
             }
         }
 
         private void CreateRenderers()
         {
-            for (int i = 0; i < VisibleCount; i++)
+            for (int i = 0; i < visibleCount; i++)
             {
                 if (trailRenderers[i] != null) continue;
                 GameObject trailObject = new GameObject("SpiritsGuidanceTrail" + (i + 1));
@@ -109,14 +128,69 @@ namespace Nytherion.GamePlay.Combat
         private void ApplyFrames()
         {
             int firstFrame = variant * FrameCount;
-            // 다섯 위치 중 세 곳을 순환해 어느 조각도 계속 고정되지 않게 합니다.
-            for (int i = 0; i < VisibleCount; i++)
+            // 다섯 위치 중 설정된 개수만큼 순환해 어느 조각도 계속 고정되지 않게 합니다.
+            for (int i = 0; i < visibleCount; i++)
                 ApplyFrame(trailRenderers[i], firstFrame, (animationPhase + i * 2) % FrameCount);
+        }
+
+        private void UpdateWorldTrail()
+        {
+            float deltaTime = Time.deltaTime;
+            float interval = WorldTrailInterval;
+            float lifetime = WorldTrailLifetime;
+
+            for (int i = 0; i < visibleCount; i++)
+            {
+                if (!activeTrails[i]) continue;
+                trailAges[i] += deltaTime;
+                if (trailAges[i] >= lifetime)
+                {
+                    activeTrails[i] = false;
+                    trailRenderers[i].enabled = false;
+                }
+            }
+
+            frameTimer += deltaTime;
+            int steps = Mathf.FloorToInt(frameTimer / interval);
+            frameTimer -= steps * interval;
+            int spawnCount = Mathf.Min(steps, visibleCount);
+            for (int i = spawnCount - 1; i >= 0; i--)
+            {
+                float age = frameTimer + i * interval;
+                if (age >= lifetime) continue;
+                float fraction = deltaTime > 0f ? Mathf.Clamp01(1f - age / deltaTime) : 1f;
+                trailPositions[nextTrail] = Vector3.Lerp(previousPosition, transform.position, fraction)
+                    + transform.TransformVector(localOffset);
+                trailAges[nextTrail] = age;
+                activeTrails[nextTrail] = true;
+                trailRenderers[nextTrail].enabled = true;
+                nextTrail = (nextTrail + 1) % visibleCount;
+            }
+            previousPosition = transform.position;
+
+            int firstFrame = variant * FrameCount;
+            for (int i = 0; i < visibleCount; i++)
+            {
+                if (!activeTrails[i]) continue;
+                float progress = Mathf.Clamp01(trailAges[i] / lifetime);
+                int frame = Mathf.Min(Mathf.FloorToInt(progress * FrameCount), FrameCount - 1);
+                float scale = trailScale * Mathf.Lerp(0.65f, 0.4f, progress);
+                SpriteRenderer renderer = trailRenderers[i];
+                renderer.sprite = trailSprites[firstFrame + frame];
+                renderer.transform.localScale = Vector3.one * scale;
+                // 시트의 각 조각은 프레임마다 중심이 달라 월드 위치에서 보정합니다.
+                Vector2 frameCenter = new Vector2((12.5f - 6f * frame) / 32f, -0.5f / 32f);
+                renderer.transform.position = trailPositions[i] - transform.TransformVector(frameCenter * scale);
+                Color color = projectileRenderer.color;
+                color.a *= 0.7f * (1f - progress);
+                renderer.color = color;
+            }
         }
 
         private void ApplyFrame(SpriteRenderer renderer, int firstFrame, int frame)
         {
             renderer.sprite = trailSprites[firstFrame + frame];
+            renderer.color = Color.white;
             renderer.transform.localScale = Vector3.one * trailScale;
 
             // 시트 안에서 프레임마다 그림이 6픽셀씩 왼쪽으로 배치되어 있습니다.

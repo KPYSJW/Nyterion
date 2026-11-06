@@ -275,7 +275,7 @@ namespace Nytherion.UI.Skill
         public void SyncUIFromData()
         {
             if (skillDataManager == null) return;
-            if (storageSlots == null || equipSlots == null) return;
+            if (storageSlots == null || equipSlots == null || storageContent == null) return;
 
             EnsureStorageSlots(skillDataManager.storageSkills.Length);
 
@@ -283,6 +283,7 @@ namespace Nytherion.UI.Skill
             int equipCount = 0;
             for (int i = 0; i < equipSlots.Length; i++)
             {
+                if (equipSlots[i] == null) continue;
                 equipSlots[i].Setup(skillDataManager.equippedSkills[i], skillDataManager, skillTooltip);
                 if (skillDataManager.equippedSkills[i] != null) equipCount++;
             }
@@ -291,6 +292,7 @@ namespace Nytherion.UI.Skill
             int storageCount = 0;
             for (int i = 0; i < storageSlots.Length; i++)
             {
+                if (storageSlots[i] == null) continue;
                 if (i < skillDataManager.storageSkills.Length)
                 {
                     storageSlots[i].Setup(skillDataManager.storageSkills[i], skillDataManager, skillTooltip);
@@ -303,7 +305,7 @@ namespace Nytherion.UI.Skill
         private void HandleSkillDataChanged()
         {
             if (skillDataManager == null) return;
-            playerSkillManager?.SetEquippedSkills(skillDataManager.equippedSkills);
+            if (playerSkillManager != null) playerSkillManager.SetEquippedSkills(skillDataManager.equippedSkills);
             SyncUIFromData();
         }
 

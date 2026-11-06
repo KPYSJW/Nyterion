@@ -20,6 +20,18 @@ namespace Nytherion.Data.ScriptableObjects
         [Header("냉기 이펙트")]
         public Nytherion.GamePlay.Combat.ChillSnowVFX chillSnowPrefab;
 
+        [Header("중독 이펙트")]
+        public Nytherion.GamePlay.Combat.PoisonCloudVFX poisonCloudPrefab;
+
+        [Header("저주 이펙트")]
+        public Nytherion.GamePlay.Combat.CurseAuraVFX curseAuraPrefab;
+
+        [Header("신성 이펙트")]
+        public Nytherion.GamePlay.Combat.HolySparkleVFX holySparklePrefab;
+
+        [Header("어둠 이펙트")]
+        public GameObject darknessEffectPrefab;
+
         [Header("감전 이펙트")]
         public Nytherion.GamePlay.Combat.ShockPulseVFX shockPulsePrefab;
         [Min(0f)] public float lightningBonusDamageRatio = 0.3f;

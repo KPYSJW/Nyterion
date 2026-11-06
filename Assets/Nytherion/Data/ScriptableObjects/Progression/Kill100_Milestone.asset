@@ -20,8 +20,8 @@ MonoBehaviour:
   targetValue: 100
   requiredMilestones: []
   rewards:
-  - rewardType: 0
+  - rewardType: 5
     amount: 1
-    skillData: {fileID: 11400000, guid: f190c741e6c38da4c8efef123f11daef, type: 2}
+    skillData: {fileID: 0}
     itemData: {fileID: 0}
-    relicData: {fileID: 0}
+    relicData: {fileID: 11400000, guid: 62b68285693a077438efec2c29e2e999, type: 2}

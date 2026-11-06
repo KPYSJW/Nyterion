@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7274576d474b487bab4616f427261021, type: 3}
+  m_Name: MagicMissile_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_magicmissile
+  isDisabled: 0
+  skillType: 23
+  skillName: "\uB9E4\uC9C1 \uBBF8\uC0AC\uC77C"
+  description: "\uC801\uC5D0\uAC8C \uD53C\uD574\uB97C \uC8FC\uB294 \uB9C8\uBC95 \uD22C\uC0AC\uCCB4\uB97C
+    \uBC1C\uC0AC\uD569\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 1
+  manaCost: 10
+  damage: 10
+  range: 12
+  icon: {fileID: 21300000, guid: 7eb7a317a6cb79b44b67473f60936838, type: 3}
+  skillPrefab: {fileID: 3333067456433721311, guid: 1b3e13f05e4ec394399663790e755ed3, type: 3}
+  unlockMilestoneID: 
+  projectilePrefab: {fileID: 1511047174178608816, guid: acd717136a6472549b1c2ecd3da9e5f7, type: 3}
+  projectileFrames:
+  - {fileID: 404757077, guid: 3393842af065fa74e92a0a60958778a1, type: 3}
+  - {fileID: 723148100, guid: 3393842af065fa74e92a0a60958778a1, type: 3}
+  - {fileID: 1138931142, guid: 3393842af065fa74e92a0a60958778a1, type: 3}
+  - {fileID: 850246737, guid: 3393842af065fa74e92a0a60958778a1, type: 3}
+  hitFrames:
+  - {fileID: -1305944502, guid: 9e6f08a11ec402441b23f4f8f826f2ac, type: 3}
+  - {fileID: 1109488431, guid: 9e6f08a11ec402441b23f4f8f826f2ac, type: 3}
+  - {fileID: 1470614139, guid: 9e6f08a11ec402441b23f4f8f826f2ac, type: 3}
+  - {fileID: -161426494, guid: 9e6f08a11ec402441b23f4f8f826f2ac, type: 3}
+  - {fileID: 2036633460, guid: 9e6f08a11ec402441b23f4f8f826f2ac, type: 3}
+  - {fileID: -785554289, guid: 9e6f08a11ec402441b23f4f8f826f2ac, type: 3}
+  - {fileID: 1624416516, guid: 9e6f08a11ec402441b23f4f8f826f2ac, type: 3}
+  launchOffset: 0.5
+  castFrames:
+  - {fileID: 1615607718, guid: f37ad4aec35d40b8821d1dde7b2f0dd3, type: 3}
+  - {fileID: 1588577202, guid: f37ad4aec35d40b8821d1dde7b2f0dd3, type: 3}
+  - {fileID: 1773380895, guid: f37ad4aec35d40b8821d1dde7b2f0dd3, type: 3}
+  - {fileID: 533117149, guid: f37ad4aec35d40b8821d1dde7b2f0dd3, type: 3}
+  - {fileID: 927855427, guid: f37ad4aec35d40b8821d1dde7b2f0dd3, type: 3}
+  castFps: 14
+  castVisualScale: 0.3
+  castOffset: 0.3
+  projectileVisualScale: 0.6
+  hitVisualScale: 0.5
+  hitVerticalScale: 1
+  speed: 8
+  projectileLifetime: 1
+  projectileSpreadAngle: 60
+  collisionRadius: 0.25
+  projectileFps: 12
+  hitFps: 14
+  damagePerLevel: 2
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 2568

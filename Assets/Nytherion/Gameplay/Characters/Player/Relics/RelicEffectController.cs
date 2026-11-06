@@ -293,6 +293,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
                 // 1. 기존에 활성화되었던 모듈 중, 장착 해제되었거나, 레벨이 변했거나, 비활성화되었거나, 조건이 불충족된 모듈 비활성화 (Remove)
                 // Dictionary를 순회하면서 DeactivateModule을 통해 요소를 제거하므로, Key 목록을 복사하여 순회
+                Dictionary<RelicEffectModule, int> retainedSkillModules = new Dictionary<RelicEffectModule, int>();
                 activeModules.Clear();
                 activeModules.AddRange(activeModuleLevels.Keys);
                 foreach (RelicEffectModule activeModule in activeModules)
@@ -300,17 +301,15 @@ namespace Nytherion.GamePlay.Characters.Player
                     int oldLevel = activeModuleLevels[activeModule];
 
                     bool isStillEquipped = currentlyEquippedModules.TryGetValue(activeModule, out EquippedModuleData data);
-                    // 장착 해제, 레벨 변경, 혹은 비활성화 상태가 된 경우 제거 대상으로 지정
-                    if (!isStillEquipped || oldLevel != data.Level || data.IsDisabled)
+                    if (!isStillEquipped || data.IsDisabled ||
+                        !IsModuleConditionMet(activeModule, data, maxSatisfiedChains))
                     {
                         DeactivateModule(activeModule, oldLevel);
                     }
-                    else
+                    else if (oldLevel != data.Level)
                     {
-                        if (!IsModuleConditionMet(activeModule, data, maxSatisfiedChains))
-                        {
-                            DeactivateModule(activeModule, oldLevel);
-                        }
+                        DeactivateModule(activeModule, oldLevel, true);
+                        retainedSkillModules[activeModule] = oldLevel;
                     }
                 }
 
@@ -326,7 +325,17 @@ namespace Nytherion.GamePlay.Characters.Player
                         if (IsModuleConditionMet(module, data, maxSatisfiedChains))
                         {
                             ActivateModule(module, currentLevel);
+                            retainedSkillModules.Remove(module);
                         }
+                    }
+                }
+
+                // 재평가 중 조건이 불충족된 경우 유지해 둔 스킬도 해제한다.
+                foreach (KeyValuePair<RelicEffectModule, int> retained in retainedSkillModules)
+                {
+                    foreach (var effect in retained.Key.effects)
+                    {
+                        if (effect is GrantSkillEffect) effect.RemoveEffect(playerManager, retained.Value);
                     }
                 }
             }
@@ -387,13 +396,14 @@ namespace Nytherion.GamePlay.Characters.Player
             }
         }
 
-        private void DeactivateModule(RelicEffectModule module, int level)
+        private void DeactivateModule(RelicEffectModule module, int level, bool retainGrantedSkills = false)
         {
             if (module == null || module.effects == null) return;
 
             foreach (var effect in module.effects)
             {
-                if (effect != null)
+                // 레벨 변경 중에는 스킬 장착 슬롯과 경험치를 유지한다.
+                if (effect != null && !(retainGrantedSkills && effect is GrantSkillEffect))
                 {
                     effect.RemoveEffect(playerManager, level);
                 }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using Nytherion.Core.Managers;
+using Nytherion.Core.Enums;
 using Nytherion.Data.ScriptableObjects.Relics;
 using Nytherion.GamePlay.Relics;
 using VContainer;

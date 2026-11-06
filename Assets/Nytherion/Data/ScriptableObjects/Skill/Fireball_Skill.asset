@@ -41,7 +41,7 @@ MonoBehaviour:
   - {fileID: -2086324415, guid: fe39388fa89063e47bb800c53089a835, type: 3}
   - {fileID: 578880803, guid: fe39388fa89063e47bb800c53089a835, type: 3}
   - {fileID: 1893087440, guid: fe39388fa89063e47bb800c53089a835, type: 3}
-  launchOffset: 0.5
+  launchOffset: 0.3
   castFrames:
   - {fileID: 1615607718, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
   - {fileID: 1588577202, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
@@ -49,7 +49,7 @@ MonoBehaviour:
   - {fileID: 533117149, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
   - {fileID: 927855427, guid: 5f6f860079564babbf1a222a1f2e778c, type: 3}
   castFps: 14
-  castVisualScale: 0.25
+  castVisualScale: 0.3
   projectileVisualScale: 0.6
   hitVisualScale: 0.5
   hitVerticalScale: 1

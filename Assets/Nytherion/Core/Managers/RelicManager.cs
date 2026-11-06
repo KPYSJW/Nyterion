@@ -479,6 +479,34 @@ namespace Nytherion.Core.Managers
             }
         }
 
+        /// <summary>현재 보유한 유물의 기본 레벨을 테스트용으로 1 증가시킨다.</summary>
+        public int IncreaseAllRelicLevelsForTest()
+        {
+            if (!IsInitialized || storageBlocks == null || placedBlockPositions == null ||
+                logicGrid == null || currentlyDraggedBlock != null) return -1;
+
+            int count = 0;
+            foreach (RelicBlock block in storageBlocks)
+            {
+                if (block?.SourceData == null) continue;
+                if (block.IncreaseBaseLevel()) count++;
+            }
+
+            foreach (Vector2Int position in placedBlockPositions.Values)
+            {
+                RelicBlock block = logicGrid.GetBlockAt(position.y, position.x);
+                if (block?.SourceData == null) continue;
+                if (block.IncreaseBaseLevel()) count++;
+            }
+
+            if (count > 0)
+            {
+                RefreshRelicLogic();
+                OnRelicStateChanged?.Invoke();
+            }
+            return count;
+        }
+
         private RelicGridState GetRelicsForSave()
         {
             var state = new RelicGridState();

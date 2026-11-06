@@ -222,12 +222,12 @@ namespace Nytherion.Editor
                     effect.ApplyEffect(player, level);
                     float bonus = Capacity[index] + CapacityGrowth[index] * (level - 1);
                     float maximum = CapacityPercentage[index] ? 100f * (1f + bonus) : 100f + bonus;
-                    float regeneration = 5f + Regeneration[index] + RegenerationGrowth[index] * (level - 1);
+                    float regeneration = basis.manaRegenPerSecond + Regeneration[index] + RegenerationGrowth[index] * (level - 1);
                     Require(Mathf.Approximately(mana.MaxMana, maximum) && Mathf.Approximately(mana.ManaRegenPerSecond, regeneration), "마나 능력치 적용");
                     Require(Mathf.Approximately(player.currentPlayerData.maxMana, maximum) && Mathf.Approximately(player.currentPlayerData.manaRegenPerSecond, regeneration), "인벤토리 데이터 동기화");
                     Require(mana.CurrentMana == 60f, "장착 시 임의 충전 방지");
                     effect.RemoveEffect(player, level);
-                    Require(mana.MaxMana == 100f && mana.ManaRegenPerSecond == 5f && mana.CurrentMana == 60f, "해제 시 원복 및 미충전");
+                    Require(mana.MaxMana == 100f && mana.ManaRegenPerSecond == basis.manaRegenPerSecond && mana.CurrentMana == 60f, "해제 시 원복 및 미충전");
                 }
                 if (CapacityPercentage[index])
                 {

@@ -604,6 +604,24 @@ namespace Nytherion.UI.Test
             }
         }
 
+        public void IncreaseAllRelicLevels()
+        {
+            if (relicManager == null) TryManualInject();
+            if (relicManager == null)
+            {
+                UpdateStatusText("RelicManager를 찾을 수 없습니다.");
+                return;
+            }
+
+            int count = relicManager.IncreaseAllRelicLevelsForTest();
+            if (count < 0)
+                UpdateStatusText("유물 매니저가 준비되지 않았거나 유물을 이동 중입니다.");
+            else if (count == 0)
+                UpdateStatusText("보유한 유물이 없거나 모두 최대 레벨입니다.");
+            else
+                UpdateStatusText($"보유 유물 {count}개의 레벨을 1 증가했습니다. (저장되지 않음)");
+        }
+
         private void UpdateStatusText(string message)
         {
             if (statusText != null)
@@ -765,6 +783,7 @@ namespace Nytherion.UI.Test
                 statusText.fontSizeMax = 22f;
                 statusText.raycastTarget = false;
             }
+            AddCategoryButton("유물", "IncreaseAllRelicLevelsButton", "보유 유물 전체 레벨 +1", IncreaseAllRelicLevels);
             CreateRelicEffectButtons();
             CreateAttackTraitButtons();
             fireballHomingButton = AddCategoryButton("스킬", "DebugFireballHomingButton", "", ToggleDebugFireballHoming);
@@ -784,8 +803,30 @@ namespace Nytherion.UI.Test
             AddCategoryButton("스킬", "DebugFireballExtraProjectileButton", "추가 투사체 +1 (공통)",
                 () => IncreaseDebugStat(StatType.ExtraProjectiles, 1f));
             AddCategoryButton("스킬", "ResetFireballExtraProjectileButton", "테스트 추가 투사체 초기화", ResetDebugExtraProjectiles);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            AddCategoryButton("시스템", "PreviewMilestoneProgressButton", "업적 알림 진행 미리보기",
+                () => PreviewMilestoneNotification(false));
+            AddCategoryButton("시스템", "PreviewMilestoneCompletedButton", "업적 알림 완료 미리보기",
+                () => PreviewMilestoneNotification(true));
+#endif
             SelectCategory(selectedCategory);
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private void PreviewMilestoneNotification(bool completed)
+        {
+            if (objectResolver != null &&
+                objectResolver.TryResolve<Nytherion.UI.Progression.MilestoneNotificationController>(out var notification) &&
+                notification != null &&
+                notification.TryShowDebugPreview(completed))
+            {
+                Close();
+                return;
+            }
+
+            UpdateStatusText("업적 알림을 표시할 수 없습니다.");
+        }
+#endif
 
         private static void StretchRect(RectTransform rect, Vector2 offsetMin, Vector2 offsetMax)
         {

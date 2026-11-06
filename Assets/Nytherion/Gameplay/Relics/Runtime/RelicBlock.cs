@@ -6,6 +6,8 @@ namespace Nytherion.GamePlay.Relics
 {
     public class RelicBlock
     {
+        public const int MaxLevel = 7;
+
         public RelicData SourceData { get; private set; }
         public string BlockId { get; private set; }
         public string RelicId => SourceData.relicName;
@@ -19,7 +21,8 @@ namespace Nytherion.GamePlay.Relics
         {
             SourceData = data;
             BlockId = System.Guid.NewGuid().ToString();
-            baseLevel = data.level;
+            baseLevel = Mathf.Min(data.level, MaxLevel);
+            SourceData.level = baseLevel;
             RotationState = 0;
         }
 
@@ -27,14 +30,24 @@ namespace Nytherion.GamePlay.Relics
         {
             SourceData = data;
             BlockId = System.Guid.NewGuid().ToString();
-            baseLevel = level;
-            SourceData.level = level;
+            baseLevel = Mathf.Min(level, MaxLevel);
+            SourceData.level = baseLevel;
             RotationState = 0;
         }
 
         public void ChangeLevel(int amount)
         {
-            SourceData.level += amount;
+            long changedLevel = (long)SourceData.level + amount;
+            SourceData.level = (int)System.Math.Max(int.MinValue, System.Math.Min(changedLevel, MaxLevel));
+        }
+
+        public bool IncreaseBaseLevel()
+        {
+            if (baseLevel >= MaxLevel) return false;
+
+            baseLevel++;
+            SourceData.level = Mathf.Min(SourceData.level + 1, MaxLevel);
+            return true;
         }
 
         public void SetDisabled(bool disabled)

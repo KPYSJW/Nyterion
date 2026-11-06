@@ -22,6 +22,9 @@ namespace Nytherion.Core.Enums
         BubbleShield,
         Fireball,
         IceShot,
-        Thunderbolt
+        Thunderbolt,
+        DarkBolt,
+        LightBolt,
+        MagicMissile
     }
 }
