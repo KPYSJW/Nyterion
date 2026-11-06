@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   milestoneID: YarnUntangler
   title: "\uC2E4\uD0C0\uB798 \uD480\uAE30 \uC7A5\uC778"
-  description: "'\uAF2C\uC778 \uC2E4\uD0C0\uB798' \uD6A8\uACFC(\uD65C\uC131 \uCCB4\uC778
-    \uB9C1\uD06C 3\uAC1C \uC774\uC0C1) \uC0C1\uD0DC\uB85C \uBC29 \uD074\uB9AC\uC5B4."
+  description: "'꼬인 실타래'를 장착하고, 각 시리즈의 첫 유물을 제외한 추가 장착 유물이 총 3개 이상인 상태로 방 클리어."
   icon: {fileID: 0}
   progressionType: 15
   targetValue: 1

@@ -12,18 +12,19 @@ namespace Nytherion.Gameplay.Relics.Modules
     }
 
     /// <summary>
-    /// 특정 시너지 시리즈의 연결 체인 길이 또는 보드 장착 개수를 검사하는 조건 모듈
+    /// 특정 시너지 시리즈의 보드 장착 개수를 검사하는 조건 모듈
     /// </summary>
-    [Serializable, RelicDisplayName("시너지 체인 조건")]
+    [Serializable, RelicDisplayName("시너지 장착 개수 조건")]
     public class ChainSynergyCondition : RelicConditionBase
     {
         [Tooltip("검사할 시너지 시리즈 ID")]
         public string targetSeriesId;
 
-        [Tooltip("시너지 수치 계산 방식. 기존 데이터는 연결된 최장 체인을 사용합니다.")]
-        public ChainSynergyMeasure measure = ChainSynergyMeasure.LongestConnectedChain;
+        // 기존 에셋의 직렬화 필드를 보존하며, 모든 조건은 장착 개수로 판정한다.
+        [HideInInspector]
+        public ChainSynergyMeasure measure = ChainSynergyMeasure.EquippedSeriesRelicCount;
 
-        [Tooltip("요구되는 최소 체인 길이 또는 장착 개수")]
+        [Tooltip("요구되는 최소 장착 개수")]
         public int requiredChainLength = 2;
 
         public override bool IsConditionMet(PlayerManager playerManager, int level)
@@ -33,9 +34,7 @@ namespace Nytherion.Gameplay.Relics.Modules
             var relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
             if (relicManager == null) return false;
 
-            int currentValue = measure == ChainSynergyMeasure.EquippedSeriesRelicCount
-                ? relicManager.GetEquippedSeriesRelicCount(targetSeriesId)
-                : relicManager.GetMaxChainLength(targetSeriesId);
+            int currentValue = relicManager.GetEquippedSeriesRelicCount(targetSeriesId);
 
             return currentValue >= requiredChainLength;
         }

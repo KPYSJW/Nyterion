@@ -470,7 +470,7 @@ namespace Nytherion.GamePlay.Dungeon
             {
                 room.cleared = true;
 
-                // 꼬인 실타래 (TangledYarn) 활성 링크 3개 이상 상태로 방 클리어 업적 연동
+                // 꼬인 실타래 장착 시 시리즈별 추가 유물 합계가 3개 이상이면 진행도를 갱신한다.
                 RelicManager relicManager = UnityEngine.Object.FindObjectOfType<RelicManager>();
                 if (relicManager != null)
                 {
@@ -494,10 +494,10 @@ namespace Nytherion.GamePlay.Dungeon
                             int totalLinks = 0;
                             foreach (string seriesId in seriesIds)
                             {
-                                int length = relicManager.GetMaxChainLength(seriesId);
-                                if (length >= 2)
+                                int count = relicManager.GetEquippedSeriesRelicCount(seriesId);
+                                if (count >= 2)
                                 {
-                                    totalLinks += (length - 1);
+                                    totalLinks += (count - 1);
                                 }
                             }
 

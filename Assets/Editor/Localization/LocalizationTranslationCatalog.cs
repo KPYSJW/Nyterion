@@ -239,7 +239,7 @@ namespace Nytherion.Editor.Localization
                 ["milestone_speedrunner"] = "Reach 300 seconds (5 minutes) of total play time.",
                 ["milestone_survivor"] = "Take a total of 1,000 damage from enemy attacks.",
                 ["milestone_untouchable"] = "Reach floor 5 and prove your mastery of survival.",
-                ["YarnUntangler"] = "Clear a room while 'Tangled Yarn' has at least 3 active chain links."
+                ["YarnUntangler"] = "Clear a room with 'Tangled Yarn' equipped and at least 3 additional relics across series, excluding the first relic in each series."
             };
 
         public static readonly IReadOnlyDictionary<string, string> RelicEnglishDescriptions =

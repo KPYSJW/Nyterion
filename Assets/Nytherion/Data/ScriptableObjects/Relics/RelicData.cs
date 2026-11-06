@@ -29,7 +29,7 @@ namespace Nytherion.Data.ScriptableObjects.Relics
     /// <summary>
     /// 유물 등급별 영향 범위를 한 곳에서 관리합니다.
     /// 일반 유물은 최대 다섯 칸 안에서 레벨 업/다운을 함께 사용하고,
-    /// 침묵 또는 시너지 연결을 가진 특수 유물은 고유 영향권을 유지합니다.
+    /// 침묵 또는 고유 설정을 가진 특수 유물은 고유 영향권을 유지합니다.
     /// </summary>
     public static class RelicInfluencePolicy
     {
@@ -106,12 +106,13 @@ namespace Nytherion.Data.ScriptableObjects.Relics
 
         public static bool IsSpecialRelic(RelicData relic)
         {
-            if (relic == null || relic.influenceZones == null) return false;
+            if (relic == null) return false;
+            if (relic.preserveCustomInfluenceZones) return true;
+            if (relic.influenceZones == null) return false;
 
             foreach (InfluenceZone zone in relic.influenceZones)
             {
-                if (zone != null &&
-                    (zone.type == InfluenceType.Silence || zone.type == InfluenceType.SynergyLink))
+                if (zone != null && zone.type == InfluenceType.Silence)
                 {
                     return true;
                 }
@@ -149,9 +150,14 @@ namespace Nytherion.Data.ScriptableObjects.Relics
                 relic.influenceZones = new List<InfluenceZone>();
             }
 
+            // 기존 데이터의 연결 칸을 제거하면서 다른 고유 영향권은 유지한다.
+            bool removedLegacyLinks = relic.influenceZones.RemoveAll(
+                zone => zone != null && zone.type == InfluenceType.SynergyLink) > 0;
+            if (removedLegacyLinks) relic.preserveCustomInfluenceZones = true;
+
             if (IsSpecialRelic(relic))
             {
-                bool changedSpecialAmount = false;
+                bool changedSpecialAmount = removedLegacyLinks;
                 foreach (InfluenceZone zone in relic.influenceZones)
                 {
                     if (zone == null ||
@@ -256,8 +262,10 @@ namespace Nytherion.Data.ScriptableObjects.Relics
         public List<Vector2Int> shape = new List<Vector2Int> { Vector2Int.zero };
 
         [Header("영향 범위 설정 (등급별 고정)")]
-        [Tooltip("일반 유물은 최대 다섯 칸의 레벨 업/다운 조합을 사용합니다. 침묵·시너지 연결 유물은 고유 영향권을 유지합니다.")]
+        [Tooltip("일반 유물은 최대 다섯 칸의 레벨 업/다운 조합을 사용합니다. 침묵 또는 고유 설정 유물은 고유 영향권을 유지합니다.")]
         public List<InfluenceZone> influenceZones = new List<InfluenceZone>();
+
+        [HideInInspector] public bool preserveCustomInfluenceZones;
 
         [Header("시너지 설정")]
         [Tooltip("같은 계열의 시너지 부품임을 식별하는 ID (비어있으면 시너지 없음)")]

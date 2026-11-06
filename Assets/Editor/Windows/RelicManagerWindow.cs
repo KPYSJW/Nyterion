@@ -558,7 +558,7 @@ namespace Nytherion.Editor
                         EditorGUI.BeginDisabledGroup(!isAllowed);
                         if (GUILayout.Button(label, GUILayout.Width(60), GUILayout.Height(60)))
                         {
-                            CycleInfluenceType(x, y);
+                            CycleInfluenceType(x, y, targetRelic != null && targetRelic.preserveCustomInfluenceZones);
                             if (targetRelic != null) SyncGridToRelic(targetRelic);
                         }
                         EditorGUI.EndDisabledGroup();
@@ -602,12 +602,11 @@ namespace Nytherion.Editor
                 case InfluenceType.LevelUp: GUI.backgroundColor = new Color(0.4f, 0.6f, 1f); break; // Blue
                 case InfluenceType.LevelDown: GUI.backgroundColor = new Color(1f, 0.4f, 0.4f); break; // Red
                 case InfluenceType.Silence: GUI.backgroundColor = new Color(0.8f, 0.4f, 1f); break; // Purple
-                case InfluenceType.SynergyLink: GUI.backgroundColor = new Color(1f, 0.8f, 0.2f); break; // Gold
                 default: GUI.backgroundColor = Color.white; break;
             }
         }
 
-        private void CycleInfluenceType(int x, int y)
+        private void CycleInfluenceType(int x, int y, bool allowEmpty)
         {
             switch (influenceGrid[x, y])
             {
@@ -618,7 +617,7 @@ namespace Nytherion.Editor
                     influenceGrid[x, y] = InfluenceType.Silence;
                     break;
                 case InfluenceType.Silence:
-                    influenceGrid[x, y] = InfluenceType.SynergyLink;
+                    influenceGrid[x, y] = allowEmpty ? InfluenceType.None : InfluenceType.LevelUp;
                     break;
                 default:
                     influenceGrid[x, y] = InfluenceType.LevelUp;
@@ -636,8 +635,6 @@ namespace Nytherion.Editor
                     return $"Down -{Mathf.Clamp(levelAmount, 1, 3)}";
                 case InfluenceType.Silence:
                     return "Silence";
-                case InfluenceType.SynergyLink:
-                    return "Link";
                 default:
                     return "";
             }

@@ -97,9 +97,11 @@ namespace Nytherion.Editor
                 try
                 {
                     bool storage = path.Contains("StorageSlot");
-                    float slotSize = storage ? RelicGridUI.StorageSlotSize :
+                    bool skillStorage = path.Contains("SkillStorageSlot");
+                    float slotSize = skillStorage ? SkillUIController.StorageSlotSize : storage ? RelicGridUI.StorageSlotSize :
                         path.Contains("SkillEquipSlot") ? 160f : RelicGridUI.EquippedSlotSize;
-                    float iconSize = storage || path.Contains("Draggable") ? 96f : 64f;
+                    float iconSize = skillStorage ? 96f : storage ? RelicBlockDraggable.StorageIconSize :
+                        path.Contains("Draggable") ? RelicBlockDraggable.DragIconSize : 64f;
                     RectTransform rect = root.GetComponent<RectTransform>();
                     rect.sizeDelta = Vector2.one * slotSize;
                     Image background = root.GetComponent<Image>();
@@ -143,7 +145,7 @@ namespace Nytherion.Editor
                         {
                             ConfigureFrame(slot.GetComponent<Image>(), frame);
                             slot.GetComponent<RectTransform>().sizeDelta = Vector2.one *
-                                (slot.slotType == SkillSlotType.Storage ? RelicGridUI.StorageSlotSize : 160f);
+                                (slot.slotType == SkillSlotType.Storage ? SkillUIController.StorageSlotSize : 160f);
                             SerializedObject serialized = new SerializedObject(slot);
                             Image icon = serialized.FindProperty("skillIcon").objectReferenceValue as Image;
                             ConfigureIcon(icon, slot.slotType == SkillSlotType.Storage ? 96f : 64f);
@@ -207,8 +209,11 @@ namespace Nytherion.Editor
                         foreach (RelicGridUI ui in root.GetComponentsInChildren<RelicGridUI>(true))
                         {
                             GridLayoutGroup storage = ui.blockStorageParent.GetComponent<GridLayoutGroup>();
-                            if (storage.constraintCount != 4 || storage.cellSize != Vector2.one * 128f ||
-                                !Mathf.Approximately(ui.blockStorageParent.rect.width, 527f + storage.padding.horizontal) ||
+                            float storageWidth = RelicGridUI.StorageSlotSize * RelicGridUI.StorageColumns +
+                                5f * (RelicGridUI.StorageColumns - 1) + storage.padding.horizontal;
+                            if (storage.constraintCount != RelicGridUI.StorageColumns ||
+                                storage.cellSize != Vector2.one * RelicGridUI.StorageSlotSize ||
+                                !Mathf.Approximately(ui.blockStorageParent.rect.width, storageWidth) ||
                                 ui.blockStorageParent.anchorMin != ui.blockStorageParent.anchorMax)
                                 throw new InvalidOperationException(scene.name + " 유물 보관함 Inspector 규격 불일치: 열=" +
                                     storage.constraintCount + " 칸=" + storage.cellSize + " 영역=" + ui.blockStorageParent.rect.size);
@@ -218,11 +223,11 @@ namespace Nytherion.Editor
                                 "Assets/Nytherion/Art/UI/Relics/EquipedRelic_Slot.png")
                                 throw new InvalidOperationException(scene.name + " 장착 슬롯 이미지 참조 불일치");
                             results.Add("PASS " + scene.name + ": 유물 보관함 폭=" + ui.blockStorageParent.rect.width +
-                                "·4열·고정 앵커·장착 전용 이미지 참조 (높이는 ContentSizeFitter로 슬롯 생성 후 결정)");
+                                "·" + RelicGridUI.StorageColumns + "열·고정 앵커·장착 전용 이미지 참조 (높이는 ContentSizeFitter로 슬롯 생성 후 결정)");
                         }
                         foreach (SkillSlotUI slot in root.GetComponentsInChildren<SkillSlotUI>(true))
                         {
-                            float size = slot.slotType == SkillSlotType.Storage ? 128f : 160f;
+                            float size = slot.slotType == SkillSlotType.Storage ? SkillUIController.StorageSlotSize : 160f;
                             if (slot.GetComponent<RectTransform>().rect.size != Vector2.one * size ||
                                 slot.GetComponent<PixelPerfectSlotFrame>() == null)
                                 throw new InvalidOperationException(scene.name + " " + slot.name + " 스킬 슬롯 Inspector 규격 불일치");

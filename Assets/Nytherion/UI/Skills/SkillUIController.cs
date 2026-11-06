@@ -15,6 +15,8 @@ namespace Nytherion.UI.Skill
     /// </summary>
     public class SkillUIController : UIPanelBase, IInitializable
     {
+        public const float StorageSlotSize = 128f;
+
         protected override bool UsesBookOpenSound => true;
         [Header("Toggle Settings")]
         [Tooltip("스킬 UI 전체를 담고 있는 패널 오브젝트")]
@@ -239,7 +241,7 @@ namespace Nytherion.UI.Skill
         private void InitializeStorageSlots()
         {
             GridLayoutGroup layout = storageContent.GetComponent<GridLayoutGroup>();
-            if (layout != null) layout.cellSize = Vector2.one * Nytherion.UI.RelicBoard.RelicGridUI.StorageSlotSize;
+            if (layout != null) layout.cellSize = Vector2.one * StorageSlotSize;
             EnsureStorageSlots(Mathf.Max(maxStorageSlots, skillDataManager.storageSkills.Length));
         }
 

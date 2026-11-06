@@ -28,9 +28,8 @@ MonoBehaviour:
     - rid: 5002
   shape:
   - {x: 0, y: 0}
-  influenceZones:
-  - offset: {x: 1, y: 0}
-    type: 4
+  influenceZones: []
+  preserveCustomInfluenceZones: 1
   synergySeriesId: AncientStatSeries
   synergySetBonusData: {fileID: 11400000, guid: 129645fca4b20f14abe16e329caf04a0, type: 2}
   unlockMilestoneID: 

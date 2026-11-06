@@ -23,7 +23,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private readonly HashSet<RelicSetBonusData> equippedSetBonuses = new();
         private readonly HashSet<RelicTranscendenceData> linkedTranscendenceEffects = new();
         private readonly List<RelicEffectModule> activeModules = new();
-        private readonly Dictionary<(Object, ChainSynergyMeasure, string), int> maxSatisfiedChains = new();
+        private readonly Dictionary<(Object, string), int> maxSatisfiedChains = new();
 
         // 디버그 강제 활성 상태는 플레이어 수명 동안만 유지하며 저장하지 않는다.
         private readonly Dictionary<RelicSetBonusData, int> debugSetRequirements = new();
@@ -353,7 +353,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private bool IsModuleConditionMet(
             RelicEffectModule module,
             EquippedModuleData data,
-            Dictionary<(Object, ChainSynergyMeasure, string), int> maxSatisfiedChains)
+            Dictionary<(Object, string), int> maxSatisfiedChains)
         {
             if (data.Owner is RelicTranscendenceData transcendence && debugTranscendences.Contains(transcendence))
                 return true;
@@ -369,9 +369,9 @@ namespace Nytherion.GamePlay.Characters.Player
             return module.condition.IsConditionMet(playerManager, data.Level);
         }
 
-        private static (Object, ChainSynergyMeasure, string) GetChainTierGroup(Object owner, ChainSynergyCondition condition)
+        private static (Object, string) GetChainTierGroup(Object owner, ChainSynergyCondition condition)
         {
-            return (owner, condition.measure, condition.targetSeriesId ?? string.Empty);
+            return (owner, condition.targetSeriesId ?? string.Empty);
         }
 
         private void ActivateModule(RelicEffectModule module, int level)
