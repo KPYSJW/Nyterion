@@ -12183,7 +12183,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1336590987}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.99999994
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -14370,7 +14370,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 585024138}
   m_HandleRect: {fileID: 585024137}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -16965,7 +16965,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: -1.3458467, y: -1.626454, z: -1.8794434, w: -1.5988362}
+  m_RaycastPadding: {x: 0, y: 0.5, z: 0, w: -0.5}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -18078,15 +18078,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6897564625673274989, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6897564625673274989, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6897564625673274989, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7577976460084191873, guid: 0a9b00072fc23dc4a8075172dc7d9ee8, type: 3}
       propertyPath: m_SizeDelta.x
@@ -19083,7 +19083,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: -1.1087505, y: -1.626454, z: -2.1165397, w: -1.5988362}
+  m_RaycastPadding: {x: 0, y: 0.5, z: 0, w: -0.5}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -19736,7 +19736,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 309.99994}
+  m_AnchoredPosition: {x: 0, y: 310}
   m_SizeDelta: {x: 527, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1155189844
@@ -21268,7 +21268,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: -2.4070477, y: -1.9604731, z: -0.8182425, w: -1.2648171}
+  m_RaycastPadding: {x: -0.5, y: 0, z: 0.5, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -26653,7 +26653,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: -2.1699514, y: -1.9604731, z: -1.0553387, w: -1.2648171}
+  m_RaycastPadding: {x: -0.5, y: 0, z: 0.5, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -27861,7 +27861,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1721288127}
   m_HandleRect: {fileID: 1721288126}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -28100,7 +28100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8451803222681576171, guid: 828a39a27d46bf049bfec2c3abd1d500, type: 3}
       propertyPath: orthographic size
-      value: 7.90625
+      value: 4.21875
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

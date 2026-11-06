@@ -234,11 +234,20 @@ namespace Nytherion.GamePlay.Characters.Enemy
             OverchargePursuing,
             CrossingPreparing,
             CrossingDeparting,
-            CrossingReturning
+            CrossingReturning,
+            StoppingBeforeAttack
         }
         private AttackPhase currentPhase;
+        private EnemyAIController locomotionEnemy;
+        private int locomotionState;
+        private static readonly int RunStartState = Animator.StringToHash("Base Layer.Boss_Knight_RunStart");
+        private static readonly int RunLoopState = Animator.StringToHash("Base Layer.Boss_Knight_RunLoop");
+        private static readonly int RunEndState = Animator.StringToHash("Base Layer.Boss_Knight_RunEnd");
+        private static readonly int RunIdleState = Animator.StringToHash("Base Layer.Boss_Knight_Idle");
+        private static readonly int PatternBodyState = Animator.StringToHash("Base Layer.Boss_Knight_Move");
         public bool IsPreparing => isActiveAndEnabled &&
-            (currentPhase == AttackPhase.Preparing || currentPhase == AttackPhase.OverchargeCharging) &&
+            (currentPhase == AttackPhase.Preparing || currentPhase == AttackPhase.OverchargeCharging ||
+                currentPhase == AttackPhase.StoppingBeforeAttack) &&
             activeEnemy != null && activeEnemy.isActiveAndEnabled;
         public bool IsDashing => isActiveAndEnabled &&
             currentPhase == AttackPhase.Dashing &&
@@ -269,6 +278,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             overchargeContact = GetComponent<Knight>();
             crossingSprite = GetComponent<SpriteRenderer>();
             crossingBodyAnimator = GetComponent<Animator>();
+            locomotionEnemy = GetComponent<EnemyAIController>();
             crossingAfterimages = GetComponent<KnightMovementAfterimageVFX>();
             if (dashRangePreview == null) return;
 
@@ -353,6 +363,27 @@ namespace Nytherion.GamePlay.Characters.Enemy
             lastAttack = selected;
             activeEnemy = enemy;
 
+            if (crossingBodyAnimator != null && crossingBodyAnimator.isActiveAndEnabled &&
+                crossingBodyAnimator.HasState(0, RunEndState) &&
+                (locomotionState == RunStartState || locomotionState == RunLoopState ||
+                    locomotionState == RunEndState))
+            {
+                currentPhase = AttackPhase.StoppingBeforeAttack;
+                blockedChaseMovement = true;
+                HoldPositionDuringPreparation(enemy);
+                SetRunEffectVisible(false);
+                PlayLocomotionState(RunEndState);
+                return;
+            }
+
+            BeginSelectedAttack(enemy, selected);
+        }
+
+        private void BeginSelectedAttack(EnemyAIController enemy, BossAttackType selected)
+        {
+            // Restore the original body before a pattern captures or freezes its sprite.
+            PlayLocomotionState(PatternBodyState);
+
             switch (selected)
             {
                 case BossAttackType.ThunderAssault:
@@ -419,6 +450,17 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         public void UpdateAttackState(EnemyAIController enemy)
         {
+            if (currentPhase == AttackPhase.StoppingBeforeAttack)
+            {
+                HoldPositionDuringPreparation(enemy);
+                if (enemyBase != null && enemyBase.isDead) return;
+                bool canAnimate = crossingBodyAnimator != null &&
+                    crossingBodyAnimator.isActiveAndEnabled && crossingBodyAnimator.HasState(0, RunEndState);
+                if (currentAttack.HasValue && (!canAnimate || IsLocomotionClipFinished()))
+                    BeginSelectedAttack(enemy, currentAttack.Value);
+                return;
+            }
+
             if (IsCrossingTransition)
             {
                 HoldPositionDuringPreparation(enemy);
@@ -943,10 +985,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void LateUpdate()
         {
+            UpdateLocomotionAnimation();
             if (IsCrossingTransition) UpdateCrossingTransitionEffect();
             UpdateRunEffect();
             SetPatternOutline(isActiveAndEnabled && currentAttack.HasValue &&
-                currentPhase != AttackPhase.None && activeEnemy != null &&
+                currentPhase != AttackPhase.None && currentPhase != AttackPhase.StoppingBeforeAttack &&
+                activeEnemy != null &&
                 activeEnemy.isActiveAndEnabled && (enemyBase == null || !enemyBase.isDead));
             if (!IsOverchargePursuing || activeEnemy == null || !activeEnemy.isActiveAndEnabled ||
                 (enemyBase != null && enemyBase.isDead))
@@ -975,6 +1019,61 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 CheckOverchargeShieldHit(center, diameter * 0.5f * overchargeShieldHitRadiusScale);
         }
 
+        private void UpdateLocomotionAnimation()
+        {
+            if (crossingBodyAnimator == null || !crossingBodyAnimator.isActiveAndEnabled ||
+                !crossingBodyAnimator.HasState(0, RunStartState) ||
+                (enemyBase != null && enemyBase.isDead)) return;
+
+            // The attack state owns the end clip until it finishes, then starts the pattern.
+            if (currentPhase == AttackPhase.StoppingBeforeAttack) return;
+
+            if (currentAttack.HasValue || currentPhase != AttackPhase.None)
+            {
+                PlayLocomotionState(PatternBodyState);
+                return;
+            }
+
+            bool moving = locomotionEnemy != null && locomotionEnemy.isActiveAndEnabled &&
+                locomotionEnemy.agent != null && locomotionEnemy.agent.isActiveAndEnabled &&
+                locomotionEnemy.agent.isOnNavMesh && !locomotionEnemy.agent.isStopped &&
+                overchargeContact != null && overchargeContact.CurrentSpeed > 0.1f;
+
+            if (moving)
+            {
+                if (locomotionState != RunStartState && locomotionState != RunLoopState)
+                    PlayLocomotionState(RunStartState);
+                else if (locomotionState == RunStartState && IsLocomotionClipFinished())
+                    PlayLocomotionState(RunLoopState);
+            }
+            else if (locomotionState == RunStartState || locomotionState == RunLoopState)
+            {
+                PlayLocomotionState(RunEndState);
+            }
+            else if (locomotionState != RunEndState || IsLocomotionClipFinished())
+            {
+                PlayLocomotionState(RunIdleState);
+            }
+        }
+
+        private bool IsLocomotionClipFinished()
+        {
+            AnimatorStateInfo state = crossingBodyAnimator.GetCurrentAnimatorStateInfo(0);
+            return state.fullPathHash == locomotionState && state.normalizedTime >= 1f;
+        }
+
+        private void PlayLocomotionState(int state)
+        {
+            if (locomotionState == state || crossingBodyAnimator == null ||
+                !crossingBodyAnimator.isActiveAndEnabled ||
+                !crossingBodyAnimator.HasState(0, RunStartState) ||
+                !crossingBodyAnimator.HasState(0, state)) return;
+
+            locomotionState = state;
+            crossingBodyAnimator.Play(state, 0, 0f);
+            crossingBodyAnimator.Update(0f);
+        }
+
         private void UpdateRunEffect()
         {
             Vector3 position = transform.position;
@@ -982,7 +1081,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 ? Vector2.Distance(runEffectLastPosition, position) : 0f;
             runEffectLastPosition = position;
             runEffectHasLastPosition = true;
+            bool running = (currentPhase == AttackPhase.None && locomotionState == RunLoopState) ||
+                currentPhase == AttackPhase.Dashing || currentPhase == AttackPhase.OverchargePursuing;
             bool visible = isActiveAndEnabled && crossingSprite != null && crossingSprite.enabled &&
+                running &&
                 (enemyBase == null || !enemyBase.isDead) && !IsPreparing && !IsCrossingHidden && !IsCrossingTransition &&
                 Time.deltaTime > 0f && distance / Time.deltaTime > runEffectMinimumSpeed;
             SetRunEffectVisible(visible);
@@ -1160,7 +1262,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 return;
             }
 
-            if (currentPhase == AttackPhase.Preparing || currentPhase == AttackPhase.OverchargeCharging ||
+            if (currentPhase == AttackPhase.StoppingBeforeAttack ||
+                currentPhase == AttackPhase.Preparing || currentPhase == AttackPhase.OverchargeCharging ||
                 currentPhase == AttackPhase.CrossingPreparing || IsCrossingTransition)
             {
                 HoldPositionDuringPreparation(activeEnemy);
@@ -1514,6 +1617,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         }
         public void ResetForReuse()
         {
+            locomotionState = 0;
             StopShockwave();
             ClearDashState();
             lastAttack = null;
@@ -1525,6 +1629,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void OnDisable()
         {
+            locomotionState = 0;
             SetRunEffectVisible(false);
             runEffectHasLastPosition = false;
             StopShockwave();

@@ -130,3 +130,12 @@ MonoBehaviour:
   - tag: Player_EvilEyeHitVFX
     prefab: {fileID: 2802172147523158979, guid: b9ac66dedf1aff345990bd1acbff592f, type: 3}
     size: 30
+  - tag: Boss_Witch
+    prefab: {fileID: 7692483418629133086, guid: aa4c82a2bda94574af4c5119d589de96, type: 3}
+    size: 1
+  - tag: Boss_DemonSlime
+    prefab: {fileID: 7692483418629133086, guid: ed6e84b9b76942368493f0965a8cbb2a, type: 3}
+    size: 1
+  - tag: Boss_GameMaster
+    prefab: {fileID: 7692483418629133086, guid: c4597da9adcb4b9eb9495155cba62999, type: 3}
+    size: 1

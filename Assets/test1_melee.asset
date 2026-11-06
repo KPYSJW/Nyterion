@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742e9e1339086c94b85fd539b07b2450, type: 3}
   m_Name: test1_melee
   m_EditorClassIdentifier: 
+  floorTile: {fileID: 0}
+  wallRuleTile: {fileID: 0}
+  portalTile: {fileID: 0}
+  startRoomTile: {fileID: 0}
+  shopRoomTile: {fileID: 0}
+  itemRoomTile: {fileID: 0}
   desiredNumberOfRooms: 2
   minRoomSize: {x: 20, y: 20}
   maxRoomSize: {x: 20, y: 20}
@@ -22,7 +28,7 @@ MonoBehaviour:
   StartRoomPrefab: {fileID: 2311304213159145408, guid: 152a1a907c2425348957e6d7fc8372ef, type: 3}
   ItemRoomPrefab: {fileID: 2311304213159145408, guid: ecf4718509ffaf846be5b10b50f93dca, type: 3}
   bossRoomPrefab: {fileID: 2311304213159145408, guid: 227752a830facb24a806d9acbf79c15e, type: 3}
-  bossMonsterData: {fileID: 11400000, guid: 664259e8e8680a5468594b2dae3cbfa3, type: 2}
+  bossMonsterData: {fileID: 11400000, guid: 7a7a709344a847d7b73cc7c765ec697c, type: 2}
   obstacles:
   - prefab: {fileID: 5617744718106360532, guid: 2b08b76bb574b344fb055530b354cca9, type: 3}
     size: {x: 5, y: 5}
