@@ -79,7 +79,7 @@ namespace Nytherion.Editor
                 relic.description_KR = "다크볼트 스킬을 얻는다.";
                 relic.description_EN = "Grants the Darkbolt skill.";
                 relic.Image = icon;
-                relic.rarity = Rarity.Common;
+                relic.rarity = Rarity.Rare;
                 relic.effectModules = new List<RelicEffectModule>
                 { new RelicEffectModule { effects = new List<RelicEffectBase> { new GrantSkillEffect { skillData = data } } } };
                 AssetDatabase.CreateAsset(relic, RelicPath);
@@ -88,7 +88,7 @@ namespace Nytherion.Editor
             Save(relic);
             RelicDatabaseSO relicDatabase = Require<RelicDatabaseSO>(Root + "Relics/RelicDatabase.asset");
             if (!relicDatabase.allRelics.Contains(relic)) { relicDatabase.allRelics.Add(relic); Save(relicDatabase); }
-            GachaPoolSO pool = Require<GachaPoolSO>(Root + "Gacha/GachaPool/Relic/Common_Relic.asset");
+            GachaPoolSO pool = Require<GachaPoolSO>(Root + $"Gacha/GachaPool/Relic/{relic.rarity}_Relic.asset");
             if (!pool.items.Any(entry => entry.item == relic))
             { pool.items.Add(new GachaItemRate { item = relic, weight = 100 }); Save(pool); }
             Debug.Log("[DarkboltSkillSetup] 다크볼트 스킬과 유물 연결 완료.", data);

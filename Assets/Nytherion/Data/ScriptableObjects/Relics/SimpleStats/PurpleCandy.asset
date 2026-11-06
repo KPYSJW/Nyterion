@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
-  m_Name: ExtraTrigger
+  m_Name: PurpleCandy
   m_EditorClassIdentifier: 
-  relicName: Trigger Piece
-  koreanName: "\uBC29\uC544\uC1E0 \uC870\uAC01"
+  relicName: Purple Candy
+  koreanName: "\uBCF4\uB77C\uC0C9 \uC0AC\uD0D5"
+  englishName: 
   description_KR: "\uCD94\uAC00 \uD22C\uC0AC\uCCB4 +1"
   description_EN: Extra projectiles +1.
-  Image: {fileID: 21300000, guid: f2bb4c220f7f50641b73101d96dad533, type: 3}
+  Image: {fileID: 21300000, guid: 07e3028f5e69dbc4abde2435c1de12b2, type: 3}
   rarity: 2
   level: 1
   isDisabled: 0
@@ -31,17 +32,18 @@ MonoBehaviour:
   grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
+  preserveCustomInfluenceZones: 1
   influenceZones:
   - offset: {x: 0, y: 1}
     type: 1
     levelAmount: 1
-  - offset: {x: 1, y: 0}
+  - offset: {x: 0, y: 2}
     type: 1
     levelAmount: 1
-  - offset: {x: 0, y: -1}
+  - offset: {x: 0, y: 3}
     type: 2
     levelAmount: 1
-  - offset: {x: -1, y: 0}
+  - offset: {x: 0, y: 4}
     type: 2
     levelAmount: 1
   synergySeriesId: TrickshotEngineerSeries

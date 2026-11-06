@@ -18,7 +18,7 @@ MonoBehaviour:
   description_KR: "\uB9E4\uC9C1 \uBBF8\uC0AC\uC77C \uC2A4\uD0AC\uC744 \uC5BB\uB294\uB2E4."
   description_EN: "Grants the \uB9E4\uC9C1 \uBBF8\uC0AC\uC77C skill."
   Image: {fileID: 21300000, guid: 7eb7a317a6cb79b44b67473f60936838, type: 3}
-  rarity: 0
+  rarity: 2
   level: 1
   isDisabled: 0
   effectModules:
@@ -33,18 +33,19 @@ MonoBehaviour:
   shape:
   - {x: 0, y: 0}
   influenceZones:
-  - offset: {x: 1, y: 0}
+  - offset: {x: 0, y: 1}
     type: 1
     levelAmount: 1
-  - offset: {x: 0, y: 1}
+  - offset: {x: 0, y: 2}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 0, y: 3}
     type: 2
     levelAmount: 1
-  - offset: {x: -1, y: 0}
+  - offset: {x: 0, y: 4}
     type: 2
     levelAmount: 1
-  - offset: {x: 0, y: -1}
-    type: 2
-    levelAmount: 1
+  preserveCustomInfluenceZones: 1
   synergySeriesId: 
   synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 

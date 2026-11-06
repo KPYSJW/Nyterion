@@ -15,6 +15,7 @@ namespace Nytherion.GamePlay.Relics
         public int Level => SourceData.level;
 
         private int baseLevel;
+        private bool influenceWarningIssued;
         public int RotationState { get; private set; }
 
         public RelicBlock(RelicData data)
@@ -71,8 +72,21 @@ namespace Nytherion.GamePlay.Relics
         public List<InfluenceZone> GetRotatedInfluenceZones()
         {
             var rotatedZones = new List<InfluenceZone>();
+            if (!RelicInfluencePolicy.TryValidateInfluenceZones(SourceData.influenceZones, out string error))
+            {
+                if (!influenceWarningIssued)
+                {
+                    Debug.LogWarning($"[유물] {SourceData.name}: 영향 범위가 올바르지 않아 적용하지 않습니다. {error}", SourceData);
+                    influenceWarningIssued = true;
+                }
+                return rotatedZones;
+            }
+
+            influenceWarningIssued = false;
+            if (SourceData.influenceZones == null) return rotatedZones;
             foreach (var zone in SourceData.influenceZones)
             {
+                if (zone == null || zone.type == InfluenceType.None) continue;
                 Vector2Int rotatedOffset = zone.offset;
                 for (int i = 0; i < RotationState; i++)
                 {

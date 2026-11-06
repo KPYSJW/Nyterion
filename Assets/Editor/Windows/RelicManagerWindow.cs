@@ -40,9 +40,14 @@ namespace Nytherion.Editor
         private ProgressionType milestoneType = ProgressionType.KillEnemy;
         private int milestoneTarget = 100;
 
-        // Influence Grid Data (3x3 buffer)
-        private InfluenceType[,] influenceGrid = new InfluenceType[3, 3];
-        private int[,] influenceAmounts = new int[3, 3];
+        private const int InfluenceRadius = 4;
+        private const int InfluenceGridSize = InfluenceRadius * 2 + 1;
+        private InfluenceType[,] influenceGrid = new InfluenceType[InfluenceGridSize, InfluenceGridSize];
+        private int[,] influenceAmounts = new int[InfluenceGridSize, InfluenceGridSize];
+        private bool creationUsesCustomInfluence;
+        private Vector2Int selectedInfluenceCell = Vector2Int.zero;
+        private InfluenceType[,] savedCreationGrid;
+        private int[,] savedCreationAmounts;
         
         // Edit Mode Fields
         private List<RelicData> allRelics = new List<RelicData>();
@@ -62,6 +67,7 @@ namespace Nytherion.Editor
         private void OnEnable()
         {
             RefreshRelicList();
+            creationUsesCustomInfluence = false;
             ResetInfluenceGrid(rarity);
             InitializeCreationData();
         }
@@ -75,31 +81,24 @@ namespace Nytherion.Editor
 
         private void ResetInfluenceGrid(Rarity targetRarity)
         {
-            for (int x = 0; x < 3; x++)
-                for (int y = 0; y < 3; y++)
-                {
-                    influenceGrid[x, y] = InfluenceType.None;
-                    influenceAmounts[x, y] = 1;
-                }
+            ClearInfluenceGrid();
 
             foreach (InfluenceZone zone in RelicInfluencePolicy.GetDefaultZones(targetRarity))
             {
-                influenceGrid[zone.offset.x + 1, zone.offset.y + 1] = zone.type;
-                influenceAmounts[zone.offset.x + 1, zone.offset.y + 1] = zone.levelAmount;
+                influenceGrid[zone.offset.x + InfluenceRadius, zone.offset.y + InfluenceRadius] = zone.type;
+                influenceAmounts[zone.offset.x + InfluenceRadius, zone.offset.y + InfluenceRadius] = zone.levelAmount;
             }
         }
 
-        private void ResetInfluenceGrid(RelicData relic)
+        private void ClearInfluenceGrid()
         {
-            ResetInfluenceGrid(relic.rarity);
-            if (!RelicInfluencePolicy.IsSpecialRelic(relic)) return;
-
-            for (int x = 0; x < 3; x++)
-                for (int y = 0; y < 3; y++)
+            for (int x = 0; x < InfluenceGridSize; x++)
+                for (int y = 0; y < InfluenceGridSize; y++)
                 {
                     influenceGrid[x, y] = InfluenceType.None;
                     influenceAmounts[x, y] = 1;
                 }
+            selectedInfluenceCell = Vector2Int.zero;
         }
 
         private void RefreshRelicList()
@@ -118,7 +117,18 @@ namespace Nytherion.Editor
             
             if (currentTab != lastTab)
             {
-                if (currentTab == WindowTab.Edit) RefreshRelicList();
+                if (currentTab == WindowTab.Edit)
+                {
+                    savedCreationGrid = (InfluenceType[,])influenceGrid.Clone();
+                    savedCreationAmounts = (int[,])influenceAmounts.Clone();
+                    RefreshRelicList();
+                }
+                else if (savedCreationGrid != null)
+                {
+                    influenceGrid = savedCreationGrid;
+                    influenceAmounts = savedCreationAmounts;
+                    selectedInfluenceCell = Vector2Int.zero;
+                }
                 lastTab = currentTab;
             }
 
@@ -160,7 +170,7 @@ namespace Nytherion.Editor
 
             Rarity previousRarity = rarity;
             rarity = (Rarity)EditorGUILayout.EnumPopup("Rarity", rarity);
-            if (rarity != previousRarity)
+            if (rarity != previousRarity && !creationUsesCustomInfluence)
             {
                 ResetInfluenceGrid(rarity);
             }
@@ -378,14 +388,15 @@ namespace Nytherion.Editor
             {
                 EditorUtility.SetDirty(relic);
             }
-            ResetInfluenceGrid(relic);
+            ClearInfluenceGrid();
             if (relic.influenceZones == null) return;
 
             foreach (var zone in relic.influenceZones)
             {
-                int x = zone.offset.x + 1;
-                int y = zone.offset.y + 1;
-                if (x >= 0 && x < 3 && y >= 0 && y < 3)
+                if (zone == null) continue;
+                int x = zone.offset.x + InfluenceRadius;
+                int y = zone.offset.y + InfluenceRadius;
+                if (x >= 0 && x < InfluenceGridSize && y >= 0 && y < InfluenceGridSize)
                 {
                     influenceGrid[x, y] = zone.type;
                     influenceAmounts[x, y] = zone.GetLevelAmount();
@@ -393,44 +404,31 @@ namespace Nytherion.Editor
             }
         }
 
-        private void SyncGridToRelic(RelicData relic)
+        private bool SyncGridToRelic(RelicData relic)
         {
-            if (relic.influenceZones == null) relic.influenceZones = new List<InfluenceZone>();
-            relic.influenceZones.Clear();
-
-            if (RelicInfluencePolicy.IsSpecialRelic(relic))
+            List<InfluenceZone> zones = new List<InfluenceZone>();
+            for (int x = 0; x < InfluenceGridSize; x++)
             {
-                for (int x = 0; x < 3; x++)
+                for (int y = 0; y < InfluenceGridSize; y++)
                 {
-                    for (int y = 0; y < 3; y++)
+                    InfluenceType type = influenceGrid[x, y];
+                    if (x == InfluenceRadius && y == InfluenceRadius || type == InfluenceType.None) continue;
+                    zones.Add(new InfluenceZone
                     {
-                        InfluenceType type = influenceGrid[x, y];
-                        if (x == 1 && y == 1 || type == InfluenceType.None) continue;
-
-                        relic.influenceZones.Add(new InfluenceZone
-                        {
-                            offset = new Vector2Int(x - 1, y - 1),
-                            type = type,
-                            levelAmount = influenceAmounts[x, y]
-                        });
-                    }
-                }
-            }
-            else
-            {
-                foreach (InfluenceZone defaultZone in RelicInfluencePolicy.GetDefaultZones(relic.rarity))
-                {
-                    int x = defaultZone.offset.x + 1;
-                    int y = defaultZone.offset.y + 1;
-                    relic.influenceZones.Add(new InfluenceZone
-                    {
-                        offset = defaultZone.offset,
-                        type = influenceGrid[x, y],
+                        offset = new Vector2Int(x - InfluenceRadius, y - InfluenceRadius),
+                        type = type,
                         levelAmount = influenceAmounts[x, y]
                     });
                 }
             }
+            if (!RelicInfluencePolicy.TryValidateInfluenceZones(zones, out string error))
+            {
+                EditorUtility.DisplayDialog("영향 범위 오류", error, "확인");
+                return false;
+            }
+            relic.influenceZones = zones;
             EditorUtility.SetDirty(relic);
+            return true;
         }
 
         private Vector2 detailScroll;
@@ -476,7 +474,7 @@ namespace Nytherion.Editor
             selectedRelic.rarity = (Rarity)EditorGUILayout.EnumPopup("Rarity", selectedRelic.rarity);
             if (selectedRelic.rarity != previousRarity)
             {
-                RelicInfluencePolicy.Normalize(selectedRelic);
+                if (!RelicInfluencePolicy.IsSpecialRelic(selectedRelic)) RelicInfluencePolicy.Normalize(selectedRelic);
                 LoadRelicToGrid(selectedRelic);
             }
             selectedRelic.level = EditorGUILayout.IntField("Level", selectedRelic.level);
@@ -515,84 +513,136 @@ namespace Nytherion.Editor
         private void DrawInfluenceGridEditor(RelicData targetRelic = null)
         {
             Rarity targetRarity = targetRelic != null ? targetRelic.rarity : rarity;
-            bool isSpecialRelic = targetRelic != null && RelicInfluencePolicy.IsSpecialRelic(targetRelic);
-            int zoneCount = isSpecialRelic
-                ? targetRelic.influenceZones.Count
-                : RelicInfluencePolicy.GetDefaultZones(targetRarity).Count;
+            bool custom = targetRelic != null
+                ? RelicInfluencePolicy.IsSpecialRelic(targetRelic)
+                : creationUsesCustomInfluence;
 
             EditorGUILayout.BeginVertical("box");
-            GUILayout.Label("Influence Zones (Rarity Policy)", EditorStyles.miniBoldLabel);
-            EditorGUILayout.HelpBox(
-                isSpecialRelic
-                    ? $"특수 유물: 고유 영향권 {zoneCount}칸을 유지합니다."
-                    : $"{targetRarity}: 레벨 업/다운을 포함한 {zoneCount}칸 고정. " +
-                      "레벨 업 수치는 등급에 따라 최대 +3까지 적용됩니다.",
-                MessageType.Info);
+            GUILayout.Label("유물 영향 범위", EditorStyles.miniBoldLabel);
+            bool newCustom = EditorGUILayout.Toggle("유물별 개별 설정", custom);
+            if (newCustom != custom)
+            {
+                if (targetRelic != null)
+                {
+                    Undo.RecordObject(targetRelic, "유물 영향 범위 변경");
+                    targetRelic.preserveCustomInfluenceZones = newCustom;
+                    if (!newCustom)
+                    {
+                        ResetInfluenceGrid(targetRarity);
+                        SyncGridToRelic(targetRelic);
+                    }
+                    EditorUtility.SetDirty(targetRelic);
+                }
+                else
+                {
+                    creationUsesCustomInfluence = newCustom;
+                    if (!newCustom) ResetInfluenceGrid(targetRarity);
+                }
+                custom = newCustom;
+            }
 
-            EditorGUILayout.Space(5);
+            if (targetRelic != null &&
+                !RelicInfluencePolicy.TryValidateInfluenceZones(targetRelic.influenceZones, out string validationError))
+            {
+                EditorGUILayout.HelpBox(validationError + " 기존 설정을 유지하고 있습니다. 범위를 초기화하거나 Inspector에서 수정해 주세요.", MessageType.Error);
+                if (GUILayout.Button("등급 기본 범위로 초기화"))
+                {
+                    Undo.RecordObject(targetRelic, "유물 영향 범위 초기화");
+                    targetRelic.preserveCustomInfluenceZones = true;
+                    ResetInfluenceGrid(targetRarity);
+                    SyncGridToRelic(targetRelic);
+                }
+                EditorGUILayout.EndVertical();
+                return;
+            }
+
+            EditorGUILayout.HelpBox(custom
+                ? "칸을 눌러 레벨 증가, 감소, 침묵, 비우기 순으로 변경합니다. 유물을 포함한 전체 범위는 최대 5×5입니다."
+                : "등급별 기본 범위를 사용합니다. 개별 설정을 켜면 범위를 직접 편집할 수 있습니다.", MessageType.Info);
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            
             EditorGUILayout.BeginVertical();
-            for (int y = 2; y >= 0; y--)
+            for (int y = InfluenceGridSize - 1; y >= 0; y--)
             {
                 EditorGUILayout.BeginHorizontal();
-                for (int x = 0; x < 3; x++)
+                for (int x = 0; x < InfluenceGridSize; x++)
                 {
-                    bool isCenter = (x == 1 && y == 1);
-                    
-                    if (isCenter)
+                    bool center = x == InfluenceRadius && y == InfluenceRadius;
+                    InfluenceType type = influenceGrid[x, y];
+                    if (center) GUI.backgroundColor = new Color(0.3f, 0.3f, 0.3f);
+                    else SetGridColor(type);
+                    bool allowed = custom && !center &&
+                        (type != InfluenceType.None || CanAddInfluenceCell(x, y));
+                    EditorGUI.BeginDisabledGroup(!allowed);
+                    string label = center ? "유물" : GetInfluenceLabel(type, influenceAmounts[x, y]);
+                    if (GUILayout.Button(label, GUILayout.Width(43), GUILayout.Height(32)))
                     {
-                        GUI.backgroundColor = new Color(0.3f, 0.3f, 0.3f);
-                        GUILayout.Button("RELIC", GUILayout.Width(60), GUILayout.Height(60));
-                    }
-                    else
-                    {
-                        Vector2Int offset = new Vector2Int(x - 1, y - 1);
-                        bool isAllowed = RelicInfluencePolicy.ContainsOffset(targetRelic, targetRarity, offset);
-                        InfluenceType type = influenceGrid[x, y];
-                        SetGridColor(type);
-
-                        string label = isAllowed ? GetInfluenceLabel(type, influenceAmounts[x, y]) : "-";
-                        EditorGUI.BeginDisabledGroup(!isAllowed);
-                        if (GUILayout.Button(label, GUILayout.Width(60), GUILayout.Height(60)))
+                        if (targetRelic != null)
                         {
-                            CycleInfluenceType(x, y, targetRelic != null && targetRelic.preserveCustomInfluenceZones);
-                            if (targetRelic != null) SyncGridToRelic(targetRelic);
+                            Undo.RecordObject(targetRelic, "유물 영향 칸 변경");
+                            targetRelic.preserveCustomInfluenceZones = true;
                         }
-                        EditorGUI.EndDisabledGroup();
+                        selectedInfluenceCell = new Vector2Int(x, y);
+                        CycleInfluenceType(x, y, true);
+                        if (targetRelic != null) SyncGridToRelic(targetRelic);
                     }
+                    EditorGUI.EndDisabledGroup();
                     GUI.backgroundColor = Color.white;
-                    if (x < 2) GUILayout.Space(2);
                 }
                 EditorGUILayout.EndHorizontal();
-                if (y > 0) GUILayout.Space(2);
             }
             EditorGUILayout.EndVertical();
-
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
-            
-            EditorGUILayout.Space(5);
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("등급 기본값", GUILayout.Width(100)))
+
+            int selectedX = selectedInfluenceCell.x;
+            int selectedY = selectedInfluenceCell.y;
+            if (custom && (influenceGrid[selectedX, selectedY] == InfluenceType.LevelUp ||
+                           influenceGrid[selectedX, selectedY] == InfluenceType.LevelDown))
             {
-                if (targetRelic == null)
+                int amount = EditorGUILayout.IntSlider("선택한 칸의 레벨 변동량", influenceAmounts[selectedX, selectedY], 1, 3);
+                if (amount != influenceAmounts[selectedX, selectedY])
                 {
-                    ResetInfluenceGrid(targetRarity);
+                    if (targetRelic != null)
+                    {
+                        Undo.RecordObject(targetRelic, "유물 영향 수치 변경");
+                        targetRelic.preserveCustomInfluenceZones = true;
+                    }
+                    influenceAmounts[selectedX, selectedY] = amount;
+                    if (targetRelic != null) SyncGridToRelic(targetRelic);
                 }
-                else if (!isSpecialRelic)
+            }
+
+            if (custom && GUILayout.Button("등급 기본 범위로 초기화"))
+            {
+                if (targetRelic != null)
                 {
-                    ResetInfluenceGrid(targetRarity);
+                    Undo.RecordObject(targetRelic, "유물 영향 범위 초기화");
+                    targetRelic.preserveCustomInfluenceZones = true;
                 }
+                ResetInfluenceGrid(targetRarity);
                 if (targetRelic != null) SyncGridToRelic(targetRelic);
             }
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
-            
             EditorGUILayout.EndVertical();
+        }
+
+        private bool CanAddInfluenceCell(int candidateX, int candidateY)
+        {
+            int minX = Mathf.Min(InfluenceRadius, candidateX);
+            int maxX = Mathf.Max(InfluenceRadius, candidateX);
+            int minY = Mathf.Min(InfluenceRadius, candidateY);
+            int maxY = Mathf.Max(InfluenceRadius, candidateY);
+            for (int x = 0; x < InfluenceGridSize; x++)
+                for (int y = 0; y < InfluenceGridSize; y++)
+                {
+                    if (influenceGrid[x, y] == InfluenceType.None) continue;
+                    minX = Mathf.Min(minX, x);
+                    maxX = Mathf.Max(maxX, x);
+                    minY = Mathf.Min(minY, y);
+                    maxY = Mathf.Max(maxY, y);
+                }
+            return maxX - minX <= 4 && maxY - minY <= 4;
         }
 
         private void SetGridColor(InfluenceType type)
@@ -659,17 +709,11 @@ namespace Nytherion.Editor
                 newData.effectModules = new List<Nytherion.Gameplay.Relics.Modules.RelicEffectModule>(creationData.effectModules);
             }
 
-            newData.influenceZones = new List<InfluenceZone>();
-            foreach (InfluenceZone defaultZone in RelicInfluencePolicy.GetDefaultZones(newData.rarity))
+            newData.preserveCustomInfluenceZones = creationUsesCustomInfluence;
+            if (!SyncGridToRelic(newData))
             {
-                int x = defaultZone.offset.x + 1;
-                int y = defaultZone.offset.y + 1;
-                newData.influenceZones.Add(new InfluenceZone
-                {
-                    offset = defaultZone.offset,
-                    type = influenceGrid[x, y],
-                    levelAmount = influenceAmounts[x, y]
-                });
+                DestroyImmediate(newData);
+                return;
             }
 
             // Automated Milestone Creation
@@ -721,6 +765,7 @@ namespace Nytherion.Editor
             relicImage = null;
             createMilestone = false;
             milestoneTitle = "유물 해금: ";
+            creationUsesCustomInfluence = false;
             ResetInfluenceGrid(rarity);
             InitializeCreationData(); 
         }
@@ -792,7 +837,8 @@ namespace Nytherion.Editor
                 "Synergy_Series_ID", "Unlock_Milestone_ID",
                 "Influence_Zones",
                 "Stat1_Type", "Stat1_Value", "Stat1_ValuePerLevel", "Stat1_IsPercentage",
-                "Stat2_Type", "Stat2_Value", "Stat2_ValuePerLevel", "Stat2_IsPercentage"
+                "Stat2_Type", "Stat2_Value", "Stat2_ValuePerLevel", "Stat2_IsPercentage",
+                "Custom_Influence_Zones"
             };
             List<string[]> rows = new List<string[]>();
 
@@ -807,7 +853,7 @@ namespace Nytherion.Editor
                     List<string> zoneStrings = new List<string>();
                     foreach (InfluenceZone zone in r.influenceZones)
                     {
-                        zoneStrings.Add($"{zone.offset.x},{zone.offset.y}:{zone.type}");
+                        zoneStrings.Add($"{zone.offset.x},{zone.offset.y}:{zone.type}:{zone.GetLevelAmount()}");
                     }
                     influenceZonesStr = string.Join(";", zoneStrings);
                 }
@@ -858,12 +904,58 @@ namespace Nytherion.Editor
                     stat2Type,
                     stat2Value,
                     stat2ValuePerLevel,
-                    stat2IsPercentage
+                    stat2IsPercentage,
+                    r.preserveCustomInfluenceZones.ToString()
                 });
             }
 
             DataSyncUtility.ExportToCSV(path, headers, rows);
             EditorUtility.DisplayDialog("Success", "Relics exported successfully!", "OK");
+        }
+
+        private static bool ImportInfluenceZones(Dictionary<string, string> entry, RelicData relic)
+        {
+            if (!entry.TryGetValue("Influence_Zones", out string zonesText)) return true;
+            List<InfluenceZone> zones = new List<InfluenceZone>();
+            if (!string.IsNullOrEmpty(zonesText))
+            {
+                foreach (string item in zonesText.Split(';'))
+                {
+                    if (string.IsNullOrEmpty(item)) continue;
+                    string[] parts = item.Split(':');
+                    string[] coords = parts[0].Split(',');
+                    if ((parts.Length != 2 && parts.Length != 3) || coords.Length != 2 ||
+                        !int.TryParse(coords[0], out int x) || !int.TryParse(coords[1], out int y) ||
+                        !System.Enum.TryParse(parts[1], out InfluenceType type) || !System.Enum.IsDefined(typeof(InfluenceType), type))
+                    {
+                        Debug.LogWarning($"[RelicManager] {relic.relicName}: 잘못된 영향 칸 '{item}' 때문에 기존 범위를 유지합니다.");
+                        return false;
+                    }
+                    int amount = 1;
+                    if (parts.Length == 3 && (!int.TryParse(parts[2], out amount) || amount < 1 || amount > 3))
+                    {
+                        Debug.LogWarning($"[RelicManager] {relic.relicName}: 잘못된 영향 수치 '{item}' 때문에 기존 범위를 유지합니다.");
+                        return false;
+                    }
+                    zones.Add(new InfluenceZone { offset = new Vector2Int(x, y), type = type, levelAmount = amount });
+                }
+            }
+
+            if (!RelicInfluencePolicy.TryValidateInfluenceZones(zones, out string error))
+            {
+                Debug.LogWarning($"[RelicManager] {relic.relicName}: 영향 범위를 가져오지 않았습니다. {error}");
+                return false;
+            }
+            bool custom = relic.preserveCustomInfluenceZones;
+            if (entry.TryGetValue("Custom_Influence_Zones", out string customText) &&
+                !string.IsNullOrEmpty(customText) && !bool.TryParse(customText, out custom))
+            {
+                Debug.LogWarning($"[RelicManager] {relic.relicName}: 잘못된 개별 설정 값 때문에 기존 범위를 유지합니다.");
+                return false;
+            }
+            relic.influenceZones = zones;
+            relic.preserveCustomInfluenceZones = custom;
+            return true;
         }
 
         private void ImportCSV()
@@ -909,43 +1001,8 @@ namespace Nytherion.Editor
                 if (entry.ContainsKey("Synergy_Series_ID")) relic.synergySeriesId = entry["Synergy_Series_ID"];
                 if (entry.ContainsKey("Unlock_Milestone_ID")) relic.unlockMilestoneID = entry["Unlock_Milestone_ID"];
 
-                if (entry.ContainsKey("Influence_Zones"))
-                {
-                    if (relic.influenceZones == null)
-                    {
-                        relic.influenceZones = new List<InfluenceZone>();
-                    }
-                    relic.influenceZones.Clear();
-
-                    string zonesStr = entry["Influence_Zones"];
-                    if (!string.IsNullOrEmpty(zonesStr))
-                    {
-                        string[] zoneEntries = zonesStr.Split(';');
-                        foreach (string entryStr in zoneEntries)
-                        {
-                            if (string.IsNullOrEmpty(entryStr)) continue;
-                            string[] parts = entryStr.Split(':');
-                            if (parts.Length != 2) continue;
-
-                            string[] coords = parts[0].Split(',');
-                            if (coords.Length != 2) continue;
-
-                            if (int.TryParse(coords[0], out int offsetX) && int.TryParse(coords[1], out int offsetY))
-                            {
-                                if (System.Enum.TryParse(parts[1], out InfluenceType infType))
-                                {
-                                    relic.influenceZones.Add(new InfluenceZone
-                                    {
-                                        offset = new Vector2Int(offsetX, offsetY),
-                                        type = infType
-                                    });
-                                }
-                            }
-                        }
-                    }
-                }
-
-                RelicInfluencePolicy.Normalize(relic);
+                if (ImportInfluenceZones(entry, relic))
+                    RelicInfluencePolicy.Normalize(relic);
 
                 if (relic is SimpleStatRelicData simpleRelic)
                 {
@@ -1104,43 +1161,8 @@ namespace Nytherion.Editor
                 if (entry.ContainsKey("Synergy_Series_ID")) relic.synergySeriesId = entry["Synergy_Series_ID"];
                 if (entry.ContainsKey("Unlock_Milestone_ID")) relic.unlockMilestoneID = entry["Unlock_Milestone_ID"];
 
-                if (entry.ContainsKey("Influence_Zones"))
-                {
-                    if (relic.influenceZones == null)
-                    {
-                        relic.influenceZones = new List<InfluenceZone>();
-                    }
-                    relic.influenceZones.Clear();
-
-                    string zonesStr = entry["Influence_Zones"];
-                    if (!string.IsNullOrEmpty(zonesStr))
-                    {
-                        string[] zoneEntries = zonesStr.Split(';');
-                        foreach (string entryStr in zoneEntries)
-                        {
-                            if (string.IsNullOrEmpty(entryStr)) continue;
-                            string[] parts = entryStr.Split(':');
-                            if (parts.Length != 2) continue;
-
-                            string[] coords = parts[0].Split(',');
-                            if (coords.Length != 2) continue;
-
-                            if (int.TryParse(coords[0], out int offsetX) && int.TryParse(coords[1], out int offsetY))
-                            {
-                                if (System.Enum.TryParse(parts[1], out InfluenceType infType))
-                                {
-                                    relic.influenceZones.Add(new InfluenceZone
-                                    {
-                                        offset = new Vector2Int(offsetX, offsetY),
-                                        type = infType
-                                    });
-                                }
-                            }
-                        }
-                    }
-                }
-
-                RelicInfluencePolicy.Normalize(relic);
+                if (ImportInfluenceZones(entry, relic))
+                    RelicInfluencePolicy.Normalize(relic);
 
                 if (relic is SimpleStatRelicData simpleRelic)
                 {

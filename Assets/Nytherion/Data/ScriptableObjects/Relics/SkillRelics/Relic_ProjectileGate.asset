@@ -35,15 +35,16 @@ MonoBehaviour:
   - offset: {x: 0, y: 1}
     type: 1
     levelAmount: 1
-  - offset: {x: 1, y: 0}
+  - offset: {x: 0, y: 2}
     type: 1
     levelAmount: 1
-  - offset: {x: 0, y: -1}
+  - offset: {x: 0, y: 3}
     type: 2
     levelAmount: 1
-  - offset: {x: -1, y: 0}
+  - offset: {x: 0, y: 4}
     type: 2
     levelAmount: 1
+  preserveCustomInfluenceZones: 1
   synergySeriesId: 
   synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
