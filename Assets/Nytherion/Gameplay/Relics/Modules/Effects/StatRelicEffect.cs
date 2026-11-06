@@ -40,7 +40,6 @@ namespace Nytherion.Gameplay.Relics.Modules
                 playerManager.AddTemporaryStatModifier(scaledModifier);
             }
             
-            Debug.Log($"[StatRelicEffect] 스탯 변경 효과가 레벨 {level} 스케일링으로 적용되었습니다.");
         }
 
         public override void RemoveEffect(PlayerManager playerManager, int level)
@@ -53,7 +52,6 @@ namespace Nytherion.Gameplay.Relics.Modules
             }
             
             appliedModifiers.Clear();
-            Debug.Log($"[StatRelicEffect] 스탯 변경 효과가 해제되었습니다.");
         }
     }
 }

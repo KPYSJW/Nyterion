@@ -31,7 +31,6 @@ namespace Nytherion.GamePlay.Skills
         private Transform target;
         private ContactFilter2D enemyFilter;
         private float expiresAt;
-        private float explosionEndsAt;
         private bool hasExploded;
         private bool isJumping;
         private Vector2 jumpDirection;
@@ -77,7 +76,6 @@ namespace Nytherion.GamePlay.Skills
             target = null;
             targetCollider = null;
             expiresAt = Time.time + Mathf.Max(0.01f, data.lifetime);
-            explosionEndsAt = 0f;
             body.simulated = false;
             body.velocity = Vector2.zero;
             transform.SetPositionAndRotation(position, Quaternion.identity);

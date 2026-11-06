@@ -96,6 +96,10 @@ namespace Nytherion.Core.Managers
             playerActions.Player.Skill_E.performed += ctx => TriggerSkillInput(2);
             playerActions.Player.Skill_R.performed += ctx => TriggerSkillInput(1);
 
+            playerActions.Player.QuickSlot_1.performed += ctx => onQuickSlotInput?.Invoke(1);
+            playerActions.Player.QuickSlot_2.performed += ctx => onQuickSlotInput?.Invoke(2);
+            playerActions.Player.QuickSlot_3.performed += ctx => onQuickSlotInput?.Invoke(3);
+
             playerActions.Player.Progression.performed += ctx => onToggleProgressionUI?.Invoke();
 
 

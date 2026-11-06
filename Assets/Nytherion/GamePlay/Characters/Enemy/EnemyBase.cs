@@ -341,7 +341,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             float totalDuration = Mathf.Max(0f, hitFlashDuration);
             float holdDuration = Mathf.Min(totalDuration, Mathf.Max(0f, hitFlashHoldDuration));
-            Color baseColor = GetCurrentBaseColor();
+            Color baseColor = originalColor;
             spriteRenderer.color = baseColor;
             bool useFlashMaterial = TryApplyHitFlashMaterial();
             float elapsed = 0f;
@@ -363,7 +363,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
 
             RestoreHitFlashMaterial();
-            spriteRenderer.color = GetCurrentBaseColor();
+            spriteRenderer.color = originalColor;
             hitFlashCoroutine = null;
         }
 

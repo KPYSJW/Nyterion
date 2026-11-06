@@ -25,7 +25,7 @@ namespace Nytherion.UI.RelicBoard
         private bool[] replacedPanelStates;
         private RelicManager manager;
         private CurrencyDataManager currency;
-        private AudioManager audio;
+        private AudioManager audioManager;
         private RelicGridUI gridUI;
         private RelicTooltip tooltip;
         public bool IsOpen { get; private set; }
@@ -38,7 +38,7 @@ namespace Nytherion.UI.RelicBoard
             this.manager = manager;
             this.currency = currency;
             this.gridUI = gridUI;
-            this.audio = audio;
+            audioManager = audio;
             this.tooltip = tooltip;
             dismantleButton.onClick.RemoveListener(Dismantle);
             dismantleButton.onClick.AddListener(Dismantle);
@@ -70,7 +70,7 @@ namespace Nytherion.UI.RelicBoard
             gameObject.SetActive(true);
             Refresh();
             tooltip?.Hide();
-            audio?.RequestUISound(UISoundType.Open);
+            audioManager?.RequestUISound(UISoundType.Open);
         }
 
         public void Close()
@@ -83,7 +83,7 @@ namespace Nytherion.UI.RelicBoard
                 if (replacedPanels[i] != null) replacedPanels[i].SetActive(replacedPanelStates[i]);
             gridUI?.SetRelicCountHiddenForDismantle(false);
             tooltip?.Hide();
-            audio?.RequestUISound(UISoundType.Close);
+            audioManager?.RequestUISound(UISoundType.Close);
         }
 
         public bool TryStage(RelicBlock block)
@@ -91,7 +91,7 @@ namespace Nytherion.UI.RelicBoard
             if (!IsOpen) return false;
             bool added = manager.StageForDismantle(block);
             tooltip?.Hide();
-            audio?.RequestUISound(added ? UISoundType.Place : UISoundType.Error);
+            audioManager?.RequestUISound(added ? UISoundType.Place : UISoundType.Error);
             return added;
         }
 
@@ -100,7 +100,7 @@ namespace Nytherion.UI.RelicBoard
             if (!IsOpen) return;
             bool removed = manager.UnstageForDismantle(block);
             tooltip?.Hide();
-            audio?.RequestUISound(removed ? UISoundType.Place : UISoundType.Error);
+            audioManager?.RequestUISound(removed ? UISoundType.Place : UISoundType.Error);
         }
 
         public void ResetItems()
@@ -108,7 +108,7 @@ namespace Nytherion.UI.RelicBoard
             if (!IsOpen) return;
             manager.ResetDismantle();
             tooltip?.Hide();
-            audio?.RequestUISound(UISoundType.Place);
+            audioManager?.RequestUISound(UISoundType.Place);
         }
 
         public void Dismantle()
@@ -116,7 +116,7 @@ namespace Nytherion.UI.RelicBoard
             if (!IsOpen) return;
             bool success = manager.DismantleRelics(currency);
             tooltip?.Hide();
-            audio?.RequestUISound(success ? UISoundType.ShopTransaction : UISoundType.Error);
+            audioManager?.RequestUISound(success ? UISoundType.ShopTransaction : UISoundType.Error);
         }
 
         public void StageByRarity()
@@ -124,7 +124,7 @@ namespace Nytherion.UI.RelicBoard
             if (!IsOpen) return;
             int added = manager.StageForDismantleUpToRarity((Rarity)maxRarityDropdown.value);
             tooltip?.Hide();
-            audio?.RequestUISound(added > 0 ? UISoundType.Place : UISoundType.Error);
+            audioManager?.RequestUISound(added > 0 ? UISoundType.Place : UISoundType.Error);
         }
 
         private void OnRarityChanged(int _) => Refresh();
