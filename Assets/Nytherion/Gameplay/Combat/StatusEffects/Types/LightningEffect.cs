@@ -11,7 +11,7 @@ namespace Nytherion.GamePlay.Combat
             Duration = duration;
         }
 
-        public override void OnApply() { }
+        public override void OnApply() => manager?.PlayShockStatusVFX();
         public override void OnUpdate(float deltaTime) { }
         public override void OnRemove() => manager?.StopVFX(EffectId);
 

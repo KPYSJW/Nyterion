@@ -25,12 +25,16 @@ namespace Nytherion.GamePlay.Characters.Companions
         [Header("추적")]
         [SerializeField] private float followOffsetX = 1.2f;
         [SerializeField] private float followOffsetY = 0.6f;
+        [Tooltip("방향별 뒤쪽 위치를 맞추지 않고 플레이어와의 거리만 유지하며 따라갑니다.")]
+        [SerializeField] private bool followOwnerDirectly;
         [SerializeField] private float wakeupDistance = 1f;
         [SerializeField] private float stopRadius = 0.5f;
         [SerializeField] private float leashRange = 36f;
         [SerializeField] private float minMoveSpeed = 4f;
         [SerializeField] private float maxMoveSpeed = 5f;
         [SerializeField] private float acceleration = 12f;
+        [Tooltip("거리와 가속도에 관계없이 maxMoveSpeed의 일정한 속도로 추적합니다.")]
+        [SerializeField] private bool useConstantMoveSpeed;
 
         [Header("공격")]
         [SerializeField] private float attackRange = 5f;
@@ -59,6 +63,7 @@ namespace Nytherion.GamePlay.Characters.Companions
         [SerializeField] private string alternateAttackTriggerParam = "Attack2";
 
         protected static readonly Collider2D[] EnemyBuffer = new Collider2D[20];
+        private const float ConstantMovementStopTolerance = 0.01f;
 
         protected Transform owner;
         protected PlayerManager ownerManager;
@@ -82,6 +87,9 @@ namespace Nytherion.GamePlay.Characters.Companions
         protected float nextAttackTime;
         private float nextJumpTime;
         private Vector3 targetPosition;
+        private float movementStopDistance;
+        private float followSide = -1f;
+        private float lastFollowOwnerX;
         protected Vector3 lastPlayerAttackPosition;
         protected float lastPlayerAttackTime = float.NegativeInfinity;
         protected Transform defensiveTarget;
@@ -119,6 +127,9 @@ namespace Nytherion.GamePlay.Characters.Companions
 
             CacheComponents();
             EnsureRigidbody();
+            PlayerController playerController = owner.GetComponent<PlayerController>();
+            followSide = playerController == null || playerController.IsFacingRight ? -1f : 1f;
+            lastFollowOwnerX = owner.position.x;
             transform.SetParent(null, true);
             transform.position = owner.position + GetFollowOffset();
             companionRigidbody.position = transform.position;
@@ -169,6 +180,7 @@ namespace Nytherion.GamePlay.Characters.Companions
                 attackFreezeTimer -= Time.deltaTime;
             }
 
+            UpdateFollowSide();
             float distanceToOwner = Vector2.Distance(transform.position, owner.position);
             if (distanceToOwner > leashRange)
             {
@@ -223,20 +235,38 @@ namespace Nytherion.GamePlay.Characters.Companions
                 return;
             }
 
-            Vector2 direction = targetPosition - transform.position;
+            // 일정 속도 이동은 보간된 표시 좌표 대신 물리 좌표를 기준으로 계산합니다.
+            Vector2 movementPosition = useConstantMoveSpeed
+                ? companionRigidbody.position
+                : (Vector2)transform.position;
+            Vector2 direction = (Vector2)targetPosition - movementPosition;
             float distance = direction.magnitude;
-            if (distance <= stopRadius)
+            float stoppingDistance = useConstantMoveSpeed ? movementStopDistance : stopRadius;
+            float stopTolerance = useConstantMoveSpeed ? ConstantMovementStopTolerance : 0f;
+            if (distance <= stoppingDistance + stopTolerance)
             {
                 companionRigidbody.velocity = Vector2.zero;
                 currentSpeed = 0f;
+                SetMoving(false);
                 return;
             }
 
-            float desiredSpeed = Mathf.Clamp(
-                distance * maxMoveSpeed / Mathf.Max(0.01f, wakeupDistance),
-                minMoveSpeed,
-                maxMoveSpeed);
-            currentSpeed = Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.fixedDeltaTime);
+            if (useConstantMoveSpeed)
+            {
+                currentSpeed = Mathf.Max(0f, maxMoveSpeed);
+                // 마지막 이동량만 제한해 정지 경계를 왕복하지 않도록 합니다.
+                float step = Mathf.Min(currentSpeed * Time.fixedDeltaTime, distance - stoppingDistance);
+                companionRigidbody.MovePosition(movementPosition + direction.normalized * step);
+                return;
+            }
+            else
+            {
+                float desiredSpeed = Mathf.Clamp(
+                    distance * maxMoveSpeed / Mathf.Max(0.01f, wakeupDistance),
+                    minMoveSpeed,
+                    maxMoveSpeed);
+                currentSpeed = Mathf.MoveTowards(currentSpeed, desiredSpeed, acceleration * Time.fixedDeltaTime);
+            }
             companionRigidbody.velocity = direction.normalized * currentSpeed;
         }
 
@@ -273,18 +303,25 @@ namespace Nytherion.GamePlay.Characters.Companions
             companionRigidbody.interpolation = RigidbodyInterpolation2D.Interpolate;
         }
 
-        private Vector3 GetFollowOffset()
+        private void UpdateFollowSide()
         {
-            PlayerController playerController = owner != null ? owner.GetComponent<PlayerController>() : null;
-            bool isFacingRight = playerController == null || playerController.IsFacingRight;
-            float side = isFacingRight ? -1f : 1f;
-
-            if (playerController != null && Mathf.Abs(playerController.MoveInput.x) > 0.1f)
+            if (followOwnerDirectly)
             {
-                side = playerController.MoveInput.x > 0f ? -1f : 1f;
+                return;
             }
 
-            return new Vector3(side * followOffsetX, followOffsetY, 0f);
+            // 제자리 방향 전환은 무시하고 실제 좌우 이동이 있을 때만 추적 위치를 바꿉니다.
+            float horizontalMovement = owner.position.x - lastFollowOwnerX;
+            if (Mathf.Abs(horizontalMovement) > 0.01f)
+            {
+                followSide = horizontalMovement > 0f ? -1f : 1f;
+                lastFollowOwnerX = owner.position.x;
+            }
+        }
+
+        private Vector3 GetFollowOffset()
+        {
+            return new Vector3(followSide * followOffsetX, followOffsetY, 0f);
         }
 
         private void TeleportToOwner()
@@ -300,26 +337,26 @@ namespace Nytherion.GamePlay.Characters.Companions
         {
             float distanceToTarget;
             bool shouldMove;
+            Vector2 movementPosition = useConstantMoveSpeed && companionRigidbody != null
+                ? companionRigidbody.position
+                : (Vector2)transform.position;
+            // 정지 경계의 부동소수점 오차로 Walk 상태만 유지되지 않도록 합니다.
+            float stopTolerance = useConstantMoveSpeed ? ConstantMovementStopTolerance : 0f;
 
             if (ShouldPursueCombatTarget && combatTarget != null)
             {
                 targetPosition = combatTarget.position;
-                distanceToTarget = Vector2.Distance(transform.position, targetPosition);
-                shouldMove = distanceToTarget > CombatApproachDistance;
-                if (isMoving && distanceToTarget <= CombatStopDistance)
-                {
-                    shouldMove = false;
-                }
+                distanceToTarget = Vector2.Distance(movementPosition, targetPosition);
+                movementStopDistance = Mathf.Max(0f, CombatStopDistance);
+                shouldMove = distanceToTarget > (isMoving ? CombatStopDistance : CombatApproachDistance) + stopTolerance;
             }
             else
             {
-                targetPosition = owner.position + GetFollowOffset();
-                distanceToTarget = Vector2.Distance(transform.position, targetPosition);
-                shouldMove = distanceToTarget > wakeupDistance;
-                if (isMoving && distanceToTarget <= stopRadius)
-                {
-                    shouldMove = false;
-                }
+                // 방향 전환 시 플레이어 반대편으로 자리를 옮기지 않고 현재 위치에서 추적합니다.
+                targetPosition = followOwnerDirectly ? owner.position : owner.position + GetFollowOffset();
+                distanceToTarget = Vector2.Distance(movementPosition, targetPosition);
+                movementStopDistance = Mathf.Max(0f, stopRadius);
+                shouldMove = distanceToTarget > (isMoving ? stopRadius : wakeupDistance) + stopTolerance;
             }
 
             SetMoving(shouldMove && attackFreezeTimer <= 0f);
@@ -411,6 +448,10 @@ namespace Nytherion.GamePlay.Characters.Companions
             {
                 // 플레이어를 따라 이동 중이어도 감지한 적을 계속 바라봅니다.
                 horizontalDifference = combatTarget.position.x - transform.position.x;
+            }
+            else if (useConstantMoveSpeed && isMoving && companionRigidbody != null)
+            {
+                horizontalDifference = targetPosition.x - companionRigidbody.position.x;
             }
             else
             {

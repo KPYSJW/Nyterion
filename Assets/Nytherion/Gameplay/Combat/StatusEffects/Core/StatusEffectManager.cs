@@ -18,6 +18,7 @@ namespace Nytherion.GamePlay.Combat
         private PlayerManager playerManager;
         private BurnTickVFX burnTickVFX;
         private ShockPulseVFX shockPulseVFX;
+        private ShockStatusVFX shockStatusVFX;
         private ChillSnowVFX chillSnowVFX;
         private PoisonCloudVFX poisonCloudVFX;
         private CurseAuraVFX curseAuraVFX;
@@ -180,6 +181,7 @@ namespace Nytherion.GamePlay.Combat
             if (effectId == "Poison" && poisonCloudVFX != null) poisonCloudVFX.Stop();
             if (effectId == "Ice" && chillSnowVFX != null) chillSnowVFX.Stop();
             if (effectId == "Lightning" && shockPulseVFX != null) shockPulseVFX.Stop();
+            if (effectId == "Lightning" && shockStatusVFX != null) shockStatusVFX.Stop();
             if (effectId == "Fire" && burnTickVFX != null) burnTickVFX.Stop();
             // 속성 이펙트 정지 비활성화
             /*
@@ -270,6 +272,16 @@ namespace Nytherion.GamePlay.Combat
             if (body == null || body.sprite == null) return;
             if (shockPulseVFX == null) shockPulseVFX = Instantiate(database.shockPulsePrefab, transform);
             shockPulseVFX.Play(body);
+        }
+
+        public void PlayShockStatusVFX()
+        {
+            if (owner == null || owner.isDead || !gameObject.activeInHierarchy ||
+                database == null || database.shockStatusPrefab == null) return;
+            SpriteRenderer body = owner.BodyRenderer;
+            if (body == null || body.sprite == null) return;
+            if (shockStatusVFX == null) shockStatusVFX = Instantiate(database.shockStatusPrefab, transform);
+            shockStatusVFX.Play(body);
         }
 
         public void ApplyEffect(StatusEffect newEffect)

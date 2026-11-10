@@ -7,6 +7,7 @@ using VContainer;
 using VContainer.Unity;
 using Nytherion.Core.Enums;
 using Nytherion.UI.Components;
+using TMPro;
 
 namespace Nytherion.UI.Skill
 {
@@ -16,6 +17,9 @@ namespace Nytherion.UI.Skill
     public class SkillUIController : UIPanelBase, IInitializable
     {
         public const float StorageSlotSize = 128f;
+        public const int StorageColumns = 4;
+        public const int StorageRows = 4;
+        public const int StorageSlotsPerPage = StorageColumns * StorageRows;
 
         protected override bool UsesBookOpenSound => true;
         [Header("Toggle Settings")]
@@ -35,6 +39,13 @@ namespace Nytherion.UI.Skill
 
         [Tooltip("보관함에 생성할 최대 슬롯 개수")]
         [SerializeField] private int maxStorageSlots = 20;
+
+        private Button previousPageButton;
+        private Button nextPageButton;
+        private TMP_Text pageText;
+        private Button storageSortButton;
+        private int storagePage;
+        private int storagePageCount = 1;
 
 
         private InputManager inputManager;
@@ -78,6 +89,10 @@ namespace Nytherion.UI.Skill
             this.storageDropArea = uiRefs.storageDropArea;
             this.storageContent = uiRefs.storageContent;
             this.equipSlots = uiRefs.equipSlots;
+            previousPageButton = uiRefs.SkillPreviousPageButton;
+            nextPageButton = uiRefs.SkillNextPageButton;
+            pageText = uiRefs.SkillPageText;
+            storageSortButton = uiRefs.SkillStorageSortButton;
             if (cooldownHUD == null && cooldownHUDPrefab != null)
             {
                 cooldownHUD = Instantiate(cooldownHUDPrefab);
@@ -125,6 +140,9 @@ namespace Nytherion.UI.Skill
             isInitialized = true;
             // 보관함 슬롯 UI 객체들을 미리 생성
             InitializeStorageSlots();
+            if (previousPageButton != null) previousPageButton.onClick.AddListener(ShowPreviousStoragePage);
+            if (nextPageButton != null) nextPageButton.onClick.AddListener(ShowNextStoragePage);
+            if (storageSortButton != null) storageSortButton.onClick.AddListener(SortStorage);
 
             // 장착 슬롯에 상호작용 이벤트 등록
             foreach (var slot in equipSlots)
@@ -159,6 +177,9 @@ namespace Nytherion.UI.Skill
         }
         private void OnDestroy()
         {
+            if (previousPageButton != null) previousPageButton.onClick.RemoveListener(ShowPreviousStoragePage);
+            if (nextPageButton != null) nextPageButton.onClick.RemoveListener(ShowNextStoragePage);
+            if (storageSortButton != null) storageSortButton.onClick.RemoveListener(SortStorage);
             if (ownsSkillTooltip && skillTooltip != null) Destroy(skillTooltip.gameObject);
             if (cooldownHUD != null) Destroy(cooldownHUD.gameObject);
             // 메모리 누수 방지를 위해 객체 파괴 시 모든 이벤트 구독 해제
@@ -241,12 +262,19 @@ namespace Nytherion.UI.Skill
         private void InitializeStorageSlots()
         {
             GridLayoutGroup layout = storageContent.GetComponent<GridLayoutGroup>();
-            if (layout != null) layout.cellSize = Vector2.one * StorageSlotSize;
+            if (layout != null)
+            {
+                layout.cellSize = Vector2.one * StorageSlotSize;
+                layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+                layout.constraintCount = StorageColumns;
+            }
             EnsureStorageSlots(Mathf.Max(maxStorageSlots, skillDataManager.storageSkills.Length));
         }
 
         private void EnsureStorageSlots(int requiredSlots)
         {
+            requiredSlots = Mathf.Max(StorageSlotsPerPage,
+                Mathf.CeilToInt(requiredSlots / (float)StorageSlotsPerPage) * StorageSlotsPerPage);
             int currentCount = storageSlots?.Length ?? 0;
             if (requiredSlots <= currentCount) return;
 
@@ -301,6 +329,75 @@ namespace Nytherion.UI.Skill
                     if (skillDataManager.storageSkills[i] != null) storageCount++;
                 }
                 else storageSlots[i].Setup(null, skillDataManager, skillTooltip);
+            }
+            UpdateStoragePagination();
+        }
+
+        private void ShowPreviousStoragePage() => ChangeStoragePage(-1);
+        private void ShowNextStoragePage() => ChangeStoragePage(1);
+
+        public void SortStorage()
+        {
+            if (skillDataManager == null) return;
+            if (equipSlots != null)
+                foreach (var slot in equipSlots) slot?.CancelDrag();
+            if (storageSlots != null)
+                foreach (var slot in storageSlots) slot?.CancelDrag();
+            skillTooltip?.Hide();
+            storagePage = 0;
+            skillDataManager.SortStorageSkills();
+            saveLoadManager?.SaveGame();
+            PlayUISound(UISoundType.Click);
+        }
+
+        public void ChangeStoragePage(int direction)
+        {
+            int nextPage = Mathf.Clamp(storagePage + direction, 0, storagePageCount - 1);
+            if (nextPage == storagePage) return;
+            // 페이지 전환 전에 캔버스로 옮긴 드래그 아이콘과 툴팁을 정리한다.
+            if (equipSlots != null)
+                foreach (var slot in equipSlots) slot?.CancelDrag();
+            if (storageSlots != null)
+                foreach (var slot in storageSlots) slot?.CancelDrag();
+            skillTooltip?.Hide();
+            storagePage = nextPage;
+            UpdateStoragePagination();
+            PlayUISound(UISoundType.Click);
+        }
+
+        private void UpdateStoragePagination()
+        {
+            if (storageSlots == null) return;
+            int occupiedRange = 0;
+            int occupiedCount = 0;
+            for (int i = 0; i < storageSlots.Length; i++)
+            {
+                if (storageSlots[i].GetSkill() == null) continue;
+                occupiedRange = i + 1;
+                occupiedCount++;
+            }
+            if (storageSortButton != null) storageSortButton.interactable = occupiedCount > 1;
+
+            storagePageCount = Mathf.Max(1, Mathf.CeilToInt(occupiedRange / (float)StorageSlotsPerPage));
+            storagePage = Mathf.Clamp(storagePage, 0, storagePageCount - 1);
+            int firstIndex = storagePage * StorageSlotsPerPage;
+            for (int i = 0; i < storageSlots.Length; i++)
+                storageSlots[i].gameObject.SetActive(i >= firstIndex && i < firstIndex + StorageSlotsPerPage);
+
+            if (previousPageButton != null)
+            {
+                previousPageButton.gameObject.SetActive(storagePageCount > 1);
+                previousPageButton.interactable = storagePage > 0;
+            }
+            if (nextPageButton != null)
+            {
+                nextPageButton.gameObject.SetActive(storagePageCount > 1);
+                nextPageButton.interactable = storagePage + 1 < storagePageCount;
+            }
+            if (pageText != null)
+            {
+                pageText.gameObject.SetActive(storagePageCount > 1);
+                pageText.text = $"{storagePage + 1}/{storagePageCount}";
             }
         }
 

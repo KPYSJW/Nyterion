@@ -99,16 +99,17 @@ namespace Nytherion.Core.Data
         {
             AudioListener.volume = GetMasterVolume(AudioListener.volume);
 
-            bool hasResolution = TryGetResolution(out int width, out int height);
-            bool hasFullscreenSetting = PlayerPrefs.HasKey(FullscreenKey);
-            if (hasResolution)
+#if UNITY_EDITOR
+            // 에디터 검증은 UI 기준 해상도에서 시작하고 저장된 사용자 설정은 보존합니다.
+            ApplyDisplaySettings(1920, 1080, GetFullscreen(Screen.fullScreen));
+#else
+            if (!TryGetResolution(out int width, out int height))
             {
-                ApplyDisplaySettings(width, height, GetFullscreen(Screen.fullScreen));
+                width = 1920;
+                height = 1080;
             }
-            else if (hasFullscreenSetting)
-            {
-                ApplyDisplaySettings(Screen.width, Screen.height, GetFullscreen(Screen.fullScreen));
-            }
+            ApplyDisplaySettings(width, height, GetFullscreen(Screen.fullScreen));
+#endif
         }
 
         /// <summary>해상도와 화면 모드를 함께 적용해 연속 변경 시에도 선택값을 유지합니다.</summary>

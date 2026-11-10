@@ -24,6 +24,7 @@ namespace Nytherion.Editor
         public const string DummyPath = "Assets/Prefabs/Gameplay/Skills/DecoyDummy.prefab";
         public const string SkillPath = "Assets/Prefabs/Gameplay/Skills/DecoySkill.prefab";
         public const string SheetPath = "Assets/Nytherion/Art/Skills/Sprites/Decoy/DecoySummon_Sheet.png";
+        public const string DummySpritePath = "Assets/Nytherion/Art/Skills/Sprites/Decoy/DecoyDummy.png";
         public const string RelicPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Relic_Decoy.asset";
         private const string DataRoot = "Assets/Nytherion/Data/ScriptableObjects/";
         public const string Output = "output/decoy";
@@ -62,8 +63,7 @@ namespace Nytherion.Editor
                     AssetDatabase.CreateAsset(data, DataPath);
                 }
                 data.summonFrames = frames;
-                GameObject player = Require<GameObject>("Assets/Prefabs/Gameplay/Characters/Player/Player.prefab");
-                data.dummySprite = player.GetComponent<SpriteRenderer>().sprite;
+                data.dummySprite = Require<Sprite>(DummySpritePath);
                 data.icon = frames[0];
                 GameObject dummy = AssetDatabase.LoadAssetAtPath<GameObject>(DummyPath);
                 if (dummy == null) dummy = CreatePrefab(false, data);
@@ -137,7 +137,7 @@ namespace Nytherion.Editor
                 {
                     root.AddComponent<DecoyDummy>();
                     root.GetComponent<SpriteRenderer>().sprite = data.dummySprite;
-                    root.GetComponent<SpriteRenderer>().color = new Color(0.65f, 0.9f, 1f, 1f);
+                    root.GetComponent<SpriteRenderer>().color = Color.white;
                     root.GetComponent<SpriteRenderer>().sortingOrder = 2;
                     CircleCollider2D body = root.GetComponent<CircleCollider2D>();
                     body.radius = data.collisionRadius;

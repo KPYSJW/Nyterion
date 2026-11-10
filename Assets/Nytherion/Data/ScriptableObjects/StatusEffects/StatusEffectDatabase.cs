@@ -33,6 +33,7 @@ namespace Nytherion.Data.ScriptableObjects
         public GameObject darknessEffectPrefab;
 
         [Header("감전 이펙트")]
+        public Nytherion.GamePlay.Combat.ShockStatusVFX shockStatusPrefab;
         public Nytherion.GamePlay.Combat.ShockPulseVFX shockPulsePrefab;
         [Min(0f)] public float lightningBonusDamageRatio = 0.3f;
 

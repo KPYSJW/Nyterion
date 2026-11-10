@@ -20,7 +20,7 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         public float dropHorizontalOffset = -6f;
         [Min(0.01f)] public float fallSpeed = 20f;
         [Tooltip("착탄 후 폭발만 세로로 보정합니다. 양수는 아래, 음수는 위로 이동하며 낙하 경로에는 영향을 주지 않습니다.")]
-        public float explosionYOffset = 0.4f;
+        public float explosionYOffset = 0.5f;
         public MeteorStrikeImpact impactPrefab;
 
         public float GetDamage(int level) => Mathf.Max(0f, damage + Mathf.Max(0f, damagePerLevel) * Mathf.Max(0, level - 1));

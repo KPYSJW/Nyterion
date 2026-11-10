@@ -23,6 +23,13 @@ namespace Nytherion.Editor
         private static void Update()
         {
             if (!EditorApplication.isCompiling && !EditorApplication.isUpdating &&
+                !EditorApplication.isPlayingOrWillChangePlaymode && File.Exists(Output + "/verify.request"))
+            {
+                File.Delete(Output + "/verify.request");
+                VerifyOnly();
+                return;
+            }
+            if (!EditorApplication.isCompiling && !EditorApplication.isUpdating &&
                 !EditorApplication.isPlayingOrWillChangePlaymode && File.Exists(Output + "/align.request"))
             {
                 File.Delete(Output + "/align.request");
@@ -213,9 +220,29 @@ namespace Nytherion.Editor
             return AssetDatabase.LoadAssetAtPath<Sprite>(path);
         }
 
+        [MenuItem("Tools/Nytherion/Player/마나 테스트 기능 검증")]
+        public static void VerifyOnly()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            Directory.CreateDirectory(Output);
+            try
+            {
+                VerifyMana();
+                File.WriteAllText(Output + "/debug-verification.txt",
+                    "PASS 기본 비용·마나 부족 차단·무한 마나 연속 시전·쿨타임 유지·잘못된 비용 차단·낮은 최대 마나에서도 시전·해제 후 정상 소모·최대 회복·회복량 변경 시 현재 마나 유지\n");
+            }
+            catch (Exception error)
+            {
+                File.WriteAllText(Output + "/debug-verification.txt", "FAIL " + error);
+                Debug.LogException(error);
+            }
+        }
+
         private static void VerifyMana()
         {
+            Scene preview = EditorSceneManager.NewPreviewScene();
             GameObject owner = new GameObject("마나 검증");
+            SceneManager.MoveGameObjectToScene(owner, preview);
             SkillData data = ScriptableObject.CreateInstance<SkillData>();
             try
             {
@@ -235,8 +262,31 @@ namespace Nytherion.Editor
                 Require(skill.TryUse() && mana.CurrentMana == 0f, "무료 스킬");
                 mana.InitializeMana(100f, 5f);
                 Require(mana.CurrentMana == 100f, "마나 초기화");
+                data.manaCost = 60;
+                Require(mana.TrySpendMana(100f), "테스트 전 마나 소진");
+                mana.SetDebugInfiniteMana(true);
+                Require(skill.TryUse() && skill.TryUse() && mana.CurrentMana == 0f, "무한 마나 연속 시전");
+                data.coolDown = 100f;
+                Require(!skill.CanUse() && !skill.TryUse(), "무한 마나에서도 쿨타임 유지");
+                skill.SetDebugCooldownReduction(1f);
+                Require(skill.TryUse() && mana.CurrentMana == 0f, "쿨타임 감소와 무한 마나 동시 적용");
+                Require(!mana.TrySpendMana(float.NaN) && !mana.HasMana(float.PositiveInfinity), "무한 마나의 유효하지 않은 비용 차단");
+                mana.UpdateManaStats(10f, 5f);
+                Require(skill.TryUse() && mana.MaxMana == 10f && mana.CurrentMana == 0f, "최대 마나보다 높은 비용 무시");
+                mana.SetDebugInfiniteMana(false);
+                Require(!skill.CanUse() && !skill.TryUse() && mana.CurrentMana == 0f, "무한 마나 해제 후 부족 차단");
+                mana.UpdateManaStats(100f, 10f);
+                Require(mana.CurrentMana == 0f && mana.ManaRegenPerSecond == 10f, "능력치 변경 시 현재 마나 유지");
+                Require(mana.RestoreMana(mana.MaxMana) == 100f && mana.CurrentMana == 100f, "마나 최대 회복");
+                Require(mana.RestoreMana(mana.MaxMana) == 0f && mana.CurrentMana == 100f, "최대 마나 초과 회복 차단");
+                Require(skill.TryUse() && mana.CurrentMana == 40f && !skill.TryUse(), "해제 후 정상 소모 복구");
             }
-            finally { UnityEngine.Object.DestroyImmediate(owner); UnityEngine.Object.DestroyImmediate(data); }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(owner);
+                UnityEngine.Object.DestroyImmediate(data);
+                EditorSceneManager.ClosePreviewScene(preview);
+            }
         }
 
         private static void Require(bool result, string message)

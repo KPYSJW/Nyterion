@@ -51,9 +51,10 @@ MonoBehaviour:
   fireSoundVolume: 0.4
   animatorController: {fileID: 0}
   projectilePrefab: {fileID: 4388211735977503658, guid: 8fae2d79634426a44af06f51afb709b1, type: 3}
+  chargedProjectilePrefab: {fileID: 0}
   projectileAnimationVariants: []
   projectileStartEffectVariants: []
-  projectileSpeed: 8
+  projectileSpeed: 11
   projectileRotationOffset: 0
   extraProjectileMode: 1
   maxChargeTime: 1

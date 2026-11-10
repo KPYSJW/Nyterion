@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: SkillDatabaseSO
   m_EditorClassIdentifier: 
   allSkills:
-  - {fileID: 11400000, guid: 91d4bda510480a342a8941c5894800f2, type: 2}
   - {fileID: 11400000, guid: 9db2d15baa8d38845ab987c170946da2, type: 2}
   - {fileID: 11400000, guid: 69cd9cc6cf24a2a4fb0abf9ca48be53f, type: 2}
   - {fileID: 11400000, guid: f490c741e6c38da4c8efef123f11daef, type: 2}
@@ -22,8 +21,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ccda83465516ebc449745615426e4cf6, type: 2}
   - {fileID: 11400000, guid: ccda83465516ebc449745615426e4cf6, type: 2}
   - {fileID: 11400000, guid: 6539e447c211ffe43bced76a52c64e04, type: 2}
-  - {fileID: 11400000, guid: 1920441c325ffa048a78fe428dad929b, type: 2}
   - {fileID: 11400000, guid: 378f9bd6cd054b4c99d926849dd1b042, type: 2}
+  - {fileID: 11400000, guid: d5e1bf5602c41294f9232f7f47333e62, type: 2}
   - {fileID: 11400000, guid: 978305071c08ced4c8108a118700d281, type: 2}
   - {fileID: 11400000, guid: e9aaa7e648c16ab499e35f403ff54095, type: 2}
   - {fileID: 11400000, guid: 421372da12241c34b80d880998a6605f, type: 2}
@@ -33,6 +32,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e685eb6937147c0439c0f4642ec70a64, type: 2}
   - {fileID: 11400000, guid: 308999c69e529fc4bb13c6126d33b277, type: 2}
   - {fileID: 11400000, guid: 65b2f51bcb0e12e42b0979b8a266652a, type: 2}
+  - {fileID: 11400000, guid: e277fa1f57a0cd54c8e6aba17f209c1b, type: 2}
   - {fileID: 11400000, guid: ee58f72c5d2c30a4988f81fe392274bc, type: 2}
   - {fileID: 11400000, guid: 1e0ec37bc1b4ece4e9382442bea58e04, type: 2}
   - {fileID: 11400000, guid: 23d365d921d14b444868ff7bd8513371, type: 2}

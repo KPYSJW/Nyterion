@@ -164,6 +164,10 @@ public class GameSceneUIRefs : MonoBehaviour
     public Transform storageContent;
     public SkillStorageArea storageDropArea;
     public SkillSlotUI[] equipSlots;
+    public Button SkillPreviousPageButton;
+    public Button SkillNextPageButton;
+    public TMP_Text SkillPageText;
+    public Button SkillStorageSortButton;
     private void Awake()
     {
         if (shopPlayerInventoryParent == null && inventorySlotParent != null)

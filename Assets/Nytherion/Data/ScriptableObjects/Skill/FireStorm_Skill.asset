@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0f4874c4bc5c4148bed7627325d723b, type: 3}
+  m_Name: FireStorm_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_fire_storm
+  isDisabled: 0
+  skillType: 25
+  skillName: "\uD30C\uC774\uC5B4 \uC2A4\uD1B0"
+  description: "\uB9C8\uC6B0\uC2A4 \uC704\uCE58\uC5D0 \uD654\uC5FC \uD3ED\uD48D\uC744
+    \uC77C\uC73C\uCF1C \uBC94\uC704 \uC548\uC758 \uC801\uC5D0\uAC8C \uC9C0\uC18D\uC801\uC73C\uB85C
+    \uD654\uC5FC \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 8
+  manaCost: 20
+  damage: 10
+  range: 0
+  icon: {fileID: 21300000, guid: d2272d4152ffa384f976c34a618e4e15, type: 3}
+  skillPrefab: {fileID: 8766273169366288658, guid: dca37c8b5e1bc9f4e9e0ccf7381a862d, type: 3}
+  unlockMilestoneID: 
+  duration: 5
+  tickInterval: 0.5
+  radius: 0.75
+  verticalRadius: 0.2
+  damageOffset: {x: 0, y: -0.1}
+  damagePerLevel: 2
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  burnDuration: 5
+  burnDamageRatio: 0.2
+  spawnFrames:
+  - {fileID: 384469835, guid: 2fa7c644b7dbdaf4799b9984e157791c, type: 3}
+  - {fileID: -980841880, guid: 2fa7c644b7dbdaf4799b9984e157791c, type: 3}
+  - {fileID: -1987688330, guid: 2fa7c644b7dbdaf4799b9984e157791c, type: 3}
+  - {fileID: 1672118072, guid: 2fa7c644b7dbdaf4799b9984e157791c, type: 3}
+  - {fileID: -552762390, guid: 2fa7c644b7dbdaf4799b9984e157791c, type: 3}
+  - {fileID: 1585409253, guid: 2fa7c644b7dbdaf4799b9984e157791c, type: 3}
+  - {fileID: -2095447235, guid: 2fa7c644b7dbdaf4799b9984e157791c, type: 3}
+  - {fileID: 1590478808, guid: 2fa7c644b7dbdaf4799b9984e157791c, type: 3}
+  loopFrames:
+  - {fileID: -157445654, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 2035784219, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: -1663819987, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 1182676840, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 528078721, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 376288678, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 820559311, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 2003599199, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 1161445623, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 310129117, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 1920100248, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 2142861457, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: -1290661015, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: 526412313, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: -461191274, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  - {fileID: -471561720, guid: 7eeb82c477ebf6842b3af37b81b9a6f1, type: 3}
+  hitFrames:
+  - {fileID: -138470790, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
+  - {fileID: -1443758831, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
+  - {fileID: 340370101, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
+  - {fileID: 1936029029, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
+  - {fileID: -249422361, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
+  - {fileID: -873655384, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
+  - {fileID: 500389093, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
+  spawnFps: 12
+  loopFps: 12
+  hitFps: 14
+  visualScale: 1.5
+  hitVisualScale: 0.8

@@ -57,7 +57,7 @@ namespace Nytherion.GamePlay.Skills
                 if (Physics2D.OverlapCircle(transform.position, data.collisionRadius, wallFilter, hits) > 0)
                 { Close(); return; }
                 visual.sprite = data.dummySprite;
-                visual.color = new Color(0.65f, 0.9f, 1f, 1f);
+                visual.color = Color.white;
                 body.enabled = true;
                 IsAlive = true;
                 owner.GetComponentInParent<OminousDollRuntime>()?.NotifyActivated(this);

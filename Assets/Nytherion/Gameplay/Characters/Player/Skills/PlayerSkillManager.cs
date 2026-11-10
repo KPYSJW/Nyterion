@@ -32,6 +32,10 @@ namespace Nytherion.GamePlay.Characters.Player
         internal void NotifySkillUsed(SkillBase skill) => SkillUsed?.Invoke(skill);
         private float manaRegenPerSecond = 1f;
         public float ManaRegenPerSecond => manaRegenPerSecond;
+        // 테스트 상태는 원본 능력치나 저장 데이터에 기록하지 않습니다.
+        public bool DebugInfiniteMana { get; private set; }
+
+        public void SetDebugInfiniteMana(bool enabled) => DebugInfiniteMana = enabled;
         private PlayerHealth health;
 
         private void Awake() => health = GetComponent<PlayerHealth>();
@@ -54,12 +58,12 @@ namespace Nytherion.GamePlay.Characters.Player
         }
 
         public bool HasMana(float cost) => !float.IsNaN(cost) && !float.IsInfinity(cost) &&
-            CurrentMana >= Mathf.Max(0f, cost);
+            (DebugInfiniteMana || CurrentMana >= Mathf.Max(0f, cost));
 
         public bool TrySpendMana(float cost)
         {
             if (!HasMana(cost)) return false;
-            if (cost <= 0f) return true;
+            if (cost <= 0f || DebugInfiniteMana) return true;
             CurrentMana -= cost;
             ManaChanged?.Invoke(CurrentMana, MaxMana);
             return true;

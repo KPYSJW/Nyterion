@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a94e613c77dffa544b7db0a8995dcb54, type: 3}
+  m_Name: PoisonDrop_Skill
+  m_EditorClassIdentifier: 
+  skillID: skill_poison_drop
+  isDisabled: 0
+  skillType: 26
+  skillName: "\uB3C5\uBC29\uC6B8"
+  description: "\uB3C5\uBC29\uC6B8\uC744 \uB5A8\uC5B4\uB728\uB824 \uBC94\uC704 \uC548\uC758
+    \uC801\uC5D0\uAC8C \uD53C\uD574\uC640 \uB3C5 \uD6A8\uACFC\uB97C \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+  skillLevel: 1
+  exp: 0
+  coolDown: 6
+  manaCost: 15
+  damage: 20
+  range: 0
+  icon: {fileID: 21300000, guid: 13491f54166fa30459fb0ef7ac507a4d, type: 3}
+  skillPrefab: {fileID: 5634327670023341512, guid: 4cbbe8eb92c987d44a491b231f5a737e, type: 3}
+  unlockMilestoneID: 
+  fallDuration: 0.35
+  fallHeight: 4
+  radius: 1.1
+  verticalRadius: 0.4
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  damagePerLevel: 3
+  poisonDamageRatio: 0.2
+  poisonDuration: 5
+  dropSprite: {fileID: 1047772039, guid: ddba15ef40912aa4c98c522ec1041ea0, type: 3}
+  frames:
+  - {fileID: 509255656, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: -2040424657, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: -1833273137, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: 1973305760, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: 1505337779, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: -38483588, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: 1247314179, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: 29515474, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: -1291002007, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: -506538804, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: -992989311, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: 1891910529, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  - {fileID: 1790430572, guid: b7b2ab5ca954b3e4d872912566349aea, type: 3}
+  animationFps: 12
+  visualScale: 1

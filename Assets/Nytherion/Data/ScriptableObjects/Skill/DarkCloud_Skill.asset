@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83aad8fea7bb4efda458c73c42a31607, type: 3}
+  m_Name: DarkCloud_Skill
+  m_EditorClassIdentifier: 
+  damage: 10
+  summonPrefab: {fileID: 6936192064216774670, guid: ae5ca25e38ee474ba52932f9dd13c4bf, type: 3}
+  damagePerLevel: 2
+  attackInterval: 7.5
+  detectionRadius: 6
+  cloudHeight: 2
+  moveSpeed: 5
+  impactRadius: 1
+  shockDuration: 5
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  idleFrames:
+  - {fileID: 210000001, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000002, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000003, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000004, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000005, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000006, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000007, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000008, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000009, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  - {fileID: 210000010, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  boltFrames:
+  - {fileID: 210000001, guid: 6ad1874e1d054464aef41744c803cd9e, type: 3}
+  - {fileID: 210000002, guid: 6ad1874e1d054464aef41744c803cd9e, type: 3}
+  - {fileID: 210000003, guid: 6ad1874e1d054464aef41744c803cd9e, type: 3}
+  - {fileID: 210000004, guid: 6ad1874e1d054464aef41744c803cd9e, type: 3}
+  impactFrames:
+  - {fileID: 210000001, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  - {fileID: 210000002, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  - {fileID: 210000003, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  - {fileID: 210000004, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  - {fileID: 210000005, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  - {fileID: 210000006, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  - {fileID: 210000007, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  - {fileID: 210000008, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  - {fileID: 210000009, guid: 0e6473df936b4d3a82a34e7e5ada4376, type: 3}
+  launchCloudFrames:
+  - {fileID: 210000001, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000002, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000003, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000004, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000005, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000006, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000007, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000008, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000009, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  - {fileID: 210000010, guid: aa9b8b011ef34a41b971f3aa305b078a, type: 3}
+  idleFps: 8
+  impactFps: 12
+  launchFps: 12
+  cloudVisualScale: 0.9375

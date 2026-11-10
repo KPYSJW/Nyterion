@@ -4,6 +4,7 @@ using Nytherion.Core.Data;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Nytherion.GamePlay.Combat;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -16,13 +17,17 @@ namespace Nytherion.GamePlay.Skills
         private PlayerManager playerManager;
         private Coroutine activeBuffCoroutine;
         private bool isBuffApplied = false;
+        private readonly SpriteBodyBounds bodyBounds = new SpriteBodyBounds();
+        private SpriteRenderer activationRenderer;
+        private SpriteRenderer playerBody;
+        private float activationElapsed;
 
         // 적용된 버프 정보를 추적하여 나중에 제거할 때 사용
         private List<StatModifier> appliedModifiers = new List<StatModifier>();
 
         private void Start()
         {
-            playerManager = FindObjectOfType<PlayerManager>();
+            playerManager = SkillOwner;
         }
 
         protected override void Activate()
@@ -36,6 +41,7 @@ namespace Nytherion.GamePlay.Skills
                     return;
                 }
 
+                if (playerManager == null) playerManager = SkillOwner;
                 if (playerManager != null)
                 {
                     // 버프 시간 갱신 처리를 위해 기존 코루틴 정지
@@ -44,12 +50,75 @@ namespace Nytherion.GamePlay.Skills
                         StopCoroutine(activeBuffCoroutine);
                     }
                     activeBuffCoroutine = StartCoroutine(BuffRoutine());
+                    PlayActivationEffect();
                 }
                 else
                 {
                     Debug.LogError("[StatBuffSkill] PlayerManager를 찾을 수 없습니다.");
                 }
             }
+        }
+
+        private void PlayActivationEffect()
+        {
+            if (statBuffData.activationFrames == null || statBuffData.activationFrames.Length == 0) return;
+            Transform owner = caster != null ? caster : playerManager.transform;
+            playerBody = owner.GetComponent<SpriteRenderer>();
+            if (playerBody == null) playerBody = owner.GetComponentInChildren<SpriteRenderer>();
+            if (activationRenderer == null)
+            {
+                GameObject visual = new GameObject("StatBuffActivationVFX");
+                visual.transform.SetParent(transform, false);
+                activationRenderer = visual.AddComponent<SpriteRenderer>();
+            }
+            activationElapsed = 0f;
+            activationRenderer.enabled = true;
+            UpdateActivationEffect();
+        }
+
+        private void LateUpdate()
+        {
+            if (activationRenderer == null || !activationRenderer.enabled) return;
+            activationElapsed += Time.deltaTime;
+            UpdateActivationEffect();
+        }
+
+        private void UpdateActivationEffect()
+        {
+            int frame = Mathf.FloorToInt(activationElapsed * Mathf.Max(1f, statBuffData.activationFramesPerSecond));
+            if (frame >= statBuffData.activationFrames.Length)
+            {
+                activationRenderer.enabled = false;
+                return;
+            }
+
+            Transform owner = caster != null ? caster : playerManager.transform;
+            Vector3 feet = owner.position;
+            if (playerBody != null && playerBody.sprite != null)
+            {
+                Bounds bounds = bodyBounds.GetBounds(playerBody);
+                feet = new Vector3(bounds.center.x, bounds.min.y, owner.position.z);
+                activationRenderer.sortingLayerID = playerBody.sortingLayerID;
+                activationRenderer.sortingOrder = playerBody.sortingOrder + 1;
+            }
+            Transform visual = activationRenderer.transform;
+            visual.position = feet + (Vector3)statBuffData.activationFeetOffset;
+            // 좌우 반전과 이동 방향에 관계없이 빛은 발밑에서 수직으로 올라갑니다.
+            visual.rotation = Quaternion.identity;
+            Vector3 parentScale = transform.lossyScale;
+            float scale = Mathf.Max(0.01f, statBuffData.activationScale);
+            visual.localScale = new Vector3(scale / SafeScale(parentScale.x), scale / SafeScale(parentScale.y), 1f);
+            activationRenderer.sprite = statBuffData.activationFrames[frame];
+        }
+
+        private static float SafeScale(float value) => Mathf.Abs(value) < 0.001f ? 0.001f : value;
+
+        private void OnDisable()
+        {
+            if (activeBuffCoroutine != null) StopCoroutine(activeBuffCoroutine);
+            activeBuffCoroutine = null;
+            if (activationRenderer != null) activationRenderer.enabled = false;
+            RemoveBuffs();
         }
 
         /// <summary>

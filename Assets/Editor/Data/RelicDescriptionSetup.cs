@@ -38,7 +38,7 @@ namespace Nytherion.Editor
                 ["BoomMaker"] = ("적을 추적하는 폭발 로봇을 내보내는 BoomMaker 소환", "Summons BoomMaker to deploy robots that chase enemies and explode."),
                 ["Comrade Blast"] = ("장착 중 가까운 적에게 미사일을 발사하는 블래스트 소환", "While equipped, summons Blast to fire missiles at nearby enemies."),
                 ["Opapa"] = ("장착 중 적을 관통하고 벽에서 튕기는 오파파 소환", "While equipped, summons Opapa to pierce enemies and bounce off walls."),
-                ["Frog"] = ("장착 중 적을 자동 공격하는 개구리 소환", "While equipped, summons a frog that automatically attacks enemies."),
+                ["Frog"] = ("장착 중 적을 자동 공격하는 펭구 소환", "While equipped, summons Pengoo to automatically attack enemies."),
                 ["Slime Specimen"] = ("장착 중 적을 자동 공격하는 슬라임 소환", "While equipped, summons a slime that automatically attacks enemies."),
                 ["Azure Berry"] = ("루티 투사체 +2", "Rooti projectiles +2."),
                 ["Purple Radish"] = ("루티 공격 속도 +25%", "Rooti attack speed +25%."),
@@ -92,7 +92,6 @@ namespace Nytherion.Editor
                 case "skill_meteor_strike": return "메테오 마법 책";
                 case "skill_shadow_clone": return "그림자 분신 마법 책";
                 case "skill_turret": return "루티 마법 책";
-                case "skill_spiral": return "나선";
             }
             string name = string.IsNullOrWhiteSpace(currentName) ? skill.skillName : currentName;
             return name == null ? skill.name : name.Replace(" 각인", "").Trim();
@@ -103,10 +102,6 @@ namespace Nytherion.Editor
         {
             switch (skill.skillID)
             {
-                case "skill_all_stat_up":
-                    korean = "일정 시간 모든 능력치를 높이는 스킬을 얻는다.";
-                    english = "Grants a skill that temporarily boosts all stats.";
-                    return;
                 case "skill_blackhole":
                     korean = "적을 끌어당기며 피해를 주는 블랙홀 스킬을 얻는다.";
                     english = "Grants a black hole skill that pulls in and damages enemies.";
@@ -166,10 +161,6 @@ namespace Nytherion.Editor
                 case "skill_souleater":
                     korean = "적을 처치할수록 강해지는 투사체 스킬을 얻는다.";
                     english = "Grants a projectile skill that grows stronger with each kill.";
-                    return;
-                case "skill_spiral":
-                    korean = "회전 구체로 주변 적을 공격하는 나선 스킬을 얻는다.";
-                    english = "Grants a skill that summons spinning orbs to attack nearby enemies.";
                     return;
                 case "skill_turret":
                     korean = "적을 자동으로 공격하는 루티 소환 스킬을 얻는다.";

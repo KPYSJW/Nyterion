@@ -19,6 +19,8 @@ namespace Nytherion.Editor
             EditorApplication.playModeStateChanged += state =>
             {
                 if (state == PlayModeStateChange.EnteredEditMode) Restore();
+                if (state == PlayModeStateChange.EnteredPlayMode)
+                    EditorApplication.delayCall += ApplyStartupScale;
             };
         }
 
@@ -74,6 +76,37 @@ namespace Nytherion.Editor
             catch (Exception error)
             {
                 Debug.LogWarning("[설정] Game 뷰 미리보기 변경 실패: " + error.Message);
+            }
+        }
+
+        private static void ApplyStartupScale()
+        {
+            if (!EditorApplication.isPlaying) return;
+            try
+            {
+                Type viewType = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
+                FieldInfo zoomAreaField = viewType.GetField("m_ZoomArea",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                if (zoomAreaField == null)
+                    throw new MissingFieldException("UnityEditor.GameView", "m_ZoomArea");
+
+                // 정수 배율 스냅을 거치지 않고 작업용 미리보기를 0.91배로 맞춥니다.
+                foreach (UnityEngine.Object view in Resources.FindObjectsOfTypeAll(viewType))
+                {
+                    object zoomArea = zoomAreaField.GetValue(view);
+                    if (zoomArea == null)
+                        throw new InvalidOperationException("Game 뷰 확대 영역이 초기화되지 않았습니다.");
+                    MethodInfo setTransform = zoomArea.GetType().GetMethod("SetTransform",
+                        new[] { typeof(Vector2), typeof(Vector2) });
+                    if (setTransform == null)
+                        throw new MissingMethodException(zoomArea.GetType().FullName, "SetTransform");
+                    setTransform.Invoke(zoomArea, new object[] { Vector2.zero, Vector2.one * 0.91f });
+                    ((EditorWindow)view).Repaint();
+                }
+            }
+            catch (Exception error)
+            {
+                Debug.LogWarning("[설정] Game 뷰 시작 배율 변경 실패: " + error.Message);
             }
         }
 
