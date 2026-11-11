@@ -38,6 +38,20 @@ namespace Nytherion.Editor
             if (data == null || data.skillPrefab == null || !data.HasValidFrames) CreateAssets();
         }
 
+        [MenuItem("Tools/Nytherion/Fire Storm/Update Loop Animation")]
+        public static void UpdateLoopAnimation()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            // 원본 파일의 수정 시각이 과거여도 교체한 시트를 다시 가져옵니다.
+            AssetDatabase.ImportAsset(Sprites + "Loop.png",
+                ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            FireStormSkillData data = Require<FireStormSkillData>(DataPath);
+            data.loopFrames = Slice("Loop", 48, 80, 8, 16, new Vector2(0.5f, 0.075f));
+            data.loopFps = 1000f / 70f;
+            Save(data);
+            Debug.Log("[FireStormSkillSetup] 루프 시트 재임포트 및 16프레임·70ms 애니메이션 연결 완료.", data);
+        }
+
         [MenuItem("Tools/Nytherion/Fire Storm/Create Assets")]
         public static void CreateAssets()
         {
@@ -59,6 +73,8 @@ namespace Nytherion.Editor
             }
             data.spawnFrames = Slice("Spawn", 48, 80, 8, 8, new Vector2(0.5f, 0.075f));
             data.loopFrames = Slice("Loop", 48, 80, 8, 16, new Vector2(0.5f, 0.075f));
+            // 루프 원본의 프레임당 70ms 재생 속도를 유지합니다.
+            data.loopFps = 1000f / 70f;
             data.hitFrames = Slice("Hit", 64, 64, 7, 7, new Vector2(0.5f, 0.5f));
             string iconPath = Sprites + "Icon.png";
             AssetDatabase.ImportAsset(iconPath, ImportAssetOptions.ForceSynchronousImport);

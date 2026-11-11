@@ -26,7 +26,7 @@ namespace Nytherion.Editor
                 ["Beast Scale"] = ("피격 시 4초 동안 방어력 +3 (레벨당 +1), 최대 3중첩. 재발동 시 지속 시간 갱신.", "Taking damage grants +3 defense for 4 seconds (+1 per level), up to 3 stacks. Repeated triggers refresh the duration."),
                 ["Mossy Stone"] = ("최대 체력 +45 (레벨당 +9).", "Max health +45 (+9 per level)."),
                 ["Wraith Stone"] = ("저주받은 적 처치 시 반경 3 안의 저주받지 않은 적에게 남은 저주 전파 (레벨당 반경 +0.25).", "When a cursed enemy dies, spread its remaining curse to uncursed enemies within 3 units (+0.25 radius per level)."),
-                ["Grimoire"] = ("저주 장비 장착 시 공격력 +15% (레벨당 +5%p).", "With Cursed equipment, attack +15% (+5pp per level)."),
+                ["OrbOfGrudge"] = ("저주 장비 장착 시 공격력 +15% (레벨당 +5%p).", "With Cursed equipment, attack +15% (+5pp per level)."),
                 ["CatEyes"] = ("공격 시 일반 투사체를 발사하는 소환물 생성", "Summons a companion that fires normal projectiles when you attack."),
                 ["Daemon"] = ("공격 시 마성 투사체를 발사하는 소환물 생성", "Summons a companion that fires demonic projectiles when you attack."),
                 ["Fulmen"] = ("공격 시 번개 투사체를 발사하는 소환물 생성", "Summons a companion that fires lightning projectiles when you attack."),

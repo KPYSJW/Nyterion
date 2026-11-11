@@ -96,7 +96,7 @@ namespace Nytherion.Editor
                 data.collisionLayers = LayerMask.GetMask("Enemy", "Wall", "Obstacle");
                 AssetDatabase.CreateAsset(data, DataPath);
             }
-            data.icon = icon;
+            data.icon = projectileFrames[0];
             data.projectileFrames = projectileFrames;
             if (AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Hit.png") != null) data.hitFrames = ConfigureHitFrames();
             if (AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Cast.png") != null &&

@@ -23,7 +23,7 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         public Sprite[] loopFrames;
         public Sprite[] hitFrames;
         [Min(1f)] public float spawnFps = 12f;
-        [Min(1f)] public float loopFps = 12f;
+        [Min(1f)] public float loopFps = 1000f / 70f;
         [Min(1f)] public float hitFps = 14f;
         [Min(0.01f)] public float visualScale = 1.5f;
         [Min(0.01f)] public float hitVisualScale = 1f;

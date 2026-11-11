@@ -74,7 +74,7 @@ MonoBehaviour:
   - {fileID: -873655384, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
   - {fileID: 500389093, guid: 997f122b73ed760488e7c78d9888ca82, type: 3}
   spawnFps: 12
-  loopFps: 12
+  loopFps: 14.285714
   hitFps: 14
   visualScale: 1.5
   hitVisualScale: 0.8

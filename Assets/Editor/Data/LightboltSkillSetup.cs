@@ -54,13 +54,13 @@ namespace Nytherion.Editor
                 data.damage = 10f;
                 data.range = 12f;
                 data.collisionLayers = LayerMask.GetMask("Enemy", "Wall", "Obstacle");
-                data.icon = icon;
                 data.projectileFrames = projectileFrames;
                 data.hitFrames = hitFrames;
                 data.castVisualScale = 0.25f;
                 AssetDatabase.CreateAsset(data, DataPath);
             }
 
+            data.icon = data.projectileFrames[0];
             if (data.castFrames == null || data.castFrames.Length == 0) data.castFrames = castFrames;
 
             GameObject projectile = AssetDatabase.LoadAssetAtPath<GameObject>(ProjectilePath);

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Mandrake
   m_EditorClassIdentifier: 
   relicName: Mandrake
-  koreanName: "\ub9e8\ub4dc\ub808\uc774\ud06c"
-  description_KR: "\uc77c\uc815 \uc2dc\uac04 \uacf5\uaca9\ub825, \uacf5\uaca9 \uc18d\ub3c4\uc640 \ub300\uc2dc \uc18d\ub3c4\ub97c \ub192\uc774\ub294 \uc2a4\ud0ac\uc744 \uc5bb\ub294\ub2e4."
-  description_EN: "Grants a skill that temporarily boosts attack, attack speed and dash speed."
+  koreanName: "\uB9E8\uB4DC\uB808\uC774\uD06C"
+  englishName: Mandrake
+  description_KR: "\uCD5C\uB300 \uCCB4\uB825 +60 (\uB808\uBCA8\uB2F9 +12)."
+  description_EN: Max health +60 (+12 per level).
   Image: {fileID: 21300000, guid: 1073be4f7aaa7424fbc413e401329463, type: 3}
   rarity: 3
   level: 1
@@ -26,11 +27,12 @@ MonoBehaviour:
     condition:
       rid: -2
     effects:
-    - rid: 2313383513706201107
+    - rid: 4790878081994457088
   grantsProjectileHoming: 0
   grantsProjectilePiercing: 0
   shape:
   - {x: 0, y: 0}
+  preserveCustomInfluenceZones: 1
   influenceZones:
   - offset: {x: 0, y: 1}
     type: 1
@@ -47,7 +49,6 @@ MonoBehaviour:
   - offset: {x: -1, y: 0}
     type: 2
     levelAmount: 1
-  preserveCustomInfluenceZones: 1
   synergySeriesId: 
   synergySetBonusData: {fileID: 0}
   unlockMilestoneID: 
@@ -56,7 +57,11 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 2313383513706201107
-      type: {class: GrantSkillEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+    - rid: 4790878081994457088
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
       data:
-        skillData: {fileID: 11400000, guid: f390c741e6c38da4c8efef123f11daef, type: 2}
+        statModifiers:
+        - stat: 0
+          value: 60
+          valuePerLevel: 12
+          isPercentage: 0

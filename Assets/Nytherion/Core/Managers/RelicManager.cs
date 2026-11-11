@@ -542,8 +542,9 @@ namespace Nytherion.Core.Managers
 
             foreach (var savedBlock in state.placedBlocks)
             {
-                // 이름 변경 전 저장된 마력 충전기도 현재 유물로 복원합니다.
+                // 이름 변경 전 저장된 유물도 현재 ID로 복원합니다.
                 string relicId = savedBlock.relicId == "ChargeRelic" ? "ManaCharger" : savedBlock.relicId;
+                if (relicId == "Grimoire") relicId = "OrbOfGrudge";
                 if (relicDatabase.TryGetValue(relicId, out RelicData originalData))
                 {
                     var instanceData = Instantiate(originalData);
