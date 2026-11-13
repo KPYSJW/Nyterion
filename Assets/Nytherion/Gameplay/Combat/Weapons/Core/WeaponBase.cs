@@ -192,9 +192,9 @@ namespace Nytherion.GamePlay.Combat
         }
 
         // 상태 효과를 적용하기 전에도 이번 타격의 속성을 적중 이벤트에 전달합니다.
-        public void DealAttackDamage(IDamageable target, float damage)
+        public void DealAttackDamage(IDamageable target, float damage, Vector2? hitPoint = null)
         {
-            if (target is EnemyBase enemy) enemy.TakeDamage(damage, false, GetTraits());
+            if (target is EnemyBase enemy) enemy.TakeDamage(damage, false, GetTraits(), hitPoint);
             else target?.TakeDamage(damage);
         }
 

@@ -234,7 +234,7 @@ namespace Nytherion.GamePlay.Combat
                 if (isEnemy)
                 {
                     IDamageable target = collision.GetComponentInParent<IDamageable>();
-                    if (target is EnemyBase enemy) enemy.TakeDamage(damage, isChainDamage, traits);
+                    if (target is EnemyBase enemy) enemy.TakeDamage(damage, isChainDamage, traits, hitPoint);
                     else target?.TakeDamage(damage, isChainDamage);
                     if (!isSecondaryProjectile && bounceModifier.enabled)
                         SpawnRicochetExtraProjectiles(hitPoint, target);

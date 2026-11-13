@@ -2,6 +2,7 @@ using Nytherion.Core.Data;
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Dungeon;
 using Nytherion.GamePlay.Characters.Enemy;
+using Nytherion.UI.HUD;
 using Nytherion.UI.Map;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,10 +48,10 @@ namespace Nytherion.GamePlay.Dungeon
         [Header("Boss Intro")]
         [SerializeField] private bool playBossIntro = true;
         [SerializeField] private bool disablePlayerControlDuringBossIntro = true;
-        [SerializeField] private string bossIntroTitle = "WARNING";
-        [SerializeField] private float bossIntroFadeDuration = 0.25f;
-        [SerializeField] private float bossIntroHoldDuration = 1.25f;
+        [SerializeField] private float bossIntroFadeDuration = 1f;
+        [SerializeField] private float bossIntroNameDuration = 1.1f;
         [SerializeField] private float bossIntroPostDelay = 0.25f;
+        [SerializeField] private Texture2D bossHealthBarSheet;
 
         private Tilemap portalTilemap;
         private TilemapCollider2D portalCollider;
@@ -70,6 +71,7 @@ namespace Nytherion.GamePlay.Dungeon
         private DungeonData currentDungeonData;
         public DungeonData CurrentDungeonData => currentDungeonData;
         private bool isBossIntroPlaying = false;
+        private BossHealthBarUI bossHealthBar;
         private Tilemap floorTilemap;
         private Tilemap wallTilemap;
         private Tilemap portalTilemapInstance;
@@ -206,6 +208,9 @@ namespace Nytherion.GamePlay.Dungeon
 
         private void OnDestroy()
         {
+            if (bossHealthBar != null)
+                Destroy(bossHealthBar.gameObject);
+
             if (_eventManager != null)
             {
                 _eventManager.UnregisterEnemyDeathListener(HandleEnemyDeath);
@@ -279,6 +284,9 @@ namespace Nytherion.GamePlay.Dungeon
 
         public void ClearDungeonData()
         {
+            if (bossHealthBar != null)
+                bossHealthBar.Show(null);
+
             portalLinks.Clear();
             AllDungeonRooms?.Clear();
             roomLookup?.Clear();
@@ -574,62 +582,143 @@ namespace Nytherion.GamePlay.Dungeon
             isBossIntroPlaying = true;
             LockPortals();
 
-            if (disablePlayerControlDuringBossIntro)
-            {
+            const float cameraReturnDuration = 0.5f;
+            const float revealDuration = 1f;
+            const float nameFadeDuration = 0.15f;
+            bool lockInput = disablePlayerControlDuringBossIntro;
+            FollowCamera followCamera = null;
+            GameObject overlay = null;
+            EnemyAIController bossAI = null;
+            SpriteRenderer visual = null;
+            Animator animator = null;
+            Rigidbody2D body = null;
+            EnemyDeathDissolve dissolve = null;
+            bool wasHidden = false;
+            bool wasSimulated = false;
+            float animatorSpeed = 1f;
+
+            if (lockInput)
                 _inputManager?.DisableMovement();
-            }
 
-            if (playBossIntro)
+            try
             {
-                string bossName = currentDungeonData?.bossMonsterData != null
-                    ? currentDungeonData.bossMonsterData.enemyName
-                    : "Boss";
+                if (!playBossIntro)
+                {
+                    if (bossIntroPostDelay > 0f)
+                        yield return new WaitForSeconds(bossIntroPostDelay);
+                    ShowBossHealthBar(SpawnBoss(bossRoom));
+                    yield break;
+                }
 
-                yield return StartCoroutine(ShowBossIntroOverlay(bossName));
+                string bossName = currentDungeonData?.bossMonsterData?.enemyName ?? "Boss";
+                overlay = CreateBossIntroOverlay(bossName, out Image dim, out TextMeshProUGUI name);
+                yield return new WaitForSeconds(1f);
+
+                EnemyBase boss = SpawnBoss(bossRoom);
+                if (boss == null)
+                {
+                    yield return FadeBossIntroOverlay(dim, 1f, 0f, 0.25f);
+                    yield break;
+                }
+
+                bossAI = boss.aiController;
+                bossAI.StopMovement();
+                bossAI.enabled = false;
+                animator = bossAI.animator;
+                if (animator != null)
+                {
+                    animatorSpeed = animator.speed;
+                    animator.speed = 0f;
+                }
+
+                body = boss.GetComponent<Rigidbody2D>();
+                if (body != null)
+                {
+                    wasSimulated = body.simulated;
+                    body.simulated = false;
+                }
+
+                visual = boss.BodyRenderer;
+                Vector3 focus = visual != null ? visual.bounds.center : boss.transform.position;
+                if (visual != null)
+                {
+                    wasHidden = visual.forceRenderingOff;
+                    visual.forceRenderingOff = true;
+                }
+
+                followCamera = FindObjectOfType<FollowCamera>();
+                if (followCamera != null)
+                    followCamera.SetIntroFraming(focus);
+                yield return FadeBossIntroOverlay(dim, 1f, 0f, bossIntroFadeDuration);
+
+                if (boss == null || !boss.isActiveAndEnabled)
+                    yield break;
+
+                if (followCamera != null)
+                    followCamera.SetIntroFraming(focus, 0.86f);
+                if (visual != null)
+                {
+                    visual.forceRenderingOff = wasHidden;
+                    dissolve = boss.GetComponent<EnemyDeathDissolve>();
+                    if (dissolve != null)
+                    {
+                        bool revealed = false;
+                        dissolve.Reveal(visual, revealDuration, 3f, () => revealed = true);
+                        while (!revealed && dissolve != null && dissolve.gameObject.activeInHierarchy)
+                            yield return null;
+                        if (!revealed)
+                            yield break;
+                        dissolve = null;
+                    }
+                }
+
+                yield return FadeBossIntroOverlay(name, 0f, 1f, nameFadeDuration);
+                float nameHoldDuration = bossIntroNameDuration - nameFadeDuration;
+                if (nameHoldDuration > 0f)
+                    yield return new WaitForSeconds(nameHoldDuration);
+
+                if (followCamera != null)
+                    followCamera.SetIntroFraming(null);
+                ShowBossHealthBar(boss);
+                yield return FadeBossIntroOverlay(name, 1f, 0f, cameraReturnDuration);
             }
-
-            
-
-            if (bossIntroPostDelay > 0f)
+            finally
             {
-                yield return new WaitForSeconds(bossIntroPostDelay);
+                if (dissolve != null)
+                    dissolve.ResetState(visual);
+                if (visual != null)
+                    visual.forceRenderingOff = wasHidden;
+                if (animator != null)
+                    animator.speed = animatorSpeed;
+                if (body != null)
+                    body.simulated = wasSimulated;
+                if (bossAI != null)
+                    bossAI.enabled = true;
+                if (followCamera != null)
+                    followCamera.ClearIntroFraming();
+                if (overlay != null)
+                    Destroy(overlay);
+                if (lockInput)
+                    _inputManager?.EnableMovement();
+                isBossIntroPlaying = false;
             }
-
-            SpawnBoss(bossRoom);
-
-            if (disablePlayerControlDuringBossIntro)
-            {
-                _inputManager?.EnableMovement();
-            }
-            
-
-            isBossIntroPlaying = false;
         }
 
-        private IEnumerator ShowBossIntroOverlay(string bossName)
+        private void ShowBossHealthBar(EnemyBase boss)
         {
-            CanvasGroup canvasGroup = CreateBossIntroOverlay(bossName);
-            if (canvasGroup == null)
-                yield break;
+            if (boss == null || bossHealthBarSheet == null)
+                return;
 
-            yield return StartCoroutine(FadeBossIntroOverlay(canvasGroup, 0f, 1f, bossIntroFadeDuration));
+            if (bossHealthBar == null)
+                bossHealthBar = BossHealthBarUI.Create(bossHealthBarSheet, gameObject.scene);
 
-            if (bossIntroHoldDuration > 0f)
-            {
-                yield return new WaitForSeconds(bossIntroHoldDuration);
-            }
-
-            yield return StartCoroutine(FadeBossIntroOverlay(canvasGroup, 1f, 0f, bossIntroFadeDuration));
-
-            if (canvasGroup != null)
-            {
-                Destroy(canvasGroup.gameObject);
-            }
+            bossHealthBar.Show(boss);
         }
 
-        private CanvasGroup CreateBossIntroOverlay(string bossName)
+        private GameObject CreateBossIntroOverlay(string bossName, out Image dim, out TextMeshProUGUI name)
         {
             GameObject canvasObject = new GameObject("BossIntroCanvas");
+            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(canvasObject, gameObject.scene);
             Canvas canvas = canvasObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 9000;
@@ -637,87 +726,61 @@ namespace Nytherion.GamePlay.Dungeon
             CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920f, 1080f);
-            canvasObject.AddComponent<GraphicRaycaster>();
 
-            CanvasGroup canvasGroup = canvasObject.AddComponent<CanvasGroup>();
-            canvasGroup.alpha = 0f;
-            canvasGroup.blocksRaycasts = false;
-
-            GameObject dimObject = new GameObject("Dim");
-            dimObject.transform.SetParent(canvasObject.transform, false);
-            Image dimImage = dimObject.AddComponent<Image>();
-            dimImage.color = new Color(0f, 0f, 0f, 0.65f);
-            RectTransform dimRect = dimObject.GetComponent<RectTransform>();
-            dimRect.anchorMin = Vector2.zero;
-            dimRect.anchorMax = Vector2.one;
-            dimRect.offsetMin = Vector2.zero;
-            dimRect.offsetMax = Vector2.zero;
-
-            GameObject titleObject = new GameObject("Title");
-            titleObject.transform.SetParent(canvasObject.transform, false);
-            TextMeshProUGUI titleText = titleObject.AddComponent<TextMeshProUGUI>();
-            titleText.text = bossIntroTitle;
-            titleText.fontSize = 72f;
-            titleText.alignment = TextAlignmentOptions.Center;
-            titleText.color = new Color(1f, 0.2f, 0.16f, 1f);
-            titleText.fontStyle = FontStyles.Bold;
-            RectTransform titleRect = titleObject.GetComponent<RectTransform>();
-            titleRect.anchorMin = new Vector2(0.1f, 0.52f);
-            titleRect.anchorMax = new Vector2(0.9f, 0.68f);
-            titleRect.offsetMin = Vector2.zero;
-            titleRect.offsetMax = Vector2.zero;
+            dim = canvasObject.AddComponent<Image>();
+            dim.color = Color.black;
+            dim.raycastTarget = false;
 
             GameObject nameObject = new GameObject("BossName");
             nameObject.transform.SetParent(canvasObject.transform, false);
-            TextMeshProUGUI nameText = nameObject.AddComponent<TextMeshProUGUI>();
-            nameText.text = bossName;
-            nameText.fontSize = 44f;
-            nameText.alignment = TextAlignmentOptions.Center;
-            nameText.color = Color.white;
-            RectTransform nameRect = nameObject.GetComponent<RectTransform>();
-            nameRect.anchorMin = new Vector2(0.1f, 0.42f);
-            nameRect.anchorMax = new Vector2(0.9f, 0.52f);
+            name = nameObject.AddComponent<TextMeshProUGUI>();
+            name.text = bossName;
+            name.fontSize = 68f;
+            name.fontStyle = FontStyles.Bold;
+            name.alignment = TextAlignmentOptions.Center;
+            name.color = new Color(1f, 1f, 1f, 0f);
+            name.raycastTarget = false;
+            RectTransform nameRect = name.rectTransform;
+            nameRect.anchorMin = new Vector2(0.1f, 0.10f);
+            nameRect.anchorMax = new Vector2(0.9f, 0.24f);
             nameRect.offsetMin = Vector2.zero;
             nameRect.offsetMax = Vector2.zero;
 
-            return canvasGroup;
+            return canvasObject;
         }
 
-        private IEnumerator FadeBossIntroOverlay(CanvasGroup canvasGroup, float from, float to, float duration)
+        private IEnumerator FadeBossIntroOverlay(Graphic graphic, float from, float to, float duration)
         {
-            if (canvasGroup == null)
+            if (graphic == null)
                 yield break;
 
-            if (duration <= 0f)
-            {
-                canvasGroup.alpha = to;
-                yield break;
-            }
-
+            Color color = graphic.color;
             float elapsed = 0f;
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                canvasGroup.alpha = Mathf.Lerp(from, to, elapsed / duration);
+                color.a = Mathf.Lerp(from, to, elapsed / duration);
+                graphic.color = color;
                 yield return null;
             }
 
-            canvasGroup.alpha = to;
+            color.a = to;
+            graphic.color = color;
         }
 
-        private bool SpawnBoss(RoomFirstDungeonGenerator.Room bossRoom)
+        private EnemyBase SpawnBoss(RoomFirstDungeonGenerator.Room bossRoom)
         {
             DungeonData dungeonData = currentDungeonData;
             if (dungeonData.bossMonsterData == null)
             {
                 Debug.LogWarning("DungeonData에 보스 몬스터 데이터가 할당되지 않았습니다.");
-                return false;
+                return null;
             }
 
             if (!bossRoom.bossSpawnPoint.HasValue)
             {
                 Debug.LogError("보스 방에 스폰 위치가 지정되지 않았습니다! RoomFirstDungeonGenerator를 확인하세요.");
-                return false;
+                return null;
             }
 
             GameObject bossPrefab = _objectPoolManager?.pools?.Find(
@@ -727,7 +790,7 @@ namespace Nytherion.GamePlay.Dungeon
                     bossRoom.bossSpawnPoint.Value, out Vector3 spawnPosition))
             {
                 Debug.LogError($"[Boss Spawn] {dungeonData.bossMonsterData.enemyName}: No valid spawn position inside the boss room. Check this boss's NavMesh Surface and room size. The boss room has not been cleared.");
-                return false;
+                return null;
             }
             GameObject bossObj = _objectPoolManager.SpawnFromPool(
                 dungeonData.bossMonsterData.enemyName,
@@ -742,21 +805,21 @@ namespace Nytherion.GamePlay.Dungeon
                     bossEnemy.aiController?.PrepareForPoolReturn();
                     _objectPoolManager.ReturnToPool(dungeonData.bossMonsterData.enemyName, bossObj);
                     Debug.LogError("[Boss Spawn] Initialization failed; returned to pool without marking the boss as spawned.");
-                    return false;
+                    return null;
                 }
                 bossEnemy.homeRoom = bossRoom;
                 bossRoom.enemies.Add(bossEnemy);
                 hasBossSpawned = true;
 
                 Debug.Log($"<color=red><b>보스 등장!</b></color> '{dungeonData.bossMonsterData.enemyName}' 스폰 완료!");
-                return true;
+                return bossEnemy;
             }
             else
             {
                 if (bossObj != null)
                     _objectPoolManager.ReturnToPool(dungeonData.bossMonsterData.enemyName, bossObj);
                 Debug.LogError($"오브젝트 풀에서 '{dungeonData.bossMonsterData.enemyName}' 태그를 가진 오브젝트를 스폰하는데 실패했습니다. ObjectPoolManager 설정을 확인하세요.");
-                return false;
+                return null;
             }
         }
         #endregion

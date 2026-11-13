@@ -37,7 +37,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private int projectileSortingOrder;
         private readonly List<BossGameMasterHomingProjectile> projectiles = new List<BossGameMasterHomingProjectile>();
         private float beganAt;
-        private double damageRemainder, pendingShots;
+        private double damageRemainder;
+        private sealed class CounterVolley
+        {
+            public Vector2 HitDirection;
+            public double Remaining;
+        }
+        private readonly Queue<CounterVolley> pendingVolleys = new();
         public BossGameMasterPatternType PatternType => BossGameMasterPatternType.ShieldCounter;
         public bool HasStarted => root != null;
         public bool IsShieldActive => root != null && isActiveAndEnabled && owner != null && owner.isActiveAndEnabled &&
@@ -104,8 +110,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (!bodySwitched) return;
             if (!IsShieldActive) { RestoreHitBody(); return; }
             Vector3 scale = transform.lossyScale;
-            float diameter = Mathf.Min(shield.sprite.bounds.size.x, shield.sprite.bounds.size.y) *
-                Mathf.Max(0.1f, shieldScale) * Mathf.Clamp(shieldHitRadiusRatio, 0.1f, 1f);
+            float diameter = ShieldHitDiameter;
             hitBody.size = new Vector2(diameter / Mathf.Max(0.001f, Mathf.Abs(scale.x)),
                 diameter / Mathf.Max(0.001f, Mathf.Abs(scale.y)));
             hitBody.offset = centerOffset;
@@ -135,8 +140,11 @@ namespace Nytherion.GamePlay.Characters.Enemy
             bodySwitched = false;
         }
 
+        private float ShieldHitDiameter => Mathf.Min(shield.sprite.bounds.size.x, shield.sprite.bounds.size.y) *
+            Mathf.Max(0.1f, shieldScale) * Mathf.Clamp(shieldHitRadiusRatio, 0.1f, 1f);
+
         // Called after critical/status multipliers, before the shared damage event and health subtraction.
-        public float ReceiveDamage(float amount)
+        public float ReceiveDamage(float amount, Vector2? hitPoint = null)
         {
             if (!IsShieldActive || amount <= 0f || float.IsNaN(amount) || float.IsInfinity(amount)) return amount;
             damageRemainder += amount;
@@ -144,7 +152,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
             double count = System.Math.Floor((damageRemainder + threshold * 0.000001) / threshold);
             if (count > 0)
             {
-                pendingShots += count;
+                Vector2 center = transform.TransformPoint(centerOffset);
+                Vector2 hitDirection = hitPoint.HasValue ? (hitPoint.Value - center).normalized : Vector2.zero;
+                pendingVolleys.Enqueue(new CounterVolley { HitDirection = hitDirection, Remaining = count });
                 damageRemainder = System.Math.Max(0d, damageRemainder - count * threshold);
             }
             return amount * (1f - Mathf.Clamp01(damageReduction));
@@ -160,9 +170,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
             UpdateHitBody();
         }
 
-        private void FireCounter()
+        private void FireCounter(Vector2 hitDirection)
         {
             Vector3 origin = transform.TransformPoint(centerOffset);
+            if (hitDirection.sqrMagnitude < 0.0001f)
+                hitDirection = ((Vector2)(ai.CurrentTarget.position - origin)).normalized;
+            if (hitDirection.sqrMagnitude < 0.0001f) hitDirection = Vector2.right;
+            origin += (Vector3)(hitDirection * (ShieldHitDiameter * 0.5f));
             Vector2 aim = ai.CurrentTarget.position - origin;
             float angle = (Mathf.Atan2(aim.y, aim.x) * Mathf.Rad2Deg + Random.Range(-spreadAngle * 0.5f, spreadAngle * 0.5f)) * Mathf.Deg2Rad;
             Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
@@ -183,9 +197,14 @@ namespace Nytherion.GamePlay.Characters.Enemy
             UpdateShield();
             // Spread only exceptionally large hit bursts across frames; never discard earned counter shots.
             if (ai != null && ai.CurrentTarget != null)
-                for (int i = 0; i < 16 && pendingShots >= 1d; i++, pendingShots--) FireCounter();
+                for (int i = 0; i < 16 && pendingVolleys.Count > 0; i++)
+                {
+                    CounterVolley volley = pendingVolleys.Peek();
+                    FireCounter(volley.HitDirection);
+                    if (--volley.Remaining < 1d) pendingVolleys.Dequeue();
+                }
             projectiles.RemoveAll(shot => shot == null || shot.IsFinished);
-            if (IsShieldActive || pendingShots >= 1d || projectiles.Count > 0) return false;
+            if (IsShieldActive || pendingVolleys.Count > 0 || projectiles.Count > 0) return false;
             Clear();
             return true;
         }
@@ -207,7 +226,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
             projectiles.Clear();
             if (root != null) { root.SetActive(false); Destroy(root); }
             root = null; shield = null;
-            damageRemainder = pendingShots = 0d;
+            damageRemainder = 0d;
+            pendingVolleys.Clear();
         }
 
         private void OnDisable() => Clear();

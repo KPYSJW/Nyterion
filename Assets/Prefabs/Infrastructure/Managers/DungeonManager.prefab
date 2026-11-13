@@ -50,6 +50,8 @@ MonoBehaviour:
   roomFirstDungeonGenerator: {fileID: -2933753644565975262}
   tilemapVisualizer: {fileID: 1573712204440672803}
   ignoreSavedDungeonMapForTest: 1
+  bossIntroFadeDuration: 1
+  bossHealthBarSheet: {fileID: 2800000, guid: db697ef26a5c4a5469fe1ad3651900d4, type: 3}
   _objectPoolManager: {fileID: 0}
   _stageManager: {fileID: 0}
 --- !u!114 &-2933753644565975262
