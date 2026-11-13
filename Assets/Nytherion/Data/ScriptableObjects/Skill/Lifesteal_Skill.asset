@@ -41,4 +41,4 @@ MonoBehaviour:
   - {fileID: 21300014, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
   activationFramesPerSecond: 16
   activationScale: 0.75
-  activationFeetOffset: {x: 0, y: 0}
+  activationFeetOffset: {x: 0, y: 0.1}

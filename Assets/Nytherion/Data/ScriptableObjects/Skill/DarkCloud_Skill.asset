@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83aad8fea7bb4efda458c73c42a31607, type: 3}
   m_Name: DarkCloud_Skill
   m_EditorClassIdentifier: 
-  damage: 10
   summonPrefab: {fileID: 6936192064216774670, guid: ae5ca25e38ee474ba52932f9dd13c4bf, type: 3}
+  damage: 10
   damagePerLevel: 2
-  attackInterval: 7.5
-  detectionRadius: 6
+  attackInterval: 1
+  detectionRadius: 3
   cloudHeight: 2
   moveSpeed: 5
   impactRadius: 1
