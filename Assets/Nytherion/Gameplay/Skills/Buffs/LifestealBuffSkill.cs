@@ -1,6 +1,7 @@
 using Nytherion.Core.Managers;
 using Nytherion.Data.ScriptableObjects.Skill;
 using Nytherion.GamePlay.Characters.Player;
+using Nytherion.GamePlay.Combat;
 using System.Collections;
 using UnityEngine;
 
@@ -10,12 +11,17 @@ namespace Nytherion.GamePlay.Skills
     /// 일정 시간 동안 플레이어가 적에게 입힌 피해의 일정 비율만큼 체력을 회복하는 흡혈 버프 스킬
     /// 이벤트 매니저를 통해 적 타격 이벤트를 구독하여 처리
     /// </summary>
+    [DefaultExecutionOrder(1100)]
     public class LifestealBuffSkill : SkillBase
     {
         private LifestealBuffSkillData lifestealData;
         private EventManager eventManager;
         private PlayerHealth playerHealth;
         private bool isBuffActive = false;
+        private readonly SpriteBodyBounds bodyBounds = new SpriteBodyBounds();
+        private SpriteRenderer activationRenderer;
+        private SpriteRenderer playerBody;
+        private float activationElapsed;
 
         private void Start()
         {
@@ -42,12 +48,72 @@ namespace Nytherion.GamePlay.Skills
                 if (playerHealth != null && eventManager != null)
                 {
                     StartCoroutine(BuffRoutine());
+                    PlayActivationEffect();
                 }
                 else
                 {
                     Debug.LogError("[LifestealBuffSkill] PlayerHealth 또는 EventManager를 찾을 수 없습니다.");
                 }
             }
+        }
+
+        private void PlayActivationEffect()
+        {
+            if (caster == null || lifestealData.activationFrames == null || lifestealData.activationFrames.Length == 0) return;
+            playerBody = caster.GetComponent<SpriteRenderer>();
+            if (playerBody == null) playerBody = caster.GetComponentInChildren<SpriteRenderer>();
+            if (activationRenderer == null)
+            {
+                GameObject visual = new GameObject("LifestealActivationVFX");
+                visual.transform.SetParent(transform, false);
+                activationRenderer = visual.AddComponent<SpriteRenderer>();
+            }
+            activationElapsed = 0f;
+            activationRenderer.enabled = true;
+            UpdateActivationEffect();
+        }
+
+        private void LateUpdate()
+        {
+            if (activationRenderer == null || !activationRenderer.enabled) return;
+            activationElapsed += Time.deltaTime;
+            UpdateActivationEffect();
+        }
+
+        private void UpdateActivationEffect()
+        {
+            int frame = Mathf.FloorToInt(activationElapsed * Mathf.Max(1f, lifestealData.activationFramesPerSecond));
+            if (caster == null || frame >= lifestealData.activationFrames.Length)
+            {
+                activationRenderer.enabled = false;
+                return;
+            }
+
+            Vector3 feet = caster.position;
+            if (playerBody != null && playerBody.sprite != null)
+            {
+                Bounds bounds = bodyBounds.GetBounds(playerBody);
+                feet = new Vector3(bounds.center.x, bounds.min.y, caster.position.z);
+                SortActivationEffectAboveWeapon(activationRenderer, playerBody);
+            }
+            Transform visual = activationRenderer.transform;
+            visual.position = feet + (Vector3)lifestealData.activationFeetOffset;
+            // 좌우 반전과 이동 방향에 관계없이 발밑에서 수직으로 재생합니다.
+            visual.rotation = Quaternion.identity;
+            Vector3 parentScale = transform.lossyScale;
+            float scale = Mathf.Max(0.01f, lifestealData.activationScale);
+            visual.localScale = new Vector3(scale / SafeScale(parentScale.x), scale / SafeScale(parentScale.y), 1f);
+            activationRenderer.sprite = lifestealData.activationFrames[frame];
+        }
+
+        private static float SafeScale(float value) => Mathf.Abs(value) < 0.001f ? 0.001f : value;
+
+        private void OnDisable()
+        {
+            StopAllCoroutines();
+            isBuffActive = false;
+            if (activationRenderer != null) activationRenderer.enabled = false;
+            if (eventManager != null) eventManager.OnEnemyDamagedByPlayer -= HandleEnemyDamaged;
         }
 
         /// <summary>

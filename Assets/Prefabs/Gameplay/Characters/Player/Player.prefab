@@ -436,6 +436,7 @@ MonoBehaviour:
   deadZoneRadius: 0.5
   orbitSpeed: 15
   centerOffset: {x: 0, y: 0, z: 0}
+  weaponSortingOrderOffset: -1
   aimAngleLimit: 45
   currentWeapon: {fileID: 0}
 --- !u!114 &7562096975272180810
@@ -453,6 +454,7 @@ MonoBehaviour:
   rb: {fileID: 4926970481670371563}
   spriteRenderer: {fileID: 7144026513014664610}
   animator: {fileID: 4850890469495388231}
+  idleAnimationResumeDelay: 3
 --- !u!114 &4367693792231427975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -463,30 +465,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76f5a5dde7894d2ba46d72f591689857, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   sourceRenderer: {fileID: 7144026513014664610}
   afterimageMaterial: {fileID: 2100000, guid: e6e769a9417b49a3b83fad8eb7ab813e, type: 2}
---- !u!114 &8093471562419037642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5097942217742227509}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bda9f63b6bbb49c183e7c5177fb71e62, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  detectionRadius: 0.9
-  pushDistance: 1.25
-  minimumInputAlignment: 0.1
-  minimumCenterDistance: 0.2
-  crowdDetectionRadius: 2.25
-  enemySpacing: 0.9
-  separationWeight: 0.8
-  chainedPushMultiplier: 0.75
+  useSpriteSheet: 1
+  dashFrames:
+  - {fileID: -532117636, guid: 0c57ca81a843db74ca07b4d0cd41f9c2, type: 3}
+  - {fileID: -1612026613, guid: 0c57ca81a843db74ca07b4d0cd41f9c2, type: 3}
+  - {fileID: 2110076760, guid: 0c57ca81a843db74ca07b4d0cd41f9c2, type: 3}
+  - {fileID: 1855785000, guid: 0c57ca81a843db74ca07b4d0cd41f9c2, type: 3}
+  - {fileID: -1137705847, guid: 0c57ca81a843db74ca07b4d0cd41f9c2, type: 3}
+  - {fileID: 1463418990, guid: 0c57ca81a843db74ca07b4d0cd41f9c2, type: 3}
+  - {fileID: -2070915323, guid: 0c57ca81a843db74ca07b4d0cd41f9c2, type: 3}
+  - {fileID: 1700837044, guid: 0c57ca81a843db74ca07b4d0cd41f9c2, type: 3}
+  spriteSheetMaterial: {fileID: 2100000, guid: 450fe21acd375b644b894d600a7739bc, type: 2}
+  sheetPlaybackSpeed: 0.5
 --- !u!114 &-2891475838477974602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -514,6 +508,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2480bd2a519f9004f85628d0cb508f1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 0}
+  hitColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashDuration: 0.1
+  hitFlashStrength: 0.9
+  hitFlashHoldDuration: 0.03
+  damageEffectScale: {x: 1, y: 1, z: 1}
+  damageEffectSortingOffset: 10
 --- !u!114 &5387959611554575142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -556,6 +557,26 @@ MonoBehaviour:
   animator: {fileID: 4850890469495388231}
   rb: {fileID: 4926970481670371563}
   playerController: {fileID: 7562096975272180810}
+--- !u!114 &8093471562419037642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5097942217742227509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda9f63b6bbb49c183e7c5177fb71e62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 0.9
+  pushDistance: 1.25
+  minimumInputAlignment: 0.1
+  minimumCenterDistance: 0.2
+  crowdDetectionRadius: 2.25
+  enemySpacing: 0.9
+  separationWeight: 0.8
+  chainedPushMultiplier: 0.75
 --- !u!1 &5200688149237149439
 GameObject:
   m_ObjectHideFlags: 0

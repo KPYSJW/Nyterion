@@ -198,9 +198,10 @@ namespace Nytherion.Editor
             {
                 relic = ScriptableObject.CreateInstance<RelicData>();
                 relic.relicName = "Relic of Portal Gate";
-                relic.koreanName = "차원문";
+                relic.koreanName = "차원문 마법책";
+                relic.englishName = "Portal Magic Book";
                 RelicDescriptionSetup.GetSkillDescriptions(data, out relic.description_KR, out relic.description_EN);
-                relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/WarpGear.png") ?? data.icon;
+                relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/PortalGateMagicBook.png") ?? data.icon;
                 relic.rarity = Rarity.Rare;
                 relic.effectModules = new List<RelicEffectModule>
                 {

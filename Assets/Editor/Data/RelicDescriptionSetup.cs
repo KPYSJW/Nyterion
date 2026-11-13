@@ -38,7 +38,7 @@ namespace Nytherion.Editor
                 ["BoomMaker"] = ("적을 추적하는 폭발 로봇을 내보내는 BoomMaker 소환", "Summons BoomMaker to deploy robots that chase enemies and explode."),
                 ["Comrade Blast"] = ("장착 중 가까운 적에게 미사일을 발사하는 블래스트 소환", "While equipped, summons Blast to fire missiles at nearby enemies."),
                 ["Opapa"] = ("장착 중 적을 관통하고 벽에서 튕기는 오파파 소환", "While equipped, summons Opapa to pierce enemies and bounce off walls."),
-                ["Frog"] = ("장착 중 적을 자동 공격하는 펭구 소환", "While equipped, summons Pengoo to automatically attack enemies."),
+                ["Frog"] = ("푸른 슬라임을 소환합니다.", "Summons a blue slime."),
                 ["Slime Specimen"] = ("장착 중 적을 자동 공격하는 슬라임 소환", "While equipped, summons a slime that automatically attacks enemies."),
                 ["Azure Berry"] = ("루티 투사체 +2", "Rooti projectiles +2."),
                 ["Purple Radish"] = ("루티 공격 속도 +25%", "Rooti attack speed +25%."),
@@ -91,6 +91,7 @@ namespace Nytherion.Editor
                 case "skill_fire_bolt": return "파이어볼 마법 책";
                 case "skill_meteor_strike": return "메테오 마법 책";
                 case "skill_shadow_clone": return "그림자 분신 마법 책";
+                case "skill_portal_gate": return "차원문 마법책";
                 case "skill_turret": return "루티 마법 책";
             }
             string name = string.IsNullOrWhiteSpace(currentName) ? skill.skillName : currentName;

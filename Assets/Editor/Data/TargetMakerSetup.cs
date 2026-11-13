@@ -19,7 +19,7 @@ namespace Nytherion.Editor
         public const string SummonPath = "Assets/Prefabs/Gameplay/Combat/VFX/BlazeShadeSummonEffect.prefab";
         public const string AttackPath = "Assets/Prefabs/Gameplay/Combat/VFX/BlazeShadeAttackEffect.prefab";
         private const string AnimationFolder = "Assets/Nytherion/Art/Combat/Weapons/Animations/Blazeshade/";
-        private const string SpriteFolder = "Assets/Nytherion/Art/Combat/VFX/Sprites/";
+        private const string SpriteFolder = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Blazeshade/";
 
         static TargetMakerSetup() => EditorApplication.update += Update;
 
@@ -95,7 +95,7 @@ namespace Nytherion.Editor
             relic.relicName = "TargetMaker";
             relic.koreanName = "타겟 메이커";
             RelicDescriptionSetup.ApplyDescription(relic);
-            relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/TargetMaker.png");
+            relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/CombatUtility/TargetMaker.png");
             if (relic.Image == null) throw new InvalidOperationException("TargetMaker 아이콘 누락");
             RelicInfluencePolicy.Normalize(relic);
             EditorUtility.SetDirty(relic);

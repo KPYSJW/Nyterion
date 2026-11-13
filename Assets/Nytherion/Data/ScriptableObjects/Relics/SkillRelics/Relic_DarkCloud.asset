@@ -46,8 +46,8 @@ MonoBehaviour:
     type: 2
     levelAmount: 1
   preserveCustomInfluenceZones: 1
-  synergySeriesId: 
-  synergySetBonusData: {fileID: 0}
+  synergySeriesId: ElementalCompanionSeries
+  synergySetBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
   unlockMilestoneID: 
   references:
     version: 2

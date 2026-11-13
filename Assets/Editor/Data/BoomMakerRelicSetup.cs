@@ -23,7 +23,7 @@ namespace Nytherion.Editor
         private const string AnimationRoot = ArtRoot + "/Animations";
         private const string PrefabRoot = "Assets/Prefabs/Gameplay/Characters/Companions/RoboPilot";
         private const string RelicPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/BoomMaker.asset";
-        private const string RelicIconPath = "Assets/Nytherion/Art/Relics/Sprites/BoomMaker.png";
+        private const string RelicIconPath = "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/BoomMaker.png";
         private const string DatabasePath = "Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset";
         private const string SummonedCreatureSetPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SummonedCreatureSet.asset";
         private const string ExistingExplosionPrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/ExplosionVFX.prefab";

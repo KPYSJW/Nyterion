@@ -106,9 +106,11 @@ MonoBehaviour:
   - {fileID: 210000006, guid: 83934e5822904ab88eb303018ec33635, type: 3}
   - {fileID: 210000007, guid: 83934e5822904ab88eb303018ec33635, type: 3}
   - {fileID: 210000008, guid: 83934e5822904ab88eb303018ec33635, type: 3}
-  - {fileID: 210000009, guid: 83934e5822904ab88eb303018ec33635, type: 3}
-  - {fileID: 210000010, guid: 83934e5822904ab88eb303018ec33635, type: 3}
-  - {fileID: 210000011, guid: 83934e5822904ab88eb303018ec33635, type: 3}
-  - {fileID: 210000012, guid: 83934e5822904ab88eb303018ec33635, type: 3}
+  animationSheet: {fileID: 2800000, guid: cee38e2ac45a6404080d9b8e1625b836, type: 3}
   framesPerSecond: 12
   bodyCoverage: {x: 1, y: 1}
+  emissionPerSecond: 12
+  maxParticles: 24
+  particleSizeMultiplier: 0.7
+  minFallSpeed: 0.7
+  maxFallSpeed: 1.2

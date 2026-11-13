@@ -16,7 +16,7 @@ namespace Nytherion.Editor
     public static class ThermalShockEffectSetup
     {
         private const string Output = "output/thermal-shock";
-        private const string SheetPath = "Assets/Nytherion/Art/Combat/ThermalShockEffect.png";
+        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/ThermalShockEffect.png";
         private const string AnimationRoot = "Assets/Nytherion/Art/Combat/VFX/Animations";
         private const string ClipPath = AnimationRoot + "/ThermalShockExplosion.anim";
         private const string ControllerPath = AnimationRoot + "/ThermalShockExplosion.controller";

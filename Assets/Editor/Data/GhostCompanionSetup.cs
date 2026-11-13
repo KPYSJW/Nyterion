@@ -22,7 +22,7 @@ namespace Nytherion.Editor
         private const string AnimationRoot = ArtRoot + "/Animations";
         private const string SpriteRoot = ArtRoot + "/Sprites";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Characters/Companions/GhostCompanion.prefab";
-        private const string IconPath = "Assets/Nytherion/Art/Relics/Sprites/Ghost.png";
+        private const string IconPath = "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/Ghost.png";
         private const string RelicPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Ghost.asset";
         private const string DatabasePath = "Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset";
         private const string HitPrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/GhostSpiritHitVFX.prefab";

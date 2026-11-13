@@ -16,7 +16,7 @@ namespace Nytherion.Editor
     public static class ArcaneDartHitEffectSetup
     {
         private const string Output = "output/arcane-dart-hit";
-        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/ArcaneDartHit.png";
+        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ArcaneDart/ArcaneDartHit.png";
         private const string ClipPath = "Assets/Nytherion/Art/Combat/VFX/Animations/ArcaneDartHit.anim";
         private const string ControllerPath = "Assets/Nytherion/Art/Combat/VFX/Animations/ArcaneDartHit.controller";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/ArcaneDartHitVFX.prefab";

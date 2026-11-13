@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcc6bc6f7a9e7d4998a440e0763228a, type: 3}
+  m_Name: FrostStream
+  m_EditorClassIdentifier: 
+  uniqueID: bd1a959c-0e8b-4efe-8b9a-2225b122c1c4
+  itemName_KR: "\uB0C9\uAE30 \uBC29\uC0AC\uAE30"
+  itemName_EN: Frost Stream
+  icon: {fileID: 21300000, guid: 8516e77e24df9bd48a3bf8ff7834864f, type: 3}
+  description_KR: "\uC804\uBC29\uC73C\uB85C \uB0C9\uAE30\uB97C \uBC29\uC0AC\uD574
+    \uBC94\uC704 \uC548\uC758 \uC801\uC5D0\uAC8C \uC9C0\uC18D\uC801\uC73C\uB85C \uD53C\uD574\uB97C
+    \uC90D\uB2C8\uB2E4."
+  description_EN: Sprays frost forward, repeatedly damaging enemies within the stream.
+  isStackable: 0
+  maxStack: 1
+  unlockMilestoneID: 
+  baseValue: 150
+  equipmentType: 0
+  traits: 04000000
+  statModifiers: []
+  useDiagonalIcon: 0
+  iconRotationOffset: 0
+  iconSlotScale: 1
+  inventoryIconScale: 1.1
+  inventoryIconSizeMultiplier: 1
+  damage: 2
+  range: 4
+  cooldown: 0.4
+  weaponType: 0
+  weaponSprite: {fileID: 21300000, guid: d9509abd82e3c9b4ab8d1982382e98f4, type: 3}
+  firePointOffset: {x: 0.5, y: 0, z: 0}
+  spriteRotationOffset: 0
+  visualPositionOffset: {x: -0.4, y: -0.15, z: 0}
+  visualScale: 0.4
+  sortingOrderOffset: 5
+  useFixedFacingPose: 0
+  useStaffRecoil: 0
+  weaponEffectPrefab: {fileID: 0}
+  fireEffectPrefab: {fileID: 0}
+  chargedFireEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 0}
+  chargeEffectRotationSpeed: 0
+  fireSound: {fileID: 0}
+  fireSoundVolume: 0.4
+  animatorController: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  chargedProjectilePrefab: {fileID: 0}
+  projectileAnimationVariants: []
+  projectileStartEffectVariants: []
+  projectileSpeed: 11
+  projectileRotationOffset: 0
+  extraProjectileMode: 1
+  maxChargeTime: 1
+  fullChargeRangeMultiplier: 1
+  fullChargeProjectileCountMultiplier: 1
+  fullChargeProjectileInterval: 0
+  fullChargePreparationTime: 0
+  hasHomingProjectiles: 0
+  usePlayerCircleSpawn: 0
+  playerCircleSpawnRadius: 0.65
+  playerCircleSpawnPointCount: 12
+  useHomingLaunchAngles: 0
+  homingLaunchAngles:
+  - 120
+  - 60
+  - 0
+  - -60
+  - -120
+  homingTurnSpeed: 180
+  useConstantHomingSpeed: 0
+  homingSearchRadius: 10
+  homingLaunchDuration: 0.15
+  homingLifetime: 4
+  chargeThresholdTime: 0.15
+  requiredRelicId: 
+  hitEffectPrefab: {fileID: 4718468594992411681, guid: 1d3ab778824fdd44eb1e0885b3af7d4d, type: 3}
+  weaponPrefab: {fileID: 1892968138910001148, guid: 129521e66b90d08418ff83930a5e7bab, type: 3}
+  isArchivable: 0

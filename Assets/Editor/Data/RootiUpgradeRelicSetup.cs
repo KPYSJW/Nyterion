@@ -90,7 +90,7 @@ namespace Nytherion.Editor
             if (string.IsNullOrWhiteSpace(relic.koreanName)) relic.koreanName = koreanName;
             RelicDescriptionSetup.ApplyDescription(relic);
             if (relic.Image == null)
-                relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/" + fileName + ".png");
+                relic.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/" + fileName + ".png");
             if (relic.effectModules == null) relic.effectModules = new List<RelicEffectModule>();
             if (!relic.effectModules.Any(module => module != null && module.effects != null &&
                 module.effects.Any(effect => effect is RootiUpgradeRelicEffect)))

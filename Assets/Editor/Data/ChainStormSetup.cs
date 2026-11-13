@@ -25,7 +25,7 @@ namespace Nytherion.Editor
     {
         private const string Output = "output/chain-storm";
         private const string Root = "Assets/Nytherion/Data/ScriptableObjects/Relics/";
-        private const string Sheet = "Assets/Nytherion/Art/Combat/WindBlastProj.png";
+        private const string Sheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/WindBlastProj.png";
         private const string Clip = "Assets/Nytherion/Art/Combat/VFX/Animations/WindBlastProjectile.anim";
         private const string Controller = "Assets/Nytherion/Art/Combat/VFX/Animations/WindBlastProjectile.controller";
         private const string Prefab = "Assets/Prefabs/Gameplay/Combat/Projectiles/WindBlastProjectile.prefab";

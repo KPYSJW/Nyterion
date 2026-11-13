@@ -1,0 +1,110 @@
+{
+  "confirmedDate": "2026-11-13",
+  "evidence": "사용자가 미확인 이미지 26개 모두 본인 추가 파일이라고 직접 확인함",
+  "images": [
+    {
+      "path": "Assets/Nytherion/Art/Characters/Player/Effects/DashSpriteSheet.png",
+      "guid": "0c57ca81a843db74ca07b4d0cd41f9c2"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/BurnEmberSheet.png",
+      "guid": "15ff328e38204f51a9c16cd3e5bcc38f"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/BurnFlameSheet.png",
+      "guid": "04f4bfe3416849318f854b768698c560"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/BurnVariantSheet.png",
+      "guid": "db80f6b5addb4ef0817c6623cfc542a5"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalA.png",
+      "guid": "8138b50f6e87011408be2ee24063bced"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalB.png",
+      "guid": "1970c9677e1c924448d17896d86df264"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalVariants.png",
+      "guid": "cee38e2ac45a6404080d9b8e1625b836"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStream.png",
+      "guid": "2abe51707230380499c58b50978e47d7"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStreamHit.png",
+      "guid": "c5a21e770a0da2440a229df6ab4d4e99"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStreamStart.png",
+      "guid": "8054a21dda2f10d42806d785f803cb37"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/Weapons/Sprites/FrostStream.png",
+      "guid": "d9509abd82e3c9b4ab8d1982382e98f4"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Combat/Weapons/Sprites/FrostStream_Icon.png",
+      "guid": "8516e77e24df9bd48a3bf8ff7834864f"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicPortalGate.png",
+      "guid": "12dfc98b25e64d4eab94e811e31cbe7d"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/Blackhole_skill_Icon.png",
+      "guid": "62c9ca19e17347ff896e4175614dbb69"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/BubbleShield_skill_Icon.png",
+      "guid": "92dbb8aff0cc4d8295a0473b53fb36df"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/ChainIgnition_skill_Icon.png",
+      "guid": "0b630b6168034c66af1d1a75e89de141"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/Darkbolt_skill_Icon.png",
+      "guid": "6f40e6f779e344218d2cf81db42564a6"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/Fireball_skill_Icon.png",
+      "guid": "404dafe161494c6295a2ff32f4f9776d"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/FireStorm_skill_Icon.png",
+      "guid": "af4721d78f014a9788027272efc5f453"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/IceShot_skill_Icon.png",
+      "guid": "2e03cd299df4408681ee0ce783aae72d"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/Lightbolt_skill_Icon.png",
+      "guid": "80124fe5a17d46d1932f907b4dd65941"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/MagicMissile_skill_Icon.png",
+      "guid": "b41d38ebcebe4c4994bdf0e4b2c7c0a8"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/PortalGate_skill_Icon.png",
+      "guid": "b53b7d633568486cbfb779609d3e71c7"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/ProjectileGate_skill_Icon.png",
+      "guid": "1b542cb1259e4decaa593f586c332740"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/Rooti_skill_Icon.png",
+      "guid": "c4cfeaca14ee4b2f91628b5802d6d576"
+    },
+    {
+      "path": "Assets/Nytherion/Art/Skills/Icons/Thunderbolt_skill_Icon.png",
+      "guid": "7c5ff175c9e84b71a0f5224a290ac44c"
+    }
+  ]
+}

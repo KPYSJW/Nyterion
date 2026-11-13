@@ -28,7 +28,7 @@ namespace Nytherion.Editor
         private const string DataPath = Root + "Skill/PoisonDrop_Skill.asset";
         private const string RelicPath = Root + "Relics/SkillRelics/Relic_PoisonDrop.asset";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Skills/PoisonDropSkill.prefab";
-        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/PoisonDrop_";
+        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/PoisonDrop/PoisonDrop_";
 
         static PoisonDropSkillSetup() => EditorApplication.delayCall += SetupIfMissing;
 
@@ -64,7 +64,7 @@ namespace Nytherion.Editor
             }
             data.dropSprite = Slice("Drop", 96, 72, 1, 1, new Vector2(0.5f, 30f / 72f))[0];
             data.frames = Slice("Sheet", 96, 72, 3, 13, new Vector2(0.5f, 12f / 72f));
-            string iconPath = Sprites + "Icon.png";
+            string iconPath = "Assets/Nytherion/Art/Skills/Icons/PoisonDrop_Icon.png";
             AssetDatabase.ImportAsset(iconPath, ImportAssetOptions.ForceSynchronousImport);
             TextureImporter iconImporter = (TextureImporter)AssetImporter.GetAtPath(iconPath);
             Configure(iconImporter, SpriteImportMode.Single);

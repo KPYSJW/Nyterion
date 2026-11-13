@@ -233,12 +233,14 @@ MonoBehaviour:
   invertFacing: 0
   followOffsetX: 1.2
   followOffsetY: 0.55
+  followOwnerDirectly: 0
   wakeupDistance: 0.8
   stopRadius: 0.35
   leashRange: 36
   minMoveSpeed: 3.5
   maxMoveSpeed: 4.5
   acceleration: 15
+  useConstantMoveSpeed: 0
   attackRange: 8
   attackInterval: 5.5
   attackFreezeDuration: 0
@@ -268,6 +270,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2560
   maximumBouncesPerStep: 4
+  dashStartFrames:
+  - {fileID: 332653577, guid: fa47e29f898e49943821bcd52a4be61b, type: 3}
+  - {fileID: -418479864, guid: fa47e29f898e49943821bcd52a4be61b, type: 3}
+  - {fileID: -1953737186, guid: fa47e29f898e49943821bcd52a4be61b, type: 3}
+  - {fileID: 869406174, guid: fa47e29f898e49943821bcd52a4be61b, type: 3}
+  - {fileID: 1777276737, guid: fa47e29f898e49943821bcd52a4be61b, type: 3}
+  - {fileID: 278120356, guid: fa47e29f898e49943821bcd52a4be61b, type: 3}
+  - {fileID: -2115538520, guid: fa47e29f898e49943821bcd52a4be61b, type: 3}
+  - {fileID: 1188840525, guid: fa47e29f898e49943821bcd52a4be61b, type: 3}
+  dashStartMaterial: {fileID: 2100000, guid: e45152c5bb405724686076f03f39e025, type: 2}
+  dashStartDuration: 0.4
+  dashStartScale: 0.8
+  dashStartBehindOffset: 0.05
   blinkTriggerParam: Blink
   rollStopTriggerParam: StopRoll
   minimumBlinkInterval: 3

@@ -11,7 +11,7 @@ namespace Nytherion.Editor
     [InitializeOnLoad]
     public static class MeteorStrikeFallSetup
     {
-        private const string Sheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/MeteorStrikeSheet.png";
+        private const string Sheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/MeteorStrike/MeteorStrikeSheet.png";
         private const string ClipPath = "Assets/Nytherion/Art/Combat/VFX/Animations/MeteorStrikeFall.anim";
         private const string ExplosionSheet = Sheet;
         private const string ExplosionClipPath = "Assets/Nytherion/Art/Combat/VFX/Animations/MeteorStrikeExplosion.anim";

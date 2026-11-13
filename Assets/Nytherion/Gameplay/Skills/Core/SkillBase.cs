@@ -1,6 +1,7 @@
 using Nytherion.Data.ScriptableObjects.Skill;
 using UnityEngine;
 using Nytherion.GamePlay.Characters.Player;
+using System.Collections.Generic;
 
 namespace Nytherion.GamePlay.Skills
 {
@@ -12,6 +13,29 @@ namespace Nytherion.GamePlay.Skills
     {
         /// <summary> 스킬의 기본 정보와 능력치를 담고 있는 데이터/// </summary>
         public SkillData skillData;
+
+        private readonly List<SpriteRenderer> activationWeaponRenderers = new List<SpriteRenderer>();
+
+        // 무기의 본체와 자식 스프라이트보다 사용 이펙트를 앞에 그립니다.
+        protected void SortActivationEffectAboveWeapon(SpriteRenderer effect, SpriteRenderer body)
+        {
+            if (body == null) return;
+            int order = body.sortingOrder;
+            PlayerCombat combat = caster != null ? caster.GetComponentInParent<PlayerCombat>()
+                : GetComponentInParent<PlayerCombat>();
+            if (combat != null && combat.currentWeapon != null)
+            {
+                combat.currentWeapon.GetComponentsInChildren<SpriteRenderer>(true, activationWeaponRenderers);
+                foreach (SpriteRenderer weaponRenderer in activationWeaponRenderers)
+                {
+                    if (weaponRenderer.sortingLayerID == body.sortingLayerID)
+                        order = Mathf.Max(order, weaponRenderer.sortingOrder);
+                }
+                activationWeaponRenderers.Clear();
+            }
+            effect.sortingLayerID = body.sortingLayerID;
+            effect.sortingOrder = order + 1;
+        }
 
         protected float EffectSizeMultiplier
         {

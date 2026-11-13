@@ -1,0 +1,349 @@
+{
+  "entries": [
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Blackhole.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Blackhole/Blackhole.png",
+      "guid": "eec041ec2caeadf49896734136349182"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Blackhole_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Blackhole/Blackhole_Icon.png",
+      "guid": "0eab6401e6ad1ed459b6bfc894bcddb6"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Blackhole_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/Blackhole_skill_Icon.png",
+      "guid": "62c9ca19e17347ff896e4175614dbb69"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/BubbleShield_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/BubbleShield_skill_Icon.png",
+      "guid": "92dbb8aff0cc4d8295a0473b53fb36df"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition/ChainIgnition.png",
+      "guid": "41cf23f2d3f4c4b4eb91c6ea0d69447f"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition/ChainIgnition_Icon.png",
+      "guid": "2f9eb43b8ebfbac46a1aca9c42d36a58"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/ChainIgnition_skill_Icon.png",
+      "guid": "0b630b6168034c66af1d1a75e89de141"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkBolt_Cast.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Darkbolt/DarkBolt_Cast.png",
+      "guid": "5ebd5e6f7f5549d495b56470874f43a0"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkBolt_Hit.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Darkbolt/DarkBolt_Hit.png",
+      "guid": "5b1102c1e8824eea91568179854dbc85"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkBolt_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Darkbolt/DarkBolt_Icon.png",
+      "guid": "b77cf03f97fe43fcbbffff7d942d4b6f"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkBolt_Projectile.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Darkbolt/DarkBolt_Projectile.png",
+      "guid": "d94136519c274e07bf0459d4a89f4d03"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Darkbolt_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/Darkbolt_skill_Icon.png",
+      "guid": "6f40e6f779e344218d2cf81db42564a6"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud_Bolt.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud/DarkCloud_Bolt.png",
+      "guid": "ed80166caca94a508b99de02fc7f4b06"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud_HitCurrent.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud/DarkCloud_HitCurrent.png",
+      "guid": "0e6473df936b4d3a82a34e7e5ada4376"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud_Idle.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud/DarkCloud_Idle.png",
+      "guid": "da17e748daa5436e8df457c4e6fbfb92"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud_Summon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud/DarkCloud_Summon.png",
+      "guid": "aa9b8b011ef34a41b971f3aa305b078a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud_TurquoiseBolt.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/DarkCloud/DarkCloud_TurquoiseBolt.png",
+      "guid": "6ad1874e1d054464aef41744c803cd9e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Decoy_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/Decoy_Icon.png",
+      "guid": "bef9346cfd8f0d3428b52bb1c8d0617e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Fireball_Cast.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Fireball/Fireball_Cast.png",
+      "guid": "5f6f860079564babbf1a222a1f2e778c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Fireball_Hit.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Fireball/Fireball_Hit.png",
+      "guid": "fe39388fa89063e47bb800c53089a835"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Fireball_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Fireball/Fireball_Icon.png",
+      "guid": "468a78cabfab3f5428a630f629084993"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Fireball_Projectile.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Fireball/Fireball_Projectile.png",
+      "guid": "b724c9ad2367c6040b763a6f1745d7b8"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Fireball_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/Fireball_skill_Icon.png",
+      "guid": "404dafe161494c6295a2ff32f4f9776d"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/FireStorm_Hit.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/FireStorm/FireStorm_Hit.png",
+      "guid": "997f122b73ed760488e7c78d9888ca82"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/FireStorm_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/FireStorm/FireStorm_Icon.png",
+      "guid": "d2272d4152ffa384f976c34a618e4e15"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/FireStorm_Loop.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/FireStorm/FireStorm_Loop.png",
+      "guid": "7eeb82c477ebf6842b3af37b81b9a6f1"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/FireStorm_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/FireStorm_skill_Icon.png",
+      "guid": "af4721d78f014a9788027272efc5f453"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/FireStorm_Spawn.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/FireStorm/FireStorm_Spawn.png",
+      "guid": "2fa7c644b7dbdaf4799b9984e157791c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/FrostSplinterProjectile.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Shared/FrostSplinterProjectile.png",
+      "guid": "d70f4229252743f99f65bf19d4850f0c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/IceShot_Cast.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/IceShot/IceShot_Cast.png",
+      "guid": "070369cecb13492fa8d05d2aa580d710"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/IceShot_Hit.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/IceShot/IceShot_Hit.png",
+      "guid": "0d24dedd62bb20c44ab1e424fa854dd9"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/IceShot_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/IceShot/IceShot_Icon.png",
+      "guid": "85e7ac47af43cdf4b86efe73ee1f133a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/IceShot_Projectile.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/IceShot/IceShot_Projectile.png",
+      "guid": "f91beae4cf938c84ca375e032db61219"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/IceShot_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/IceShot_skill_Icon.png",
+      "guid": "2e03cd299df4408681ee0ce783aae72d"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/LifeSteal_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/LifeSteal_Icon.png",
+      "guid": "277ee38f9483dfa43abab5ec944ea163"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Lightbolt_Bolt.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Lightbolt/Lightbolt_Bolt.png",
+      "guid": "c133d6e5ffba4b87b5eed12976201174"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/LightBolt_Cast.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Lightbolt/LightBolt_Cast.png",
+      "guid": "c940b35a8d1953247b0b8846e9e9162b"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Lightbolt_Hit.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Lightbolt/Lightbolt_Hit.png",
+      "guid": "5e713cd905fcb7b4f981403e5699a8b9"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Lightbolt_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Lightbolt/Lightbolt_Icon.png",
+      "guid": "95724ee6e45458848a41b289d9a4ddbb"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Lightbolt_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/Lightbolt_skill_Icon.png",
+      "guid": "80124fe5a17d46d1932f907b4dd65941"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile_Cast.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile/MagicMissile_Cast.png",
+      "guid": "f37ad4aec35d40b8821d1dde7b2f0dd3"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile_Hit.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile/MagicMissile_Hit.png",
+      "guid": "9e6f08a11ec402441b23f4f8f826f2ac"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile/MagicMissile_Icon.png",
+      "guid": "7eb7a317a6cb79b44b67473f60936838"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile_Projectile.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile/MagicMissile_Projectile.png",
+      "guid": "3393842af065fa74e92a0a60958778a1"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/MagicMissile_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/MagicMissile_skill_Icon.png",
+      "guid": "b41d38ebcebe4c4994bdf0e4b2c7c0a8"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/MeteorStrike.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/MeteorStrike.png",
+      "guid": "2eaac90482922a741904bacc2c0275be"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/MultiShot_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/MultiShot_Icon.png",
+      "guid": "4bf671ae281a08b459c178d972d547d4"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Overdrive_Activation.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Overdrive/Overdrive_Activation.png",
+      "guid": "cd1bba9dc89e4ee6988053468c5982e6"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Overdrive_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/Overdrive_Icon.png",
+      "guid": "6cf5c84ea61cae748bdd3db9f032f00c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/PoisonDrop_Drop.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/PoisonDrop/PoisonDrop_Drop.png",
+      "guid": "ddba15ef40912aa4c98c522ec1041ea0"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/PoisonDrop_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/PoisonDrop_Icon.png",
+      "guid": "13491f54166fa30459fb0ef7ac507a4d"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/PoisonDrop_Sheet.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/PoisonDrop/PoisonDrop_Sheet.png",
+      "guid": "b7b2ab5ca954b3e4d872912566349aea"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/PortalGate_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/PortalGate_skill_Icon.png",
+      "guid": "b53b7d633568486cbfb779609d3e71c7"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/projectilegate_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/ProjectileGate/projectilegate_Icon.png",
+      "guid": "2f0d0514c1bc26849afdda5f910b6505"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/ProjectileGate_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/ProjectileGate_skill_Icon.png",
+      "guid": "1b542cb1259e4decaa593f586c332740"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/RelicIceShard.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Shared/RelicIceShard.png",
+      "guid": "95d0819a706a451897119de17bc7a8e6"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Rooti.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Rooti/Rooti.png",
+      "guid": "591962a6177062c4cacfd63ce26e9ce1"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Rooti_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/Rooti_skill_Icon.png",
+      "guid": "c4cfeaca14ee4b2f91628b5802d6d576"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/ShadowCloneSkill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/ShadowCloneSkill_Icon.png",
+      "guid": "1efc05dccf0b8d4429402531e4278440"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/SoulEater_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/SoulEater_Icon.png",
+      "guid": "36c1e236c80bd8441aebb22c9d81181f"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/SoulEater_Kill.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/SoulEater/SoulEater_Kill.png",
+      "guid": "d76ef053ab3e491ba23308f6782cb95e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/SoulEater_Launch.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/SoulEater/SoulEater_Launch.png",
+      "guid": "f20a9850e4d04789a22ea0de1c34593d"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/SoulEater_Projectile.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/SoulEater/SoulEater_Projectile.png",
+      "guid": "93b8042da78e42cbaaec34bd5bb1bd7d"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Spiral.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Shared/Spiral.png",
+      "guid": "2641987862f4dbd4da2fef9e117d24b6"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt_Cast.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt/Thunderbolt_Cast.png",
+      "guid": "aa11a03deb364992a4460ddc34b8c2bd"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt_Hit.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt/Thunderbolt_Hit.png",
+      "guid": "6fa43220fb4cd99499c274b9074b3ffc"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt/Thunderbolt_Icon.png",
+      "guid": "2e7e8866e47061d429d358b65f556f69"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt_Projectile.png",
+      "destination": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt/Thunderbolt_Projectile.png",
+      "guid": "b804f93e80700934cb6065d67270f816"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt_skill_Icon.png",
+      "destination": "Assets/Nytherion/Art/Skills/Icons/Thunderbolt_skill_Icon.png",
+      "guid": "7c5ff175c9e84b71a0f5224a290ac44c"
+    }
+  ]
+}

@@ -15,7 +15,7 @@ namespace Nytherion.Editor
     public static class AfterglowHitEffectSetup
     {
         private const string Output = "output/afterglow-hit";
-        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/AfterglowHit.png";
+        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Afterglow/AfterglowHit.png";
         private const string ClipPath = "Assets/Nytherion/Art/Combat/VFX/Animations/AfterglowHit.anim";
         private const string ControllerPath = "Assets/Nytherion/Art/Combat/VFX/Animations/AfterglowHit.controller";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/AfterglowHitVFX.prefab";

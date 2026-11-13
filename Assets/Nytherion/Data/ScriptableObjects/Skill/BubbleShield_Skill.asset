@@ -24,7 +24,7 @@ MonoBehaviour:
   manaCost: 30
   damage: 0
   range: 0
-  icon: {fileID: 184623147, guid: 1680c2c5c307f284c8177d20079a8bc2, type: 3}
+  icon: {fileID: 21300000, guid: 92dbb8aff0cc4d8295a0473b53fb36df, type: 3}
   skillPrefab: {fileID: 2286145910398734347, guid: 7183957c8b658654bbc95abe18ba7632, type: 3}
   unlockMilestoneID: 
   baseShield: 100

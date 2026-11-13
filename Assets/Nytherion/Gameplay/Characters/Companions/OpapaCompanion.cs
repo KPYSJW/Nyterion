@@ -30,6 +30,13 @@ namespace Nytherion.GamePlay.Characters.Companions
         [SerializeField] private LayerMask blockingLayers;
         [SerializeField, Range(1, 8)] private int maximumBouncesPerStep = 4;
 
+        [Header("돌진 및 반사 먼지")]
+        [SerializeField] private Sprite[] dashStartFrames;
+        [SerializeField] private Material dashStartMaterial;
+        [SerializeField, Min(0.01f)] private float dashStartDuration = 0.4f;
+        [SerializeField, Min(0.01f)] private float dashStartScale = 0.8f;
+        [SerializeField, Min(0f)] private float dashStartBehindOffset = 0.05f;
+
         [Header("전용 애니메이션")]
         [SerializeField] private string blinkTriggerParam = "Blink";
         [SerializeField] private string rollStopTriggerParam = "StopRoll";
@@ -49,6 +56,16 @@ namespace Nytherion.GamePlay.Characters.Companions
         private float phaseEndTime;
         private float nextBlinkTime;
         private bool wasIdle;
+        private sealed class DashStartInstance
+        {
+            public SpriteRenderer renderer;
+            public Vector3 position;
+            public Quaternion rotation;
+            public float startTime;
+            public bool playing;
+        }
+
+        private readonly List<DashStartInstance> dashStartEffects = new List<DashStartInstance>();
 
         protected override bool IsUsingCustomMovement => rollState != RollState.None;
         protected override bool CanAutoAttack => rollState == RollState.None;
@@ -56,6 +73,8 @@ namespace Nytherion.GamePlay.Characters.Companions
         protected override void OnInitialized()
         {
             CacheOpapaComponents();
+            // 원본은 오른쪽을 바라보므로 이미지 반전 없이 객체의 X 스케일로만 방향을 정합니다.
+            if (spriteRenderer != null) spriteRenderer.flipX = false;
             rollState = RollState.None;
             damagedTargets.Clear();
             wasIdle = false;
@@ -140,7 +159,84 @@ namespace Nytherion.GamePlay.Characters.Companions
 
             rollState = RollState.Rolling;
             phaseEndTime = Time.time + Mathf.Max(0.1f, rollingDuration);
+            PlayDashStart(CompanionRigidbody.position);
             DamageOverlappingEnemies(CompanionRigidbody.position);
+        }
+
+        private void PlayDashStart(Vector2 origin)
+        {
+            if (spriteRenderer == null || dashStartFrames == null || dashStartFrames.Length == 0 ||
+                dashStartMaterial == null)
+            {
+                return;
+            }
+
+            DashStartInstance instance = null;
+            foreach (DashStartInstance candidate in dashStartEffects)
+            {
+                if (!candidate.playing)
+                {
+                    instance = candidate;
+                    break;
+                }
+            }
+            if (instance == null)
+            {
+                GameObject effect = new GameObject("Opapa Dash Start");
+                effect.transform.SetParent(transform, false);
+                instance = new DashStartInstance { renderer = effect.AddComponent<SpriteRenderer>() };
+                dashStartEffects.Add(instance);
+            }
+
+            // 원본 이미지의 오른쪽 끝을 발밑에 맞춰 이동 방향 뒤쪽으로 먼지를 펼칩니다.
+            // 반사 시에는 보간된 표시 위치 대신 실제 충돌 지점을 기준으로 생성합니다.
+            Bounds bounds = spriteRenderer.bounds;
+            instance.position = new Vector3(origin.x, origin.y, transform.position.z)
+                + new Vector3(bounds.center.x - transform.position.x, bounds.min.y - transform.position.y, 0f)
+                - (Vector3)rollingDirection * dashStartBehindOffset;
+            instance.rotation = Quaternion.Euler(0f, 0f,
+                Mathf.Atan2(rollingDirection.y, rollingDirection.x) * Mathf.Rad2Deg);
+            // 오른쪽 끝은 항상 본체 쪽을 향하고, 왼쪽 돌진에서도 먼지가 아래로 뒤집히지 않게 합니다.
+            instance.renderer.flipY = rollingDirection.x < 0f;
+            instance.renderer.sharedMaterial = dashStartMaterial;
+            instance.renderer.sortingLayerID = spriteRenderer.sortingLayerID;
+            instance.renderer.sortingOrder = spriteRenderer.sortingOrder - 1;
+            instance.renderer.sprite = dashStartFrames[0];
+            instance.startTime = Time.time;
+            instance.playing = true;
+            instance.renderer.gameObject.SetActive(true);
+            UpdateDashStartPose(instance);
+        }
+
+        private void LateUpdate()
+        {
+            foreach (DashStartInstance instance in dashStartEffects)
+            {
+                if (!instance.playing) continue;
+
+                int frame = Mathf.FloorToInt((Time.time - instance.startTime) /
+                    Mathf.Max(0.01f, dashStartDuration) * dashStartFrames.Length);
+                if (frame >= dashStartFrames.Length)
+                {
+                    instance.playing = false;
+                    instance.renderer.gameObject.SetActive(false);
+                    continue;
+                }
+
+                instance.renderer.sprite = dashStartFrames[frame];
+                UpdateDashStartPose(instance);
+            }
+        }
+
+        private void UpdateDashStartPose(DashStartInstance instance)
+        {
+            // 부모 이동과 Rigidbody 보간에 관계없이 출발 지점에 남깁니다.
+            Transform effect = instance.renderer.transform;
+            effect.SetPositionAndRotation(instance.position, instance.rotation);
+            Vector3 parentScale = transform.lossyScale;
+            effect.localScale = new Vector3(
+                dashStartScale * Mathf.Sign(parentScale.x) / Mathf.Max(0.0001f, Mathf.Abs(parentScale.x)),
+                dashStartScale * Mathf.Sign(parentScale.y) / Mathf.Max(0.0001f, Mathf.Abs(parentScale.y)), 1f);
         }
 
         /// <summary>
@@ -222,6 +318,7 @@ namespace Nytherion.GamePlay.Characters.Companions
                 float consumedDistance = Mathf.Max(hitDistance, collisionSkin);
                 remainingDistance = Mathf.Max(0f, remainingDistance - consumedDistance);
                 rollingDirection = Vector2.Reflect(rollingDirection, hitNormal).normalized;
+                PlayDashStart(position);
                 bounceCount++;
             }
 
@@ -446,9 +543,12 @@ namespace Nytherion.GamePlay.Characters.Companions
 
         private void UpdateRollingFacing()
         {
-            if (spriteRenderer != null && Mathf.Abs(rollingDirection.x) > 0.01f)
+            if (Mathf.Abs(rollingDirection.x) > 0.01f)
             {
-                spriteRenderer.flipX = rollingDirection.x < 0f;
+                // 일반 조준과 같은 방식으로 방향을 바꿔 이중 반전을 방지합니다.
+                Vector3 scale = transform.localScale;
+                scale.x = Mathf.Abs(scale.x) * Mathf.Sign(rollingDirection.x);
+                transform.localScale = scale;
             }
         }
 
@@ -464,6 +564,11 @@ namespace Nytherion.GamePlay.Characters.Companions
 
         private void OnDisable()
         {
+            foreach (DashStartInstance instance in dashStartEffects)
+            {
+                instance.playing = false;
+                instance.renderer.gameObject.SetActive(false);
+            }
             rollState = RollState.None;
             damagedTargets.Clear();
             if (CompanionRigidbody != null)

@@ -137,7 +137,8 @@ MonoBehaviour:
   - {fileID: 944166840, guid: 60838953101e4c844958c4187340fa6e, type: 3}
   - {fileID: -1427618769, guid: 60838953101e4c844958c4187340fa6e, type: 3}
   - {fileID: -71429372, guid: 60838953101e4c844958c4187340fa6e, type: 3}
-  emissionPerSecond: 16
+  animationSheet: {fileID: 2800000, guid: db80f6b5addb4ef0817c6623cfc542a5, type: 3}
+  emissionPerSecond: 24
   maxParticles: 48
   minRiseSpeed: 1.2
   maxRiseSpeed: 1.5

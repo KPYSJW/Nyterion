@@ -23,8 +23,8 @@ namespace Nytherion.Editor
         public const string DataPath = "Assets/Nytherion/Data/ScriptableObjects/Skill/ChainIgnition_Skill.asset";
         public const string SkillPrefabPath = "Assets/Prefabs/Gameplay/Skills/ChainIgnitionSkill.prefab";
         public const string WavePrefabPath = "Assets/Prefabs/Gameplay/Skills/ChainIgnitionWave.prefab";
-        private const string SheetPath = "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition.png";
-        private const string IconPath = "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition_Icon.png";
+        private const string SheetPath = "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition/ChainIgnition.png";
+        private const string IconPath = "Assets/Nytherion/Art/Skills/Sprites/ChainIgnition/ChainIgnition_Icon.png";
         public const string SoundPath = "Assets/Nytherion/Audio/ChainIgnitionSound.wav";
         private const string RelicPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Relic_ChainIgnition.asset";
 

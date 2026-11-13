@@ -1,0 +1,65 @@
+{
+  "reason": "Git 추가 작성자는 실제 이미지 작업자와 다를 수 있으므로 사용자 정정을 우선한다.",
+  "overrides": [
+    {
+      "guid": "f9a90e75884b01446b11866757152f33",
+      "path": "Assets/Resources/Sprites/Monster/Oculith/Oculith.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "5954531edb6d0cd47aabd990627272d2",
+      "path": "Assets/Resources/Sprites/Monster/Oculith/OculithIdle.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "2a17f2270bf989f4b8d50a38cc0ee3a1",
+      "path": "Assets/Resources/Sprites/Monster/Oculith/OculithWalkDown.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "359982834eacd294c86a32dd35a3e572",
+      "path": "Assets/Resources/Sprites/Monster/Oculith/OculithWalkSide.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "e5b71ef1b41364343836dedaab397e3b",
+      "path": "Assets/Resources/Sprites/Monster/Oculith/OculithWalkUp.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "3543050653b94974bbded6de93ffc3b6",
+      "path": "Assets/Resources/Sprites/Monster/Vanok/Vanok.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "f09875c4c620e45459d6a749a98e9756",
+      "path": "Assets/Resources/Sprites/Monster/Vanok/VanokIdle.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "1dc1c5397e6a624448f2891153091fa5",
+      "path": "Assets/Resources/Sprites/Monster/Vanok/VanokWalkDown.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "ca2fca92d7452634fa5a5a6c88b20928",
+      "path": "Assets/Resources/Sprites/Monster/Vanok/VanokWalkSide.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    },
+    {
+      "guid": "3d25654bcb8283f4cb42c5b987af67f6",
+      "path": "Assets/Resources/Sprites/Monster/Vanok/VanokWalkUp.png",
+      "classification": "collaborator",
+      "evidence": "사용자가 적 이미지는 협업자 작업이라고 직접 정정함"
+    }
+  ]
+}

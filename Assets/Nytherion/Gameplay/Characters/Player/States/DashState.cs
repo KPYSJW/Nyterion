@@ -18,13 +18,13 @@ public class DashState : PlayerState
         {
             afterimageEffect = playerController.gameObject.AddComponent<DashAfterimageVFX>();
         }
-        afterimageEffect.Play();
-
         // 거리를 속도로 나누어 대쉬 지속 시간을 계산합니다.
         float calculatedDuration = playerController.PlayerData.dashDistance / playerController.PlayerData.dashSpeed;
         dashTimer = calculatedDuration;
 
         playerController.ApplyDashVelocity();
+        afterimageEffect.Play(playerController.GetComponent<Rigidbody2D>().velocity.normalized,
+            playerController.PlayerData.dashDistance, calculatedDuration);
     }
 
     public override void Execute(PlayerController playerController)

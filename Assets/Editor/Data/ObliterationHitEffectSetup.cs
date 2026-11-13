@@ -15,7 +15,7 @@ namespace Nytherion.Editor
     public static class ObliterationHitEffectSetup
     {
         private const string Output = "output/obliteration-hit";
-        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/ObliterationHit.png";
+        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Obliteration/ObliterationHit.png";
         private const string ClipPath = "Assets/Nytherion/Art/Combat/VFX/Animations/ObliterationHit.anim";
         private const string ControllerPath = "Assets/Nytherion/Art/Combat/VFX/Animations/ObliterationHit.controller";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/ObliterationHitVFX.prefab";

@@ -24,9 +24,9 @@ namespace Nytherion.Editor
         private const string RelicPath = Root + "Relics/SkillRelics/Relic_MagicMissile.asset";
         private const string SkillPath = "Assets/Prefabs/Gameplay/Skills/MagicMissileSkill.prefab";
         private const string ProjectilePath = "Assets/Prefabs/Gameplay/Skills/MagicMissileProjectile.prefab";
-        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/MagicMissile_";
-        private const string ProjectileSpritePath = "Assets/Nytherion/Art/Skills/Sprites/MagicMissile_Projectile.png";
-        private const string TailPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/MagicMissileTail.png";
+        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/MagicMissile/MagicMissile_";
+        private const string ProjectileSpritePath = "Assets/Nytherion/Art/Skills/Sprites/MagicMissile/MagicMissile_Projectile.png";
+        private const string TailPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/MagicMissile/MagicMissileTail.png";
 
         [MenuItem("Tools/Nytherion/MagicMissile/Create Assets")]
         public static void CreateAssets()
@@ -41,7 +41,7 @@ namespace Nytherion.Editor
                 if (!string.IsNullOrEmpty(error)) throw new InvalidOperationException("투사체 이미지 이름 변경 실패: " + error);
             }
 
-            Sprite icon = ConfigureIcon(Sprites + "Icon.png");
+            Sprite icon = ConfigureIcon("Assets/Nytherion/Art/Skills/Sprites/MagicMissile/MagicMissile_Icon.png");
             Sprite[] projectileFrames = ConfigureFrames(ProjectileSpritePath, 32, 4);
             Sprite[] hitFrames = ConfigureFrames(Sprites + "Hit.png", 64, 7);
             Sprite[] castFrames = ConfigureFrames(Sprites + "Cast.png", 64, 5);

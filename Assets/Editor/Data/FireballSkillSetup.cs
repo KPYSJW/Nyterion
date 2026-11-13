@@ -24,7 +24,7 @@ namespace Nytherion.Editor
         private const string RelicPath = Root + "Relics/SkillRelics/Relic_Fireball.asset";
         private const string SkillPath = "Assets/Prefabs/Gameplay/Skills/FireballSkill.prefab";
         private const string ProjectilePath = "Assets/Prefabs/Gameplay/Skills/FireballProjectile.prefab";
-        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/Fireball_";
+        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/Fireball/Fireball_";
 
         static FireballSkillSetup() => EditorApplication.delayCall += SetupIfMissing;
 
@@ -59,7 +59,7 @@ namespace Nytherion.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             Sprite[] projectileFrames = ConfigureFrames(Sprites + "Projectile.png", 32, 4);
             Sprite[] hitFrames = ConfigureFrames(Sprites + "Hit.png", 64, 7);
-            Sprite icon = ConfigureIcon(Sprites + "Icon.png");
+            Sprite icon = ConfigureIcon("Assets/Nytherion/Art/Skills/Sprites/Fireball/Fireball_Icon.png");
             FireballSkillData data = AssetDatabase.LoadAssetAtPath<FireballSkillData>(DataPath);
             if (data == null)
             {

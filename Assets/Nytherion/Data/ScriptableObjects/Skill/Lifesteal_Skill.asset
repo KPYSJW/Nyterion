@@ -30,3 +30,15 @@ MonoBehaviour:
   buffDuration: 5
   healRatio: 0.1
   healRatioPerLevel: 0.05
+  activationFrames:
+  - {fileID: 21300000, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
+  - {fileID: 21300002, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
+  - {fileID: 21300004, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
+  - {fileID: 21300006, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
+  - {fileID: 21300008, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
+  - {fileID: 21300010, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
+  - {fileID: 21300012, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
+  - {fileID: 21300014, guid: f003184e0e3d46298e24e4a9cdd8b568, type: 3}
+  activationFramesPerSecond: 16
+  activationScale: 0.75
+  activationFeetOffset: {x: 0, y: 0}

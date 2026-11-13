@@ -11,6 +11,7 @@ namespace Nytherion.GamePlay.Skills
     /// <summary>
     /// 일정 시간 동안 플레이어의 지정된 스탯들을 상승시키는 버프 스킬
     /// </summary>
+    [DefaultExecutionOrder(1100)]
     public class StatBuffSkill : SkillBase
     {
         private StatBuffSkillData statBuffData;
@@ -98,8 +99,7 @@ namespace Nytherion.GamePlay.Skills
             {
                 Bounds bounds = bodyBounds.GetBounds(playerBody);
                 feet = new Vector3(bounds.center.x, bounds.min.y, owner.position.z);
-                activationRenderer.sortingLayerID = playerBody.sortingLayerID;
-                activationRenderer.sortingOrder = playerBody.sortingOrder + 1;
+                SortActivationEffectAboveWeapon(activationRenderer, playerBody);
             }
             Transform visual = activationRenderer.transform;
             visual.position = feet + (Vector3)statBuffData.activationFeetOffset;

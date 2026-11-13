@@ -25,7 +25,7 @@ namespace Nytherion.Editor
         private const string DataPath = Root + "Skill/FireStorm_Skill.asset";
         private const string RelicPath = Root + "Relics/SkillRelics/Relic_FireStorm.asset";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Skills/FireStormSkill.prefab";
-        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/FireStorm_";
+        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/FireStorm/FireStorm_";
 
         static FireStormSkillSetup() => EditorApplication.delayCall += SetupIfMissing;
 
@@ -76,7 +76,7 @@ namespace Nytherion.Editor
             // 루프 원본의 프레임당 70ms 재생 속도를 유지합니다.
             data.loopFps = 1000f / 70f;
             data.hitFrames = Slice("Hit", 64, 64, 7, 7, new Vector2(0.5f, 0.5f));
-            string iconPath = Sprites + "Icon.png";
+            string iconPath = "Assets/Nytherion/Art/Skills/Sprites/FireStorm/FireStorm_Icon.png";
             AssetDatabase.ImportAsset(iconPath, ImportAssetOptions.ForceSynchronousImport);
             TextureImporter iconImporter = (TextureImporter)AssetImporter.GetAtPath(iconPath);
             Configure(iconImporter, SpriteImportMode.Single);

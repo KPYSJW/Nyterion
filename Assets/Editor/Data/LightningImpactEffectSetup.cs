@@ -17,7 +17,7 @@ namespace Nytherion.Editor
     public static class LightningImpactEffectSetup
     {
         private const string Output = "output/lightning-impact-status";
-        private const string SheetPath = "Assets/Nytherion/Art/Combat/LightningImpactEffect.png";
+        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LightningImpactEffect.png";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/ShockPulseVFX.prefab";
         private const string DataPath = "Assets/Nytherion/Data/StatusEffectDatabase.asset";
 

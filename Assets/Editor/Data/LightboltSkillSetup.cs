@@ -24,17 +24,17 @@ namespace Nytherion.Editor
         private const string RelicPath = Root + "Relics/SkillRelics/Relic_Lightbolt.asset";
         private const string SkillPath = "Assets/Prefabs/Gameplay/Skills/LightboltSkill.prefab";
         private const string ProjectilePath = "Assets/Prefabs/Gameplay/Skills/LightboltProjectile.prefab";
-        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/Lightbolt_";
-        private const string ProjectileSpritePath = "Assets/Nytherion/Art/Skills/Sprites/Lightbolt_Bolt.png";
-        private const string CastSpritePath = "Assets/Nytherion/Art/Skills/Sprites/LightBolt_Cast.png";
-        private const string TailPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/LightboltTail.png";
+        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/Lightbolt/Lightbolt_";
+        private const string ProjectileSpritePath = "Assets/Nytherion/Art/Skills/Sprites/Lightbolt/Lightbolt_Bolt.png";
+        private const string CastSpritePath = "Assets/Nytherion/Art/Skills/Sprites/Lightbolt/LightBolt_Cast.png";
+        private const string TailPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/Lightbolt/LightboltTail.png";
 
         [MenuItem("Tools/Nytherion/Lightbolt/Create Assets")]
         public static void CreateAssets()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-            Sprite icon = ConfigureIcon(Sprites + "Icon.png");
+            Sprite icon = ConfigureIcon("Assets/Nytherion/Art/Skills/Sprites/Lightbolt/Lightbolt_Icon.png");
             Sprite[] projectileFrames = { ConfigureIcon(ProjectileSpritePath) };
             Sprite[] hitFrames = ConfigureFrames(Sprites + "Hit.png", 64, 9);
             Sprite[] castFrames = ConfigureFrames(CastSpritePath, 64, 5);

@@ -14,7 +14,7 @@ namespace Nytherion.Editor
     {
         public const string Output = "output/blackhole-animation";
         public const string FieldPath = "Assets/Prefabs/Gameplay/Skills/Blackhole/BlackholeField.prefab";
-        public const string SheetPath = "Assets/Nytherion/Art/Skills/Sprites/Blackhole.png";
+        public const string SheetPath = "Assets/Nytherion/Art/Skills/Sprites/Blackhole/Blackhole.png";
         public const string Folder = "Assets/Nytherion/Art/Skills/Animations/Blackhole";
         private const string DataPath = "Assets/Nytherion/Data/ScriptableObjects/Skill/Blackhole_Skill.asset";
 
@@ -42,7 +42,7 @@ namespace Nytherion.Editor
                 .OrderBy(sprite => int.Parse(sprite.name.Substring(sprite.name.LastIndexOf('_') + 1))).ToArray();
             if (frames.Length != 16 || frames.Any(sprite => sprite.rect.size != new Vector2(96f, 96f)))
                 throw new InvalidOperationException("Blackhole.png의 96×96, 16프레임 슬라이스를 확인해 주세요.");
-            Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Skills/Sprites/Blackhole_Icon.png");
+            Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Skills/Sprites/Blackhole/Blackhole_Icon.png");
             BlackholeSkillData data = AssetDatabase.LoadAssetAtPath<BlackholeSkillData>(DataPath);
             if (icon == null || data == null) throw new InvalidOperationException("블랙홀 데이터 또는 아이콘이 없습니다.");
 

@@ -11,5 +11,11 @@ namespace Nytherion.Data.ScriptableObjects.Skill
         public float healRatio = 0.5f;
         [Tooltip("스킬 레벨당 추가 회복 비율")]
         public float healRatioPerLevel = 0.1f;
+
+        [Header("사용 시 발밑 이펙트")]
+        public Sprite[] activationFrames;
+        [Min(1f)] public float activationFramesPerSecond = 16f;
+        [Min(0.01f)] public float activationScale = 0.75f;
+        public Vector2 activationFeetOffset;
     }
 }
