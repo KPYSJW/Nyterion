@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 1140001104}
   - component: {fileID: 1140001105}
   - component: {fileID: 1140001106}
+  - component: {fileID: 1140001107}
   m_Layer: 3
   m_Name: Boss_GameMaster
   m_TagString: Enemy
@@ -287,7 +288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85bfec538f024b19812971ac75ec0589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectionMode: 1
+  selectionMode: 0
   testPattern: 4
   patternCooldown: 6
   basicAttackInterval: 2
@@ -700,3 +701,38 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 4e3852a352d84022bc7e8e7a25d13cb1, type: 3}
   - {fileID: 21300000, guid: a2e85369086e451cb86b019cdd7725b6, type: 3}
   effectMaterial: {fileID: 2100000, guid: 0b1c01953f3b4f1c913b0daf941e0e5f, type: 2}
+--- !u!114 &1140001107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692483418629133086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 408c3947ed814df5a7d279c88799987f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  selection: 0
+  knightReady: {fileID: 7400000, guid: 8a1ac93fc60042aebc89cd75bf4a0e49, type: 2}
+  knightRun: {fileID: 7400000, guid: 2f330b48b1bd4c2fbc98975b4d8f1e30, type: 2}
+  knightStop: {fileID: 7400000, guid: 45d65638f15f45348274fcc716344efd, type: 2}
+  witchCast: {fileID: 7400000, guid: 46437626b95e49c29b714e996721dddd, type: 2}
+  demonSmash: {fileID: 7400000, guid: 820b27b313804dd1b4a7e1e37fc37bff, type: 2}
+  knightFirstFrame: {fileID: -1243443288, guid: 464bba222dfa7304eaed8301f4d561f2, type: 3}
+  witchFirstFrame: {fileID: 21300000, guid: ee322d45a1944fe2adf7f514d1e4ab38, type: 3}
+  demonFirstFrame: {fileID: 21300000, guid: 1ce9bf66509b457ebfe97f665bc5519e, type: 3}
+  witchPattern: {fileID: 1140000800, guid: aa4c82a2bda94574af4c5119d589de96, type: 3}
+  demonPattern: {fileID: 1140000600, guid: ed6e84b9b76942368493f0965a8cbb2a, type: 3}
+  warningMaterial: {fileID: 2100000, guid: 0b1c01953f3b4f1c913b0daf941e0e5f, type: 2}
+  silhouetteColor: {r: 0, g: 0, b: 0, a: 1}
+  revealDuration: 0.55
+  vanishDuration: 0.45
+  summonDistance: 4
+  knightDashCenterOffsetY: -2.2
+  knightDamage: 2
+  witchDamage: 2
+  demonDamage: 2
+  walls:
+    serializedVersion: 2
+    m_Bits: 2560

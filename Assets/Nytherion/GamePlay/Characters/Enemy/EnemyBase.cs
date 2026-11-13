@@ -23,7 +23,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
         
         public EnemyData enemyData;
         private float currentHealth;
-        protected float CurrentHealth => currentHealth;
+        public float CurrentHealth => currentHealth;
+        public float MaxHealth { get; private set; }
         public bool isDead { get; private set; } = false;
         protected virtual bool HasUnlimitedHealth => false;
         protected virtual float InitialHealth => enemyData != null ? enemyData.maxHealth : 0f;
@@ -33,7 +34,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         protected void SetPhaseHealth(float health)
         {
-            currentHealth = Mathf.Max(1f, health);
+            MaxHealth = Mathf.Max(1f, health);
+            currentHealth = MaxHealth;
         }
 
         public RoomFirstDungeonGenerator.Room homeRoom { get; set; }
@@ -151,7 +153,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
             enemyData = data;
             poolTag = data.enemyName;
-            currentHealth = InitialHealth;
+            MaxHealth = InitialHealth;
+            currentHealth = MaxHealth;
             isDead = false;
             homeRoom = null;
             gameObject.SetActive(true);
@@ -186,9 +189,9 @@ namespace Nytherion.GamePlay.Characters.Enemy
             ApplyDamage(damageAmount, isChain, false);
         }
 
-        public void TakeDamage(float damageAmount, bool isChain, IReadOnlyList<EquipmentTrait> attackTraits)
+        public void TakeDamage(float damageAmount, bool isChain, IReadOnlyList<EquipmentTrait> attackTraits, Vector2? hitPoint = null)
         {
-            ApplyDamage(damageAmount, isChain, false, attackTraits);
+            ApplyDamage(damageAmount, isChain, false, attackTraits, hitPoint);
         }
 
         public void TakeDamageOverTime(float damageAmount)
@@ -196,10 +199,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
             ApplyDamage(damageAmount, false, true);
         }
 
-        protected virtual float ModifyIncomingDamage(float damageAmount) => damageAmount;
+        protected virtual float ModifyIncomingDamage(float damageAmount, Vector2? hitPoint) => damageAmount;
 
         private void ApplyDamage(float damageAmount, bool isChain, bool isDamageOverTime,
-            IReadOnlyList<EquipmentTrait> attackTraits = null)
+            IReadOnlyList<EquipmentTrait> attackTraits = null, Vector2? hitPoint = null)
         {
             if (isDead || !CanReceiveDamage) return;
 
@@ -233,7 +236,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 }
             }
 
-            damageAmount = ModifyIncomingDamage(damageAmount);
+            damageAmount = ModifyIncomingDamage(damageAmount, hitPoint);
             PlayHitFlash();
             // 이번 적중 이벤트에서 처음 부여한 감전은 다음 직접 타격부터 추가 피해를 줍니다.
             bool hadLightningBeforeHit = !isChain && !isDamageOverTime && statusEffectManager != null && statusEffectManager.HasEffect("Lightning");

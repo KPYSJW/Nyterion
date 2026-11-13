@@ -160,7 +160,7 @@ MonoBehaviour:
   playBossIntro: 1
   disablePlayerControlDuringBossIntro: 1
   bossIntroTitle: WARNING
-  bossIntroFadeDuration: 0.25
+  bossIntroFadeDuration: 1.6
   bossIntroHoldDuration: 1.25
   bossIntroPostDelay: 0.25
   _objectPoolManager: {fileID: 0}

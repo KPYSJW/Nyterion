@@ -49,7 +49,8 @@ namespace Nytherion.GamePlay.Combat
                 
                 if (target != null)
                 {
-                    DealAttackDamage(target, weaponData.damage * EffectiveDamageMultiplier);
+                    DealAttackDamage(target, weaponData.damage * EffectiveDamageMultiplier,
+                        hit.collider.ClosestPoint(transform.position));
                     ApplyStatusEffects(target);
                     if (weaponData != null)
                     {
@@ -79,23 +80,17 @@ namespace Nytherion.GamePlay.Combat
             
             if (hitTargets.Contains(target)) return;
             hitTargets.Add(target);
-            DealAttackDamage(target, weaponData.damage * EffectiveDamageMultiplier);
+            Vector2 hitPoint = collision.ClosestPoint(transform.position);
+            if (col != null)
+            {
+                ColliderDistance2D dist = col.Distance(collision);
+                if (dist.isValid) hitPoint = dist.pointB;
+            }
+            DealAttackDamage(target, weaponData.damage * EffectiveDamageMultiplier, hitPoint);
             ApplyStatusEffects(target);
-
             if (weaponData != null)
             {
-                Vector3 hitPoint = collision.transform.position;
-                Vector3 attackDir = (hitPoint - transform.position).normalized;
-                
-                if (col != null)
-                {
-                    ColliderDistance2D dist = col.Distance(collision);
-                    if (dist.isValid)
-                    {
-                        hitPoint = (Vector3)dist.pointB;
-                        attackDir = (hitPoint - transform.position).normalized;
-                    }
-                }
+                Vector3 attackDir = ((Vector3)hitPoint - transform.position).normalized;
                 WeaponVFXHelper.PlayHitEffect(weaponData.hitEffectPrefab, hitPoint, direction: attackDir);
             }
         }

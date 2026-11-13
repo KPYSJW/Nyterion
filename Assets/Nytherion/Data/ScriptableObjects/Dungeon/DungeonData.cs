@@ -42,6 +42,8 @@ namespace Nytherion.Data.ScriptableObjects.Dungeon
         [Header("Tile Assets")]
         [Tooltip("Unassigned tiles use the TilemapVisualizer Inspector defaults.")]
         public TileBase floorTile;
+        [Tooltip("Tile variants for normal rooms and corridors. If empty, uses Floor Tile.")]
+        public TileBase[] floorTileVariants;
         public RuleTile wallRuleTile;
         public TileBase portalTile;
 

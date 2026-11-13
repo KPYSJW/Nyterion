@@ -24,14 +24,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
         [SerializeField, Min(0.1f)] private float basicAttackInterval = 2f;
         [SerializeField, Min(0.1f)] private float activationRange = 20f;
         private readonly List<IBossGameMasterPattern> available = new List<IBossGameMasterPattern>();
+        private readonly List<IBossGameMasterPattern> running = new List<IBossGameMasterPattern>();
         private BossGameMasterIdleBehavior movement;
         private BossGameMasterEnemy owner;
         private EnemyAIController ai;
         private IBossGameMasterPattern active;
         private BossGameMasterReturningProjectilePattern basicAttack;
+        private BossGameMasterEchoes echoes;
         private BossGameMasterPatternType? lastPattern;
-        private bool attacking, castFinished, patternStarted, patternFinished;
-        private bool movementReleased;
+        private bool attacking, castFinished, patternStarted;
         private bool usingBasic;
         private float nextPatternAt, nextAttackAt;
         private int castState;
@@ -44,6 +45,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (movement == null) movement = GetComponent<BossGameMasterIdleBehavior>();
             if (ai == null) ai = GetComponent<EnemyAIController>();
             if (basicAttack == null) basicAttack = GetComponent<BossGameMasterReturningProjectilePattern>();
+            if (echoes == null) echoes = GetComponent<BossGameMasterEchoes>();
         }
 
         private bool Ready(EnemyAIController enemy)
@@ -59,6 +61,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             available.Clear();
             foreach (MonoBehaviour component in GetComponents<MonoBehaviour>())
                 if (component.isActiveAndEnabled && component is IBossGameMasterPattern pattern &&
+                    !running.Contains(pattern) &&
                     (selectionMode != SelectionMode.Test || pattern.PatternType == testPattern) && pattern.CanStart())
                     available.Add(pattern);
             if (selectionMode == SelectionMode.Random && available.Count > 1 && lastPattern.HasValue)
@@ -82,8 +85,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             usingBasic = Time.time < nextPatternAt || available.Count == 0;
             active = usingBasic ? null : available[Random.Range(0, available.Count)];
             attacking = true;
-            castFinished = patternStarted = patternFinished = false;
-            movementReleased = false;
+            castFinished = patternStarted = false;
             movement.SetPatternLocked(true);
             Vector2 aim = enemy.CurrentTarget.position - transform.position;
             movement.FacePattern(aim);
@@ -110,7 +112,14 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (patternStarted) return;
             patternStarted = true;
             if (usingBasic) basicAttack.Begin();
-            else active.Begin();
+            else
+            {
+                active.Begin();
+                running.Add(active);
+                lastPattern = active.PatternType;
+                nextPatternAt = Time.time + Mathf.Max(0f, patternCooldown);
+                if (owner.IsUpgraded) echoes?.Begin();
+            }
         }
 
         public void UpdateAttackState(EnemyAIController enemy)
@@ -135,33 +144,14 @@ namespace Nytherion.GamePlay.Characters.Enemy
                     enemy.PlayAnimation("Idle");
                 }
             }
-            if (patternStarted && !patternFinished) patternFinished = usingBasic ? castFinished : active.Tick();
-            bool canMoveDuringPattern = (active is BossGameMasterRotatingBeamPattern rotation && rotation.HasFired) ||
-                (active is BossGameMasterHomingProjectilePattern homing && homing.HasSpawned) ||
-                (active is BossGameMasterShieldPattern shield && shield.HasStarted);
-            if (castFinished && !patternFinished && canMoveDuringPattern)
-            {
-                if (!movementReleased)
-                {
-                    movementReleased = true;
-                    enemy.ClearForcedFacingDirection();
-                    movement.SetPatternLocked(false);
-                    enemy.SetMovementAllowed(true);
-                }
-                // Stay in the attack state to keep ticking the pattern until its off animation ends.
-                movement.MoveTowards(transform.position);
-            }
-            if (!castFinished || !patternFinished) return;
-            if (!usingBasic) lastPattern = active.PatternType;
-            enemy.TransitionToState(enemy.chaseState);
+            if (castFinished) enemy.TransitionToState(enemy.chaseState);
         }
 
         public void ExitAttackState(EnemyAIController enemy)
         {
-            bool wasBasic = usingBasic;
-            Cancel(wasBasic && castFinished);
+            if (castFinished) ReleaseCast();
+            else Cancel();
             nextAttackAt = Time.time + Mathf.Max(0.1f, basicAttackInterval);
-            if (!wasBasic) nextPatternAt = Time.time + Mathf.Max(0f, patternCooldown);
         }
 
         public void RestartCooldown()
@@ -170,16 +160,21 @@ namespace Nytherion.GamePlay.Characters.Enemy
             nextAttackAt = Time.time + Mathf.Max(0.1f, basicAttackInterval);
         }
 
-        public void Cancel() => Cancel(false);
-
-        private void Cancel(bool preserveBasicProjectiles)
+        public void Cancel()
         {
             Cache();
-            active?.Clear();
-            if (!preserveBasicProjectiles && basicAttack != null) basicAttack.Clear();
+            echoes?.Clear();
+            basicAttack?.Clear();
+            foreach (IBossGameMasterPattern pattern in running)
+                if (pattern is MonoBehaviour component && component != null) pattern.Clear();
+            running.Clear();
+            ReleaseCast();
+        }
+
+        private void ReleaseCast()
+        {
             active = null;
-            attacking = castFinished = patternStarted = patternFinished = false;
-            movementReleased = false;
+            attacking = castFinished = patternStarted = false;
             usingBasic = false;
             if (movement != null) movement.SetPatternLocked(false);
             if (ai != null)
@@ -200,7 +195,18 @@ namespace Nytherion.GamePlay.Characters.Enemy
 
         private void Update()
         {
-            if (attacking && (owner == null || owner.isDead || owner.IsUpgrading || ai == null || !ai.enabled)) Cancel();
+            if (!attacking && running.Count == 0) return;
+            if (owner == null || owner.isDead || owner.IsUpgrading || ai == null || !ai.enabled)
+            {
+                Cancel();
+                return;
+            }
+            for (int i = running.Count - 1; i >= 0; i--)
+            {
+                IBossGameMasterPattern pattern = running[i];
+                if (!(pattern is MonoBehaviour component) || component == null || !component.isActiveAndEnabled ||
+                    pattern.Tick()) running.RemoveAt(i);
+            }
         }
 
         private void OnDisable() => ResetForReuse();
