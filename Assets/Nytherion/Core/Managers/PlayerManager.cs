@@ -35,6 +35,7 @@ namespace Nytherion.Core.Managers
         [Header("Player Data")]
         [SerializeField] private PlayerData basePlayerData;
         public PlayerData currentPlayerData;
+        public float BaseMoveSpeed => basePlayerData != null ? Mathf.Max(0f, basePlayerData.moveSpeed) : 0f;
         public event Action OnPlayerStatsChanged;
 
         public int CurrentRunKillCount { get; private set; }

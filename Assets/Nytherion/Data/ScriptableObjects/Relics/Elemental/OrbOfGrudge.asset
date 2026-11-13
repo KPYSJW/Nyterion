@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: OrbOfGrudge
+  m_EditorClassIdentifier: 
+  relicName: OrbOfGrudge
+  koreanName: "\uC6D0\uD55C\uC758 \uAD6C\uC2AC"
+  englishName: Orb of Grudge
+  description_KR: "\uC800\uC8FC \uC7A5\uBE44 \uC7A5\uCC29 \uC2DC \uACF5\uACA9\uB825
+    +15% (\uB808\uBCA8\uB2F9 +5%p)."
+  description_EN: With Cursed equipment, attack +15% (+5pp per level).
+  Image: {fileID: 21300000, guid: acd94b973bb80824a89aa40682a92f5f, type: 3}
+  rarity: 1
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: 
+    description_EN: 
+    condition:
+      rid: 6716071130084147340
+    effects:
+    - rid: 6716071130084147341
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  preserveCustomInfluenceZones: 1
+  influenceZones:
+  - offset: {x: -1, y: 1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: -2, y: 2}
+    type: 2
+    levelAmount: 1
+  - offset: {x: 1, y: -1}
+    type: 2
+    levelAmount: 1
+  synergySeriesId: 
+  synergySetBonusData: {fileID: 0}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: 6716071130084147340
+      type: {class: EquipmentTraitCondition, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        requiredTrait: 7
+    - rid: 6716071130084147341
+      type: {class: StatRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        statModifiers:
+        - stat: 4
+          value: 0.15
+          valuePerLevel: 0.05
+          isPercentage: 1

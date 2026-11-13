@@ -25,10 +25,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
         public bool IsUpgraded => upgraded;
         public bool IsUpgrading => upgrading;
         protected override bool CanReceiveDamage => !upgrading;
-        protected override float ModifyIncomingDamage(float damageAmount)
+        protected override float ModifyIncomingDamage(float damageAmount, Vector2? hitPoint)
         {
             if (shield == null) shield = GetComponent<BossGameMasterShieldPattern>();
-            return shield != null ? shield.ReceiveDamage(damageAmount) : damageAmount;
+            return shield != null ? shield.ReceiveDamage(damageAmount, hitPoint) : damageAmount;
         }
 
         private void CachePhaseComponents()

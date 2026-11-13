@@ -139,7 +139,8 @@ namespace Nytherion.Editor
             }
             if (firstIndex == 0)
             {
-                Sprite warp = ImportSprite("WarpGear");
+                Sprite warp = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/PortalGateMagicBook.png");
+                Require(warp != null, "Portal Magic Book icon missing");
                 RelicData portal = AssetDatabase.LoadAssetAtPath<RelicData>(PortalGateSkillSetup.RelicPath);
                 Require(portal != null, "차원문 유물 누락");
                 portal.Image = warp;
@@ -156,7 +157,7 @@ namespace Nytherion.Editor
 
         internal static Sprite ImportSprite(string name)
         {
-            string path = SpriteRoot + name + ".png";
+            string path = SpriteRoot + (name == "WarpGear" ? "Unassigned/" : "Mana/") + name + ".png";
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
             TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
             Require(importer != null, "아이콘 누락: " + name);

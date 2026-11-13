@@ -72,6 +72,7 @@ namespace Nytherion.UI.Test
         private SkillDataManager skillDataManager;
         private ILocalizationService localizationService;
         private Button languageToggleButton;
+        private Button infiniteManaButton;
         private Button fireballHomingButton;
         private Button iceShotHomingButton;
         private Button thunderboltHomingButton;
@@ -97,6 +98,8 @@ namespace Nytherion.UI.Test
         private static readonly (StatType stat, string label, float amount, bool ratio)[] debugStats =
         {
             (StatType.MaxHealth, "최대 체력", 10f, false),
+            (StatType.MaxMana, "최대 마나", 10f, false),
+            (StatType.ManaRegenPerSecond, "초당 마나 회복", 1f, false),
             (StatType.Defense, "방어력", 1f, false),
             (StatType.MoveSpeed, "이동 속도", 0.5f, false),
             (StatType.RangedDamage, "공격력", 5f, false),
@@ -245,6 +248,7 @@ namespace Nytherion.UI.Test
                 RefreshEffectButtonLabels();
                 RefreshAttackTraitButtonLabels();
                 RefreshFireballHomingButton();
+                RefreshInfiniteManaButton();
                 UpdateStatusText("디버그 패널 활성화됨");
                 // 패널이 열릴 때 게임 시간 정지 (선택 사항)
                 // Time.timeScale = 0f;
@@ -786,6 +790,9 @@ namespace Nytherion.UI.Test
             AddCategoryButton("유물", "IncreaseAllRelicLevelsButton", "보유 유물 전체 레벨 +1", IncreaseAllRelicLevels);
             CreateRelicEffectButtons();
             CreateAttackTraitButtons();
+            AddCategoryButton("스킬", "RestoreDebugManaButton", "마나 즉시 최대 회복", RestoreDebugMana);
+            infiniteManaButton = AddCategoryButton("스킬", "DebugInfiniteManaButton", "", ToggleDebugInfiniteMana);
+            RefreshInfiniteManaButton();
             fireballHomingButton = AddCategoryButton("스킬", "DebugFireballHomingButton", "", ToggleDebugFireballHoming);
             iceShotHomingButton = AddCategoryButton("스킬", "DebugIceShotHomingButton", "", ToggleDebugIceShotHoming);
             thunderboltHomingButton = AddCategoryButton("스킬", "DebugThunderboltHomingButton", "", ToggleDebugThunderboltHoming);
@@ -1346,6 +1353,38 @@ namespace Nytherion.UI.Test
             button.gameObject.SetActive(true);
         }
 
+        public void RestoreDebugMana()
+        {
+            var skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 마나 기능이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.RestoreMana(skills.MaxMana);
+            UpdateStatusText($"마나 회복 → 현재 {skills.CurrentMana:0.##}/{skills.MaxMana:0.##}");
+        }
+
+        public void ToggleDebugInfiniteMana()
+        {
+            var skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            if (skills == null)
+            {
+                UpdateStatusText("플레이어 마나 기능이 아직 준비되지 않았습니다.");
+                return;
+            }
+            skills.SetDebugInfiniteMana(!skills.DebugInfiniteMana);
+            RefreshInfiniteManaButton();
+            UpdateStatusText($"무한 마나 {(skills.DebugInfiniteMana ? "활성화 · 마나 소모 없이 스킬을 사용할 수 있습니다." : "해제 · 기존 마나 소모를 적용합니다.")}");
+        }
+
+        private void RefreshInfiniteManaButton()
+        {
+            if (infiniteManaButton == null) return;
+            var skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
+            SetButtonLabel(infiniteManaButton, $"[{(skills != null && skills.DebugInfiniteMana ? "ON" : "OFF")}] 무한 마나");
+        }
+
         public void IncreaseSkillCooldownReduction()
         {
             var skills = playerManager != null ? playerManager.GetComponent<PlayerSkillManager>() : null;
@@ -1407,7 +1446,12 @@ namespace Nytherion.UI.Test
             }
             debugStatModifiers.Clear();
             if (playerManager != null)
-                playerManager.GetComponent<PlayerSkillManager>()?.SetDebugCooldownReduction(0f);
+            {
+                var skills = playerManager.GetComponent<PlayerSkillManager>();
+                skills?.SetDebugCooldownReduction(0f);
+                skills?.SetDebugInfiniteMana(false);
+            }
+            RefreshInfiniteManaButton();
             UpdateStatusText("테스트로 추가한 능력치를 초기화했습니다.");
         }
 
@@ -1417,6 +1461,8 @@ namespace Nytherion.UI.Test
             return stat switch
             {
                 StatType.MaxHealth => data.maxHealth,
+                StatType.MaxMana => data.maxMana,
+                StatType.ManaRegenPerSecond => data.manaRegenPerSecond,
                 StatType.Defense => data.defense,
                 StatType.MoveSpeed => data.moveSpeed,
                 StatType.RangedDamage => data.rangedDamage,

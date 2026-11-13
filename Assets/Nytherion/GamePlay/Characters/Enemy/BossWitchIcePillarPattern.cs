@@ -64,7 +64,6 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             CacheComponents();
             pillars.RemoveAll(pillar => pillar == null);
-            planned.Clear();
             casting = true;
             movement.SetCastingFacingReversed(reverseCastingFacing);
             Vector2 forward = enemy.CurrentTarget.position - transform.position;
@@ -72,26 +71,35 @@ namespace Nytherion.GamePlay.Characters.Enemy
             forward.Normalize();
             FaceTarget(enemy);
             enemy.PlayAnimation("IcePillarCast");
-            Vector2 origin = transform.position;
             RoomFirstDungeonGenerator.Room room = OwnerRoom();
-            float maxDistance = RoomTravelLimit(origin, room);
-            float centerAngle = Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg;
-            int count = Mathf.Max(1, branchCount);
             float damage = (enemy.enemyData != null ? enemy.enemyData.damageAmount : 2f) * damageMultiplier;
             if (statusEffects != null) damage *= statusEffects.GetOutgoingDamageMultiplier();
+            SpawnPillars(enemyBody, transform.position, forward, room, dungeonManager, damage, pillars);
+        }
+
+        internal bool HasEchoEffect => pillarPrefab != null;
+
+        internal void SpawnPillars(EnemyBase source, Vector3 origin, Vector2 forward, RoomFirstDungeonGenerator.Room room,
+            DungeonManager dungeon, float damage, List<BossWitchIcePillarHazard> destination, int sortingOrderOffset = 1)
+        {
+            planned.Clear();
+            float maxDistance = RoomTravelLimit(origin, room, dungeon);
+            float centerAngle = Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg;
+            int count = Mathf.Max(1, branchCount);
             for (int i = 0; i < count; i++)
             {
                 float offset = count == 1 ? 0f : -fanAngle * 0.5f + fanAngle * i / (count - 1);
                 float angle = (centerAngle + offset) * Mathf.Deg2Rad;
                 Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                TraceBranch(origin, direction, maxDistance, room, damage);
+                TraceBranch(source, origin, direction, maxDistance, room, dungeon, damage, destination, sortingOrderOffset);
             }
             if (planned.Count == 0)
                 Debug.LogWarning("[WitchBoss] 얼음 전파 경로가 모두 벽 또는 방 경계에 막혀 있습니다.", this);
         }
 
-        private void TraceBranch(Vector2 origin, Vector2 direction, float maxDistance,
-            RoomFirstDungeonGenerator.Room room, float damage)
+        private void TraceBranch(EnemyBase source, Vector3 origin, Vector2 direction, float maxDistance,
+            RoomFirstDungeonGenerator.Room room, DungeonManager dungeon, float damage,
+            List<BossWitchIcePillarHazard> destination, int sortingOrderOffset)
         {
             Vector2 previous = origin;
             float spacing = Mathf.Max(0.1f, pillarSpacing);
@@ -99,23 +107,23 @@ namespace Nytherion.GamePlay.Characters.Enemy
             // The room's actual bounds provide a finite travel limit, not a fixed pillar count.
             for (float distance = Mathf.Max(0.1f, startDistance); distance <= maxDistance; distance += spacing, step++)
             {
-                Vector2 position = origin + direction * distance;
-                if (!PathClear(previous, position, room, step == 0) || !ValidPosition(position, room)) break;
+                Vector2 position = (Vector2)origin + direction * distance;
+                if (!PathClear(previous, position, room, dungeon, step == 0) || !ValidPosition(position, room, dungeon)) break;
                 previous = position;
                 if (AlreadyPlanned(position)) continue;
                 planned.Add(position);
                 BossWitchIcePillarHazard pillar = Instantiate(pillarPrefab,
-                    new Vector3(position.x, position.y, transform.position.z), Quaternion.identity);
-                pillar.Initialize(enemyBody, warningDuration, standingDuration, hitRadius, blockingRadius,
-                    damage, step * Mathf.Max(0.01f, propagationInterval));
-                pillars.Add(pillar);
+                    new Vector3(position.x, position.y, origin.z), Quaternion.identity);
+                pillar.Initialize(source, warningDuration, standingDuration, hitRadius, blockingRadius,
+                    damage, step * Mathf.Max(0.01f, propagationInterval), sortingOrderOffset);
+                destination.Add(pillar);
             }
         }
 
-        private float RoomTravelLimit(Vector2 origin, RoomFirstDungeonGenerator.Room room)
+        private float RoomTravelLimit(Vector2 origin, RoomFirstDungeonGenerator.Room room, DungeonManager dungeon)
         {
             BoundsInt bounds = room.Bounds;
-            GameObject prefab = dungeonManager.CurrentDungeonData != null ? dungeonManager.CurrentDungeonData.bossRoomPrefab : null;
+            GameObject prefab = dungeon.CurrentDungeonData != null ? dungeon.CurrentDungeonData.bossRoomPrefab : null;
             Tilemap floor = prefab != null && room.type == RoomFirstDungeonGenerator.RoomType.Boss ?
                 prefab.GetComponentInChildren<Tilemap>() : null;
             if (floor != null)
@@ -138,15 +146,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
             return false;
         }
 
-        private bool FloorClear(Vector2 position, RoomFirstDungeonGenerator.Room room, float radius)
+        private bool FloorClear(Vector2 position, RoomFirstDungeonGenerator.Room room, DungeonManager dungeon, float radius)
         {
-            if (dungeonManager.FindRoomAt(Vector2Int.FloorToInt(position)) != room) return false;
+            if (dungeon.FindRoomAt(Vector2Int.FloorToInt(position)) != room) return false;
             for (int x = Mathf.FloorToInt(position.x - radius); x <= Mathf.FloorToInt(position.x + radius); x++)
                 for (int y = Mathf.FloorToInt(position.y - radius); y <= Mathf.FloorToInt(position.y + radius); y++)
                 {
                     Vector2 nearest = new Vector2(Mathf.Clamp(position.x, x, x + 1), Mathf.Clamp(position.y, y, y + 1));
                     if ((nearest - position).sqrMagnitude < radius * radius &&
-                        dungeonManager.FindRoomAt(new Vector2Int(x, y)) != room) return false;
+                        dungeon.FindRoomAt(new Vector2Int(x, y)) != room) return false;
                 }
             return true;
         }
@@ -154,13 +162,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private bool IsWall(Collider2D collider) => collider != null &&
             (collider.CompareTag(Tags.Wall) || (wallLayers.value & (1 << collider.gameObject.layer)) != 0);
 
-        private bool PathClear(Vector2 from, Vector2 to, RoomFirstDungeonGenerator.Room room, bool firstSegment)
+        private bool PathClear(Vector2 from, Vector2 to, RoomFirstDungeonGenerator.Room room, DungeonManager dungeon, bool firstSegment)
         {
             float distance = Vector2.Distance(from, to);
             int samples = Mathf.Max(1, Mathf.CeilToInt(distance / 0.25f));
             float radius = firstSegment ? 0f : Mathf.Max(hitRadius, blockingRadius) + 0.1f;
             for (int i = 1; i <= samples; i++)
-                if (!FloorClear(Vector2.Lerp(from, to, i / (float)samples), room, radius)) return false;
+                if (!FloorClear(Vector2.Lerp(from, to, i / (float)samples), room, dungeon, radius)) return false;
             ContactFilter2D filter = new ContactFilter2D();
             filter.SetLayerMask(Physics2D.AllLayers);
             filter.useTriggers = true;
@@ -172,10 +180,10 @@ namespace Nytherion.GamePlay.Characters.Enemy
             return true;
         }
 
-        private bool ValidPosition(Vector2 position, RoomFirstDungeonGenerator.Room room)
+        private bool ValidPosition(Vector2 position, RoomFirstDungeonGenerator.Room room, DungeonManager dungeon)
         {
             float radius = Mathf.Max(hitRadius, blockingRadius) + 0.1f;
-            if (!FloorClear(position, room, radius)) return false;
+            if (!FloorClear(position, room, dungeon, radius)) return false;
             ContactFilter2D filter = new ContactFilter2D();
             filter.SetLayerMask(Physics2D.AllLayers);
             filter.useTriggers = true;

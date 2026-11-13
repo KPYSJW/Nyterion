@@ -28,7 +28,7 @@ namespace Nytherion.GamePlay.Characters.Companions
         [SerializeField] private bool spriteFacesLeft;
 
         [Header("공격 연결")]
-        [Tooltip("공격 모션의 5번째 프레임에 표적을 전달합니다. 피해나 투사체는 연결한 공격 기능에서 처리합니다.")]
+        [Tooltip("공격 모션의 3번째 프레임에 표적을 전달합니다. 피해나 투사체는 연결한 공격 기능에서 처리합니다.")]
         [SerializeField] private GhostAttackEvent onAttackRequested = new GhostAttackEvent();
 
         [Header("영혼 적중 이펙트")]
@@ -114,7 +114,7 @@ namespace Nytherion.GamePlay.Characters.Companions
             return true;
         }
 
-        /// <summary>공격 모션의 5번째 프레임에서 적중 이펙트와 공격을 실행합니다.</summary>
+        /// <summary>공격 모션의 3번째 프레임에서 적중 이펙트와 공격을 실행합니다.</summary>
         public void ReleaseSpiritHit()
         {
             Transform target = pendingTarget;
@@ -127,7 +127,7 @@ namespace Nytherion.GamePlay.Characters.Companions
             onAttackRequested.Invoke(target);
         }
 
-        /// <summary>공격 모션의 9번째 프레임에서 적중 이펙트를 종료합니다.</summary>
+        /// <summary>공격 모션의 7번째 프레임에서 적중 이펙트를 종료합니다.</summary>
         public void EndSpiritHit()
         {
             GameObject effect = activeSpiritHitEffect;

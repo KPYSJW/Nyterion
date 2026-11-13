@@ -18,7 +18,6 @@ namespace Nytherion.Editor
         // 기본 제공 스킬 설명 딕셔너리
         private static readonly Dictionary<string, string> DefaultSkillDescriptions = new Dictionary<string, string>
         {
-            { "All_Stat_Skill", "모든 능력치 증가." },
             { "Blackhole_Skill", "블랙홀로 적을 끌어당기며 지속 피해." },
             { "CallLightning_Skill", "하늘에서 강력한 벼락을 내리쳐 적들에게 고위력의 전기 피해를 입힙니다." },
             { "FireWave_Skill", "전방으로 번지는 거대한 화염 파도를 발사하여 범위 안의 적들에게 화염 피해를 입힙니다." },
@@ -30,7 +29,6 @@ namespace Nytherion.Editor
             { "Overdrive_Skill", "일정 시간 공격력, 공격 속도, 대시 속도 증가." },
             { "Shadow_Clone_Skill", "함께 공격하는 그림자 분신 소환." },
             { "Soul_Eater_Skill", "적 처치 시 체력 회복 및 일시적 능력 강화." },
-            { "Spiral_Skill", "회전 구체로 주변 적에게 지속 피해." },
             { "Turret_Skill", "적을 자동으로 공격하는 루티를 소환합니다." }
         };
 
@@ -123,10 +121,10 @@ namespace Nytherion.Editor
                 relicData.description_KR = descriptionKR;
                 relicData.description_EN = descriptionEN;
                 relicData.Image = isRooti
-                    ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicRooti.png")
+                    ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicRooti.png")
                     : skill.icon;
                 if (skill.skillID == "skill_portal_gate")
-                    relicData.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/WarpGear.png") ?? relicData.Image;
+                    relicData.Image = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/PortalGateMagicBook.png") ?? relicData.Image;
                 relicData.rarity = Core.Enums.Rarity.Rare;
                 relicData.level = 1;
                 relicData.shape = new List<Vector2Int> { Vector2Int.zero };
@@ -251,7 +249,7 @@ namespace Nytherion.Editor
                             string newName = RelicDescriptionSetup.GetSkillRelicName(grantEffect.skillData, relic.koreanName);
                             // 루티 유물은 스킬과 다른 전용 아이콘을 사용합니다.
                             Sprite rootiRelicIcon = grantEffect.skillData.skillID == "skill_turret"
-                                ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicRooti.png") : null;
+                                ? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicRooti.png") : null;
                             bool updateRooti = grantEffect.skillData.skillID == "skill_turret" &&
                                 (relic.koreanName != "루티 마법 책" || relic.Image != rootiRelicIcon);
                             if (relic.description_KR != newKR || relic.description_EN != newEN || relic.koreanName != newName || updateRooti)

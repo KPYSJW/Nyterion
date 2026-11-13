@@ -18,7 +18,7 @@ namespace Nytherion.Editor
     public static class LightningImpactSetup
     {
         private const string Output = "output/lightning-impact";
-        private const string Sheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/LightningImpactSheet.png";
+        private const string Sheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LightningImpactSheet.png";
         private const string Clip = "Assets/Nytherion/Art/Combat/VFX/Animations/LightningImpact.anim";
         private const string Controller = "Assets/Nytherion/Art/Combat/VFX/Animations/LightningImpact.controller";
         private const string Prefab = "Assets/Prefabs/Gameplay/Combat/VFX/LightningImpactVFX.prefab";

@@ -76,7 +76,7 @@ namespace Nytherion.Editor
             skill.projectileSpawnOffset = new Vector3(0f, 0.46f, 0f);
             skill.skillName = "루티";
             skill.description = "적을 자동으로 공격하는 루티를 소환합니다.";
-            Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Skills/Sprites/Rooti.png");
+            Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Skills/Sprites/Rooti/Rooti.png");
             if (icon != null) skill.icon = icon;
             EditorUtility.SetDirty(skill);
 

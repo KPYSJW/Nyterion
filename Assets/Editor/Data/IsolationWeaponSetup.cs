@@ -26,7 +26,7 @@ namespace Nytherion.Editor
         private const string HitAnimationFolder = "Assets/Nytherion/Art/Combat/VFX/Animations/IsolationHitEffect";
         private const string AttackAnimationFolder = "Assets/Nytherion/Art/Combat/VFX/Animations/IsolationAttackEffect";
         private const string SpriteFolder = "Assets/Nytherion/Art/Combat/Weapons/Sprites/";
-        private const string EffectFolder = "Assets/Nytherion/Art/Combat/VFX/Sprites/";
+        private const string EffectFolder = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Isolation/";
         private const string DatabasePath = "Assets/Nytherion/Data/ScriptableObjects/Items/ItemDatabaseSO.asset";
 
         static IsolationWeaponSetup() => EditorApplication.update += Update;

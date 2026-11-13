@@ -18,14 +18,14 @@ namespace Nytherion.Editor
     public static class LightningSpriteSetup
     {
         private const string Output = "output/lightning-sprite";
-        private const string Sheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/LightningSpriteSheet.png";
+        private const string Sheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LightningSpriteSheet.png";
         private const string Animation = "Assets/Nytherion/Art/Combat/VFX/Animations/LightningSprite.anim";
         private const string Controller = "Assets/Nytherion/Art/Combat/VFX/Animations/LightningSprite.controller";
         private const string Segment = "Assets/Prefabs/Gameplay/Combat/VFX/LightningSpriteSegment.prefab";
         private const string Original = "Assets/Prefabs/Gameplay/Combat/VFX/ChainLightningVFX.prefab";
         private const string SpriteEffect = "Assets/Prefabs/Gameplay/Combat/VFX/ChainLightningSpriteVFX.prefab";
         private const string Weapon = "Assets/Prefabs/Gameplay/Combat/Proj/StormbringerProj.prefab";
-        private const string LaserSheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/LaserEffect.png";
+        private const string LaserSheet = "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LaserEffect.png";
         private const string LaserSegment = "Assets/Prefabs/Gameplay/Combat/VFX/StormbringerLaserSegment.prefab";
         private const string LaserEffect = "Assets/Prefabs/Gameplay/Combat/VFX/StormbringerLaserVFX.prefab";
         private const string Relics = "Assets/Nytherion/Data/ScriptableObjects/Relics/";

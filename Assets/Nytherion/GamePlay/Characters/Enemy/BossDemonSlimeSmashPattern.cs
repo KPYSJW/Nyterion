@@ -67,7 +67,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
         {
             CacheComponents();
             meteors.RemoveAll(meteor => meteor == null);
-            SelectPositions(OwnerRoom());
+            SelectPositions(OwnerRoom(), dungeonManager);
             casting = true;
             Vector2 aim = (Vector2)enemy.CurrentTarget.position - (Vector2)transform.position;
             if (aim.sqrMagnitude < 0.0001f) aim = movement.FacingRight ? Vector2.right : Vector2.left;
@@ -83,6 +83,23 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (state.fullPathHash != SmashState || state.normalizedTime < 1f || enemy.animator.IsInTransition(0)) return false;
             float damage = (enemy.enemyData != null ? enemy.enemyData.damageAmount : 2f) * Mathf.Max(0f, damageMultiplier);
             if (statusEffects != null) damage *= statusEffects.GetOutgoingDamageMultiplier();
+            SpawnMeteors(body, transform.position.z, damage, meteors);
+            casting = false;
+            enemy.PlayAnimation("Idle");
+            return true;
+        }
+
+        internal bool HasEchoEffect => meteorPrefab != null && meteorPrefab.HasSprites;
+
+        internal void SpawnEchoMeteors(EnemyBase source, RoomFirstDungeonGenerator.Room room, DungeonManager dungeon,
+            float damage, List<BossDemonSlimeMeteorHazard> destination)
+        {
+            SelectPositions(room, dungeon);
+            SpawnMeteors(source, source.transform.position.z, damage, destination);
+        }
+
+        private void SpawnMeteors(EnemyBase source, float depth, float damage, List<BossDemonSlimeMeteorHazard> destination)
+        {
             float low = Mathf.Max(0f, Mathf.Min(minimumMeteorInterval, maximumMeteorInterval));
             float high = Mathf.Max(low, Mathf.Max(minimumMeteorInterval, maximumMeteorInterval));
             float delay = 0f;
@@ -90,23 +107,20 @@ namespace Nytherion.GamePlay.Characters.Enemy
             {
                 Vector2 point = positions[i];
                 BossDemonSlimeMeteorHazard meteor = Instantiate(meteorPrefab,
-                    new Vector3(point.x, point.y, transform.position.z), Quaternion.identity);
-                meteor.Initialize(body, impactScale, meteorScale, warningDuration, fallDuration, fallHeight,
+                    new Vector3(point.x, point.y, depth), Quaternion.identity);
+                meteor.Initialize(source, impactScale, meteorScale, warningDuration, fallDuration, fallHeight,
                     fallFramesPerSecond, impactFramesPerSecond, damage, delay, wallLayers);
-                meteors.Add(meteor);
+                destination.Add(meteor);
                 if (i + 1 < positions.Count) delay += Random.Range(low, high);
             }
-            casting = false;
-            enemy.PlayAnimation("Idle");
-            return true;
         }
 
-        private void SelectPositions(RoomFirstDungeonGenerator.Room room)
+        private void SelectPositions(RoomFirstDungeonGenerator.Room room, DungeonManager dungeon)
         {
             candidates.Clear();
             positions.Clear();
             BoundsInt bounds = room.Bounds;
-            GameObject roomPrefab = dungeonManager.CurrentDungeonData != null ? dungeonManager.CurrentDungeonData.bossRoomPrefab : null;
+            GameObject roomPrefab = dungeon.CurrentDungeonData != null ? dungeon.CurrentDungeonData.bossRoomPrefab : null;
             Tilemap floor = roomPrefab != null && room.type == RoomFirstDungeonGenerator.RoomType.Boss ?
                 roomPrefab.GetComponentInChildren<Tilemap>() : null;
             if (floor != null)
@@ -116,7 +130,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             }
             for (int x = bounds.xMin; x < bounds.xMax; x++)
                 for (int y = bounds.yMin; y < bounds.yMax; y++)
-                    if (dungeonManager.FindRoomAt(new Vector2Int(x, y)) == room)
+                    if (dungeon.FindRoomAt(new Vector2Int(x, y)) == room)
                         candidates.Add(new Vector2(x + 0.5f, y + 0.5f));
 
             float radius = meteorPrefab.GetImpactRadius(impactScale);
@@ -129,14 +143,14 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 candidates[chosen] = candidates[i];
                 candidates[i] = candidate;
                 Vector2 point = candidate + new Vector2(Random.Range(-0.35f, 0.35f), Random.Range(-0.35f, 0.35f));
-                if (IsValidPosition(point, room, radius)) positions.Add(point);
+                if (IsValidPosition(point, room, dungeon, radius)) positions.Add(point);
             }
             if (positions.Count < requested)
                 Debug.LogWarning($"[DemonSlime] 메테오 {requested}개 중 {positions.Count}개만 배치했습니다. " +
                     "방 크기, Impact Scale, Minimum Spacing을 확인하세요.", this);
         }
 
-        private bool IsValidPosition(Vector2 point, RoomFirstDungeonGenerator.Room room, float hitRadius)
+        private bool IsValidPosition(Vector2 point, RoomFirstDungeonGenerator.Room room, DungeonManager dungeon, float hitRadius)
         {
             float radius = hitRadius + Mathf.Max(0f, wallClearance);
             for (int x = Mathf.FloorToInt(point.x - radius); x <= Mathf.FloorToInt(point.x + radius); x++)
@@ -144,7 +158,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
                 {
                     Vector2 nearest = new Vector2(Mathf.Clamp(point.x, x, x + 1), Mathf.Clamp(point.y, y, y + 1));
                     if ((nearest - point).sqrMagnitude < radius * radius &&
-                        dungeonManager.FindRoomAt(new Vector2Int(x, y)) != room) return false;
+                        dungeon.FindRoomAt(new Vector2Int(x, y)) != room) return false;
                 }
             float spacing = Mathf.Max(minimumSpacing, hitRadius);
             foreach (Vector2 other in positions)

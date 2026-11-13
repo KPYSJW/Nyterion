@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ca0915ead80246955d6fa69924dea, type: 3}
+  m_Name: Relic_DarkCloud
+  m_EditorClassIdentifier: 
+  relicName: Relic of Dark Cloud
+  koreanName: 먹구름
+  englishName: Dark Cloud
+  description_KR: 플레이어를 따라다니며 벼락으로 적을 공격하고 감전시키는 먹구름을 소환합니다.
+  description_EN: Summons a cloud that follows the player and strikes enemies with shocking lightning.
+  Image: {fileID: 210000001, guid: da17e748daa5436e8df457c4e6fbfb92, type: 3}
+  rarity: 2
+  level: 1
+  isDisabled: 0
+  effectModules:
+  - description_KR: 
+    description_EN: 
+    condition:
+      rid: -2
+    effects:
+    - rid: 1314306310148456448
+  grantsProjectileHoming: 0
+  grantsProjectilePiercing: 0
+  shape:
+  - {x: 0, y: 0}
+  influenceZones:
+  - offset: {x: 0, y: 1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 1, y: 1}
+    type: 1
+    levelAmount: 1
+  - offset: {x: 1, y: 2}
+    type: 2
+    levelAmount: 1
+  - offset: {x: 2, y: 2}
+    type: 2
+    levelAmount: 1
+  preserveCustomInfluenceZones: 1
+  synergySeriesId: ElementalCompanionSeries
+  synergySetBonusData: {fileID: 11400000, guid: c4b4cf54910f4d20a0ace10a1a4fa75e, type: 2}
+  unlockMilestoneID: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1314306310148456448
+      type: {class: DarkCloudRelicEffect, ns: Nytherion.Gameplay.Relics.Modules, asm: Assembly-CSharp}
+      data:
+        summonData: {fileID: 11400000, guid: 8c0c62b439d14613a42596f1cd83218f, type: 2}

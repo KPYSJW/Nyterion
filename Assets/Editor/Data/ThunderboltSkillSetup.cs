@@ -24,7 +24,7 @@ namespace Nytherion.Editor
         private const string RelicPath = Root + "Relics/SkillRelics/Relic_Thunderbolt.asset";
         private const string SkillPath = "Assets/Prefabs/Gameplay/Skills/ThunderboltSkill.prefab";
         private const string ProjectilePath = "Assets/Prefabs/Gameplay/Skills/ThunderboltProjectile.prefab";
-        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt_";
+        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/Thunderbolt/Thunderbolt_";
 
         static ThunderboltSkillSetup()
         {
@@ -79,7 +79,7 @@ namespace Nytherion.Editor
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             Sprite[] projectileFrames = ConfigureFrames(Sprites + "Projectile.png", 32, 8);
-            Sprite icon = ConfigureIcon(Sprites + "Icon.png");
+            Sprite icon = ConfigureIcon("Assets/Nytherion/Art/Skills/Sprites/Thunderbolt/Thunderbolt_Icon.png");
             ThunderboltSkillData data = AssetDatabase.LoadAssetAtPath<ThunderboltSkillData>(DataPath);
             if (data == null)
             {
@@ -96,7 +96,7 @@ namespace Nytherion.Editor
                 data.collisionLayers = LayerMask.GetMask("Enemy", "Wall", "Obstacle");
                 AssetDatabase.CreateAsset(data, DataPath);
             }
-            data.icon = icon;
+            data.icon = projectileFrames[0];
             data.projectileFrames = projectileFrames;
             if (AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Hit.png") != null) data.hitFrames = ConfigureHitFrames();
             if (AssetDatabase.LoadAssetAtPath<Texture2D>(Sprites + "Cast.png") != null &&

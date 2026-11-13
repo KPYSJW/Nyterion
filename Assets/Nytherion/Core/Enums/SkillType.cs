@@ -6,7 +6,7 @@ namespace Nytherion.Core.Enums
         SoulEater,
         Blackhole,
         Drone,
-        Spiral,
+        Spiral, // 폐기됨: 기존 직렬화 값 보존
         TestSkill,
         LifestealBuff,
         StatBuff,
@@ -25,6 +25,9 @@ namespace Nytherion.Core.Enums
         Thunderbolt,
         DarkBolt,
         LightBolt,
-        MagicMissile
+        MagicMissile,
+        StormCloud,
+        FireStorm,
+        PoisonDrop
     }
 }

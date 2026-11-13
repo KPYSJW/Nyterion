@@ -8,6 +8,8 @@ namespace Nytherion.GamePlay.Combat
     public sealed class BurnTickVFX : MonoBehaviour
     {
         [SerializeField] private Sprite[] frames;
+        [SerializeField, Tooltip("각 행에 32×32 프레임 10장으로 구성한 두 종류의 화상 애니메이션입니다.")]
+        private Texture2D animationSheet;
         [SerializeField, Min(0f), InspectorName("초당 불꽃 수")]
         [Tooltip("몬스터 한 마리에 초당 생성할 불꽃 수입니다.")]
         private float emissionPerSecond = 6f;
@@ -40,7 +42,8 @@ namespace Nytherion.GamePlay.Combat
 
         public void Play(SpriteRenderer source)
         {
-            if (source == null || source.sprite == null || frames == null || frames.Length == 0) return;
+            if (source == null || source.sprite == null ||
+                (animationSheet == null && (frames == null || frames.Length == 0))) return;
             if (particles != null && particles.isPlaying) return;
             body = source;
             EnsureParticles();
@@ -64,7 +67,7 @@ namespace Nytherion.GamePlay.Combat
             main.simulationSpace = ParticleSystemSimulationSpace.Local;
             main.scalingMode = ParticleSystemScalingMode.Hierarchy;
             main.startSpeed = 0f;
-            main.startSize = new ParticleSystem.MinMaxCurve(0.45f, 0.85f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.85f, 1f);
             ParticleSystem.EmissionModule emission = particles.emission;
             emission.enabled = false;
             ParticleSystem.ShapeModule shape = particles.shape;
@@ -87,13 +90,29 @@ namespace Nytherion.GamePlay.Combat
             colorOverLifetime.color = fade;
             ParticleSystem.TextureSheetAnimationModule animation = particles.textureSheetAnimation;
             animation.enabled = true;
-            animation.mode = ParticleSystemAnimationMode.Sprites;
-            foreach (Sprite frame in frames) if (frame != null) animation.AddSprite(frame);
+            if (animationSheet != null)
+            {
+                // 입자마다 한 행을 선택하고, 수명 동안 해당 불꽃의 프레임만 재생합니다.
+                animation.mode = ParticleSystemAnimationMode.Grid;
+                animation.numTilesX = 10;
+                animation.numTilesY = 2;
+                animation.animation = ParticleSystemAnimationType.SingleRow;
+                animation.rowMode = ParticleSystemAnimationRowMode.Random;
+            }
+            else
+            {
+                animation.mode = ParticleSystemAnimationMode.Sprites;
+                foreach (Sprite frame in frames) if (frame != null) animation.AddSprite(frame);
+            }
+            animation.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
+            animation.frameOverTime = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0f, 1f, 1f));
+            animation.startFrame = new ParticleSystem.MinMaxCurve(0f);
+            animation.cycleCount = 1;
             particleRenderer = child.GetComponent<ParticleSystemRenderer>();
             particleRenderer.renderMode = ParticleSystemRenderMode.Billboard;
             particleRenderer.alignment = ParticleSystemRenderSpace.View;
             particleMaterial = new Material(body.sharedMaterial);
-            particleMaterial.mainTexture = frames[0].texture;
+            particleMaterial.mainTexture = animationSheet != null ? animationSheet : frames[0].texture;
             particleRenderer.sharedMaterial = particleMaterial;
         }
 
@@ -165,7 +184,7 @@ namespace Nytherion.GamePlay.Combat
             Vector3 parentScale = emitter.parent.lossyScale;
             emitter.localScale = new Vector3(InverseScale(parentScale.x), InverseScale(parentScale.y), InverseScale(parentScale.z));
             ParticleSystem.MainModule main = particles.main;
-            main.startSize = new ParticleSystem.MinMaxCurve(size * 0.45f, size * 0.85f);
+            main.startSize = new ParticleSystem.MinMaxCurve(size * 0.85f, size);
             particleRenderer.sortingLayerID = body.sortingLayerID;
             particleRenderer.sortingOrder = body.sortingOrder + 1;
         }

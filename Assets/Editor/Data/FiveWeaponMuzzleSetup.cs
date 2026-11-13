@@ -40,7 +40,7 @@ namespace Nytherion.Editor
             for (int i = 0; i < Names.Length; i++)
             {
                 data[i] = AssetDatabase.LoadAssetAtPath<WeaponData>("Assets/Nytherion/Data/ScriptableObjects/Weapons/" + Names[i] + ".asset");
-                var sheet = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Nytherion/Art/Combat/" + Names[i] + "MuzzleFlash.png");
+                var sheet = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/" + Names[i] + "/" + Names[i] + "MuzzleFlash.png");
                 frames[i] = WeaponFireEffectAssets.LoadFrames(sheet);
                 if (data[i] == null || frames[i].Length != ExpectedCounts[i])
                     throw new InvalidOperationException(Names[i] + " 무기 데이터 또는 슬라이스 프레임 누락");

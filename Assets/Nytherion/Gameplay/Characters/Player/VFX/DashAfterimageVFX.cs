@@ -4,8 +4,7 @@ using UnityEngine;
 namespace Nytherion.GamePlay.Characters.Player
 {
     /// <summary>
-    /// 대쉬 중 현재 플레이어 스프라이트의 흰색 실루엣을 남기고 서서히 투명하게 만듭니다.
-    /// 잔상은 Player 하위의 풀 컨테이너에 보관하지만, 활성 중에는 월드 좌표를 유지합니다.
+    /// 첨부 스프라이트 시트로 대쉬를 재생하며, Inspector에서 기존 흰색 잔상으로 전환할 수 있습니다.
     /// </summary>
     public class DashAfterimageVFX : MonoBehaviour
     {
@@ -16,6 +15,21 @@ namespace Nytherion.GamePlay.Characters.Player
 
         [SerializeField] private SpriteRenderer sourceRenderer;
         [SerializeField] private Material afterimageMaterial;
+        [Header("대쉬 시트 미리 적용")]
+        [Tooltip("해제하면 기존 흰색 잔상으로 재생합니다.")]
+        [SerializeField] private bool useSpriteSheet = true;
+        [SerializeField] private Sprite[] dashFrames;
+        [SerializeField] private Material spriteSheetMaterial;
+        [Tooltip("이펙트 재생 속도입니다. 0.5는 기존의 절반 속도이며 대쉬 이동에는 영향을 주지 않습니다.")]
+        [SerializeField, Range(0.1f, 2f)] private float sheetPlaybackSpeed = 0.5f;
+
+        private SpriteRenderer sheetRenderer;
+        private Vector3 sheetPosition;
+        private Quaternion sheetRotation;
+        private Vector3 sheetScale;
+        private float sheetElapsed;
+        private float sheetFrameDuration;
+        private bool sheetPlaying;
 
         private readonly List<AfterimageInstance> activeAfterimages = new List<AfterimageInstance>();
         private readonly Stack<AfterimageInstance> inactiveAfterimages = new Stack<AfterimageInstance>();
@@ -25,9 +39,17 @@ namespace Nytherion.GamePlay.Characters.Player
         private bool isPlaying;
         private float nextSpawnTime;
 
-        public void Play()
+        public void Play(Vector2 direction, float distance, float duration)
         {
-            if (!TryCacheSourceRenderer() || !TryCacheMaterial())
+            isPlaying = false;
+            if (!TryCacheSourceRenderer()) return;
+            if (useSpriteSheet && dashFrames != null && dashFrames.Length > 0 && spriteSheetMaterial != null)
+            {
+                PlaySpriteSheet(direction, distance, duration);
+                return;
+            }
+
+            if (!TryCacheMaterial())
             {
                 return;
             }
@@ -44,6 +66,7 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void Update()
         {
+            UpdateSpriteSheet();
             UpdateActiveAfterimages();
 
             if (!isPlaying || sourceRenderer == null || sourceRenderer.sprite == null)
@@ -62,11 +85,77 @@ namespace Nytherion.GamePlay.Characters.Player
 
         private void LateUpdate()
         {
+            if (sheetPlaying) ApplySheetPose();
             for (int i = 0; i < activeAfterimages.Count; i++)
             {
                 AfterimageInstance afterimage = activeAfterimages[i];
                 afterimage.root.transform.SetPositionAndRotation(afterimage.worldPosition, afterimage.worldRotation);
             }
+        }
+
+        private void PlaySpriteSheet(Vector2 direction, float distance, float duration)
+        {
+            EnsureAfterimageRoot();
+            if (sheetRenderer == null)
+            {
+                GameObject root = new GameObject("Dash Sprite Sheet");
+                root.transform.SetParent(afterimageRoot, false);
+                sheetRenderer = root.AddComponent<SpriteRenderer>();
+                sheetRenderer.sharedMaterial = spriteSheetMaterial;
+            }
+
+            // 4열×2행의 8프레임을 재생 속도에 맞춰 한 번 재생합니다.
+            // 기존 시트의 출발점과 이동 폭을 유지해 진행 방향으로 펼칩니다.
+            sheetPosition = sourceRenderer.bounds.center;
+            sheetRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+            sheetScale = new Vector3(Mathf.Max(0.01f, distance) * 32f / 82f,
+                Mathf.Max(0.01f, sourceRenderer.bounds.size.y) * 32f / 34f, 1f);
+            sheetFrameDuration = Mathf.Max(0.01f,
+                duration / dashFrames.Length / Mathf.Max(0.1f, sheetPlaybackSpeed));
+            sheetElapsed = 0f;
+            sheetPlaying = true;
+            sheetRenderer.sortingLayerID = sourceRenderer.sortingLayerID;
+            sheetRenderer.sortingOrder = sourceRenderer.sortingOrder + 1;
+            sheetRenderer.sprite = dashFrames[0];
+            sheetRenderer.gameObject.SetActive(true);
+            ApplySheetPose();
+        }
+
+        private void UpdateSpriteSheet()
+        {
+            if (!sheetPlaying) return;
+            sheetElapsed += Time.deltaTime;
+            int frame = Mathf.FloorToInt(sheetElapsed / sheetFrameDuration);
+            if (frame >= dashFrames.Length)
+            {
+                sheetPlaying = false;
+                sheetRenderer.gameObject.SetActive(false);
+                return;
+            }
+            sheetRenderer.sprite = dashFrames[frame];
+        }
+
+        private void ApplySheetPose()
+        {
+            Transform effect = sheetRenderer.transform;
+            effect.SetPositionAndRotation(sheetPosition, sheetRotation);
+            Vector3 parentScale = effect.parent.lossyScale;
+            effect.localScale = new Vector3(
+                sheetScale.x / Mathf.Max(0.0001f, Mathf.Abs(parentScale.x)),
+                sheetScale.y / Mathf.Max(0.0001f, Mathf.Abs(parentScale.y)), 1f);
+        }
+
+        private void OnDisable()
+        {
+            isPlaying = false;
+            sheetPlaying = false;
+            if (sheetRenderer != null) sheetRenderer.gameObject.SetActive(false);
+            foreach (AfterimageInstance afterimage in activeAfterimages)
+            {
+                afterimage.root.SetActive(false);
+                inactiveAfterimages.Push(afterimage);
+            }
+            activeAfterimages.Clear();
         }
 
         private bool TryCacheSourceRenderer()

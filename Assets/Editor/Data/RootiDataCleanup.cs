@@ -17,7 +17,7 @@ namespace Nytherion.Editor
         private const string RelicRoot = "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/";
         private const string ActiveGuid = "21915b07d256e544e9113b34e4a76341";
         private const string RetiredGuid = "3cf25cce484487d4eaab681476a246ce";
-        private const string IconPath = "Assets/Nytherion/Art/Skills/Sprites/Rooti.png";
+        private const string IconPath = "Assets/Nytherion/Art/Skills/Sprites/Rooti/Rooti.png";
 
         static RootiDataCleanup() => EditorApplication.update += Update;
 
@@ -72,7 +72,7 @@ namespace Nytherion.Editor
                 if (!string.IsNullOrEmpty(error)) throw new InvalidOperationException(error);
             }
             Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>(IconPath);
-            Sprite relicIcon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicRooti.png");
+            Sprite relicIcon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicRooti.png");
             if (icon == null || relicIcon == null) throw new InvalidOperationException("루티의 스킬 또는 유물 아이콘이 없습니다.");
             SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>("Assets/Nytherion/Data/ScriptableObjects/Skill/Turret_Skill.asset");
             skill.icon = icon;

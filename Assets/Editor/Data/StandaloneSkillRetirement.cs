@@ -28,29 +28,35 @@ namespace Nytherion.Editor
         private const string Output = "output/standalone-skill-retirement";
         private const string SkillDirectory = "Assets/Nytherion/Data/ScriptableObjects/Skill/";
         private const string RelicDirectory = "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/";
-        private static readonly string[] RetiredNames = { "Atk_Buff_Skill", "AS_Skill", "Dash_CD_Skill", "Laser_Skill", "Aura_Skill" };
-        private static readonly string[] RetiredRelics = { "BearTotem", "BlueOre", "MysticalFeather", "Relic_Laser", "Relic_Aura" };
-        private static readonly string[] RetiredIds = { "skill_Atk_buff", "skill_attack_speed", "skill_Dash_cooldown", "skill_laser", "skill_aura" };
+        private static readonly string[] RetiredNames = { "Atk_Buff_Skill", "AS_Skill", "Dash_CD_Skill", "Laser_Skill", "Aura_Skill", "All_Stat_Skill", "Spiral_Skill" };
+        private static readonly string[] RetiredRelics = { "BearTotem", "BlueOre", "MysticalFeather", "Relic_Laser", "Relic_Aura", "RainbowSyrup", "Relic_Spiral" };
+        private static readonly string[] RetiredIds = { "skill_Atk_buff", "skill_attack_speed", "skill_Dash_cooldown", "skill_laser", "skill_aura", "skill_all_stat_up", "skill_spiral" };
+        private static readonly string[] RetiredMilestones = { "Aura_Milestone", "All_Stat_Milestone", "Spiral_Milestone" };
         private static readonly string[] RetiredPrefabPaths =
         {
             "Assets/Prefabs/Gameplay/Skills/Buffs/AtkBuffSkillPrefab.prefab",
             "Assets/Prefabs/Gameplay/Skills/Buffs/AttackSpeedBoost.prefab",
             "Assets/Prefabs/Gameplay/Skills/Buffs/CoolDownSkillPrefab.prefab",
             "Assets/Prefabs/Gameplay/Skills/LaserSkill.prefab",
-            "Assets/Prefabs/Gameplay/Skills/AuraSkilPrefab.prefab"
+            "Assets/Prefabs/Gameplay/Skills/AuraSkilPrefab.prefab",
+            "Assets/Prefabs/Gameplay/Skills/Buffs/AllStatUpSkillPrefab.prefab",
+            "Assets/Prefabs/Gameplay/Skills/SpiralSkillPrefab.prefab",
+            "Assets/Prefabs/Gameplay/Combat/Proj/SpiralProj.prefab"
         };
         private static readonly string[] RetiredCodePaths =
         {
             "Assets/Nytherion/Gameplay/Skills/Abilities/Laser/LaserSkill.cs",
             "Assets/Nytherion/Data/ScriptableObjects/Skill/LaserSkillData.cs",
             "Assets/Nytherion/Gameplay/Skills/Abilities/Aura/AuraSkill.cs",
-            "Assets/Nytherion/Data/ScriptableObjects/Skill/AuraSkillData.cs"
+            "Assets/Nytherion/Data/ScriptableObjects/Skill/AuraSkillData.cs",
+            "Assets/Nytherion/Gameplay/Skills/Abilities/Spiral/SpiralSkill.cs",
+            "Assets/Nytherion/Gameplay/Skills/Abilities/Spiral/SpiralMovement.cs"
         };
 
         private static IEnumerable<string> RemovedPaths => RetiredNames.Select(name => SkillDirectory + name + ".asset")
             .Concat(RetiredRelics.Select(name => RelicDirectory + name + ".asset"))
             .Concat(RetiredPrefabPaths).Concat(RetiredCodePaths)
-            .Concat(new[] { "Assets/Nytherion/Data/ScriptableObjects/Progression/Aura_Milestone.asset" });
+            .Concat(RetiredMilestones.Select(name => "Assets/Nytherion/Data/ScriptableObjects/Progression/" + name + ".asset"));
 
         static StandaloneSkillRetirement() => EditorApplication.update += Update;
 
@@ -62,7 +68,7 @@ namespace Nytherion.Editor
             Apply();
         }
 
-        [MenuItem("Tools/Nytherion/Skills/Retire Standalone Buffs, Laser And Aura")]
+        [MenuItem("Tools/Nytherion/Skills/Retire Removed Skills")]
         public static void Apply()
         {
             Directory.CreateDirectory(Output);
@@ -103,7 +109,7 @@ namespace Nytherion.Editor
                 var obsoleteMilestones = new HashSet<MilestoneData>();
                 foreach (MilestoneData milestone in Find<MilestoneData>())
                 {
-                    if (milestone.name == "Aura_Milestone") obsoleteMilestones.Add(milestone);
+                    if (RetiredMilestones.Contains(milestone.name)) obsoleteMilestones.Add(milestone);
                     if (milestone.rewards == null) continue;
                     int removed = milestone.rewards.RemoveAll(reward => reward != null &&
                         ((reward.skillData != null && RetiredIds.Contains(reward.skillData.skillID)) ||
@@ -116,6 +122,7 @@ namespace Nytherion.Editor
                 {
                     if (database.allMilestones != null && database.allMilestones.RemoveAll(obsoleteMilestones.Contains) > 0) Save(database);
                 }
+                RemoveSpiralPool();
                 DeleteExclusiveAssets(results);
                 Verify(results);
                 results.Add("PASS Unity Editor 컴파일 및 에셋 등록·지급·기존 세이브 왕복 검증 완료");
@@ -129,6 +136,19 @@ namespace Nytherion.Editor
             {
                 File.WriteAllLines(Output + "/deletion-verification.txt", results);
             }
+        }
+
+        private static void RemoveSpiralPool()
+        {
+            const string path = "Assets/Prefabs/Infrastructure/Managers/ObjectPoolManager.prefab";
+            GameObject prefab = PrefabUtility.LoadPrefabContents(path);
+            try
+            {
+                ObjectPoolManager manager = prefab.GetComponent<ObjectPoolManager>();
+                if (manager.pools.RemoveAll(pool => pool.tag == "Player_Spiral") > 0)
+                    PrefabUtility.SaveAsPrefabAsset(prefab, path);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(prefab); }
         }
 
         private static void DeleteExclusiveAssets(List<string> results)
@@ -184,7 +204,8 @@ namespace Nytherion.Editor
 
             StatBuffSkillData overdrive = Load<StatBuffSkillData>(SkillDirectory + "Overdrive_Skill.asset");
             Require(overdrive.IsRuntimeAvailable && overdrive.skillPrefab.GetComponent<StatBuffSkill>() != null &&
-                overdrive.statModifiers.Count == 5 && overdrive.statModifiers.All(modifier => modifier.stat != StatType.DashCooldown),
+                new HashSet<StatType>(overdrive.statModifiers.Select(modifier => modifier.stat)).SetEquals(
+                    new[] { StatType.RangedDamage, StatType.RangedSpeed, StatType.DashSpeed }),
                 "오버드라이브 공격력·공속·대시 속도 통합, 대시 쿨타임 제외", results);
 
             Scene preview = EditorSceneManager.NewPreviewScene();
@@ -212,13 +233,15 @@ namespace Nytherion.Editor
                         new SkillEntry { skillId = retired[1].skillID, level = 2 },
                         new SkillEntry { skillId = retired[2].skillID, level = 2 },
                         new SkillEntry { skillId = retired[3].skillID, level = 2 },
-                        new SkillEntry { skillId = retired[4].skillID, level = 5, exp = 3 }
+                        new SkillEntry { skillId = retired[4].skillID, level = 5, exp = 3 },
+                        new SkillEntry { skillId = retired[5].skillID, level = 4, exp = 2 },
+                        new SkillEntry { skillId = retired[6].skillID, level = 3, exp = 1 }
                     },
-                    equippedSkillIds = new List<string> { retired[4].skillID, retired[2].skillID, retired[3].skillID }
+                    equippedSkillIds = new List<string> { retired[5].skillID, retired[6].skillID, retired[3].skillID }
                 };
                 manager.LoadFromSaveData(JsonUtility.FromJson<SaveData>(JsonUtility.ToJson(old)));
                 Require(manager.storageSkills[0] == null && manager.storageSkills[1] == overdrive &&
-                    manager.storageSkills[5] == null &&
+                    manager.storageSkills[5] == null && manager.storageSkills[6] == null && manager.storageSkills[7] == null &&
                     manager.equippedSkills.All(skill => skill == null) && manager.skillStates.Count == 1 &&
                     manager.skillStates[overdrive.skillID].level == 3 && manager.skillStates[overdrive.skillID].exp == 1,
                     "기존 세이브 로드: 폐기 스킬 제거·오버드라이브 레벨·경험치·슬롯 보존", results);

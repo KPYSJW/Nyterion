@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Nytherion.Editor.Localization
 {
@@ -116,19 +116,19 @@ namespace Nytherion.Editor.Localization
         public static readonly IReadOnlyDictionary<string, (string Korean, string English)> Skills =
             new Dictionary<string, (string, string)>
             {
-                ["skill_all_stat_up"] = ("모든 능력치 증가", "All Stat Up"),
                 ["skill_bubble_shield"] = ("비눗방울", "Bubble Shield"),
                 ["skill_decoy"] = ("허수아비", "Decoy"),
                 ["skill_fire_bolt"] = ("파이어볼", "Fireball"),
+                ["skill_poison_drop"] = ("독방울", "Poison Drop"),
+                ["skill_fire_storm"] = ("파이어 스톰", "Fire Storm"),
                 ["skill_aura"] = ("오라", "Aura"),
                 ["skill_blackhole"] = ("블랙홀", "Black Hole"),
                 ["skill_lifesteal"] = ("생명력 흡수", "Lifesteal"),
                 ["skill_meteor_strike"] = ("운석 낙하", "Meteor Strike"),
                 ["skill_multishot"] = ("다중 사격", "Multi Shot"),
-                ["skill_overdrive"] = ("오버드라이브", "Overdrive"),
+                ["skill_overdrive"] = ("폭주", "Overdrive"),
                 ["skill_shadow_clone"] = ("그림자 분신", "Shadow Clone"),
                 ["skill_souleater"] = ("영혼 포식자", "Soul Eater"),
-                ["skill_spiral"] = ("나선", "Spiral"),
                 ["skill_turret"] = ("루티", "Rooti"),
                 ["skill_pyro_tank"] = ("폭열 전차", "Pyro Tank"),
                 ["skill_chain_ignition"] = ("연쇄 점화", "Chain Ignition")
@@ -137,9 +137,10 @@ namespace Nytherion.Editor.Localization
         public static readonly IReadOnlyDictionary<string, string> SkillKoreanDescriptions =
             new Dictionary<string, string>
             {
+                ["skill_poison_drop"] = "독방울을 떨어뜨려 범위 안의 적에게 피해와 독 효과를 부여합니다.",
+                ["skill_fire_storm"] = "마우스 위치에 화염 폭풍을 일으켜 범위 안의 적에게 지속적으로 화염 피해를 줍니다.",
                 ["skill_bubble_shield"] = "피해를 흡수하는 비눗방울 생성",
                 ["skill_decoy"] = "주변 적을 유인하는 허수아비 소환",
-                ["skill_all_stat_up"] = "일정 시간 모든 능력치 증가",
                 ["skill_aura"] = "주변 적에게 지속 피해를 주는 오라 생성",
                 ["skill_blackhole"] = "적을 끌어당기며 피해를 주는 블랙홀 생성",
                 ["skill_lifesteal"] = "일정 시간 공격 피해로 체력 회복",
@@ -148,7 +149,6 @@ namespace Nytherion.Editor.Localization
                 ["skill_overdrive"] = "일정 시간 공격력, 공격 속도와 대시 속도 증가",
                 ["skill_shadow_clone"] = "함께 공격하는 그림자 분신 소환",
                 ["skill_souleater"] = "적을 처치할수록 강해지는 투사체 발사",
-                ["skill_spiral"] = "주변 적을 공격하는 회전 구체 소환",
                 ["skill_turret"] = "적을 자동으로 공격하는 루티를 소환합니다.",
                 ["skill_pyro_tank"] = "적에게 돌진해 폭발하는 전차 소환",
                 ["skill_chain_ignition"] = "조준 방향으로 연속 화염 폭발"
@@ -157,9 +157,10 @@ namespace Nytherion.Editor.Localization
         public static readonly IReadOnlyDictionary<string, string> SkillEnglishDescriptions =
             new Dictionary<string, string>
             {
+                ["skill_poison_drop"] = "Drops a poison glob that damages and poisons enemies in an area.",
+                ["skill_fire_storm"] = "Creates a fire storm at the cursor that repeatedly deals fire damage to enemies in its area.",
                 ["skill_bubble_shield"] = "Creates a damage-absorbing bubble shield.",
                 ["skill_decoy"] = "Summons a decoy that taunts nearby enemies.",
-                ["skill_all_stat_up"] = "Temporarily boosts all stats.",
                 ["skill_aura"] = "Creates an aura that damages nearby enemies.",
                 ["skill_blackhole"] = "Creates a black hole that pulls in and damages enemies.",
                 ["skill_lifesteal"] = "Temporarily restores health by dealing damage.",
@@ -168,7 +169,6 @@ namespace Nytherion.Editor.Localization
                 ["skill_overdrive"] = "Temporarily boosts attack, attack speed and dash speed.",
                 ["skill_shadow_clone"] = "Summons a shadow clone that attacks alongside you.",
                 ["skill_souleater"] = "Fires a projectile that grows stronger with each kill.",
-                ["skill_spiral"] = "Summons spinning orbs that attack nearby enemies.",
                 ["skill_turret"] = "Summons Rooti to automatically attack enemies.",
                 ["skill_pyro_tank"] = "Summons a tank that charges at enemies and explodes.",
                 ["skill_chain_ignition"] = "Unleashes successive fire explosions toward your aim."
@@ -177,7 +177,6 @@ namespace Nytherion.Editor.Localization
         public static readonly IReadOnlyDictionary<string, TranslationEntry> Milestones =
             new Dictionary<string, TranslationEntry>
             {
-                ["All_Stat"] = new TranslationEntry("All_Stat", "모든 능력치 강화", "All Stat Buff"),
                 ["AS"] = new TranslationEntry("AS", "공격 속도 증가", "Attack Speed Boost"),
                 ["Atk_Buff"] = new TranslationEntry("Atk_Buff", "공격력 강화", "Attack Buff"),
                 ["Aura"] = new TranslationEntry("Aura", "오라", "Aura"),
@@ -187,7 +186,6 @@ namespace Nytherion.Editor.Localization
                 ["Lifesteal"] = new TranslationEntry("Lifesteal", "생명력 흡수", "Lifesteal"),
                 ["Shadow_Clone"] = new TranslationEntry("Shadow_Clone", "그림자 분신", "Shadow Clone"),
                 ["Soul_Eater"] = new TranslationEntry("Soul_Eater", "영혼 포식자", "Soul Eater"),
-                ["Spiral"] = new TranslationEntry("Spiral", "나선", "Spiral"),
                 ["Turret"] = new TranslationEntry("Turret", "포탑", "Turret"),
                 ["BreakingThePiggy"] = new TranslationEntry("BreakingThePiggy", "저금통 터는 날", "Breaking the Piggy Bank"),
                 ["CenterOfAttention"] = new TranslationEntry("CenterOfAttention", "주인공 체질", "Center of Attention"),

@@ -23,7 +23,7 @@ namespace Nytherion.Editor
         private const string AnimationRoot = ArtRoot + "/Animations";
         private const string PrefabRoot = "Assets/Prefabs/Gameplay/Characters/Companions/Opapa";
         private const string CompanionPrefabPath = PrefabRoot + "/Opapa.prefab";
-        private const string IconPath = "Assets/Nytherion/Art/Relics/Sprites/Opapa.png";
+        private const string IconPath = "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/Opapa.png";
         private const string RelicPath =
             "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Opapa.asset";
         private const string DatabasePath =
@@ -471,6 +471,8 @@ namespace Nytherion.Editor
             SetFloat(serializedCompanion, "minimumBlinkInterval", 3f);
             SetFloat(serializedCompanion, "maximumBlinkInterval", 7f);
             serializedCompanion.ApplyModifiedPropertiesWithoutUndo();
+
+            OpapaDashEffectSetup.Configure(companion);
 
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, CompanionPrefabPath);
             Object.DestroyImmediate(root);

@@ -24,8 +24,8 @@ namespace Nytherion.Editor
         private const string RelicPath = Root + "Relics/SkillRelics/Relic_Darkbolt.asset";
         private const string SkillPath = "Assets/Prefabs/Gameplay/Skills/DarkboltSkill.prefab";
         private const string ProjectilePath = "Assets/Prefabs/Gameplay/Skills/DarkboltProjectile.prefab";
-        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/DarkBolt_";
-        private const string TailPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/DarkboltTail.png";
+        private const string Sprites = "Assets/Nytherion/Art/Skills/Sprites/Darkbolt/DarkBolt_";
+        private const string TailPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/Darkbolt/DarkboltTail.png";
 
         [MenuItem("Tools/Nytherion/Darkbolt/Create Assets")]
         public static void CreateAssets()
@@ -34,7 +34,7 @@ namespace Nytherion.Editor
             Sprite[] projectileFrames = { ConfigureIcon(Sprites + "Projectile.png") };
             Sprite[] hitFrames = ConfigureFrames(Sprites + "Hit.png", 64, 7);
             Sprite[] castFrames = ConfigureFrames(Sprites + "Cast.png", 64, 5);
-            Sprite icon = ConfigureIcon(Sprites + "Icon.png");
+            Sprite icon = ConfigureIcon("Assets/Nytherion/Art/Skills/Sprites/Darkbolt/DarkBolt_Icon.png");
 
             DarkboltSkillData data = AssetDatabase.LoadAssetAtPath<DarkboltSkillData>(DataPath);
             if (data == null)
@@ -53,7 +53,7 @@ namespace Nytherion.Editor
                 data.collisionLayers = LayerMask.GetMask("Enemy", "Wall", "Obstacle");
                 AssetDatabase.CreateAsset(data, DataPath);
             }
-            data.icon = icon;
+            data.icon = projectileFrames[0];
             data.projectileFrames = projectileFrames;
             data.hitFrames = hitFrames;
             data.castFrames = castFrames;

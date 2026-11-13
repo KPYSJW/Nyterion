@@ -38,6 +38,10 @@ namespace Nytherion.GamePlay
       
 
         private Vector3 velocity = Vector3.zero;
+        private Camera introCamera;
+        private Vector3? introFocus;
+        private float introBaseSize;
+        private float introZoom = 1f;
     //   private float timeSinceLastPositionChange = 0f; 
         private bool debugLogging = false;
         [Inject]
@@ -169,12 +173,41 @@ namespace Nytherion.GamePlay
                 target.position = playerPos;
             }
 
+            if (introFocus.HasValue)
+            {
+                Vector3 focus = introFocus.Value;
+                targetPosition = new Vector3(focus.x, focus.y, offset.z);
+            }
+
+            if (introCamera != null && introCamera.orthographic)
+            {
+                introCamera.orthographicSize = Mathf.Lerp(introCamera.orthographicSize,
+                    introBaseSize * introZoom, 1f - Mathf.Exp(-12f * Time.deltaTime));
+            }
+
             transform.position = Vector3.SmoothDamp(
                 transform.position,
                 targetPosition,
                 ref velocity,
                 1f / smoothSpeed
             );
+        }
+
+        public void SetIntroFraming(Vector3? focus, float zoom = 1f)
+        {
+            if (introCamera == null && TryGetComponent(out introCamera))
+                introBaseSize = introCamera.orthographicSize;
+
+            introFocus = focus;
+            introZoom = zoom;
+        }
+
+        public void ClearIntroFraming()
+        {
+            introFocus = null;
+            if (introCamera != null && introCamera.orthographic)
+                introCamera.orthographicSize = introBaseSize;
+            introCamera = null;
         }
 
         /// <summary>

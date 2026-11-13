@@ -109,6 +109,7 @@ namespace Nytherion.GamePlay.Combat
         private sealed class PixelBounds
         {
             public bool ready;
+            public bool pending;
             public float bottom;
             public float top;
         }
@@ -117,13 +118,20 @@ namespace Nytherion.GamePlay.Combat
 
         public static float GetWorldBottom(SpriteRenderer renderer, float fallback)
         {
-            Sprite sprite = renderer.sprite;
+            return GetWorldBottom(renderer, renderer.sprite, fallback, out _);
+        }
+
+        public static float GetWorldBottom(SpriteRenderer renderer, Sprite sprite, float fallback, out bool pending)
+        {
+            pending = false;
+            if (renderer == null || sprite == null) return fallback;
             if (!Cache.TryGetValue(sprite, out PixelBounds pixels))
             {
                 pixels = new PixelBounds();
                 Cache.Add(sprite, pixels);
                 RequestPixels(sprite, pixels);
             }
+            pending = pixels.pending;
             if (!pixels.ready) return fallback;
             float localBottom = renderer.flipY ? -pixels.top : pixels.bottom;
             float localTop = renderer.flipY ? -pixels.bottom : pixels.top;
@@ -145,9 +153,11 @@ namespace Nytherion.GamePlay.Combat
                 if (width <= 0 || height <= 0) return;
                 float pivotY = sprite.pivot.y;
                 float pixelsPerUnit = sprite.pixelsPerUnit;
+                pixels.pending = true;
                 AsyncGPUReadback.Request(sprite.texture, 0, Mathf.RoundToInt(rect.x), width,
                     Mathf.RoundToInt(rect.y), height, 0, 1, TextureFormat.RGBA32, request =>
                     {
+                        pixels.pending = false;
                         if (request.hasError) return;
                         var data = request.GetData<Color32>();
                         if (data.Length < width * height) return;
@@ -171,6 +181,7 @@ namespace Nytherion.GamePlay.Combat
             }
             catch (UnityException)
             {
+                pixels.pending = false;
                 // 픽셀 영역을 읽을 수 없는 스프라이트는 기존 몸체 경계를 사용합니다.
             }
         }

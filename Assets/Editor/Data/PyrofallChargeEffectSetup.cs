@@ -16,7 +16,7 @@ namespace Nytherion.Editor
 {
     public static class PyrofallChargeEffectSetup
     {
-        public const string ImagePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/PyrofallCharging.png";
+        public const string ImagePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Pyrofall/PyrofallCharging.png";
         public const string PrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/PyrofallCharging.prefab";
         private const string AnimationFolder = "Assets/Nytherion/Art/Combat/VFX/Animations/Weapons/PyrofallCharging";
 

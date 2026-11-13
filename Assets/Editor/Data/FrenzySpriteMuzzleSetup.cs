@@ -28,7 +28,7 @@ namespace Nytherion.Editor
         public static void Apply()
         {
             var data = AssetDatabase.LoadAssetAtPath<WeaponData>("Assets/Nytherion/Data/ScriptableObjects/Weapons/Frenzy.asset");
-            var sheet = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Nytherion/Art/Combat/FrenzyMuzzleFlash.png");
+            var sheet = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Frenzy/FrenzyMuzzleFlash.png");
             Sprite[] frames = WeaponFireEffectAssets.LoadFrames(sheet);
             if (frames.Length != 6) throw new InvalidOperationException("Frenzy 시트에 6프레임이 필요합니다.");
             WeaponFireEffectAssets.CreateAndAssign(data, frames, 0, 4, 60f, 0.28f, new Vector3(-0.06f, 0f, 0f),

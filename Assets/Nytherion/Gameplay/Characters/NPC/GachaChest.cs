@@ -51,7 +51,6 @@ namespace Nytherion.GamePlay.Characters.NPC
 
         [Header("Gacha Chest Settings")]
         [SerializeField] private float interactionDistance = 2.0f;
-        [SerializeField] private GameObject worldPromptUI; // "1회: X / 10회: C" 월드 UI
         [SerializeField] private GameObject droppedRelicPrefab; // DroppedRelic 프리팹
         [SerializeField, Min(10), Tooltip("첫 가챠 때 미리 생성할 드롭 유물 수입니다.")]
         private int droppedRelicPoolSize = 30;
@@ -129,8 +128,6 @@ namespace Nytherion.GamePlay.Characters.NPC
             {
                 animator = GetComponent<Animator>();
             }
-
-            RefreshWorldPromptUI();
         }
 
         private void Update()
@@ -141,11 +138,7 @@ namespace Nytherion.GamePlay.Characters.NPC
             float distance = Vector2.Distance(transform.position, playerTransform.position);
             bool inRange = distance <= interactionDistance;
 
-            if (inRange != isPlayerInRange)
-            {
-                isPlayerInRange = inRange;
-                RefreshWorldPromptUI();
-            }
+            isPlayerInRange = inRange;
 
             // 범위 내에 있고 애니메이션 진행 중이 아닐 때 키보드 입력 감지
             if (isPlayerInRange && !isAnimating && GetInputTarget(playerTransform) == this)
@@ -168,7 +161,6 @@ namespace Nytherion.GamePlay.Characters.NPC
             if (gachaManager == null || currencyDataManager == null || relicManager == null || playerTransform == null)
             {
                 Debug.LogError("[GachaChest] 필수 컴포넌트가 누락되어 가챠를 실행할 수 없습니다.");
-                RefreshWorldPromptUI();
                 return;
             }
 
@@ -178,16 +170,12 @@ namespace Nytherion.GamePlay.Characters.NPC
                 return;
             }
 
-            if (!PerformGacha(count))
-            {
-                RefreshWorldPromptUI();
-            }
+            PerformGacha(count);
         }
 
         private IEnumerator CollectRemainingRelicsThenPerformGacha(int count)
         {
             isAnimating = true;
-            RefreshWorldPromptUI();
 
             DroppedRelic.BeginAutoCollectAll(playerTransform);
             while (DroppedRelic.HasUncollectedRelics())
@@ -221,7 +209,6 @@ namespace Nytherion.GamePlay.Characters.NPC
             }
 
             isAnimating = true;
-            RefreshWorldPromptUI();
 
             // 3. 상자 열림 애니메이션 재생
             if (animator != null)
@@ -277,21 +264,6 @@ namespace Nytherion.GamePlay.Characters.NPC
             // Close 애니메이션 동작 후 입력 상태 해제
             yield return new WaitForSeconds(0.5f);
             isAnimating = false;
-            RefreshWorldPromptUI();
-        }
-
-        private void RefreshWorldPromptUI()
-        {
-            if (worldPromptUI == null)
-            {
-                return;
-            }
-
-            // 키 안내는 화면 하단 HUD에서 함께 표시합니다.
-            if (worldPromptUI.activeSelf)
-            {
-                worldPromptUI.SetActive(false);
-            }
         }
 
         private void SpawnDroppedRelic(

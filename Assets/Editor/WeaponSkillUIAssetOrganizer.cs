@@ -11,6 +11,8 @@ namespace Nytherion.Editor
     {
         private const string PlanPath = "Documentation/WeaponSkillUIAssetMoves.json";
         private const string Output = "output/asset-organization";
+        private const string SkillPlanPath = "Documentation/SkillSpriteAssetMoves.json";
+        private const string SkillOutput = "output/skill-sprite-organization";
 
         [Serializable]
         private class MoveEntry
@@ -33,6 +35,17 @@ namespace Nytherion.Editor
             if (EditorApplication.isCompiling || EditorApplication.isUpdating ||
                 EditorApplication.isPlayingOrWillChangePlaymode) return;
             string request = Output + "/move.request";
+            if (File.Exists(SkillOutput + "/move.request"))
+            {
+                File.Delete(SkillOutput + "/move.request");
+                try { Organize(SkillPlanPath, SkillOutput); }
+                catch (Exception error)
+                {
+                    File.WriteAllText(SkillOutput + "/result.txt", "FAIL\n" + error);
+                    Debug.LogException(error);
+                }
+                return;
+            }
             if (!File.Exists(request)) return;
             File.Delete(request);
             try { Organize(); }
@@ -46,9 +59,20 @@ namespace Nytherion.Editor
         [MenuItem("Tools/Nytherion/Assets/Organize Weapon Skill UI")]
         public static void Organize()
         {
+            Organize(PlanPath, Output);
+        }
+
+        [MenuItem("Tools/Nytherion/Assets/Organize Skill Sprites")]
+        public static void OrganizeSkillSprites()
+        {
+            Organize(SkillPlanPath, SkillOutput);
+        }
+
+        private static void Organize(string planPath, string output)
+        {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 throw new InvalidOperationException("편집 모드에서 실행해 주세요.");
-            MovePlan plan = JsonUtility.FromJson<MovePlan>(File.ReadAllText(PlanPath));
+            MovePlan plan = JsonUtility.FromJson<MovePlan>(File.ReadAllText(planPath));
             if (plan == null || plan.entries == null || plan.entries.Length == 0)
                 throw new InvalidOperationException("에셋 정리 목록이 비어 있습니다.");
 
@@ -82,9 +106,9 @@ namespace Nytherion.Editor
                     AssetDatabase.LoadMainAssetAtPath(entry.destination) == null)
                     throw new InvalidOperationException("이동 후 에셋 로드 실패: " + entry.destination);
             }
-            Directory.CreateDirectory(Output);
-            File.WriteAllText(Output + "/result.txt", "PASS\n검증: " + plan.entries.Length + "개\n이번 이동: " + moved + "개");
-            Debug.Log("[AssetOrganizer] 무기·스킬·UI 에셋 정리 및 GUID 검증 완료.");
+            Directory.CreateDirectory(output);
+            File.WriteAllText(output + "/result.txt", "PASS\n검증: " + plan.entries.Length + "개\n이번 이동: " + moved + "개");
+            Debug.Log("[AssetOrganizer] 에셋 " + plan.entries.Length + "개 정리 및 GUID 검증 완료.");
         }
 
         private static void EnsureFolder(string path)

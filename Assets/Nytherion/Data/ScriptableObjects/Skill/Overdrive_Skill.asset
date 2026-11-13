@@ -15,7 +15,7 @@ MonoBehaviour:
   skillID: skill_overdrive
   isDisabled: 0
   skillType: 7
-  skillName: Overdrive
+  skillName: "\uD3ED\uC8FC"
   description: "\uC77C\uC815 \uC2DC\uAC04 \uACF5\uACA9\uB825, \uACF5\uACA9 \uC18D\uB3C4\uC640
     \uB300\uC2DC \uC18D\uB3C4 \uC99D\uAC00"
   skillLevel: 1
@@ -41,3 +41,17 @@ MonoBehaviour:
     value: 0.2
     valuePerLevel: 0.1
     isPercentage: 1
+  activationFrames:
+  - {fileID: 21300000, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300002, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300004, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300006, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300008, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300010, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300012, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300014, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300016, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  - {fileID: 21300018, guid: cd1bba9dc89e4ee6988053468c5982e6, type: 3}
+  activationFramesPerSecond: 16
+  activationScale: 0.75
+  activationFeetOffset: {x: 0, y: 0.1}

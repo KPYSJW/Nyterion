@@ -76,7 +76,17 @@ namespace Nytherion.GamePlay.Characters.Enemy
             SpriteRenderer spriteRenderer,
             float duration,
             float pixelSize,
-            Action onComplete)
+            Action onComplete) => PlayTransition(spriteRenderer, duration, pixelSize, onComplete, false);
+
+        public void Reveal(SpriteRenderer spriteRenderer, float duration, float pixelSize, Action onComplete) =>
+            PlayTransition(spriteRenderer, duration, pixelSize, onComplete, true);
+
+        private void PlayTransition(
+            SpriteRenderer spriteRenderer,
+            float duration,
+            float pixelSize,
+            Action onComplete,
+            bool reverse)
         {
             if (dissolveCoroutine != null)
             {
@@ -99,13 +109,13 @@ namespace Nytherion.GamePlay.Characters.Enemy
             FreezeAnimation();
 
             ConfigureProperties(Mathf.Max(1f, pixelSize));
-            SetDissolveAmount(0f);
+            SetDissolveAmount(reverse ? 1f : 0f);
             SetCollidersEnabled(false);
             FreezeMovement();
            // PrepareFragmentParticles(duration);
 
             dissolveCoroutine = StartCoroutine(
-                DissolveRoutine(Mathf.Max(0.01f, duration), onComplete));
+                DissolveRoutine(Mathf.Max(0.01f, duration), onComplete, reverse));
         }
 
         public void ResetState(SpriteRenderer spriteRenderer)
@@ -131,12 +141,12 @@ namespace Nytherion.GamePlay.Characters.Enemy
             //StopFragmentParticles();
         }
 
-        private IEnumerator DissolveRoutine(float duration, Action onComplete)
+        private IEnumerator DissolveRoutine(float duration, Action onComplete, bool reverse)
         {
             float holdDuration = Mathf.Min(0.15f, duration * 0.25f);
             float dissolveDuration = Mathf.Max(0.01f, duration - holdDuration);
 
-            if (holdDuration > 0f)
+            if (!reverse && holdDuration > 0f)
             {
                 yield return new WaitForSeconds(holdDuration);
             }
@@ -152,12 +162,15 @@ namespace Nytherion.GamePlay.Characters.Enemy
                     fragmentParticles?.Play();
                     particlesStarted = true;
                 }
-                SetDissolveAmount(normalizedTime);
+                SetDissolveAmount(reverse ? 1f - normalizedTime : normalizedTime);
                 yield return null;
             }
 
-            SetDissolveAmount(1f);
+            SetDissolveAmount(reverse ? 0f : 1f);
+            if (reverse && holdDuration > 0f)
+                yield return new WaitForSeconds(holdDuration);
             dissolveCoroutine = null;
+            if (reverse) ResetState(targetRenderer);
             onComplete?.Invoke();
         }
 

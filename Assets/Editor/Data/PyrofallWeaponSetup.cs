@@ -25,8 +25,8 @@ namespace Nytherion.Editor
         private const string IconSpritePath = "Assets/Nytherion/Art/Combat/Weapons/Icons/Pyrofall_Icon.png";
         private const string FireballSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/FireBall.png";
         private const string ExplosionSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/FireBallExplosion.png";
-        private const string CastFlashSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/PyroFallFlash.png";
-        private const string HitEffectSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/PyroFallHit.png";
+        private const string CastFlashSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Pyrofall/PyroFallFlash.png";
+        private const string HitEffectSpritePath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Pyrofall/PyroFallHit.png";
         private const string DatabasePath = "Assets/Nytherion/Data/ScriptableObjects/Items/ItemDatabaseSO.asset";
         private const string RarePoolPath = "Assets/Nytherion/Data/ScriptableObjects/Gacha/GachaPool/Weapon/Rare_Weapon.asset";
 

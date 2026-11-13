@@ -26,7 +26,7 @@ namespace Nytherion.Editor
                 ["Beast Scale"] = ("피격 시 4초 동안 방어력 +3 (레벨당 +1), 최대 3중첩. 재발동 시 지속 시간 갱신.", "Taking damage grants +3 defense for 4 seconds (+1 per level), up to 3 stacks. Repeated triggers refresh the duration."),
                 ["Mossy Stone"] = ("최대 체력 +45 (레벨당 +9).", "Max health +45 (+9 per level)."),
                 ["Wraith Stone"] = ("저주받은 적 처치 시 반경 3 안의 저주받지 않은 적에게 남은 저주 전파 (레벨당 반경 +0.25).", "When a cursed enemy dies, spread its remaining curse to uncursed enemies within 3 units (+0.25 radius per level)."),
-                ["Grimoire"] = ("저주 장비 장착 시 공격력 +15% (레벨당 +5%p).", "With Cursed equipment, attack +15% (+5pp per level)."),
+                ["OrbOfGrudge"] = ("저주 장비 장착 시 공격력 +15% (레벨당 +5%p).", "With Cursed equipment, attack +15% (+5pp per level)."),
                 ["CatEyes"] = ("공격 시 일반 투사체를 발사하는 소환물 생성", "Summons a companion that fires normal projectiles when you attack."),
                 ["Daemon"] = ("공격 시 마성 투사체를 발사하는 소환물 생성", "Summons a companion that fires demonic projectiles when you attack."),
                 ["Fulmen"] = ("공격 시 번개 투사체를 발사하는 소환물 생성", "Summons a companion that fires lightning projectiles when you attack."),
@@ -38,7 +38,7 @@ namespace Nytherion.Editor
                 ["BoomMaker"] = ("적을 추적하는 폭발 로봇을 내보내는 BoomMaker 소환", "Summons BoomMaker to deploy robots that chase enemies and explode."),
                 ["Comrade Blast"] = ("장착 중 가까운 적에게 미사일을 발사하는 블래스트 소환", "While equipped, summons Blast to fire missiles at nearby enemies."),
                 ["Opapa"] = ("장착 중 적을 관통하고 벽에서 튕기는 오파파 소환", "While equipped, summons Opapa to pierce enemies and bounce off walls."),
-                ["Frog"] = ("장착 중 적을 자동 공격하는 개구리 소환", "While equipped, summons a frog that automatically attacks enemies."),
+                ["Frog"] = ("푸른 슬라임을 소환합니다.", "Summons a blue slime."),
                 ["Slime Specimen"] = ("장착 중 적을 자동 공격하는 슬라임 소환", "While equipped, summons a slime that automatically attacks enemies."),
                 ["Azure Berry"] = ("루티 투사체 +2", "Rooti projectiles +2."),
                 ["Purple Radish"] = ("루티 공격 속도 +25%", "Rooti attack speed +25%."),
@@ -91,8 +91,8 @@ namespace Nytherion.Editor
                 case "skill_fire_bolt": return "파이어볼 마법 책";
                 case "skill_meteor_strike": return "메테오 마법 책";
                 case "skill_shadow_clone": return "그림자 분신 마법 책";
+                case "skill_portal_gate": return "차원문 마법책";
                 case "skill_turret": return "루티 마법 책";
-                case "skill_spiral": return "나선";
             }
             string name = string.IsNullOrWhiteSpace(currentName) ? skill.skillName : currentName;
             return name == null ? skill.name : name.Replace(" 각인", "").Trim();
@@ -103,10 +103,6 @@ namespace Nytherion.Editor
         {
             switch (skill.skillID)
             {
-                case "skill_all_stat_up":
-                    korean = "일정 시간 모든 능력치를 높이는 스킬을 얻는다.";
-                    english = "Grants a skill that temporarily boosts all stats.";
-                    return;
                 case "skill_blackhole":
                     korean = "적을 끌어당기며 피해를 주는 블랙홀 스킬을 얻는다.";
                     english = "Grants a black hole skill that pulls in and damages enemies.";
@@ -166,10 +162,6 @@ namespace Nytherion.Editor
                 case "skill_souleater":
                     korean = "적을 처치할수록 강해지는 투사체 스킬을 얻는다.";
                     english = "Grants a projectile skill that grows stronger with each kill.";
-                    return;
-                case "skill_spiral":
-                    korean = "회전 구체로 주변 적을 공격하는 나선 스킬을 얻는다.";
-                    english = "Grants a skill that summons spinning orbs to attack nearby enemies.";
                     return;
                 case "skill_turret":
                     korean = "적을 자동으로 공격하는 루티 소환 스킬을 얻는다.";

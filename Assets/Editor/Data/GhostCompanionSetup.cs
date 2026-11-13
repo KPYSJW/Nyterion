@@ -22,11 +22,13 @@ namespace Nytherion.Editor
         private const string AnimationRoot = ArtRoot + "/Animations";
         private const string SpriteRoot = ArtRoot + "/Sprites";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Characters/Companions/GhostCompanion.prefab";
-        private const string IconPath = "Assets/Nytherion/Art/Relics/Sprites/Ghost.png";
+        private const string IconPath = "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/Ghost.png";
         private const string RelicPath = "Assets/Nytherion/Data/ScriptableObjects/Relics/SkillRelics/Ghost.asset";
         private const string DatabasePath = "Assets/Nytherion/Data/ScriptableObjects/Relics/RelicDatabase.asset";
         private const string HitPrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/GhostSpiritHitVFX.prefab";
         private const float FrameRate = 10f;
+        private const int IdleFrameCount = 4;
+        private const int AttackFrameCount = 7;
 
         static GhostCompanionSetup()
         {
@@ -53,6 +55,16 @@ namespace Nytherion.Editor
 
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             GhostCompanion companion = prefab != null ? prefab.GetComponent<GhostCompanion>() : null;
+            AnimationClip attackClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(AnimationRoot + "/Ghost_Attack.anim");
+            AnimationClip idleClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(AnimationRoot + "/Ghost_Idle.anim");
+            EditorCurveBinding spriteBinding = EditorCurveBinding.PPtrCurve(string.Empty, typeof(SpriteRenderer), "m_Sprite");
+            if (companion != null && attackClip != null &&
+                (AnimationUtility.GetObjectReferenceCurve(attackClip, spriteBinding)?.Length != AttackFrameCount ||
+                 idleClip == null || AnimationUtility.GetObjectReferenceCurve(idleClip, spriteBinding)?.Length != IdleFrameCount))
+            {
+                UpdateAnimations();
+                AssetDatabase.SaveAssets();
+            }
             if (companion != null &&
                 new SerializedObject(companion).FindProperty("spiritHitEffectPrefab").objectReferenceValue == null &&
                 AssetDatabase.LoadAssetAtPath<Texture2D>(SpriteRoot + "/Ghost_SpiritHit.png") != null)
@@ -65,14 +77,14 @@ namespace Nytherion.Editor
         public static void Setup()
         {
             EnsureFolder(AnimationRoot);
-            Sprite[] idleFrames = ConfigureFrames("Ghost_Idle", 5);
-            Sprite[] attackFrames = ConfigureFrames("Ghost_Attack", 12);
+            Sprite[] idleFrames = ConfigureFrames("Ghost_Idle", IdleFrameCount);
+            Sprite[] attackFrames = ConfigureFrames("Ghost_Attack", AttackFrameCount);
             AnimationClip idleClip = CreateClip("Ghost_Idle", idleFrames, true);
             AnimationClip attackClip = CreateClip("Ghost_Attack", attackFrames, false);
             AnimationUtility.SetAnimationEvents(attackClip, new[]
             {
-                new AnimationEvent { time = 4f / FrameRate, functionName = "ReleaseSpiritHit" },
-                new AnimationEvent { time = 8f / FrameRate, functionName = "EndSpiritHit" }
+                new AnimationEvent { time = 2f / FrameRate, functionName = "ReleaseSpiritHit" },
+                new AnimationEvent { time = 6f / FrameRate, functionName = "EndSpiritHit" }
             });
             EditorUtility.SetDirty(attackClip);
 
@@ -129,10 +141,44 @@ namespace Nytherion.Editor
                 }
             }
 
+            UpdatePrefabAttackTiming();
             SetupRelic();
             AssetDatabase.SaveAssets();
             RelicGachaSync.SyncRelicsToGachaPools(false);
             Debug.Log("[GhostCompanionSetup] 유령 소환 유물과 아이콘·가챠 등록을 완료했습니다. 실제 공격 기능은 별도로 연결하세요.");
+        }
+
+        [MenuItem("Nytherion/Update Ghost Animations")]
+        public static void UpdateAnimations()
+        {
+            CreateClip("Ghost_Idle", ConfigureFrames("Ghost_Idle", IdleFrameCount), true);
+            AnimationClip attack = CreateClip("Ghost_Attack", ConfigureFrames("Ghost_Attack", AttackFrameCount), false);
+            AnimationUtility.SetAnimationEvents(attack, new[]
+            {
+                new AnimationEvent { time = 2f / FrameRate, functionName = "ReleaseSpiritHit" },
+                new AnimationEvent { time = 6f / FrameRate, functionName = "EndSpiritHit" }
+            });
+            EditorUtility.SetDirty(attack);
+            UpdatePrefabAttackTiming();
+            AssetDatabase.SaveAssets();
+            Debug.Log("[GhostCompanionSetup] idle 4프레임, attack 7프레임과 3번째 프레임 공격 이벤트를 적용했습니다.");
+        }
+
+        private static void UpdatePrefabAttackTiming()
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath) == null) return;
+            GameObject contents = PrefabUtility.LoadPrefabContents(PrefabPath);
+            try
+            {
+                SerializedObject settings = new SerializedObject(contents.GetComponent<GhostCompanion>());
+                settings.FindProperty("attackFreezeDuration").floatValue = AttackFrameCount / FrameRate;
+                settings.ApplyModifiedPropertiesWithoutUndo();
+                PrefabUtility.SaveAsPrefabAsset(contents, PrefabPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(contents);
+            }
         }
 
         private static void SetupRelic()
@@ -199,6 +245,7 @@ namespace Nytherion.Editor
         private static Sprite[] ConfigureFrames(string name, int count)
         {
             string path = SpriteRoot + "/" + name + ".png";
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
             TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
             Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
             if (importer == null || texture == null)
@@ -257,20 +304,21 @@ namespace Nytherion.Editor
                 AssetDatabase.CreateAsset(clip, path);
             }
             clip.frameRate = FrameRate;
-            // 마지막 프레임도 온전히 한 프레임 동안 재생합니다.
-            ObjectReferenceKeyframe[] keys = new ObjectReferenceKeyframe[frames.Length + 1];
+            // Unity가 마지막 키 뒤의 한 프레임을 포함하므로 끝에 중복 키를 추가하지 않습니다.
+            ObjectReferenceKeyframe[] keys = new ObjectReferenceKeyframe[frames.Length];
             for (int i = 0; i < keys.Length; i++)
             {
                 keys[i] = new ObjectReferenceKeyframe
                 {
                     time = i / FrameRate,
-                    value = frames[Mathf.Min(i, frames.Length - 1)]
+                    value = frames[i]
                 };
             }
             AnimationUtility.SetObjectReferenceCurve(clip,
                 EditorCurveBinding.PPtrCurve(string.Empty, typeof(SpriteRenderer), "m_Sprite"), keys);
             AnimationClipSettings settings = AnimationUtility.GetAnimationClipSettings(clip);
             settings.loopTime = loop;
+            settings.stopTime = frames.Length / FrameRate;
             AnimationUtility.SetAnimationClipSettings(clip, settings);
             EditorUtility.SetDirty(clip);
             return clip;

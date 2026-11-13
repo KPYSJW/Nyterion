@@ -101,7 +101,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 32
+        y: 0
         width: 32
         height: 32
       alignment: 0
@@ -122,7 +122,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 32
+        y: 0
         width: 32
         height: 32
       alignment: 0
@@ -143,7 +143,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 32
+        y: 0
         width: 32
         height: 32
       alignment: 0
@@ -163,7 +163,7 @@ TextureImporter:
       name: Ghost_Idle_03
       rect:
         serializedVersion: 2
-        x: 0
+        x: 96
         y: 0
         width: 32
         height: 32
@@ -176,27 +176,6 @@ TextureImporter:
       bones: []
       spriteID: cb48d197e9f9e854aa9b0a4c15042359
       internalID: -88419055
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Ghost_Idle_04
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6b48aab8b21995340911c32544e78af8
-      internalID: -469203511
       vertices: []
       indices: 
       edges: []
@@ -216,7 +195,6 @@ TextureImporter:
       Ghost_Idle_01: 1127174232
       Ghost_Idle_02: -684624797
       Ghost_Idle_03: -88419055
-      Ghost_Idle_04: -469203511
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using Nytherion.Core.Utils;
 using Nytherion.Core.Interfaces;
 using Nytherion.Core.Data;
 using Nytherion.Data.ScriptableObjects.Skill;
@@ -219,6 +221,27 @@ namespace Nytherion.Core.Managers
             OnSkillDataChanged?.Invoke();
         }
 
+
+        /// <summary>보관함 전체를 현재 레벨 내림차순, 현재 언어의 표시 이름 오름차순으로 정렬한다.</summary>
+        public void SortStorageSkills()
+        {
+            if (storageSkills == null) return;
+            CompareInfo names = CultureInfo.GetCultureInfo(
+                LocalizationText.IsEnglishSelected ? "en-US" : "ko-KR").CompareInfo;
+            Array.Sort(storageSkills, (left, right) =>
+            {
+                if (left == right) return 0;
+                if (left == null) return 1;
+                if (right == null) return -1;
+                int leftLevel = skillStates.TryGetValue(left.skillID, out var leftState) ? leftState.level : 1;
+                int rightLevel = skillStates.TryGetValue(right.skillID, out var rightState) ? rightState.level : 1;
+                int levelOrder = rightLevel.CompareTo(leftLevel);
+                if (levelOrder != 0) return levelOrder;
+                int nameOrder = names.Compare(left.DisplayName, right.DisplayName, CompareOptions.IgnoreCase);
+                return nameOrder != 0 ? nameOrder : string.CompareOrdinal(left.skillID, right.skillID);
+            });
+            OnSkillDataChanged?.Invoke();
+        }
 
         /// <summary>
         /// UI 에서 장착 상태나 보관함 순서가 변경되었을 때 데이터를 최신화

@@ -13,7 +13,7 @@ namespace Nytherion.Editor
     public static class EvilEyeHitEffectSetup
     {
         private const string Output = "output/evil-eye-hit";
-        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/EvilEyeHit.png";
+        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/EvilEye/EvilEyeHit.png";
         private const string ClipPath = "Assets/Nytherion/Art/Combat/VFX/Animations/EvilEyeHit.anim";
         private const string ControllerPath = "Assets/Nytherion/Art/Combat/VFX/Animations/EvilEyeHit.controller";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/EvilEyeHitVFX.prefab";
@@ -177,7 +177,7 @@ namespace Nytherion.Editor
                     EditorUtility.CopySerialized(visual.GetComponent<SpriteRenderer>(), renderer);
                     UnityEngine.Object.DestroyImmediate(visual.gameObject);
                 }
-                renderer.sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Nytherion/Art/Combat/VFX/Sprites/Explosion.png")
+                renderer.sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/Explosion.png")
                     .OfType<Sprite>().Single(sprite =>
                         AssetDatabase.TryGetGUIDAndLocalFileIdentifier(sprite, out string guid, out long id) && id == 67403793);
                 renderer.sortingOrder = 0;

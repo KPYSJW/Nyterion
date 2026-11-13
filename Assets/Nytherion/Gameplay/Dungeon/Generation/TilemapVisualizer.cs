@@ -141,7 +141,40 @@ namespace Nytherion.GamePlay.Dungeon
         /// </summary>
         public void PaintFloorTiles(IEnumerable<Vector2Int> floorPositions)
         {
-            PaintTiles(floorPositions, floorTilemap, FloorTile);
+            TileBase[] variants = activeTileData?.floorTileVariants?
+                .Where(tile => tile != null)
+                .ToArray();
+            if (variants == null || variants.Length == 0)
+            {
+                PaintTiles(floorPositions, floorTilemap, FloorTile);
+                return;
+            }
+
+            if (floorTilemap == null || floorPositions == null) return;
+
+            Vector3Int[] positions = floorPositions.Select(position => (Vector3Int)position).ToArray();
+            if (positions.Length == 0) return;
+
+            TileBase[] tiles = new TileBase[positions.Length];
+            for (int i = 0; i < positions.Length; i++)
+            {
+                tiles[i] = variants[GetFloorVariantIndex(positions[i], variants.Length)];
+            }
+
+            floorTilemap.SetTiles(positions, tiles);
+        }
+
+        private static int GetFloorVariantIndex(Vector3Int position, int variantCount)
+        {
+            // Mix the cell coordinates so loading a saved layout reproduces the same choices.
+            unchecked
+            {
+                uint hash = (uint)position.x * 0x9E3779B1u ^ (uint)position.y * 0x85EBCA77u;
+                hash ^= hash >> 16;
+                hash *= 0x7FEB352Du;
+                hash ^= hash >> 15;
+                return (int)(hash % (uint)variantCount);
+            }
         }
 
         /// <summary>

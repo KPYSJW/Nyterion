@@ -18,7 +18,7 @@ namespace Nytherion.Editor
     public static class BlazeshadeHitEffectSetup
     {
         private const string Output = "output/blazeshade-hit";
-        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeshadeHit.png";
+        private const string SheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Blazeshade/BlazeshadeHit.png";
         private const string ClipPath = "Assets/Nytherion/Art/Combat/VFX/Animations/BlazeshadeHit.anim";
         private const string ControllerPath = "Assets/Nytherion/Art/Combat/VFX/Animations/BlazeshadeHit.controller";
         private const string PrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/BlazeshadeHitVFX.prefab";

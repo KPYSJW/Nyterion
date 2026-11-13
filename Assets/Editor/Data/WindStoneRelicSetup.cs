@@ -20,7 +20,7 @@ namespace Nytherion.Editor
         public const string ProjectilePath = "Assets/Prefabs/Gameplay/Combat/Proj/WindStoneProj.prefab";
         public const string HitPath = "Assets/Prefabs/Gameplay/Combat/VFX/WindStoneProjHitEffect.prefab";
         public const string AnimationFolder = "Assets/Nytherion/Art/Combat/VFX/Animations/WindStone";
-        private const string SpriteFolder = "Assets/Nytherion/Art/Combat/VFX/Sprites/";
+        private const string SpriteFolder = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/WindStone/";
 
         static WindStoneRelicSetup() { EditorApplication.update += Update; }
 
@@ -45,7 +45,7 @@ namespace Nytherion.Editor
             EnsureFolder(AnimationFolder);
             Sprite[] frames = LoadFrames(SpriteFolder + "WindStoneProj.png", 5);
             Sprite[] hitFrames = LoadFrames(SpriteFolder + "WindStoneProjHitEffect.png", 4);
-            var icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/WindStone.png");
+            var icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Nytherion/Art/Relics/Sprites/CombatUtility/WindStone.png");
             if (icon == null) throw new InvalidOperationException("WindStone.png 아이콘 누락");
             var loop = CreateAnimation("WindStoneProj", frames, true);
             var hitAnimation = CreateAnimation("WindStoneProjHitEffect", hitFrames, false);

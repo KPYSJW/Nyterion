@@ -34,18 +34,6 @@ AnimationClip:
       value: {fileID: 1540127018, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
     - time: 0.6
       value: {fileID: -717828077, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - time: 0.7
-      value: {fileID: 1777199342, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - time: 0.8
-      value: {fileID: 865099912, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - time: 0.9
-      value: {fileID: -205620763, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - time: 1
-      value: {fileID: 2129132906, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - time: 1.1
-      value: {fileID: -773967114, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - time: 1.2
-      value: {fileID: -773967114, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -75,18 +63,12 @@ AnimationClip:
     - {fileID: -1210748321, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
     - {fileID: 1540127018, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
     - {fileID: -717828077, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - {fileID: 1777199342, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - {fileID: 865099912, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - {fileID: -205620763, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - {fileID: 2129132906, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - {fileID: -773967114, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
-    - {fileID: -773967114, guid: 1c286173961bc9f4f9328739c6ec9dce, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 1.3
+    m_StopTime: 0.70000005
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -106,14 +88,14 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.4
+  - time: 0.2
     functionName: ReleaseSpiritHit
     data:
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.8
+  - time: 0.6
     functionName: EndSpiritHit
     data:
     objectReferenceParameter: {fileID: 0}

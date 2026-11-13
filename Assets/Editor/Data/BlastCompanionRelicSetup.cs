@@ -33,6 +33,7 @@ namespace Nytherion.Editor
         private const string IdleTexturePath = SpriteRoot + "/Blast_Idle.png";
         private const string WalkTexturePath = SpriteRoot + "/Blast_Movement.png";
         private const string MissileTexturePath = SpriteRoot + "/Missile.png";
+        private const string IconTexturePath = "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/ComradeBlast.png";
         private const string CompanionPrefabPath = PrefabRoot + "/ComradeBlast.prefab";
         private const string MissilePrefabPath = ProjectilePrefabRoot + "/ComradeBlastMissile.prefab";
 
@@ -65,7 +66,7 @@ namespace Nytherion.Editor
 
             GameObject missilePrefab = CreateMissilePrefab(missileSprite);
             GameObject companionPrefab = CreateCompanionPrefab(idleFrames[0], controller, missilePrefab);
-            RelicData relic = CreateOrUpdateRelic(idleFrames[0], companionPrefab);
+            RelicData relic = CreateOrUpdateRelic(ConfigureSingleSprite(IconTexturePath), companionPrefab);
             RegisterRelic(relic);
 
             AssetDatabase.SaveAssets();

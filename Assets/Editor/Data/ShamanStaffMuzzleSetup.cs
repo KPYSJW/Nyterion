@@ -16,8 +16,8 @@ namespace Nytherion.Editor
     {
         public const string Output = "output/shaman-staff-muzzle";
         private const string WeaponPath = "Assets/Nytherion/Data/ScriptableObjects/Weapons/ShamanStaff.asset";
-        private const string SourceSheetPath = "Assets/Nytherion/Art/Combat/ManaBallMuzzleFlash.png";
-        private const string TargetSheetPath = "Assets/Nytherion/Art/Combat/AbyssalFlameMuzzleFlash.png";
+        private const string SourceSheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ManaBall/ManaBallMuzzleFlash.png";
+        private const string TargetSheetPath = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/AbyssalFlame/AbyssalFlameMuzzleFlash.png";
         private const string TargetPrefabPath = "Assets/Prefabs/Gameplay/Combat/VFX/AbyssalFlameMuzzleFlash.prefab";
         private const string TargetAnimationFolder = "Assets/Nytherion/Art/Combat/VFX/Animations/Weapons/AbyssalFlameMuzzleFlash";
 

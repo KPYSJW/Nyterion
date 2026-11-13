@@ -53,7 +53,7 @@ namespace Nytherion.Editor
             for (int i = 0; i < prefabs.Length; i++)
             {
                 string name = "SpiritsGuidanceStart" + (i + 1);
-                string source = "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProjStart" + (i == 0 ? "" : i.ToString()) + ".png";
+                string source = "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/Spirits'GuidanceProjStart" + (i == 0 ? "" : i.ToString()) + ".png";
                 Sprite[] frames = AssetDatabase.LoadAllAssetsAtPath(source).OfType<Sprite>()
                     .OrderBy(sprite => sprite.name, StringComparer.Ordinal).ToArray();
                 if (frames.Length != 6) throw new InvalidOperationException("시작 이펙트의 6프레임을 확인해 주세요: " + source);
@@ -143,7 +143,7 @@ namespace Nytherion.Editor
             {
                 string suffix = i == 0 ? "" : " " + i;
                 Sprite[] frames = AssetDatabase.LoadAllAssetsAtPath(
-                    "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProj" + suffix + ".png")
+                    "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/Spirits'GuidanceProj" + suffix + ".png")
                     .OfType<Sprite>().OrderBy(sprite => sprite.name, StringComparer.Ordinal).ToArray();
                 if (frames.Length != 4) throw new InvalidOperationException("투사체 시트의 4프레임을 확인해 주세요: " + suffix);
                 if (i == 0) firstFrame = frames[0];

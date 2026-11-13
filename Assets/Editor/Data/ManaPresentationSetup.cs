@@ -25,11 +25,11 @@ namespace Nytherion.Editor
         // 최대 마나 100과 초당 회복 5를 기준으로 반복 공격·소환·광역기의 비용을 구분합니다.
         private static readonly Dictionary<string, int> Costs = new Dictionary<string, int>
         {
-            { "All_Stat_Skill", 40 }, { "Blackhole_Skill", 35 }, { "BubbleShield_Skill", 30 },
+            { "Blackhole_Skill", 35 }, { "BubbleShield_Skill", 30 },
             { "ChainIgnition_Skill", 15 }, { "Decoy_Skill", 25 }, { "Lifesteal_Skill", 25 },
             { "MeteorStrike_Skill", 60 }, { "MultiShot_Skill", 10 }, { "Overdrive_Skill", 40 },
             { "PortalGate_Skill", 20 }, { "ProjectileGate_Skill", 30 }, { "PyroTank_Skill", 25 },
-            { "Shadow_Clone_Skill", 30 }, { "Soul_Eater_Skill", 10 }, { "Spiral_Skill", 20 },
+            { "Shadow_Clone_Skill", 30 }, { "Soul_Eater_Skill", 10 },
             { "Turret_Skill", 20 }
         };
 

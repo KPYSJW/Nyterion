@@ -1,219 +1,255 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Nytherion.GamePlay.Combat
 {
-    /// <summary>냉기 상태인 적의 몸체 주변에 눈을 대각선으로 내립니다.</summary>
+    /// <summary>냉기 상태인 적의 몸체에 두 종류의 눈 결정 입자를 반복합니다.</summary>
     [DefaultExecutionOrder(1100)]
+    [RequireComponent(typeof(SpriteRenderer))]
     public sealed class ChillSnowVFX : MonoBehaviour
     {
-        [SerializeField] private Sprite snowSprite;
-        [SerializeField] private Shader clipShader;
-        [SerializeField, Min(0f), InspectorName("초당 눈 입자 수")]
-        private float emissionPerSecond = 16f;
-        [SerializeField, Min(1), InspectorName("최대 눈 입자 수")]
-        private int maxParticles = 32;
-        [SerializeField, InspectorName("눈 생성 가로 범위")]
-        [Tooltip("몸체 중심을 기준으로 한 생성 너비 비율입니다. 오른쪽에는 대각선 이동을 위한 여유가 추가됩니다.")]
-        private Vector2 spawnHorizontalRange = new Vector2(-0.2f, 0.525f);
-        [SerializeField, InspectorName("눈 생성 세로 범위")]
-        [Tooltip("몸체 중심을 기준으로 한 높이 비율입니다. X는 아래쪽, Y는 위쪽 경계입니다.")]
-        private Vector2 spawnVerticalRange = new Vector2(0.05f, 0.575f);
-        [SerializeField, InspectorName("눈 이동 속도 범위")]
-        [Tooltip("몸체의 짧은 변에 대한 초당 이동 속도 비율입니다.")]
-        private Vector2 fallSpeedRange = new Vector2(0.65f, 0.95f);
-        [SerializeField, Range(0f, 80f), InspectorName("눈 낙하 기울기 (도)")]
-        [Tooltip("수직 아래 방향을 0도로 하여 왼쪽으로 기울어지는 각도입니다.")]
-        private float fallAngle = 30f;
-        [SerializeField, InspectorName("눈 수명 범위 (초)")]
-        [Tooltip("수명이 길수록 눈이 더 멀리 이동합니다.")]
-        private Vector2 lifetimeRange = new Vector2(0.7f, 1.1f);
-        [SerializeField, InspectorName("눈 크기 범위")]
-        [Tooltip("몸체 높이에 대한 눈 입자 크기 비율입니다.")]
-        private Vector2 particleSizeRange = new Vector2(0.04f, 0.08f);
+        // 기존 프리팹의 직렬화 참조를 보존합니다.
+        [SerializeField, HideInInspector] private Sprite[] frames;
+        [SerializeField] private Texture2D animationSheet;
+        [SerializeField, Min(1f)] private float framesPerSecond = 12f;
+        [SerializeField, InspectorName("입자 생성 범위")]
+        [Tooltip("X는 몸체 대비 좌우 범위, Y는 세로 범위입니다. (1, 1)이면 각 가로 위치의 위쪽 윤곽에서 생성됩니다.")]
+        private Vector2 bodyCoverage = Vector2.one;
+        [SerializeField, Min(0f), InspectorName("초당 눈 결정 수")] private float emissionPerSecond = 8f;
+        [SerializeField, Min(1), InspectorName("최대 눈 결정 수")] private int maxParticles = 16;
+        [SerializeField, Min(0.01f), InspectorName("입자 크기 배율")]
+        [Tooltip("1은 현재 기본 크기입니다. 플레이 중 변경하면 새로 생성되는 입자부터 적용됩니다.")]
+        private float particleSizeMultiplier = 1f;
+        [SerializeField, Min(0f), InspectorName("최소 낙하 속도 (몸체 높이/초)")]
+        [Tooltip("1이면 1초에 적 몸체 높이만큼 내려갑니다. 플레이 중 변경도 즉시 적용됩니다.")]
+        private float minFallSpeed = 0.7f;
+        [SerializeField, Min(0f), InspectorName("최대 낙하 속도 (몸체 높이/초)")]
+        private float maxFallSpeed = 1.2f;
 
         private readonly SpriteBodyBounds bodyBounds = new SpriteBodyBounds();
+        private readonly Dictionary<Sprite, Vector2[][]> outlineCache = new Dictionary<Sprite, Vector2[][]>();
+        private readonly List<Vector2[]> worldOutlines = new List<Vector2[]>();
         private SpriteRenderer body;
         private ParticleSystem particles;
         private ParticleSystemRenderer particleRenderer;
         private Material particleMaterial;
-        private MaterialPropertyBlock clipProperties;
-        private static readonly int ClipRectId = Shader.PropertyToID("_ClipRect");
         private ParticleSystem.Particle[] particleBuffer;
         private float emissionTimer;
+        private bool playing;
 
         public void Play(SpriteRenderer source)
         {
-            if (source == null || source.sprite == null || snowSprite == null || clipShader == null) return;
-            if (particles != null && particles.isPlaying) return;
+            if (playing || source == null || source.sprite == null || animationSheet == null) return;
             body = source;
             EnsureParticles();
+            GetComponent<SpriteRenderer>().enabled = false;
             gameObject.SetActive(true);
             enabled = true;
+            playing = true;
+            emissionTimer = 0f;
             UpdatePlacement();
             particles.Play();
-            emissionTimer = 0f;
+            EmitParticle();
         }
 
         private void EnsureParticles()
         {
             if (particles != null) return;
-            GameObject child = new GameObject("냉기 눈 입자");
+            GameObject child = new GameObject("냉기 눈 결정 입자");
             child.transform.SetParent(transform, false);
             particles = child.AddComponent<ParticleSystem>();
             particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             ParticleSystem.MainModule main = particles.main;
             main.playOnAwake = false;
             main.loop = true;
+            main.startSpeed = 0f;
             main.simulationSpace = ParticleSystemSimulationSpace.Local;
             main.scalingMode = ParticleSystemScalingMode.Hierarchy;
-            main.startSpeed = 0f;
-            main.maxParticles = Mathf.Max(1, maxParticles);
             ParticleSystem.EmissionModule emission = particles.emission;
             emission.enabled = false;
             ParticleSystem.ShapeModule shape = particles.shape;
             shape.enabled = false;
+            ParticleSystem.VelocityOverLifetimeModule velocity = particles.velocityOverLifetime;
+            velocity.enabled = true;
+            velocity.space = ParticleSystemSimulationSpace.Local;
+            velocity.x = new ParticleSystem.MinMaxCurve(-0.04f, 0.04f);
+            velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
             ParticleSystem.TextureSheetAnimationModule animation = particles.textureSheetAnimation;
             animation.enabled = true;
-            animation.mode = ParticleSystemAnimationMode.Sprites;
-            animation.AddSprite(snowSprite);
+            animation.mode = ParticleSystemAnimationMode.Grid;
+            animation.numTilesX = 10;
+            animation.numTilesY = 2;
+            animation.animation = ParticleSystemAnimationType.SingleRow;
+            // 생성 시 한 행을 고르고 같은 종류의 10프레임을 끝까지 재생합니다.
+            animation.rowMode = ParticleSystemAnimationRowMode.Random;
+            animation.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
+            animation.frameOverTime = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0f, 1f, 1f));
+            animation.startFrame = new ParticleSystem.MinMaxCurve(0f);
+            animation.cycleCount = 1;
             particleRenderer = child.GetComponent<ParticleSystemRenderer>();
             particleRenderer.renderMode = ParticleSystemRenderMode.Billboard;
             particleRenderer.alignment = ParticleSystemRenderSpace.View;
-            particleMaterial = new Material(clipShader);
-            particleMaterial.mainTexture = snowSprite.texture;
+            particleMaterial = new Material(GetComponent<SpriteRenderer>().sharedMaterial);
+            particleMaterial.mainTexture = animationSheet;
             particleRenderer.sharedMaterial = particleMaterial;
-            clipProperties = new MaterialPropertyBlock();
         }
 
         private void LateUpdate()
         {
+            if (!playing) return;
             if (body == null || body.sprite == null || !body.enabled || !body.gameObject.activeInHierarchy)
             {
                 Stop();
                 return;
             }
-            Bounds bounds = UpdatePlacement();
-            RemoveParticlesBelowBody(bounds.min.y);
+            UpdatePlacement();
+            RemoveParticlesBelowBody();
             if (emissionPerSecond <= 0f) return;
-            emissionTimer += Time.deltaTime;
             float interval = 1f / emissionPerSecond;
+            emissionTimer = Mathf.Min(emissionTimer + Time.deltaTime, interval * Mathf.Max(1, maxParticles));
             while (emissionTimer >= interval)
             {
                 emissionTimer -= interval;
-                if (particles.particleCount >= Mathf.Max(1, maxParticles)) continue;
-                float width = Mathf.Max(bounds.size.x, 0.1f);
-                float height = Mathf.Max(bounds.size.y, 0.1f);
-                float size = Mathf.Clamp(height, 0.35f, 2f);
-                // 몸체 크기에 비례한 범위에서 생성해 좌측 아래로 내립니다.
-                float speed = Mathf.Max(0f, RandomRange(fallSpeedRange)) * Mathf.Min(width, height);
-                float horizontalSpeed = speed * Mathf.Tan(Mathf.Clamp(fallAngle, 0f, 80f) * Mathf.Deg2Rad);
-                float lifetime = Mathf.Max(0.01f, RandomRange(lifetimeRange));
-                // 오른쪽 바깥에서 들어오는 눈도 생성해 경계 근처가 비지 않도록 합니다.
-                float upstreamWidth = Mathf.Min(horizontalSpeed * lifetime,
-                    Mathf.Tan(Mathf.Clamp(fallAngle, 0f, 80f) * Mathf.Deg2Rad) * height);
-                float left = Mathf.Min(spawnHorizontalRange.x, spawnHorizontalRange.y) * width;
-                float right = Mathf.Max(spawnHorizontalRange.x, spawnHorizontalRange.y) * width;
-                float particleSize = Mathf.Max(0.001f, RandomRange(particleSizeRange)) * size;
-                Vector3 velocity = new Vector3(-horizontalSpeed, -speed, 0f);
-                if (!TryFindSpawnPosition(bounds, left, right + upstreamWidth, height,
-                    velocity, lifetime, particleSize, out Vector3 position)) continue;
-                ParticleSystem.EmitParams parameters = new ParticleSystem.EmitParams();
-                parameters.position = particles.transform.InverseTransformPoint(position);
-                parameters.velocity = particles.transform.InverseTransformVector(velocity);
-                parameters.startLifetime = lifetime;
-                parameters.startSize = particleSize;
-                particles.Emit(parameters, 1);
+                EmitParticle();
             }
         }
 
-        private bool TryFindSpawnPosition(Bounds bounds, float left, float right, float height,
-            Vector3 velocity, float lifetime, float size, out Vector3 position)
-        {
-            int count = particles.particleCount;
-            EnsureParticleBuffer(count);
-            int alive = count > 0 ? particles.GetParticles(particleBuffer) : 0;
-            float bestDistance = -1f;
-            position = default;
-            float width = Mathf.Max(bounds.size.x, 0.1f);
-            for (int attempt = 0; attempt < 12; attempt++)
-            {
-                Vector3 candidate = bounds.center + new Vector3(
-                    Random.Range(left, right), RandomRange(spawnVerticalRange) * height, 0f);
-                float nearest = float.PositiveInfinity;
-                bool overlaps = false;
-                for (int i = 0; i < alive && !overlaps; i++)
-                {
-                    ParticleSystem.Particle existing = particleBuffer[i];
-                    Vector3 otherPosition = particles.transform.TransformPoint(existing.position);
-                    Vector3 otherVelocity = particles.transform.TransformVector(existing.velocity);
-                    float minimumDistance = (size + existing.GetCurrentSize(particles)) * 0.5f;
-                    Vector3 delta = candidate - otherPosition;
-                    Vector3 relativeVelocity = velocity - otherVelocity;
-                    float speedSquared = relativeVelocity.x * relativeVelocity.x + relativeVelocity.y * relativeVelocity.y;
-                    float closestTime = speedSquared > 0.000001f
-                        ? Mathf.Clamp(-(delta.x * relativeVelocity.x + delta.y * relativeVelocity.y) / speedSquared,
-                            0f, Mathf.Min(existing.remainingLifetime, lifetime))
-                        : 0f;
-                    Vector3 closest = delta + relativeVelocity * closestTime;
-                    if (closest.x * closest.x + closest.y * closest.y < minimumDistance * minimumDistance)
-                    {
-                        overlaps = true;
-                        break;
-                    }
-                    float x = delta.x / width;
-                    float y = delta.y / height;
-                    nearest = Mathf.Min(nearest, x * x + y * y);
-                }
-                if (overlaps || nearest <= bestDistance) continue;
-                bestDistance = nearest;
-                position = candidate;
-            }
-            return bestDistance >= 0f;
-        }
-
-        private void EnsureParticleBuffer(int count)
-        {
-            if (particleBuffer == null || particleBuffer.Length < count)
-                particleBuffer = new ParticleSystem.Particle[Mathf.Max(count, particles.main.maxParticles)];
-        }
-
-        private void RemoveParticlesBelowBody(float bottom)
-        {
-            int count = particles.particleCount;
-            if (count == 0) return;
-            EnsureParticleBuffer(count);
-            int alive = particles.GetParticles(particleBuffer);
-            bool removed = false;
-            for (int i = 0; i < alive; i++)
-            {
-                float radius = particleBuffer[i].GetCurrentSize(particles) * 0.5f;
-                if (particles.transform.TransformPoint(particleBuffer[i].position).y + radius >= bottom) continue;
-                particleBuffer[i].remainingLifetime = -1f;
-                removed = true;
-            }
-            if (removed) particles.SetParticles(particleBuffer, alive);
-        }
-
-        private Bounds UpdatePlacement()
+        private void UpdatePlacement()
         {
             Bounds bounds = bodyBounds.GetBounds(body);
+            UpdateBodyOutlines();
             Transform emitter = particles.transform;
             emitter.position = bounds.center;
             emitter.rotation = Quaternion.identity;
             Vector3 parentScale = emitter.parent.lossyScale;
             emitter.localScale = new Vector3(InverseScale(parentScale.x), InverseScale(parentScale.y), InverseScale(parentScale.z));
+            ParticleSystem.MainModule main = particles.main;
+            main.maxParticles = Mathf.Max(1, maxParticles);
+            main.startLifetime = 10f / Mathf.Max(1f, framesPerSecond);
+            // 32픽셀 프레임의 여백을 포함한 입자 크기입니다.
+            float size = Mathf.Clamp(bounds.size.y, 0.6f, 1.8f) * Mathf.Max(0.01f, particleSizeMultiplier);
+            main.startSize = new ParticleSystem.MinMaxCurve(size * 0.85f, size);
+            // Inspector에서 지정한 속도를 몸체 높이에 비례해 적용합니다.
+            float minimumSpeed = Mathf.Max(0f, minFallSpeed);
+            float maximumSpeed = Mathf.Max(minimumSpeed, maxFallSpeed);
+            ParticleSystem.VelocityOverLifetimeModule velocity = particles.velocityOverLifetime;
+            velocity.y = new ParticleSystem.MinMaxCurve(-maximumSpeed * bounds.size.y, -minimumSpeed * bounds.size.y);
             particleRenderer.sortingLayerID = body.sortingLayerID;
             particleRenderer.sortingOrder = body.sortingOrder + 1;
-            clipProperties.SetVector(ClipRectId, new Vector4(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y));
-            particleRenderer.SetPropertyBlock(clipProperties);
-            return bounds;
         }
 
-        private static float RandomRange(Vector2 range) => Random.Range(Mathf.Min(range.x, range.y), Mathf.Max(range.x, range.y));
+        private void EmitParticle()
+        {
+            if (particles.particleCount >= Mathf.Max(1, maxParticles)) return;
+            Bounds bounds = bodyBounds.GetBounds(body);
+            Vector3 extent = bounds.extents;
+            float bottomMargin = particles.main.startSize.constantMax * 0.25f;
+            for (int attempt = 0; attempt < 16; attempt++)
+            {
+                float x = bounds.center.x + Random.Range(-extent.x, extent.x) * Mathf.Clamp01(bodyCoverage.x);
+                if (!TryGetColumnRange(x, out float bottom, out float top)) continue;
+                float y = Mathf.Min(top, bounds.center.y + extent.y * Mathf.Clamp01(bodyCoverage.y));
+                if (y - bottomMargin <= bottom) continue;
+                ParticleSystem.EmitParams parameters = new ParticleSystem.EmitParams();
+                parameters.position = particles.transform.InverseTransformPoint(new Vector3(x, y, bounds.center.z));
+                particles.Emit(parameters, 1);
+                return;
+            }
+        }
+
+        private void RemoveParticlesBelowBody()
+        {
+            int capacity = particles.main.maxParticles;
+            if (particleBuffer == null || particleBuffer.Length < capacity)
+                particleBuffer = new ParticleSystem.Particle[capacity];
+            int count = particles.GetParticles(particleBuffer);
+            bool changed = false;
+            for (int i = 0; i < count; i++)
+            {
+                Vector3 position = particles.transform.TransformPoint(particleBuffer[i].position);
+                float bottomMargin = particleBuffer[i].GetCurrentSize(particles) * 0.25f;
+                // 현재 가로 위치의 아래쪽 윤곽에 닿거나 옆으로 벗어나면 제거합니다.
+                if (TryGetColumnRange(position.x, out float bottom, out _) &&
+                    position.y - bottomMargin >= bottom) continue;
+                particleBuffer[i].remainingLifetime = 0f;
+                changed = true;
+            }
+            if (changed) particles.SetParticles(particleBuffer, count);
+        }
+
+        private void UpdateBodyOutlines()
+        {
+            Sprite sprite = body.sprite;
+            if (!outlineCache.TryGetValue(sprite, out Vector2[][] outlines))
+            {
+                List<Vector2[]> shapes = new List<Vector2[]>();
+                List<Vector2> points = new List<Vector2>();
+                for (int i = 0; i < sprite.GetPhysicsShapeCount(); i++)
+                {
+                    sprite.GetPhysicsShape(i, points);
+                    if (points.Count >= 3) shapes.Add(points.ToArray());
+                }
+                // 물리 윤곽이 없는 스프라이트는 실제 렌더 메시의 삼각형으로 범위를 구합니다.
+                if (shapes.Count == 0)
+                {
+                    Vector2[] vertices = sprite.vertices;
+                    ushort[] triangles = sprite.triangles;
+                    for (int i = 0; i + 2 < triangles.Length; i += 3)
+                        shapes.Add(new[] { vertices[triangles[i]], vertices[triangles[i + 1]], vertices[triangles[i + 2]] });
+                }
+                outlines = shapes.ToArray();
+                outlineCache.Add(sprite, outlines);
+            }
+            while (worldOutlines.Count < outlines.Length) worldOutlines.Add(null);
+            if (worldOutlines.Count > outlines.Length)
+                worldOutlines.RemoveRange(outlines.Length, worldOutlines.Count - outlines.Length);
+            for (int shape = 0; shape < outlines.Length; shape++)
+            {
+                Vector2[] points = outlines[shape];
+                if (worldOutlines[shape] == null || worldOutlines[shape].Length != points.Length)
+                    worldOutlines[shape] = new Vector2[points.Length];
+                for (int i = 0; i < points.Length; i++)
+                {
+                    Vector2 point = points[i];
+                    if (body.flipX) point.x = -point.x;
+                    if (body.flipY) point.y = -point.y;
+                    worldOutlines[shape][i] = body.transform.TransformPoint(point);
+                }
+            }
+        }
+
+        private bool TryGetColumnRange(float x, out float bottom, out float top)
+        {
+            bottom = float.PositiveInfinity;
+            top = float.NegativeInfinity;
+            foreach (Vector2[] outline in worldOutlines)
+            {
+                for (int i = 0, previous = outline.Length - 1; i < outline.Length; previous = i++)
+                {
+                    Vector2 a = outline[previous];
+                    Vector2 b = outline[i];
+                    // 꼭짓점을 중복 계산하지 않도록 한쪽 끝만 포함합니다.
+                    if ((a.x > x) == (b.x > x)) continue;
+                    float y = Mathf.LerpUnclamped(a.y, b.y, (x - a.x) / (b.x - a.x));
+                    bottom = Mathf.Min(bottom, y);
+                    top = Mathf.Max(top, y);
+                }
+            }
+            return bottom < top;
+        }
+
         private static float InverseScale(float value) => Mathf.Abs(value) < 0.001f ? 1f : 1f / value;
+
+        private void OnValidate()
+        {
+            particleSizeMultiplier = Mathf.Max(0.01f, particleSizeMultiplier);
+            minFallSpeed = Mathf.Max(0f, minFallSpeed);
+            maxFallSpeed = Mathf.Max(minFallSpeed, maxFallSpeed);
+        }
 
         public void Stop()
         {
+            playing = false;
             if (particles != null) particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             emissionTimer = 0f;
             body = null;

@@ -1,0 +1,2715 @@
+{
+  "entries": [
+    {
+      "source": "Assets/Nytherion/Art/Combat/AbyssalFlameMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/AbyssalFlame/AbyssalFlameMuzzleFlash.png",
+      "guid": "7c6d7af98d70da341a74efa0f2f949ac",
+      "category": "Weapons/AbyssalFlame",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/AbyssalFlameMuzzleFlash.png",
+      "commit": "a27444fbce07cc74172a236f2262f258af86133a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/AfterglowMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Afterglow/AfterglowMuzzleFlash.png",
+      "guid": "ab26ec484cd01b7419ca67db1327b465",
+      "category": "Weapons/Afterglow",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/AfterglowMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/ArcaneDartMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ArcaneDart/ArcaneDartMuzzleFlash.png",
+      "guid": "d512115b632c03146815677000523f0f",
+      "category": "Weapons/ArcaneDart",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/ArcaneDartMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/BlazeShadeMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Blazeshade/BlazeShadeMuzzleFlash.png",
+      "guid": "85f9b30d84b97644da857efd0fab9a17",
+      "category": "Weapons/Blazeshade",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/BlazeShadeMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/BurnParticleSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/BurnParticleSheet.png",
+      "guid": "60838953101e4c844958c4187340fa6e",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/BurnParticleSheet.png",
+      "commit": "8b1ea252483cda6ed35ea6235d3e5672e3cfc469"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/BurnTickEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/BurnTickEffect.png",
+      "guid": "e8ac1815beae119489761eeb3fa67946",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/BurnTickEffect.png",
+      "commit": "f4a9cfc812eb5ebc781b6c261f7535645e706893"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/CorrosionMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Corrosion/CorrosionMuzzleFlash.png",
+      "guid": "fcb045c04817bad4eb33d21a8b78239a",
+      "category": "Weapons/Corrosion",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VenomousStaffMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/EvilEyeMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/EvilEye/EvilEyeMuzzleFlash.png",
+      "guid": "b417c19f87cecb04f85d848fb8762c8c",
+      "category": "Weapons/EvilEye",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/EvilEyeMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/ForestThornMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ForestThorn/ForestThornMuzzleFlash.png",
+      "guid": "e28e602356da4c1498166b13b62706d5",
+      "category": "Weapons/ForestThorn",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/ForestThornMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/FrenzyMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Frenzy/FrenzyMuzzleFlash.png",
+      "guid": "81438fe2d73ca4e47986324a60d7b6cc",
+      "category": "Weapons/Frenzy",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/FrenzyMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/IcicleMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Icicle/IcicleMuzzleFlash.png",
+      "guid": "477aadf7697a7a148badb97aff3a74f8",
+      "category": "Weapons/Icicle",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/IcicleMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/IgnitionMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Ignition/IgnitionMuzzleFlash.png",
+      "guid": "f2b6f0f8b3ddc5d4395701389e3b14df",
+      "category": "Weapons/Ignition",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/PyrogemStaffMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/IsolationMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Isolation/IsolationMuzzleFlash.png",
+      "guid": "b3377527fdaab9e4ab2e7835e7e91117",
+      "category": "Weapons/Isolation",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/GuardianStaffMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/LightningImpactEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LightningImpactEffect.png",
+      "guid": "213cb74f8ba5f5649a9958433fb68bad",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/LightningImpactEffect.png",
+      "commit": "f4a9cfc812eb5ebc781b6c261f7535645e706893"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/ManaBallMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ManaBall/ManaBallMuzzleFlash.png",
+      "guid": "752db139736f97440a9a2ebab62e8ae1",
+      "category": "Weapons/ManaBall",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/ManaBallMuzzleFlash.png",
+      "commit": "a27444fbce07cc74172a236f2262f258af86133a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/AbyssalFlame.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/AbyssalFlame.png",
+      "guid": "78182fccae090524ea2b7fe3919fbfdb",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/Proj/Sprites/AbyssalFlame.png",
+      "commit": "a27444fbce07cc74172a236f2262f258af86133a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/AfterglowProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/AfterglowProj.png",
+      "guid": "6c64f42261de01f4c9abb16800b49558",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/Proj/Sprites/AfterglowProj.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/ArcaneDartProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/ArcaneDartProj.png",
+      "guid": "5836ce971ff99f64a987cf36763c3f35",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/FlutterProj.png",
+      "commit": "f56b25c6909316155150db120d3a690be79adfda"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/CorrosionProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/CorrosionProj.png",
+      "guid": "8258391eb45a8b945980d15672fb58ee",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/AcidicLarva.png",
+      "commit": "a5c960573594e53c57745221bc21b2961fe9a5b1"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/EvilEyeProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/EvilEyeProj.png",
+      "guid": "ca305270bc39a504baf09700a789dd04",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/EvilEyeProjectile.png",
+      "commit": "a39e6e4addaa7c79e1dcad8eb1aa31b4fbaa1724"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/ForestThornProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/ForestThornProj.png",
+      "guid": "16176f04004c62d49b3175b111183045",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/LeafBowBullet.png",
+      "commit": "5217058e6ae0af30a69898576a8d32f370fd2809"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/FrenzyProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/FrenzyProj.png",
+      "guid": "9b0595195a1f8ce419ee589cde467386",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/FrenzyBullet.png",
+      "commit": "5217058e6ae0af30a69898576a8d32f370fd2809"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/IceVFX.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/IceVFX.png",
+      "guid": "84ebc2b13bb937a458e878b2454a2ac7",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/IceVFX.png",
+      "commit": "a5c960573594e53c57745221bc21b2961fe9a5b1"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/IceVFXHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/IceVFXHit.png",
+      "guid": "cb21eef21ad906b4eb07c610996a2c56",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/IceVFXHit.png",
+      "commit": "a5c960573594e53c57745221bc21b2961fe9a5b1"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/IceVFXStart.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/IceVFXStart.png",
+      "guid": "d75530c754f57d9498ae951d356a90ec",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/IceVFXStart.png",
+      "commit": "a5c960573594e53c57745221bc21b2961fe9a5b1"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/IgnitionProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/IgnitionProj.png",
+      "guid": "49a484ac0d544f3468e60555775bb1e2",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/FireWave.png",
+      "commit": "e22f068375cfb3dc80abaf8e32a0bb5c7d426143"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/LightningShot.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/LightningShot.png",
+      "guid": "7ab0b5999de3867469f151a9ba0ae122",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/LightningShot.png",
+      "commit": "e22f068375cfb3dc80abaf8e32a0bb5c7d426143"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/ManaBall.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/ManaBall.png",
+      "guid": "a2ec31c16f104f041b6a912a34d09066",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/ManaBall.png",
+      "commit": "e22f068375cfb3dc80abaf8e32a0bb5c7d426143"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/RadianceProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/RadianceProj.png",
+      "guid": "ec23affeac8d25445a39c77e686ceb72",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Projectile/Saint's Staff Projectille.png",
+      "commit": "e22f068375cfb3dc80abaf8e32a0bb5c7d426143"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Proj/Sprites/RubberBall.png",
+      "destination": "Assets/Nytherion/Art/Combat/Projectiles/Sprites/RubberBall.png",
+      "guid": "d15feec802565904c8320318275fbda5",
+      "category": "Projectiles",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/RubberBall.png",
+      "commit": "d402eff071a6dcaedebeab0f6f92d294b069e2bf"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/RadianceMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Radiance/RadianceMuzzleFlash.png",
+      "guid": "537ecc1f211fc3649b5653a933840fc0",
+      "category": "Weapons/Radiance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/SaintsStaffMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/StormbringerMuzzleFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Stormbringer/StormbringerMuzzleFlash.png",
+      "guid": "3934116a8c9137e4cb725cf0725c9be4",
+      "category": "Weapons/Stormbringer",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/StormbringerMuzzleFlash.png",
+      "commit": "8757a654d5ef70e58925f23fa361157ed96340d5"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/ThermalShockEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/ThermalShockEffect.png",
+      "guid": "8f1344b96895837408b77d52a6573062",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/ThermalShockEffect.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/AfterglowCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Afterglow/AfterglowCharging.png",
+      "guid": "57ff213654ec472b88c0f8bd16b4c43c",
+      "category": "Weapons/Afterglow",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/AfterglowCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/AfterglowHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Afterglow/AfterglowHit.png",
+      "guid": "423c12892a710ae4382a55e0f53d46c4",
+      "category": "Weapons/Afterglow",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/AfterglowHit.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ArcaneDartCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ArcaneDart/ArcaneDartCharging.png",
+      "guid": "e5bd90968d454387abb4777f094cd5bb",
+      "category": "Weapons/ArcaneDart",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ArcaneDartCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ArcaneDartHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ArcaneDart/ArcaneDartHit.png",
+      "guid": "1094da6f0485f6f4faae31e440388899",
+      "category": "Weapons/ArcaneDart",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ArcaneDartHit.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Beam.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/Beam.png",
+      "guid": "5985659233ad4ab4d968836c3aa91f84",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Beam.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeShadeAttackEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Blazeshade/BlazeShadeAttackEffect.png",
+      "guid": "8c208040454ea62469fc8b527e7631d6",
+      "category": "Weapons/Blazeshade",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeShadeAttackEffect.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeshadeHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Blazeshade/BlazeshadeHit.png",
+      "guid": "633d8b999d755fe48bdbad0d673087e5",
+      "category": "Weapons/Blazeshade",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeshadeHit.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeShadeSummonEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Blazeshade/BlazeShadeSummonEffect.png",
+      "guid": "9f8c08cfd73805a40a47989ba603e125",
+      "category": "Weapons/Blazeshade",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/BlazeShadeSummonEffect.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/burning.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/burning.png",
+      "guid": "51ba002fee96333418deba82e0f41afe",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/burning.png",
+      "commit": "e22f068375cfb3dc80abaf8e32a0bb5c7d426143"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillStatusSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/ChillStatusSheet.png",
+      "guid": "83934e5822904ab88eb303018ec33635",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillStatusSheet.png",
+      "commit": "c39810d354571a7a476b5425ef7a174147991dea"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CorrosionCharge.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Corrosion/CorrosionCharge.png",
+      "guid": "ff93ee2114cd4cd44be215d7da601331",
+      "category": "Weapons/Corrosion",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/VenomousStaffCharge.png",
+      "commit": "3d5d60feeb452d6d59ec2b66f01b6ae151f7dc2e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CorrosionChargedFire.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Corrosion/CorrosionChargedFire.png",
+      "guid": "74bdb97ec53045368fa4074718968849",
+      "category": "Weapons/Corrosion",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/CorrosionChargedFire.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/CrimsonLotus/CrimsonLotusCharging.png",
+      "guid": "f676fc2bb7864671b688b38c1fd68b18",
+      "category": "Weapons/CrimsonLotus",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/CrimsonLotus/CrimsonLotusEffect.png",
+      "guid": "d2885505f770fbf40bfdfdccf829ba2e",
+      "category": "Weapons/CrimsonLotus",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LaserEffect2.png",
+      "commit": "38068a5da5f444e4f8f951b02929a34c482524ea"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusHit1.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/CrimsonLotus/CrimsonLotusHit1.png",
+      "guid": "4dfc55014b5a4b343b2044ca9c9a22ff",
+      "category": "Weapons/CrimsonLotus",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusHit1.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusHit2.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/CrimsonLotus/CrimsonLotusHit2.png",
+      "guid": "74be67d978c7f7847952c0b867cc5609",
+      "category": "Weapons/CrimsonLotus",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusHit2.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusHit3.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/CrimsonLotus/CrimsonLotusHit3.png",
+      "guid": "fedb91cfed2bfee4a9c49a3abefb416d",
+      "category": "Weapons/CrimsonLotus",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusHit3.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusStartEnd.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/CrimsonLotus/CrimsonLotusStartEnd.png",
+      "guid": "dc7863555dd81594e84693ad3aee13ff",
+      "category": "Weapons/CrimsonLotus",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/CrimsonLotusStartEnd.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CurseAuraSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/CurseAuraSheet.png",
+      "guid": "8c543569acb2436bac3fa84bc613bb6e",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/CurseAuraSheet.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/CursedHitEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/CursedHitEffect.png",
+      "guid": "56882bc455f829f4eb87cf1b28d91875",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/CursedHitEffect.png",
+      "commit": "8cb7c92f9f5c56e98a2f1d4efd0c2aed6b9b5dc9"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/DarkboltTail.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/Darkbolt/DarkboltTail.png",
+      "guid": "55cdfa80a74c3f443a8e1b6f805bb1a3",
+      "category": "Skills/Darkbolt",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/DarkboltTail.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/DarknessEffectSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/DarknessEffectSheet.png",
+      "guid": "65aeb9d8dea24c63ba5838d3da975ea4",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/DarknessEffectSheet.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/EnergyCharge.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/EnergyCharge.png",
+      "guid": "21d302af38d49524997b1b36ea054bcc",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/EnergyCharge.png",
+      "commit": "f1d6c62d8748114a65904071e855a04e9ac7123f"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/EvilEyeCharge.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/EvilEye/EvilEyeCharge.png",
+      "guid": "3b35405bc4cc7414785377f9e1c3a986",
+      "category": "Weapons/EvilEye",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/EvilEyeCharge.png",
+      "commit": "a39e6e4addaa7c79e1dcad8eb1aa31b4fbaa1724"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/EvilEyeHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/EvilEye/EvilEyeHit.png",
+      "guid": "dc742862258370645b00af1414acbed7",
+      "category": "Weapons/EvilEye",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/EvilEyeHit.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Explosion.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/Explosion.png",
+      "guid": "197cd84cfcd58bf4c8fe3b9b28311033",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/Explosion.png",
+      "commit": "d261fbd27e085801d84baeaabbf43d91ae33700c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/FireHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/FireHit.png",
+      "guid": "2ddd6c27079bc3146bd74a88a3e41a1d",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/FireHit.png",
+      "commit": "8cb7c92f9f5c56e98a2f1d4efd0c2aed6b9b5dc9"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Firepillar.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/Firepillar.png",
+      "guid": "a0a15b778494d624998d0d76f6691115",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Firepillar.png",
+      "commit": "c64edb80642a00ebd824c41223c5c6d85cda9c8a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/FirepillarExplosion.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/FirepillarExplosion.png",
+      "guid": "d42a5a476aeeb2b4795adaec4bd7cdf9",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/FirepillarExplosion.png",
+      "commit": "c64edb80642a00ebd824c41223c5c6d85cda9c8a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ForestThornCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ForestThorn/ForestThornCharging.png",
+      "guid": "26f251fa3dd283e44aa94735e649dee7",
+      "category": "Weapons/ForestThorn",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/LeafBowCharging.png",
+      "commit": "5217058e6ae0af30a69898576a8d32f370fd2809"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ForestThornChargingParticle.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ForestThorn/ForestThornChargingParticle.png",
+      "guid": "3bbfb9a3da205174c8904f2ba50f8e87",
+      "category": "Weapons/ForestThorn",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/LeafBowChargingParticle.png",
+      "commit": "5217058e6ae0af30a69898576a8d32f370fd2809"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ForestThornHitEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ForestThorn/ForestThornHitEffect.png",
+      "guid": "cd97c846d9b37934580666f930d59195",
+      "category": "Weapons/ForestThorn",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ForestThornHitEffect.png",
+      "commit": "1e4d9b5c01c540149df7b9ae8cb4bb2266e8147b"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrenzyCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Frenzy/FrenzyCharging.png",
+      "guid": "34331ba95919476e967b1c45d88d4da5",
+      "category": "Weapons/Frenzy",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrenzyCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrenzyFirePoint.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Frenzy/FrenzyFirePoint.png",
+      "guid": "7047b1649b80c964c8831e7d7f995294",
+      "category": "Weapons/Frenzy",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/FrenzyFirePoint.png",
+      "commit": "5217058e6ae0af30a69898576a8d32f370fd2809"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrenzyProjHitVFX.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Frenzy/FrenzyProjHitVFX.png",
+      "guid": "1daf5b05323fb76438462626083e5acd",
+      "category": "Weapons/Frenzy",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/FrenzyBulletHit.png",
+      "commit": "5217058e6ae0af30a69898576a8d32f370fd2809"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/HolySparkleWhite.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/HolySparkleWhite.png",
+      "guid": "4c2097affa74492baa2db16f116068d6",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/HolySparkleWhite.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/HolySparkleYellow.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/HolySparkleYellow.png",
+      "guid": "e87e9195980841849038883859778da1",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/HolySparkleYellow.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IcicleCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Icicle/IcicleCharging.png",
+      "guid": "cdbe23b8a0dc4b9eb44364f60f405d15",
+      "category": "Weapons/Icicle",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/IcicleCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IcicleHitEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Icicle/IcicleHitEffect.png",
+      "guid": "f0da9bc3afcf16046b78e18490cf822f",
+      "category": "Weapons/Icicle",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/IceShotHitEffect.png",
+      "commit": "e22f068375cfb3dc80abaf8e32a0bb5c7d426143"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IcicleTrail.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Icicle/IcicleTrail.png",
+      "guid": "0f4bd7835e9a49a89842dc77ade15c31",
+      "category": "Weapons/Icicle",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/IceShotTrail.png",
+      "commit": "f1d6c62d8748114a65904071e855a04e9ac7123f"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IgnitionChargedFire.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Ignition/IgnitionChargedFire.png",
+      "guid": "b389e438d5854494b962f1c92f3ba33f",
+      "category": "Weapons/Ignition",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/IgnitionChargedFire.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IgnitionChargedProjectile.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Ignition/IgnitionChargedProjectile.png",
+      "guid": "78b8ab688ab94cb6895ba6cfc9628aae",
+      "category": "Weapons/Ignition",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/IgnitionChargedProjectile.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IgnitionCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Ignition/IgnitionCharging.png",
+      "guid": "a88eb12ec603406f80fc87dd1df47912",
+      "category": "Weapons/Ignition",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/IgnitionCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IsolationAttackEffect1.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Isolation/IsolationAttackEffect1.png",
+      "guid": "ae256097ae65334459c7f756773b7ddf",
+      "category": "Weapons/Isolation",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Guardian'sStaffAttackEffect1.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IsolationAttackEffect2.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Isolation/IsolationAttackEffect2.png",
+      "guid": "fb17350d160c4044f8ceff2e1d027350",
+      "category": "Weapons/Isolation",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Guardian'sStaffAttackEffect2.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IsolationAttackEffect3.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Isolation/IsolationAttackEffect3.png",
+      "guid": "4fea19bf684a31245acb22d78a744846",
+      "category": "Weapons/Isolation",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Guardian'sStaffAttackEffect3.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IsolationAttackEffect4.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Isolation/IsolationAttackEffect4.png",
+      "guid": "4a7050c7e03c1264cb20645ceb13ccc0",
+      "category": "Weapons/Isolation",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Guardian'sStaffAttackEffect4.png",
+      "commit": "6f49d7f719033391798d1bf46fc94f44e725e8cc"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IsolationCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Isolation/IsolationCharging.png",
+      "guid": "1c68d4dee9bd46189491929a7e3e319f",
+      "category": "Weapons/Isolation",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/IsolationCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/IsolationHitEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Isolation/IsolationHitEffect.png",
+      "guid": "09e329ccf93fb964385054ff77fdd7fa",
+      "category": "Weapons/Isolation",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Guardian'sStaffHitEffect.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/LaserEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LaserEffect.png",
+      "guid": "1b7937329c54fa04091c89b98695e802",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LaserEffect.png",
+      "commit": "38068a5da5f444e4f8f951b02929a34c482524ea"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/LightboltTail.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/Lightbolt/LightboltTail.png",
+      "guid": "e4cfb16c96f5e3f4eabbef94831cae64",
+      "category": "Skills/Lightbolt",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LightboltTail.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/LightningImpactSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LightningImpactSheet.png",
+      "guid": "2dc3365b6385dde40a1b8723bae3db17",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LightningImpactSheet.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/LightningSpriteSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LightningSpriteSheet.png",
+      "guid": "deeb5e7b0c0b8094c8136d1a7d256ad3",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LightningSpriteSheet.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/LightSparkle.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/LightSparkle.png",
+      "guid": "c844caed9c5d41cf86d7aba539e3946f",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LightSparkle.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/MagicMissileTail.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/MagicMissile/MagicMissileTail.png",
+      "guid": "4bca2e45d9bf4cd489d92b3aee7c13ad",
+      "category": "Skills/MagicMissile",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/MagicMissileTail.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Meteor.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/Meteor.png",
+      "guid": "79cf6998d61c5f248a9bfd845f369dda",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/Meteor.png",
+      "commit": "d261fbd27e085801d84baeaabbf43d91ae33700c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/MeteorStrikeExplosion.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/MeteorStrike/MeteorStrikeExplosion.png",
+      "guid": "8f0faa948610dd64ba2fb2cf73535987",
+      "category": "Skills/MeteorStrike",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/MeteorStrikeExplosion.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/MeteorStrikeFall.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/MeteorStrike/MeteorStrikeFall.png",
+      "guid": "623a2faf83e04fe4496220599e51f911",
+      "category": "Skills/MeteorStrike",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/MeteorStrikeFall.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/MeteorStrikeSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Skills/MeteorStrike/MeteorStrikeSheet.png",
+      "guid": "028386488419b8b45a0b478de2b0a3ad",
+      "category": "Skills/MeteorStrike",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/MeteorStrikeSheet.png",
+      "commit": "c39810d354571a7a476b5425ef7a174147991dea"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Obliteration.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Obliteration/Obliteration.png",
+      "guid": "bf01858e5ef99c0438396f59b3316909",
+      "category": "Weapons/Obliteration",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LayLaser.png",
+      "commit": "f1d6c62d8748114a65904071e855a04e9ac7123f"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ObliterationCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Obliteration/ObliterationCharging.png",
+      "guid": "978bafe8438043ac9b3c1d271416264d",
+      "category": "Weapons/Obliteration",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ObliterationCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ObliterationEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Obliteration/ObliterationEffect.png",
+      "guid": "8ff8f9db3d06d994597df7d65eb9658c",
+      "category": "Weapons/Obliteration",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LayLaserEffect.png",
+      "commit": "f1d6c62d8748114a65904071e855a04e9ac7123f"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ObliterationHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Obliteration/ObliterationHit.png",
+      "guid": "9fa4d21dec1da4f4bb097fe6ebed1f1f",
+      "category": "Weapons/Obliteration",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ObliterationHit.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ObliterationStartEnd.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Obliteration/ObliterationStartEnd.png",
+      "guid": "45d7c898e7bf4fd6a88e734a86c40ce1",
+      "category": "Weapons/Obliteration",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/LayLaserStartEnd.png",
+      "commit": "f1d6c62d8748114a65904071e855a04e9ac7123f"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/PengooShockwaveSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/PengooShockwaveSheet.png",
+      "guid": "ad4ec3e40cd1a9b46b523e371025be80",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/PengooShockwaveSheet.png",
+      "commit": "c39810d354571a7a476b5425ef7a174147991dea"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/PoisonCloudSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/PoisonCloudSheet.png",
+      "guid": "625934af18ba43ad8bbd982e3f2ce744",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/PoisonCloudSheet.png",
+      "commit": "4294dcfb8afc237170ae389d6e2073ce13a8db72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/PoisonEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/PoisonEffect.png",
+      "guid": "6a66efd75171f1747846b2c023d2a5bc",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/PoisonEffect.png",
+      "commit": "71515e63d0cd4b6d87f91b5f1c59761d8ceb4615"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Pyrofall.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Pyrofall/Pyrofall.png",
+      "guid": "ebd1a4b229038344d847bbd78a045ac9",
+      "category": "Weapons/Pyrofall",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/FireBall.png",
+      "commit": "c64edb80642a00ebd824c41223c5c6d85cda9c8a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/PyrofallCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Pyrofall/PyrofallCharging.png",
+      "guid": "9cdfea4336d43874e954adc5e17fbeb5",
+      "category": "Weapons/Pyrofall",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/PyrofallCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/PyrofallExplosion.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Pyrofall/PyrofallExplosion.png",
+      "guid": "fe665a9597f40454a9820a4d98def8cb",
+      "category": "Weapons/Pyrofall",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/FireBallExplosion.png",
+      "commit": "c64edb80642a00ebd824c41223c5c6d85cda9c8a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/PyroFallFlash.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Pyrofall/PyroFallFlash.png",
+      "guid": "2dc215128bcc41d42a5b7dc53ea7b413",
+      "category": "Weapons/Pyrofall",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/PyroFallFlash.png",
+      "commit": "c64edb80642a00ebd824c41223c5c6d85cda9c8a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/PyroFallHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Pyrofall/PyroFallHit.png",
+      "guid": "5bd612ffda4d4a8d883b6b34508c184d",
+      "category": "Weapons/Pyrofall",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/PyroFallHit.png",
+      "commit": "c64edb80642a00ebd824c41223c5c6d85cda9c8a"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/RadianceCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Radiance/RadianceCharging.png",
+      "guid": "90a589934a3e4cfcab4dbf38b0a893a6",
+      "category": "Weapons/Radiance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/RadianceCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/RadianceHitEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/Radiance/RadianceHitEffect.png",
+      "guid": "83156cd06665681428aeaf5d71bda3fe",
+      "category": "Weapons/Radiance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/RadianceHitEffect.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ShamanStaffCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/ShamanStaff/ShamanStaffCharging.png",
+      "guid": "1cd0ae615221412bb112e876188c8fcf",
+      "category": "Weapons/ShamanStaff",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ShamanStaffCharging.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ShockStatusSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/ShockStatusSheet.png",
+      "guid": "ce2179a5cc2a4444951cac9a2494c70f",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ShockStatusSheet.png",
+      "commit": "c39810d354571a7a476b5425ef7a174147991dea"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ShockStatusWideSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/ShockStatusWideSheet.png",
+      "guid": "6293ce8145cf41c1b1017c0969c3c334",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ShockStatusWideSheet.png",
+      "commit": "c39810d354571a7a476b5425ef7a174147991dea"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spark.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/Spark.png",
+      "guid": "5ce4ab4eeec36ac408f640291c642ec0",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/Spark.png",
+      "commit": "a5c960573594e53c57745221bc21b2961fe9a5b1"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/SparkCharge.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/SparkCharge.png",
+      "guid": "492367d6f38b9e0409003c3f9d723a96",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/SparkCharge.png",
+      "commit": "8232c84db5c8f1ea682860c20fa1376ddf4f8e31"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProj 1.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/Spirits'GuidanceProj 1.png",
+      "guid": "c815f2dbfef3266469a57469dc50f723",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProj 1.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProj 2.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/Spirits'GuidanceProj 2.png",
+      "guid": "18c673eff9e7496469b59ababdeae329",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProj 2.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/Spirits'GuidanceProj.png",
+      "guid": "4ae9280bcb367b04694746ac0cd983b5",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProj.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProjStart.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/Spirits'GuidanceProjStart.png",
+      "guid": "90b863dff35e8e6419a34c19422eed27",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProjStart.png",
+      "commit": "d0f5fb49ac0b3a799a23cd270de7e10563507596"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProjStart1.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/Spirits'GuidanceProjStart1.png",
+      "guid": "51f289678e0a933458345d83a6612ac7",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProjStart1.png",
+      "commit": "d0f5fb49ac0b3a799a23cd270de7e10563507596"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProjStart2.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/Spirits'GuidanceProjStart2.png",
+      "guid": "1f54cec392f2d7d468ccc55c8f60d9e2",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Spirits'GuidanceProjStart2.png",
+      "commit": "d0f5fb49ac0b3a799a23cd270de7e10563507596"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceChargeStages.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/SpiritsGuidanceChargeStages.png",
+      "guid": "26c3bd4555a3450d980abe7a22126ee3",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceChargeStages.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceCharging.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/SpiritsGuidanceCharging.png",
+      "guid": "13f64e8ddd98c6147922c330493ba9c8",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceCharging.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceHitEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/SpiritsGuidanceHitEffect.png",
+      "guid": "d6012d6d0d4289c49a18c6e4f461458f",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Resources/Effect/SpiritsGuidanceHitEffect.png",
+      "commit": "228b8c3745cd5ad52c3dc387e56d426a4a144a53"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceTail1.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/SpiritsGuidanceTail1.png",
+      "guid": "811709515eec44f7a8b251759bb09aa0",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceTail1.png",
+      "commit": "8b1ea252483cda6ed35ea6235d3e5672e3cfc469"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceTail2.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/SpiritsGuidanceTail2.png",
+      "guid": "edcd14a29c2341a8b8c3a7c9c422279b",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceTail2.png",
+      "commit": "8b1ea252483cda6ed35ea6235d3e5672e3cfc469"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceTail3.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/SpiritsGuidance/SpiritsGuidanceTail3.png",
+      "guid": "ebcac884b15442a4916df799cd2abd46",
+      "category": "Weapons/SpiritsGuidance",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/SpiritsGuidanceTail3.png",
+      "commit": "8b1ea252483cda6ed35ea6235d3e5672e3cfc469"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/WindStoneProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/WindStone/WindStoneProj.png",
+      "guid": "86cb956548e25ad4aa1453f6b007f1a4",
+      "category": "Weapons/WindStone",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/WindStoneProj.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/WindStoneProjHitEffect.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/WindStone/WindStoneProjHitEffect.png",
+      "guid": "28660c7ee11ae184d97571d678089232",
+      "category": "Weapons/WindStone",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/WindStoneProjHitEffect.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/WindBlastProj.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Shared/WindBlastProj.png",
+      "guid": "0ae0d25e1822aad4f8d99bac42679f7c",
+      "category": "Shared",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/WindBlastProj.png",
+      "commit": "77b1f540fffd177f4fe14d9570dcbf97dbc92d72"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Amber.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Amber.png",
+      "guid": "a3c683cf808146e47bf8f560000fd147",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Amber.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/AncientSkull.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/AncientSkull.png",
+      "guid": "605854ef5826a5e4ba9bcbc7341e1d55",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/AncientSkull.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Astril.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/Astril.png",
+      "guid": "19d7c3f45acb6a7408601861244e255e",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Astril.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/AzureBerry.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/AzureBerry.png",
+      "guid": "b07f5d1fb9786954fa3c77d2d4c7a62a",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/AzureBerry.png",
+      "commit": "98f0141357fe939cff4a03b73eed1f2d393b7e25"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BearTotem.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/BearTotem.png",
+      "guid": "1963ece3e86d1e44da0f066baa311f65",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BearTotem.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BeastScale.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/BeastScale.png",
+      "guid": "7dbcbddcc245d08438dc5cf6af546391",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BeastScale.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BeastSerum.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/BeastSerum.png",
+      "guid": "24784c9af9db30c4c9ae6d9ab7df6bc4",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BeastSerum.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BlazingCube.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Stat/BlazingCube.png",
+      "guid": "6d6d12706e2d0ad4496b60c51177abba",
+      "category": "Stat",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BlazingCube.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BloomRing.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/BloomRing.png",
+      "guid": "78aedf68b04bce846b5cd9a21326c24d",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BloomRing.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BlueApple.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/BlueApple.png",
+      "guid": "2a1c9535fac2b2347a36cee7f15c9d8c",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BlueApple.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BlueFish.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/BlueFish.png",
+      "guid": "edf78772794e013468ddb72be01a985f",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BlueFish.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BlueMushroom.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/BlueMushroom.png",
+      "guid": "95d8ce34755946f44bc40d6568231ac0",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BlueMushroom.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BlueOre.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/BlueOre.png",
+      "guid": "10984910af633214c8f2485941f3b958",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BlueOre.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BoomMaker.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/BoomMaker.png",
+      "guid": "e31cf2cafcb09944187a788605df16e0",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BoomMaker.png",
+      "commit": "5b6e98673c000ab017a95fbf92e0558b4cd703a0"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BounceBerry.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/BounceBerry.png",
+      "guid": "76ca925ee3d509b4382d802ff43a2965",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BounceBerry.png",
+      "commit": "98f0141357fe939cff4a03b73eed1f2d393b7e25"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BrokenSword.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/BrokenSword.png",
+      "guid": "4a28827c899a71741a7b0d6deff20e65",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BrokenSword.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/BurningCoal.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/BurningCoal.png",
+      "guid": "f50330988c8be384ea91d605db912ce2",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/BurningCoal.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Candle.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Candle.png",
+      "guid": "5b0913d93573a2e428c64224de8d4cae",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Candle.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Censer.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Censer.png",
+      "guid": "e24da81cbb9cf054f977fa7b044bdd6b",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Censer.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/CenterStone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/CenterStone.png",
+      "guid": "dcb45529dc5a0ef49bc98f07c95d385e",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/CenterStone.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Charred Twig.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/Charred Twig.png",
+      "guid": "114b8f6b7edd92c408e75387c535304e",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Charred Twig.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/CloudCotton.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/CloudCotton.png",
+      "guid": "563178e2f6643b142b14599151bcb6fe",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/CloudCotton.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/CornerStone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/CornerStone.png",
+      "guid": "779f6cf0bb5af1043a1f68047c55e3ab",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/CornerStone.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/CouponPiece.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/CouponPiece.png",
+      "guid": "dc47b380e6ad0df4087d6b086c7ee9b4",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/CouponPiece.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Cracked Orbs.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/Cracked Orbs.png",
+      "guid": "53e4299de8861094bb4181568b1111af",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Cracked Orbs.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Cracked Vial.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/Cracked Vial.png",
+      "guid": "bf2fb19f66f4c3948919a58e95b0f69b",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Cracked Vial.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/CrimsonLeaf.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/CrimsonLeaf.png",
+      "guid": "4848d38a5cd7a8a48b9c8ea86d3aa491",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/CrimsonLeaf.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Crucifix.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Crucifix.png",
+      "guid": "274f34a3ae8a51642adaaf8108210799",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Crucifix.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Crystal Ball.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Crystal Ball.png",
+      "guid": "cb02e281e2c4bec48adacaf4f9aabd2c",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Crystal Ball.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/CursedClaw.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/CursedClaw.png",
+      "guid": "d722518aa797aaa4d86fc8e75bd42e58",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/CursedClaw.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/CursedPortrait.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/CursedPortrait.png",
+      "guid": "9136018442be68547a5cf221efb9de5c",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/CursedPortrait.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/DemonTalon.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/DemonTalon.png",
+      "guid": "f33c48354ed019142bcaab262b67870f",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/DemonTalon.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Diamond.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Diamond.png",
+      "guid": "036d24b6ace43b7428f77ad80e5b58bc",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Diamond.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Dice1.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/DiceOfFate/Dice1.png",
+      "guid": "7482d8313ebfc7a42a6a48d8a9f4f880",
+      "category": "DiceOfFate",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Dice1.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Dice2.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/DiceOfFate/Dice2.png",
+      "guid": "0b5c1e98419099f44a506fe77db5bbdc",
+      "category": "DiceOfFate",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Dice2.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Dice3.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/DiceOfFate/Dice3.png",
+      "guid": "3dde44b9822036747afe647ce9a83854",
+      "category": "DiceOfFate",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Dice3.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Dice4.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/DiceOfFate/Dice4.png",
+      "guid": "d2250b6a7e932e746bb3e863c9265709",
+      "category": "DiceOfFate",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Dice4.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Dice5.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/DiceOfFate/Dice5.png",
+      "guid": "4d2c8becf3fa3584cbe48cfabf765d7b",
+      "category": "DiceOfFate",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Dice5.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Dice6.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/DiceOfFate/Dice6.png",
+      "guid": "b8d4b6792f09858478e2e22095d5a2e8",
+      "category": "DiceOfFate",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Dice6.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/DragonFruit.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/DragonFruit.png",
+      "guid": "a19926cb327fadf409e6e593edbd6071",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/DragonFruit.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/EchoFlower.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/EchoFlower.png",
+      "guid": "88913b143f1d1964ea313aa25c90bd49",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/EchoFlower.png",
+      "commit": "98f0141357fe939cff4a03b73eed1f2d393b7e25"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/EyeofAbyss.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/EyeofAbyss.png",
+      "guid": "bb8b2b03afd67d442b1152ea1b631ebe",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/EyeofAbyss.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/FiendScripture.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/FiendScripture.png",
+      "guid": "db30816255ec0224a8ed7c5b18f1e507",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/FiendScripture.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/FirePepper.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/FirePepper.png",
+      "guid": "a2c8c295e8fca5f4594330760bda4cad",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/FirePepper.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/FireStone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/FireStone.png",
+      "guid": "71a4856382bc88242b375f8d00056988",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/FireStone.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/FossilClam.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/FossilClam.png",
+      "guid": "bc3c0c78e6b8ae5489adcb9af4f85980",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/FossilClam.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Fugitive'sFlask.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Fugitive'sFlask.png",
+      "guid": "21169cc7b25f2b14f8d19c1bf42764f6",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Fugitive'sFlask.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GemPile.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/GemPile.png",
+      "guid": "c2009cbf9fbe0254da0e8d51a915e725",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GemPile.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Ghost.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/Ghost.png",
+      "guid": "44a563809a2180443bbf665402f37feb",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Ghost.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Ginseng.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/Ginseng.png",
+      "guid": "ba326743ba151a6458cda90325609914",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Ginseng.png",
+      "commit": "98f0141357fe939cff4a03b73eed1f2d393b7e25"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GlacialPrism.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/GlacialPrism.png",
+      "guid": "9f98f62e499d1304585effa27b57b0b4",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GlacialPrism.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Glass Shard.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Glass Shard.png",
+      "guid": "1355d7f98d71d4947967fd8242127866",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Glass Shard.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GlassSword.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/GlassSword.png",
+      "guid": "c4134c5444bec8b42a09362b5c76e8e9",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GlassSword.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Globe.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/Globe.png",
+      "guid": "e701d9dd66b9d6f40a38a1b06f6a2ef8",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Globe.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Gluttony.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/Gluttony.png",
+      "guid": "299b3064269bdf3438b06fa7306dbea3",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Gluttony.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GoldCoin.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/GoldCoin.png",
+      "guid": "c56a8938273e104408b2aca6af5a2184",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GoldCoin.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GoldenApple.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/GoldenApple.png",
+      "guid": "43a2ffafc604e9144adbe82ceca386fd",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GoldenApple.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GoldenChalice.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/GoldenChalice.png",
+      "guid": "66c16444d495ef44b9d8d0b068c92e86",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GoldenChalice.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GoldenSphere.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/GoldenSphere.png",
+      "guid": "38a52872e5cbd7145a0d20b806ac5c55",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GoldenSphere.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GravityStone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Stat/GravityStone.png",
+      "guid": "1e7fd743d7cd7d5489c73ab3730c29b5",
+      "category": "Stat",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GravityStone.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GreenApple.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/GreenApple.png",
+      "guid": "09ffb2f4abb039249b072ec92a2d1bed",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GreenApple.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/GreenOnion.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/GreenOnion.png",
+      "guid": "510bbd7c2ab7cba4884f0455f51ae0a9",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/GreenOnion.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/HasteRune.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/HasteRune.png",
+      "guid": "666b6474eba4c824291a2178b59150a0",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/HasteRune.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Hourglass.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Hourglass.png",
+      "guid": "009962b771081a741a8f54329fdd8586",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Hourglass.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/IceBall.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/IceBall.png",
+      "guid": "05bb0a55738c6b449a5b46d62c8b67d8",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/IceBall.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/IceCream.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/IceCream.png",
+      "guid": "bd789a921663a434d983a3dcc261dd32",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/IceCream.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/IceCube.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/IceCube.png",
+      "guid": "93e967b4af5513548bf55083955490e3",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/IceCube.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Lantern.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/Lantern.png",
+      "guid": "14ca1dfc6fff6a74f9f31ba2c2199b97",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Lantern.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/LargeBattery.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/LargeBattery.png",
+      "guid": "044a115a2ebbd85458f73d2844501849",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/LargeBattery.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/LaurelSprig.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/LaurelSprig.png",
+      "guid": "652e5238deb680547a71c34c1dcbc799",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/LaurelSprig.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Leaden Weight.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Leaden Weight.png",
+      "guid": "a215236cf4ff89b429f83139cfe3071d",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Leaden Weight.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/LeatherBracelet.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/LeatherBracelet.png",
+      "guid": "8cbcc0bfe41d40246a4cba1d5befb111",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/LeatherBracelet.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/LeatherPouch.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/LeatherPouch.png",
+      "guid": "8f43f9d3bfbaee44aa231959466a65a6",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/LeatherPouch.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Leech.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Leech.png",
+      "guid": "535f1d49010205f42846d1fd7a5247fa",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Leech.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Light'sGrace.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Light'sGrace.png",
+      "guid": "ce439f174a4476448b28d130dc44aa06",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Light'sGrace.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Loner.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/Loner.png",
+      "guid": "9af93a38a1d58d34b96c1ee47c4b8db1",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Loner.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Lucky Coin.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Lucky Coin.png",
+      "guid": "7899e817078cc864babf440acf33c241",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Lucky Coin.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/LuckyClover.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/LuckyClover.png",
+      "guid": "d8edc57c276626f449084ba691022a1c",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/LuckyClover.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ManaCharger.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/ManaCharger.png",
+      "guid": "539871f87750f5949b0d513f79a78a6b",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ManaCharger.png",
+      "commit": "8f3afc763841c706354ec1824c8cf31efd9515b9"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ManaGrimoire.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/ManaGrimoire.png",
+      "guid": "0e2d6b07379f1f541bc8b24d28718c45",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ManaGrimoire.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ManaRelic03.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/ManaRelic03.png",
+      "guid": "8cef2b57eb9960f46b210f1a51668ae4",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ManaRelic03.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ManaRelic04.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/ManaRelic04.png",
+      "guid": "92e7c98557b4a7244ade25f48dcd7074",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ManaRelic04.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ManaRelic05.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/ManaRelic05.png",
+      "guid": "94561880f426a1047963af3b933ad78e",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ManaRelic05.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Mandrake.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/Mandrake.png",
+      "guid": "1073be4f7aaa7424fbc413e401329463",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Mandrake.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Meteorite.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Stat/Meteorite.png",
+      "guid": "95e6ae23f702d7a4bae52fd53ddc1055",
+      "category": "Stat",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Meteorite.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Mirror.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Mirror.png",
+      "guid": "f57d77def181d3644b87846a791d6501",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Mirror.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Mossy Stone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Mossy Stone.png",
+      "guid": "fafef5eafe0807c49b26a1fdc3b906b3",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Mossy Stone.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/MysteriousFlask.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/MysteriousFlask.png",
+      "guid": "5239acd97e21c0345a81f65f366e4a22",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/MysteriousFlask.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Mystical Feather.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/Mystical Feather.png",
+      "guid": "a180505633062ef4a96473cd86ae515a",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Mystical Feather.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/MysticalCrystal.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/MysticalCrystal.png",
+      "guid": "cc676c8f40cd98145a7b3ae8f7584836",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/MysticalCrystal.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/OminousDoll.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/OminousDoll.png",
+      "guid": "bdd41ae33ff90df4dbcbe476aab02a28",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/OminousDoll.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/OminousMask.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/OminousMask.png",
+      "guid": "86d9103ea9574494984f782cbbe4e52b",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/CorruptedFace.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Opapa.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/Opapa.png",
+      "guid": "a51d104611cfb294ba7a7c1123141e84",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Opapa.png",
+      "commit": "5b6e98673c000ab017a95fbf92e0558b4cd703a0"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/OrbOfGrudge.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/OrbOfGrudge.png",
+      "guid": "acd94b973bb80824a89aa40682a92f5f",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/OrbOfGrudge.png",
+      "commit": "2192c630a996577eb60731f0b694ece502f6f3dd"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/OverchargedOrb.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/OverchargedOrb.png",
+      "guid": "52689bc7a07dca244bb09bd5d9a270e9",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/OverchargedOrb.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Package.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Package.png",
+      "guid": "646a8453e2b05c94fa4b64107544a4d8",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Package.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Pengoo.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/Pengoo.png",
+      "guid": "134a9bb39fe59ce4496821bfca2fc5b6",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Frog.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/PhoenixFeather.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/PhoenixFeather.png",
+      "guid": "97023b59e50ca1d4388d40668b67f4a5",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/PhoenixFeather.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/PoisonedChalice.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/PoisonedChalice.png",
+      "guid": "71f7b03ddf287bc4ea7ca194efd467fc",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/PoisonedChalice.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/PollutedPlant.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/PollutedPlant.png",
+      "guid": "94e94da575c6bcf4fa037a6f72606546",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/PollutedPlant.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Potato.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Potato.png",
+      "guid": "9a5d7a344ab55cd4da85deaea8383f3c",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Potato.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/PouchOfAbundance.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/PouchOfAbundance.png",
+      "guid": "9bec4e2e83844b848ae1772cddde6cec",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/PouchOfAbundance.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/PowerDevice.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/PowerDevice.png",
+      "guid": "980bc70a95234823b3657b8eb2c56308",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/PowerDevice.png",
+      "commit": "ccfd2e23661183c14b5e9bd7cab3dea44b73fc18"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/PurpleCandy.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/PurpleCandy.png",
+      "guid": "07e3028f5e69dbc4abde2435c1de12b2",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/PurpleCandy.png",
+      "commit": "dc90496b281a753740dc2def403be54061f8cf7c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/PurpleRadish.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/PurpleRadish.png",
+      "guid": "0e57ac7ac72e2184caf52d7112303be5",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/PurpleRadish.png",
+      "commit": "98f0141357fe939cff4a03b73eed1f2d393b7e25"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/PyroEssence .png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/PyroEssence .png",
+      "guid": "08433541ac11d404fb4a23fd47911cca",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/PyroEssence .png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Quiver.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Quiver.png",
+      "guid": "d2e4fe109920d224399f96236f930ade",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Quiver.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RainbowSyrup.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/RainbowSyrup.png",
+      "guid": "c249435e0bab507408fb278edf911a9d",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RainbowSyrup.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RampageSerum.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/RampageSerum.png",
+      "guid": "4d33f6a410a36a64a959f64180c66b42",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RampageSerum.png",
+      "commit": "2192c630a996577eb60731f0b694ece502f6f3dd"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RedApple.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/RedApple.png",
+      "guid": "12ac4091f7a8db241b05a0badba67d75",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RedApple.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RedEmbers.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/RedEmbers.png",
+      "guid": "543a2c807c9042e42ad3cc6bd4d7b83f",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RedEmbers.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RedGlasses.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/RedGlasses.png",
+      "guid": "0bca076d4a4f0bd45b584001027e2801",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RedGlasses.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RedPebble.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/RedPebble.png",
+      "guid": "3761ac95c82f0b343937e5c28c23ac05",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RedPebble.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RitualDagger.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/RitualDagger.png",
+      "guid": "2d7114440c008e744aed13f364bec1e4",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RitualDagger.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Rooti.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Stat/Rooti.png",
+      "guid": "c0cfa8eb448663441811f8c9bd7a6b93",
+      "category": "Stat",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Rooti.png",
+      "commit": "5b6e98673c000ab017a95fbf92e0558b4cd703a0"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RubberBall.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/RubberBall.png",
+      "guid": "be735e5881d79654481cef7fe8584416",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RubberBall.png",
+      "commit": "5b6e98673c000ab017a95fbf92e0558b4cd703a0"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/RuneGlove.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/RuneGlove.png",
+      "guid": "144a82c134dbce94d955708b654a6013",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/RuneGlove.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Sacramentals.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Sacramentals.png",
+      "guid": "ccfb8ed0df93f164d8a8e1dccecb4a7f",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Sacramentals.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Scripture.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Scripture.png",
+      "guid": "5ed3e19e25f6b6b4e83b75c398b70550",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Scripture.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ScrollofShadowClone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Stat/ScrollofShadowClone.png",
+      "guid": "bc77d90dce3a1d9419269720e47db5f6",
+      "category": "Stat",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ScrollofShadowClone.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SharpClaw.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/SharpClaw.png",
+      "guid": "6c29142b6d73bc240a8532f60777e931",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SharpClaw.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SilverBullet.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/SilverBullet.png",
+      "guid": "c04a1b07bab153f44a7ce931cec01e5b",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SilverBullet.png",
+      "commit": "dc90496b281a753740dc2def403be54061f8cf7c"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SinisterEgg.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/SinisterEgg.png",
+      "guid": "d9f8c3c2677b57c448b7c0a548add897",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SinisterEgg.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicBlackhole.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicBlackhole.png",
+      "guid": "715b59f3917289940806df964c060e59",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicBlackhole.png",
+      "commit": "f4a9cfc812eb5ebc781b6c261f7535645e706893"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicChainIgnition.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicChainIgnition.png",
+      "guid": "6f8d72220b992d44c8fb96c97e69f901",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicChainIgnition.png",
+      "commit": "f4a9cfc812eb5ebc781b6c261f7535645e706893"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicDecoy.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicDecoy.png",
+      "guid": "5a6e6de35a01543499ee54d27fe38069",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicDecoy.png",
+      "commit": "f4a9cfc812eb5ebc781b6c261f7535645e706893"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicMeteor.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicMeteor.png",
+      "guid": "6df3068747762464bbc7389349355198",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicMeteor.png",
+      "commit": "f4a9cfc812eb5ebc781b6c261f7535645e706893"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicRooti.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicRooti.png",
+      "guid": "a6b1cb3012f48fe4cb829e0be7ae53b9",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicRooti.png",
+      "commit": "f4a9cfc812eb5ebc781b6c261f7535645e706893"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicShadowClone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicShadowClone.png",
+      "guid": "4b5cf089eb741814eaf4baf6db6bf5d4",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicShadowClone.png",
+      "commit": "f4a9cfc812eb5ebc781b6c261f7535645e706893"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SkullRing.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/SkullRing.png",
+      "guid": "562652bc2ccd54b46a89ece4420f4121",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SkullRing.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SlimeSpecimen.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SlimeSpecimen.png",
+      "guid": "2b5b64eb0e4c0e548af4a105d60d1001",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SlimeSpecimen.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SmallBattery.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/SmallBattery.png",
+      "guid": "b003c28388c2d7343acadc16381037f6",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SmallBattery.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SnowMan.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/SnowMan.png",
+      "guid": "f2c690fc5ae2db543843ed44cd1c2695",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SnowMan.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/StarlightShard.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/StarlightShard.png",
+      "guid": "ec2e33a4ea32b8e4fb5a56a10f53ba4c",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/StarlightShard.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/StoneAmulet.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/StoneAmulet.png",
+      "guid": "63daafdc1df1cac408e7ed7e4d25eb86",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/StoneAmulet.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/StoneMask.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/StoneMask.png",
+      "guid": "b47294491e660de479f4fc10e4b3300e",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/StoneMask.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SuspiciousDrug.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/SuspiciousDrug.png",
+      "guid": "47d0a558919b301458237331c3a7a4a2",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SuspiciousDrug.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Tarantula.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Tarantula.png",
+      "guid": "6d6e6c5b325ef6843a4ca3a8efdb6b41",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Tarantula.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/TargetMaker.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/TargetMaker.png",
+      "guid": "91fddb5ffd049524ca98a4d4bfcda19d",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/TargetMaker.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ThreadSpindle.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/ThreadSpindle.png",
+      "guid": "b07291dc1bdce75429aef9039eff1715",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ThreadSpindle.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Thunderstone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Thunderstone.png",
+      "guid": "b142c67487db98740b4c0c81e29a8b00",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Thunderstone.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/TinyWing.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/TinyWing.png",
+      "guid": "b7ee5bc583ac1d04da431595caebb867",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/TinyWing.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ToxicCatalyst.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/ToxicCatalyst.png",
+      "guid": "e39b228fda8d3ee47af7c67a4f07c065",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ToxicCatalyst.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/TreasureMap.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/TreasureMap.png",
+      "guid": "091c9ecd8ac1405469a1cb05fb75b7d1",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/TreasureMap.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/VampiricFang.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/VampiricFang.png",
+      "guid": "2b2abc9e2138f16459aacefd751fe6f4",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/VampiricFang.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/VanguardShield.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/VanguardShield.png",
+      "guid": "134bb7a238023d043a3d6129be61ddcc",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/VanguardShield.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/ViperRay.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/ViperRay.png",
+      "guid": "1b361797ad5c5d145bd29c2018ac3c17",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/ViperRay.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/WarpGear.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Unassigned/WarpGear.png",
+      "guid": "79ea3a7594f396f48a41f10a079f6662",
+      "category": "Unassigned",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/WarpGear.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Watcher'sEye.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/Watcher'sEye.png",
+      "guid": "b90cd5b286d35d84a89e18ea59fd5ce7",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Watcher'sEye.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Will-o'-Wisp.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Will-o'-Wisp.png",
+      "guid": "9012a6d38b2ce7445b3804826909f752",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Will-o'-Wisp.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/WindGuide.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/WindGuide.png",
+      "guid": "bfd2dd3d11b45614e91bad49c0c1b9f2",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/WindGuide.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/WindStone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/WindStone.png",
+      "guid": "885d76e122f5ff941aae2431c47098a2",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/WindStone.png",
+      "commit": "0f533dec3a6114fc82ffaca9059bce10e3a2d87e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/WoodenTotemShard.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/WoodenTotemShard.png",
+      "guid": "1f4d836fe0e550a4698024648255fa38",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/WoodenTotemShard.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/WornCompass.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/WornCompass.png",
+      "guid": "e5471c49bfd7b3d40ba26dabebc1e05d",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/WornCompass.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Wraithfish.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/Wraithfish.png",
+      "guid": "7d2ea051e945cbe45bdbf2ab9acb2bee",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/Wraithfish.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/WraithKey.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Mana/WraithKey.png",
+      "guid": "63cfd20d4c0a23544a8efa6e61248cd7",
+      "category": "Mana",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/WraithKey.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/WraithStone.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/Elemental/WraithStone.png",
+      "guid": "2f54325af6ec927468dac129dcd0a23f",
+      "category": "Elemental",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/WraithStone.png",
+      "commit": "f2c08713da7256fe29ee7070d2301e3078779721"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/WyvernEmblem.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SimpleStats/WyvernEmblem.png",
+      "guid": "c27ae965c5f1c094693caeccb8cdd709",
+      "category": "SimpleStats",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/WyvernEmblem.png",
+      "commit": "f4379c452a53ff407706bc6c7f6799c4e6c3f90e"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/Zenith.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/CombatUtility/Zenith.png",
+      "guid": "56f948dbfc6847d9888af7b5d281e3a2",
+      "category": "CombatUtility",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/Zenith.png",
+      "commit": "c64edb80642a00ebd824c41223c5c6d85cda9c8a"
+    },
+    {
+      "source": "Assets/Nytherion/Core/test/straight_lightning_texture.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Textures/Tests/straight_lightning_texture.png",
+      "guid": "4d09dbcf8b1e8f147a418a9c93e460fb",
+      "category": "TestTextures",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Core/test/straight_lightning_texture.png",
+      "commit": "a5c960573594e53c57745221bc21b2961fe9a5b1"
+    },
+    {
+      "source": "Assets/Nytherion/Core/test/straight_lightning_texture2.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Textures/Tests/straight_lightning_texture2.png",
+      "guid": "bf5b77b4841dc734993fedcdbc32b7a7",
+      "category": "TestTextures",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Core/test/straight_lightning_texture2.png",
+      "commit": "a5c960573594e53c57745221bc21b2961fe9a5b1"
+    },
+    {
+      "source": "Assets/TextMesh Pro/Resources/Sprite Assets/SharedSprites/lightning_beam.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Textures/lightning_beam.png",
+      "guid": "387cecbfbe5dfa44b9358d1898f5a770",
+      "category": "Textures",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Sprites/lightning_beam.png",
+      "commit": "bef5de329136c4bce3dfb1d053d9394613ce73db"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/BurnEmberSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/BurnEmberSheet.png",
+      "guid": "15ff328e38204f51a9c16cd3e5bcc38f",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/BurnEmberSheet.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/BurnFlameSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/BurnFlameSheet.png",
+      "guid": "04f4bfe3416849318f854b768698c560",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/BurnFlameSheet.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/BurnVariantSheet.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/BurnVariantSheet.png",
+      "guid": "db80f6b5addb4ef0817c6623cfc542a5",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/BurnVariantSheet.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalA.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/ChillCrystalA.png",
+      "guid": "8138b50f6e87011408be2ee24063bced",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalA.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalB.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/ChillCrystalB.png",
+      "guid": "1970c9677e1c924448d17896d86df264",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalB.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalVariants.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/StatusEffects/ChillCrystalVariants.png",
+      "guid": "cee38e2ac45a6404080d9b8e1625b836",
+      "category": "StatusEffects",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/ChillCrystalVariants.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStream.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/FrostStream/FrostStream.png",
+      "guid": "2abe51707230380499c58b50978e47d7",
+      "category": "Weapons/FrostStream",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStream.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStreamHit.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/FrostStream/FrostStreamHit.png",
+      "guid": "c5a21e770a0da2440a229df6ab4d4e99",
+      "category": "Weapons/FrostStream",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStreamHit.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStreamStart.png",
+      "destination": "Assets/Nytherion/Art/Combat/VFX/Sprites/Weapons/FrostStream/FrostStreamStart.png",
+      "guid": "8054a21dda2f10d42806d785f803cb37",
+      "category": "Weapons/FrostStream",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/VFX/Sprites/FrostStreamStart.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Combat/Weapons/Sprites/FrostStream_Icon.png",
+      "destination": "Assets/Nytherion/Art/Combat/Weapons/Icons/FrostStream_Icon.png",
+      "guid": "8516e77e24df9bd48a3bf8ff7834864f",
+      "category": "WeaponIcons",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Combat/Weapons/Sprites/FrostStream_Icon.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    },
+    {
+      "source": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicPortalGate.png",
+      "destination": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicS/SkillRelicPortalGate.png",
+      "guid": "12dfc98b25e64d4eab94e811e31cbe7d",
+      "category": "SkillRelics",
+      "author": "kyungtae9922@gmail.com",
+      "original": "Assets/Nytherion/Art/Relics/Sprites/SkillRelicPortalGate.png",
+      "commit": "",
+      "ownershipEvidence": "2026-11-13 사용자 직접 확인"
+    }
+  ]
+}

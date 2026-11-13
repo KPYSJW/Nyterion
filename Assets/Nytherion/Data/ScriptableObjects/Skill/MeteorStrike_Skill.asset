@@ -37,5 +37,5 @@ MonoBehaviour:
   dropHeight: 10
   dropHorizontalOffset: -6
   fallSpeed: 20
-  explosionYOffset: 0.6
+  explosionYOffset: 0.5
   impactPrefab: {fileID: 7987386238065005855, guid: a94b835fdf8762c4c8f7a9317d7066de, type: 3}

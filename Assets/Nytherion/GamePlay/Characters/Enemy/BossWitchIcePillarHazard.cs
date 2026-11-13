@@ -32,7 +32,8 @@ namespace Nytherion.GamePlay.Characters.Enemy
         private LineRenderer warning;
 
         public void Initialize(EnemyBase source, float warningSeconds, float duration,
-            float damageRadius, float obstacleRadius, float damageAmount, float warningDelay = 0f)
+            float damageRadius, float obstacleRadius, float damageAmount, float warningDelay = 0f,
+            int sortingOrderOffset = 1)
         {
             owner = source;
             hitRadius = Mathf.Max(0.1f, damageRadius);
@@ -50,7 +51,7 @@ namespace Nytherion.GamePlay.Characters.Enemy
             if (body != null)
             {
                 pillarVisual.sortingLayerID = body.sortingLayerID;
-                pillarVisual.sortingOrder = body.sortingOrder + 1;
+                pillarVisual.sortingOrder = body.sortingOrder + sortingOrderOffset;
             }
             GameObject warningObject = new GameObject("Ice Pillar Warning");
             warningObject.transform.SetParent(transform, false);

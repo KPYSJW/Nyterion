@@ -34,8 +34,8 @@ namespace Nytherion.GamePlay.Skills
             remainingHeight = Mathf.Max(0.01f, data.dropHeight);
             horizontalSlope = data.dropHorizontalOffset / remainingHeight;
             transform.position = GetTargetPosition() + new Vector3(data.dropHorizontalOffset, remainingHeight);
-            // 원본 불꽃의 꼬리는 위쪽이므로 낙하 경로의 반대 방향으로 향하게 합니다.
-            transform.rotation = Quaternion.Euler(0f, 0f, -Mathf.Atan(horizontalSlope) * Mathf.Rad2Deg);
+            // 시트의 꼬리가 오른쪽 위로 기울어진 각도를 보정해 낙하 반대 방향에 맞춥니다.
+            transform.rotation = Quaternion.Euler(0f, 0f, 30f - Mathf.Atan(horizontalSlope) * Mathf.Rad2Deg);
             gameObject.SetActive(true);
             if (animator == null) animator = GetComponent<Animator>();
             animator.Rebind();

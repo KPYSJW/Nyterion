@@ -488,6 +488,7 @@ namespace Nytherion.GamePlay.Characters.Player
         private bool ShouldUseGenericCharging()
         {
             return currentWeapon != null &&
+                   currentWeapon.SupportsGenericCharging &&
                    !(currentWeapon is IChargeableWeapon) &&
                    playerManager != null &&
                    playerManager.playerRelicManager != null &&
